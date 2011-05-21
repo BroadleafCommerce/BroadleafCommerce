@@ -17,7 +17,6 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -37,6 +36,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.money.Money;
+import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -97,7 +97,12 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 			if (candidates.isMatchedTarget()) {
 				if (candidateOffer == null) {
 					//we don't know the final target yet, so put null for the order item for now
-					createCandidateItemOffer(qualifiedItemOffers, offer, null);
+					candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null);
+				}
+				for (OrderItem candidateItem : candidates.getCandidateTargets()) {
+					CandidateItemOffer itemOffer = ((CandidateItemOffer) candidateOffer).clone();
+					itemOffer.setOrderItem(candidateItem);
+					candidateItem.getCandidateItemOffers().add(itemOffer);
 				}
 				candidateOffer.getCandidateTargets().addAll(candidates.getCandidateTargets());
 			}
@@ -163,7 +168,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	protected int applyAdjustments(List<DiscreteOrderItem> discreteOrderItems, Order order, int appliedItemOffersCount, CandidateItemOffer itemOffer, int beforeCount) {
 		boolean notCombinableOfferApplied = false;
 		boolean offerApplied = false;
-		for (OrderItem targetItem : order.getSplitItems()) {
+		List<OrderItem> allSplitItems = getAllSplitItems(order);
+		for (OrderItem targetItem : allSplitItems) {
 			notCombinableOfferApplied = targetItem.isNotCombinableOfferApplied();
 			if (!offerApplied) {
 				offerApplied = targetItem.isHasOrderItemAdjustments();
@@ -183,7 +189,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 			) 
 		{
 	    	applyItemQualifiersAndTargets(discreteOrderItems, itemOffer, order);
-	    	for (OrderItem splitItem : order.getSplitItems()) {
+	    	allSplitItems = getAllSplitItems(order);
+	    	for (OrderItem splitItem : allSplitItems) {
 	    		for (PromotionDiscount discount : splitItem.getPromotionDiscounts()) {
 	    			if (discount.getPromotion().equals(itemOffer.getOffer())) {
 	    				applyOrderItemAdjustment(itemOffer, splitItem);
@@ -198,13 +205,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		if ((!itemOffer.getOffer().isCombinableWithOtherOffers() || (itemOffer.getOffer().isTotalitarianOffer() != null && itemOffer.getOffer().isTotalitarianOffer())) && appliedItemOffersCount > beforeCount) { 
 			Money adjustmentTotal = new Money(0D);
 			Money saleTotal = new Money(0D);
-			for (OrderItem splitItem : order.getSplitItems()) {
+			for (OrderItem splitItem : allSplitItems) {
 				adjustmentTotal = adjustmentTotal.add(splitItem.getCurrentPrice().multiply(splitItem.getQuantity()));
 				saleTotal = saleTotal.add(splitItem.getPriceBeforeAdjustments(true).multiply(splitItem.getQuantity()));
 			}
 			if (adjustmentTotal.greaterThanOrEqual(saleTotal)) {
 		        // adjustment price is not best price, remove adjustments for this item
-				for (OrderItem splitItem : order.getSplitItems()) {
+				for (OrderItem splitItem : allSplitItems) {
 					if (splitItem.isHasOrderItemAdjustments()) {
 						appliedItemOffersCount--;
 					}
@@ -217,8 +224,9 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
 	protected int checkAdjustments(Order order, int appliedItemOffersCount) {
 		if (appliedItemOffersCount > 0) {
+			List<OrderItem> allSplitItems = getAllSplitItems(order);
 		    // compare adjustment price to sales price and remove adjustments if sales price is better
-		    for (OrderItem splitItem : order.getSplitItems()) {
+		    for (OrderItem splitItem : allSplitItems) {
 		        if (splitItem.isHasOrderItemAdjustments()) {
 		            Money itemPrice = splitItem.getRetailPrice();
 		            if (splitItem.getSalePrice() != null) {
@@ -369,25 +377,22 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		} while (matchFound);
 		
 		if (order.getSplitItems().size() == 0) {
-			order.getSplitItems().addAll(order.getOrderItems());
+			initializeSplitItems(order, order.getOrderItems());
 		}
-		Iterator<OrderItem> chargeableItemsIterator = order.getSplitItems().iterator();
-		List<OrderItem> splitChargeableItems = new ArrayList<OrderItem>();
-		
-		while (chargeableItemsIterator.hasNext()) {
-			OrderItem chargeableItem = chargeableItemsIterator.next();
+		List<OrderItem> allSplitItems = getAllSplitItems(order);
+		for (OrderItem chargeableItem : allSplitItems) {
 			if (itemOffer.getCandidateTargets().contains(chargeableItem)) {
 				List<OrderItem> splitItems = chargeableItem.split();
 				if (splitItems != null && splitItems.size() > 0) {
 					// Remove this item from the list
-					chargeableItemsIterator.remove();
-					splitChargeableItems.addAll(splitItems);
+					List<OrderItem> temp = order.searchSplitItems(chargeableItem);
+					if (!CollectionUtils.isEmpty(temp)) {
+						temp.remove(chargeableItem);
+						temp.addAll(splitItems);
+					}
 				}
 			} 
 		}
-
-		// Add the split items back to the order list
-		order.getSplitItems().addAll(splitChargeableItems);
 	}
 
     /**
@@ -405,7 +410,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     
     public List<DiscreteOrderItem> filterOffers(Order order, List<Offer> filteredOffers, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers) {
 		// set order subtotal price to total item price without adjustments
-		order.setSubTotal(order.calculateOrderItemsCurrentPrice());
+    	order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
 		List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
 		for (Offer offer : filteredOffers) {
 			OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(offer);
@@ -437,7 +442,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		    applyAllOrderOffers(qualifiedOrderOffers, order);
 		}
 		
-		calculateOrderTotal(order);
+		compileOrderTotal(order);
 		
 		if (!qualifiedOrderOffers.isEmpty() && !qualifiedItemOffers.isEmpty()) {
 		    List<CandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();

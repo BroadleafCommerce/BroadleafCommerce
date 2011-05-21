@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.offer.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -45,6 +46,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.money.Money;
@@ -56,6 +58,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
+import org.easymock.IAnswer;
+import org.easymock.classextension.EasyMock;
 
 /**
  * 
@@ -64,6 +68,72 @@ import org.broadleafcommerce.profile.core.domain.StateImpl;
  */
 public class OfferDataItemProvider {
 
+	public static Long orderItemId = 1L;
+	
+	public static Long getOrderItemId() {
+		return orderItemId++;
+	}
+	
+	public static IAnswer<FulfillmentGroup> getAddItemToFulfillmentGroupAnswer() {
+		return new IAnswer<FulfillmentGroup>() {
+			public FulfillmentGroup answer() throws Throwable {
+				FulfillmentGroup fg = (FulfillmentGroup) EasyMock.getCurrentArguments()[1];
+				FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
+				fgItem.setOrderItem((OrderItem) EasyMock.getCurrentArguments()[0]);
+				fgItem.setQuantity(((OrderItem) EasyMock.getCurrentArguments()[0]).getQuantity());
+				fg.getFulfillmentGroupItems().add(fgItem);
+				return fg;
+			}
+		};
+	}
+	
+	public static IAnswer<OrderItem> getAddOrderItemToOrderAnswer() {
+		return new IAnswer<OrderItem>() {
+			public OrderItem answer() throws Throwable {
+				Order order = (Order) EasyMock.getCurrentArguments()[0];
+				order.getOrderItems().add((OrderItem) EasyMock.getCurrentArguments()[1]);
+				if (((OrderItem) EasyMock.getCurrentArguments()[1]).getId() == null) {
+					((OrderItem) EasyMock.getCurrentArguments()[1]).setId(OfferDataItemProvider.getOrderItemId());
+				}
+				return (OrderItem) EasyMock.getCurrentArguments()[1];
+			}
+		};
+	}
+	
+	public static IAnswer<OrderItem> getSaveOrderItemAnswer() {
+		return new IAnswer<OrderItem>() {
+			public OrderItem answer() throws Throwable {
+				return (OrderItem) EasyMock.getCurrentArguments()[0];
+			}
+		};
+	}
+	
+	public static IAnswer<FulfillmentGroupItem> getSaveFulfillmentGroupItemAnswer() {
+		return new IAnswer<FulfillmentGroupItem>() {
+			public FulfillmentGroupItem answer() throws Throwable {
+				return (FulfillmentGroupItem) EasyMock.getCurrentArguments()[0];
+			}
+		};
+	}
+	
+	public static IAnswer<Order> getRemoveItemFromOrderAnswer() {
+		return new IAnswer<Order>() {
+			public Order answer() throws Throwable {
+				Order order = (Order) EasyMock.getCurrentArguments()[0];
+				order.getOrderItems().remove((OrderItem) EasyMock.getCurrentArguments()[1]);
+				for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+					Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
+					while (itr.hasNext()) {
+						if (itr.next().getOrderItem().equals((OrderItem) EasyMock.getCurrentArguments()[1])) {
+							itr.remove();
+						}
+					}
+				}
+				return order;
+			}
+		};
+	}
+	
 	public Order createBasicOrder() {
 		Order order = new OrderImpl();
 		
@@ -107,6 +177,7 @@ public class OfferDataItemProvider {
 		orderItem1.setSku(sku1);
 		orderItem1.setRetailPrice(new Money(19.99D));
 		orderItem1.setPrice(new Money(19.99D));
+		orderItem1.setId(getOrderItemId());
 		
 		order.getOrderItems().add(orderItem1);
 		
@@ -120,6 +191,7 @@ public class OfferDataItemProvider {
 		orderItem2.setSku(sku2);
 		orderItem2.setRetailPrice(new Money(29.99D));
 		orderItem2.setPrice(new Money(29.99D));
+		orderItem2.setId(getOrderItemId());
 		
 		order.getOrderItems().add(orderItem2);
 		
@@ -168,7 +240,7 @@ public class OfferDataItemProvider {
 		fgItem1.setFulfillmentGroup(fg1);
 		fgItem1.setOrderItem(orderItem1);
 		fgItem1.setQuantity(2);
-		fgItem1.setRetailPrice(new Money(19.99D));
+		//fgItem1.setRetailPrice(new Money(19.99D));
 		fg1.getFulfillmentGroupItems().add(fgItem1);
 		
 		order.getFulfillmentGroups().add(fg1);
@@ -207,7 +279,7 @@ public class OfferDataItemProvider {
 		fgItem2.setFulfillmentGroup(fg2);
 		fgItem2.setOrderItem(orderItem2);
 		fgItem2.setQuantity(3);
-		fgItem2.setRetailPrice(new Money(29.99D));
+		//fgItem2.setRetailPrice(new Money(29.99D));
 		fg2.getFulfillmentGroupItems().add(fgItem2);
 		
 		order.getFulfillmentGroups().add(fg2);

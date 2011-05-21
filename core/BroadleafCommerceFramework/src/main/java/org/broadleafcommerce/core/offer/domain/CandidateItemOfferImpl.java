@@ -15,26 +15,24 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.money.Money;
@@ -46,8 +44,9 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implements CandidateItemOffer {
+public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implements CandidateItemOffer, Cloneable {
 
+	public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);
     public static final long serialVersionUID = 1L;
 
     @Id
@@ -69,11 +68,6 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
     @Column(name = "DISCOUNTED_PRICE")
     @Deprecated
     private BigDecimal discountedPrice;
-    
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderItemImpl.class)
-    @JoinTable(name = "BLC_QUALIFIER_ITEM_XREF", joinColumns = @JoinColumn(name = "CANDIDATE_ITEM_OFFER_ID", referencedColumnName = "CANDIDATE_ITEM_OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ITEM_ID", referencedColumnName = "ORDER_ITEM_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<OrderItem> candidateQualifierItems = new ArrayList<OrderItem>();
     
     @Transient
     protected Money potentialSavings; 
@@ -105,14 +99,6 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
     public Offer getOffer() {
         return offer;
     }
-
-    public List<OrderItem> getCandidateQualifierItems() {
-		return candidateQualifierItems;
-	}
-
-	public void setCandidateQualifierItems(List<OrderItem> candidateQualifierItems) {
-		this.candidateQualifierItems = candidateQualifierItems;
-	}
 	
 	public Money getPotentialSavings() {
 		if (potentialSavings == null) {
@@ -180,7 +166,37 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
 		
 		return numberOfUsesForThisItemCriteria;
 	}
-
+	
+	public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+		Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[]{});
+		if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
+			//subclass is not implementing the clone method
+			throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+		}
+	}
+	
+	@Override
+	public CandidateItemOffer clone() {
+		//instantiate from the fully qualified name via reflection
+		CandidateItemOffer candidateItemOffer;
+		try {
+			candidateItemOffer = (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
+			try {
+				checkCloneable(candidateItemOffer);
+			} catch (CloneNotSupportedException e) {
+				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + candidateItemOffer.getClass().getName(), e);
+			}
+			candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
+			candidateItemOffer.setCandidateTargets(getCandidateTargets());
+			candidateItemOffer.setOffer(getOffer());
+			candidateItemOffer.setOrderItem(getOrderItem());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+ 		
+ 		return candidateItemOffer;
+	}
+	
 	@Override
     public int hashCode() {
         final int prime = 31;

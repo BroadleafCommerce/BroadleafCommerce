@@ -26,4 +26,6 @@ public interface CandidateItemOffer extends CandidateQualifiedOffer {
 
     public Money getPotentialSavings();
     
+    public CandidateItemOffer clone();
+    
 }

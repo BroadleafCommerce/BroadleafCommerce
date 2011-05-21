@@ -32,8 +32,13 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.money.Money;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
@@ -46,22 +51,37 @@ import org.easymock.classextension.EasyMock;
 public class ItemOfferProcessorTest extends TestCase {
 
 	private OfferDao offerDaoMock;
+	private CartService cartServiceMock;
+	private OrderItemService orderItemServiceMock;
+	private FulfillmentGroupItemDao fgItemDaoMock;
 	private ItemOfferProcessorImpl itemProcessor;
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 	
 	@Override
 	protected void setUp() throws Exception {
 		offerDaoMock = EasyMock.createMock(OfferDao.class);
+		cartServiceMock = EasyMock.createMock(CartService.class);
+		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
+		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
 		itemProcessor = new ItemOfferProcessorImpl();
 		itemProcessor.setOfferDao(offerDaoMock);
+		itemProcessor.setCartService(cartServiceMock);
+		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+		itemProcessor.setOrderItemService(orderItemServiceMock);
 	}
 	
 	public void replay() {
 		EasyMock.replay(offerDaoMock);
+		EasyMock.replay(cartServiceMock);
+		EasyMock.replay(orderItemServiceMock);
+		EasyMock.replay(fgItemDaoMock);
 	}
 	
 	public void verify() {
 		EasyMock.verify(offerDaoMock);
+		EasyMock.verify(cartServiceMock);
+		EasyMock.verify(orderItemServiceMock);
+		EasyMock.verify(fgItemDaoMock);
 	}
 	
 	public void testFilterItemLevelOffer() {
@@ -200,6 +220,12 @@ public class ItemOfferProcessorTest extends TestCase {
 		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
 		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(4);
 		
+		EasyMock.expect(cartServiceMock.addItemToFulfillmentGroup(EasyMock.isA(OrderItem.class), EasyMock.isA(FulfillmentGroup.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
+		EasyMock.expect(cartServiceMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
+		EasyMock.expect(cartServiceMock.removeItemFromOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
+		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
+		EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
+		
 		replay();
 		
 		Order order = dataProvider.createBasicOrder();
@@ -238,7 +264,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		Answer answer = new Answer();
 		Answer2 answer2 = new Answer2();
 		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
-		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(7);
+		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(8);
 		
 		replay();
 		
@@ -368,7 +394,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			}
 		}
 		assertTrue(qualCount == 0 && targetCount == 4);
-		assertTrue(order.getSplitItems().size() == 3);
+		assertTrue(itemProcessor.getAllSplitItems(order).size() == 3);
 		
 		itemProcessor.applyItemQualifiersAndTargets(order.getDiscountableDiscreteOrderItems(), qualifiedOffers.get(0), order);
 		
@@ -383,7 +409,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			}
 		}
 		assertTrue(qualCount == 1 && targetCount == 5);
-		assertTrue(order.getSplitItems().size() == 4);
+		assertTrue(order.getSplitItems().size() == 2 && order.getSplitItems().get(0).getSplitItems().size() == 2 && order.getSplitItems().get(1).getSplitItems().size() == 2);
 		
 		itemProcessor.applyItemQualifiersAndTargets(order.getDiscountableDiscreteOrderItems(), qualifiedOffers.get(2), order);
 		
@@ -398,14 +424,15 @@ public class ItemOfferProcessorTest extends TestCase {
 			}
 		}
 		int promoCount = 0;
-		for (OrderItem item : order.getSplitItems()) {
+		List<OrderItem> allSplitItems = itemProcessor.getAllSplitItems(order);
+		for (OrderItem item : allSplitItems) {
 			promoCount += item.getPromotionDiscounts().size();
 		}
 		/*
 		 * There's not enough qualifier spaces left
 		 */
 		assertTrue(qualCount == 1 && targetCount == 5);
-		assertTrue(order.getSplitItems().size() == 4);
+		assertTrue(order.getSplitItems().size() == 2 && order.getSplitItems().get(0).getSplitItems().size() == 2 && order.getSplitItems().get(1).getSplitItems().size() == 2);
 		assertTrue(promoCount == 4);
 		
 		verify();

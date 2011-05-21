@@ -61,7 +61,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
-import org.hibernate.envers.Audited;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -109,7 +108,7 @@ public class ProductImpl implements Product {
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Product Description", order=2, group="Product Description", prominent=true, largeEntry=true, groupOrder=1)
+    @AdminPresentation(friendlyName="Product Description", order=2, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)
     protected String description;
 
     /** The long description. */

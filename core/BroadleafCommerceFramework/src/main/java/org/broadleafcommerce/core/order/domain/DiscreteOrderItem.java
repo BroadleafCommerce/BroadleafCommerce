@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -49,4 +50,7 @@ public interface DiscreteOrderItem extends OrderItem {
 
 	public void setBaseSalePrice(Money baseSalePrice);
 	
+	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices();
+
+	public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> orderItemFeePrices);
 }

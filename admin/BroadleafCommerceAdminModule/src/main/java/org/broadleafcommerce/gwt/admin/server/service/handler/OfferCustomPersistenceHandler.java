@@ -112,7 +112,6 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			
 			return results;
 		} catch (Exception e) {
-			LOG.error("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
@@ -173,7 +172,6 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			
 			return response;
 		} catch (Exception e) {
-			LOG.error("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 			throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
@@ -217,7 +215,6 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			
 			return offerEntity;
 		} catch (Exception e) {
-			LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
 	}
@@ -238,8 +235,7 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			Offer offerInstance = (Offer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			dynamicEntityDao.remove(offerInstance);
 		} catch (Exception e) {
-			LOG.error("Unable to remove entity for " + entity.getType()[0], e);
-			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+			throw new ServiceException("Unable to remove entity for " + entity.getType()[0] + ". It is likely this offer is currently associated with one or more orders. Only unused offers may be deleted.", e);
 		}
 	}
 
@@ -298,7 +294,6 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			
 			return offerEntity;
 		} catch (Exception e) {
-			LOG.error("Unable to update entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
 	}

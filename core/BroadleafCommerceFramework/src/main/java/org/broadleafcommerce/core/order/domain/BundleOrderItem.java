@@ -27,5 +27,9 @@ public interface BundleOrderItem extends OrderItem {
     void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems);
 
     Money getTaxablePrice();
+    
+    public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices();
+
+    public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices);
 
 }

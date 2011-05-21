@@ -34,10 +34,18 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.util.OrderItemSplitContainer;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.money.Money;
+import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -52,6 +60,15 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
 	@Resource(name="blOfferDao")
     protected OfferDao offerDao;
+	
+	@Resource(name="blCartService")
+	protected CartService cartService;
+	
+	@Resource(name="blOrderItemService")
+	protected OrderItemService orderItemService;
+	
+	@Resource(name="blFulfillmentGroupItemDao")
+	protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 	
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor#filterOrderLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
@@ -254,6 +271,26 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         return orderOffersApplied;
     }
+    
+    public List<OrderItem> getAllSplitItems(Order order) {
+    	List<OrderItem> response = new ArrayList<OrderItem>();
+    	for (OrderItemSplitContainer container : order.getSplitItems()) {
+    		response.addAll(container.getSplitItems());
+    	}
+    	
+    	return response;
+    }
+    
+    public void initializeSplitItems(Order order, List<OrderItem> items) {
+    	for (OrderItem item : items) {
+    		List<OrderItem> temp = new ArrayList<OrderItem>();
+    		temp.add(item);
+    		OrderItemSplitContainer container = new OrderItemSplitContainer();
+    		container.setKey(item);
+    		container.setSplitItems(temp);
+    		order.getSplitItems().add(container);
+    	}
+    }
 
 	protected boolean compareAndAdjustOrderAndItemOffers(Order order, boolean orderOffersApplied) {
 		if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
@@ -263,13 +300,49 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 		} else {
 			// totalitarian order offer is better; remove all item offers
 			order.removeAllItemAdjustments();
-			order.getSplitItems().clear();
-			order.getSplitItems().addAll(order.getOrderItems());
-			mergeSplitItems(order);
+			gatherCart(order);
+			initializeSplitItems(order, order.getOrderItems());
 		}
 		return orderOffersApplied;
 	}
     
+	public void gatherCart(Order order) {
+		List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
+		Map<Long, Map<String, Object[]>> gatherMap = new HashMap<Long, Map<String, Object[]>>();
+		for (FulfillmentGroup group : order.getFulfillmentGroups()) {
+			Map<String, Object[]> gatheredItem = gatherMap.get(group);
+			if (gatheredItem == null) {
+				gatheredItem = new HashMap<String, Object[]>();
+				gatherMap.put(group.getId(), gatheredItem);
+			}
+			for (FulfillmentGroupItem fgItem : group.getFulfillmentGroupItems()) {
+				OrderItem orderItem = fgItem.getOrderItem();
+				if (!orderItem.isHasOrderItemAdjustments()) {
+					Object[] gatheredOrderItem = gatheredItem.get(orderItem.getName());
+					if (gatheredOrderItem == null) {
+						gatheredItem.put(orderItem.getName(), new Object[]{orderItem, fgItem});
+						continue;
+					}
+					((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + orderItem.getQuantity());
+					((FulfillmentGroupItem) gatheredOrderItem[1]).setQuantity(((FulfillmentGroupItem) gatheredOrderItem[1]).getQuantity() + fgItem.getQuantity());
+					itemsToRemove.add(orderItem);
+				}
+			}
+		}
+		try {
+			for (Map<String, Object[]> values : gatherMap.values()) {
+				for (Object[] item : values.values()) {
+					orderItemService.saveOrderItem((OrderItem) item[0]);
+					fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
+				}
+			}
+			for (OrderItem orderItem : itemsToRemove) {
+				cartService.removeItemFromOrder(order, orderItem, false);
+			}
+		} catch (PricingException e) {
+			throw new RuntimeException("Could not gather the cart", e);
+		}
+	}
     
     /**
      * Private method used by applyAllOrderOffers to create an OrderAdjustment from a CandidateOrderOffer
@@ -286,19 +359,17 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     
     protected void mergeSplitItems(Order order) {
 		//If adjustments are removed - merge split items back together before adding to the cart
-		Map<String, List<OrderItem>> splitMap = new HashMap<String, List<OrderItem>>();
-		for (OrderItem splitItem : order.getSplitItems()) {
-			if (!splitMap.containsKey(splitItem.getName())) {
-				List<OrderItem> mySplits = new ArrayList<OrderItem>();
-				splitMap.put(splitItem.getName(), mySplits);
-			}
-			splitMap.get(splitItem.getName()).add(splitItem);
-		}
+		List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
 		Iterator<OrderItem> finalItems = order.getOrderItems().iterator();
 		while(finalItems.hasNext()) {
 			OrderItem nextItem = finalItems.next();
-			List<OrderItem> mySplits = splitMap.get(nextItem.getName());
-			if (mySplits != null && mySplits.size() > 0) {
+			List<OrderItem> mySplits = order.searchSplitItems(nextItem);
+			if (!CollectionUtils.isEmpty(mySplits)) {
+				if (mySplits.size() == 1 && mySplits.contains(nextItem)) {
+					//the item was not split - no need to merge
+					mySplits.remove(nextItem);
+					continue;
+				}
 				OrderItem cloneItem = nextItem.clone();
 				cloneItem.clearAllDiscount();
 				cloneItem.clearAllQualifiers();
@@ -315,20 +386,53 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 				if (cloneItem.getQuantity() > 0) {
 					mySplits.add(cloneItem);
 				}
-				finalItems.remove();
+				if (mySplits.contains(nextItem)) {
+					mySplits.remove(nextItem);
+				} else {
+					itemsToRemove.add(nextItem);
+				}
 			}
 		}
-		for (String key : splitMap.keySet()) {
-			List<OrderItem> mySplits = splitMap.get(key);
-			if (mySplits != null && mySplits.size() > 0) {
-				order.getOrderItems().addAll(mySplits);
+		try {
+			for (OrderItemSplitContainer key : order.getSplitItems()) {
+				List<OrderItem> mySplits = key.getSplitItems();
+				if (!CollectionUtils.isEmpty(mySplits)) { 
+					//find fulfillment group for original order item
+					FulfillmentGroup targetGroup = null;
+					checkGroups: {
+						for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+							for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
+								if (fgItem.getOrderItem().equals(key.getKey())) {
+									targetGroup = fg;
+									break checkGroups;
+								}
+							}
+						}
+					}
+					for (OrderItem myItem : mySplits) {
+						/*
+						 * TODO there's a todo inside OrderItemImpl to manage transient values from a promotion management interface.
+						 * These transient items should not be managed here and should not be part of the public API, since they
+						 * are not intended to be permanent.
+						 */
+						Money adjustmentPrice = myItem.getAdjustmentPrice();
+						myItem = cartService.addOrderItemToOrder(order, myItem, false);
+						cartService.addItemToFulfillmentGroup(myItem, targetGroup, false);
+						myItem.setAdjustmentPrice(adjustmentPrice);
+					}
+				}
 			}
+			for (OrderItem orderItem : itemsToRemove) {
+				cartService.removeItemFromOrder(order, orderItem, false);
+			}
+		} catch (PricingException e) {
+			throw new RuntimeException("Could not propagate the items split by the promotion engine into the order", e);
 		}
 	}
     
-    public void calculateOrderTotal(Order order) {
+    public void compileOrderTotal(Order order) {
 		order.assignOrderItemsFinalPrice();
-		order.setSubTotal(order.calculateOrderItemsFinalPrice());
+		order.setSubTotal(order.calculateOrderItemsFinalPrice(true));
 	}
     
 	public OfferDao getOfferDao() {
@@ -338,4 +442,30 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 	public void setOfferDao(OfferDao offerDao) {
 		this.offerDao = offerDao;
 	}
+
+	public CartService getCartService() {
+		return cartService;
+	}
+
+	public void setCartService(CartService cartService) {
+		this.cartService = cartService;
+	}
+
+	public OrderItemService getOrderItemService() {
+		return orderItemService;
+	}
+
+	public void setOrderItemService(OrderItemService orderItemService) {
+		this.orderItemService = orderItemService;
+	}
+
+	public FulfillmentGroupItemDao getFulfillmentGroupItemDao() {
+		return fulfillmentGroupItemDao;
+	}
+
+	public void setFulfillmentGroupItemDao(
+			FulfillmentGroupItemDao fulfillmentGroupItemDao) {
+		this.fulfillmentGroupItemDao = fulfillmentGroupItemDao;
+	}
+	
 }

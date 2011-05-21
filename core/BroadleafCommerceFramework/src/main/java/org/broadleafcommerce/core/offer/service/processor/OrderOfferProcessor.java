@@ -21,8 +21,12 @@ import java.util.Map;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 
 /**
  * 
@@ -45,6 +49,24 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	
 	public boolean applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order);
 	
-	public void calculateOrderTotal(Order order);
+	public void compileOrderTotal(Order order);
+	
+	public List<OrderItem> getAllSplitItems(Order order);
+    
+    public void initializeSplitItems(Order order, List<OrderItem> items);
+	
+    public CartService getCartService();
+
+	public void setCartService(CartService cartService);
+	
+	public void gatherCart(Order order);
+	
+	public OrderItemService getOrderItemService();
+
+	public void setOrderItemService(OrderItemService orderItemService);
+
+	public FulfillmentGroupItemDao getFulfillmentGroupItemDao();
+
+	public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao);
 	
 }

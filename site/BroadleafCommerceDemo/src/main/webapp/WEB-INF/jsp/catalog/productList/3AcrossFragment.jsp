@@ -49,7 +49,9 @@
 							</c:otherwise>
 						</c:choose>
 					</span> <br/><br/>
-					<a class="addCartBtn" href="<c:url value="/basket/addItem.htm"> <c:param name="skuId" value="${product.skus[0].id}"/>
+					<a class="addCartBtn" href="<c:url value="/basket/addItem.htm"> 
+						<c:param name="skuId" value="${product.skus[0].id}"/>
+						<c:param name="categoryId" value="${product.defaultCategory.id}"/>
 						<c:param name="quantity" value="1"/> </c:url>">Add to Cart</a>
 				</div>
 				<c:choose>
