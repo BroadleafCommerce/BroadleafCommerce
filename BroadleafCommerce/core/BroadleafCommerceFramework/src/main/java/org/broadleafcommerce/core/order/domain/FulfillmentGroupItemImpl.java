@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -31,6 +29,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -62,15 +61,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     @Column(name = "QUANTITY", nullable=false)
     protected int quantity;
-
-    @Column(name = "RETAIL_PRICE")
-    protected BigDecimal retailPrice;
-
-    @Column(name = "SALE_PRICE")
-    protected BigDecimal salePrice;
-
-    @Column(name = "PRICE")
-    protected BigDecimal price;
 
     @Column(name = "STATUS")
     @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
@@ -109,27 +99,15 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     }
 
     public Money getRetailPrice() {
-        return retailPrice == null ? null : new Money(retailPrice);
-    }
-
-    public void setRetailPrice(Money retailPrice) {
-        this.retailPrice = Money.toAmount(retailPrice);
+        return orderItem.getRetailPrice();
     }
 
     public Money getSalePrice() {
-        return salePrice == null ? null : new Money(salePrice);
-    }
-
-    public void setSalePrice(Money salePrice) {
-        this.salePrice = Money.toAmount(salePrice);
+        return orderItem.getSalePrice();
     }
 
     public Money getPrice() {
-        return price == null ? null : new Money(price);
-    }
-
-    public void setPrice(Money price) {
-        this.price = Money.toAmount(price);
+        return orderItem.getPrice();
     }
 
     public String getStatus() {
@@ -139,6 +117,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    public void removeAssociations() {
+		if (getFulfillmentGroup() != null) getFulfillmentGroup().getFulfillmentGroupItems().remove(this);
+		setFulfillmentGroup(null);
+		setOrderItem(null);
+	}
 
     @Override
     public boolean equals(Object obj) {

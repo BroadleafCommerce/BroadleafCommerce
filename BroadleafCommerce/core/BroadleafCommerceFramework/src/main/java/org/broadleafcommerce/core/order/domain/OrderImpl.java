@@ -57,6 +57,7 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.util.OrderItemSplitContainer;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
@@ -210,7 +211,7 @@ public class OrderImpl implements Order {
     protected boolean hasOrderAdjustments = false;
     
     @Transient
-    protected List<OrderItem> splitItems = new ArrayList<OrderItem>();
+    protected List<OrderItemSplitContainer> splitItems = new ArrayList<OrderItemSplitContainer>();
 
     public Long getId() {
         return id;
@@ -245,10 +246,15 @@ public class OrderImpl implements Order {
         return calculatedSubTotal;
     }
 
-    public Money calculateOrderItemsFinalPrice() {
+    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
-            Money price = orderItem.getPrice();
+        	Money price;
+        	if (includeNonTaxableItems) {
+        		price = orderItem.getPrice();
+        	} else {
+        		price = orderItem.getTaxablePrice();
+        	}
             calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
         }
         return calculatedSubTotal;
@@ -705,7 +711,7 @@ public class OrderImpl implements Order {
 	public boolean isHasOrderAdjustments() {
 		return hasOrderAdjustments;
 	}
-	
+
 	public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
@@ -732,12 +738,21 @@ public class OrderImpl implements Order {
 		this.notCombinableOfferAppliedAtAnyLevel = notCombinableOfferAppliedAtAnyLevel;
 	}
 
-	public List<OrderItem> getSplitItems() {
+	public List<OrderItemSplitContainer> getSplitItems() {
 		return splitItems;
 	}
 
-	public void setSplitItems(List<OrderItem> splitItems) {
+	public void setSplitItems(List<OrderItemSplitContainer> splitItems) {
 		this.splitItems = splitItems;
+	}
+	
+	public List<OrderItem> searchSplitItems(OrderItem key) {
+		for (OrderItemSplitContainer container : splitItems) {
+			if (container.getKey().equals(key)) {
+				return container.getSplitItems();
+			}
+		}
+		return null;
 	}
 
 	public boolean equals(Object obj) {

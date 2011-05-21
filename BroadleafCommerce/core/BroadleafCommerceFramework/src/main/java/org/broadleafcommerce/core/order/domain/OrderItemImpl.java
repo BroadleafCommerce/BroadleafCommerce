@@ -15,13 +15,12 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,13 +31,14 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -54,13 +54,10 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -69,8 +66,9 @@ import org.hibernate.annotations.NotFoundAction;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-public class OrderItemImpl implements OrderItem {
+public class OrderItemImpl implements OrderItem, Cloneable {
 
+	private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -110,9 +108,6 @@ public class OrderItemImpl implements OrderItem {
     @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true)
     protected String name;
 
-    @Transient
-    protected BigDecimal adjustmentPrice; // retailPrice with adjustments
-
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
@@ -136,32 +131,24 @@ public class OrderItemImpl implements OrderItem {
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
 
     @Transient
-    protected int markedForOffer = 0;
+    protected int markedForOffer = 0;  
     
     @Transient
-    protected boolean notCombinableOfferApplied = false;    
+    //TODO move these transient elements to a promotion management interface since they are not intended to be permanent facets of the API
+    protected BigDecimal adjustmentPrice; // retailPrice with adjustments
     
     @Transient
-    protected boolean hasOrderItemAdjustments = false;
-    
-    @Transient
+    //TODO move these transient elements to a promotion management interface since they are not intended to be permanent facets of the API
     protected List<PromotionDiscount> promotionDiscounts = new ArrayList<PromotionDiscount>();
     
     @Transient
+    //TODO move these transient elements to a promotion management interface since they are not intended to be permanent facets of the API
     protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
 
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     @AdminPresentation(friendlyName="Item Type", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderItemType")
     protected String orderItemType;
-    
-    @CollectionOfElements
-    @JoinTable(name = "BLC_ORDER_ITEM_ADD_FEE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
-    @BatchSize(size = 50)
-	protected Map<String, BigDecimal> additionalFees;
 
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
@@ -341,11 +328,7 @@ public class OrderItemImpl implements OrderItem {
         }
         adjustmentPrice = adjustmentPrice.subtract(orderItemAdjustment.getValue().getAmount());
         this.orderItemAdjustments.add(orderItemAdjustment);
-        if (!orderItemAdjustment.getOffer().isCombinableWithOtherOffers() || (orderItemAdjustment.getOffer().isTotalitarianOffer() != null && orderItemAdjustment.getOffer().isTotalitarianOffer())) {
-        	notCombinableOfferApplied = true;
-        }
         getOrder().resetTotalitarianOfferApplied();
-        hasOrderItemAdjustments = true;
     }
 
     public int removeAllAdjustments() {
@@ -355,28 +338,20 @@ public class OrderItemImpl implements OrderItem {
             orderItemAdjustments.clear();
         }
         adjustmentPrice = null;
-        notCombinableOfferApplied = false;
-        hasOrderItemAdjustments = false;
         if (getOrder() != null) {
         	getOrder().resetTotalitarianOfferApplied();
         }
-        
+        if (promotionDiscounts != null) {
+        	promotionDiscounts.clear();
+        }
+        if (promotionQualifiers != null) {
+        	promotionQualifiers.clear();
+        }
         return removedAdjustmentCount;
     }
 
-    protected void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {    	
+    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {    	
         this.orderItemAdjustments = orderItemAdjustments;
-        if ((orderItemAdjustments == null) || (orderItemAdjustments.size() == 0)) {
-        	removeAllAdjustments();
-        } else {
-        	for (OrderItemAdjustment orderItemAdjustment : orderItemAdjustments) {
-        		if (!notCombinableOfferApplied) {
-        			addOrderItemAdjustment(orderItemAdjustment);
-        		} else {
-        			break;
-        		}
-        	}
-        }
     }
 
     public Money getAdjustmentValue() {
@@ -387,10 +362,12 @@ public class OrderItemImpl implements OrderItem {
         return adjustmentValue;
     }
 
+    @Deprecated
     public Money getAdjustmentPrice() {
         return adjustmentPrice == null ? null : new Money(adjustmentPrice);
     }
 
+    @Deprecated
     public void setAdjustmentPrice(Money adjustmentPrice) {
         this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
@@ -420,21 +397,18 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public boolean isNotCombinableOfferApplied() {
-		return notCombinableOfferApplied;
+    	for (OrderItemAdjustment orderItemAdjustment : orderItemAdjustments) {
+    		boolean notCombineableApplied = !orderItemAdjustment.getOffer().isCombinableWithOtherOffers() || (orderItemAdjustment.getOffer().isTotalitarianOffer() != null && orderItemAdjustment.getOffer().isTotalitarianOffer());
+    		if (notCombineableApplied) return true;
+    	}
+    	
+    	return false;
 	}
 
 	public boolean isHasOrderItemAdjustments() {
-		return hasOrderItemAdjustments;
-	}
-	
-	public Map<String, BigDecimal> getAdditionalFees() {
-		return additionalFees==null?new HashMap<String, BigDecimal>():additionalFees;
+		return orderItemAdjustments != null && orderItemAdjustments.size() > 0;
 	}
 
-	public void setAdditionalFees(Map<String, BigDecimal> additionalFees) {
-		this.additionalFees = additionalFees;
-	}
-	
 	public boolean updatePrices() {
         return false;
     }
@@ -632,8 +606,47 @@ public class OrderItemImpl implements OrderItem {
 		return 0;
 	}
 	
+	public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+		Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
+		if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
+			//subclass is not implementing the clone method
+			throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+		}
+	}
+	
 	public OrderItem clone() {
-		throw new RuntimeException();
+		//this is likely an extended class - instantiate from the fully qualified name via reflection
+		OrderItem orderItem;
+		try {
+			orderItem = (OrderItem) Class.forName(this.getClass().getName()).newInstance();
+			try {
+				checkCloneable(orderItem);
+			} catch (CloneNotSupportedException e) {
+				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + orderItem.getClass().getName(), e);
+			}
+			if (getCandidateItemOffers() != null) {
+				for (CandidateItemOffer candidate : getCandidateItemOffers()) {
+					CandidateItemOffer clone = candidate.clone();
+					clone.setOrderItem(orderItem);
+					orderItem.getCandidateItemOffers().add(clone);
+				}
+			}
+			orderItem.setCategory(getCategory());
+			orderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
+			orderItem.setName(getName());
+			orderItem.setOrder(getOrder());
+			orderItem.setOrderItemType(getOrderItemType());
+			orderItem.setPersonalMessage(getPersonalMessage());
+			orderItem.setQuantity(getQuantity());
+			orderItem.setRetailPrice(getRetailPrice());
+			orderItem.setSalePrice(getSalePrice());
+			orderItem.setAdjustmentPrice(getAdjustmentPrice());
+			orderItem.setPrice(getPrice());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+ 		
+ 		return orderItem;
 	}
 	
 	public List<OrderItem> split() {	
@@ -645,10 +658,6 @@ public class OrderItemImpl implements OrderItem {
 				chargeableItems = new ArrayList<OrderItem>();
 				OrderItem firstItem = clone();
 				OrderItem secondItem = clone();
-				firstItem.clearAllDiscount();
-				firstItem.clearAllQualifiers();
-				secondItem.clearAllDiscount();
-				secondItem.clearAllQualifiers();
 				chargeableItems.add(firstItem);
 				chargeableItems.add(secondItem);
 				
@@ -697,12 +706,10 @@ public class OrderItemImpl implements OrderItem {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((adjustmentPrice == null) ? 0 : adjustmentPrice.hashCode());
-        result = prime * result + ((candidateItemOffers == null) ? 0 : candidateItemOffers.hashCode());
         result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((giftWrapOrderItem == null) ? 0 : giftWrapOrderItem.hashCode());
         result = prime * result + markedForOffer;
         result = prime * result + ((order == null) ? 0 : order.hashCode());
-        result = prime * result + ((orderItemAdjustments == null) ? 0 : orderItemAdjustments.hashCode());
         result = prime * result + ((orderItemType == null) ? 0 : orderItemType.hashCode());
         result = prime * result + ((personalMessage == null) ? 0 : personalMessage.hashCode());
         result = prime * result + ((price == null) ? 0 : price.hashCode());
@@ -730,11 +737,6 @@ public class OrderItemImpl implements OrderItem {
                 return false;
         } else if (!adjustmentPrice.equals(other.adjustmentPrice))
             return false;
-        if (candidateItemOffers == null) {
-            if (other.candidateItemOffers != null)
-                return false;
-        } else if (!candidateItemOffers.equals(other.candidateItemOffers))
-            return false;
         if (category == null) {
             if (other.category != null)
                 return false;
@@ -751,11 +753,6 @@ public class OrderItemImpl implements OrderItem {
             if (other.order != null)
                 return false;
         } else if (!order.equals(other.order))
-            return false;
-        if (orderItemAdjustments == null) {
-            if (other.orderItemAdjustments != null)
-                return false;
-        } else if (!orderItemAdjustments.equals(other.orderItemAdjustments))
             return false;
         if (orderItemType == null) {
             if (other.orderItemType != null)

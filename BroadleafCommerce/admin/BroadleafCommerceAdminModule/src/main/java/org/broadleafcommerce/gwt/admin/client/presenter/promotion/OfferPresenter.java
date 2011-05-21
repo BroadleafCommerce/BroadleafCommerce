@@ -127,10 +127,12 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 				@SuppressWarnings("deprecation")
 				public void onChanged(ChangedEvent event) {
 					Date myDate = (Date) event.getValue();
-					myDate.setHours(23);
-					myDate.setMinutes(59);
-					myDate.setSeconds(59);
-					event.getItem().setValue(myDate);
+					if (myDate != null) {
+						myDate.setHours(23);
+						myDate.setMinutes(59);
+						myDate.setSeconds(59);
+						event.getItem().setValue(myDate);
+					}
 				}
 			});
 		}

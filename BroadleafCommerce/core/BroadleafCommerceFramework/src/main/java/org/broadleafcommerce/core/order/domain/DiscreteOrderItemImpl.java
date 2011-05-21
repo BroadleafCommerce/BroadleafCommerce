@@ -16,8 +16,12 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -25,9 +29,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -38,6 +42,7 @@ import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
@@ -82,7 +87,12 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Column(name = "VALUE")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
-	protected Map<String, String> additionalAttributes;
+	protected Map<String, String> additionalAttributes = new HashMap<String, String>();
+    
+    @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
     public Sku getSku() {
         return sku;
@@ -146,9 +156,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             setSalePrice(getSku().getSalePrice());
             updated = true;
         }
-        for (BigDecimal fee : getAdditionalFees().values()) {
-        	setSalePrice(getSalePrice().add(new Money(fee)));
-        	setRetailPrice(getRetailPrice().add(new Money(fee)));
+        if (getDiscreteOrderItemFeePrices() != null) {
+	        for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
+	        	setSalePrice(getSalePrice().add(fee.getAmount()));
+	        	setRetailPrice(getRetailPrice().add(fee.getAmount()));
+	        }
         }
         return updated;
     }
@@ -177,16 +189,26 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
 	}
 
+	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
+		return discreteOrderItemFeePrices;
+	}
+
+	public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
+	}
+	
 	@Override
 	public OrderItem clone() {
-		try {
-			//deep clone
-			OrderItem clone = (OrderItem) SerializationUtils.clone(this);
-			clone.setId(null);
-			return clone;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		DiscreteOrderItem orderItem = (DiscreteOrderItem) super.clone();
+		if (getDiscreteOrderItemFeePrices() != null) orderItem.getDiscreteOrderItemFeePrices().addAll(getDiscreteOrderItemFeePrices());
+		if (getAdditionalAttributes() != null) orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
+		orderItem.setBaseRetailPrice(getBaseRetailPrice());
+		orderItem.setBaseSalePrice(getBaseSalePrice());
+		orderItem.setBundleOrderItem(getBundleOrderItem());
+		orderItem.setProduct(getProduct());
+		orderItem.setSku(getSku());
+		
+		return orderItem;
 	}
 
 	@Override
@@ -198,6 +220,10 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (getClass() != obj.getClass())
             return false;
         DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;
+        
+        if (!super.equals(obj)) {
+        	return false;
+        }
 
         if (id != null && other.id != null) {
             return id.equals(other.id);
@@ -218,7 +244,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        final int prime = super.hashCode();
         int result = 1;
         result = prime * result + ((bundleOrderItem == null) ? 0 : bundleOrderItem.hashCode());
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());

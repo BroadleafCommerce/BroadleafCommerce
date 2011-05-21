@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
@@ -25,6 +24,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingServi
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
@@ -60,7 +60,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setProduct(itemRequest.getProduct());
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.setAdditionalFees(itemRequest.getAdditionalFees());
+        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         item.updatePrices();
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
@@ -79,9 +79,10 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(prices.getSalePrice());
         item.setSalePrice(prices.getSalePrice());
         item.setRetailPrice(prices.getRetailPrice());
-        for (BigDecimal fee : itemRequest.getAdditionalFees().values()) {
-        	item.setSalePrice(item.getSalePrice().add(new Money(fee)));
-        	item.setRetailPrice(item.getRetailPrice().add(new Money(fee)));
+        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
+        for (DiscreteOrderItemFeePrice fee : itemRequest.getDiscreteOrderItemFeePrices()) {
+        	item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
+        	item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
@@ -97,7 +98,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setProduct(itemRequest.getProduct());
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.setAdditionalFees(itemRequest.getAdditionalFees());
+        item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         item.updatePrices();
         item.assignFinalPrice();
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
@@ -113,6 +114,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setName(itemRequest.getName());
+        item.setBundleOrderItemFeePrices(itemRequest.getBundleOrderItemFeePrices());
 
         for (DiscreteOrderItemRequest discreteItemRequest : itemRequest.getDiscreteOrderItems()) {
             final DiscreteOrderItem discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);

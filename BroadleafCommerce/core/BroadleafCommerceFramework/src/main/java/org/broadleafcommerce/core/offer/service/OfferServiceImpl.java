@@ -217,17 +217,19 @@ public class OfferServiceImpl implements OfferService {
         List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
 
         if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
-            orderOfferProcessor.calculateOrderTotal(order);
+            orderOfferProcessor.compileOrderTotal(order);
         } else {
+        	itemOfferProcessor.gatherCart(order);
             List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
             List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
             
             List<DiscreteOrderItem> discreteOrderItems = itemOfferProcessor.filterOffers(order, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
 
             if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
-                orderOfferProcessor.calculateOrderTotal(order);
+                orderOfferProcessor.compileOrderTotal(order);
             } else {
                 itemOfferProcessor.applyAndCompareOrderAndItemOffers(order, qualifiedOrderOffers, qualifiedItemOffers, discreteOrderItems);
+                itemOfferProcessor.gatherCart(order);
             }
         }
     }
@@ -249,6 +251,7 @@ public class OfferServiceImpl implements OfferService {
     	if (!qualifiedFGOffers.isEmpty()) {
 		    fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, order);
     	}
+    	fulfillmentGroupOfferProcessor.gatherCart(order);
     	fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(order);
     }
 

@@ -57,5 +57,5 @@ public interface OfferDao {
     OfferInfo save(OfferInfo offerInfo);
 
     void delete(OfferInfo offerInfo);
-
+    
 }

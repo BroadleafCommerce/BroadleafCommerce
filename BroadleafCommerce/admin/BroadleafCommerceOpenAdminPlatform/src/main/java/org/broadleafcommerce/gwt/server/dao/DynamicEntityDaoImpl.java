@@ -86,11 +86,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	
 	public Serializable persist(Serializable entity) {
 		entityManager.persist(entity);
+		entityManager.flush();
 		return entity;
 	}
 	
 	public Serializable merge(Serializable entity) {
-		return entityManager.merge(entity);
+		Serializable response = entityManager.merge(entity);
+		entityManager.flush();
+		return response;
 	}
 	
 	public void flush() {
@@ -111,6 +114,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	
 	public void remove(Serializable entity) {
 		entityManager.remove(entity);
+		entityManager.flush();
 	}
 	
 	public void clear() {

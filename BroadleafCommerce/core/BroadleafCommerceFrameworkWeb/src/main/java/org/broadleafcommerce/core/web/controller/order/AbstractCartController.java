@@ -98,7 +98,7 @@ public abstract class AbstractCartController {
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
 
-        if (cart.getOrderItems() != null ) {
+        /*if (cart.getOrderItems() != null ) {
 	        for (OrderItem orderItem : cart.getOrderItems()) {
 	            if (orderItem instanceof DiscreteOrderItem) {
 	                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
@@ -119,7 +119,7 @@ public abstract class AbstractCartController {
 	                orderItem.getPrice();
 	            }
 	        }
-        }
+        }*/
 
         if (cart.getOrderItems() != null ) {
             for (OrderItem orderItem : cart.getOrderItems()) {
@@ -146,6 +146,18 @@ public abstract class AbstractCartController {
 
         updateFulfillmentGroups(cartSummary, cart);
         cartSummary.setOrderDiscounts(cart.getTotalAdjustmentsValue().getAmount());
+        
+        //re-add cart items in case there were item splits resulting from promotions
+        if (cart.getOrderItems() != null ) {
+        	cartSummary.getRows().clear();
+            for (OrderItem orderItem : cart.getOrderItems()) {
+                CartOrderItem cartOrderItem = new CartOrderItem();
+                cartOrderItem.setOrderItem(orderItem);
+                cartOrderItem.setQuantity(orderItem.getQuantity());
+                cartSummary.getRows().add(cartOrderItem);
+            }
+        }
+        
         model.addAttribute("cartSummary", cartSummary);
         return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
@@ -259,7 +271,20 @@ public abstract class AbstractCartController {
                 }
             }
         }
+        
+        //re-add cart items in case there were item splits resulting from promotions
+        if (currentCartOrder.getOrderItems() != null ) {
+        	cartSummary.getRows().clear();
+            for (OrderItem orderItem : currentCartOrder.getOrderItems()) {
+                CartOrderItem cartOrderItem = new CartOrderItem();
+                cartOrderItem.setOrderItem(orderItem);
+                cartOrderItem.setQuantity(orderItem.getQuantity());
+                cartSummary.getRows().add(cartOrderItem);
+            }
+        }
+        
         cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
+        model.addAttribute("cartSummary", cartSummary);
         return cartView;
     }
 

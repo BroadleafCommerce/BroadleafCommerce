@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import javax.persistence.Table;
 import org.broadleafcommerce.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -41,6 +41,11 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
+    
+    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         return discreteOrderItems;
@@ -50,7 +55,15 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         this.discreteOrderItems = discreteOrderItems;
     }
 
-    @Override
+    public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
+		return bundleOrderItemFeePrices;
+	}
+
+	public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
+		this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+	}
+
+	@Override
     public void removeAllCandidateItemOffers() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
             discreteOrderItem.removeAllCandidateItemOffers();
@@ -81,6 +94,11 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             Money currentItemTaxablePrice = discreteOrderItem.getTaxablePrice();
             currentBundleTaxablePrice = currentBundleTaxablePrice.add(new Money(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity()));
         }
+        for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
+        	if (fee.isTaxable()) {
+        		currentBundleTaxablePrice = currentBundleTaxablePrice.add(fee.getAmount());
+        	}
+        }
         return currentBundleTaxablePrice;
     }
 
@@ -91,8 +109,8 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             Money itemRetailPrice = discreteOrderItem.getRetailPrice();
             bundleRetailPrice = bundleRetailPrice.add(new Money(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity()));
         }
-        for (BigDecimal fee : getAdditionalFees().values()) {
-        	bundleRetailPrice = bundleRetailPrice.add(new Money(fee));
+        for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
+        	bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
         }
         return bundleRetailPrice;
     }
@@ -112,8 +130,8 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                 }
                 bundleSalePrice = bundleSalePrice.add(new Money(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity()));
             }
-            for (BigDecimal fee : getAdditionalFees().values()) {
-            	bundleSalePrice = bundleSalePrice.add(new Money(fee));
+            for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
+            	bundleSalePrice = bundleSalePrice.add(fee.getAmount());
             }
         }
         return bundleSalePrice;
@@ -187,6 +205,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         if (getClass() != obj.getClass())
             return false;
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
+        
+        if (!super.equals(obj)) {
+        	return false;
+        }
 
         if (id != null && other.id != null) {
             return id.equals(other.id);
@@ -202,7 +224,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        final int prime = super.hashCode();
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;

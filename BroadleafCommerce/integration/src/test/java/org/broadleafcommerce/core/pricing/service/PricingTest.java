@@ -128,7 +128,7 @@ public class PricingTest extends BaseTest {
         fgItem.setFulfillmentGroup(group);
         fgItem.setOrderItem(item);
         fgItem.setQuantity(2);
-        fgItem.setPrice(new Money(0D));
+        //fgItem.setPrice(new Money(0D));
         group.addFulfillmentGroupItem(fgItem);
 
         item = new DiscreteOrderItemImpl();
@@ -145,7 +145,7 @@ public class PricingTest extends BaseTest {
         fgItem.setFulfillmentGroup(group);
         fgItem.setOrderItem(item);
         fgItem.setQuantity(1);
-        fgItem.setPrice(new Money(0D));
+        //fgItem.setPrice(new Money(0D));
         group.addFulfillmentGroupItem(fgItem);
 
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456"));
@@ -212,7 +212,7 @@ public class PricingTest extends BaseTest {
         for (OrderItem orderItem : items) {
             FulfillmentGroupItem fgi = new FulfillmentGroupItemImpl();
             fgi.setOrderItem(orderItem);
-            fgi.setRetailPrice(new Money(15D));
+            //fgi.setRetailPrice(new Money(15D));
             group1.addFulfillmentGroupItem(fgi);
         }
         order.setTotalShipping(new Money(0D));

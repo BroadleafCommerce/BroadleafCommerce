@@ -151,10 +151,8 @@ public class CategoryCustomPersistenceHandler implements CustomPersistenceHandle
 			
 			dynamicEntityDao.remove(category);
 		} catch (ServiceException e) {
-			LOG.error("Unable to remove entity for " + entity.getType()[0], e);
 			throw e;
 		} catch (Exception e) {
-			LOG.error("Unable to remove entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
 		

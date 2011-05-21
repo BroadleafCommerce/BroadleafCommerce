@@ -128,7 +128,6 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 			
 			return results;
 		} catch (Exception e) {
-			LOG.error("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
@@ -172,7 +171,6 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 			
 			return response;
 		} catch (Exception e) {
-			LOG.error("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 			throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
@@ -209,7 +207,6 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 			
 			return productEntity;
 		} catch (Exception e) {
-			LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
 	}
@@ -223,7 +220,6 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 			dynamicEntityDao.remove(skuInstance);
 			dynamicEntityDao.remove(productInstance);
 		} catch (Exception e) {
-			LOG.error("Unable to remove entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
 	}
@@ -252,7 +248,6 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 			
 			return productEntity;
 		} catch (Exception e) {
-			LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
 	}

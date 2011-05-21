@@ -138,7 +138,7 @@ public class CheckoutTest extends BaseTest {
         fgItem.setFulfillmentGroup(group);
         fgItem.setOrderItem(item);
         fgItem.setQuantity(1);
-        fgItem.setPrice(new Money(0D));
+        //fgItem.setPrice(new Money(0D));
         group.addFulfillmentGroupItem(fgItem);
 
         order.setTotalShipping(new Money(0D));

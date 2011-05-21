@@ -70,6 +70,14 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		SecurityManager.getInstance().registerSection(sectionViewKey, sectionRoles, sectionPermissions);
 	}
 	
+	public void setSecurity(
+		String sectionViewKey,
+		List<String> sectionRoles,
+		List<String> sectionPermissions
+	) {
+		SecurityManager.getInstance().registerSection(sectionViewKey, sectionRoles, sectionPermissions);
+	}
+	
 	public void removeSection(
 		String sectionTitle
 	) {

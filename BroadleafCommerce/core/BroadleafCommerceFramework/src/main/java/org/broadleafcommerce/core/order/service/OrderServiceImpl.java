@@ -596,9 +596,6 @@ public class OrderServiceImpl implements OrderService {
         fgi.setFulfillmentGroup(fulfillmentGroup);
         fgi.setOrderItem(orderItem);
         fgi.setQuantity(quantity);
-        fgi.setPrice(orderItem.getPrice());
-        fgi.setRetailPrice(orderItem.getRetailPrice());
-        fgi.setSalePrice(orderItem.getSalePrice());
         return fgi;
     }
 

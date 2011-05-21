@@ -64,7 +64,7 @@ public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int prime = super.hashCode();
 		int result = super.hashCode();
 		result = prime * result + ((sku == null) ? 0 : sku.hashCode());
 		return result;
@@ -78,7 +78,17 @@ public class ProductSkuImpl extends ProductImpl implements ProductSku {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
 		ProductSkuImpl other = (ProductSkuImpl) obj;
+		
+		if (!super.equals(obj)) {
+			return false;
+		}
+		
+		if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+		
 		if (sku == null) {
 			if (other.sku != null)
 				return false;

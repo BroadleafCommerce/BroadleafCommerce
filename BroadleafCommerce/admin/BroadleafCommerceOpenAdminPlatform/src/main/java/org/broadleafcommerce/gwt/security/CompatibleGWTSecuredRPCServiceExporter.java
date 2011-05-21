@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.GWTRPCServiceExporter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.transaction.TransactionSystemException;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
@@ -104,30 +105,27 @@ public class CompatibleGWTSecuredRPCServiceExporter extends GWTRPCServiceExporte
 			if (cause1 != null && cause1 instanceof UnexpectedException) {
 				final Throwable preciousException = cause1.getCause();
 				if (preciousException != null && (preciousException instanceof AccessDeniedException || preciousException instanceof AuthenticationException)) {
-					String failurePayload = null;
-					try {
-						failurePayload = RPC.encodeResponseForFailure(
-							rpcRequest.getMethod(),
-							SecurityExceptionFactory.get(preciousException));
-					} catch (final UnexpectedException ue) {
-						LOGGER.error("You may have forgotten to add a 'throws ApplicationSecurityException' declaration to your service interface.");
-						throw ue;
-					}
-					return failurePayload;
+					return processException(preciousException, rpcRequest);
+				} else if (preciousException != null && (preciousException instanceof TransactionSystemException)) {
+					return processException(((TransactionSystemException) preciousException).getApplicationException(), rpcRequest);
 				}
 			}
-			handleOtherException(e);
+			return processException(e, rpcRequest);
 		}
 		return response;
 	}
-
-	protected void handleOtherException(final Throwable e) throws SerializationException {
-		if (e instanceof RuntimeException) {
-			throw (RuntimeException) e;
-		} else if (e instanceof SerializationException) {
-			throw (SerializationException) e;
-		} else {
-			throw new SerializationException(e);
+	
+	protected String processException(final Throwable e, final RPCRequest rpcRequest) throws SerializationException {
+		String failurePayload = null;
+		try {
+			failurePayload = RPC.encodeResponseForFailure(
+				rpcRequest.getMethod(),
+				SecurityExceptionFactory.get(e));
+		} catch (final UnexpectedException ue) {
+			LOGGER.error("You may have forgotten to add a 'throws ApplicationSecurityException' declaration to your service interface.");
+			throw ue;
 		}
+		return failurePayload;
 	}
+	
 }

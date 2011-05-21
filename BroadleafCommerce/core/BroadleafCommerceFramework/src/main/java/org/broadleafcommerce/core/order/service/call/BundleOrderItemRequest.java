@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.order.domain.BundleOrderItemFeePrice;
 
 public class BundleOrderItemRequest {
 
@@ -26,6 +27,7 @@ public class BundleOrderItemRequest {
     private Category category;
     private int quantity;
     private List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
+    private List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
     public String getName() {
         return name;
@@ -59,7 +61,16 @@ public class BundleOrderItemRequest {
         this.discreteOrderItems = discreteOrderItems;
     }
 
-    @Override
+    public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices() {
+		return bundleOrderItemFeePrices;
+	}
+
+	public void setBundleOrderItemFeePrices(
+			List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
+		this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

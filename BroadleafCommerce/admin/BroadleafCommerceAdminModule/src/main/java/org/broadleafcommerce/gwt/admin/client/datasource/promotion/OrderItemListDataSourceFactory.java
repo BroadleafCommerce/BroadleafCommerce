@@ -60,7 +60,8 @@ public class OrderItemListDataSourceFactory implements DataSourceFactory {
 					"sku.salePrice",
 					"sku.retailPrice",
 					"category.activeEndDate",
-					"category.activeStartDate"
+					"category.activeStartDate",
+					"personalMessage"
 				}
 			);
 			DataSourceModule[] modules = new DataSourceModule[]{

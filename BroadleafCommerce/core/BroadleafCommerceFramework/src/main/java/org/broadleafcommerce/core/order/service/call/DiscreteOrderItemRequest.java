@@ -16,12 +16,14 @@
 package org.broadleafcommerce.core.order.service.call;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 
 public class DiscreteOrderItemRequest {
@@ -31,7 +33,7 @@ public class DiscreteOrderItemRequest {
     private Product product;
     private int quantity;
     private PersonalMessage personalMessage;
-    private Map<String, BigDecimal> additionalFees = new HashMap<String, BigDecimal>();
+    private List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
     public Sku getSku() {
         return sku;
@@ -65,12 +67,13 @@ public class DiscreteOrderItemRequest {
         this.quantity = quantity;
     }
 
-	public Map<String, BigDecimal> getAdditionalFees() {
-		return additionalFees;
+	public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices() {
+		return discreteOrderItemFeePrices;
 	}
 
-	public void setAdditionalFees(Map<String, BigDecimal> additionalFees) {
-		this.additionalFees = additionalFees;
+	public void setDiscreteOrderItemFeePrices(
+			List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
 	}
 
 	@Override

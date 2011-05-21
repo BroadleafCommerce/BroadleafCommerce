@@ -39,18 +39,14 @@ public interface FulfillmentGroupItem extends Serializable {
 
     Money getRetailPrice();
 
-    void setRetailPrice(Money retailPrice);
-
     Money getSalePrice();
 
-    void setSalePrice(Money salePrice);
-
     Money getPrice();
-
-    void setPrice(Money price);
 
     String getStatus();
 
     void setStatus(String status);
-
+    
+    public void removeAssociations();
+    
 }

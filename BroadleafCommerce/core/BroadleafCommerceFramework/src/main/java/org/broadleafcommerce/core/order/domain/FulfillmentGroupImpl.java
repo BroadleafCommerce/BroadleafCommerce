@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.util.DiscreteOrderItemDecorator;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -250,7 +251,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
             } else {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
                 if (discreteOrderItem.getSku().isDiscountable()) {
-                    discreteOrderItems.add(discreteOrderItem);
+                	//use the decorator patter to return the quantity for this fgItem, not the quantity on the discrete order item
+                    discreteOrderItems.add(new DiscreteOrderItemDecorator(discreteOrderItem, fgItem.getQuantity()));
                 }
             }
         }

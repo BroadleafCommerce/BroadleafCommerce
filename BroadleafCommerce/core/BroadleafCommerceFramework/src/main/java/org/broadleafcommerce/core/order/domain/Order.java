@@ -16,6 +16,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.util.OrderItemSplitContainer;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.common.domain.Auditable;
@@ -65,7 +67,7 @@ public interface Order extends Serializable {
 
     public Money calculateOrderItemsCurrentPrice();
 
-    public Money calculateOrderItemsFinalPrice();
+    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
     
     public Money calculateOrderItemsPriceWithoutAdjustments();
 
@@ -248,9 +250,11 @@ public interface Order extends Serializable {
 
 	public boolean updatePrices();
 	
-	public List<OrderItem> getSplitItems();
+	public List<OrderItemSplitContainer> getSplitItems();
 
-	public void setSplitItems(List<OrderItem> splitItems);
+	public void setSplitItems(List<OrderItemSplitContainer> splitItems);
+	
+	public List<OrderItem> searchSplitItems(OrderItem key);
 	
 	public void removeAllFulfillmentAdjustments();
 	
