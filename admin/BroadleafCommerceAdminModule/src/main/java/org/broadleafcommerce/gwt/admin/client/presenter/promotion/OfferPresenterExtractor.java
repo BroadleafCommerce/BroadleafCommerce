@@ -127,6 +127,7 @@ public class OfferPresenterExtractor {
 							temp.setAttribute("orderItemMatchRule", mvel);
 							temp.setAttribute("_type", new String[]{((DynamicEntityDataSource) presenter.offerItemCriteriaDataSource).getDefaultNewEntityFullyQualifiedClassname()});
 							temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.entityDataSource.getPrimaryKeyValue(selectedRecord));
+							temp.setAttribute("id", "");
 							presenter.offerItemCriteriaDataSource.addData(temp, new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
