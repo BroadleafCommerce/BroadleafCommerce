@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
@@ -45,6 +47,7 @@ import org.mvel2.ParserContext;
  */
 public abstract class AbstractBaseProcessor implements BaseProcessor {
 
+	private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
 	private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
 	
 	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<DiscreteOrderItem> discreteOrderItems) {
@@ -122,21 +125,28 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return a Boolean object containing the result of executing the MVEL expression
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
-        Serializable exp = (Serializable) EXPRESSION_CACHE.get(expression);
-        if (exp == null) {
-            ParserContext context = new ParserContext();
-            context.addImport("OfferType", OfferType.class);
-            context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
-            context.addImport("MVEL", MVEL.class);
-            //            StringBuffer completeExpression = new StringBuffer(functions.toString());
-            //            completeExpression.append(" ").append(expression);
-            exp = MVEL.compileExpression(expression.toString(), context);
-        }
-        EXPRESSION_CACHE.put(expression, exp);
+        try {
+			Serializable exp = (Serializable) EXPRESSION_CACHE.get(expression);
+			if (exp == null) {
+			    ParserContext context = new ParserContext();
+			    context.addImport("OfferType", OfferType.class);
+			    context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
+			    context.addImport("MVEL", MVEL.class);
+			    //            StringBuffer completeExpression = new StringBuffer(functions.toString());
+			    //            completeExpression.append(" ").append(expression);
+			    exp = MVEL.compileExpression(expression.toString(), context);
+			}
+			EXPRESSION_CACHE.put(expression, exp);
 
-        Object test = MVEL.executeExpression(exp, vars);
-        
-        return (Boolean) test;
+			Object test = MVEL.executeExpression(exp, vars);
+			
+			return (Boolean) test;
+		} catch (Exception e) {
+			//Unable to execute the MVEL expression for some reason
+			//Return false, but notify about the bad expression through logs
+			LOG.error("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
+			return false;
+		}
 
     }
     

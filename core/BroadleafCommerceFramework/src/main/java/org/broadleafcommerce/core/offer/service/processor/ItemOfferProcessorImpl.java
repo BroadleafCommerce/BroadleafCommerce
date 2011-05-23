@@ -94,7 +94,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 				candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null);
 				candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
 			}
-			if (candidates.isMatchedTarget()) {
+			if (candidates.isMatchedTarget() && candidates.isMatchedQualifier()) {
 				if (candidateOffer == null) {
 					//we don't know the final target yet, so put null for the order item for now
 					candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, null);

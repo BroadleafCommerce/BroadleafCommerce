@@ -347,6 +347,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         if (promotionQualifiers != null) {
         	promotionQualifiers.clear();
         }
+        assignFinalPrice();
         return removedAdjustmentCount;
     }
 

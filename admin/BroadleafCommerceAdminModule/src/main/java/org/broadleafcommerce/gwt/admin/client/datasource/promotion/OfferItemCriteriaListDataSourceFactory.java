@@ -17,9 +17,9 @@ package org.broadleafcommerce.gwt.admin.client.datasource.promotion;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.module.OfferItemCriteriaListModule;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -48,7 +48,7 @@ public class OfferItemCriteriaListDataSourceFactory implements DataSourceFactory
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.OFFER, null));
 			persistencePerspective.setPopulateToOneFields(false);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.OFFER_ITEM_CRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new OfferItemCriteriaListModule(CeilingEntities.OFFER_ITEM_CRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new DynamicEntityDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
