@@ -33,8 +33,6 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
