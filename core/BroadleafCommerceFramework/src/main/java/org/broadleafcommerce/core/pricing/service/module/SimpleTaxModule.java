@@ -49,7 +49,7 @@ public class SimpleTaxModule implements TaxModule {
 
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
         	Money fgTotalTax;
-        	if (fulfillmentGroup.isShippingPriceTaxable()) {
+        	if (fulfillmentGroup.isShippingPriceTaxable() == null || fulfillmentGroup.isShippingPriceTaxable()) {
 	            fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
         	} else {
         		fgTotalTax = new Money(0D);

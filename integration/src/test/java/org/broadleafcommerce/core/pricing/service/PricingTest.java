@@ -24,14 +24,16 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.order.dao.OrderDao;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
@@ -39,6 +41,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
@@ -52,7 +56,9 @@ import org.broadleafcommerce.profile.core.domain.IdGeneration;
 import org.broadleafcommerce.profile.core.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
+import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.time.SystemTime;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
@@ -62,16 +68,28 @@ import org.testng.annotations.Test;
 public class PricingTest extends BaseTest {
 
     @Resource
-    private PricingService pricingService;
-
-    @Resource
     private CustomerService customerService;
 
     @Resource
-    private OrderDao orderDao;
+    private CartService cartService;
 
     @Resource
     private ShippingRateService shippingRateService;
+    
+    @Resource
+    private CatalogService catalogService;
+    
+    @Resource
+    private OrderItemService orderItemService;
+    
+    @Resource
+    private OfferService offerService;
+    
+    @Resource
+    private CountryService countryService;
+    
+    @Resource
+    private StateService stateService;
 
     @Test(groups =  {"testShippingInsert"}, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
     @Rollback(false)
@@ -83,8 +101,9 @@ public class PricingTest extends BaseTest {
     @Test(dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
     @Transactional
     public void testPricing() throws Exception {
-        Order order = orderDao.create();
-        order.setCustomer(createCustomer());
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        
+        customerService.saveCustomer(order.getCustomer());
         
         Address address = new AddressImpl();
         address.setAddressLine1("123 Test Rd");
@@ -105,55 +124,71 @@ public class PricingTest extends BaseTest {
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
+        group.setIsShippingPriceTaxable(true);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         group.setMethod("standard");
         group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         group.setOrder(order);
         groups.add(group);
         order.setFulfillmentGroups(groups);
-        Money total = new Money(5D);
+        Money total = new Money(8.5D);
         group.setShippingPrice(total);
 
-        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
+        {
+        DiscreteOrderItem item = new DiscreteOrderItemImpl();
         Sku sku = new SkuImpl();
-        sku.setId(123456L);
+        sku.setName("Test Sku");
         sku.setRetailPrice(new Money(10D));
         sku.setDiscountable(true);
+        
+        sku = catalogService.saveSku(sku);
+        
         item.setSku(sku);
         item.setQuantity(2);
         item.setOrder(order);
-        order.addOrderItem(item);
         
+        item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
+        
+        order.addOrderItem(item);
         FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
         fgItem.setFulfillmentGroup(group);
         fgItem.setOrderItem(item);
         fgItem.setQuantity(2);
         //fgItem.setPrice(new Money(0D));
         group.addFulfillmentGroupItem(fgItem);
-
-        item = new DiscreteOrderItemImpl();
-        sku = new SkuImpl();
-        sku.setId(1234567L);
+        }
+        
+        {
+        DiscreteOrderItem item = new DiscreteOrderItemImpl();
+        Sku sku = new SkuImpl();
+        sku.setName("Test Product 2");
         sku.setRetailPrice(new Money(20D));
         sku.setDiscountable(true);
+        
+        sku = catalogService.saveSku(sku);
+        
         item.setSku(sku);
         item.setQuantity(1);
         item.setOrder(order);
+        
+        item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
+        
         order.addOrderItem(item);
         
-        fgItem = new FulfillmentGroupItemImpl();
+        FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
         fgItem.setFulfillmentGroup(group);
         fgItem.setOrderItem(item);
         fgItem.setQuantity(1);
         //fgItem.setPrice(new Money(0D));
         group.addFulfillmentGroupItem(fgItem);
-
-        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456"));
-        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != 123456"));
+        }
+        
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.name==\"Test Sku\""));
+        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.name!=\"Test Sku\""));
         order.addAddedOfferCode(createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null));
         order.setTotalShipping(new Money(0D));
-
-        order = pricingService.executePricing(order);
+        
+        cartService.save(order, true);
 
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
@@ -161,23 +196,46 @@ public class PricingTest extends BaseTest {
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).subtract(order.getOrderAdjustmentsValue())));
     }
 
-    @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
     @Transactional
     public void testShipping() throws Exception {
-        Order order = orderDao.create();
-        order.setCustomer(createCustomer());
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        
+        customerService.saveCustomer(order.getCustomer());
+        
         FulfillmentGroup group1 = new FulfillmentGroupImpl();
         FulfillmentGroup group2 = new FulfillmentGroupImpl();
 
         // setup group1 - standard
         group1.setMethod("standard");
         group1.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        
         Address address = new AddressImpl();
+        address.setAddressLine1("123 Test Rd");
+        address.setCity("Dallas");
+        address.setFirstName("Jeff");
+        address.setLastName("Fischer");
+        address.setPostalCode("75240");
+        address.setPrimaryPhone("972-978-9067");
+        
+        Country country = new CountryImpl();
+        country.setAbbreviation("US");
+        country.setName("United States");
+        
+        countryService.save(country);
+        
         State state = new StateImpl();
-        state.setAbbreviation("hi");
+        state.setAbbreviation("TX");
+        state.setName("Texas");
+        state.setCountry(country);
+        
+        stateService.save(state);
+        
         address.setState(state);
+        address.setCountry(country);
         group1.setAddress(address);
         group1.setOrder(order);
+        group1.setIsShippingPriceTaxable(true);
 
         // setup group2 - truck
         group2.setMethod("truck");
@@ -188,7 +246,7 @@ public class PricingTest extends BaseTest {
         groups.add(group1);
         //groups.add(group2);
         order.setFulfillmentGroups(groups);
-        Money total = new Money(5D);
+        Money total = new Money(8.5D);
         group1.setShippingPrice(total);
         group2.setShippingPrice(total);
         //group1.setTotalTax(new Money(1D));
@@ -196,27 +254,35 @@ public class PricingTest extends BaseTest {
         order.setSubTotal(total);
         order.setTotal(total);
 
-        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
+        DiscreteOrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
         item.setRetailPrice(new Money(15D));
         Sku sku = new SkuImpl();
-        sku.setId(1234567L);
         sku.setRetailPrice(new Money(15D));
         sku.setDiscountable(true);
+        sku.setName("Test Sku");
+        
+        sku = catalogService.saveSku(sku);
+        
         item.setSku(sku);
         item.setQuantity(1);
         item.setOrder(order);
+        
+        item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
+        
         List<OrderItem> items = new ArrayList<OrderItem>();
         items.add(item);
         order.setOrderItems(items);
         for (OrderItem orderItem : items) {
             FulfillmentGroupItem fgi = new FulfillmentGroupItemImpl();
             fgi.setOrderItem(orderItem);
+            fgi.setFulfillmentGroup(group1);
             //fgi.setRetailPrice(new Money(15D));
             group1.addFulfillmentGroupItem(fgi);
         }
         order.setTotalShipping(new Money(0D));
-        order = pricingService.executePricing(order);
+        
+        cartService.save(order, true);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D).add(group1.getShippingPrice().multiply(0.05D))));
@@ -233,7 +299,7 @@ public class PricingTest extends BaseTest {
         em.persist(idGeneration);
     }
 
-    private Customer createCustomer() {
+    public Customer createCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
         return customer;
     }
@@ -243,6 +309,7 @@ public class PricingTest extends BaseTest {
         Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule);
         offerCode.setOffer(offer);
         offerCode.setOfferCode("OPRAH");
+        offerCode = offerService.saveOfferCode(offerCode);
         return offerCode;
     }
 
@@ -263,6 +330,8 @@ public class PricingTest extends BaseTest {
         offer.setAppliesToOrderRules(orderRule);
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
+        offer = offerService.save(offer);
+        offer.setMaxUses(50);
         return offer;
     }
 }
