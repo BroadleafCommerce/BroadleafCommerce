@@ -103,8 +103,6 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
 
-    protected boolean rollupOrderItems = true;
-
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
@@ -483,16 +481,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
         int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
-        boolean containsItem = orderItems.contains(newOrderItem);
-        if (rollupOrderItems && containsItem) {
-            OrderItem itemFromOrder = orderItems.get(orderItems.indexOf(newOrderItem));
-            itemFromOrder.setQuantity(itemFromOrder.getQuantity() + newOrderItem.getQuantity());
-            orderItemIndex = orderItems.indexOf(itemFromOrder);
-        } else {
-            orderItems.add(newOrderItem);
-            newOrderItem.setOrder(order);
-            orderItemIndex = orderItems.size() - 1;
-        }
+        orderItems.add(newOrderItem);
+        newOrderItem.setOrder(order);
+        orderItemIndex = orderItems.size() - 1;
 
         // don't worry about fulfillment groups, since the phase for adding
         // items occurs before shipping arrangements
@@ -517,14 +508,6 @@ public class OrderServiceImpl implements OrderService {
             newFg.addFulfillmentGroupItem(createFulfillmentGroupItemFromOrderItem(orderItem, newFg, orderItem.getQuantity()));
         }
         return newFg;
-    }
-
-    public boolean isRollupOrderItems() {
-        return rollupOrderItems;
-    }
-
-    public void setRollupOrderItems(boolean rollupOrderItems) {
-        this.rollupOrderItems = rollupOrderItems;
     }
 
     public OrderDao getOrderDao() {

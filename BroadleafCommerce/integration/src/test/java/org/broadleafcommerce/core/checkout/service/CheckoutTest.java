@@ -104,6 +104,7 @@ public class CheckoutTest extends BaseTest {
         address.setCountry(country);
          
         FulfillmentGroup group = new FulfillmentGroupImpl();
+        group.setIsShippingPriceTaxable(true);
         group.setOrder(order);
         group.setAddress(address);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();

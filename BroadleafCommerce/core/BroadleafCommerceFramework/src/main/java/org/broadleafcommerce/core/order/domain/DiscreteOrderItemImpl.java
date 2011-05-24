@@ -111,7 +111,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     public Money getTaxablePrice() {
         Money taxablePrice = new Money(0D);
-        if (sku.isTaxable()) {
+        if (sku.isTaxable() == null || sku.isTaxable()) {
             taxablePrice = getPrice();
         }
         return taxablePrice;
