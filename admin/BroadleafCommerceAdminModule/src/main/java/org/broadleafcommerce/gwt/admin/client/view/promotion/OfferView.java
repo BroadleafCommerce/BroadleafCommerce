@@ -435,7 +435,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         stepItemForm.setFields(itemRuleRadio);
         orderItemLayout.addMember(stepItemForm);
         requiredItemsLayout.addMember(orderItemLayout);
-        itemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true, false));
+        itemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true));
         
         newItemBuilderLayout = new VLayout();
         newItemBuilderLayout.setVisible(false);
@@ -516,7 +516,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         targetItemsLabel.setStyleName("label-bold");
         targetItemsLayout.addMember(targetItemsLabel);
         
-        targetItemBuilder = new ItemBuilderView(orderItemDataSource, false, true);
+        targetItemBuilder = new ItemBuilderView(orderItemDataSource, false);
         targetItemsLayout.addMember((ItemBuilderView) targetItemBuilder);
         targetItemsLayout.setLayoutBottomMargin(10);
         
@@ -638,7 +638,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	}
 	
 	public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
-		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true, false);
+		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
 		builder.enable();
 		builder.setDirty(true);
 		itemBuilderContainerLayout.addMember((ItemBuilderView) builder);

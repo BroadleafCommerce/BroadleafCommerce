@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.gwt.admin.client.view.promotion;
 
-import java.util.LinkedHashMap;
-
 import org.broadleafcommerce.gwt.client.datasource.dynamic.FieldDataSourceWrapper;
 
 import com.google.gwt.core.client.GWT;
@@ -27,11 +25,9 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
-import com.smartgwt.client.widgets.form.validator.IsIntegerValidator;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -54,7 +50,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 	protected Boolean dirty = false;
 	
 
-	public ItemBuilderView(DataSource itemDataSource, Boolean allowDelete, Boolean allowInfiniteQuantity) {
+	public ItemBuilderView(DataSource itemDataSource, Boolean allowDelete) {
 		super(10);
 		if (allowDelete) {
 			VLayout removeLayout = new VLayout();
@@ -77,12 +73,12 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		formLayout.setWidth(30);
 		formLayout.setHeight(40);
 		itemForm = new DynamicForm();
-		if (!allowInfiniteQuantity) {
+		//if (!allowInfiniteQuantity) {
 			itemQuantity = new IntegerItem();
 			itemQuantity.setShowTitle(false);
 			itemQuantity.setValue(1);
 			itemQuantity.setWidth(40);
-		} else {
+		/*} else {
 			itemQuantity = new ComboBoxItem();
 			itemQuantity.setType("comboBox");  
 			LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
@@ -92,7 +88,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 			itemQuantity.setValue(1);
 			itemQuantity.setWidth(60);
 			itemQuantity.setValidators(new IsIntegerValidator());
-		}
+		}*/
 		itemForm.setItems(itemQuantity);
 		formLayout.addMember(itemForm);
 		addMember(formLayout);
