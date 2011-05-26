@@ -87,5 +87,13 @@
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-demo-launcher</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-cybersource</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>integration</artifactId>
+		</dependency>
 	</dependencies>
 </project>
