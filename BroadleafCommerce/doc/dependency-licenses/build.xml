@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="BroadleafCommerceDependencyManagement" default="core">
+<project name="BroadleafCommerceDependencyManagement" default="core-admin">
 	
 	<property name="copy.destination" value="${destination}"/>
 	
-	<target name="core">
+	<target name="core-admin">
 		<copy todir="${copy.destination}">
-			<fileset dir="framework">
+			<fileset dir="framework_and_admin">
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
@@ -18,27 +18,15 @@
 			<fileset dir="../dist">
 				<include name="**/*-framework-*.jar"/>
 				<include name="**/*-profile-*.jar"/>
-				<exclude name="**/*-sources.jar"/>
+				<include name="**/*-admin-module-*.jar"/>
+				<include name="**/*-open-admin-platform-*.jar"/>
 			</fileset>
 		</copy>
 	</target>
 	
-	<target name="demo">
+	<target name="demo" depends="core-admin, usps">
 		<copy todir="${copy.destination}">
 			<fileset dir="demo">
-				<include name="**/*.jar"/>
-				<include name="**/*.zip"/>
-			</fileset>
-			<chainedmapper>
-				<regexpmapper from="^(.*)?-[0-9].*\.jar$$" to="\1.jar"/>
-				<flattenmapper/>
-			</chainedmapper>
-		</copy>
-	</target>
-	
-	<target name="admin">
-		<copy todir="${copy.destination}">
-			<fileset dir="admin">
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
