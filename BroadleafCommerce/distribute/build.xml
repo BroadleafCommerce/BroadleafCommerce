@@ -12,6 +12,7 @@
 
 	<artifact:pom id="mypom" file="${releaseParentDir}/pom.xml" />
 
+	<property file="${releaseParentDir}/build.properties" />
 	<property name="maven.build.dir" value="${releaseParentDir}/distribute/target" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}" />
 
@@ -146,7 +147,7 @@
 
 	<target name="build-src-jars" depends="setup">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/dist" />
-		<artifact:mvn fork="true" pom="${releaseParentDir}/pom.xml">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
 			<arg value="source:jar" />
 		</artifact:mvn>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/dist">
@@ -186,7 +187,7 @@
 	<target name="build-docs" depends="setup">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs/api" />
-		<artifact:mvn fork="true" pom="${releaseParentDir}/pom.xml">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
 			<arg value="javadoc:javadoc" />
 		</artifact:mvn>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/docs/api">
@@ -301,7 +302,7 @@
 	</target>
 
 	<target name="setup" depends="setup-dependencies">
-		<artifact:mvn fork="true" pom="${releaseParentDir}/pom.xml">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
 			<arg value="clean" />
 		</artifact:mvn>
 		<delete dir="${maven.build.dir}/${maven.build.finalName}" />
