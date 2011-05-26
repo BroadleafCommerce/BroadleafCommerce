@@ -20,7 +20,8 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.gwtwidgets.server.spring.GWTRPCServiceExporter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -40,9 +41,7 @@ public class CompatibleGWTSecuredRPCServiceExporter extends GWTRPCServiceExporte
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 2733022902422767233L;
-
-	/** logger. */
-	private final static Logger LOGGER = Logger.getLogger(CompatibleGWTSecuredRPCServiceExporter.class);
+	private static Log LOGGER = LogFactory.getLog(CompatibleGWTSecuredRPCServiceExporter.class);
 
 	@SuppressWarnings("rawtypes")
 	public void setServiceInterfaces(final Class[] serviceInterfaces) {
