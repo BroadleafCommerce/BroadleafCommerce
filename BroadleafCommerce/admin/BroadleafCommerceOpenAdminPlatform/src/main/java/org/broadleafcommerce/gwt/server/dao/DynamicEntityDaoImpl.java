@@ -28,7 +28,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,17 +66,12 @@ import org.hibernate.type.Type;
  *
  */
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
-    	
-	private static final Hashtable<String, Map<String, FieldMetadata>> mergedPropertyLibrary = new Hashtable<String, Map<String, FieldMetadata>>();
 	
     protected EntityManager entityManager;
 	
 	protected SessionFactory sessionFactory;
     
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
-    
-    //@Resource(name = "blChangeSetDao")
-    //protected ChangeSetDao changeSetDao;
 
 	@Override
 	public Class<? extends Serializable> getEntityClass() {
@@ -184,29 +178,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Map<String, FieldMetadata> metadataOverrides,
 		String prefix
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		//create a unique key for this inspection query
-		StringBuffer sb = new StringBuffer();
-		sb.append(ceilingEntityFullyQualifiedClassname);
-		if (foreignField != null) {
-			sb.append(foreignField.getManyToField());
-		}
-		if (additionalNonPersistentProperties != null) {
-			for (String additionalNonPersistentProperty : additionalNonPersistentProperties) {
-				sb.append(additionalNonPersistentProperty);
-			}
-		}
-		if (additionalForeignFields != null) {
-			for (ForeignKey foreignKey : additionalForeignFields) {
-				sb.append(foreignKey.getManyToField());
-			}
-		}
-		//TODO re-establish library check for release
-		//if (!mergedPropertyLibrary.containsKey(sb.toString())) {
-			Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
-			buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, metadataOverrides, mergedProperties, prefix);
-			mergedPropertyLibrary.put(sb.toString(), mergedProperties);
-		//}
-		return mergedPropertyLibrary.get(sb.toString());
+		Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
+		buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, metadataOverrides, mergedProperties, prefix);
+			
+		return mergedProperties;
 	}
 
 	protected void buildPropertiesFromPolymorphicEntities(
