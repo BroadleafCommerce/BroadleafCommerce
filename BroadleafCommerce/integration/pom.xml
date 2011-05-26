@@ -3,13 +3,13 @@
 	<parent>
 		<artifactId>BroadleafCommerce</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-M1-SNAPSHOT</version>
+		<version>1.5.0-M1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>integration</artifactId>
 	<name>integration</name>
-	<version>1.5.0-M1-SNAPSHOT</version>
+	<version>1.5.0-M1</version>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
@@ -52,8 +52,8 @@
 									<path refid="maven.test.classpath" />
 									<pathelement location="../../BroadleafCommerceConfig/src" />
 								</path>
-								<property name="myproperty" refid="test.path"/>
-								<echo message="${myproperty}"/>
+								<property name="myproperty" refid="test.path" />
+								<echo message="${myproperty}" />
 								<taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path" />
 								<taskdef classpathref="test.path" resource="tasks.properties" />
 								<copy file="${framework}/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser" />
