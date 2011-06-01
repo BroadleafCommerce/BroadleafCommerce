@@ -107,6 +107,13 @@
 						<td style="text-align:right">Shipping:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.totalShipping}</span></td>
 					</tr>
+					<c:if test="${(currentCartOrder.fulfillmentGroupAdjustmentsValue != null)}">
+						<tr>
+							<td colspan="4">&nbsp;</td>
+							<td style="text-align:right" NOWRAP>Shipping Discount:</td>
+							<td style="text-align:right"><span class="price" style="color:red;">($${currentCartOrder.fulfillmentGroupAdjustmentsValue})</span></td>
+						</tr>	   
+					</c:if>
 					<tr class="totals">
 						<td colspan="4">&nbsp;</td>
 						<td style="text-align:right">Total:</td>
