@@ -39,6 +39,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.core.order.service.util.DiscreteOrderItemDecorator;
@@ -332,6 +333,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments() {
         return this.fulfillmentGroupAdjustments;
+    }
+    
+    public Money getFulfillmentGroupAdjustmentsValue() {
+    	Money adjustmentsValue = new Money(0);
+        for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
+        	adjustmentsValue = adjustmentsValue.add(adjustment.getValue());
+        }
+        return adjustmentsValue;
     }
 
     /*

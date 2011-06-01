@@ -83,6 +83,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 	}
 	
 	public void calculateFulfillmentGroupTotal(Order order) {
+		Money totalShipping = new Money(0D);
 		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			if (fulfillmentGroup.getAdjustmentPrice() != null) {
 	            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getAdjustmentPrice());
@@ -91,7 +92,9 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 	        } else {
 	            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getRetailShippingPrice());
 	        }
+			totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
 		}
+        order.setTotalShipping(totalShipping);
 	}
 	
 	protected boolean couldOfferApplyToFulfillmentGroup(Offer offer, FulfillmentGroup fulfillmentGroup) {

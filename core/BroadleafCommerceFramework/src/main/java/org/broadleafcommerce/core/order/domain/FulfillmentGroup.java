@@ -162,4 +162,6 @@ public interface FulfillmentGroup extends Serializable {
 	
 	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
 	
+	public Money getFulfillmentGroupAdjustmentsValue();
+	
 }
