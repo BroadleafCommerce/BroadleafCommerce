@@ -26,6 +26,14 @@
 		</property>
 	</bean>
 	
+	<bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:/META-INF/persistence-admin.xml</value>
+			</list>
+		</property>
+	</bean>
+	
 	<aop:config>
 		<aop:pointcut id="blAdminSecurityServiceSaveOperation" expression="execution(* org.broadleafcommerce.gwt.server.security.service.AdminSecurityService.save*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceSaveOperation"/>
