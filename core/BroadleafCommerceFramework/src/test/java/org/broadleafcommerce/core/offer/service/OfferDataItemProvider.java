@@ -18,8 +18,10 @@ package org.broadleafcommerce.core.offer.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -302,7 +304,7 @@ public class OfferDataItemProvider {
 		OfferItemRestrictionRuleType qualifierType,
 		OfferItemRestrictionRuleType targetType,
 		int priority,
-		List<OfferItemCriteria> qualifyingItemCriteria,
+		Set<OfferItemCriteria> qualifyingItemCriteria,
 		boolean stackable,
 		Date startDate,
 		OfferItemCriteria targetItemCriteria,
@@ -400,7 +402,7 @@ public class OfferDataItemProvider {
 		qualCriteria.setOffer(offers.get(0));
 		qualCriteria.setQuantity(1);
 		qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
-		List<OfferItemCriteria> criterias = new ArrayList<OfferItemCriteria>();
+		Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
 		criterias.add(qualCriteria);
 		
 		offers.get(0).setQualifyingItemCriteria(criterias);
@@ -415,7 +417,7 @@ public class OfferDataItemProvider {
 		qualCriteria.setOffer(offers.get(0));
 		qualCriteria.setQuantity(1);
 		qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
-		List<OfferItemCriteria> criterias = new ArrayList<OfferItemCriteria>();
+		Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
 		criterias.add(qualCriteria);
 		
 		offers.get(0).setQualifyingItemCriteria(criterias);
@@ -431,7 +433,7 @@ public class OfferDataItemProvider {
 			qualCriteria.setOffer(offers.get(0));
 			qualCriteria.setQuantity(1);
 			qualCriteria.setOrderItemMatchRule(qualRule);
-			List<OfferItemCriteria> criterias = new ArrayList<OfferItemCriteria>();
+			Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
 			criterias.add(qualCriteria);
 			
 			offers.get(0).setQualifyingItemCriteria(criterias);
