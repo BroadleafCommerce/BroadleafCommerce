@@ -16,11 +16,11 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -153,14 +153,14 @@ public class OfferImpl implements Offer {
     protected String offerItemTargetRuleType;
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
-    @JoinTable(name = "BLC_QUALIFIER_CRITERIA_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID", referencedColumnName = "OFFER_ITEM_CRITERIA_ID"))
+    @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<OfferItemCriteria> qualifyingItemCriteria = new ArrayList<OfferItemCriteria>();
+    protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @ManyToOne(targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @AdminPresentation(friendlyName="Target Item Criteria", group="Application", groupOrder=4, hidden=true)
-    @JoinTable(name = "BLC_TARGET_CRITERIA_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID", referencedColumnName = "OFFER_ITEM_CRITERIA_ID"))
+    @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected OfferItemCriteria targetItemCriteria;
     
@@ -389,11 +389,11 @@ public class OfferImpl implements Offer {
         this.uses = uses;
     }
 
-    public List<OfferItemCriteria> getQualifyingItemCriteria() {
+    public Set<OfferItemCriteria> getQualifyingItemCriteria() {
 		return qualifyingItemCriteria;
 	}
 
-	public void setQualifyingItemCriteria(List<OfferItemCriteria> qualifyingItemCriteria) {
+	public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
 		this.qualifyingItemCriteria = qualifyingItemCriteria;
 	}
 

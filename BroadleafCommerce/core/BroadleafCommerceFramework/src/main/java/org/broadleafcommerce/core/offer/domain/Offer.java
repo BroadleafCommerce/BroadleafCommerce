@@ -18,8 +18,8 @@ package org.broadleafcommerce.core.offer.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -120,9 +120,9 @@ public interface Offer extends Serializable {
     @Deprecated
     public void setUses(int uses) ;
 
-    public List<OfferItemCriteria> getQualifyingItemCriteria();
+    public Set<OfferItemCriteria> getQualifyingItemCriteria();
 
-	public void setQualifyingItemCriteria(List<OfferItemCriteria> qualifyingItemCriteria);
+	public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
 	public OfferItemCriteria getTargetItemCriteria();
 
