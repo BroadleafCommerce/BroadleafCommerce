@@ -16,7 +16,6 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -269,5 +268,7 @@ public interface Order extends Serializable {
 	public boolean isNotCombinableOfferAppliedAtAnyLevel();
 
 	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
+	
+	public Money getFulfillmentGroupAdjustmentsValue();
 	
 }

@@ -689,6 +689,14 @@ public class OrderImpl implements Order {
         }
         return itemAdjustmentsValue;
     }
+    
+    public Money getFulfillmentGroupAdjustmentsValue() {
+    	Money adjustmentValue = new Money(0);
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+        	adjustmentValue = adjustmentValue.add(fulfillmentGroup.getFulfillmentGroupAdjustmentsValue());
+        }
+        return adjustmentValue;
+    }
 
     public Money getOrderAdjustmentsValue() {
         Money orderAdjustmentsValue = new Money(0);
@@ -701,6 +709,7 @@ public class OrderImpl implements Order {
     public Money getTotalAdjustmentsValue() {
         Money totalAdjustmentsValue = getItemAdjustmentsValue();
         totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
+        totalAdjustmentsValue = totalAdjustmentsValue.add(getFulfillmentGroupAdjustmentsValue());
         return totalAdjustmentsValue;
     }
 
