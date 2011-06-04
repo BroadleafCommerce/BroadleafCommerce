@@ -14,12 +14,12 @@
 	<context-param>
 		<param-name>patchConfigLocation</param-name>
 		<param-value>
+            classpath:/bl-open-admin-applicationContext.xml
+            classpath:/bl-admin-applicationContext.xml
             /WEB-INF/applicationContext-demo.xml
             /WEB-INF/applicationContext-email.xml
             /WEB-INF/applicationContext-search.xml
             /WEB-INF/applicationContext-security.xml
-            classpath:/bl-open-admin-applicationContext.xml
-            classpath:/bl-admin-applicationContext.xml
         </param-value>
 	</context-param>
 
