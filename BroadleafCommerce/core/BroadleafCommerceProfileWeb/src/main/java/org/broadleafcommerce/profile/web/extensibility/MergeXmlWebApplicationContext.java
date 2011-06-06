@@ -104,6 +104,9 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
                 Resource resource = getResourceByPath(patchLocations[i]);
                 patches[i] = resource.getInputStream();
             }
+            if (patches[i].available() <= 0) {
+            	throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);
+            }
         }
         Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches);
 
