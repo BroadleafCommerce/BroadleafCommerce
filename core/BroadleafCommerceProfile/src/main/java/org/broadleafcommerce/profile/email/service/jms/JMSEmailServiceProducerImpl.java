@@ -32,14 +32,13 @@ import org.springframework.jms.core.MessageCreator;
  * @author jfischer
  *
  */
-public class EmailServiceProducerImpl implements EmailServiceProducer {
+public class JMSEmailServiceProducerImpl implements JMSEmailServiceProducer {
 
     private JmsTemplate emailServiceTemplate;
 
     private Destination emailServiceDestination;
 
-    @SuppressWarnings("unchecked")
-    public void send(final HashMap props) {
+    public void send(@SuppressWarnings("rawtypes") final HashMap props) {
         emailServiceTemplate.send(emailServiceDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 ObjectMessage message = session.createObjectMessage(props);
