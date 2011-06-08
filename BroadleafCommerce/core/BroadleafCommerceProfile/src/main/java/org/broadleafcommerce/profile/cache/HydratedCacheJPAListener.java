@@ -45,11 +45,11 @@ public class HydratedCacheJPAListener {
 			for (String field : descriptor.getHydratedMutators().keySet()) {
 				try {
 					Serializable entityId = (Serializable) idMutators[0].invoke(entity, new Object[]{});
-					Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(cacheRegion, entityId, field);
+					Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(cacheRegion, entity.getClass().getName(), entityId, field);
 					if (hydratedItem == null) {
 						Method factoryMethod = entity.getClass().getMethod(descriptor.getHydratedMutators().get(field).getFactoryMethod(), new Class[]{});
 						Object fieldVal = factoryMethod.invoke(entity, new Object[]{});
-						((HydratedCacheManager) manager).addHydratedCacheElementItem(cacheRegion, entityId, field, fieldVal);
+						((HydratedCacheManager) manager).addHydratedCacheElementItem(cacheRegion, entity.getClass().getName(), entityId, field, fieldVal);
 						hydratedItem = fieldVal;
 					}
 					descriptor.getHydratedMutators().get(field).getMutators()[1].invoke(entity, new Object[]{hydratedItem});
@@ -79,7 +79,7 @@ public class HydratedCacheJPAListener {
 					Object fieldVal = descriptor.getHydratedMutators().get(field).getMutators()[0].invoke(entity, new Object[]{});
 					if (fieldVal != null) {
 						Serializable entityId = (Serializable) idMutators[0].invoke(entity, new Object[]{});
-						((HydratedCacheManager) manager).addHydratedCacheElementItem(cacheRegion, entityId, field, fieldVal);
+						((HydratedCacheManager) manager).addHydratedCacheElementItem(cacheRegion, entity.getClass().getName(), entityId, field, fieldVal);
 					}
 				} catch (InvocationTargetException e) {
 					if (e.getTargetException() != null && e.getTargetException() instanceof CacheFactoryException) {
