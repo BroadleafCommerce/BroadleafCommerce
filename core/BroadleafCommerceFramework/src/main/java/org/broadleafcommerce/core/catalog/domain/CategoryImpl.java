@@ -56,7 +56,6 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
-import org.hibernate.envers.Audited;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -531,12 +530,12 @@ public class CategoryImpl implements Category {
     @SuppressWarnings("unchecked")
 	public Map<String, List<Category>> getChildCategoryURLMap() {
     	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
-    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
+    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
     	if (hydratedItem != null) {
     		return (Map<String, List<Category>>) hydratedItem;
     	}
     	childCategoryURLMap = createChildCategoryURLMap();
-    	((HydratedCacheManager) manager).addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
+    	((HydratedCacheManager) manager).addHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
         return childCategoryURLMap;
     }
     

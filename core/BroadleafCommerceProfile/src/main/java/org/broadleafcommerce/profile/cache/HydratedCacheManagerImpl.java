@@ -49,23 +49,23 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     private Map<String, HydrationDescriptor> hydrationDescriptors = new Hashtable<String, HydrationDescriptor>();
 
     public void addHydratedCache(final HydratedCache cache) {
-    	hydratedCacheContainer.put(cache.getCacheName(), cache);
+    	hydratedCacheContainer.put(cache.getCacheRegion() + "_" + cache.getCacheName(), cache);
     }
 
-    public HydratedCache removeHydratedCache(final String cacheName) {
-        return hydratedCacheContainer.remove(cacheName);
+    public HydratedCache removeHydratedCache(final String cacheRegion, final String cacheName) {
+        return hydratedCacheContainer.remove(cacheRegion + "_" + cacheName);
     }
 
-    public  HydratedCache getHydratedCache(final String cacheName) {
-    	if (!containsCache(cacheName)) {
-    		HydratedCache cache = new HydratedCache(cacheName);
+    public  HydratedCache getHydratedCache(final String cacheRegion, final String cacheName) {
+    	if (!containsCache(cacheRegion, cacheName)) {
+    		HydratedCache cache = new HydratedCache(cacheRegion, cacheName);
     		addHydratedCache(cache);
     	}
-    	return hydratedCacheContainer.get(cacheName);
+    	return hydratedCacheContainer.get(cacheRegion + "_" + cacheName);
     }
     
-    public boolean containsCache(String cacheName) {
-    	return hydratedCacheContainer.containsKey(cacheName);
+    public boolean containsCache(String cacheRegion, String cacheName) {
+    	return hydratedCacheContainer.containsKey(cacheRegion + "_" + cacheName);
     }
     
 	public HydrationDescriptor getHydrationDescriptor(Object entity) {
@@ -102,22 +102,22 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return myClass;
     }
     
-    public Object getHydratedCacheElementItem(String cacheName, Serializable elementKey, String elementItemName) {
+    public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
     	Object response = null;
-    	HydratedCache hydratedCache = getHydratedCache(cacheName);
-    	HydratedCacheElement element = hydratedCache.getCacheElement(cacheName, elementKey);
+    	HydratedCache hydratedCache = getHydratedCache(cacheRegion, cacheName);
+    	HydratedCacheElement element = hydratedCache.getCacheElement(cacheRegion, cacheName, elementKey);
     	if (element != null) {
     		response = element.getCacheElementItem(elementItemName, elementKey);
     	}
         return response;
     }
     
-    public void addHydratedCacheElementItem(String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
-    	HydratedCache hydratedCache = getHydratedCache(cacheName);
-    	HydratedCacheElement element = hydratedCache.getCacheElement(cacheName, elementKey);
+    public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
+    	HydratedCache hydratedCache = getHydratedCache(cacheRegion, cacheName);
+    	HydratedCacheElement element = hydratedCache.getCacheElement(cacheRegion, cacheName, elementKey);
     	if (element == null) {
     		element = new HydratedCacheElement();
-    		hydratedCache.addCacheElement(cacheName, elementKey, element);
+    		hydratedCache.addCacheElement(cacheRegion, cacheName, elementKey, element);
     	}
     	element.putCacheElementItem(elementItemName, elementKey, elementValue);
     }
@@ -129,18 +129,20 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
         hydratedCacheContainer.clear();
     }
 
-    private void removeCache(String cacheName, Serializable key) {
+    private void removeCache(String cacheRegion, Serializable key) {
+    	String cacheName = cacheRegion;
     	if (key instanceof CacheKey) {
+    		cacheName = ((CacheKey) key).getEntityOrRoleName();
     		key = ((CacheKey) key).getKey();
     	}
-        if (hydratedCacheContainer.containsKey(cacheName)) {
-        	HydratedCache cache = hydratedCacheContainer.get(cacheName);
-        	String myKey = cacheName + "_" + key;
+        if (containsCache(cacheRegion, cacheName)) {
+        	HydratedCache cache = hydratedCacheContainer.get(cacheRegion + "_" + cacheName);
+        	String myKey = cacheRegion + "_" + cacheName + "_" + key;
         	if (cache.containsKey(myKey)) {
 	            if (LOG.isInfoEnabled()) {
-	                LOG.info("Clearing hydrated cache for cache name: " + cacheName + "_" + key);
+	                LOG.info("Clearing hydrated cache for cache name: " + cacheRegion + "_" + cacheName + "_" + key);
 	            }
-	            cache.removeCacheElement(cacheName, key);
+	            cache.removeCacheElement(cacheRegion, cacheName, key);
         	}
         }
     }
