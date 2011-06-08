@@ -15,16 +15,12 @@
  */
 package org.broadleafcommerce.profile.email.service.jms;
 
-import java.util.HashMap;
-
 import javax.jms.Destination;
 
+import org.broadleafcommerce.profile.email.service.message.EmailServiceProducer;
 import org.springframework.jms.core.JmsTemplate;
 
-public interface EmailServiceProducer {
-
-    @SuppressWarnings("unchecked")
-    public void send(final HashMap props);
+public interface JMSEmailServiceProducer extends EmailServiceProducer {
 
     /**
      * @return the emailServiceTemplate

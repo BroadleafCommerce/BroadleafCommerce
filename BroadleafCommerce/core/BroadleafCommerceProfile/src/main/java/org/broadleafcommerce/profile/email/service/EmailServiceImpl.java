@@ -25,8 +25,9 @@ import org.broadleafcommerce.profile.email.service.exception.EmailException;
 import org.broadleafcommerce.profile.email.service.info.EmailInfo;
 import org.broadleafcommerce.profile.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.profile.email.service.info.ServerInfo;
-import org.broadleafcommerce.profile.email.service.jms.EmailServiceProducer;
+import org.broadleafcommerce.profile.email.service.jms.JMSEmailServiceProducer;
 import org.broadleafcommerce.profile.email.service.message.EmailPropertyType;
+import org.broadleafcommerce.profile.email.service.message.EmailServiceProducer;
 import org.broadleafcommerce.profile.email.service.message.MessageCreator;
 import org.springframework.stereotype.Service;
 
@@ -89,7 +90,7 @@ public class EmailServiceImpl implements EmailService {
 
         if (Boolean.parseBoolean(emailInfo.getSendEmailReliableAsync())) {
         	if (emailServiceProducer == null) {
-        		throw new EmailException("The property sendEmailReliableAsync on EmailInfo is true, but the EmailService does not have an instance of EmailServiceProducer set.");
+        		throw new EmailException("The property sendEmailReliableAsync on EmailInfo is true, but the EmailService does not have an instance of JMSEmailServiceProducer set.");
         	}
             emailServiceProducer.send(props);
         } else {
