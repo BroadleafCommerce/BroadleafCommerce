@@ -56,7 +56,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
-import org.hibernate.envers.Audited;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -205,7 +204,9 @@ public class SkuImpl implements Sku {
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(this, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		SkuDecorator skuDecorator = new SkuDecorator(this);
+    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(skuDecorator, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		skuDecorator.reset();
     		return dynamicPrices.getSalePrice();
     	}
         return salePrice == null ? null : new Money(salePrice);
@@ -214,8 +215,7 @@ public class SkuImpl implements Sku {
     /*
      * (non-Javadoc)
      * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setSalePrice(org.broadleafcommerce
-     * .util.money.Money)
+     * org.broadleafcommerce.core.catalog.domain.Sku#setSalePrice(org.broadleafcommerce.util.money.Money)
      */
     public void setSalePrice(Money salePrice) {
         this.salePrice = Money.toAmount(salePrice);
@@ -234,7 +234,9 @@ public class SkuImpl implements Sku {
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(this, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		SkuDecorator skuDecorator = new SkuDecorator(this);
+    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(skuDecorator, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		skuDecorator.reset();
     		return dynamicPrices.getRetailPrice();
     	}
         return retailPrice == null ? null : new Money(retailPrice);
