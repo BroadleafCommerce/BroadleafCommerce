@@ -58,7 +58,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 	protected Integer quantity;
     
     @Lob
-    @Column(name = "ORDER_ITEM_MATCH_RULE", nullable=false)
+    @Column(name = "ORDER_ITEM_MATCH_RULE")
     @AdminPresentation(friendlyName="Order Item Match Rule", group="Description", hidden=true)
 	protected String orderItemMatchRule;
     

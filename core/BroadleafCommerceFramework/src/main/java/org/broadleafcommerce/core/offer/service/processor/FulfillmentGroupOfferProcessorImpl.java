@@ -100,7 +100,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 	protected boolean couldOfferApplyToFulfillmentGroup(Offer offer, FulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
         OfferRule rule = offer.getOfferMatchRules().get(OfferRuleType.FULFILLMENT_GROUP.getType());
-        if (rule != null) {
+        if (rule != null && rule.getMatchRule() != null) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("fulfillmentGroup", fulfillmentGroup);
             Boolean expressionOutcome = executeExpression(rule.getMatchRule(), vars);
