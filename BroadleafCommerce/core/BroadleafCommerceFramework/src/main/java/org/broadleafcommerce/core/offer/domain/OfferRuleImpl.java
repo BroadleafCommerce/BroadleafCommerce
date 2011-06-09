@@ -49,7 +49,7 @@ public class OfferRuleImpl implements OfferRule {
     protected Long id;
     
     @Lob
-    @Column(name = "MATCH_RULE", nullable=false)
+    @Column(name = "MATCH_RULE")
     protected String matchRule;
 
 	/* (non-Javadoc)

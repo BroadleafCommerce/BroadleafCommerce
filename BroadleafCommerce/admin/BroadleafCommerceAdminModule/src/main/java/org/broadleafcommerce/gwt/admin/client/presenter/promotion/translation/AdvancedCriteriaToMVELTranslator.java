@@ -55,7 +55,11 @@ public class AdvancedCriteriaToMVELTranslator {
 	public String createMVEL(AdvancedCriteria criteria, FilterType filterType, DataSource dataSource) throws IncompatibleMVELTranslationException {
 		StringBuffer sb = new StringBuffer();
 		buildMVEL(criteria, sb, filterType, dataSource, null);
-		return sb.toString();
+		String response = sb.toString().trim();
+		if (response.length() == 0) {
+			response = null;
+		}
+		return response;
 	}
 	
 	protected void buildMVEL(Criteria criteria, StringBuffer sb, FilterType filterType, DataSource dataSource, OperatorId groupOperator) throws IncompatibleMVELTranslationException {

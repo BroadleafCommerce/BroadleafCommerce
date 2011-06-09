@@ -212,7 +212,8 @@ public class OfferPresenterExtractor {
 			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", mvel);
 		} else {
 			selectedRecord.setAttribute("targetItemCriteria.quantity", 0);
-			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", "");
+			String attr = null;
+			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", attr);
 		}
 	}
 
