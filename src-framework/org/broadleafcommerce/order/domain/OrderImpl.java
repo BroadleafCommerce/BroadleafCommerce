@@ -577,7 +577,11 @@ public class OrderImpl implements Order {
 
     public Money getTotalAdjustmentsValue() {
         Money totalAdjustmentsValue = getItemAdjustmentsValue();
-        totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
+        if (totalAdjustmentsValue != null) {
+            totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
+        } else {
+            totalAdjustmentsValue = getOrderAdjustmentsValue();
+        }
         return totalAdjustmentsValue;
     }
 

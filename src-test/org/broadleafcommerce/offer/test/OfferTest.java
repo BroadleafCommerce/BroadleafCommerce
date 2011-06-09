@@ -1017,4 +1017,116 @@ public class OfferTest extends BaseTest {
         cartService.save(order, false);
     }
 
+    @Test(groups =  {"testOrder_ApplyOrderOffer_KeepRetailShipping"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer"})
+    public void testOrder_ApplyOrderOffer_KeepRetailShipping() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 1));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 1));
+        offerService.applyOffersToOrder(null, order);
+
+        assert (order.getSubTotal().equals(new Money(200D)));
+        assert (order.getTotalShipping() == null);
+
+        order.addAddedOfferCode(createOfferCode("10 Dollars Off Order Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 10, null, null, false, false, 1));
+
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.PERCENT_OFF, 20, null, null, false, false, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+        assert (order.getSubTotal().equals(new Money(180D)));
+        assert (order.getAdjustmentPrice() == null);
+
+        // At this point, Shipping activity is NOT executed yet
+        //execute shipping activity code
+        // this sets shipping without offers and applies fulfillment offers and calculates shipping after offers
+        Money totalShipping = new Money(0D);
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+            totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+        }
+        order.setTotalShipping(totalShipping);
+
+        assert (order.getSubTotal().equals(new Money(180D)));
+        assert (order.getAdjustmentPrice() == null);
+        assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(6.8D)));
+
+        //Now apply review offers activity code
+        if (offerService.reviewAllOffersAndApplyBest(order)) {
+            // at this point, either
+            // (a) all order+item offers and adjustments have been removed and shipping offers applied.
+            // OR
+            // (b) all order+item offers and adjustments have been retained and shipping offers and adjustments have been removed.
+            // so recalculate shipping and reapply offers. If no offers, then original shipping rates are maintained.
+            totalShipping = new Money(0D);
+            for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+                totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+            }
+            order.setTotalShipping(totalShipping);
+        }
+        assert (order.getSubTotal().equals(new Money(180D)));
+        assert (order.getAdjustmentPrice() == null);
+        assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(8.5D)));
+        assert (order.getTotalShipping().equals(new Money(8.5D)));
+
+    }
+
+    @Test(groups =  {"testOrder_ApplyOrderOffer_KeepRetailShipping"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer"})
+    public void testOrder_ApplyFulfillmentOffer_KeepRetailOrder() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 5D, null, true, 1));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 5D, null, true, 1));
+        offerService.applyOffersToOrder(null, order);
+
+        assert (order.getSubTotal().equals(new Money(10D)));
+        assert (order.getTotalShipping() == null);
+
+        order.addAddedOfferCode(createOfferCode("1 Dollars Off Order Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 1, null, null, false, false, 1));
+
+        order.addAddedOfferCode(createOfferCode("50 Percent Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.PERCENT_OFF, 50, null, null, false, false, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+        assert (order.getSubTotal().equals(new Money(8D)));
+        assert (order.getAdjustmentPrice() == null);
+
+        // At this point, Shipping activity is NOT executed yet
+        //execute shipping activity code
+        // this sets shipping without offers and applies fulfillment offers and calculates shipping after offers
+        Money totalShipping = new Money(0D);
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+            totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+        }
+        order.setTotalShipping(totalShipping);
+
+        assert (order.getSubTotal().equals(new Money(8D)));
+        assert (order.getAdjustmentPrice() == null);
+        assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(4.25D)));
+
+        //Now apply review offers activity code
+        if (offerService.reviewAllOffersAndApplyBest(order)) {
+            // at this point, either
+            // (a) all order+item offers and adjustments have been removed and shipping offers applied.
+            // OR
+            // (b) all order+item offers and adjustments have been retained and shipping offers and adjustments have been removed.
+            // so recalculate shipping and reapply offers. If no offers, then original shipping rates are maintained.
+            totalShipping = new Money(0D);
+            for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+                totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+            }
+            order.setTotalShipping(totalShipping);
+        }
+        assert (order.getSubTotal().equals(new Money(10D)));
+        assert (order.getAdjustmentPrice() == null);
+        assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(4.25D)));
+        assert (order.getTotalShipping().equals(new Money(4.25D)));
+
+    }
+
 }

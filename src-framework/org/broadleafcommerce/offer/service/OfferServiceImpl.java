@@ -808,11 +808,16 @@ public class OfferServiceImpl implements OfferService {
         List<Offer> allFulfillmentOffers = new ArrayList<Offer>();
         boolean atLeastOneFulfillmentOfferNotCombinable = isAnyOneFulfillmentOfferNotCombinable(order, allFulfillmentOffers);
 
-        if (atLeastOneFulfillmentOfferNotCombinable && order.getAdjustmentPrice() != null) {
-            Money orderAdjustmentPriceWithOffers = order.getAdjustmentPrice();
+        if (atLeastOneFulfillmentOfferNotCombinable && order.getTotalAdjustmentsValue() != null) {
+            Money orderAdjustmentPriceWithOffers = null;
+            if (order.getAdjustmentPrice() != null) {
+                orderAdjustmentPriceWithOffers = order.getAdjustmentPrice();
+            } else {
+                orderAdjustmentPriceWithOffers = order.getSubTotal();
+            }
             Money totalShippingPriceWithOffers = order.getTotalShipping();
 
-            Money orderAdjustmentPriceWithoutOffers = order.getAdjustmentPrice().add(order.getTotalAdjustmentsValue());
+            Money orderAdjustmentPriceWithoutOffers = orderAdjustmentPriceWithOffers.add(order.getTotalAdjustmentsValue());
             Money totalShippingPriceWithoutOffers = order.getShippingPriceWithoutOffers();
             if ((orderAdjustmentPriceWithOffers.add(totalShippingPriceWithoutOffers)).greaterThan((orderAdjustmentPriceWithoutOffers.add(totalShippingPriceWithOffers)))) {
                 // remove order and item offers
@@ -830,7 +835,7 @@ public class OfferServiceImpl implements OfferService {
             order.setShippingPriceWithoutOffers(new Money(0));
         }
 
-        return atLeastOneFulfillmentOfferNotCombinable;
+        return (atLeastOneFulfillmentOfferNotCombinable && order.getTotalAdjustmentsValue() != null);
     }
 
     /**
