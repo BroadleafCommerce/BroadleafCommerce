@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +40,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -204,9 +206,10 @@ public class SkuImpl implements Sku {
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
-    		SkuDecorator skuDecorator = new SkuDecorator(this);
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(skuDecorator, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		skuDecorator.reset();
+    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		handler.reset();
     		return dynamicPrices.getSalePrice();
     	}
         return salePrice == null ? null : new Money(salePrice);
@@ -234,9 +237,10 @@ public class SkuImpl implements Sku {
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
-    		SkuDecorator skuDecorator = new SkuDecorator(this);
-    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(skuDecorator, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-    		skuDecorator.reset();
+    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+    		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		handler.reset();
     		return dynamicPrices.getRetailPrice();
     	}
         return retailPrice == null ? null : new Money(retailPrice);
