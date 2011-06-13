@@ -25,6 +25,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -145,30 +147,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
         return false;
     }
-
-    @Override
-    public Money getAdjustmentPrice() {
-        Money bundleAdjustmentPrice = null;
-        if (hasAdjustmentItems()) {
-            bundleAdjustmentPrice = new Money();
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                Money itemAdjustmentPrice = null;
-                if (discreteOrderItem.getAdjustmentPrice() != null) {
-                    itemAdjustmentPrice = discreteOrderItem.getAdjustmentPrice();
-                } else if (discreteOrderItem.getSalePrice() != null) {
-                    itemAdjustmentPrice = discreteOrderItem.getSalePrice();
-                } else {
-                    itemAdjustmentPrice = discreteOrderItem.getRetailPrice();
-                }
-                bundleAdjustmentPrice = bundleAdjustmentPrice.add(new Money(itemAdjustmentPrice.doubleValue() * discreteOrderItem.getQuantity()));
-            }
-        }
-        return bundleAdjustmentPrice;
-    }
-
-    private boolean hasAdjustmentItems() {
+    
+    public boolean hasAdjustedItems() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            if (discreteOrderItem.getAdjustmentPrice() != null) {
+            if (discreteOrderItem.getAdjustmentValue().greaterThan(new Money(0D))) {
                 return true;
             }
         }
@@ -228,5 +210,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
+    }
+    
+    @Override
+    public void accept(OrderItemVisitor visitor) throws PricingException {
+        visitor.visit(this);
     }
 }

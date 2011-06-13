@@ -40,9 +40,9 @@ import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImp
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.order.service.manipulation.DiscreteOrderItemDecorator;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
-import org.broadleafcommerce.core.order.service.util.DiscreteOrderItemDecorator;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -114,10 +114,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "PRICE")
     @AdminPresentation(friendlyName="Shipping Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal shippingPrice;
-
-    @Transient
-    protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
+    protected BigDecimal shippingPrice;   
 
     @Column(name = "TYPE")
     @AdminPresentation(friendlyName="FG Type", order=4, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupType")
@@ -237,28 +234,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         }
         return discreteOrderItems;
     }
-    
-    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems() {
-        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
-        for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
-        	OrderItem orderItem = fgItem.getOrderItem();
-            if (orderItem instanceof BundleOrderItemImpl) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
-                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                    if (discreteOrderItem.getSku().isDiscountable()) {
-                        discreteOrderItems.add(discreteOrderItem);
-                    }
-                }
-            } else {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
-                if (discreteOrderItem.getSku().isDiscountable()) {
-                	//use the decorator patter to return the quantity for this fgItem, not the quantity on the discrete order item
-                    discreteOrderItems.add(new DiscreteOrderItemDecorator(discreteOrderItem, fgItem.getQuantity()));
-                }
-            }
-        }
-        return discreteOrderItems;
-    }
 
     public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
         this.fulfillmentGroupItems = fulfillmentGroupItems;
@@ -343,37 +318,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return adjustmentsValue;
     }
 
-    /*
-     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
-     * price by the value of the adjustment.
-     */
-    public List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment) {
-        if (this.fulfillmentGroupAdjustments.size() == 0) {
-            adjustmentPrice = retailShippingPrice;
-        }
-        adjustmentPrice = adjustmentPrice.subtract(fulfillmentGroupAdjustment.getValue().getAmount());
-        this.fulfillmentGroupAdjustments.add(fulfillmentGroupAdjustment);
-        getOrder().resetTotalitarianOfferApplied();
-        
-        return this.fulfillmentGroupAdjustments;
-    }
-
     public void removeAllAdjustments() {
         if (fulfillmentGroupAdjustments != null) {
             fulfillmentGroupAdjustments.clear();
         }
-        getOrder().resetTotalitarianOfferApplied();
-        adjustmentPrice = null;
-    }
-    
-    public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-        Money currentPrice = null;
-        if (saleShippingPrice != null && allowSalesPrice) {
-            currentPrice = new Money(saleShippingPrice);
-        } else {
-            currentPrice = new Money(retailShippingPrice);
-        }
-        return currentPrice;
     }
 
     public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments) {
@@ -394,14 +342,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     public void setShippingPrice(Money shippingPrice) {
         this.shippingPrice = Money.toAmount(shippingPrice);
-    }
-
-    public Money getAdjustmentPrice() {
-        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
-    }
-
-    public void setAdjustmentPrice(Money adjustmentPrice) {
-        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
 
     public Money getCityTax() {

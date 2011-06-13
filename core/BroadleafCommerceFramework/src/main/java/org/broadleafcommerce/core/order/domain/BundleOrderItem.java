@@ -32,4 +32,6 @@ public interface BundleOrderItem extends OrderItem {
 
     public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices);
 
+    public boolean hasAdjustedItems();
+    
 }

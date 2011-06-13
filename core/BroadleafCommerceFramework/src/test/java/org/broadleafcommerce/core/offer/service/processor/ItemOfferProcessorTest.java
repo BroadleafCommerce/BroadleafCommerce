@@ -30,6 +30,10 @@ import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
@@ -68,6 +72,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		itemProcessor.setCartService(cartServiceMock);
 		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		itemProcessor.setOrderItemService(orderItemServiceMock);
+		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 	}
 	
 	public void replay() {
@@ -89,42 +94,43 @@ public class ItemOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
-		List<CandidateItemOffer> qualifiedOffers = new ArrayList<CandidateItemOffer>();
+		PromotableOrder order = dataProvider.createBasicOrder();
+		List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
 		List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF,
 			null, 
 			null
 		);
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the valid order item offer is included - legacy format - no qualifier
 		//since there's no qualifier, both items can apply
 		assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(1).getOffer().equals(offers.get(0)));
 		
-		qualifiedOffers = new ArrayList<CandidateItemOffer>();
+		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
 		offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the valid order item offer is included
 		//there is a qualifier and the item qualifying criteria requires only 1, therefore there will be only one qualifier in the qualifiers map
 		//we don't know the targets yet, so there's only one CandidateItemOffer for now
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
 		 
-		qualifiedOffers = new ArrayList<CandidateItemOffer>();
+		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
 		offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the invalid order item offer is excluded
 		assertTrue(qualifiedOffers.size() == 0);
@@ -135,14 +141,15 @@ public class ItemOfferProcessorTest extends TestCase {
 	public void testCouldOfferApplyToOrder() {
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
 			null, 
 			null
 		);
-		boolean couldApply = itemProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getOrderItems().get(0), order.getFulfillmentGroups().get(0));
+
+		boolean couldApply = itemProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableDiscreteOrderItems().get(0), order.getFulfillmentGroups().get(0));
 		//test that the valid order item offer is included
 		assertTrue(couldApply);
 		
@@ -152,7 +159,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			null, 
 			null
 		);
-		couldApply = itemProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getOrderItems().get(0), order.getFulfillmentGroups().get(0));
+		couldApply = itemProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableDiscreteOrderItems().get(0), order.getFulfillmentGroups().get(0));
 		//test that the invalid order item offer is excluded
 		assertFalse(couldApply);
 		
@@ -162,14 +169,15 @@ public class ItemOfferProcessorTest extends TestCase {
 	public void testCouldOrderItemMeetOfferRequirement() {
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		boolean couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getOrderItems().get(0));
+
+		boolean couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableDiscreteOrderItems().get(0));
 		//test that the valid order item offer is included
 		assertTrue(couldApply);
 		
@@ -179,7 +187,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getOrderItems().get(0));
+		couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableDiscreteOrderItems().get(0));
 		//test that the invalid order item offer is excluded
 		assertFalse(couldApply);
 		
@@ -189,14 +197,18 @@ public class ItemOfferProcessorTest extends TestCase {
 	public void testCouldOfferApplyToOrderItems() {
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		CandidatePromotionItems candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), order.getDiscountableDiscreteOrderItems());
+		List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
+		for (PromotableOrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
+			orderItems.add(orderItem);
+		}
+		CandidatePromotionItems candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
 		//test that the valid order item offer is included
 		//both cart items are valid for qualification and target
 		assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1 && candidates.getCandidateQualifiersMap().values().iterator().next().size() == 2 && candidates.isMatchedTarget() && candidates.getCandidateTargets().size() == 2);
@@ -207,7 +219,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), order.getDiscountableDiscreteOrderItems());
+		candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
 		//test that the invalid order item offer is excluded because there are no qualifying items
 		assertFalse(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
 		
@@ -228,7 +240,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		
 		Offer offer1 = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
@@ -238,22 +250,22 @@ public class ItemOfferProcessorTest extends TestCase {
 		).get(0);
 		offer1.setId(1L);
 		
-		List<CandidateItemOffer> qualifiedOffers = new ArrayList<CandidateItemOffer>();
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer1);
+		List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
 		
-		boolean applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order.getDiscountableDiscreteOrderItems(), order);
+		boolean applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order);
 		
 		assertTrue(applied);
 		
 		order = dataProvider.createBasicOrder();
 		
-		qualifiedOffers = new ArrayList<CandidateItemOffer>();
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer1);
+		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
 		
-		order.getOrderItems().get(0).setSalePrice(new Money(1D));
-		order.getOrderItems().get(1).setSalePrice(new Money(1D));
+		order.getDiscreteOrderItems().get(0).getDelegate().setSalePrice(new Money(1D));
+		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(1D));
 		
-		applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order.getDiscountableDiscreteOrderItems(), order);
+		applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order);
 		
 		assertFalse(applied);
 		
@@ -268,7 +280,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		
 		Offer offer1 = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
@@ -287,16 +299,16 @@ public class ItemOfferProcessorTest extends TestCase {
 		).get(0);
 		offer2.setId(2L);
 		
-		List<CandidateItemOffer> qualifiedOffers = new ArrayList<CandidateItemOffer>();
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer1);		
+		List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);		
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offer1) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer2);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer2);		
 		assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(1).getOffer().equals(offer2) && qualifiedOffers.get(1).getCandidateQualifiersMap().size() == 1);
 		
-		int appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, 0, qualifiedOffers.get(0), 0);
+		int appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		assertTrue(appliedCount == 1);
 		
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		//the first offer is not combinable, the a new adjustment will not be created for the second offer
 		assertTrue(appliedCount == 1);
@@ -304,8 +316,8 @@ public class ItemOfferProcessorTest extends TestCase {
 		order.removeAllAdjustments();
 		
 		offer1.setCombinableWithOtherOffers(true);
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, 0, qualifiedOffers.get(0), 0);
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		//the first offer is now combinable, so both offer may be applied
 		assertTrue(appliedCount == 2);
@@ -313,13 +325,13 @@ public class ItemOfferProcessorTest extends TestCase {
 		order.removeAllAdjustments();
 		
 		offer1.setCombinableWithOtherOffers(false);
-		order.getOrderItems().get(1).setSalePrice(new Money(10D));
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, 0, qualifiedOffers.get(0), 0);
+		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(10D));
+		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		
 		//the first offer is not combinable and the discount is less than the sale price
 		assertTrue(appliedCount == 0);
 		
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		//since the non-combinable offer was removed, the second offer is now available to be applied
 		assertTrue(appliedCount == 1);
@@ -327,13 +339,13 @@ public class ItemOfferProcessorTest extends TestCase {
 		order.removeAllAdjustments();
 		
 		offer1.setCombinableWithOtherOffers(true);
-		order.getOrderItems().get(1).setSalePrice(null);
+		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(null);
 		offer2.setStackable(false);
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, 0, qualifiedOffers.get(0), 0);
+		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		
 		assertTrue(appliedCount == 1);
 		
-		appliedCount = itemProcessor.applyAdjustments(order.getDiscountableDiscreteOrderItems(), order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		assertTrue(appliedCount == 2);
 		
@@ -346,8 +358,8 @@ public class ItemOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
-		List<CandidateItemOffer> qualifiedOffers = new ArrayList<CandidateItemOffer>();
+		PromotableOrder order = dataProvider.createBasicOrder();
+		List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
 		Offer offer1 = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
@@ -372,20 +384,24 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		).get(0);
 		
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer1);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);		
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offer1) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
 		
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer2);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer2);		
 		assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(1).getOffer().equals(offer2) && qualifiedOffers.get(1).getCandidateQualifiersMap().size() == 0);
 		
-		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offer3);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer3);		
 		assertTrue(qualifiedOffers.size() == 3 && qualifiedOffers.get(2).getOffer().equals(offer3) && qualifiedOffers.get(2).getCandidateQualifiersMap().size() == 1);
 		
-		itemProcessor.applyItemQualifiersAndTargets(order.getDiscountableDiscreteOrderItems(), qualifiedOffers.get(1), order);
+		itemProcessor.applyItemQualifiersAndTargets(qualifiedOffers.get(1), order);
 		
+		List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
+		for (PromotableOrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
+			orderItems.add(orderItem);
+		}
 		int qualCount = 0;
 		int targetCount = 0;
-		for (OrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
+		for (PromotableOrderItem orderItem : orderItems) {
 			for (PromotionDiscount discount : orderItem.getPromotionDiscounts()) {
 				targetCount += discount.getQuantity();
 			}
@@ -394,13 +410,13 @@ public class ItemOfferProcessorTest extends TestCase {
 			}
 		}
 		assertTrue(qualCount == 0 && targetCount == 4);
-		assertTrue(itemProcessor.getAllSplitItems(order).size() == 3);
+		assertTrue(order.getAllSplitItems().size() == 3);
 		
-		itemProcessor.applyItemQualifiersAndTargets(order.getDiscountableDiscreteOrderItems(), qualifiedOffers.get(0), order);
+		itemProcessor.applyItemQualifiersAndTargets(qualifiedOffers.get(0), order);
 		
 		qualCount = 0;
 		targetCount = 0;
-		for (OrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
+		for (PromotableOrderItem orderItem : orderItems) {
 			for (PromotionDiscount discount : orderItem.getPromotionDiscounts()) {
 				targetCount += discount.getQuantity();
 			}
@@ -411,11 +427,11 @@ public class ItemOfferProcessorTest extends TestCase {
 		assertTrue(qualCount == 1 && targetCount == 5);
 		assertTrue(order.getSplitItems().size() == 2 && order.getSplitItems().get(0).getSplitItems().size() == 2 && order.getSplitItems().get(1).getSplitItems().size() == 2);
 		
-		itemProcessor.applyItemQualifiersAndTargets(order.getDiscountableDiscreteOrderItems(), qualifiedOffers.get(2), order);
+		itemProcessor.applyItemQualifiersAndTargets(qualifiedOffers.get(2), order);
 		
 		qualCount = 0;
 		targetCount = 0;
-		for (OrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
+		for (PromotableOrderItem orderItem : orderItems) {
 			for (PromotionDiscount discount : orderItem.getPromotionDiscounts()) {
 				targetCount += discount.getQuantity();
 			}
@@ -424,8 +440,8 @@ public class ItemOfferProcessorTest extends TestCase {
 			}
 		}
 		int promoCount = 0;
-		List<OrderItem> allSplitItems = itemProcessor.getAllSplitItems(order);
-		for (OrderItem item : allSplitItems) {
+		List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
+		for (PromotableOrderItem item : allSplitItems) {
 			promoCount += item.getPromotionDiscounts().size();
 		}
 		/*

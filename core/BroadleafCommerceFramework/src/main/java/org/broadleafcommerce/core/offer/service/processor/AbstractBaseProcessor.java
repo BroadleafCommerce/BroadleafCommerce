@@ -29,14 +29,14 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.time.SystemTime;
+import org.hibernate.tool.hbm2x.StringUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
@@ -50,13 +50,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 	private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
 	private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
 	
-	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<DiscreteOrderItem> discreteOrderItems) {
+	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
     	CandidatePromotionItems candidates = new CandidatePromotionItems();
     	if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
     		candidates.setMatchedQualifier(true);
     	} else {
     		for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
-    			checkForItemRequirements(candidates, criteria, discreteOrderItems, true);
+    			checkForItemRequirements(candidates, criteria, promotableOrderItems, true);
     			if (!candidates.isMatchedQualifier()) {
     				break;
     			}
@@ -67,20 +67,20 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 	    	if (offer.getTargetItemCriteria() == null) {
 	    		throw new RuntimeException("Invalid promotion data : Order Item promotions must specify a target criteria. This promotion does not appear to have a target criteria.");
 	    	}
-    		checkForItemRequirements(candidates, offer.getTargetItemCriteria(), discreteOrderItems, false);
+    		checkForItemRequirements(candidates, offer.getTargetItemCriteria(), promotableOrderItems, false);
     	}
     	
     	return candidates;
     }
 	
-	protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<DiscreteOrderItem> discreteOrderItems, boolean isQualifier) {
+	protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
 		boolean matchFound = false;
 		int criteriaQuantity = criteria.getQuantity();
 		
 		if (criteriaQuantity > 0) {			
 			// If matches are found, add the candidate items to a list and store it with the itemCriteria 
 			// for this promotion.
-			for (OrderItem item : discreteOrderItems) {
+			for (PromotableOrderItem item : promotableOrderItems) {
 				if (couldOrderItemMeetOfferRequirement(criteria, item)) {
 					if (isQualifier) {
 						candidates.addQualifier(criteria, item);
@@ -99,12 +99,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 		}
 	}
 	
-	protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, OrderItem discreteOrderItem) {
+	protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem discreteOrderItem) {
         boolean appliesToItem = false;
 
         if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("discreteOrderItem", discreteOrderItem);
+            vars.put("discreteOrderItem", discreteOrderItem.getDelegate());
             Boolean expressionOutcome = executeExpression(criteria.getOrderItemMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
@@ -156,19 +156,19 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 	 * qualifiers so they are eligible for other promotions.
 	 * @param chargeableItems
 	 */
-	protected void clearAllNonFinalizedQuantities(List<OrderItem> chargeableItems) {
-		for(OrderItem chargeableItem : chargeableItems) {
+	protected void clearAllNonFinalizedQuantities(List<PromotableOrderItem> chargeableItems) {
+		for(PromotableOrderItem chargeableItem : chargeableItems) {
 			chargeableItem.clearAllNonFinalizedQuantities();
 		}
 	}
 	
-	protected void finalizeQuantities(List<DiscreteOrderItem> chargeableItems) {
-		for(OrderItem chargeableItem : chargeableItems) {
+	protected void finalizeQuantities(List<PromotableOrderItem> chargeableItems) {
+		for(PromotableOrderItem chargeableItem : chargeableItems) {
 			chargeableItem.finalizeQuantities();
 		}
 	}
 	
-	public void clearOffersandAdjustments(Order order) {
+	public void clearOffersandAdjustments(PromotableOrder order) {
         order.removeAllCandidateOffers();
         order.removeAllAdjustments();
     }
@@ -243,7 +243,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         boolean appliesToCustomer = false;
         
         String rule = null;
-        if (offer.getAppliesToCustomerRules() != null && offer.getAppliesToCustomerRules().trim().length() != 0) {
+        if (!StringUtils.isEmpty(offer.getAppliesToCustomerRules())) {
         	rule = offer.getAppliesToCustomerRules();
         } else {
         	OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());

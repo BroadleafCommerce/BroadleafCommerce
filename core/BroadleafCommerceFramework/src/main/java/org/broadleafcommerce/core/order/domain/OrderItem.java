@@ -20,12 +20,10 @@ import java.util.List;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
-import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.money.Money;
 
 public interface OrderItem extends Serializable {
@@ -48,17 +46,9 @@ public interface OrderItem extends Serializable {
 
     public Money getAdjustmentValue();
 
-    public Money getAdjustmentPrice();
-
-    public void setAdjustmentPrice(Money adjustmentPrice);
-
     public Money getPrice();
 
     public void setPrice(Money price);
-
-    public void assignFinalPrice();
-
-    public Money getCurrentPrice();
 
     public int getQuantity();
 
@@ -72,18 +62,6 @@ public interface OrderItem extends Serializable {
 
     public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers);
 
-    public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
-
-    public void removeAllCandidateItemOffers();
-
-    public boolean markForOffer();
-
-    public int getMarkedForOffer();
-
-    public boolean unmarkForOffer();
-
-    public boolean isAllQuantityMarkedForOffer();
-
     /**
      * Returns a unmodifiable List of OrderItemAdjustment.  To modify the List of OrderItemAdjustment, please
      * use the addOrderItemAdjustment or removeAllAdjustments methods.
@@ -91,19 +69,7 @@ public interface OrderItem extends Serializable {
      */
     public List<OrderItemAdjustment> getOrderItemAdjustments();
 
-    /**
-     * Adds the adjustment to the order item's adjustment list and discounts the
-     * order item's adjustment price by the value of the adjustment.
-     * @param orderItemAdjustment
-     */
-    public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment);
-
-    //public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
-
-    /**
-     * Removes all adjustment for this order item and reset the adjustment price.
-     */
-    public int removeAllAdjustments();
+    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
     public PersonalMessage getPersonalMessage();
 
@@ -125,44 +91,29 @@ public interface OrderItem extends Serializable {
 
     public boolean getIsDiscounted();
 
-    public boolean isNotCombinableOfferApplied();
-
-	public boolean isHasOrderItemAdjustments();
-	
 	public boolean updatePrices();
 	
 	public String getName();
 
 	public void setName(String name);
+
+	public OrderItem clone();
+
+	public void assignFinalPrice();
 	
-	public List<PromotionDiscount> getPromotionDiscounts();
-
-	public void setPromotionDiscounts(List<PromotionDiscount> promotionDiscounts);
-
-	public List<PromotionQualifier> getPromotionQualifiers();
-
-	public void setPromotionQualifiers(List<PromotionQualifier> promotionQualifiers);
-
-	public int getQuantityAvailableToBeUsedAsQualifier(Offer promotion);
-	
-	public int getQuantityAvailableToBeUsedAsTarget(Offer promotion);
+	public Money getCurrentPrice();
 	
 	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
 	
-	public void addPromotionQualifier(CandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity);
+	public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
 	
-	public void addPromotionDiscount(CandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity);
+	public void removeAllCandidateItemOffers();
 	
-	public void clearAllNonFinalizedQuantities();
-	
-	public void finalizeQuantities();
-	
-	public OrderItem clone();
-	
-	public List<OrderItem> split();
-	
-	public void clearAllDiscount();
-	
-	public void clearAllQualifiers();
-	
+	/**
+     * Removes all adjustment for this order item and reset the adjustment price.
+     */
+    public int removeAllAdjustments();
+    
+    public void accept(OrderItemVisitor visitor) throws PricingException;
+    
 }

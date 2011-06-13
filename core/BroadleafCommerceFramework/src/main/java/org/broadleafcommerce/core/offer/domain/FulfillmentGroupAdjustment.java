@@ -16,13 +16,14 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.money.Money;
 
 public interface FulfillmentGroupAdjustment extends Adjustment {
 
     public FulfillmentGroup getFulfillmentGroup();
 
-    public void computeAdjustmentValue();
-
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason);
 
+    public void setValue(Money value);
+    
 }

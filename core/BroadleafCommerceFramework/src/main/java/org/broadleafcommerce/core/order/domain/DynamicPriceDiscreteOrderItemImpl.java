@@ -21,6 +21,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -47,5 +49,10 @@ public class DynamicPriceDiscreteOrderItemImpl extends DiscreteOrderItemImpl imp
 	public boolean updatePrices() {
 		return false;
 	}
+	
+	@Override
+	public void accept(OrderItemVisitor visitor) throws PricingException {
+        visitor.visit(this);
+    }
 
 }

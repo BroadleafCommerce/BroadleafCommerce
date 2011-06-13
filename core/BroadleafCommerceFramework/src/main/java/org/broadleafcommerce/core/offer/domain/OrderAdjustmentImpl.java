@@ -29,7 +29,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.money.Money;
@@ -109,34 +108,11 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     }
 
     public Money getValue() {
-        if (value == null) {
-            computeAdjustmentValue();
-        }
         return value == null ? null : new Money(value);
     }
 
-    /*
-     * Calculates the value of the adjustment
-     */
-    public void computeAdjustmentValue() {
-        if (offer != null && order != null) {
-            Money adjustmentPrice = order.getAdjustmentPrice(); // get the current price of the item with all adjustments
-            if (adjustmentPrice == null) {
-                adjustmentPrice = order.getSubTotal();
-            }
-            if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                value = offer.getValue();
-            }
-            if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                value = adjustmentPrice.subtract(new Money(offer.getValue())).getAmount();
-            }
-            if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100"))).getAmount();
-            }
-            if (adjustmentPrice.lessThan(value)) {
-                value = adjustmentPrice.getAmount();
-            }
-        }
+    public void setValue(Money value) {
+    	this.value = value.getAmount();
     }
 
     @Override

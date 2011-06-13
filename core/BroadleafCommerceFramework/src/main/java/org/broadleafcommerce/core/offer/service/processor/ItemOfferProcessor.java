@@ -17,12 +17,10 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import java.util.List;
 
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 
 /**
  * 
@@ -40,7 +38,7 @@ public interface ItemOfferProcessor extends OrderOfferProcessor {
 	 * @param discreteOrderItems the order items to evaluate
 	 * @param offer the offer in question
 	 */
-	public void filterItemLevelOffer(Order order, List<CandidateItemOffer> qualifiedItemOffers, List<DiscreteOrderItem> discreteOrderItems, Offer offer);
+	public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer);
 
 	/**
 	 * Private method that takes a list of sorted CandidateItemOffers and determines if each offer can be
@@ -53,10 +51,10 @@ public interface ItemOfferProcessor extends OrderOfferProcessor {
 	 * @param itemOffers a sorted list of CandidateItemOffer
 	 * @return true if an OrderItemOffer was applied, otherwise false 
 	 */
-	public boolean applyAllItemOffers(List<CandidateItemOffer> itemOffers, List<DiscreteOrderItem> discreteOrderItems, Order order);
+	public boolean applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order);
 	
-	public void applyAndCompareOrderAndItemOffers(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers, List<DiscreteOrderItem> discreteOrderItems);
+	public void applyAndCompareOrderAndItemOffers(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers);
 	
-	public List<DiscreteOrderItem> filterOffers(Order order, List<Offer> filteredOffers, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers);
+	public void filterOffers(PromotableOrder order, List<Offer> filteredOffers, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers);
 
 }

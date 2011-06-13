@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
@@ -106,4 +107,8 @@ public interface OfferService {
 	
 	public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
+	public PromotableItemFactory getPromotableItemFactory();
+
+	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+	
 }

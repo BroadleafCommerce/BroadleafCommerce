@@ -8,10 +8,11 @@ bl-profile-applicationContext.xml
 bl-framework-applicationContext.xml
 bl-framework-applicationContext-workflow.xml
 bl-framework-web-applicationContext.xml
-bl-framework-applicationContext-test.xml
-bl-applicationContext-test.xml
-bl-applicationContext-test-security.xml
 #The application context files below are not added by default to the BLC runtime
 #Instead, these items must be explicity declared for import in web.xml, if desired
 bl-open-admin-applicationContext.xml
 bl-admin-applicationContext.xml
+#testing application context files
+bl-framework-applicationContext-test.xml
+bl-applicationContext-test.xml
+bl-applicationContext-test-security.xml

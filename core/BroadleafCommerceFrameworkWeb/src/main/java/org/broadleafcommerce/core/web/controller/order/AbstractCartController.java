@@ -25,12 +25,10 @@ import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -312,7 +310,7 @@ public abstract class AbstractCartController {
             OfferCode code = offerService.lookupOfferCodeByCode(cartSummary.getPromoCode());
 
             if (code != null ) {
-                currentCartOrder.addAddedOfferCode(code);
+                currentCartOrder.addOfferCode(code);
                 List<Offer> offers = offerService.buildOfferListForOrder(currentCartOrder);
                 offerService.applyOffersToOrder(offers, currentCartOrder);
                 currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);
@@ -324,6 +322,16 @@ public abstract class AbstractCartController {
             }
         }
 
+        if (currentCartOrder.getOrderItems() != null ) {
+        	cartSummary.getRows().clear();
+            for (OrderItem orderItem : currentCartOrder.getOrderItems()) {
+                CartOrderItem cartOrderItem = new CartOrderItem();
+                cartOrderItem.setOrderItem(orderItem);
+                cartOrderItem.setQuantity(orderItem.getQuantity());
+                cartSummary.getRows().add(cartOrderItem);
+            }
+        }
+        
         cartSummary.setPromoCode(null);
         model.addAttribute("currentCartOrder", currentCartOrder );
         model.addAttribute("cartSummary", cartSummary);

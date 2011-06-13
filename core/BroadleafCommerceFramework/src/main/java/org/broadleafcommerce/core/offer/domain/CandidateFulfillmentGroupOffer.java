@@ -15,17 +15,25 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.money.Money;
 
-public interface CandidateFulfillmentGroupOffer extends CandidateQualifiedOffer {
+public interface CandidateFulfillmentGroupOffer extends Serializable {
 
-    public Money getDiscountedPrice(); //transient, computed
+    public Money getDiscountedPrice();
 
-    public Money getDiscountAmount(); //transient, computed
+    public void setDiscountedPrice(Money discountedPrice);
 
     public FulfillmentGroup getFulfillmentGroup();
 
     public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    
+    public void setOffer(Offer offer);
+
+    public Offer getOffer();
+    
+    public int getPriority();
     
 }

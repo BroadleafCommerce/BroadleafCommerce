@@ -17,18 +17,18 @@ package org.broadleafcommerce.core.offer.service.discount;
 
 import java.util.Comparator;
 
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class ItemOfferComparator implements Comparator<CandidateItemOffer> {
+public class ItemOfferComparator implements Comparator<PromotableCandidateItemOffer> {
 	
 	public static ItemOfferComparator INSTANCE = new ItemOfferComparator();
 
-	public int compare(CandidateItemOffer p1, CandidateItemOffer p2) {
+	public int compare(PromotableCandidateItemOffer p1, PromotableCandidateItemOffer p2) {
 		
 		Integer priority1 = p1.getPriority();
 		Integer priority2 = p2.getPriority();

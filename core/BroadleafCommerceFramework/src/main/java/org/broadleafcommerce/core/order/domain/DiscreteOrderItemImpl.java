@@ -36,6 +36,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -83,7 +85,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     
     @CollectionOfElements
     @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @MapKey(columns = { @Column(name = "NAME", nullable = false) })
     @Column(name = "VALUE")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
@@ -249,6 +251,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         result = prime * result + ((bundleOrderItem == null) ? 0 : bundleOrderItem.hashCode());
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());
         return result;
+    }
+    
+    @Override
+    public void accept(OrderItemVisitor visitor) throws PricingException {
+        visitor.visit(this);
     }
 
 }

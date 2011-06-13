@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 
 /**
  * 
@@ -29,15 +29,15 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
  */
 public class CandidatePromotionItems {
 	
-	protected HashMap<OfferItemCriteria, List<OrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<OrderItem>>();
+	protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
 	protected boolean isMatchedQualifier = false;
-	protected List<OrderItem> candidateTargets = new ArrayList<OrderItem>();
+	protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
 	protected boolean isMatchedTarget = false;
 	
-	public void addQualifier(OfferItemCriteria criteria, OrderItem item) {
-		List<OrderItem> itemList = candidateQualifiersMap.get(criteria);
+	public void addQualifier(OfferItemCriteria criteria, PromotableOrderItem item) {
+		List<PromotableOrderItem> itemList = candidateQualifiersMap.get(criteria);
 		if (itemList == null) {
-			itemList = new ArrayList<OrderItem>();
+			itemList = new ArrayList<PromotableOrderItem>();
 			candidateQualifiersMap.put(criteria, itemList);
 		}
 		itemList.add(item);
@@ -51,11 +51,11 @@ public class CandidatePromotionItems {
 		this.isMatchedQualifier = isMatchedCandidate;
 	}
 
-	public HashMap<OfferItemCriteria, List<OrderItem>> getCandidateQualifiersMap() {
+	public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
 		return candidateQualifiersMap;
 	}
 	
-	public void addTarget(OrderItem item) {
+	public void addTarget(PromotableOrderItem item) {
 		candidateTargets.add(item);
 	}
 
@@ -67,7 +67,7 @@ public class CandidatePromotionItems {
 		this.isMatchedTarget = isMatchedCandidate;
 	}
 
-	public List<OrderItem> getCandidateTargets() {
+	public List<PromotableOrderItem> getCandidateTargets() {
 		return candidateTargets;
 	}
 

@@ -17,7 +17,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,11 +41,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
-import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
@@ -55,9 +52,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.order.service.util.OrderItemSplitContainer;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
@@ -156,9 +151,6 @@ public class OrderImpl implements Order {
     @AdminPresentation(friendlyName="Order Email Address", group="Order", order=13)
     protected String emailAddress;
 
-    @Transient
-    protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
-
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<OrderItem> orderItems = new ArrayList<OrderItem>();
@@ -194,25 +186,6 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
-    @Transient
-    protected boolean totalitarianOfferApplied = false;
-    
-    @Transient
-    protected boolean notCombinableOfferAppliedAtAnyLevel = false;
-    
-    @Transient
-    @Deprecated
-    protected boolean markedForOffer;
-
-    @Transient
-    protected boolean notCombinableOfferApplied = false;    
-    
-    @Transient
-    protected boolean hasOrderAdjustments = false;
-    
-    @Transient
-    protected List<OrderItemSplitContainer> splitItems = new ArrayList<OrderItemSplitContainer>();
-
     public Long getId() {
         return id;
     }
@@ -237,15 +210,6 @@ public class OrderImpl implements Order {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    public Money calculateOrderItemsCurrentPrice() {
-        Money calculatedSubTotal = new Money();
-        for (OrderItem orderItem : orderItems) {
-            Money currentPrice = orderItem.getCurrentPrice();
-            calculatedSubTotal = calculatedSubTotal.add(currentPrice.multiply(orderItem.getQuantity()));
-        }
-        return calculatedSubTotal;
-    }
-
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
@@ -255,15 +219,6 @@ public class OrderImpl implements Order {
         	} else {
         		price = orderItem.getTaxablePrice();
         	}
-            calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
-        }
-        return calculatedSubTotal;
-    }
-    
-    public Money calculateOrderItemsPriceWithoutAdjustments() {
-        Money calculatedSubTotal = new Money();
-        for (OrderItem orderItem : orderItems) {
-            Money price = orderItem.getPriceBeforeAdjustments(true);
             calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
         }
         return calculatedSubTotal;
@@ -348,47 +303,8 @@ public class OrderImpl implements Order {
         this.candidateOrderOffers = candidateOrderOffers;
     }
 
-    public void addCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer) {
-        candidateOrderOffers.add(candidateOrderOffer);
-    }
-
     public List<CandidateOrderOffer> getCandidateOrderOffers() {
         return candidateOrderOffers;
-    }
-
-    public void removeAllCandidateOffers() {
-    	removeAllCandidateOrderOffers();
-        if (getOrderItems() != null) {
-            for (OrderItem item : getOrderItems()) {
-                item.removeAllCandidateItemOffers();
-            }
-        }
-
-        removeAllCandidateFulfillmentGroupOffers();
-    }
-    
-    public void removeAllCandidateFulfillmentGroupOffers() {
-    	if (getFulfillmentGroups() != null) {
-            for (FulfillmentGroup fg : getFulfillmentGroups()) {
-                fg.removeAllCandidateOffers();
-            }
-        }
-    }
-
-    public void removeAllCandidateOrderOffers() {
-        if (candidateOrderOffers != null) {
-            candidateOrderOffers.clear();
-        }
-    }
-
-    @Deprecated
-    public boolean isMarkedForOffer() {
-        return markedForOffer;
-    }
-
-    @Deprecated
-    public void setMarkedForOffer(boolean markedForOffer) {
-        this.markedForOffer = markedForOffer;
     }
 
     public String getName() {
@@ -473,135 +389,11 @@ public class OrderImpl implements Order {
     }
 
     public List<OrderAdjustment> getOrderAdjustments() {
-        return Collections.unmodifiableList(this.orderAdjustments);
-    }
-
-    public void addOrderAdjustments(OrderAdjustment orderAdjustment) {
-        if (this.orderAdjustments.size() == 0) {
-            adjustmentPrice = getSubTotal().getAmount();
-        }
-        adjustmentPrice = adjustmentPrice.subtract(orderAdjustment.getValue().getAmount());
-        this.orderAdjustments.add(orderAdjustment);
-        if (!orderAdjustment.getOffer().isCombinableWithOtherOffers()) {
-        	notCombinableOfferApplied = true;
-        }
-        resetTotalitarianOfferApplied();
-        hasOrderAdjustments = true;
-    }
-    
-    public void resetTotalitarianOfferApplied() {
-    	totalitarianOfferApplied = false;
-    	notCombinableOfferAppliedAtAnyLevel = false;
-    	for (OrderAdjustment adjustment : orderAdjustments) {
-    		if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-    			totalitarianOfferApplied = true;
-    			break;
-    		}
-    		if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-    			notCombinableOfferAppliedAtAnyLevel = true;
-    			break;
-    		}
-    	}
-    	if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
-    		check: {
-		    	for (OrderItem orderItem : orderItems) {
-		    		for (OrderItemAdjustment adjustment : orderItem.getOrderItemAdjustments()) {
-		    			if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-		    				totalitarianOfferApplied = true;
-		    				break check;
-		    			}
-		    			if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-		        			notCombinableOfferAppliedAtAnyLevel = true;
-		        			break check;
-		        		}
-		    		}
-		    	}
-    		}
-    	}
-    	if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
-    		check: {
-		    	for (FulfillmentGroup fg : fulfillmentGroups) {
-		    		for (FulfillmentGroupAdjustment adjustment : fg.getFulfillmentGroupAdjustments()) {
-		    			if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
-		    				totalitarianOfferApplied = true;
-		    				break check;
-		    			}
-		    			if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
-		        			notCombinableOfferAppliedAtAnyLevel = true;
-		        			break check;
-		        		}
-		    		}
-		    	}
-    		}
-    	}
-    }
-
-    public void removeAllAdjustments() {
-        removeAllItemAdjustments();
-        removeAllFulfillmentAdjustments();
-        removeAllOrderAdjustments();
-    }
-
-    public void removeAllOrderAdjustments() {
-        if (orderAdjustments != null) {
-            orderAdjustments.clear();
-        }
-        adjustmentPrice = null;
-    	notCombinableOfferApplied = false;
-        hasOrderAdjustments = false;
-        resetTotalitarianOfferApplied();
-   }
-
-    public void removeAllItemAdjustments() {
-        for (OrderItem orderItem: orderItems) {
-            orderItem.removeAllAdjustments();
-        }
-        splitItems.clear();
-    }
-
-    public void removeAllFulfillmentAdjustments() {
-        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-            fulfillmentGroup.removeAllAdjustments();
-        }
+        return this.orderAdjustments;
     }
 
     protected void setOrderAdjustments(List<OrderAdjustment> orderAdjustments) {
         this.orderAdjustments = orderAdjustments;
-    }
-
-    public Money getAdjustmentPrice() {
-        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
-    }
-
-    public void setAdjustmentPrice(Money adjustmentPrice) {
-        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
-    }
-
-    /*
-     * Checks the order adjustment to see if it is not stackable
-     */
-    public boolean containsNotStackableOrderOffer() {
-        boolean isContainsNotStackableOrderOffer = false;
-        for (OrderAdjustment orderAdjustment: orderAdjustments) {
-            if (!orderAdjustment.getOffer().isStackable()) {
-                isContainsNotStackableOrderOffer = true;
-                break;
-            }
-        }
-        return isContainsNotStackableOrderOffer;
-    }
-    
-    public boolean containsNotStackableFulfillmentGroupOffer() {
-        boolean isContainsNotStackableFulfillmentGroupOffer = false;
-        for (FulfillmentGroup fg : fulfillmentGroups) {
-        	for (FulfillmentGroupAdjustment fgAdjustment : fg.getFulfillmentGroupAdjustments()) {
-        		if (!fgAdjustment.getOffer().isStackable()) {
-        			isContainsNotStackableFulfillmentGroupOffer = true;
-        			break;
-        		}
-        	}
-        }
-        return isContainsNotStackableFulfillmentGroupOffer;
     }
 
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
@@ -620,38 +412,8 @@ public class OrderImpl implements Order {
         return discreteOrderItems;
     }
 
-    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems() {
-        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
-        for (OrderItem orderItem : orderItems) {
-            if (orderItem instanceof BundleOrderItemImpl) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
-                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                    if (discreteOrderItem.getSku().isDiscountable()) {
-                        discreteOrderItems.add(discreteOrderItem);
-                    }
-                }
-            } else {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
-                if (discreteOrderItem.getSku().isDiscountable()) {
-                    discreteOrderItems.add(discreteOrderItem);
-                }
-            }
-        }
-        return discreteOrderItems;
-    }
-
     public List<OfferCode> getAddedOfferCodes() {
         return addedOfferCodes;
-    }
-
-    public void addAddedOfferCode(OfferCode addedOfferCode) {
-        addedOfferCodes.add(addedOfferCode);
-    }
-
-    public void removeAllAddedOfferCodes() {
-        if (addedOfferCodes != null) {
-            addedOfferCodes.clear();
-        }
     }
 
     public String getOrderNumber() {
@@ -713,14 +475,6 @@ public class OrderImpl implements Order {
         return totalAdjustmentsValue;
     }
 
-    public boolean isNotCombinableOfferApplied() {
-		return notCombinableOfferApplied;
-	}
-
-	public boolean isHasOrderAdjustments() {
-		return hasOrderAdjustments;
-	}
-
 	public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
@@ -730,39 +484,15 @@ public class OrderImpl implements Order {
         }
         return updated;
     }
-
-	public boolean isTotalitarianOfferApplied() {
-		return totalitarianOfferApplied;
-	}
-
-	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied) {
-		this.totalitarianOfferApplied = totalitarianOfferApplied;
-	}
-
-	public boolean isNotCombinableOfferAppliedAtAnyLevel() {
-		return notCombinableOfferAppliedAtAnyLevel;
-	}
-
-	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel) {
-		this.notCombinableOfferAppliedAtAnyLevel = notCombinableOfferAppliedAtAnyLevel;
-	}
-
-	public List<OrderItemSplitContainer> getSplitItems() {
-		return splitItems;
-	}
-
-	public void setSplitItems(List<OrderItemSplitContainer> splitItems) {
-		this.splitItems = splitItems;
+	
+	@Deprecated
+	public void addAddedOfferCode(OfferCode offerCode) {
+		addOfferCode(offerCode);
 	}
 	
-	public List<OrderItem> searchSplitItems(OrderItem key) {
-		for (OrderItemSplitContainer container : splitItems) {
-			if (container.getKey().equals(key)) {
-				return container.getSplitItems();
-			}
-		}
-		return null;
-	}
+	public void addOfferCode(OfferCode offerCode) {
+        getAddedOfferCodes().add(offerCode);
+    }
 
 	public boolean equals(Object obj) {
 	   	if (this == obj)
