@@ -29,10 +29,12 @@ import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOfferImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.money.Money;
 
@@ -43,9 +45,9 @@ import org.broadleafcommerce.money.Money;
  */
 public class CandidateItemOfferTest extends TestCase {
 	
-	private CandidateItemOfferImpl candidate;
+	private PromotableCandidateItemOffer promotableCandidate;
 	private Offer offer;
-	private DiscreteOrderItem orderItem1;
+	private PromotableOrderItem promotableOrderItem;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -58,7 +60,7 @@ public class CandidateItemOfferTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		).get(0);
 		
-		candidate = new CandidateItemOfferImpl();
+		CandidateItemOfferImpl candidate = new CandidateItemOfferImpl();
 		
 		Category category1 = new CategoryImpl();
 		category1.setName("test1");
@@ -90,7 +92,7 @@ public class CandidateItemOfferTest extends TestCase {
 		
 		category2.getAllProducts().add(product2);
 		
-		orderItem1 = new DiscreteOrderItemImpl();
+		DiscreteOrderItemImpl orderItem1 = new DiscreteOrderItemImpl();
 		orderItem1.setCategory(category1);
 		orderItem1.setName("test1");
 		orderItem1.setOrderItemType(OrderItemType.DISCRETE);
@@ -100,59 +102,63 @@ public class CandidateItemOfferTest extends TestCase {
 		orderItem1.setRetailPrice(new Money(19.99D));
 		orderItem1.setPrice(new Money(19.99D));
 		
-		List<OrderItem> items = new ArrayList<OrderItem>();
-		items.add(orderItem1);
+		promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null);
 		
-		candidate.getCandidateTargets().addAll(items);
-		candidate.setOffer(offer);
+		List<PromotableOrderItem> items = new ArrayList<PromotableOrderItem>();
+		items.add(promotableOrderItem);
+		
+		promotableCandidate = new PromotableCandidateItemOfferImpl(candidate);
+		
+		promotableCandidate.getCandidateTargets().addAll(items);
+		promotableCandidate.setOffer(offer);
 	}
 	
 	public void testCalculatePotentialSavings() throws Exception {
-		Money savings = candidate.calculatePotentialSavings();
+		Money savings = promotableCandidate.calculatePotentialSavings();
 		assertTrue(savings.equals(new Money(2D)));
 	}
 	
 	public void testCalculateSavingsForOrderItem() throws Exception {
-		Money savings = candidate.calculateSavingsForOrderItem(orderItem1, 1);
+		Money savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
 		assertTrue(savings.equals(new Money(2D)));
 		
 		offer.setDiscountType(OfferDiscountType.AMOUNT_OFF);
-		savings = candidate.calculateSavingsForOrderItem(orderItem1, 1);
+		savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
 		assertTrue(savings.equals(new Money(10D)));
 		
 		offer.setDiscountType(OfferDiscountType.FIX_PRICE);
-		savings = candidate.calculateSavingsForOrderItem(orderItem1, 1);
+		savings = promotableCandidate.calculateSavingsForOrderItem(promotableOrderItem, 1);
 		assertTrue(savings.equals(new Money(19.99D - 10D)));
 	}
 	
 	public void testCalculateMaximumNumberOfUses() throws Exception {
-		int maxOfferUses = candidate.calculateMaximumNumberOfUses();
+		int maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
 		//based on criteria, the max would be 2, but the maxUses on the offer limits it to 1
 		assertTrue(maxOfferUses == 1);
 		
 		offer.setMaxUses(2);
-		maxOfferUses = candidate.calculateMaximumNumberOfUses();
+		maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
 		assertTrue(maxOfferUses == 2);
 	}
 	
 	public void testCalculateMaxUsesForItemCriteria() throws Exception {
-		int maxItemCriteriaUses = candidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
+		int maxItemCriteriaUses = promotableCandidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
 		assertTrue(maxItemCriteriaUses == 2);
 		
 		PromotionQualifier qualifier = new PromotionQualifier();
 		qualifier.setPromotion(offer);
 		qualifier.setQuantity(1);
-		orderItem1.getPromotionQualifiers().add(qualifier);
+		promotableOrderItem.getPromotionQualifiers().add(qualifier);
 		
-		maxItemCriteriaUses = candidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
+		maxItemCriteriaUses = promotableCandidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
 		assertTrue(maxItemCriteriaUses == 1);
 		
 		PromotionDiscount discount = new PromotionDiscount();
 		discount.setPromotion(offer);
 		discount.setQuantity(1);
-		orderItem1.getPromotionDiscounts().add(discount);
+		promotableOrderItem.getPromotionDiscounts().add(discount);
 		
-		maxItemCriteriaUses = candidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
+		maxItemCriteriaUses = promotableCandidate.calculateMaxUsesForItemCriteria(offer.getTargetItemCriteria(), offer);
 		assertTrue(maxItemCriteriaUses == 0);
 	}
 }

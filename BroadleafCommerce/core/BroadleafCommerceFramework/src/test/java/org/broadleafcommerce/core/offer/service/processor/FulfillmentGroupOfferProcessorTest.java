@@ -36,6 +36,11 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -82,12 +87,15 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		fgProcessor.setCartService(cartServiceMock);
 		fgProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		fgProcessor.setOrderItemService(orderItemServiceMock);
+		fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		
 		OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
 		orderProcessor.setOfferDao(offerDaoMock);
 		orderProcessor.setCartService(cartServiceMock);
 		orderProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		orderProcessor.setOrderItemService(orderItemServiceMock);
+		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+		
 		offerService.setOrderOfferProcessor(orderProcessor);
 		
 		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
@@ -95,9 +103,11 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		itemProcessor.setCartService(cartServiceMock);
 		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		itemProcessor.setOrderItemService(orderItemServiceMock);
-		offerService.setItemOfferProcessor(itemProcessor);
+		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		
+		offerService.setItemOfferProcessor(itemProcessor);
 		offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
+		offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
 	}
 	
 	public void replay() {
@@ -134,8 +144,8 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
-		List<CandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		PromotableOrder order = dataProvider.createBasicOrder();
+		List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
 		offers.addAll(dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"));
 		offers.get(1).setName("secondOffer");
@@ -146,18 +156,18 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		));
-		offerService.applyOffersToOrder(offers, order);
+		offerService.applyOffersToOrder(offers, order.getDelegate());
 		
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(1));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(1));
 		boolean offerApplied = fgProcessor.applyAllFulfillmentGroupOffers(qualifiedOffers, order);
 		
 		//confirm that at least one of the fg offers was applied
 		assertTrue(offerApplied);
 		
 		int fgAdjustmentCount = 0;
-		for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-			fgAdjustmentCount += fg.getFulfillmentGroupAdjustments().size();
+		for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
+			fgAdjustmentCount += fg.getDelegate().getFulfillmentGroupAdjustments().size();
 		}
 		//The totalitarian offer that applies to both fg's is not combinable and is a worse offer than the order item offers - it is therefore ignored
 		//However, the second combinable fg offer is allowed to be applied.
@@ -166,27 +176,27 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		order = dataProvider.createBasicOrder();
 		offers.get(2).setValue(new BigDecimal("1"));
 		
-		offerService.applyOffersToOrder(offers, order);
+		offerService.applyOffersToOrder(offers, order.getDelegate());
 		
-		qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(1));
+		qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(1));
 		offerApplied = fgProcessor.applyAllFulfillmentGroupOffers(qualifiedOffers, order);
 		
 		//confirm that at least one of the fg offers was applied
 		assertTrue(offerApplied);
 		
 		fgAdjustmentCount = 0;
-		for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-			fgAdjustmentCount += fg.getFulfillmentGroupAdjustments().size();
+		for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
+			fgAdjustmentCount += fg.getDelegate().getFulfillmentGroupAdjustments().size();
 		}
 		//The totalitarian fg offer is now a better deal than the order item offers, therefore the totalitarian fg offer is applied
 		//and the order item offers are removed
 		assertTrue(fgAdjustmentCount == 2);
 		
 		int itemAdjustmentCount = 0;
-		for (OrderItem item : order.getOrderItems()) {
-			itemAdjustmentCount += item.getOrderItemAdjustments().size();
+		for (PromotableOrderItem item : order.getDiscreteOrderItems()) {
+			itemAdjustmentCount += item.getDelegate().getOrderItemAdjustments().size();
 		}
 		
 		//Confirm that the order item offers are removed
@@ -203,30 +213,32 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
-		List<CandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		PromotableOrder order = dataProvider.createBasicOrder();
+		
+		List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		boolean offerApplied = fgProcessor.applyAllFulfillmentGroupOffers(qualifiedOffers, order);
 		
 		assertTrue(offerApplied);
 		
 		order = dataProvider.createBasicOrder();
-		qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		
+		qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
 		offers.addAll(dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"));
 		offers.get(1).setName("secondOffer");
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(1));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(1));
 		
 		offerApplied = fgProcessor.applyAllFulfillmentGroupOffers(qualifiedOffers, order);
 		
 		//the first offer applies to both fulfillment groups, but the second offer only applies to one of the fulfillment groups
 		assertTrue(offerApplied);
 		int fgAdjustmentCount = 0;
-		for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-			fgAdjustmentCount += fg.getFulfillmentGroupAdjustments().size();
+		for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
+			fgAdjustmentCount += fg.getDelegate().getFulfillmentGroupAdjustments().size();
 		}
 		assertTrue(fgAdjustmentCount == 3);
 		
@@ -239,33 +251,34 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
-		List<CandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		PromotableOrder order = dataProvider.createBasicOrder();
+
+		List<PromotableCandidateFulfillmentGroupOffer> qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the valid fg offer is included
 		//No item criteria, so each fulfillment group applies
 		assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)));
 		
-		qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the valid fg offer is included
 		//only 1 fulfillment group has qualifying items
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offers.get(0))) ;
 		 
-		qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75240", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"),MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the invalid fg offer is excluded - zipcode is wrong
 		assertTrue(qualifiedOffers.size() == 0) ;
 		
-		qualifiedOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+		qualifiedOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
 		offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test5\"),MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, order.getDiscountableDiscreteOrderItems(), offers.get(0));
+		fgProcessor.filterFulfillmentGroupLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the invalid fg offer is excluded - no qualifying items
 		assertTrue(qualifiedOffers.size() == 0) ;
@@ -276,14 +289,14 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 	public void testCouldOfferApplyToFulfillmentGroup() {
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
-		boolean couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), order.getFulfillmentGroups().get(0));
+		boolean couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), (PromotableFulfillmentGroup) order.getFulfillmentGroups().get(0));
 		//test that the valid fg offer is included
 		assertTrue(couldApply);
 		
 		offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75240", OfferDiscountType.PERCENT_OFF);
-		couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), order.getFulfillmentGroups().get(0));
+		couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), (PromotableFulfillmentGroup) order.getFulfillmentGroups().get(0));
 		//test that the invalid fg offer is excluded
 		assertFalse(couldApply);
 		
@@ -293,14 +306,14 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 	public void testCouldOrderItemMeetOfferRequirement() {
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
 		List<Offer> offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		boolean couldApply = fgProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getOrderItems().get(0));
+		boolean couldApply = fgProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscreteOrderItems().get(0));
 		//test that the valid fg offer is included
 		assertTrue(couldApply);
 		
 		offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		couldApply = fgProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getOrderItems().get(0));
+		couldApply = fgProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscreteOrderItems().get(0));
 		//test that the invalid fg offer is excluded
 		assertFalse(couldApply);
 		
@@ -310,14 +323,20 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 	public void testCouldOfferApplyToOrderItems() {
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		PromotableOrder order = dataProvider.createBasicOrder();
+		
+		List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
+		for (PromotableOrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
+			orderItems.add(orderItem);
+		}
+		
 		List<Offer> offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		CandidatePromotionItems candidates = fgProcessor.couldOfferApplyToOrderItems(offers.get(0), order.getDiscountableDiscreteOrderItems());
+		CandidatePromotionItems candidates = fgProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
 		//test that the valid fg offer is included
 		assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
 		
 		offers = dataProvider.createFGBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-		candidates = fgProcessor.couldOfferApplyToOrderItems(offers.get(0), order.getDiscountableDiscreteOrderItems());
+		candidates = fgProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
 		//test that the invalid fg offer is excluded because there are no qualifying items
 		assertFalse(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
 		

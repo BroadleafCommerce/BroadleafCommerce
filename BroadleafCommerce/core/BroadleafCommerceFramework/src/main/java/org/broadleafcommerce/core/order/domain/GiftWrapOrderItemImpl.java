@@ -26,6 +26,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -91,4 +93,8 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         return true;
     }
 
+    @Override
+    public void accept(OrderItemVisitor visitor) throws PricingException {
+        visitor.visit(this);
+    }
 }

@@ -29,7 +29,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +43,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implements CandidateItemOffer, Cloneable {
+public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
 	public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);
     public static final long serialVersionUID = 1L;
@@ -66,11 +65,7 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
     protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE")
-    @Deprecated
     private BigDecimal discountedPrice;
-    
-    @Transient
-    protected Money potentialSavings; 
 
     public Long getId() {
         return id;
@@ -99,72 +94,13 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
     public Offer getOffer() {
         return offer;
     }
-	
-	public Money getPotentialSavings() {
-		if (potentialSavings == null) {
-			potentialSavings = calculatePotentialSavings();
-		}
-		return potentialSavings;
-	}
-
-	/**
-	 * This method determines how much the customer might save using this promotion for the
-	 * purpose of sorting promotions with the same priority. The assumption is that any possible
-	 * target specified for BOGO style offers are of equal or lesser value. We are using
-	 * a calculation based on the qualifiers here strictly for rough comparative purposes.
-	 *  
-	 * If two promotions have the same priority, the one with the highest potential savings
-	 * will be used as the tie-breaker to determine the order to apply promotions.
-	 * 
-	 * This method makes a good approximation of the promotion value as determining the exact value
-	 * would require all permutations of promotions to be run resulting in a costly 
-	 * operation.
-	 * 
-	 * @return
-	 */
-	protected Money calculatePotentialSavings() {
-		Money savings = new Money(0);
-		int maxUses = calculateMaximumNumberOfUses();
-		int appliedCount = 0;
-		
-		for (OrderItem chgItem : candidateTargets) {
-			int qtyToReceiveSavings = Math.min(chgItem.getQuantity(), maxUses);
-			savings = calculateSavingsForOrderItem(chgItem, qtyToReceiveSavings);
-
-			appliedCount = appliedCount + qtyToReceiveSavings;
-			if (appliedCount >= maxUses) {
-				return savings;
-			}
-		}
-		
-		return savings;
-	}
-	
-	/**
-	 * Determines the maximum number of times this promotion can be used based on the
-	 * ItemCriteria and promotion's maxQty setting.
-	 */
-	protected int calculateMaximumNumberOfUses() {		
-		int maxMatchesFound = 9999; // set arbitrarily high / algorithm will adjust down	
-		
-		int numberOfUsesForThisItemCriteria = calculateMaxUsesForItemCriteria(getOffer().getTargetItemCriteria(), getOffer());
-		maxMatchesFound = Math.min(maxMatchesFound, numberOfUsesForThisItemCriteria);
-
-		return Math.min(maxMatchesFound, getOffer().getMaxUses());
-	}
-	
-	protected int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion) {
-		int numberOfTargets = 0;
-		int numberOfUsesForThisItemCriteria = 9999;
-		
-		if (candidateTargets != null && itemCriteria != null) {
-			for(OrderItem potentialTarget : candidateTargets) {
-				numberOfTargets += potentialTarget.getQuantityAvailableToBeUsedAsTarget(promotion);
-			}
-			numberOfUsesForThisItemCriteria = numberOfTargets / itemCriteria.getQuantity();
-		}
-		
-		return numberOfUsesForThisItemCriteria;
+    
+    public Money getDiscountedPrice() {
+        return discountedPrice == null ? null : new Money(discountedPrice);
+    }
+    
+    public void setDiscountedPrice(Money discountedPrice) {
+		this.discountedPrice = discountedPrice.getAmount();
 	}
 	
 	public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
@@ -186,8 +122,8 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
 			} catch (CloneNotSupportedException e) {
 				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + candidateItemOffer.getClass().getName(), e);
 			}
-			candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
-			candidateItemOffer.setCandidateTargets(getCandidateTargets());
+			//candidateItemOffer.setCandidateQualifiersMap(getCandidateQualifiersMap());
+			//candidateItemOffer.setCandidateTargets(getCandidateTargets());
 			candidateItemOffer.setOffer(getOffer());
 			candidateItemOffer.setOrderItem(getOrderItem());
 		} catch (Exception e) {

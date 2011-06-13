@@ -28,9 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.money.Money;
@@ -42,7 +40,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl implements CandidateOrderOffer {
+public class CandidateOrderOfferImpl implements CandidateOrderOffer {
 
     public static final long serialVersionUID = 1L;
 
@@ -64,9 +62,6 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
 
     @Column(name = "DISCOUNTED_PRICE")
     protected BigDecimal discountedPrice;
-
-    @Transient
-    private BigDecimal discountAmount;
 
     public Long getId() {
         return id;
@@ -90,17 +85,11 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
     }
 
     public Money getDiscountedPrice() {
-        if (discountedPrice == null) {
-            computeDiscountedPriceAndAmount();
-        }
         return discountedPrice == null ? null : new Money(discountedPrice);
     }
-
-    public Money getDiscountAmount() {
-        if (discountAmount == null) {
-            computeDiscountedPriceAndAmount();
-        }
-        return discountAmount == null ? null : new Money(discountAmount);
+    
+    public void setDiscountedPrice(Money discountedPrice) {
+    	this.discountedPrice = discountedPrice.getAmount();
     }
 
     public Order getOrder() {
@@ -110,28 +99,6 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
     public void setOrder(Order order) {
         this.order = order;
         discountedPrice = null;  // price needs to be recalculated
-    }
-
-	protected void computeDiscountedPriceAndAmount() {
-        if (offer != null && order != null){
-            if (order.getSubTotal() != null) {
-                Money priceToUse = order.getSubTotal();
-                Money discountAmount = new Money(0);
-                if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountAmount = new Money(offer.getValue());
-                } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountAmount = priceToUse.subtract(new Money(offer.getValue()));
-                } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                    discountAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")));
-                }
-                if (discountAmount.greaterThan(priceToUse)) {
-                    discountAmount = priceToUse;
-                }
-                priceToUse = priceToUse.subtract(discountAmount);
-                discountedPrice = priceToUse.getAmount();
-                this.discountAmount = discountAmount.getAmount();
-            }
-        }
     }
 
     @Override

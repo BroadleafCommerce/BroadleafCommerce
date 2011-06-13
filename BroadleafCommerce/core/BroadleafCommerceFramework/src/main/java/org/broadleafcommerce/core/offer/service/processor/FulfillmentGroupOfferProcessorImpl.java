@@ -23,17 +23,17 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateQualifiedOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.FulfillmentGroupOfferPotential;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.money.Money;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +48,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor#filterFulfillmentGroupLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
-	public void filterFulfillmentGroupLevelOffer(Order order, List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, List<DiscreteOrderItem> discreteOrderItems, Offer offer) {
-		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer) {
+		for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			boolean fgLevelQualification = false;
 			fgQualification: {
 				//handle legacy fields in addition to the 1.5 order rule field
@@ -57,7 +57,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 	            	fgLevelQualification = true;
 	                break fgQualification;
 	            }
-	            for (OrderItem discreteOrderItem : discreteOrderItems) {
+	            for (PromotableOrderItem discreteOrderItem : order.getDiscountableDiscreteOrderItems()) {
 	            	if(couldOfferApplyToOrder(offer, order, discreteOrderItem, fulfillmentGroup)) {
 	            		fgLevelQualification = true;
 	            		break fgQualification;
@@ -75,16 +75,17 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 			if (fgLevelQualification) {
 				CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, fulfillmentGroup.getDiscountableDiscreteOrderItems());
 				if (candidates.isMatchedQualifier()) {
-					CandidateQualifiedOffer candidateOffer = createCandidateFulfillmentGroupOffer(offer, qualifiedFGOffers, fulfillmentGroup);
+					PromotableCandidateFulfillmentGroupOffer candidateOffer = createCandidateFulfillmentGroupOffer(offer, qualifiedFGOffers, fulfillmentGroup);
 					candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
 				}
 			}
 		}
 	}
 	
-	public void calculateFulfillmentGroupTotal(Order order) {
+	public void calculateFulfillmentGroupTotal(PromotableOrder order) {
 		Money totalShipping = new Money(0D);
-		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+		for (PromotableFulfillmentGroup fulfillmentGroupMember : order.getFulfillmentGroups()) {
+			PromotableFulfillmentGroup fulfillmentGroup = (PromotableFulfillmentGroup) fulfillmentGroupMember;
 			if (fulfillmentGroup.getAdjustmentPrice() != null) {
 	            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getAdjustmentPrice());
 	        } else if (fulfillmentGroup.getSaleShippingPrice() != null) {
@@ -97,12 +98,12 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         order.setTotalShipping(totalShipping);
 	}
 	
-	protected boolean couldOfferApplyToFulfillmentGroup(Offer offer, FulfillmentGroup fulfillmentGroup) {
+	protected boolean couldOfferApplyToFulfillmentGroup(Offer offer, PromotableFulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
         OfferRule rule = offer.getOfferMatchRules().get(OfferRuleType.FULFILLMENT_GROUP.getType());
         if (rule != null && rule.getMatchRule() != null) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("fulfillmentGroup", fulfillmentGroup);
+            vars.put("fulfillmentGroup", fulfillmentGroup.getDelegate());
             Boolean expressionOutcome = executeExpression(rule.getMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
@@ -114,14 +115,15 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         return appliesToItem;
     }
 	
-	protected CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer(Offer offer, List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, FulfillmentGroup fulfillmentGroup) {
+	protected PromotableCandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer(Offer offer, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableFulfillmentGroup fulfillmentGroup) {
 		CandidateFulfillmentGroupOffer candidateOffer = offerDao.createCandidateFulfillmentGroupOffer();
-		candidateOffer.setFulfillmentGroup(fulfillmentGroup);
+		candidateOffer.setFulfillmentGroup(fulfillmentGroup.getDelegate());
 		candidateOffer.setOffer(offer);
-		fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
-		qualifiedFGOffers.add(candidateOffer);
+		PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer = promotableItemFactory.createPromotableCandidateFulfillmentGroupOffer(candidateOffer, fulfillmentGroup);
+		fulfillmentGroup.addCandidateFulfillmentGroupOffer(promotableCandidateFulfillmentGroupOffer);
+		qualifiedFGOffers.add(promotableCandidateFulfillmentGroupOffer);
 		
-		return candidateOffer;
+		return promotableCandidateFulfillmentGroupOffer;
 	}
 	
 	/**
@@ -136,28 +138,29 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
      * @return true if order offer applied; otherwise false
      */
     @SuppressWarnings("unchecked")
-	public boolean applyAllFulfillmentGroupOffers(List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, Order order) {
-    	Map<FulfillmentGroupOfferPotential, List<CandidateFulfillmentGroupOffer>> offerMap = new HashMap<FulfillmentGroupOfferPotential, List<CandidateFulfillmentGroupOffer>>();
-    	for (CandidateFulfillmentGroupOffer candidate : qualifiedFGOffers) {
+	public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order) {
+    	Map<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>> offerMap = new HashMap<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>>();
+    	for (PromotableCandidateFulfillmentGroupOffer candidate : qualifiedFGOffers) {
     		FulfillmentGroupOfferPotential potential = new FulfillmentGroupOfferPotential();
     		potential.setOffer(candidate.getOffer());
     		if (offerMap.get(potential) == null) {
-    			offerMap.put(potential, new ArrayList<CandidateFulfillmentGroupOffer>());
+    			offerMap.put(potential, new ArrayList<PromotableCandidateFulfillmentGroupOffer>());
     		}
     		offerMap.get(potential).add(candidate);
     	}
     	List<FulfillmentGroupOfferPotential> potentials = new ArrayList<FulfillmentGroupOfferPotential>();
 		for (FulfillmentGroupOfferPotential potential : offerMap.keySet()) {
-			for (CandidateFulfillmentGroupOffer candidate : offerMap.get(potential)) {
-				potential.setTotalSavings(potential.getTotalSavings().add(candidate.getDiscountAmount()));
-				potential.setPriority(candidate.getPriority());
+			for (PromotableCandidateFulfillmentGroupOffer candidate : offerMap.get(potential)) {
+				potential.setTotalSavings(potential.getTotalSavings().add(candidate.getFulfillmentGroup().getPriceBeforeAdjustments(candidate.getOffer().getApplyDiscountToSalePrice()).subtract(candidate.getDiscountedPrice())));
+				potential.setPriority(candidate.getOffer().getPriority());
 			}
 			potentials.add(potential);
 		}
 		
 		// Sort order offers by priority and discount
-	    Collections.sort(potentials, new BeanComparator("totalSavings", Collections.reverseOrder()));
+		Collections.sort(potentials, new BeanComparator("totalSavings", Collections.reverseOrder()));
 	    Collections.sort(potentials, new BeanComparator("priority"));
+	    potentials = removeTrailingNotCombinableFulfillmentGroupOffers(potentials);
 	    
     	boolean fgOfferApplied = false;
     	for (FulfillmentGroupOfferPotential potential : potentials) {
@@ -165,8 +168,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     		if (offer.getTreatAsNewFormat() == null || !offer.getTreatAsNewFormat()) {
     			if ((offer.isStackable()) || !fgOfferApplied) {
     				boolean alreadyContainsNotCombinableOfferAtAnyLevel = order.isNotCombinableOfferAppliedAtAnyLevel();
-    				List<CandidateFulfillmentGroupOffer> candidates = offerMap.get(potential);
-    				for (CandidateFulfillmentGroupOffer candidate : candidates) {
+    				List<PromotableCandidateFulfillmentGroupOffer> candidates = offerMap.get(potential);
+    				for (PromotableCandidateFulfillmentGroupOffer candidate : candidates) {
     					applyFulfillmentGroupOffer(candidate);
     					fgOfferApplied = true;
     				}
@@ -180,8 +183,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     		} else {
     			if (!order.containsNotStackableFulfillmentGroupOffer() || !fgOfferApplied) {
     				boolean alreadyContainsTotalitarianOffer = order.isTotalitarianOfferApplied();
-    				List<CandidateFulfillmentGroupOffer> candidates = offerMap.get(potential);
-    				for (CandidateFulfillmentGroupOffer candidate : candidates) {
+    				List<PromotableCandidateFulfillmentGroupOffer> candidates = offerMap.get(potential);
+    				for (PromotableCandidateFulfillmentGroupOffer candidate : candidates) {
     					applyFulfillmentGroupOffer(candidate);
     					fgOfferApplied = true;
     				}
@@ -203,16 +206,16 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
         return fgOfferApplied;
     }
 
-	protected boolean compareAndAdjustFulfillmentGroupOffers(Order order, boolean fgOfferApplied) {
+	protected boolean compareAndAdjustFulfillmentGroupOffers(PromotableOrder order, boolean fgOfferApplied) {
 		Money regularOrderDiscountShippingTotal = new Money(0D);
 		regularOrderDiscountShippingTotal = regularOrderDiscountShippingTotal.add(order.calculateOrderItemsPriceWithoutAdjustments());
-		for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+		for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
 			regularOrderDiscountShippingTotal = regularOrderDiscountShippingTotal.add(fg.getAdjustmentPrice());
 		}
 		
 		Money discountOrderRegularShippingTotal = new Money(0D);
 		discountOrderRegularShippingTotal = discountOrderRegularShippingTotal.add(order.getSubTotal());
-		for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+		for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
 			discountOrderRegularShippingTotal = discountOrderRegularShippingTotal.add(fg.getPriceBeforeAdjustments(true));
 		}
 		
@@ -225,15 +228,36 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 			order.removeAllOrderAdjustments();
 			order.removeAllItemAdjustments();
 			gatherCart(order);
-			initializeSplitItems(order, order.getOrderItems());
+			initializeSplitItems(order, order.getDiscountableDiscreteOrderItems());
 		}
 		return fgOfferApplied;
 	}
 	
-	protected void applyFulfillmentGroupOffer(CandidateFulfillmentGroupOffer fulfillmentGroupOffer) {
+	protected void applyFulfillmentGroupOffer(PromotableCandidateFulfillmentGroupOffer fulfillmentGroupOffer) {
         FulfillmentGroupAdjustment fulfillmentGroupAdjustment = offerDao.createFulfillmentGroupAdjustment();
-        fulfillmentGroupAdjustment.init(fulfillmentGroupOffer.getFulfillmentGroup(), fulfillmentGroupOffer.getOffer(), fulfillmentGroupOffer.getOffer().getName());
+        fulfillmentGroupAdjustment.init(((PromotableFulfillmentGroup) fulfillmentGroupOffer.getFulfillmentGroup()).getDelegate(), fulfillmentGroupOffer.getOffer(), fulfillmentGroupOffer.getOffer().getName());
+        PromotableFulfillmentGroupAdjustment promotableFulfillmentGroupAdjustment = promotableItemFactory.createPromotableFulfillmentGroupAdjustment(fulfillmentGroupAdjustment, (PromotableFulfillmentGroup) fulfillmentGroupOffer.getFulfillmentGroup());
         //add to adjustment
-        fulfillmentGroupOffer.getFulfillmentGroup().addFulfillmentGroupAdjustment(fulfillmentGroupAdjustment);
+        fulfillmentGroupOffer.getFulfillmentGroup().addFulfillmentGroupAdjustment(promotableFulfillmentGroupAdjustment);
+    }
+	
+	public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers) {
+        List<FulfillmentGroupOfferPotential> remainingCandidateOffers = new ArrayList<FulfillmentGroupOfferPotential>();
+        int offerCount = 0;
+        for (FulfillmentGroupOfferPotential candidateOffer : candidateOffers) {
+            if (offerCount == 0) {
+                remainingCandidateOffers.add(candidateOffer);
+            } else {
+            	boolean treatAsNewFormat = false;
+            	if (candidateOffer.getOffer().getTreatAsNewFormat() != null && candidateOffer.getOffer().getTreatAsNewFormat()) {
+            		treatAsNewFormat = true;
+            	}
+            	if ((!treatAsNewFormat && candidateOffer.getOffer().isCombinableWithOtherOffers()) || (treatAsNewFormat && (candidateOffer.getOffer().isTotalitarianOffer() == null || !candidateOffer.getOffer().isTotalitarianOffer()))) {
+                    remainingCandidateOffers.add(candidateOffer);
+                }
+            }
+            offerCount++;
+        }
+        return remainingCandidateOffers;
     }
 }

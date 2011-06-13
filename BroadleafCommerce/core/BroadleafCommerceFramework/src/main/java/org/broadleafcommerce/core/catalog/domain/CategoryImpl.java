@@ -515,8 +515,7 @@ public class CategoryImpl implements Category {
     /*
      * (non-Javadoc)
      * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setLongDescription(java
-     * .lang.String)
+     * org.broadleafcommerce.core.catalog.domain.Category#setLongDescription(java.lang.String)
      */
     public void setLongDescription(final String longDescription) {
         this.longDescription = longDescription;

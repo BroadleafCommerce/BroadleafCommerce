@@ -20,8 +20,7 @@ import java.io.Serializable;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 
 /**
  * Records the usage of this item as qualifier or target of
@@ -33,7 +32,7 @@ import org.broadleafcommerce.money.Money;
 public class PromotionDiscount implements Serializable{ 
     private static final long serialVersionUID = 1L;
     
-    private CandidateItemOffer candidateItemOffer;
+    private PromotableCandidateItemOffer candidateItemOffer;
 	private Offer promotion;
 	private OfferItemCriteria itemCriteria;
 	private int quantity;
@@ -76,11 +75,11 @@ public class PromotionDiscount implements Serializable{
 		this.quantity = this.quantity + quantity;
 	}
 	
-	public CandidateItemOffer getCandidateItemOffer() {
+	public PromotableCandidateItemOffer getCandidateItemOffer() {
 		return candidateItemOffer;
 	}
 
-	public void setCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
+	public void setCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer) {
 		this.candidateItemOffer = candidateItemOffer;
 	}
 

@@ -311,7 +311,7 @@ public class DemoCartController {
             OfferCode code = offerService.lookupOfferCodeByCode(cartSummary.getPromoCode());
 
             if (code != null ) {
-                currentCartOrder.addAddedOfferCode(code);
+                currentCartOrder.addOfferCode(code);
                 List<Offer> offers = offerService.buildOfferListForOrder(currentCartOrder);
                 offerService.applyOffersToOrder(offers, currentCartOrder);
                 currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);

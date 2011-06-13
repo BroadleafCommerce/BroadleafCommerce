@@ -66,10 +66,6 @@ public interface FulfillmentGroup extends Serializable {
 
     void setShippingPrice(Money shippingPrice);
 
-    Money getAdjustmentPrice();
-
-    void setAdjustmentPrice(Money adjustmentPrice);
-
     String getReferenceNumber();
 
     void setReferenceNumber(String referenceNumber);
@@ -87,8 +83,6 @@ public interface FulfillmentGroup extends Serializable {
     void removeAllCandidateOffers();
 
     List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
-
-    List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment);
 
     void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
 
@@ -157,10 +151,6 @@ public interface FulfillmentGroup extends Serializable {
 	public void setService(String service);
 	
 	public List<DiscreteOrderItem> getDiscreteOrderItems();
-	
-	public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems();
-	
-	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
 	
 	public Money getFulfillmentGroupAdjustmentsValue();
 	

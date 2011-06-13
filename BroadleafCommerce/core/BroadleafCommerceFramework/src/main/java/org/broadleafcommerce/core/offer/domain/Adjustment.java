@@ -32,5 +32,7 @@ public interface Adjustment extends Serializable {
     public void setReason(String reason);
 
     public Money getValue();
+    
+    public void setValue(Money value);
 
 }

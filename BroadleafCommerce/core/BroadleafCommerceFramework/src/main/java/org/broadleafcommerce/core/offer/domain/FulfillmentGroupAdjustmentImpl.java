@@ -29,7 +29,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.money.Money;
@@ -109,38 +108,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     }
 
     public Money getValue() {
-        if (value == null) {
-            computeAdjustmentValue();
-        }
         return value == null ? null : new Money(value);
     }
-
-    /*
-     * Calculates the value of the adjustment
-     */
-    public void computeAdjustmentValue() {
-        if (offer != null && fulfillmentGroup != null) {
-            Money adjustmentPrice = fulfillmentGroup.getAdjustmentPrice(); // get the current price of the item with all adjustments
-            if (adjustmentPrice == null) {
-                if ((offer.getApplyDiscountToSalePrice()) && (fulfillmentGroup.getSaleShippingPrice() != null)) {
-                    adjustmentPrice = fulfillmentGroup.getSaleShippingPrice();
-                } else {
-                    adjustmentPrice = fulfillmentGroup.getRetailShippingPrice();
-                }
-            }
-            if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF )) {
-                value = offer.getValue();
-            }
-            if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                value = adjustmentPrice.subtract(new Money(offer.getValue())).getAmount();
-            }
-            if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100"))).getAmount();
-            }
-            if (adjustmentPrice.lessThan(value)) {
-                value = adjustmentPrice.getAmount();
-            }
-        }
+    
+    public void setValue(Money value) {
+    	this.value = value.getAmount();
     }
 
     @Override

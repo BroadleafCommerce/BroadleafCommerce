@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.order.service.util.OrderItemSplitContainer;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.common.domain.Auditable;
@@ -64,11 +63,7 @@ public interface Order extends Serializable {
 
     public void assignOrderItemsFinalPrice();
 
-    public Money calculateOrderItemsCurrentPrice();
-
     public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
-    
-    public Money calculateOrderItemsPriceWithoutAdjustments();
 
     public Money getTotal();
 
@@ -96,18 +91,7 @@ public interface Order extends Serializable {
 
     public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers);
 
-    public void addCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer);
-
     public List<CandidateOrderOffer> getCandidateOrderOffers();
-
-    public void removeAllCandidateOffers();
-
-    public void removeAllCandidateOrderOffers();
-    
-    public void removeAllCandidateFulfillmentGroupOffers();
-
-    @Deprecated
-    public void setMarkedForOffer(boolean markForOffer);
 
     public Date getSubmitDate();
 
@@ -141,14 +125,6 @@ public interface Order extends Serializable {
 
     public void setTotalShipping(Money totalShipping);
 
-    /**
-     * Returns the price of the order with the order offers applied (item offers are not applied).
-     * @return the order price with the order offers applied (item offers are not applied)
-     */
-    public Money getAdjustmentPrice();
-
-    public void setAdjustmentPrice(Money adjustmentPrice);
-
     public List<PaymentInfo> getPaymentInfos();
 
     public void setPaymentInfos(List<PaymentInfo> paymentInfos);
@@ -163,45 +139,9 @@ public interface Order extends Serializable {
      */
     public List<OrderAdjustment> getOrderAdjustments();
 
-    /**
-     * Adds the adjustment to the order's adjustment list and discounts the order's adjustment
-     * price by the value of the adjustment.
-     * 
-     * @param orderAdjustment
-     */
-    public void addOrderAdjustments(OrderAdjustment orderAdjustment);
-
-    //public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
-
-    /**
-     * Removes all order, order item, and fulfillment adjustments from the order and resets the adjustment
-     * price.
-     */
-    public void removeAllAdjustments();
-
-    /**
-     * Removes all order adjustments from the order and resets the adjustment price.  This method does not 
-     * remove order item or fulfillment adjustments from the order.
-     */
-    public void removeAllOrderAdjustments();
-
-    /**
-     * Removes all adjustments from the order's order items and resets the adjustment price for each item.  
-     * This method does not remove order or fulfillment adjustments from the order.
-     */
-    public void removeAllItemAdjustments();
-
-    public boolean containsNotStackableOrderOffer();
-
     public List<DiscreteOrderItem> getDiscreteOrderItems();
 
-    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems();
-
     public List<OfferCode> getAddedOfferCodes();
-
-    public void addAddedOfferCode(OfferCode addedOfferCode);
-
-    public void removeAllAddedOfferCodes();
 
     public String getFulfillmentStatus();
 
@@ -243,32 +183,12 @@ public interface Order extends Serializable {
      */
     public Money getTotalAdjustmentsValue();
 
-    public boolean isNotCombinableOfferApplied();
-
-	public boolean isHasOrderAdjustments();
-
 	public boolean updatePrices();
-	
-	public List<OrderItemSplitContainer> getSplitItems();
-
-	public void setSplitItems(List<OrderItemSplitContainer> splitItems);
-	
-	public List<OrderItem> searchSplitItems(OrderItem key);
-	
-	public void removeAllFulfillmentAdjustments();
-	
-	public boolean containsNotStackableFulfillmentGroupOffer();
-	
-	public void resetTotalitarianOfferApplied();
-	
-	public boolean isTotalitarianOfferApplied();
-
-	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
-	
-	public boolean isNotCombinableOfferAppliedAtAnyLevel();
-
-	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
 	
 	public Money getFulfillmentGroupAdjustmentsValue();
 	
+	public void addOfferCode(OfferCode addedOfferCode);
+	
+	@Deprecated
+	public void addAddedOfferCode(OfferCode offerCode);
 }

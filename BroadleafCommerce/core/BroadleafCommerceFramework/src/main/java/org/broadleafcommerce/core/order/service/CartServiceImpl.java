@@ -224,7 +224,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                             offerInfo.getFieldValues().put(key, info.getFieldValues().get(key));
                         }
                         customerCart.getAdditionalOfferInformation().put(transferredCode.getOffer(), offerInfo);
-                        customerCart.addAddedOfferCode(transferredCode);
+                        customerCart.addOfferCode(transferredCode);
                     }
                 }
                 customerCart = save(customerCart, true);

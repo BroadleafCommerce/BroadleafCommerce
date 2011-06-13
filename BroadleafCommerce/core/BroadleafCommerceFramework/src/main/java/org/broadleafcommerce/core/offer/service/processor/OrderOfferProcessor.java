@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 
@@ -35,7 +35,7 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
  */
 public interface OrderOfferProcessor extends BaseProcessor {
 
-	public void filterOrderLevelOffer(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<DiscreteOrderItem> discreteOrderItems, Offer offer);
+	public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
 
 	public OfferDao getOfferDao();
 
@@ -43,23 +43,21 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	
 	public Boolean executeExpression(String expression, Map<String, Object> vars);
 	
-	public boolean couldOfferApplyToOrder(Offer offer, Order order);
+	public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
 	
-	public List<CandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<CandidateOrderOffer> candidateOffers);
+	public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
 	
-	public boolean applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order);
+	public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
 	
-	public void compileOrderTotal(Order order);
-	
-	public List<OrderItem> getAllSplitItems(Order order);
+	public void compileOrderTotal(PromotableOrder order);
     
-    public void initializeSplitItems(Order order, List<OrderItem> items);
+    public void initializeSplitItems(PromotableOrder order, List<PromotableOrderItem> items);
 	
     public CartService getCartService();
 
 	public void setCartService(CartService cartService);
 	
-	public void gatherCart(Order order);
+	public void gatherCart(PromotableOrder order);
 	
 	public OrderItemService getOrderItemService();
 
@@ -68,5 +66,9 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	public FulfillmentGroupItemDao getFulfillmentGroupItemDao();
 
 	public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao);
+	
+	public PromotableItemFactory getPromotableItemFactory();
+
+	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
 	
 }

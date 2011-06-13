@@ -17,8 +17,7 @@ package org.broadleafcommerce.core.offer.service.discount;
 
 import java.util.Comparator;
 
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.money.Money;
 
 /**
@@ -26,18 +25,18 @@ import org.broadleafcommerce.money.Money;
  * @author jfischer
  *
  */
-public class OrderItemPriceComparator implements Comparator<OrderItem> {
+public class OrderItemPriceComparator implements Comparator<PromotableOrderItem> {
 	
-	private Offer offer;
+	private boolean applyToSalePrice = false;
 	
-	public OrderItemPriceComparator(Offer offer) {
-		this.offer = offer;
+	public OrderItemPriceComparator(boolean applyToSalePrice) {
+		this.applyToSalePrice = applyToSalePrice;
 	}
 
-	public int compare(OrderItem c1, OrderItem c2) {
+	public int compare(PromotableOrderItem c1, PromotableOrderItem c2) {
 		
-		Money price = c1.getPriceBeforeAdjustments(offer.getApplyDiscountToSalePrice());
-		Money price2 = c2.getPriceBeforeAdjustments(offer.getApplyDiscountToSalePrice());
+		Money price = c1.getPriceBeforeAdjustments(applyToSalePrice);
+		Money price2 = c2.getPriceBeforeAdjustments(applyToSalePrice);
 		
 		// highest amount first
 		return price2.compareTo(price);

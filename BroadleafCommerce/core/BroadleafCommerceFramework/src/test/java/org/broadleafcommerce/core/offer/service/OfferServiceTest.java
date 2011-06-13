@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
@@ -90,6 +91,7 @@ public class OfferServiceTest extends TestCase {
 		orderProcessor.setCartService(cartServiceMock);
 		orderProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		orderProcessor.setOrderItemService(orderItemServiceMock);
+		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		offerService.setOrderOfferProcessor(orderProcessor);
 		
 		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
@@ -97,6 +99,7 @@ public class OfferServiceTest extends TestCase {
 		itemProcessor.setCartService(cartServiceMock);
 		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		itemProcessor.setOrderItemService(orderItemServiceMock);
+		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		offerService.setItemOfferProcessor(itemProcessor);
 		
 		FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();
@@ -104,7 +107,9 @@ public class OfferServiceTest extends TestCase {
 		fgProcessor.setCartService(cartServiceMock);
 		fgProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
 		fgProcessor.setOrderItemService(orderItemServiceMock);
+		fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
+		offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
 	}
 	
 	public void replay() {
@@ -144,7 +149,7 @@ public class OfferServiceTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		Order order = dataProvider.createBasicOrder().getDelegate();
 		List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
 		
 		offerService.applyOffersToOrder(offers, order);
@@ -152,9 +157,9 @@ public class OfferServiceTest extends TestCase {
 		int adjustmentCount = order.getOrderAdjustments().size();
 		
 		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getAdjustmentPrice().equals(new Money(116.95D)));
+		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
 		List<Offer> offers2 = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
@@ -179,7 +184,7 @@ public class OfferServiceTest extends TestCase {
 		assertTrue(adjustmentCount == 0);
 		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		OfferRule orderRule = new OfferRuleImpl();
 		orderRule.setMatchRule("order.subTotal.getAmount()>124");
 		offers.get(0).getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
@@ -197,10 +202,10 @@ public class OfferServiceTest extends TestCase {
 		assertTrue(adjustmentCount == 2);
 		adjustmentCount = order.getOrderAdjustments().size();
 		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getAdjustmentPrice().equals(new Money(112.45D)));
+		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
 		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		//offers.get(0).setCombinableWithOtherOffers(false);
 		List<Offer> offers3 = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.AMOUNT_OFF);
 		offers.addAll(offers3);
@@ -210,7 +215,7 @@ public class OfferServiceTest extends TestCase {
 		adjustmentCount = order.getOrderAdjustments().size();
 		assertTrue(adjustmentCount == 2);
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		offers.get(0).setCombinableWithOtherOffers(false);
 		
 		offerService.applyOffersToOrder(offers, order);
@@ -226,10 +231,10 @@ public class OfferServiceTest extends TestCase {
 		assertTrue(adjustmentCount == 2);
 		adjustmentCount = order.getOrderAdjustments().size();
 		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getAdjustmentPrice().equals(new Money(112.45D)));
+		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(112.45D)));
 		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		offers.get(0).setTotalitarianOffer(true);
 		
 		offerService.applyOffersToOrder(offers, order);
@@ -245,10 +250,10 @@ public class OfferServiceTest extends TestCase {
 		assertTrue(adjustmentCount == 0);
 		adjustmentCount = order.getOrderAdjustments().size();
 		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getAdjustmentPrice().equals(new Money(116.95D)));
+		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(116.95D)));
 		assertTrue(order.getSubTotal().equals(new Money(129.95D)));
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		offers.get(0).setValue(new BigDecimal(".05"));
 		offers.get(2).setValue(new BigDecimal(".01"));
 		offers.get(2).setDiscountType(OfferDiscountType.PERCENT_OFF);
@@ -267,7 +272,7 @@ public class OfferServiceTest extends TestCase {
 		assertTrue(adjustmentCount == 2);
 		adjustmentCount = order.getOrderAdjustments().size();
 		assertTrue(adjustmentCount == 1);
-		assertTrue(order.getAdjustmentPrice().equals(new Money(124.94D)));
+		assertTrue(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(124.94D)));
 		assertTrue(order.getSubTotal().equals(new Money(124.95D)));
 		
 		verify();
@@ -287,7 +292,7 @@ public class OfferServiceTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		Order order = dataProvider.createBasicOrder().getDelegate();
 		List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
 			OfferDiscountType.PERCENT_OFF, 
@@ -306,7 +311,7 @@ public class OfferServiceTest extends TestCase {
 		
 		assertTrue(adjustmentCount == 2);
 		
-		order = dataProvider.createBasicOrder();
+		order = dataProvider.createBasicOrder().getDelegate();
 		
 		offers = dataProvider.createItemBasedOfferWithItemCriteria(
 			"order.subTotal.getAmount()>20", 
@@ -336,7 +341,7 @@ public class OfferServiceTest extends TestCase {
 		
 		replay();
 		
-		Order order = dataProvider.createBasicOrder();
+		Order order = dataProvider.createBasicOrder().getDelegate();
 		List<Offer> offers = offerService.buildOfferListForOrder(order);
 		
 		assertTrue(offers.size() == 1);

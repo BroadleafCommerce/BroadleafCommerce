@@ -51,6 +51,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.OrderServiceException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -351,7 +352,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
-        Order order = item.getOrder();
+    	Order order = item.getOrder();
+    	
+    	if (order == null) {
+    		throw new OrderServiceException("The order item does not have an order associated with it. Check to make sure you're not adding an order item that belongs to a BundleOrderItem. BundleOrderItems cannot be split among fulfillment groups");
+    	}
         
         // 1) Find the item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
@@ -491,6 +496,32 @@ public class OrderServiceImpl implements OrderService {
         order = updateOrder(order, priceOrder);
 
         return order.getOrderItems().get(orderItemIndex);
+    }
+    
+    //TODO add testing
+    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
+    	int bundleIndex = order.getOrderItems().indexOf(bundle);
+        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
+        orderItems.add(newOrderItem);
+        int orderItemIndex = orderItems.size() - 1;
+        newOrderItem.setBundleOrderItem(bundle);
+
+        // don't worry about fulfillment groups, since the phase for adding
+        // items occurs before shipping arrangements
+
+        order = updateOrder(order, priceOrder);
+
+        return ((BundleOrderItem) order.getOrderItems().get(bundleIndex)).getDiscreteOrderItems().get(orderItemIndex);
+    }
+    
+    //TODO add testing
+    public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
+        DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
+        orderItemService.delete(itemFromBundle);
+        itemFromBundle.setBundleOrderItem(null);
+        order = updateOrder(order, priceOrder);
+        
+        return order;
     }
 
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {

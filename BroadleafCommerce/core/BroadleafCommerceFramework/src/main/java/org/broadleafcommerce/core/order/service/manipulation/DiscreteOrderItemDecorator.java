@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.order.service.util;
+package org.broadleafcommerce.core.order.service.manipulation;
 
 import java.util.List;
 import java.util.Map;
@@ -7,11 +7,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
-import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
@@ -20,6 +16,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.money.Money;
 
 public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
@@ -131,14 +128,6 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 		return discreteOrderItem.getAdjustmentValue();
 	}
 
-	public Money getAdjustmentPrice() {
-		return discreteOrderItem.getAdjustmentPrice();
-	}
-
-	public void setAdjustmentPrice(Money adjustmentPrice) {
-		discreteOrderItem.setAdjustmentPrice(adjustmentPrice);
-	}
-
 	public Money getPrice() {
 		return discreteOrderItem.getPrice();
 	}
@@ -180,40 +169,8 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 		discreteOrderItem.setCandidateItemOffers(candidateItemOffers);
 	}
 
-	public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
-		discreteOrderItem.addCandidateItemOffer(candidateItemOffer);
-	}
-
-	public void removeAllCandidateItemOffers() {
-		discreteOrderItem.removeAllCandidateItemOffers();
-	}
-
-	public boolean markForOffer() {
-		return discreteOrderItem.markForOffer();
-	}
-
-	public int getMarkedForOffer() {
-		return discreteOrderItem.getMarkedForOffer();
-	}
-
-	public boolean unmarkForOffer() {
-		return discreteOrderItem.unmarkForOffer();
-	}
-
-	public boolean isAllQuantityMarkedForOffer() {
-		return discreteOrderItem.isAllQuantityMarkedForOffer();
-	}
-
 	public List<OrderItemAdjustment> getOrderItemAdjustments() {
 		return discreteOrderItem.getOrderItemAdjustments();
-	}
-
-	public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment) {
-		discreteOrderItem.addOrderItemAdjustment(orderItemAdjustment);
-	}
-
-	public int removeAllAdjustments() {
-		return discreteOrderItem.removeAllAdjustments();
 	}
 
 	public PersonalMessage getPersonalMessage() {
@@ -252,14 +209,6 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 		return discreteOrderItem.getIsDiscounted();
 	}
 
-	public boolean isNotCombinableOfferApplied() {
-		return discreteOrderItem.isNotCombinableOfferApplied();
-	}
-
-	public boolean isHasOrderItemAdjustments() {
-		return discreteOrderItem.isHasOrderItemAdjustments();
-	}
-
 	public boolean updatePrices() {
 		return discreteOrderItem.updatePrices();
 	}
@@ -272,70 +221,32 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 		discreteOrderItem.setName(name);
 	}
 
-	public List<PromotionDiscount> getPromotionDiscounts() {
-		return discreteOrderItem.getPromotionDiscounts();
-	}
-
-	public void setPromotionDiscounts(List<PromotionDiscount> promotionDiscounts) {
-		discreteOrderItem.setPromotionDiscounts(promotionDiscounts);
-	}
-
-	public List<PromotionQualifier> getPromotionQualifiers() {
-		return discreteOrderItem.getPromotionQualifiers();
-	}
-
-	public void setPromotionQualifiers(
-			List<PromotionQualifier> promotionQualifiers) {
-		discreteOrderItem.setPromotionQualifiers(promotionQualifiers);
-	}
-
-	public int getQuantityAvailableToBeUsedAsQualifier(Offer promotion) {
-		return discreteOrderItem
-				.getQuantityAvailableToBeUsedAsQualifier(promotion);
-	}
-
-	public int getQuantityAvailableToBeUsedAsTarget(Offer promotion) {
-		return discreteOrderItem
-				.getQuantityAvailableToBeUsedAsTarget(promotion);
-	}
-
 	public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
 		return discreteOrderItem.getPriceBeforeAdjustments(allowSalesPrice);
-	}
-
-	public void addPromotionQualifier(CandidateItemOffer candidatePromotion,
-			OfferItemCriteria itemCriteria, int quantity) {
-		discreteOrderItem.addPromotionQualifier(candidatePromotion,
-				itemCriteria, quantity);
-	}
-
-	public void addPromotionDiscount(CandidateItemOffer candidatePromotion,
-			OfferItemCriteria itemCriteria, int quantity) {
-		discreteOrderItem.addPromotionDiscount(candidatePromotion,
-				itemCriteria, quantity);
-	}
-
-	public void clearAllNonFinalizedQuantities() {
-		discreteOrderItem.clearAllNonFinalizedQuantities();
-	}
-
-	public void finalizeQuantities() {
-		discreteOrderItem.finalizeQuantities();
 	}
 
 	public OrderItem clone() {
 		return discreteOrderItem.clone();
 	}
 
-	public List<OrderItem> split() {
-		return discreteOrderItem.split();
+	public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {
+		discreteOrderItem.setOrderItemAdjustments(orderItemAdjustments);
 	}
 
-	public void clearAllDiscount() {
-		discreteOrderItem.clearAllDiscount();
+	public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
+		discreteOrderItem.addCandidateItemOffer(candidateItemOffer);
 	}
 
-	public void clearAllQualifiers() {
-		discreteOrderItem.clearAllQualifiers();
+	public void removeAllCandidateItemOffers() {
+		discreteOrderItem.removeAllCandidateItemOffers();
 	}
+
+	public int removeAllAdjustments() {
+		return discreteOrderItem.removeAllAdjustments();
+	}
+
+	public void accept(OrderItemVisitor visitor) throws PricingException {
+		discreteOrderItem.accept(visitor);
+	}
+
 }
