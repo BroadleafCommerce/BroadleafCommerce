@@ -17,16 +17,29 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
 	public DefaultDynamicSkuPricingInvocationHandler(Sku sku) {
 		this.delegate = sku;
 		try {
-			Field retail = delegate.getClass().getDeclaredField("retailPrice");
+			Field retail = getSingleField(delegate.getClass(), "retailPrice");
 			retail.setAccessible(true);
 			retailPrice = new Money((BigDecimal) retail.get(delegate));
-			Field sale = delegate.getClass().getDeclaredField("salePrice");
+			Field sale = getSingleField(delegate.getClass(), "salePrice");
 			sale.setAccessible(true);
 			salePrice = new Money((BigDecimal) sale.get(delegate));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException nsf) {
+            // Try superclass
+            if (clazz.getSuperclass() != null) {
+                return getSingleField(clazz.getSuperclass(), fieldName);
+            }
+
+            return null;
+        }
+    }
 	
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if (method.getName().equals("getRetailPrice")) {
