@@ -19,10 +19,12 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
 		try {
 			Field retail = getSingleField(delegate.getClass(), "retailPrice");
 			retail.setAccessible(true);
-			retailPrice = new Money((BigDecimal) retail.get(delegate));
+			Object retailVal = retail.get(delegate);
+			retailPrice = retailVal==null?null:new Money((BigDecimal) retailVal);
 			Field sale = getSingleField(delegate.getClass(), "salePrice");
 			sale.setAccessible(true);
-			salePrice = new Money((BigDecimal) sale.get(delegate));
+			Object saleVal = sale.get(delegate);
+			salePrice = saleVal==null?null:new Money((BigDecimal) saleVal);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
