@@ -69,6 +69,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 50)
     @Column(name = "ORDER_ITEM_ID")
+    @AdminPresentation(friendlyName="Order Item ID", group="Primary Key", hidden=true)
     protected Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)

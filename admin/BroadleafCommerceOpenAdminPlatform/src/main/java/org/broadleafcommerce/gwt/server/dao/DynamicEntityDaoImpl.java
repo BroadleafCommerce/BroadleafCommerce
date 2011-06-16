@@ -37,6 +37,8 @@ import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspectiveItemType;
@@ -66,6 +68,8 @@ import org.hibernate.type.Type;
  *
  */
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
+	
+	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
 	
     protected EntityManager entityManager;
 	
@@ -602,7 +606,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				 */
 				if (
 					type.isEntityType() && 
-					!returnedClass.equals(targetClass) && 
+					!returnedClass.isAssignableFrom(targetClass) &&
 					populateManyToOneFields &&
 					includeField
 				) {
