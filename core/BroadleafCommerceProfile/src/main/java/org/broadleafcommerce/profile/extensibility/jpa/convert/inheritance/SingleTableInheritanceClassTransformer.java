@@ -92,7 +92,7 @@ public class SingleTableInheritanceClassTransformer implements BroadleafClassTra
 
 	public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 		if (infos.isEmpty()) {
-			return classfileBuffer;
+			return null;
 		}
 		String convertedClassName = className.replace('/', '.');
 		SingleTableInheritanceInfo key = new SingleTableInheritanceInfo();
@@ -159,7 +159,7 @@ public class SingleTableInheritanceClassTransformer implements BroadleafClassTra
 				throw new IllegalClassFormatException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
 			}
 		} else {
-			return classfileBuffer;
+			return null;
 		}
 	}
 	
