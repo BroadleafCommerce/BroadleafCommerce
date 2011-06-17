@@ -16,7 +16,7 @@
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="false">
 			<arg value="gwt:run"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir}"/>
 		</artifact:mvn>
 	</target>
 	
@@ -25,7 +25,7 @@
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir}"/>
 		</artifact:mvn>
 	</target>
 	
@@ -49,7 +49,7 @@
 		</copy>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15 -noverify -javaagent:${jrebel.path}"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}"/>
 		</artifact:mvn>
 	</target>
 	
@@ -58,7 +58,7 @@
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15 -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
 		</artifact:mvn>
 	</target>
 	
@@ -73,11 +73,20 @@
 	
 	<target name="jetty-debug" depends="start-db">
 		<delete dir="war/WEB-INF/lib"/>
+		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001">
+			<arg value="compile"/>
+			<arg value="war:exploded"/>
+			<arg value="jetty:run"/>
+		</artifact:mvn>
+	</target>
+	
+	<target name="jetty-debug-broadleaf-instrumented" depends="start-db">
+		<delete dir="war/WEB-INF/lib"/>
 		<artifact:dependencies pathId="agentPathId">
-			<dependency groupId="org.springframework" artifactId="spring-instrument" version="3.0.5.RELEASE"/>
+			<dependency groupId="org.broadleafcommerce" artifactId="broadleaf-instrument" version="1.5.0-M2-SNAPSHOT"/>
 		</artifact:dependencies>
 		<property name="agentJarPath" refid="agentPathId"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001 -javaagent:${agentJarPath}">
 			<arg value="compile"/>
 			<arg value="war:exploded"/>
 			<arg value="jetty:run"/>
@@ -86,7 +95,7 @@
 	
 	<target name="jetty-demo-jrebel">
 		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs=" -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
 			<arg value="compile"/>
 			<arg value="war:exploded"/>
 			<arg value="jetty:run"/>

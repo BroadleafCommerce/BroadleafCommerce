@@ -33,24 +33,24 @@
             </list>
         </property>
         
-    Also, the container must be started with the Spring load time weaver implementation. This is usually accomplished by including a
+    Also, the container must be started with the Broadleaf load time weaver implementation. This is usually accomplished by including a
     javaagent at the java startup command for the server. The syntax is something along these lines:
     
-    java .... -javaagent:{/path/to/spring-instrument/jar}
+    java .... -javaagent:{/path/to/broadleaf-instrument/jar}
     
     Whatever startup approach you use for your container, it should be altered to include the javaagent syntax and the spring-instrument jar
-    should be available in your filesystem at the path specified. Note - at the time of this writing, we're using spring-instrument-3.0.5.RELEASE.jar
+    should be available in your filesystem at the path specified.
         
     see persistence-demo-entity-transform.xml for an example of how to configure which classes are included in the transformation.
      -->
-        
-    <context:load-time-weaver/>
+    
+    <context:load-time-weaver weaver-class="org.broadleafcommerce.profile.extensibility.jpa.BroadleafLoadTimeWeaver"/>
 
     <bean id="blPersistenceUnitManager"
           class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceXmlLocations">
             <list>
-                <value>classpath*:/META-INF/persistence-demo.xml</value>
+                <value>classpath*:/META-INF/persistence-demo-entity-transform.xml</value>
             </list>
         </property>
         <property name="dataSources">

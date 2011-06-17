@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.profile.extensibility.jpa;
 
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import org.springframework.util.ClassUtils;
 public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
 	private static final Log LOG = LogFactory.getLog(MergePersistenceUnitManager.class);
+	
     protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
     protected final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
     protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
@@ -69,6 +71,33 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         return mergedPus.get(persistenceUnitName);
     }
+    
+    @SuppressWarnings("rawtypes")
+	@Override
+	public void preparePersistenceUnitInfos() {
+		super.preparePersistenceUnitInfos();
+		/*
+    	 * Re-transform any classes that were possibly loaded previously before our class transformers were registered
+    	 */
+    	try {
+    		if (BroadleafLoadTimeWeaver.isInstrumentationAvailable()) {
+    			if (BroadleafLoadTimeWeaver.getInstrumentation().isRetransformClassesSupported()) {
+	    			List<Class> filteredClasses = new ArrayList<Class>();
+	    			Class[] initiatedClasses = BroadleafLoadTimeWeaver.getInstrumentation().getInitiatedClasses(getClass().getClassLoader());
+	    			for (Class clazz : initiatedClasses) {
+	    				if (BroadleafLoadTimeWeaver.getInstrumentation().isModifiableClass(clazz)) {
+	    					filteredClasses.add(clazz);
+	    				}
+	    			}
+	    			BroadleafLoadTimeWeaver.getInstrumentation().retransformClasses(filteredClasses.toArray(new Class[]{}));
+    			} else {
+    				LOG.warn("The JVM instrumentation is reporting that retransformation of classes is not supported. This feature is required for dependable class transformation with Broadleaf. Have you made sure to specify the broadleaf-instrument jar as a javaagent parameter for your JVM?");
+    			}
+    		}
+    	} catch (UnmodifiableClassException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
     @Override
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
@@ -157,4 +186,5 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 	public void setClassTransformers(List<BroadleafClassTransformer> classTransformers) {
 		this.classTransformers = classTransformers;
 	}
+	
 }
