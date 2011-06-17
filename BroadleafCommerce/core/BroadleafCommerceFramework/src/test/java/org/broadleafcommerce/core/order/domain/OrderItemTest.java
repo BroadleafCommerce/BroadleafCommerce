@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -47,7 +48,7 @@ public class OrderItemTest extends TestCase {
 		discreteOrderItem1.setQuantity(2);
 		discreteOrderItem1.setRetailPrice(new Money(19.99D));
 		discreteOrderItem1.setPrice(new Money(19.99D));
-		orderItem1 = new PromotableOrderItemImpl(discreteOrderItem1, null);
+		orderItem1 = new PromotableOrderItemImpl(discreteOrderItem1, null, new PromotableItemFactoryImpl());
 		
 		OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 		
