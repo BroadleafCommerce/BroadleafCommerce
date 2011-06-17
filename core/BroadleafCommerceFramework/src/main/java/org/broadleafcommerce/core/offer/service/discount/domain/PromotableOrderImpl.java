@@ -38,9 +38,11 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableOrderItem> discreteOrderItems;
     protected List<PromotableOrderItem> discountableDiscreteOrderItems;
     protected boolean currentSortParam = false;
+    protected PromotableItemFactory itemFactory;
     
-    public PromotableOrderImpl(Order order) {
+    public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory) {
     	this.delegate = order;
+    	this.itemFactory = itemFactory;
     }
     
     public void reset() {
@@ -307,7 +309,7 @@ public class PromotableOrderImpl implements PromotableOrder {
 		if (fulfillmentGroups == null) {
 			fulfillmentGroups = new ArrayList<PromotableFulfillmentGroup>();
 			for (FulfillmentGroup fulfillmentGroup : delegate.getFulfillmentGroups()) {
-				fulfillmentGroups.add(new PromotableFulfillmentGroupImpl(fulfillmentGroup, this));
+				fulfillmentGroups.add(itemFactory.createPromotableFulfillmentGroup(fulfillmentGroup, this));
 			}
 		}
 		return Collections.unmodifiableList(fulfillmentGroups);
@@ -363,7 +365,7 @@ public class PromotableOrderImpl implements PromotableOrder {
 				}
 				
 				private void addDiscreteItem(DiscreteOrderItem discreteOrderItem) {
-					PromotableOrderItem item = new PromotableOrderItemImpl(discreteOrderItem, PromotableOrderImpl.this);
+					PromotableOrderItem item = itemFactory.createPromotableOrderItem(discreteOrderItem, PromotableOrderImpl.this);
 					item.computeAdjustmentPrice();
 	                discreteOrderItems.add(item);
 				}

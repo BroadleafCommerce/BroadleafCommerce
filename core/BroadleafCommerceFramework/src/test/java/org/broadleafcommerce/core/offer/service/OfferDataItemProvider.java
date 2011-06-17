@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
@@ -290,7 +291,7 @@ public class OfferDataItemProvider {
 		
 		order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
 		
-		PromotableOrder promotableOrder = new PromotableOrderImpl(order);
+		PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl());
 		
 		return promotableOrder;
 	}

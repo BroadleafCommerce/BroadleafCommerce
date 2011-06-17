@@ -27,10 +27,12 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
 	protected Money adjustmentPrice;  // retailPrice with adjustments
 	protected FulfillmentGroup delegate;
 	protected PromotableOrder order;
+	protected PromotableItemFactory itemFactory;
 	
-	public PromotableFulfillmentGroupImpl(FulfillmentGroup fulfillmentGroup, PromotableOrder order) {
+	public PromotableFulfillmentGroupImpl(FulfillmentGroup fulfillmentGroup, PromotableOrder order, PromotableItemFactory itemFactory) {
 		this.delegate = fulfillmentGroup;
 		this.order = order;
+		this.itemFactory = itemFactory;
 	}
 	
 	public void reset() {
@@ -49,14 +51,14 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     if (discreteOrderItem.getSku().isDiscountable()) {
-                        discreteOrderItems.add(new PromotableOrderItemImpl(discreteOrderItem, order));
+                        discreteOrderItems.add(itemFactory.createPromotableOrderItem(discreteOrderItem, order));
                     }
                 }
             } else {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
                 if (discreteOrderItem.getSku().isDiscountable()) {
                 	//use the decorator patter to return the quantity for this fgItem, not the quantity on the discrete order item
-                    discreteOrderItems.add(new PromotableOrderItemImpl(new DiscreteOrderItemDecorator(discreteOrderItem, fgItem.getQuantity()), order));
+                    discreteOrderItems.add(itemFactory.createPromotableOrderItem(new DiscreteOrderItemDecorator(discreteOrderItem, fgItem.getQuantity()), order));
                 }
             }
         }

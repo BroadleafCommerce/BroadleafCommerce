@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class PromotableItemFactoryImpl implements PromotableItemFactory {
 	
 	public PromotableOrder createPromotableOrder(Order order) {
-		return new PromotableOrderImpl(order);
+		return new PromotableOrderImpl(order, this);
 	}
 	
 	public PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer, PromotableOrder order) {
@@ -27,7 +27,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
 	}
 
 	public PromotableOrderItem createPromotableOrderItem(DiscreteOrderItem orderItem, PromotableOrder order) {
-		return new PromotableOrderItemImpl(orderItem, order);
+		return new PromotableOrderItemImpl(orderItem, order, this);
 	}
 	
 	public PromotableCandidateItemOffer createPromotableCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
@@ -39,7 +39,7 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
 	}
 	
 	public PromotableFulfillmentGroup createPromotableFulfillmentGroup(FulfillmentGroup fulfillmentGroup, PromotableOrder order) {
-		return new PromotableFulfillmentGroupImpl(fulfillmentGroup, order);
+		return new PromotableFulfillmentGroupImpl(fulfillmentGroup, order, this);
 	}
 	
 	public PromotableCandidateFulfillmentGroupOffer createPromotableCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup fulfillmentGroup) {

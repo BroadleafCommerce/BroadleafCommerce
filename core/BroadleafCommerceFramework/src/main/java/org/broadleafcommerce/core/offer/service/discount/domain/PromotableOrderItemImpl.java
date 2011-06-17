@@ -24,10 +24,12 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
     protected DiscreteOrderItem delegate;
     protected PromotableOrder order;
+    protected PromotableItemFactory itemFactory;
     
-    public PromotableOrderItemImpl(DiscreteOrderItem orderItem, PromotableOrder order) {
+    public PromotableOrderItemImpl(DiscreteOrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
     	this.delegate = (DiscreteOrderItem) orderItem;
     	this.order = order;
+    	this.itemFactory = itemFactory;
     }
     
     public DiscreteOrderItem getDelegate() {
@@ -383,7 +385,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 	}
 	
 	public PromotableOrderItem clone() {
-		PromotableOrderItemImpl copy = new PromotableOrderItemImpl((DiscreteOrderItem) delegate.clone(), order);
+		PromotableOrderItem copy = itemFactory.createPromotableOrderItem((DiscreteOrderItem) delegate.clone(), order);
 		copy.setAdjustmentPrice(getAdjustmentPrice());
 		
 		return copy;
