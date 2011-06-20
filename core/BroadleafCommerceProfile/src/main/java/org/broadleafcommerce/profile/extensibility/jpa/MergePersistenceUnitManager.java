@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.profile.extensibility.jpa;
 
-import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
@@ -60,31 +59,41 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 				puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
 						new Class[] {SmartPersistenceUnitInfo.class}, new Jpa2PersistenceUnitInfoDecorator(newPU));
 			}
-			for (BroadleafClassTransformer transformer : classTransformers) {
-				try {
-					puiToStore.addTransformer(transformer);
-				} catch (IllegalStateException e) {
-					LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring reported a problem (likely that a LoadTimeWeaver is not registered). As a result, the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is not being registered with the persistence unit.", e);
-				}
-			}
             mergedPus.put(persistenceUnitName, puiToStore);
         }
         return mergedPus.get(persistenceUnitName);
     }
     
-    @SuppressWarnings("rawtypes")
 	@Override
 	public void preparePersistenceUnitInfos() {
 		super.preparePersistenceUnitInfos();
-		/*
-    	 * Re-transform any classes that were possibly loaded previously before our class transformers were registered
-    	 */
-    	try {
+		try {
+			List<Class<?>> managedClassList = new ArrayList<Class<?>>();
+			for (PersistenceUnitInfo pui : mergedPus.values()) {
+				for (BroadleafClassTransformer transformer : classTransformers) {
+					try {
+						pui.addTransformer(transformer);
+					} catch (IllegalStateException e) {
+						LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring reported a problem (likely that a LoadTimeWeaver is not registered). As a result, the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is not being registered with the persistence unit.", e);
+					}
+				}
+			}
+			for (PersistenceUnitInfo pui : mergedPus.values()) {
+				for (String managedClassName : pui.getManagedClassNames()) {
+					Class<?> temp = Class.forName(managedClassName, true, getClass().getClassLoader());
+					if (!managedClassList.contains(temp)) {
+						managedClassList.add(temp);
+					}
+				}
+			}
+			
+			/*
+	    	 * Re-transform any classes that were possibly loaded previously before our class transformers were registered
+	    	 */
     		if (BroadleafLoadTimeWeaver.isInstrumentationAvailable()) {
     			if (BroadleafLoadTimeWeaver.getInstrumentation().isRetransformClassesSupported()) {
-	    			List<Class> filteredClasses = new ArrayList<Class>();
-	    			Class[] initiatedClasses = BroadleafLoadTimeWeaver.getInstrumentation().getInitiatedClasses(getClass().getClassLoader());
-	    			for (Class clazz : initiatedClasses) {
+	    			List<Class<?>> filteredClasses = new ArrayList<Class<?>>();
+	    			for (Class<?> clazz : managedClassList) {
 	    				if (BroadleafLoadTimeWeaver.getInstrumentation().isModifiableClass(clazz)) {
 	    					filteredClasses.add(clazz);
 	    				}
@@ -94,7 +103,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     				LOG.warn("The JVM instrumentation is reporting that retransformation of classes is not supported. This feature is required for dependable class transformation with Broadleaf. Have you made sure to specify the broadleaf-instrument jar as a javaagent parameter for your JVM?");
     			}
     		}
-    	} catch (UnmodifiableClassException e) {
+    	} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
