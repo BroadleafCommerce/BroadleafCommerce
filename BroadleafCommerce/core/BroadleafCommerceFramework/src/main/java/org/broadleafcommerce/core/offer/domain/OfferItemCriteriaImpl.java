@@ -63,7 +63,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = OfferImpl.class)
-    @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
+    @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID", nullable=false), inverseJoinColumns = @JoinColumn(name = "OFFER_ID", nullable=false))
     protected Offer offer;
 
 	/* (non-Javadoc)
