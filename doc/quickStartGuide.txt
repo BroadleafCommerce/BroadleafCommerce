@@ -5,7 +5,7 @@ This quick-start guide is intended to give you the bare minimum information you 
 == Running the Broadleaf Commerce Demo Application ==
 
 Demo Application Prerequisites:
- * JDK 1.5 or greater (http://java.sun.com/javase/downloads/index_jdk5.jsp)
+ * JDK 1.6 or greater
  * ~1G available RAM
 
 Make sure you have the prerequisite items installed and confirm that each is in an operational state on your test machine.
@@ -29,7 +29,7 @@ Stop the Demo and Admin Applications:
 We've prepared the following quick-start overview to help you out as you prepare your custom JEE module based on Broadleaf Commerce.
 
 Prerequisites:
- * JDK 1.5 or greater (http://java.sun.com/javase/downloads/index_jdk5.jsp)
+ * JDK 1.6 or greater
 
 Dependencies:
 
