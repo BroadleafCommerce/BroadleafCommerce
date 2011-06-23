@@ -80,6 +80,7 @@
 		<class>org.broadleafcommerce.core.content.domain.ContentImpl</class>
 		<class>org.broadleafcommerce.core.content.domain.ContentDetailsImpl</class>
 		<class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
+		<class>org.broadleafcommerce.core.offer.domain.CriteriaOfferXref</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>
