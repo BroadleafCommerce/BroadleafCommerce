@@ -15,18 +15,15 @@
  */
 package org.broadleafcommerce.gwt.server.security.util;
 
-import java.io.Serializable;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class PasswordChange implements Serializable {
+public class PasswordChange extends PasswordReset {
 
     private static final long serialVersionUID = 1L;
-
-    private String username;
 
     private String currentPassword;
 
@@ -38,31 +35,8 @@ public class PasswordChange implements Serializable {
 
     private String challengeAnswer;
 
-    private String email;
-
-    private boolean passwordChangeRequired = false;
-
-    public PasswordChange() {
-    }
-
     public PasswordChange(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        super(username);
     }
 
     public String getChallengeQuestion() {
@@ -105,11 +79,4 @@ public class PasswordChange implements Serializable {
         this.newPasswordConfirm = newPasswordConfirm;
     }
 
-    public boolean getPasswordChangeRequired() {
-        return passwordChangeRequired;
-    }
-
-    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
-        this.passwordChangeRequired = passwordChangeRequired;
-    }
 }

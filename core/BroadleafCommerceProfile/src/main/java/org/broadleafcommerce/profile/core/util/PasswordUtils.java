@@ -15,18 +15,22 @@
  */
 package org.broadleafcommerce.profile.core.util;
 
-import java.util.Random;
 
 public class PasswordUtils {
 
-    public static String generateTemporaryPassword(int requiredLength) {
-        String[] good = new String[] { "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M",
-                "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
-        Random random = new Random();
-        StringBuilder builder = new StringBuilder();
-        while (builder.length() < requiredLength) {
-            builder.append(good[random.nextInt(good.length)]);
-        }
-        return builder.toString();
-    }
+	public static final Character[] characters = {
+		'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+		'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+		'1','2','3','4','5','6','7','8','9','0'
+	};
+	
+	public static String generateTemporaryPassword(int requiredLength) {
+		int length = characters.length;
+		StringBuffer sb = new StringBuffer(requiredLength);
+		for (int j=0;j<requiredLength;j++) {
+			sb.append(characters[(int) Math.round(Math.floor(Math.random() * length))]);
+		}
+		
+		return sb.toString();
+	}
 }

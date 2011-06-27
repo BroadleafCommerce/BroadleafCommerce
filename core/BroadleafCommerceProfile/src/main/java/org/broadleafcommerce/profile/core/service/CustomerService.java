@@ -15,8 +15,12 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import java.util.List;
+
 import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
+import org.broadleafcommerce.gwt.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 
 public interface CustomerService {
@@ -45,4 +49,15 @@ public interface CustomerService {
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
     public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
+    
+    public Customer resetPassword(PasswordReset passwordReset);
+	
+    public List<PasswordUpdatedHandler> getPasswordResetHandlers();
+
+	public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers);
+	
+	public List<PasswordUpdatedHandler> getPasswordChangedHandlers();
+
+	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
+	
 }

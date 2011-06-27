@@ -49,6 +49,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 	
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
+		leftVerticalLayout.setID("userLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
@@ -57,6 +58,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
+        topTabSet.setID("userTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
         topTabSet.setWidth("50%");  
@@ -64,12 +66,14 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         topTabSet.setPaneMargin(0);
         
         Tab detailsTab = new Tab(AdminModule.ADMINMESSAGES.userDetailsTitle());
+        detailsTab.setID("userDetailsTab");
         dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.userDetailsTitle(), entityDataSource);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
         Tab userRolesTab = new Tab(AdminModule.ADMINMESSAGES.userRolesTitle()); 
+        userRolesTab.setID("userUserRolesTab");
         userRolesDisplay = new UserRoleView(AdminModule.ADMINMESSAGES.userRolesTitle(), false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);

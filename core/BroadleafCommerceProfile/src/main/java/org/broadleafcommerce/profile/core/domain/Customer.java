@@ -18,6 +18,7 @@ package org.broadleafcommerce.profile.core.domain;
 import java.io.Serializable;
 
 import org.broadleafcommerce.profile.common.domain.Auditable;
+import org.broadleafcommerce.profile.core.service.type.LocaleType;
 
 public interface Customer extends Serializable {
 
@@ -89,4 +90,8 @@ public interface Customer extends Serializable {
     
     public boolean isAnonymous(); 
 
+    public LocaleType getCustomerLocale();
+    
+    public void setCustomerLocale(LocaleType customerLocale);
+    
 }

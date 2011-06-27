@@ -137,6 +137,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 		DataSource customerDataSource = additionalDataSources[3];
 		
 		VLayout leftVerticalLayout = new VLayout(10);
+		leftVerticalLayout.setID("offerLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("30%");
 		leftVerticalLayout.setShowResizeBar(true);
@@ -152,6 +153,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         leftVerticalLayout.addMember(listDisplay);
         
         VLayout rightVerticalLayout = new VLayout();
+        rightVerticalLayout.setID("offerRightVerticalLayout");
         rightVerticalLayout.setHeight100();
         rightVerticalLayout.setWidth("70%");
         dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.promotionDetailsTitle(), entityDataSource);
@@ -173,6 +175,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(basicInformationLabel, 0);
         
         VLayout restrictLayout = new VLayout();
+        restrictLayout.setID("offerRestrictLayout");
         restrictLayout.setLayoutLeftMargin(10);
         Label restrictLabel = new Label(AdminModule.ADMINMESSAGES.restrictOnlyPromotionLabel());
         restrictLabel.setWrap(false);
@@ -200,8 +203,10 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(restrictionSectionView);
         
         VLayout customerLayout = new VLayout();
+        customerLayout.setID("offerCustomerLayout");
         customerLayout.setLayoutLeftMargin(10);
         HStack customerObtainHStack = new HStack(10);
+        customerObtainHStack.setID("offerCustomerObtainHStack");
         customerObtainHStack.setWidth100();
         customerObtainHStack.setHeight(30);
         Label customerObtainLabel = new Label(AdminModule.ADMINMESSAGES.customerObtainLabel());
@@ -211,6 +216,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerObtainLabel.setStyleName("label-bold");
         customerObtainHStack.addMember(customerObtainLabel);
         VStack helpCustomerObtainVStack = new VStack();
+        helpCustomerObtainVStack.setID("offerHelpCustomerObtainVStack");
         helpCustomerObtainVStack.setAlign(VerticalAlignment.CENTER);
         helpButtonType = new ImgButton();
         helpButtonType.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/help.png");
@@ -281,12 +287,14 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerLayout.addMember(customerFilterBuilder);
         customerLayout.setLayoutBottomMargin(10);
         
-        SectionView sectionStack = new SectionView(AdminModule.ADMINMESSAGES.customerSectionViewTitle());  
+        SectionView sectionStack = new SectionView(AdminModule.ADMINMESSAGES.customerSectionViewTitle()); 
+        sectionStack.setID("offerSectionStack");
         sectionStack.setWidth("98%");
         sectionStack.getContentLayout().addMember(customerLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(sectionStack);
         
         VLayout orderSectionLayout = new VLayout();
+        orderSectionLayout.setID("offerOrderSectionLayout");
         orderSectionLayout.setLayoutLeftMargin(10);
         Label orderLabel = new Label(AdminModule.ADMINMESSAGES.orderSectionLabel());
         orderLabel.setWrap(false);
@@ -350,11 +358,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderSectionLayout.addMember(orderCombineForm);
         
         SectionView sectionStack2 = new SectionView(AdminModule.ADMINMESSAGES.orderQualificationSectionViewTitle());
+        sectionStack2.setID("offerSectionStack2");
         sectionStack2.setWidth("98%");
         sectionStack2.getContentLayout().addMember(orderSectionLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(sectionStack2);
         
         VStack itemSectionLayout = new VStack();
+        itemSectionLayout.setID("offerItemSectionLayout");
         itemSectionLayout.setLayoutLeftMargin(10);
         
         orderItemCombineLabel = new Label(AdminModule.ADMINMESSAGES.orderItemCombineLabel());
@@ -381,6 +391,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         bogoQuestionLayout = new VLayout();
         bogoQuestionLayout.setVisible(false);
         HStack hStackBogo = new HStack(10);
+        hStackBogo.setID("offerHStackBogo");
         hStackBogo.setWidth100();
         hStackBogo.setHeight(30);
         bogoQuestionLabel = new Label(AdminModule.ADMINMESSAGES.bogoQuestionLabel());
@@ -390,6 +401,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         bogoQuestionLabel.setStyleName("label-bold");
         hStackBogo.addMember(bogoQuestionLabel);
         VStack helpButtonBogoStack = new VStack();
+        helpButtonBogoStack.setID("offerHelpButtonBogoStack");
         helpButtonBogoStack.setAlign(VerticalAlignment.CENTER);
         helpButtonBogo = new ImgButton();
         helpButtonBogo.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/help.png");
@@ -440,6 +452,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         newItemBuilderLayout = new VLayout();
         newItemBuilderLayout.setVisible(false);
         HLayout buttonLayout = new HLayout();
+        buttonLayout.setID("offerButtonLayout");
         buttonLayout.setWidth100();
         buttonLayout.setAlign(Alignment.LEFT);
         buttonLayout.setHeight(30);

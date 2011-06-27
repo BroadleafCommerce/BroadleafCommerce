@@ -56,6 +56,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
+		leftVerticalLayout.setID("productSkuLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
@@ -63,7 +64,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.productsListTitle(), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
         
-        TabSet topTabSet = new TabSet();  
+        TabSet topTabSet = new TabSet(); 
+        topTabSet.setID("productSkuTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
         topTabSet.setWidth("50%");  
@@ -71,6 +73,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         topTabSet.setPaneMargin(0);
         
         Tab detailsTab = new Tab("Details");
+        detailsTab.setID("productSkuDetailsTab");
         
         dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.productDetailsTitle(), entityDataSource);
         attributesDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.productAttributesTitle(), false, true);
@@ -78,8 +81,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         detailsTab.setPane(dynamicFormDisplay);
         
         Tab crossSaleTab = new Tab("Featured"); 
+        crossSaleTab.setID("productSkuCrossSaleTab");
         
         VLayout crossLayout = new VLayout();
+        crossLayout.setID("productSkuCrossLayout");
         crossLayout.setHeight100();
         crossLayout.setWidth100();
         crossLayout.setBackgroundColor("#eaeaea");
@@ -94,8 +99,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         crossSaleTab.setPane(crossLayout);
         
         Tab mediaTab = new Tab(AdminModule.ADMINMESSAGES.mediaTabTitle()); 
+        mediaTab.setID("productSkuMediaTab");
         
         VLayout mediaLayout = new VLayout();
+        mediaLayout.setID("productSkuMediaLayout");
         mediaLayout.setHeight100();
         mediaLayout.setWidth100();
         mediaLayout.setBackgroundColor("#eaeaea");
@@ -107,8 +114,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         mediaTab.setPane(mediaLayout);
         
         Tab categoriesTab = new Tab("Categories");
+        categoriesTab.setID("productSkuCategoriesTab");
         
         VLayout categoriesLayout = new VLayout();
+        categoriesLayout.setID("productSkuCategoriesLayout");
         categoriesLayout.setHeight100();
         categoriesLayout.setWidth100();
         categoriesLayout.setBackgroundColor("#eaeaea");

@@ -19,19 +19,19 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
 import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
+import org.broadleafcommerce.gwt.server.security.util.PasswordReset;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RecordHelper;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.hibernate.tool.hbm2x.StringUtils;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
@@ -41,8 +41,6 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  *
  */
 public class CustomerPasswordCustomPersistenceHandler implements CustomPersistenceHandler {
-	
-	private static final Log LOG = LogFactory.getLog(CustomerPasswordCustomPersistenceHandler.class);
 	
 	@Resource(name="blCustomerService")
 	protected CustomerService customerService;
@@ -84,12 +82,23 @@ public class CustomerPasswordCustomPersistenceHandler implements CustomPersisten
 	}
 
 	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		PasswordChange passwordChange = new PasswordChange();
-		passwordChange.setUsername(entity.findProperty("username").getValue());
-		passwordChange.setNewPassword(entity.findProperty("password").getValue());
-		passwordChange.setPasswordChangeRequired(Boolean.valueOf(entity.findProperty("changeRequired").getValue()));
-		customerService.changePassword(passwordChange);
+		Customer customer = customerService.readCustomerByUsername(entity.findProperty("username").getValue());
+		if (StringUtils.isEmpty(customer.getEmailAddress())) {
+			throw new ServiceException("Unable to update password because an email address is not available for this customer. An email address is required to send the customer the new system generated password.");
+		}
+		
+		PasswordReset passwordReset = new PasswordReset();
+		passwordReset.setUsername(entity.findProperty("username").getValue());
+		passwordReset.setPasswordChangeRequired(false);
+		passwordReset.setEmail(customer.getEmailAddress());
+		passwordReset.setPasswordLength(22);
+		passwordReset.setSendResetEmailReliableAsync(false);
+		
+		customer = customerService.resetPassword(passwordReset);
 		
 		return entity;
 	}
+	
+	
+	
 }

@@ -80,7 +80,7 @@ public interface AdminMessages extends ConstantsWithLookup {
 	public String allParentCategoriesListTitle();
 	public String customerListTitle();
 	public String customerDetailsTitle();
-	public String updatePasswordPrompt();
+	public String resetPasswordPrompt();
 	public String saveButtonTitle();
 	public String cancelButtonTitle();
 	public String updateCustomerPasswordTitle();
@@ -157,5 +157,6 @@ public interface AdminMessages extends ConstantsWithLookup {
 	public String newAdminUserTitle();
 	public String clonePromotionHelp();
 	public String orderItemCombineLabel();
-	
+	public String confirmResetPassword();
+	public String resetPasswordSuccessful();
 }
