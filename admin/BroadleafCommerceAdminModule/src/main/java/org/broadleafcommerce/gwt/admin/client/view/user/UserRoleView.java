@@ -57,6 +57,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         setOverflow(Overflow.AUTO);
 		
 		HStack hStack = new HStack(10);
+		hStack.setID("userRoleHStack");
 		
 		hStack.setHeight("45%");
 		hStack.setWidth100();
@@ -64,6 +65,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
 		hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();
+        stack.setID("userRoleVerticalLayout");
         stack.setHeight100();
         stack.setWidth100();
         //stack.setLayoutMargin(12);

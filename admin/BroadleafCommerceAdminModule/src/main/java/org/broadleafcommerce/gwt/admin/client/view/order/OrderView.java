@@ -62,6 +62,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 	
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
+		leftVerticalLayout.setID("orderLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
@@ -69,7 +70,8 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.ordersListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
         
-        TabSet topTabSet = new TabSet();  
+        TabSet topTabSet = new TabSet(); 
+        topTabSet.setID("orderTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
         topTabSet.setWidth("50%");  
@@ -77,6 +79,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.setPaneMargin(0);
         
         Tab detailsTab = new Tab(AdminModule.ADMINMESSAGES.orderDetailsTabTitle());
+        detailsTab.setID("orderDetailsTab");
         dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.orderDetailsTitle(), entityDataSource);
         orderAdjustmentDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.orderAdjustmentsTitle(), false, false);
         ((FormOnlyView) ((DynamicFormView) dynamicFormDisplay).getFormOnlyDisplay()).addMember(orderAdjustmentDisplay);
@@ -84,6 +87,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.addTab(detailsTab);
         
         Tab orderItemsTab = new Tab(AdminModule.ADMINMESSAGES.orderItemsTabTitle()); 
+        orderItemsTab.setID("orderOrderItemsTab");
         orderItemsDisplay = new OrderItemView(AdminModule.ADMINMESSAGES.orderItemsListTitle(), false, false);
         orderItemsTab.setPane(orderItemsDisplay);
         orderItemFeeDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.orderItemFeeListTitle(), false, false);
@@ -93,6 +97,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.addTab(orderItemsTab);
         
         Tab fgTab = new Tab(AdminModule.ADMINMESSAGES.fgTabTitle()); 
+        fgTab.setID("orderFgTab");
         fulfillmentGroupDisplay = new SubItemView(AdminModule.ADMINMESSAGES.fgListTitle(), false, false);
         fulfillmentGroupAdjustmentDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.fgAdjustmentsListTitle(), false, false);
         ((FormOnlyView) ((SubItemView) fulfillmentGroupDisplay).getFormOnlyDisplay()).addMember(fulfillmentGroupAdjustmentDisplay);
@@ -100,6 +105,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.addTab(fgTab);
         
         Tab paymentInfoTab = new Tab(AdminModule.ADMINMESSAGES.paymentInfoTabTitle()); 
+        paymentInfoTab.setID("orderPaymentInfoTab");
         paymentInfoDisplay = new SubItemView(AdminModule.ADMINMESSAGES.paymentInfoListTitle(), false, false);
         additionalAttributesDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.additionalAttributesListTitle(), false, false);
         ((FormOnlyView) ((SubItemView) paymentInfoDisplay).getFormOnlyDisplay()).addMember(additionalAttributesDisplay);
@@ -107,6 +113,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.addTab(paymentInfoTab);
         
         Tab offerCodesTab = new Tab(AdminModule.ADMINMESSAGES.offerCodeTabTitle()); 
+        offerCodesTab.setID("orderOfferCodesTab");
         offerCodeDisplay = new SubItemView(AdminModule.ADMINMESSAGES.offerCodeListTitle(), false, false);
         offerCodesTab.setPane(offerCodeDisplay);
         topTabSet.addTab(offerCodesTab);

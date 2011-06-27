@@ -65,6 +65,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
     
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
+		leftVerticalLayout.setID("categoryLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
@@ -74,8 +75,10 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         leftVerticalLayout.addMember(listDisplay);
         
         VLayout abandonedCategoryVerticalLayout = new VLayout();
+        abandonedCategoryVerticalLayout.setID("abandonedCategoryVerticalLayout");
         abandonedCategoryVerticalLayout.setHeight("30%");
         ToolStrip abandonedCategoryTopBar = new ToolStrip();
+        abandonedCategoryTopBar.setID("abandonedCategoryTopBar");
         abandonedCategoryTopBar.setHeight(20);
         abandonedCategoryTopBar.setWidth100();
         abandonedCategoryTopBar.addSpacer(6);
@@ -104,7 +107,8 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         leftVerticalLayout.addMember(abandonedCategoryVerticalLayout);
         
-        TabSet topTabSet = new TabSet();  
+        TabSet topTabSet = new TabSet(); 
+        topTabSet.setID("categoryTopTabSet");
         topTabSet.setTabBarPosition(Side.TOP);  
         topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
         topTabSet.setWidth("50%");  
@@ -112,6 +116,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         topTabSet.setPaneMargin(0);
         
         Tab detailsTab = new Tab("Details");
+        detailsTab.setID("categoryDetailsTab");
         
         dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.categoryDetailsTitle(), entityDataSource);
         
@@ -121,8 +126,10 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         detailsTab.setPane(dynamicFormDisplay);
         
         Tab featuredTab = new Tab(AdminModule.ADMINMESSAGES.productsTabTitle()); 
+        featuredTab.setID("categoryFeaturedTab");
         
         VLayout featuredLayout = new VLayout();
+        featuredLayout.setID("categoryFeaturedLayout");
         featuredLayout.setHeight100();
         featuredLayout.setWidth100();
         featuredLayout.setBackgroundColor("#eaeaea");
@@ -137,8 +144,10 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         featuredTab.setPane(featuredLayout);
         
         Tab mediaTab = new Tab(AdminModule.ADMINMESSAGES.mediaTabTitle()); 
+        mediaTab.setID("categoryMediaTab");
         
         VLayout mediaLayout = new VLayout();
+        mediaLayout.setID("categoryMediaLayout");
         mediaLayout.setHeight100();
         mediaLayout.setWidth100();
         mediaLayout.setBackgroundColor("#eaeaea");

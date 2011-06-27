@@ -49,6 +49,7 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
 	
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
+		leftVerticalLayout.setID("customerLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
