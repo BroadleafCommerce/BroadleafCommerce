@@ -98,7 +98,7 @@ public class OrderImpl implements Order {
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
-    @AdminPresentation(friendlyName="Order Status", group="Order", order=2, prominent=true)
+    @AdminPresentation(friendlyName="Order Status", group="Order", order=2, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus")
     protected String status;
 
     @Column(name = "CITY_TAX")

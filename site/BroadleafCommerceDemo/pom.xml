@@ -202,5 +202,9 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-instrument</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.icegreen</groupId>
+			<artifactId>greenmail</artifactId>
+		</dependency>
 	</dependencies>
 </project>

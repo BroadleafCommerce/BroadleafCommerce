@@ -22,14 +22,20 @@ import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.view.customer.CustomerDisplay;
-import org.broadleafcommerce.gwt.admin.client.view.customer.PasswordUpdateDialog;
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationType;
+import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationTypes;
+import org.broadleafcommerce.gwt.client.datasource.results.Entity;
+import org.broadleafcommerce.gwt.client.datasource.results.Property;
 import org.broadleafcommerce.gwt.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.gwt.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.gwt.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
+import org.broadleafcommerce.gwt.client.service.AbstractCallback;
+import org.broadleafcommerce.gwt.client.service.AppServices;
 import org.broadleafcommerce.gwt.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.gwt.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
@@ -37,6 +43,8 @@ import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
@@ -47,7 +55,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
  */
 public class CustomerPresenter extends DynamicEntityPresenter implements Instantiable {
 	
-	protected PasswordUpdateDialog passwordUpdateDialog = new PasswordUpdateDialog();
 	protected HashMap<String, Object> library = new HashMap<String, Object>();
 	
 	@Override
@@ -75,7 +82,32 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					passwordUpdateDialog.updatePassword(display.getListDisplay().getGrid().getSelectedRecord());
+					SC.confirm(AdminModule.ADMINMESSAGES.confirmResetPassword(), new BooleanCallback() {
+						public void execute(Boolean value) {
+							if (value) {
+								BLCMain.NON_MODAL_PROGRESS.startProgress();
+								
+								PersistencePerspective tempPerspective = new PersistencePerspective();
+			            		OperationTypes opTypes = new OperationTypes();
+			            		opTypes.setUpdateType(OperationType.ENTITY);
+			            		tempPerspective.setOperationTypes(opTypes);
+			            		
+								final Entity entity = new Entity();
+			            		Property prop = new Property();
+			            		prop.setName("username");
+			            		prop.setValue(display.getListDisplay().getGrid().getSelectedRecord().getAttribute("username"));
+			            		entity.setProperties(new Property[]{prop});
+			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
+			            		
+			            		AppServices.DYNAMIC_ENTITY.update(entity, tempPerspective, new String[]{"passwordUpdate"}, new AbstractCallback<Entity>() {
+									public void onSuccess(Entity arg0) {
+										BLCMain.NON_MODAL_PROGRESS.stopProgress();
+										SC.say(AdminModule.ADMINMESSAGES.resetPasswordSuccessful());
+									}	
+			            		}); 
+							}
+						}
+					});
 				}
 			}
 		});

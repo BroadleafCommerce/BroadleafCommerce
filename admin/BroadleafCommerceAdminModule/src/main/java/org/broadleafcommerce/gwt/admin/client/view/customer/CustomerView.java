@@ -61,7 +61,7 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
         ToolStrip toolbar = dynamicFormDisplay.getToolbar();
         toolbar.addFill();
         Label label = new Label();
-        label.setContents(AdminModule.ADMINMESSAGES.updatePasswordPrompt());
+        label.setContents(AdminModule.ADMINMESSAGES.resetPasswordPrompt());
         label.setWrap(false);
         toolbar.addMember(label);
         

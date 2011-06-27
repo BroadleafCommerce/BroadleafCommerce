@@ -6,9 +6,9 @@
 		http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-    	<property name="host"><value>172.16.8.200</value></property>
-    	<property name="port"><value>2525</value></property>
+	<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    	<property name="host"><value>0.0.0.0</value></property>
+    	<property name="port"><value>30000</value></property>
     	<property name="protocol"><value>smtp</value></property>
     	<property name="javaMailProperties">
 			<props>
@@ -19,12 +19,21 @@
 	</bean>
     
 	<bean id="blEmailInfo" class="org.broadleafcommerce.profile.email.service.info.EmailInfo" />
+	
 	<bean id="blRegistrationEmailInfo" parent="blEmailInfo">
 		<property name="subject"><value>You have successfully registered!</value></property>
 		<property name="fromAddress"><value>demo@broadleafcommerce.com</value></property>
-		<property name="emailTemplate"><value>org/broadleafcommerce/email/service/template/default.vm</value></property>
+		<property name="emailTemplate"><value>org/broadleafcommerce/profile/email/service/template/default.vm</value></property>
 		<property name="sendAsyncPriority"><value>2</value></property>
 		<property name="sendEmailReliableAsync"><value>false</value></property>
 	</bean>
 
+	<bean id="demoSMTP" class="org.broadleafcommerce.email.DemoSMTP">
+		<constructor-arg>
+			<value>30000</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>0.0.0.0</value>
+		</constructor-arg>
+	</bean>
 </beans>
