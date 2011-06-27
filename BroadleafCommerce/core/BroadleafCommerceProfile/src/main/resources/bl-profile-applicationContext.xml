@@ -13,6 +13,14 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
+	<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+	    <property name="converters">
+	        <list>
+	            <bean class="org.broadleafcommerce.profile.core.util.LocaleConverter" />
+	        </list>
+	    </property>
+	</bean>
+	
 	<context:component-scan base-package="org.broadleafcommerce.profile">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.profile.web.controller.*"/>
     </context:component-scan>
@@ -111,5 +119,29 @@
 	<bean id="springAppContext" class="org.broadleafcommerce.profile.util.SpringAppContext"/>
 	
 	<bean id="blEncryptionModule" class="org.broadleafcommerce.profile.encryption.DefaultEncryptionModule"/>
+	
+	<bean id="blCustomerService" class="org.broadleafcommerce.profile.core.service.CustomerServiceImpl">
+		<property name="passwordResetHandlers">
+			<list>
+				<bean class="org.broadleafcommerce.profile.core.service.handler.EmailNotificationPasswordUpdatedHandler">
+					<property name="passwordResetEmailSubject">
+						<map>
+							<entry key="en_US">
+								<value>Password Reset</value>
+							</entry>
+						</map>
+					</property>
+					<property name="passwordResetEmailTemplate">
+						<map>
+							<entry key="en_US">
+								<value>org/broadleafcommerce/profile/email/service/template/passwordReset.vm</value>
+							</entry>
+						</map>
+					</property>
+					<property name="passwordResetEmailFromAddress" value="team@yourcompany.com"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
 	
 </beans>

@@ -22,7 +22,6 @@ import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.datasource.user.AdminPermissionListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.user.AdminRoleListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.user.AdminUserListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.view.customer.PasswordUpdateDialog;
 import org.broadleafcommerce.gwt.admin.client.view.user.UserManagementDisplay;
 import org.broadleafcommerce.gwt.admin.client.view.user.UserRoleDisplay;
 import org.broadleafcommerce.gwt.client.BLCMain;
@@ -48,7 +47,6 @@ import com.smartgwt.client.data.Record;
  */
 public class UserManagementPresenter extends DynamicEntityPresenter implements Instantiable {
 	
-	protected PasswordUpdateDialog passwordUpdateDialog = new PasswordUpdateDialog();
 	protected UserRolePresenter userRolePresenter;
 	protected EntitySearchDialog roleSearchView;
 	protected HashMap<String, Object> library = new HashMap<String, Object>();

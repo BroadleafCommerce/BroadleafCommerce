@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import java.util.Locale;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,9 +30,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.common.domain.Auditable;
 import org.broadleafcommerce.profile.core.domain.listener.AuditableListener;
+import org.broadleafcommerce.profile.core.service.type.LocaleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -94,6 +98,10 @@ public class CustomerImpl implements Customer {
     @Column(name = "IS_REGISTERED")
     @AdminPresentation(friendlyName="Customer Registered", group="Customer")
     protected boolean registered = false;
+    
+    @Column(name = "CUSTOMER_LOCALE")
+    @AdminPresentation(friendlyName="Customer Locale", group="Customer", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.core.service.type.LocaleType")
+    protected String customerLocale = Locale.US.toString();
 
     @Transient
     protected String unencodedPassword;
@@ -257,6 +265,17 @@ public class CustomerImpl implements Customer {
             cookied = false;
         }
     }
+    
+    public LocaleType getCustomerLocale() {
+    	if (customerLocale == null) {
+    		return null;
+    	}
+    	return LocaleType.getInstance(customerLocale);
+	}
+
+	public void setCustomerLocale(LocaleType customerLocale) {
+		this.customerLocale = customerLocale.getType();
+	}
 
     @Override
     public boolean equals(Object obj) {

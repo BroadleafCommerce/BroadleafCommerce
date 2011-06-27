@@ -22,19 +22,22 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
+import org.broadleafcommerce.gwt.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
+import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
+import org.broadleafcommerce.profile.core.util.PasswordUtils;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
-
+	
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
@@ -46,8 +49,10 @@ public class CustomerServiceImpl implements CustomerService {
     
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
-
-    private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
+   
+    protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
+    protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
+    protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
 
     public Customer saveCustomer(Customer customer) {
         return saveCustomer(customer, true);
@@ -98,6 +103,25 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(passwordChange.getNewPassword());
         customer.setPasswordChangeRequired(passwordChange.getPasswordChangeRequired());
         customer = saveCustomer(customer);
+        
+        for (PasswordUpdatedHandler handler : passwordChangedHandlers) {
+        	handler.passwordChanged(passwordChange, customer, passwordChange.getNewPassword());
+        }
+        
+        return customer;
+    }
+    
+	public Customer resetPassword(PasswordReset passwordReset) {
+        Customer customer = readCustomerByUsername(passwordReset.getUsername());
+        String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
+        customer.setUnencodedPassword(newPassword);
+        customer.setPasswordChangeRequired(passwordReset.getPasswordChangeRequired());
+        customer = saveCustomer(customer);
+        
+        for (PasswordUpdatedHandler handler : passwordResetHandlers) {
+        	handler.passwordChanged(passwordReset, customer, newPassword);
+        }
+        
         return customer;
     }
 
@@ -146,4 +170,21 @@ public class CustomerServiceImpl implements CustomerService {
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
+
+	public List<PasswordUpdatedHandler> getPasswordResetHandlers() {
+		return passwordResetHandlers;
+	}
+
+	public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers) {
+		this.passwordResetHandlers = passwordResetHandlers;
+	}
+
+	public List<PasswordUpdatedHandler> getPasswordChangedHandlers() {
+		return passwordChangedHandlers;
+	}
+
+	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
+		this.passwordChangedHandlers = passwordChangedHandlers;
+	}
+    
 }
