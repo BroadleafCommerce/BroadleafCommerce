@@ -13,12 +13,12 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
-    <context:component-scan base-package="org.broadleafcommerce.config"/>
+    <context:component-scan base-package="org.broadleafcommerce.persistence"/>
     <context:component-scan base-package="org.broadleafcommerce.gwt"/>
     
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
     
-    <bean id="blEntityConfiguration" class="org.broadleafcommerce.config.EntityConfiguration">
+    <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
 		<property name="entityContexts">
 			<list>
 				<value>classpath:bl-open-admin-applicationContext-entity.xml</value>

@@ -22,8 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
 

@@ -26,8 +26,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.mapping.PersistentClass;
 
 /**

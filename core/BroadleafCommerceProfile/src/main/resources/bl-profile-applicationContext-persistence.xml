@@ -41,7 +41,7 @@
 		</property>
 	</bean>
 	
-	<bean id="blEntityConfiguration" class="org.broadleafcommerce.config.EntityConfiguration">
+	<bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
 		<property name="entityContexts">
 			<list>
 				<value>classpath:bl-profile-applicationContext-entity.xml</value>

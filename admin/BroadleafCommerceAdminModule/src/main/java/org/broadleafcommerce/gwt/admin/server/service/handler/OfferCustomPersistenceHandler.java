@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
@@ -46,6 +45,7 @@ import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RecordHelper;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.tool.hbm2x.StringUtils;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
