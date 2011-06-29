@@ -57,7 +57,7 @@ import org.springframework.util.ReflectionUtils;
  * This class keeps track of two persistence units instead of one: the regular persistence unit and
  * the sand box persistence unit.
  * 
- * Based on PersistenceAnnotationBeanPostProcessor by Rod Johnson and Juergen Hoeller
+ * Based on {@link org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor} by Rod Johnson and Juergen Hoeller
  * 
  * @author jfischer
  *

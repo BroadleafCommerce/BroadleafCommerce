@@ -388,9 +388,26 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return fieldMetadata;
 	}
 	
+	protected Field[] getAllFields(Class<?> targetClass) {
+		Field[] allFields = new Field[]{};
+		boolean eof = false;
+		Class<?> currentClass = targetClass;
+		while (!eof) {
+			Field[] fields = currentClass.getDeclaredFields();
+			allFields = (Field[]) ArrayUtils.addAll(allFields, fields);
+			if (currentClass.getSuperclass() != null) {
+				currentClass = currentClass.getSuperclass();
+			} else {
+				eof = true;
+			}
+		}
+		
+		return allFields;
+	}
+	
 	protected Map<String, FieldPresentationAttributes> getFieldPresentationAttributes(Class<?> targetClass) {
 		Map<String, FieldPresentationAttributes> attributes = new HashMap<String, FieldPresentationAttributes>();
-		Field[] fields = targetClass.getDeclaredFields();
+		Field[] fields = getAllFields(targetClass);
 		for (Field field : fields) {
 			AdminPresentation annot = field.getAnnotation(AdminPresentation.class);
 			if (annot != null) {

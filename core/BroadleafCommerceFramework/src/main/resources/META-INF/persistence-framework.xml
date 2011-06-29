@@ -95,6 +95,25 @@
         </properties>
 	</persistence-unit>
 	
+	<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
+		<mapping-file>config/bc/jpa/domain/sandbox/Category_Sandbox.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/sandbox/CategoryXref_Sandbox.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryXref</class>
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <property name="hibernate.generate_statistics" value="false" />
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+	</persistence-unit>
+	
 	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
 		<mapping-file>config/bc/jpa/domain/GiftCardPaymentInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/CreditCardPaymentInfo.orm.xml</mapping-file>

@@ -17,7 +17,6 @@ package org.broadleafcommerce.core.offer.service.discount;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;

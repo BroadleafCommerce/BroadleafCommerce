@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.catalog.domain;
+package org.broadleafcommerce.core.catalog.domain.sandbox;
 
 import java.io.Serializable;
 
@@ -24,6 +24,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref.CategoryXrefPK;
+
 /**
  * The Class SandBoxCategoryXref is for testing purposes only.  It helps autogenerate the cross reference table
  * properly with the DISPLY_ORDER column
@@ -32,21 +35,21 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "BLC_CATEGORY_XREF")
-public class CategoryXref implements Serializable {
+@Table(name = "BLC_CATEGORY_SNDBX_XREF")
+public class SandBoxCategoryXref implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The category id. */
     @EmbeddedId
-    CategoryXrefPK categoryXrefPK = new CategoryXrefPK();
+    SandBoxCategoryXrefPK categoryXrefPK = new SandBoxCategoryXrefPK();
 
-    public CategoryXrefPK getCategoryXrefPK() {
+    public SandBoxCategoryXrefPK getCategoryXrefPK() {
         return categoryXrefPK;
     }
 
-    public void setCategoryXrefPK(final CategoryXrefPK categoryXrefPK) {
+    public void setCategoryXrefPK(final SandBoxCategoryXrefPK categoryXrefPK) {
         this.categoryXrefPK = categoryXrefPK;
     }
 
@@ -61,18 +64,18 @@ public class CategoryXref implements Serializable {
         this.displayOrder = displayOrder;
     }
 
-    public static class CategoryXrefPK implements Serializable {
+    public static class SandBoxCategoryXrefPK implements Serializable {
     	
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @ManyToOne(targetEntity = SandBoxCategoryImpl.class, optional=false)
         @JoinColumn(name = "CATEGORY_ID")
-        protected Category category = new CategoryImpl();
+        protected Category category = new SandBoxCategoryImpl();
         
-        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @ManyToOne(targetEntity = SandBoxCategoryImpl.class, optional=false)
         @JoinColumn(name = "SUB_CATEGORY_ID")
-        protected Category subCategory = new CategoryImpl();
+        protected Category subCategory = new SandBoxCategoryImpl();
 
         public Category getCategory() {
 			return category;
@@ -95,8 +98,8 @@ public class CategoryXref implements Serializable {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
 
-            return category.getId().equals(((CategoryXrefPK) obj).getCategory().getId())
-            && subCategory.getId().equals(((CategoryXrefPK) obj).getSubCategory().getId());
+            return category.getId().equals(((SandBoxCategoryXrefPK) obj).getCategory().getId())
+            && subCategory.getId().equals(((SandBoxCategoryXrefPK) obj).getSubCategory().getId());
         }
 		
 
