@@ -54,7 +54,7 @@ import org.hibernate.annotations.OrderBy;
  * <br>
  * If you want to add fields specific to your implementation of
  * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the CategoryImpl then you should implment
+ * need to make significant changes to the CategoryImpl then you should implement
  * your own version of {@link Category}. <BR>
  * <BR>
  * This implementation uses a Hibernate implementation of JPA configured through

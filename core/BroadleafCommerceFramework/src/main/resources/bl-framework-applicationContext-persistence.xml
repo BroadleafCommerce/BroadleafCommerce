@@ -32,14 +32,6 @@
 		</property>
 	</bean>
 	
-	<bean id="blEntityManagerFactorySandboxInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-		</property>
-		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
-		<property name="persistenceUnitName" value="blSandboxPU"/>
-	</bean>
-	
 	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>

@@ -20,12 +20,11 @@ import javax.persistence.Table;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
-import org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.common.CategoryMappedSuperclass;
+import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.media.domain.sandbox.SandBoxMediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.cache.CacheFactoryException;
 import org.broadleafcommerce.profile.cache.HydratedCacheManager;
@@ -34,7 +33,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
@@ -43,13 +41,9 @@ import org.hibernate.annotations.OrderBy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_SNDBX")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements SandBoxCategory {
+public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Category, SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
-    
-    @Column(name = "VERSION", nullable=false)
-    @Index(name="CAT_SNDBX_VER_INDX", columnNames={"VERSION"})
-    protected String version;
 	
     /** The default parent category. */
     @ManyToOne(targetEntity = SandBoxCategoryImpl.class)
@@ -60,7 +54,7 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements San
 
     /** The all child categories. */
     @ManyToMany(targetEntity = SandBoxCategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_SNDBX_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+    @JoinTable(name = "BLC_CTGRY_SNDBX_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -69,13 +63,41 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements San
 
     /** The all parent categories. */	
     @ManyToMany(targetEntity = SandBoxCategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_SNDBX_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @JoinTable(name = "BLC_CTGRY_SNDBX_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
+    
+    @ManyToMany(targetEntity = SandBoxProductImpl.class)
+    @JoinTable(name = "BLC_CTGRY_PRDCT_SNDBX_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<Product> allProducts = new ArrayList<Product>();
 
+    @ManyToMany(targetEntity = SandBoxMediaImpl.class)
+    @JoinTable(name = "BLC_CTGRY_MEDIA_SNDBX_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected Map<String, Media> categoryMedia = new HashMap<String , Media>();
+
+    @OneToMany(mappedBy = "category", targetEntity = SandBoxFeaturedProductImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
+
+    //SandBoxItem fields
+    
+    @Column(name = "VERSION", nullable=false)
+    @Index(name="CAT_SNDBX_VER_INDX", columnNames={"VERSION"})
+    protected long version;
+    
     /*
      * (non-Javadoc)
      * @see
@@ -163,6 +185,37 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements San
 
     /*
      * (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryImages()
+     */
+    @Deprecated
+    public Map<String, String> getCategoryImages() {
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.core.catalog.domain.Category#getCategoryImage(java.lang
+     * .String)
+     */
+    @Deprecated
+    public String getCategoryImage(final String imageKey) {
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.core.catalog.domain.Category#setCategoryImages(java.
+     * util.Map)
+     */
+    @Deprecated
+    public void setCategoryImages(final Map<String, String> categoryImages) {
+    	//do nothing
+    }
+
+    /*
+     * (non-Javadoc)
      * @see
      * org.broadleafcommerce.core.catalog.domain.Category#getChildCategoryURLMap()
      */
@@ -238,22 +291,63 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements San
     		this.allParentCategories.add(category);
     	}
     }
+
+    public List<FeaturedProduct> getFeaturedProducts() {
+        return featuredProducts;
+    }
+
+    public void setFeaturedProducts(final List<FeaturedProduct> featuredProducts) {
+    	this.featuredProducts.clear();
+    	for(FeaturedProduct featuredProduct : featuredProducts){
+    		this.featuredProducts.add(featuredProduct);
+    	}
+    }
+
+    public List<Product> getAllProducts() {
+		return allProducts;
+	}
+
+	public void setAllProducts(List<Product> allProducts) {
+		this.allProducts.clear();
+    	for(Product product : allProducts){
+    		this.allProducts.add(product);
+    	}
+	}
+
+	/*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryMedia()
+     */
+    public Map<String, Media> getCategoryMedia() {
+        return categoryMedia;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.Category#setCategoryMedia(java.util.Map)
+     */
+    public void setCategoryMedia(final Map<String, Media> categoryMedia) {
+    	this.categoryMedia.clear();
+    	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
+    		this.categoryMedia.put(me.getKey(), me.getValue());
+    	}
+    }
     
     /**
 	 * @return the version
 	 */
-	public String getVersion() {
+	public long getVersion() {
 		return version;
 	}
 
 	/**
 	 * @param version the version to set
 	 */
-	public void setVersion(String version) {
+	public void setVersion(long version) {
 		this.version = version;
 	}
-    
-    @Override
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -288,86 +382,5 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements San
             return false;
         return true;
     }
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryImages()
-	 */
-	@Override
-	public Map<String, String> getCategoryImages() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryImage(java.lang.String)
-	 */
-	@Override
-	public String getCategoryImage(String imageKey) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#setCategoryImages(java.util.Map)
-	 */
-	@Override
-	public void setCategoryImages(Map<String, String> categoryImages) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryMedia()
-	 */
-	@Override
-	public Map<String, Media> getCategoryMedia() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#setCategoryMedia(java.util.Map)
-	 */
-	@Override
-	public void setCategoryMedia(Map<String, Media> categoryMedia) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#getFeaturedProducts()
-	 */
-	@Override
-	public List<FeaturedProduct> getFeaturedProducts() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#setFeaturedProducts(java.util.List)
-	 */
-	@Override
-	public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#getAllProducts()
-	 */
-	@Override
-	public List<Product> getAllProducts() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.catalog.domain.Category#setAllProducts(java.util.List)
-	 */
-	@Override
-	public void setAllProducts(List<Product> allProducts) {
-		// TODO Auto-generated method stub
-		
-	}
     
 }

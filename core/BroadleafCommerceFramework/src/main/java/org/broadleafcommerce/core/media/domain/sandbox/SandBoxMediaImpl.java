@@ -13,23 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.media.domain;
+package org.broadleafcommerce.core.media.domain.sandbox;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
+import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.common.MediaMappedSuperclass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_MEDIA")
+@Table(name = "BLC_MEDIA_SNDBX")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class MediaImpl extends MediaMappedSuperclass implements Media {
+public class SandBoxMediaImpl extends MediaMappedSuperclass implements Media, SandBoxItem {
 
+	//SandBoxItem fields
+    
+    @Column(name = "VERSION", nullable=false)
+    @Index(name="MEDIA_SNDBX_VER_INDX", columnNames={"VERSION"})
+    protected long version;
+    
+    /**
+	 * @return the version
+	 */
+	public long getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(long version) {
+		this.version = version;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -54,7 +78,7 @@ public class MediaImpl extends MediaMappedSuperclass implements Media {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MediaImpl other = (MediaImpl) obj;
+		SandBoxMediaImpl other = (SandBoxMediaImpl) obj;
 
 		if (id != null && other.id != null) {
             return id.equals(other.id);

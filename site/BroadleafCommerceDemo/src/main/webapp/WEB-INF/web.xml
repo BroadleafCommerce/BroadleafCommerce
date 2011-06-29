@@ -14,6 +14,7 @@
 	<context-param>
 		<param-name>patchConfigLocation</param-name>
 		<param-value>
+			classpath:/bl-framework-applicationContext-persistence-sandbox.xml
 			classpath:/bl-open-admin-applicationContext.xml
             classpath:/bl-admin-applicationContext.xml
             /WEB-INF/applicationContext-demo.xml

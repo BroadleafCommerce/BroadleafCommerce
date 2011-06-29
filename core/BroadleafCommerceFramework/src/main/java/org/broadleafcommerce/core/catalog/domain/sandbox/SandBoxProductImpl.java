@@ -1,19 +1,4 @@
-/*
- * Copyright 2008-2009 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.broadleafcommerce.core.catalog.domain;
+package org.broadleafcommerce.core.catalog.domain.sandbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +19,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl;
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.common.ProductMappedSuperclass;
+import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -48,29 +44,12 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 
-/**
- * The Class ProductImpl is the default implementation of {@link Product}. A
- * product is a general description of an item that can be sold (for example: a
- * hat). Products are not sold or added to a cart. {@link Sku}s which are
- * specific items (for example: a XL Blue Hat) are sold or added to a cart. <br>
- * <br>
- * If you want to add fields specific to your implementation of
- * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the ProductImpl then you should implement
- * your own version of {@link Product}. <br>
- * <br>
- * This implementation uses a Hibernate implementation of JPA configured through
- * annotations. The Entity references the following tables: BLC_PRODUCT,
- * BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
- * @author btaylor
- * @see {@link Product}, {@link SkuImpl}, {@link CategoryImpl}
- */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT")
+@Table(name = "BLC_PRODUCT_SNDBX")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
-public class ProductImpl extends ProductMappedSuperclass implements Product {
+public class SandBoxProductImpl extends ProductMappedSuperclass implements Product, SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
 
@@ -127,6 +106,12 @@ public class ProductImpl extends ProductMappedSuperclass implements Product {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
+    
+    //SandBoxItem fields
+    
+    @Column(name = "VERSION", nullable=false)
+    @Index(name="PRDCT_SNDBX_VER_INDX", columnNames={"VERSION"})
+    protected long version;
 
     /**
      * Gets the all skus.
@@ -271,6 +256,20 @@ public class ProductImpl extends ProductMappedSuperclass implements Product {
 	public void setProductAttributes(List<ProductAttribute> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
+	
+	/**
+	 * @return the version
+	 */
+	public long getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(long version) {
+		this.version = version;
+	}
 
 	@Override
     public int hashCode() {
@@ -289,7 +288,7 @@ public class ProductImpl extends ProductMappedSuperclass implements Product {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProductImpl other = (ProductImpl) obj;
+        SandBoxProductImpl other = (SandBoxProductImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);
@@ -307,5 +306,5 @@ public class ProductImpl extends ProductMappedSuperclass implements Product {
             return false;
         return true;
     }
-
+    
 }
