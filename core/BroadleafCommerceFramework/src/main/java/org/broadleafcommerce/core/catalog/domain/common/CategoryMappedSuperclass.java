@@ -19,7 +19,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.util.DateUtil;
 import org.broadleafcommerce.profile.util.UrlUtil;
-import org.hibernate.annotations.Index;
 
 @MappedSuperclass
 public abstract class CategoryMappedSuperclass implements Category {
@@ -38,7 +37,6 @@ public abstract class CategoryMappedSuperclass implements Category {
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
-    @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Category Name", order=1, group="Description", prominent=true)
     protected String name;
 
@@ -49,7 +47,6 @@ public abstract class CategoryMappedSuperclass implements Category {
 
     /** The url key. */
     @Column(name = "URL_KEY")
-    @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
     protected String urlKey;
     

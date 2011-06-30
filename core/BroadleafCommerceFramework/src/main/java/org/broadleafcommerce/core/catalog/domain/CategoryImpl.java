@@ -30,7 +30,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.broadleafcommerce.core.catalog.domain.common.CategoryMappedSuperclass;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -47,6 +46,7 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Table;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -65,7 +65,11 @@ import org.hibernate.annotations.OrderBy;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CATEGORY")
+@Table(appliesTo="BLC_CATEGORY", indexes={
+		@Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"}),
+		@Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"}),
+		@Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryImpl extends CategoryMappedSuperclass implements Category {
 
@@ -74,7 +78,6 @@ public class CategoryImpl extends CategoryMappedSuperclass implements Category {
     /** The default parent category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
     protected Category defaultParentCategory;
 

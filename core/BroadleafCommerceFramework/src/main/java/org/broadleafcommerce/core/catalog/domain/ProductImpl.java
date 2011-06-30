@@ -32,7 +32,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
 import org.broadleafcommerce.core.catalog.domain.common.ProductMappedSuperclass;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -47,6 +46,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Table;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -63,11 +63,15 @@ import org.hibernate.annotations.MapKey;
  * annotations. The Entity references the following tables: BLC_PRODUCT,
  * BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
  * @author btaylor
- * @see {@link Product}, {@link SkuImpl}, {@link CategoryImpl}
+ * @see {@link Product}, {@link SandBoxSkuImpl}, {@link CategoryImpl}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT")
+@Table(appliesTo="BLC_PRODUCT", indexes={
+		@Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"}),
+		@Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
+})
+//@Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 public class ProductImpl extends ProductMappedSuperclass implements Product {
@@ -111,7 +115,6 @@ public class ProductImpl extends ProductMappedSuperclass implements Product {
     /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
-    @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
     @AdminPresentation(friendlyName="Product Default Category", order=6, group="Product Description")
     protected Category defaultCategory;
 

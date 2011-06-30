@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -15,13 +16,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.common.CategoryMappedSuperclass;
+import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.sandbox.SandBoxMediaImpl;
@@ -33,13 +34,20 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CATEGORY_SNDBX")
+@Table(appliesTo="BLC_CATEGORY_SNDBX", indexes = {
+		@Index(name="CAT_SNDBX_VER_INDX", columnNames={"VERSION"}),
+		@Index(name="CAT_SNDBX_NAME_INDX", columnNames={"NAME"}),
+		@Index(name="CAT_SNDBX_URLKEY_INDX", columnNames={"URL_KEY"}),
+		@Index(name="CAT_PARENT_SNDBX_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Category, SandBoxItem {
 
@@ -48,7 +56,6 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
     /** The default parent category. */
     @ManyToOne(targetEntity = SandBoxCategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    @Index(name="CAT_PARENT_SNDBX_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
     protected Category defaultParentCategory;
 
@@ -78,6 +85,16 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
     @BatchSize(size = 50)
     protected List<Product> allProducts = new ArrayList<Product>();
 
+    /** The category images. */
+    @CollectionOfElements
+    @JoinTable(name = "BLC_CTGRY_SNDBX_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @Column(name = "URL")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @Deprecated
+    protected Map<String, String> categoryImages = new HashMap<String, String>();
+    
     @ManyToMany(targetEntity = SandBoxMediaImpl.class)
     @JoinTable(name = "BLC_CTGRY_MEDIA_SNDBX_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
@@ -91,12 +108,9 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
-
-    //SandBoxItem fields
     
-    @Column(name = "VERSION", nullable=false)
-    @Index(name="CAT_SNDBX_VER_INDX", columnNames={"VERSION"})
-    protected long version;
+    @Embedded
+    protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
     
     /*
      * (non-Javadoc)
@@ -189,7 +203,7 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
      */
     @Deprecated
     public Map<String, String> getCategoryImages() {
-        return null;
+        return categoryImages;
     }
 
     /*
@@ -200,7 +214,7 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
      */
     @Deprecated
     public String getCategoryImage(final String imageKey) {
-        return null;
+        return categoryImages.get(imageKey);
     }
 
     /*
@@ -211,9 +225,12 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
      */
     @Deprecated
     public void setCategoryImages(final Map<String, String> categoryImages) {
-    	//do nothing
+    	this.categoryImages.clear();
+    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
+    		this.categoryImages.put(me.getKey(), me.getValue());
+    	}
     }
-
+    
     /*
      * (non-Javadoc)
      * @see
@@ -332,19 +349,53 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
     		this.categoryMedia.put(me.getKey(), me.getValue());
     	}
     }
-    
-    /**
-	 * @return the version
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getVersion()
 	 */
 	public long getVersion() {
-		return version;
+		return sandBoxItem.getVersion();
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setVersion(long)
 	 */
 	public void setVersion(long version) {
-		this.version = version;
+		sandBoxItem.setVersion(version);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#isDirty()
+	 */
+	public boolean isDirty() {
+		return sandBoxItem.isDirty();
+	}
+
+	/**
+	 * @param dirty
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		sandBoxItem.setDirty(dirty);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getCommaDelimitedDirtyFields()
+	 */
+	public String getCommaDelimitedDirtyFields() {
+		return sandBoxItem.getCommaDelimitedDirtyFields();
+	}
+
+	/**
+	 * @param commaDelimitedDirtyFields
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setCommaDelimitedDirtyFields(java.lang.String)
+	 */
+	public void setCommaDelimitedDirtyFields(String commaDelimitedDirtyFields) {
+		sandBoxItem.setCommaDelimitedDirtyFields(commaDelimitedDirtyFields);
 	}
 
 	@Override

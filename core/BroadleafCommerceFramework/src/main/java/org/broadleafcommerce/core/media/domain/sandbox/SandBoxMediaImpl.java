@@ -15,45 +15,83 @@
  */
 package org.broadleafcommerce.core.media.domain.sandbox;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
+import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.common.MediaMappedSuperclass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_MEDIA_SNDBX")
+@Table(appliesTo="BLC_MEDIA_SNDBX", indexes={
+		@Index(name="MEDIA_SNDBX_VER_INDX", columnNames={"VERSION"}),
+		@Index(name="MEDIA_SNDBX_NAME_INDX", columnNames={"NAME"}),
+		@Index(name="MEDIA_SNDBX_URL_INDX", columnNames={"URL"})
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SandBoxMediaImpl extends MediaMappedSuperclass implements Media, SandBoxItem {
 
-	//SandBoxItem fields
+	private static final long serialVersionUID = 1L;
+	
+	@Embedded
+    protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
     
-    @Column(name = "VERSION", nullable=false)
-    @Index(name="MEDIA_SNDBX_VER_INDX", columnNames={"VERSION"})
-    protected long version;
-    
-    /**
-	 * @return the version
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getVersion()
 	 */
 	public long getVersion() {
-		return version;
+		return sandBoxItem.getVersion();
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setVersion(long)
 	 */
 	public void setVersion(long version) {
-		this.version = version;
+		sandBoxItem.setVersion(version);
 	}
-	
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#isDirty()
+	 */
+	public boolean isDirty() {
+		return sandBoxItem.isDirty();
+	}
+
+	/**
+	 * @param dirty
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		sandBoxItem.setDirty(dirty);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getCommaDelimitedDirtyFields()
+	 */
+	public String getCommaDelimitedDirtyFields() {
+		return sandBoxItem.getCommaDelimitedDirtyFields();
+	}
+
+	/**
+	 * @param commaDelimitedDirtyFields
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setCommaDelimitedDirtyFields(java.lang.String)
+	 */
+	public void setCommaDelimitedDirtyFields(String commaDelimitedDirtyFields) {
+		sandBoxItem.setCommaDelimitedDirtyFields(commaDelimitedDirtyFields);
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

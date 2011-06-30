@@ -18,15 +18,19 @@ package org.broadleafcommerce.core.media.domain;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 import org.broadleafcommerce.core.media.domain.common.MediaMappedSuperclass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_MEDIA")
+@Table(appliesTo="BLC_MEDIA", indexes={
+		@Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"}),
+		@Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class MediaImpl extends MediaMappedSuperclass implements Media {
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.catalog.domain;
+package org.broadleafcommerce.core.catalog.domain.sandbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
@@ -33,9 +34,15 @@ import javax.persistence.OneToMany;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
+import org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl;
+import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
+import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.SkuMappedSuperclass;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.media.domain.sandbox.SandBoxMediaImpl;
 import org.compass.annotations.Searchable;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -47,41 +54,29 @@ import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Table;
 
 /**
- * The Class SandBoxSkuImpl is the default implementation of {@link Sku}. A SKU is a
- * specific item that can be sold including any specific attributes of the item
- * such as color or size. <br>
- * <br>
- * If you want to add fields specific to your implementation of
- * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the SandBoxSkuImpl then you should implement
- * your own version of {@link Sku}. <br>
- * <br>
- * This implementation uses a Hibernate implementation of JPA configured through
- * annotations. The Entity references the following tables: BLC_SKU,
- * BLC_SKU_IMAGE
- * @see {@link Sku}
- * @author btaylor
+ * @author jfischer
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_SKU", indexes={
-		@Index(name="SKU_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"}),
-		@Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"}),
-		@Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"}),
-		@Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
+@Table(appliesTo="BLC_SKU_SNDBX", indexes={
+		@Index(name="SKU_SNDBX_VER_INDX", columnNames={"VERSION"}),
+		@Index(name="SKU_SNDBX_NAME_INDX", columnNames={"NAME"}),
+		@Index(name="SKU_SNDBX_TXBL_INDX", columnNames={"TAXABLE_FLAG"}),
+		@Index(name="SKU_SNDBX_DSCNTBL_INDX", columnNames={"DISCOUNTABLE_FLAG"}),
+		@Index(name="SKU_SNDBX_AVAIL_INDX", columnNames={"AVAILABLE_FLAG"}),
+		@Index(name="SKU_SNDBX_ACTIVE_INDX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable
-public class SkuImpl extends SkuMappedSuperclass implements Sku {
+public class SandBoxSkuImpl extends SkuMappedSuperclass implements Sku, SandBoxItem {
 	
 	private static final long serialVersionUID = 1L;
 
-	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
+	private static final Log LOG = LogFactory.getLog(SandBoxSkuImpl.class);
 	
     /** The sku images. */
     @CollectionOfElements
-    @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
+    @JoinTable(name = "BLC_SKU_SNDBX_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -89,23 +84,26 @@ public class SkuImpl extends SkuMappedSuperclass implements Sku {
     protected Map<String, String> skuImages = new HashMap<String, String>();
 
     /** The sku media. */
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_SKU_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @ManyToMany(targetEntity = SandBoxMediaImpl.class)
+    @JoinTable(name = "BLC_SKU_MEDIA_SNDBX_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SandBoxProductImpl.class)
+    @JoinTable(name = "BLC_PRDCT_SKU_SNDBX_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
     protected List<Product> allParentProducts = new ArrayList<Product>();
-    
+
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<SkuAttribute> skuAttributes  = new ArrayList<SkuAttribute>();
-
+    
+    @Embedded
+    protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
+    
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSkuImages()
@@ -159,7 +157,7 @@ public class SkuImpl extends SkuMappedSuperclass implements Sku {
     public void setAllParentProducts(List<Product> allParentProducts) {
         this.allParentProducts = allParentProducts;
     }
-
+    
     /**
 	 * @return the skuAttributes
 	 */
@@ -174,6 +172,54 @@ public class SkuImpl extends SkuMappedSuperclass implements Sku {
 		this.skuAttributes = skuAttributes;
 	}
 
+    /**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getVersion()
+	 */
+	public long getVersion() {
+		return sandBoxItem.getVersion();
+	}
+
+	/**
+	 * @param version
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setVersion(long)
+	 */
+	public void setVersion(long version) {
+		sandBoxItem.setVersion(version);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#isDirty()
+	 */
+	public boolean isDirty() {
+		return sandBoxItem.isDirty();
+	}
+
+	/**
+	 * @param dirty
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		sandBoxItem.setDirty(dirty);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getCommaDelimitedDirtyFields()
+	 */
+	public String getCommaDelimitedDirtyFields() {
+		return sandBoxItem.getCommaDelimitedDirtyFields();
+	}
+
+	/**
+	 * @param commaDelimitedDirtyFields
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setCommaDelimitedDirtyFields(java.lang.String)
+	 */
+	public void setCommaDelimitedDirtyFields(String commaDelimitedDirtyFields) {
+		sandBoxItem.setCommaDelimitedDirtyFields(commaDelimitedDirtyFields);
+	}
+
 	@Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -182,7 +228,7 @@ public class SkuImpl extends SkuMappedSuperclass implements Sku {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SkuImpl other = (SkuImpl) obj;
+        SandBoxSkuImpl other = (SandBoxSkuImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);

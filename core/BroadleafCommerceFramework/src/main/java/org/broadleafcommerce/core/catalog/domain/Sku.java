@@ -29,9 +29,9 @@ import org.broadleafcommerce.money.Money;
  * <br>
  * <br>
  * You should implement this class if you want to make significant changes to how the
- * class is persisted.  If you just want to add additional fields then you should extend {@link SkuImpl}.
+ * class is persisted.  If you just want to add additional fields then you should extend {@link SandBoxSkuImpl}.
  *
- * @see {@link SkuImpl}, {@link Money}
+ * @see {@link SandBoxSkuImpl}, {@link Money}
  * @author btaylor
  *
  */
@@ -216,4 +216,8 @@ public interface Sku extends Serializable {
     public void setAllParentProducts(List<Product> allParentProducts);
 
     public boolean isActive(Product product, Category category);
+    
+    List<SkuAttribute> getSkuAttributes();
+
+	void setSkuAttributes(List<SkuAttribute> skuAttributes);
 }

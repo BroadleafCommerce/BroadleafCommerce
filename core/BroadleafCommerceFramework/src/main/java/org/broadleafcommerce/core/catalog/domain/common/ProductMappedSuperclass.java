@@ -18,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductDimension;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductWeight;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -27,12 +26,11 @@ import org.broadleafcommerce.profile.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.profile.vendor.service.type.ContainerSizeType;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
-import org.hibernate.annotations.Index;
 
 @MappedSuperclass
 public abstract class ProductMappedSuperclass implements Product {
 
-	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
+	private static final Log LOG = LogFactory.getLog(ProductMappedSuperclass.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
@@ -48,7 +46,6 @@ public abstract class ProductMappedSuperclass implements Product {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty(name="productName")
-    @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Product Name", order=1, group="Product Description", prominent=true, columnWidth="25%", groupOrder=1)
     protected String name;
 

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
@@ -17,7 +18,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -29,10 +29,11 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
+import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.ProductMappedSuperclass;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.media.domain.sandbox.SandBoxMediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SupportUnmarshall;
@@ -43,10 +44,15 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT_SNDBX")
+@Table(appliesTo="BLC_PRODUCT_SNDBX", indexes={
+		@Index(name="PRODUCT_SNDBX_VER_INDX", columnNames={"VERSION"}),
+		@Index(name="PRODUCT_SNDBX_NAME_INDX", columnNames={"NAME"}),
+		@Index(name="PRODUCT_CAT_SNDBX_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 public class SandBoxProductImpl extends ProductMappedSuperclass implements Product, SandBoxItem {
@@ -63,24 +69,24 @@ public class SandBoxProductImpl extends ProductMappedSuperclass implements Produ
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     /** The all skus. */
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SandBoxSkuImpl.class)
+    @JoinTable(name = "BLC_PRDCT_SKU_SNDBX_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Sku> allSkus = new ArrayList<Sku>();
 
     /** The product images. */
     @CollectionOfElements
-    @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @JoinTable(name = "BLC_PRDCT_SNDBX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @Deprecated
     protected Map<String, String> productImages = new HashMap<String, String>();
 
     /** The product media. */
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @ManyToMany(targetEntity = SandBoxMediaImpl.class)
+    @JoinTable(name = "BLC_PRDCT_MEDIA_SNDBX_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -88,14 +94,13 @@ public class SandBoxProductImpl extends ProductMappedSuperclass implements Produ
     protected Map<String, Media> productMedia = new HashMap<String , Media>();
 
     /** The default category. */
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = SandBoxCategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
-    @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
     @AdminPresentation(friendlyName="Product Default Category", order=6, group="Product Description")
     protected Category defaultCategory;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SandBoxCategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "BLC_CAT_PRDCT_SNDBX_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
@@ -107,11 +112,8 @@ public class SandBoxProductImpl extends ProductMappedSuperclass implements Produ
     @BatchSize(size = 50)
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
     
-    //SandBoxItem fields
-    
-    @Column(name = "VERSION", nullable=false)
-    @Index(name="PRDCT_SNDBX_VER_INDX", columnNames={"VERSION"})
-    protected long version;
+    @Embedded
+    protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
 
     /**
      * Gets the all skus.
@@ -256,19 +258,53 @@ public class SandBoxProductImpl extends ProductMappedSuperclass implements Produ
 	public void setProductAttributes(List<ProductAttribute> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
-	
+
 	/**
-	 * @return the version
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getVersion()
 	 */
 	public long getVersion() {
-		return version;
+		return sandBoxItem.getVersion();
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setVersion(long)
 	 */
 	public void setVersion(long version) {
-		this.version = version;
+		sandBoxItem.setVersion(version);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#isDirty()
+	 */
+	public boolean isDirty() {
+		return sandBoxItem.isDirty();
+	}
+
+	/**
+	 * @param dirty
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		sandBoxItem.setDirty(dirty);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getCommaDelimitedDirtyFields()
+	 */
+	public String getCommaDelimitedDirtyFields() {
+		return sandBoxItem.getCommaDelimitedDirtyFields();
+	}
+
+	/**
+	 * @param commaDelimitedDirtyFields
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setCommaDelimitedDirtyFields(java.lang.String)
+	 */
+	public void setCommaDelimitedDirtyFields(String commaDelimitedDirtyFields) {
+		sandBoxItem.setCommaDelimitedDirtyFields(commaDelimitedDirtyFields);
 	}
 
 	@Override
