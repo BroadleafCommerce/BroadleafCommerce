@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.common.CategoryMappedSuperclass;
@@ -239,12 +238,12 @@ public class SandBoxCategoryImpl extends CategoryMappedSuperclass implements Cat
     @SuppressWarnings("unchecked")
 	public Map<String, List<Category>> getChildCategoryURLMap() {
     	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
-    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
+    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem("blStandardElements", SandBoxCategoryImpl.class.getName(), getId(), "childCategoryURLMap");
     	if (hydratedItem != null) {
     		return (Map<String, List<Category>>) hydratedItem;
     	}
     	childCategoryURLMap = createChildCategoryURLMap();
-    	((HydratedCacheManager) manager).addHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
+    	((HydratedCacheManager) manager).addHydratedCacheElementItem("blStandardElements", SandBoxCategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
         return childCategoryURLMap;
     }
     

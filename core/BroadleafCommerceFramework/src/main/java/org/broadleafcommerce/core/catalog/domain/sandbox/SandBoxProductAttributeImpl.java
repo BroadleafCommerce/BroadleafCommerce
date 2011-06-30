@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.catalog.domain;
+package org.broadleafcommerce.core.catalog.domain.sandbox;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.ProductAttributeMappedSuperclass;
+import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -32,20 +37,24 @@ import org.hibernate.annotations.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_PRODUCT_ATTRIBUTE", indexes={
-		@Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
+@Table(appliesTo="BLC_PRODUCT_ATTR_SNDBX", indexes={
+		@Index(name="PRDCT_ATTR_SNDBX_VER_INDX", columnNames={"VERSION"}),
+		@Index(name="PRDCT_ATTR_SNDBX_NAME_INDX", columnNames={"NAME"}),
+		@Index(name="PRDCT_ATTR_SNDBX_INDEX", columnNames={"PRODUCT_ID"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class ProductAttributeImpl extends ProductAttributeMappedSuperclass implements ProductAttribute {
+public class SandBoxProductAttributeImpl extends ProductAttributeMappedSuperclass implements ProductAttribute, SandBoxItem {
 
 	/** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
     
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+    @ManyToOne(targetEntity = SandBoxProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product;
+    
+    @Embedded
+    protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getProduct()
@@ -61,7 +70,55 @@ public class ProductAttributeImpl extends ProductAttributeMappedSuperclass imple
         this.product = product;
     }
 
-    @Override
+    /**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getVersion()
+	 */
+	public long getVersion() {
+		return sandBoxItem.getVersion();
+	}
+
+	/**
+	 * @param version
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setVersion(long)
+	 */
+	public void setVersion(long version) {
+		sandBoxItem.setVersion(version);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#isDirty()
+	 */
+	public boolean isDirty() {
+		return sandBoxItem.isDirty();
+	}
+
+	/**
+	 * @param dirty
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		sandBoxItem.setDirty(dirty);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getCommaDelimitedDirtyFields()
+	 */
+	public String getCommaDelimitedDirtyFields() {
+		return sandBoxItem.getCommaDelimitedDirtyFields();
+	}
+
+	/**
+	 * @param commaDelimitedDirtyFields
+	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#setCommaDelimitedDirtyFields(java.lang.String)
+	 */
+	public void setCommaDelimitedDirtyFields(String commaDelimitedDirtyFields) {
+		sandBoxItem.setCommaDelimitedDirtyFields(commaDelimitedDirtyFields);
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -79,7 +136,7 @@ public class ProductAttributeImpl extends ProductAttributeMappedSuperclass imple
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProductAttributeImpl other = (ProductAttributeImpl) obj;
+        SandBoxProductAttributeImpl other = (SandBoxProductAttributeImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);

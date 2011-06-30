@@ -20,15 +20,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.ProductMappedSuperclass;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
@@ -59,11 +54,11 @@ public class SandBoxProductImpl extends ProductMappedSuperclass implements Produ
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+	@OneToMany(mappedBy = "product", targetEntity = SandBoxCrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
-    @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = SandBoxUpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @OrderBy(value="sequence")
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
@@ -106,7 +101,7 @@ public class SandBoxProductImpl extends ProductMappedSuperclass implements Produ
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
     
-    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = SandBoxProductAttributeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)

@@ -10,12 +10,18 @@
 		<mapping-file>config/bc/jpa/domain/sandbox/Product_Sandbox.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/sandbox/Sku_Sandbox.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryXref</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxProductImpl</class>
         <class>org.broadleafcommerce.core.media.domain.sandbox.SandBoxMediaImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxFeaturedProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxProductSkuImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxSkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCategoryProductXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxCrossSaleProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxProductAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxSkuAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxUpSaleProductImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

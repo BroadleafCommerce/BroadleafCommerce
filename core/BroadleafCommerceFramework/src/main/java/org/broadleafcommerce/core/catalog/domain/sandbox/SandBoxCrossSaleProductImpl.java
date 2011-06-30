@@ -22,11 +22,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.common.CrossSaleProductMappedSuperclass;
 import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
-import org.broadleafcommerce.core.catalog.domain.common.FeaturedProductMappedSuperclass;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,41 +34,41 @@ import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_PRDCT_FTRD_SNDBX", indexes = {
-		@Index(name="FP_SNDBX_VER_INDX", columnNames={"VERSION"})
+@Table(appliesTo="BLC_PRDCT_CROSS_SALE_SNDBX", indexes={
+		@Index(name="CROSSSALE_SNDBX_VER_INDX", columnNames={"VERSION"}),
+		@Index(name="CROSSSALE_SNDBX_INDEX", columnNames={"PRODUCT_ID"}),
+		@Index(name="CROSSSALE_RELATED_SNDBX_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SandBoxFeaturedProductImpl extends FeaturedProductMappedSuperclass implements FeaturedProduct, SandBoxItem {
+public class SandBoxCrossSaleProductImpl extends CrossSaleProductMappedSuperclass implements RelatedProduct, SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne(targetEntity = SandBoxCategoryImpl.class)
-    @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="PRD_FTRD_CTGRY_SNDBX_INDEX", columnNames={"CATEGORY_ID"})
-    protected Category category = new SandBoxCategoryImpl();
-
-    @ManyToOne(targetEntity = SandBoxProductImpl.class)
+	@ManyToOne(targetEntity = SandBoxProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
-    @Index(name="PRD_FTRD_PRDCT_SNDBX_INDEX", columnNames={"PRODUCT_ID"})
-    protected Product product = new SandBoxProductImpl();
+    private Product product = new SandBoxProductImpl();
 
+    @ManyToOne(targetEntity = SandBoxProductImpl.class, optional=false)
+    @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
+    private Product relatedSaleProduct = new SandBoxProductImpl();
+    
     @Embedded
     protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
-    
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 
     public Product getProduct() {
         return product;
     }
 
+    public Product getRelatedProduct() {
+        return relatedSaleProduct;
+    }
+
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public void setRelatedProduct(Product relatedSaleProduct) {
+        this.relatedSaleProduct = relatedSaleProduct;
     }
 
 	/**
@@ -119,5 +118,4 @@ public class SandBoxFeaturedProductImpl extends FeaturedProductMappedSuperclass 
 	public void setCommaDelimitedDirtyFields(String commaDelimitedDirtyFields) {
 		sandBoxItem.setCommaDelimitedDirtyFields(commaDelimitedDirtyFields);
 	}
-    
 }

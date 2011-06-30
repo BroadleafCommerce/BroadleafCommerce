@@ -24,14 +24,14 @@ package org.broadleafcommerce.gwt.admin.client.datasource;
 public class EntityImplementations {
 	
 	public static final String CATEGORY = "org.broadleafcommerce.core.catalog.domain.CategoryImpl";
-	public static final String CATEGORY_XREF = "org.broadleafcommerce.core.catalog.domain.CategoryXref";
+	public static final String CATEGORY_XREF = "org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl";
 	public static final String FEATUREDPRODUCT = "org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl";
 	public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.ProductImpl";
 	public static final String MEDIA = "org.broadleafcommerce.core.media.domain.MediaImpl";
 	public static final String CROSSSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl";
 	public static final String UPSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl";
 	public static final String PRODUCT_ATTRIBUTE = "org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl";
-	public static final String CATEGORY_PRODUCT = "org.broadleafcommerce.core.catalog.domain.CategoryProductImpl";
+	public static final String CATEGORY_PRODUCT = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl";
 	public static final String ORDER = "org.broadleafcommerce.core.order.domain.OrderImpl";
 	public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItemImpl";
 	public static final String FULFILLMENT_GROUP = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl";

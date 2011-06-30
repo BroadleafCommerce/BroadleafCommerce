@@ -15,24 +15,20 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.core.catalog.domain.common.SkuAttributeMappedSuperclass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Table;
 
 /**
- * The Class SkuAttributeImpl is the default implentation of {@link SkuAttribute}.
+ * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
  * A SKU Attribute is a designator on a SKU that differentiates it from other similar SKUs
  * (for example: Blue attribute for hat).
  * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
@@ -50,80 +46,20 @@ import org.hibernate.annotations.Index;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU_ATTRIBUTE")
+@Table(appliesTo="BLC_SKU_ATTRIBUTE", indexes={
+		@Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"}),
+		@Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SkuAttributeImpl implements SkuAttribute {
+public class SkuAttributeImpl extends SkuAttributeMappedSuperclass implements SkuAttribute {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
-    @Id
-    @GeneratedValue(generator = "SkuAttributeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SkuAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAttributeImpl", allocationSize = 50)
-    @Column(name = "SKU_ATTR_ID")
-    protected Long id;
-
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID")
-    @Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
     protected Sku sku;
-
-    /** The name. */
-    @Column(name = "NAME", nullable=false)
-    @Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"})
-    protected String name;
-
-    /** The value. */
-    @Column(name = "VALUE", nullable=false)
-    protected String value;
-
-    /** The searchable. */
-    @Column(name = "SEARCHABLE")
-    protected Boolean searchable;
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setId(java.lang.Long)
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getValue()
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setValue(java.lang.String)
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
-     */
-    public Boolean getSearchable() {
-        return searchable;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSearchable(java.lang.Boolean)
-     */
-    public void setSearchable(Boolean searchable) {
-        this.searchable = searchable;
-    }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
@@ -137,28 +73,6 @@ public class SkuAttributeImpl implements SkuAttribute {
      */
     public void setSku(Sku sku) {
         this.sku = sku;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
-     */
-    public String getName() {
-        return name;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setName(java.lang.String)
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return value;
     }
 
     @Override

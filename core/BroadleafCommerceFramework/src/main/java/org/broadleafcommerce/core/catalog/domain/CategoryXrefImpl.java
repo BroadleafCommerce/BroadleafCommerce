@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.catalog.domain.sandbox;
+package org.broadleafcommerce.core.catalog.domain;
 
 import java.io.Serializable;
 
@@ -24,32 +24,29 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryXref.CategoryXrefPK;
-
 /**
- * The Class SandBoxCategoryXref is for testing purposes only.  It helps autogenerate the cross reference table
+ * The Class SandBoxCategoryXrefImpl is for testing purposes only.  It helps autogenerate the cross reference table
  * properly with the DISPLY_ORDER column
 
  * @author krosenberg
  *
  */
 @Entity
-@Table(name = "BLC_CATEGORY_SNDBX_XREF")
-public class SandBoxCategoryXref implements Serializable {
+@Table(name = "BLC_CATEGORY_XREF")
+public class CategoryXrefImpl implements CategoryXref {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The category id. */
     @EmbeddedId
-    SandBoxCategoryXrefPK categoryXrefPK = new SandBoxCategoryXrefPK();
+    CategoryXrefPK categoryXrefPK = new CategoryXrefPK();
 
-    public SandBoxCategoryXrefPK getCategoryXrefPK() {
+    public CategoryXrefPK getCategoryXrefPK() {
         return categoryXrefPK;
     }
 
-    public void setCategoryXrefPK(final SandBoxCategoryXrefPK categoryXrefPK) {
+    public void setCategoryXrefPK(final CategoryXrefPK categoryXrefPK) {
         this.categoryXrefPK = categoryXrefPK;
     }
 
@@ -64,18 +61,50 @@ public class SandBoxCategoryXref implements Serializable {
         this.displayOrder = displayOrder;
     }
 
-    public static class SandBoxCategoryXrefPK implements Serializable {
+    /**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getCategory()
+	 */
+	public Category getCategory() {
+		return categoryXrefPK.getCategory();
+	}
+
+	/**
+	 * @param category
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
+	 */
+	public void setCategory(Category category) {
+		categoryXrefPK.setCategory(category);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getSubCategory()
+	 */
+	public Category getSubCategory() {
+		return categoryXrefPK.getSubCategory();
+	}
+
+	/**
+	 * @param subCategory
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setSubCategory(org.broadleafcommerce.core.catalog.domain.Category)
+	 */
+	public void setSubCategory(Category subCategory) {
+		categoryXrefPK.setSubCategory(subCategory);
+	}
+
+	public static class CategoryXrefPK implements Serializable {
     	
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        @ManyToOne(targetEntity = SandBoxCategoryImpl.class, optional=false)
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
         @JoinColumn(name = "CATEGORY_ID")
-        protected Category category = new SandBoxCategoryImpl();
+        protected Category category = new CategoryImpl();
         
-        @ManyToOne(targetEntity = SandBoxCategoryImpl.class, optional=false)
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
         @JoinColumn(name = "SUB_CATEGORY_ID")
-        protected Category subCategory = new SandBoxCategoryImpl();
+        protected Category subCategory = new CategoryImpl();
 
         public Category getCategory() {
 			return category;
@@ -98,8 +127,8 @@ public class SandBoxCategoryXref implements Serializable {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
 
-            return category.getId().equals(((SandBoxCategoryXrefPK) obj).getCategory().getId())
-            && subCategory.getId().equals(((SandBoxCategoryXrefPK) obj).getSubCategory().getId());
+            return category.getId().equals(((CategoryXrefPK) obj).getCategory().getId())
+            && subCategory.getId().equals(((CategoryXrefPK) obj).getSubCategory().getId());
         }
 		
 

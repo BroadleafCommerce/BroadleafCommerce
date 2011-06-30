@@ -30,7 +30,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * The Class CategoryProductImpl is the default implmentation of {@link Category}.
+ * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
  * This entity is only used for executing a named query.
  * 
  * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
@@ -49,7 +49,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class CategoryProductImpl implements Serializable {
+public class CategoryProductXrefImpl implements CategoryProductXref {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -70,20 +70,52 @@ public class CategoryProductImpl implements Serializable {
     protected Long displayOrder;
 
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProduct#getDisplayOrder()
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXref#getDisplayOrder()
      */
     public Long getDisplayOrder() {
         return displayOrder;
     }
 
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProduct#setDisplayOrder(java.lang.Integer)
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXref#setDisplayOrder(java.lang.Integer)
      */
     public void setDisplayOrder(Long displayOrder) {
         this.displayOrder = displayOrder;
     }
     
-    public static class CategoryProductXrefPk implements Serializable{
+    /**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#getCategory()
+	 */
+	public Category getCategory() {
+		return categoryProductXref.getCategory();
+	}
+
+	/**
+	 * @param category
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
+	 */
+	public void setCategory(Category category) {
+		categoryProductXref.setCategory(category);
+	}
+
+	/**
+	 * @return
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#getProduct()
+	 */
+	public Product getProduct() {
+		return categoryProductXref.getProduct();
+	}
+
+	/**
+	 * @param product
+	 * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPk#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
+	 */
+	public void setProduct(Product product) {
+		categoryProductXref.setProduct(product);
+	}
+
+	public static class CategoryProductXrefPk implements Serializable{
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
         
@@ -125,12 +157,7 @@ public class CategoryProductImpl implements Serializable {
 	        return category.getId().equals(((CategoryProductXrefPk) obj).category.getId())
 	        && product.getId().equals(((CategoryProductXrefPk) obj).product.getId());
 		}
-		
-		
         
     }
-
-
-    
     
 }

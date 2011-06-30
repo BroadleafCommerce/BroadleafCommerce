@@ -25,13 +25,13 @@ import java.io.Serializable;
  * <br>
  * You should implement this class if you want to make significant changes to the
  * relationship between Category and Product.  If you just want to add additional fields
- * then you should extend {@link CategoryProductImpl}.
+ * then you should extend {@link CategoryProductXrefImpl}.
  * 
- *  @see {@link CategoryProductImpl},{@link Category}, {@link Product}
+ *  @see {@link CategoryProductXrefImpl},{@link Category}, {@link Product}
  *  @author btaylor
  * 
  */
-public interface CategoryProduct extends Serializable {
+public interface CategoryProductXref extends Serializable {
 
     /**
      * Gets the category.
@@ -66,12 +66,12 @@ public interface CategoryProduct extends Serializable {
      * 
      * @return the display order
      */
-    Integer getDisplayOrder();
+    Long getDisplayOrder();
 
     /**
      * Sets the display order.
      * 
      * @param displayOrder the new display order
      */
-    void setDisplayOrder(Integer displayOrder);
+    void setDisplayOrder(Long displayOrder);
 }

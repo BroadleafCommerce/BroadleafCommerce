@@ -9,7 +9,6 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Index;
 
 @MappedSuperclass
 public abstract class MediaMappedSuperclass implements Media {
