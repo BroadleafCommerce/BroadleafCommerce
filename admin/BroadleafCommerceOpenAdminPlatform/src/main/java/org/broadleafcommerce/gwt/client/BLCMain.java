@@ -55,6 +55,10 @@ public class BLCMain implements EntryPoint {
 		modules.put(module.getModuleKey(), module);
 	}
 	
+	public static Module getModule(String moduleKey) {
+		return modules.get(moduleKey);
+	}
+	
 	public static void drawCurrentState(String moduleKey) {
 		if (moduleKey == null) {
 			moduleKey = modules.keySet().iterator().next();
