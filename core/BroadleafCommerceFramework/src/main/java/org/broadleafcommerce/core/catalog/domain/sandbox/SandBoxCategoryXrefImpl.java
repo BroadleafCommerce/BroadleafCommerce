@@ -32,6 +32,11 @@ import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
+/*
+ * TODO emit these java files and compile at runtime based on an annotation
+ * present in the normal entity. This will be part of special persistence
+ * class handling that will be introduced into MergePersistenceUnitManager.
+ */
 @Entity
 @Table(appliesTo="BLC_CATEGORY_SNDBX_XREF", indexes = {
 		@Index(name="CAT_XREF_SNDBX_VER_INDX", columnNames={"VERSION"})

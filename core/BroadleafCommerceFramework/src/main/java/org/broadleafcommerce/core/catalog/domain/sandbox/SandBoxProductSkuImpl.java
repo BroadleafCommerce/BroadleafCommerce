@@ -34,6 +34,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
+/*
+ * TODO emit these java files and compile at runtime based on an annotation
+ * present in the normal entity. This will be part of special persistence
+ * class handling that will be introduced into MergePersistenceUnitManager.
+ */
 /**
  * 
  * @author jfischer

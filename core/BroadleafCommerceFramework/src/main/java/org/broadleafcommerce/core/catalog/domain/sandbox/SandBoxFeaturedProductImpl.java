@@ -15,34 +15,58 @@
  */
 package org.broadleafcommerce.core.catalog.domain.sandbox;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
-import org.broadleafcommerce.core.catalog.domain.common.FeaturedProductMappedSuperclass;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
+/*
+ * TODO emit these java files and compile at runtime based on an annotation
+ * present in the normal entity. This will be part of special persistence
+ * class handling that will be introduced into MergePersistenceUnitManager.
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(appliesTo="BLC_PRDCT_FTRD_SNDBX", indexes = {
 		@Index(name="FP_SNDBX_VER_INDX", columnNames={"VERSION"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SandBoxFeaturedProductImpl extends FeaturedProductMappedSuperclass implements FeaturedProduct, SandBoxItem {
+public class SandBoxFeaturedProductImpl implements FeaturedProduct, SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
 
+	/** The id. */
+    @Id
+    @GeneratedValue(generator = "FeaturedProductId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "FeaturedProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxFeaturedProductImpl", allocationSize = 50)
+    @Column(name = "FEATURED_PRODUCT_ID")
+    protected Long id;
+    
+    @Column(name = "SEQUENCE")
+    protected Long sequence;
+
+    @Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
+    protected String promotionMessage;
+    
 	@ManyToOne(targetEntity = SandBoxCategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="PRD_FTRD_CTGRY_SNDBX_INDEX", columnNames={"CATEGORY_ID"})
@@ -55,6 +79,30 @@ public class SandBoxFeaturedProductImpl extends FeaturedProductMappedSuperclass 
 
     @Embedded
     protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
+    
+    public Long getSequence() {
+    	return this.sequence;
+    }
+
+    public String getPromotionMessage() {
+        return promotionMessage;
+    }
+
+    public void setPromotionMessage(String promotionMessage) {
+        this.promotionMessage = promotionMessage;
+    }
     
     public Category getCategory() {
         return category;

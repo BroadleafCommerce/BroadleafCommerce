@@ -15,14 +15,19 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.core.catalog.domain.common.FeaturedProductMappedSuperclass;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -31,10 +36,24 @@ import org.hibernate.annotations.Index;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_FEATURED")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class FeaturedProductImpl extends FeaturedProductMappedSuperclass implements FeaturedProduct {
+public class FeaturedProductImpl implements FeaturedProduct {
 
 	private static final long serialVersionUID = 1L;
 
+	/** The id. */
+    @Id
+    @GeneratedValue(generator = "FeaturedProductId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "FeaturedProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxFeaturedProductImpl", allocationSize = 50)
+    @Column(name = "FEATURED_PRODUCT_ID")
+    protected Long id;
+    
+    @Column(name = "SEQUENCE")
+    protected Long sequence;
+
+    @Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
+    protected String promotionMessage;
+    
 	@ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="PRODFEATURED_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
@@ -44,6 +63,30 @@ public class FeaturedProductImpl extends FeaturedProductMappedSuperclass impleme
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product = new ProductImpl();
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
+    
+    public Long getSequence() {
+    	return this.sequence;
+    }
+
+    public String getPromotionMessage() {
+        return promotionMessage;
+    }
+
+    public void setPromotionMessage(String promotionMessage) {
+        this.promotionMessage = promotionMessage;
+    }
 
     public Category getCategory() {
         return category;

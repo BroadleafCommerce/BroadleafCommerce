@@ -15,23 +15,33 @@
  */
 package org.broadleafcommerce.core.catalog.domain.sandbox;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
-import org.broadleafcommerce.core.catalog.domain.common.CrossSaleProductMappedSuperclass;
 import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
+/*
+ * TODO emit these java files and compile at runtime based on an annotation
+ * present in the normal entity. This will be part of special persistence
+ * class handling that will be introduced into MergePersistenceUnitManager.
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(appliesTo="BLC_PRDCT_CROSS_SALE_SNDBX", indexes={
@@ -40,10 +50,23 @@ import org.hibernate.annotations.Table;
 		@Index(name="CROSSSALE_RELATED_SNDBX_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SandBoxCrossSaleProductImpl extends CrossSaleProductMappedSuperclass implements RelatedProduct, SandBoxItem {
+public class SandBoxCrossSaleProductImpl implements RelatedProduct, SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
 
+	@Id
+    @GeneratedValue(generator = "CrossSaleProductId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CrossSaleProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CrossSaleProductImpl", allocationSize = 50)
+    @Column(name = "CROSS_SALE_PRODUCT_ID")
+    private Long id;
+	
+	@Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Cross Sale Promotion Message", largeEntry=true)
+    private String promotionMessage;
+
+    @Column(name = "SEQUENCE")
+    private Long sequence;
+    
 	@ManyToOne(targetEntity = SandBoxProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
     private Product product = new SandBoxProductImpl();
@@ -55,6 +78,30 @@ public class SandBoxCrossSaleProductImpl extends CrossSaleProductMappedSuperclas
     @Embedded
     protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
 
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getPromotionMessage() {
+        return promotionMessage;
+    }
+    
+    public void setPromotionMessage(String promotionMessage) {
+        this.promotionMessage = promotionMessage;
+    }
+    
+    public Long getSequence() {
+        return sequence;
+    }
+    
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
+    
     public Product getProduct() {
         return product;
     }

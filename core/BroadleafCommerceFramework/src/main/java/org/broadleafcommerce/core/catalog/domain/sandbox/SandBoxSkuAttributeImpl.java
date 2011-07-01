@@ -15,23 +15,32 @@
  */
 package org.broadleafcommerce.core.catalog.domain.sandbox;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
-import org.broadleafcommerce.core.catalog.domain.common.SkuAttributeMappedSuperclass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
+/*
+ * TODO emit these java files and compile at runtime based on an annotation
+ * present in the normal entity. This will be part of special persistence
+ * class handling that will be introduced into MergePersistenceUnitManager.
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(appliesTo="BLC_SKU_ATTR_SNDBX", indexes={
@@ -40,11 +49,30 @@ import org.hibernate.annotations.Table;
 		@Index(name="SKU_ATTR_SNDBX_SKU_INDEX", columnNames={"SKU_ID"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SandBoxSkuAttributeImpl extends SkuAttributeMappedSuperclass implements SkuAttribute, SandBoxItem {
+public class SandBoxSkuAttributeImpl implements SkuAttribute, SandBoxItem {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The id. */
+    @Id
+    @GeneratedValue(generator = "SkuAttributeId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "SkuAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAttributeImpl", allocationSize = 50)
+    @Column(name = "SKU_ATTR_ID")
+    protected Long id;
+    
+    /** The name. */
+    @Column(name = "NAME", nullable=false)
+    protected String name;
+
+    /** The value. */
+    @Column(name = "VALUE", nullable=false)
+    protected String value;
+
+    /** The searchable. */
+    @Column(name = "SEARCHABLE")
+    protected Boolean searchable;
+    
     /** The sku. */
     @ManyToOne(targetEntity = SandBoxSkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID")
@@ -52,6 +80,70 @@ public class SandBoxSkuAttributeImpl extends SkuAttributeMappedSuperclass implem
     
     @Embedded
     protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setId(java.lang.Long)
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getValue()
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setValue(java.lang.String)
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
+     */
+    public Boolean getSearchable() {
+        return searchable;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSearchable(java.lang.Boolean)
+     */
+    public void setSearchable(Boolean searchable) {
+        this.searchable = searchable;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
+     */
+    public String getName() {
+        return name;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setName(java.lang.String)
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return value;
+    }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()

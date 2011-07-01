@@ -15,20 +15,30 @@
  */
 package org.broadleafcommerce.core.media.domain.sandbox;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.common.EmbeddedSandBoxItem;
 import org.broadleafcommerce.core.catalog.domain.common.SandBoxItem;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.common.MediaMappedSuperclass;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
 
+/*
+ * TODO emit these java files and compile at runtime based on an annotation
+ * present in the normal entity. This will be part of special persistence
+ * class handling that will be introduced into MergePersistenceUnitManager.
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(appliesTo="BLC_MEDIA_SNDBX", indexes={
@@ -37,13 +47,63 @@ import org.hibernate.annotations.Table;
 		@Index(name="MEDIA_SNDBX_URL_INDX", columnNames={"URL"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SandBoxMediaImpl extends MediaMappedSuperclass implements Media, SandBoxItem {
+public class SandBoxMediaImpl implements Media, SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+    @GeneratedValue(generator = "MediaId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "MediaId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "MediaId", allocationSize = 50)
+    @Column(name = "MEDIA_ID")
+    protected Long id;
+
+    @Column(name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName="Media Name", order=1, prominent=true)
+    protected String name;
+
+    @Column(name = "URL", nullable = false)
+    @AdminPresentation(friendlyName="Media Url", order=2, prominent=true)
+    protected String url;
+
+    @Column(name = "LABEL", nullable = false)
+    @AdminPresentation(friendlyName="Media Label", order=3, prominent=true)
+    protected String label;
+
 	@Embedded
     protected SandBoxItem sandBoxItem = new EmbeddedSandBoxItem();
     
+	public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+	    
 	/**
 	 * @return
 	 * @see org.broadleafcommerce.core.catalog.domain.common.SandBoxItem#getVersion()
