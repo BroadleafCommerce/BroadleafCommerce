@@ -146,6 +146,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	}
 	
 	public void postSetup(Canvas container) {
+		BLCMain.ISNEW = false;
 		if (containsDisplay(container)) {
 			display.show();
 		} else {
@@ -153,7 +154,12 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 			container.addChild(display.asCanvas());
 			loaded = true;
 		}
-		BLCMain.MODAL_PROGRESS.stopProgress();
+		if (BLCMain.MODAL_PROGRESS.isActive()) {
+			BLCMain.MODAL_PROGRESS.stopProgress();
+		}
+		if (BLCMain.SPLASH_PROGRESS.isActive()) {
+			BLCMain.SPLASH_PROGRESS.stopProgress();
+		}
 	}
 	
 	protected Boolean containsDisplay(Canvas container) {
