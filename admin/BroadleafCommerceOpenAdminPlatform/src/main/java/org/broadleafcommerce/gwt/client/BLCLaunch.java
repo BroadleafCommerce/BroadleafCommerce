@@ -26,6 +26,9 @@ import com.google.gwt.user.client.Window;
 public class BLCLaunch implements EntryPoint {
 
 	public void onModuleLoad() {
+		if (BLCMain.SPLASH_PROGRESS != null) {
+			BLCMain.SPLASH_PROGRESS.startProgress();
+		}
 		String moduleParam = Window.Location.getParameter("defaultModule");
 		BLCMain.drawCurrentState(moduleParam);
 	}

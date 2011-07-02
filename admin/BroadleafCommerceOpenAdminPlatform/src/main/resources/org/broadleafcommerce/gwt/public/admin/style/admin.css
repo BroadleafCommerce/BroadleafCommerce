@@ -20,5 +20,11 @@
 .sectionViewBorder {
 	border-left: 1px solid #a6abb5;
 	border-bottom: 1px solid #a6abb5;
-	border-right: 1px solid #a6abb5;	
+	border-right: 1px solid #a6abb5;		
+}
+
+.versionStyle {
+	font-family:Verdana,Bitstream Vera Sans,sans-serif;
+    font-size:14px;
+    color:white;
 }
