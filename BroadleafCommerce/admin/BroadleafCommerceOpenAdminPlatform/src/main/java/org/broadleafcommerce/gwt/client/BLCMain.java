@@ -23,8 +23,10 @@ import org.broadleafcommerce.gwt.client.service.AbstractCallback;
 import org.broadleafcommerce.gwt.client.service.AppServices;
 import org.broadleafcommerce.gwt.client.setup.AppController;
 import org.broadleafcommerce.gwt.client.view.MasterView;
+import org.broadleafcommerce.gwt.client.view.SplashView;
 import org.broadleafcommerce.gwt.client.view.ProgressWindow;
 import org.broadleafcommerce.gwt.client.view.SimpleProgress;
+import org.broadleafcommerce.gwt.client.view.SplashWindow;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntityEditDialog;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -45,9 +47,12 @@ public class BLCMain implements EntryPoint {
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>();
 	
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
+	//TODO set the version as part of the build
+	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "1.5.0-M2-SNAPSHOT");
 	public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
 	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
 	public static MasterView MASTERVIEW;
+	public static boolean ISNEW = true;
 	
 	public static final boolean DEBUG = true;
 	
@@ -57,6 +62,14 @@ public class BLCMain implements EntryPoint {
 	
 	public static Module getModule(String moduleKey) {
 		return modules.get(moduleKey);
+	}
+	
+	public static void setSplashWindow(SplashView splashWindow) {
+		SPLASH_PROGRESS = splashWindow;
+	}
+	
+	public static void removeSplashWindow() {
+		SPLASH_PROGRESS = null;
 	}
 	
 	public static void drawCurrentState(String moduleKey) {

@@ -95,14 +95,21 @@ public class PresenterSequenceSetupManager {
 	}
 	
 	protected void launch() {
-		BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
-			public void run() {
-				if (!presenter.getLoaded()) {
-					itemsIterator = items.iterator();
-					next();
+		if (!BLCMain.ISNEW) {
+			BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
+				public void run() {
+					if (!presenter.getLoaded()) {
+						itemsIterator = items.iterator();
+						next();
+					}
 				}
+			});
+		} else {
+			if (!presenter.getLoaded()) {
+				itemsIterator = items.iterator();
+				next();
 			}
-		});
+		}
 	}
 
 	protected void next() {
