@@ -34,8 +34,8 @@ public class SplashWindow extends Window implements SplashView {
 		setShowShadow(true);
 		setBackgroundImage(backgroundImage);
 		setShowEdges(false);
-    	setWidth(601);  
-    	setHeight(331);  
+    	setWidth(447);  
+    	setHeight(257);  
     	setShowMinimizeButton(false); 
     	setShowTitle(false);
     	setShowHeader(false);
@@ -44,7 +44,7 @@ public class SplashWindow extends Window implements SplashView {
     	setShowCloseButton(false);
     	VLayout layout = new VLayout();
     	VLayout spacer = new VLayout();
-    	spacer.setHeight(140);
+    	spacer.setHeight(95);
     	layout.addMember(spacer);
     	HLayout versionLayout = new HLayout();
     	versionLayout.setAlign(Alignment.LEFT);
@@ -59,14 +59,15 @@ public class SplashWindow extends Window implements SplashView {
     	versionLayout.addMember(versionLabel);
     	layout.addMember(versionLayout);
     	VLayout spacer2 = new VLayout();
-    	spacer2.setHeight(20);
+    	spacer2.setHeight(10);
     	layout.addMember(spacer2);
     	HLayout progressLayout = new HLayout();
     	progressLayout.setAlign(Alignment.CENTER);
     	simpleProgress = new SimpleProgress(24); 
-    	simpleProgress.setWidth(550);
+    	simpleProgress.setWidth(417);
     	progressLayout.addMember(simpleProgress);
     	layout.addMember(progressLayout);
+    	setBorder("1px solid #3b4726");
     	addItem(layout);
 	}
 
