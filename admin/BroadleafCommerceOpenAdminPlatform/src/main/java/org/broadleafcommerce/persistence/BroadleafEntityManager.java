@@ -28,7 +28,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.metamodel.Metamodel;
 
-//TODO implement the usage of the sandbox entity manager
 /**
  * 
  * @author jfischer
@@ -78,7 +77,16 @@ public class BroadleafEntityManager implements EntityManager {
 	 * @see javax.persistence.EntityManager#find(java.lang.Class, java.lang.Object)
 	 */
 	public <T> T find(Class<T> entityClass, Object primaryKey) {
-		return standardManager.find(entityClass, primaryKey);
+		T responseStandard = standardManager.find(entityClass, primaryKey);
+		SandBoxContext context = SandBoxContext.getSandBoxContext();
+		T response;
+		if (context != null && (context.getSandBoxMode() == SandBoxMode.ADMIN || context.getSandBoxMode() == SandBoxMode.PREVIEW)) {
+			T responseSandBox = sandboxManager.find(entityClass, primaryKey);
+		} else {
+			response = responseStandard;
+		}
+		//TODO return the right proxy
+		return null;
 	}
 
 	/**

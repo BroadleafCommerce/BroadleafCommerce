@@ -59,7 +59,7 @@ import org.hibernate.annotations.Table;
 		@Index(name="CAT_SNDBX_VER_INDX", columnNames={"VERSION"}),
 		@Index(name="CAT_SNDBX_NAME_INDX", columnNames={"NAME"}),
 		@Index(name="CAT_SNDBX_URLKEY_INDX", columnNames={"URL_KEY"}),
-		@Index(name="CAT_PARENT_SNDBX_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
+		@Index(name="CAT_SNDBX_PARENT_INDX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SandBoxCategoryImpl implements Category, SandBoxItem {

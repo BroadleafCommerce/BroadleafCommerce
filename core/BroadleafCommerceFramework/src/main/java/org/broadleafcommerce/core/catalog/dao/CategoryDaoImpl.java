@@ -30,7 +30,7 @@ import org.springframework.stereotype.Repository;
 @Repository("blCategoryDao")
 public class CategoryDaoImpl implements CategoryDao {
 
-    @BroadleafPersistenceContext(unitName="blPU")
+    @BroadleafPersistenceContext(unitName="blPU", sandBoxUnitName="blSandboxPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")

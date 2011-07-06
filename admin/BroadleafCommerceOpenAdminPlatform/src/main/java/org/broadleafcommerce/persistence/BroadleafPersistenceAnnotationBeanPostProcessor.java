@@ -211,8 +211,8 @@ public class BroadleafPersistenceAnnotationBeanPostProcessor extends Persistence
 							resolveEntityManager(requestingBeanName, this.unitName));
 				} else {
 					EntityManager standardManager = resolveEntityManager(requestingBeanName, this.unitName);
-					//TODO pass the sandbox entity manager
-					return new BroadleafEntityManager(standardManager, null);
+					EntityManager sandboxManager = resolveEntityManager(requestingBeanName, this.sandBoxUnitName);
+					return new BroadleafEntityManager(standardManager, sandboxManager);
 				}
 			}
 			else {
