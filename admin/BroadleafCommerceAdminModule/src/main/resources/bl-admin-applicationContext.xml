@@ -23,10 +23,10 @@
 		</constructor-arg>
 		<property name="customPersistenceHandlers">
 			<list>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.OfferCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao" />
