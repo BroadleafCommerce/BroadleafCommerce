@@ -15,12 +15,12 @@
  */
 package org.broadleafcommerce.gwt.admin.client.view.order;
 
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.SubItemDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 

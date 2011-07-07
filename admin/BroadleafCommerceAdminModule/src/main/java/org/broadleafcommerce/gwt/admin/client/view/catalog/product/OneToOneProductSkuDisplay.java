@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.gwt.admin.client.view.catalog.product;
 
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 /**
  * 

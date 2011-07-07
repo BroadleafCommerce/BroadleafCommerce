@@ -16,17 +16,17 @@
 package org.broadleafcommerce.gwt.admin.client.presenter.catalog.category;
 
 import org.broadleafcommerce.gwt.admin.client.view.catalog.category.CategoryDisplay;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.gwt.client.datasource.relations.JoinStructure;
-import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspectiveItemType;
-import org.broadleafcommerce.gwt.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.gwt.client.event.SearchItemSelectedEventHandler;
-import org.broadleafcommerce.gwt.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.relations.JoinStructure;
+import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
+import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;

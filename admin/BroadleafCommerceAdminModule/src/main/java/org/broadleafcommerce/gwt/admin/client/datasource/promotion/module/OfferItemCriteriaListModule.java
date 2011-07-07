@@ -17,15 +17,15 @@ package org.broadleafcommerce.gwt.admin.client.datasource.promotion.module;
 
 import java.util.Map;
 
-import org.broadleafcommerce.gwt.client.BLCMain;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
-import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.gwt.client.datasource.results.Entity;
-import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
-import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
+import org.broadleafcommerce.openadmin.client.datasource.results.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;

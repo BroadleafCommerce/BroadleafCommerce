@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.gwt.admin.client.view.order;
 
-import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.FormOnlyDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.Alignment;

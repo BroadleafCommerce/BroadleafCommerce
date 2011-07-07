@@ -13,12 +13,12 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
            
-    <bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService">
+    <bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicServerEntityModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureServerModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.MapStructureServerModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.module.BasicServerEntityModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.module.JoinStructureServerModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.module.MapStructureServerModule"/>
 			</list>
 		</constructor-arg>
 		<property name="customPersistenceHandlers">

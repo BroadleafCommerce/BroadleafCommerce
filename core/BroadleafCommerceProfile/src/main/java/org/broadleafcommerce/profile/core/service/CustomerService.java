@@ -17,8 +17,8 @@ package org.broadleafcommerce.profile.core.service;
 
 import java.util.List;
 
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
-import org.broadleafcommerce.gwt.server.security.util.PasswordReset;
+import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
+import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;

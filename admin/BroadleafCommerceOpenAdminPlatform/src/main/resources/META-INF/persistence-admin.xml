@@ -5,11 +5,11 @@
              version="2.0">
 	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
 		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
-		<class>org.broadleafcommerce.gwt.server.security.domain.AdminPermissionImpl</class>
-		<class>org.broadleafcommerce.gwt.server.security.domain.AdminRoleImpl</class>
-		<class>org.broadleafcommerce.gwt.server.security.domain.AdminUserImpl</class>
-		<class>org.broadleafcommerce.gwt.server.security.domain.AdminUserPermissionXref</class>
-		<class>org.broadleafcommerce.gwt.server.security.domain.AdminUserRoleXref</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserPermissionXref</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserRoleXref</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

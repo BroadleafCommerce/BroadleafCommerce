@@ -30,17 +30,17 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
-import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
-import org.broadleafcommerce.gwt.client.datasource.results.Entity;
-import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
-import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
-import org.broadleafcommerce.gwt.client.service.ServiceException;
-import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
-import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
-import org.broadleafcommerce.gwt.server.service.module.RecordHelper;
+import org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKey;
+import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.datasource.results.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
+import org.broadleafcommerce.openadmin.client.datasource.results.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.datasource.results.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.openadmin.server.service.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.module.RecordHelper;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 

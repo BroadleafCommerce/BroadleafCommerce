@@ -16,17 +16,17 @@
 package org.broadleafcommerce.gwt.admin.client.view.order;
 
 import org.broadleafcommerce.gwt.admin.client.AdminModule;
-import org.broadleafcommerce.gwt.client.reflection.Instantiable;
-import org.broadleafcommerce.gwt.client.view.TabSet;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.gwt.client.view.dynamic.SubItemDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.SubItemView;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormView;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureView;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;

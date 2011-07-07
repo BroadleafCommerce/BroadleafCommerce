@@ -16,13 +16,13 @@
 package org.broadleafcommerce.gwt.admin.client.presenter.order;
 
 import org.broadleafcommerce.gwt.admin.client.view.order.OrderItemDisplay;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.gwt.client.presenter.entity.DynamicFormPresenter;
-import org.broadleafcommerce.gwt.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;

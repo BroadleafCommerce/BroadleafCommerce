@@ -21,7 +21,7 @@ import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.Fi
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;

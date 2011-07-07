@@ -22,8 +22,8 @@ import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.In
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.MVELToAdvancedCriteriaTranslator;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.gwt.client.BLCMain;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.AdvancedCriteria;

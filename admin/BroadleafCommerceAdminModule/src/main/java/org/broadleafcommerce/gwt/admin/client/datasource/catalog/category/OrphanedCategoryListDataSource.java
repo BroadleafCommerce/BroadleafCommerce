@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.gwt.admin.client.datasource.catalog.category;
 
-import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
-import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
-import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.datasource.results.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;

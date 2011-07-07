@@ -23,7 +23,7 @@ import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.gr
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.grouping.GroupingTranslator;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.statement.Expression;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.statement.PhraseTranslator;
-import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;

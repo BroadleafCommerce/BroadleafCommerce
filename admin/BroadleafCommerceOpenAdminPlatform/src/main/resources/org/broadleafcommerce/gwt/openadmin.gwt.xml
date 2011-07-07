@@ -11,10 +11,10 @@
 	<inherits name="com.google.gwt.i18n.I18N" />
 
 	<source path="client" />
-	<generate-with class="org.broadleafcommerce.gwt.generator.FactoryGenerator">
+	<generate-with class="org.broadleafcommerce.openadmin.generator.FactoryGenerator">
 		<when-type-assignable
-			class="org.broadleafcommerce.gwt.client.reflection.FactoryWrapper" />
+			class="org.broadleafcommerce.openadmin.client.reflection.FactoryWrapper" />
 	</generate-with>
 	
-	<entry-point class="org.broadleafcommerce.gwt.client.BLCMain" />
+	<entry-point class="org.broadleafcommerce.openadmin.client.BLCMain" />
 </module>

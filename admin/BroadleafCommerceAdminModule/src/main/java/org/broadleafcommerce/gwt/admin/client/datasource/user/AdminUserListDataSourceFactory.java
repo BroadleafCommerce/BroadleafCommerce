@@ -16,15 +16,15 @@
 package org.broadleafcommerce.gwt.admin.client.datasource.user;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
-import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationType;
-import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationTypes;
-import org.broadleafcommerce.gwt.client.service.AppServices;
+import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKey;
+import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType;
+import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationTypes;
+import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;

@@ -16,11 +16,11 @@
 package org.broadleafcommerce.gwt.admin.client.view.customer;
 
 import org.broadleafcommerce.gwt.admin.client.AdminModule;
-import org.broadleafcommerce.gwt.client.reflection.Instantiable;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;

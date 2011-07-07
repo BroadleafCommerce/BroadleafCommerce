@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.security.service.dataprovider;
 
-import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
-import org.broadleafcommerce.gwt.server.security.domain.AdminUserImpl;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.testng.annotations.DataProvider;
 
 public class AdminUserDataProvider {

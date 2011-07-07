@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.gwt.admin.client.view.order;
 
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;

@@ -16,15 +16,15 @@
 package org.broadleafcommerce.gwt.admin.client.view.catalog.category;
 
 import org.broadleafcommerce.gwt.admin.client.AdminModule;
-import org.broadleafcommerce.gwt.client.reflection.Instantiable;
-import org.broadleafcommerce.gwt.client.view.TabSet;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityTreeView;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormView;
-import org.broadleafcommerce.gwt.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
-import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureView;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;

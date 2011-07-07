@@ -18,9 +18,9 @@ package org.broadleafcommerce.gwt.admin.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broadleafcommerce.gwt.client.AbstractModule;
-import org.broadleafcommerce.gwt.client.BLCMain;
-import org.broadleafcommerce.gwt.client.validation.ValidationFactoryManager;
+import org.broadleafcommerce.openadmin.client.AbstractModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.ImgButton;

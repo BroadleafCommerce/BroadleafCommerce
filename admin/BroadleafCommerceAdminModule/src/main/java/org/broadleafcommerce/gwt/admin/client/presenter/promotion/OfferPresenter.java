@@ -28,13 +28,13 @@ import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OrderItemList
 import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OrderListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.gwt.client.BLCMain;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.gwt.client.reflection.Instantiable;
-import org.broadleafcommerce.gwt.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.gwt.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;

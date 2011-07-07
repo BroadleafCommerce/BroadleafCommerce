@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.gwt.admin.client.view.promotion;
 
-import org.broadleafcommerce.gwt.client.datasource.dynamic.FieldDataSourceWrapper;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
