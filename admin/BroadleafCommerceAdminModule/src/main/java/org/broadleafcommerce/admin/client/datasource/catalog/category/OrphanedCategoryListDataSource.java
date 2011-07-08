@@ -19,9 +19,9 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;

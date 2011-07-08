@@ -2,7 +2,7 @@ package org.broadleafcommerce.openadmin.domain;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.openadmin.dto.ForeignKeyRestrictionType;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 
 public interface ForeignKey extends Serializable {
 

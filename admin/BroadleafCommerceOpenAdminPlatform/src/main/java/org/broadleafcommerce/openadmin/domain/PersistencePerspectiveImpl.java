@@ -33,9 +33,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;

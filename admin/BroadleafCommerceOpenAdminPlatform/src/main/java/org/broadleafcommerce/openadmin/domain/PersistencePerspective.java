@@ -3,9 +3,9 @@ package org.broadleafcommerce.openadmin.domain;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 
 public interface PersistencePerspective extends Serializable {
 

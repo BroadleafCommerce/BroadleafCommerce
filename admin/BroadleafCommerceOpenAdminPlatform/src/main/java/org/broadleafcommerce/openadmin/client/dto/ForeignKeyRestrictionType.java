@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.dto;
+package org.broadleafcommerce.openadmin.client.dto;
 
 /**
  * 
  * @author jfischer
  *
  */
-public enum MergedPropertyType {
-	PRIMARY,
-	JOINSTRUCTURE,
-	MAPSTRUCTUREKEY,
-	MAPSTRUCTUREVALUE
+public enum ForeignKeyRestrictionType {
+	ID_EQ,
+	COLLECTION_SIZE_EQ
 }

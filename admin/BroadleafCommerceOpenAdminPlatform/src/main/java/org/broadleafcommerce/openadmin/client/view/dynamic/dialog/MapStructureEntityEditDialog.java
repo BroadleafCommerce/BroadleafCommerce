@@ -17,8 +17,8 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
 import java.util.LinkedHashMap;
 
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-import org.broadleafcommerce.openadmin.dto.MapStructure;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.form.DynamicForm;

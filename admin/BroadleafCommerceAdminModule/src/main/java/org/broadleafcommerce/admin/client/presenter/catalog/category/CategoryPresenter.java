@@ -34,6 +34,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamic
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
@@ -46,8 +48,6 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-import org.broadleafcommerce.openadmin.dto.OperationType;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;

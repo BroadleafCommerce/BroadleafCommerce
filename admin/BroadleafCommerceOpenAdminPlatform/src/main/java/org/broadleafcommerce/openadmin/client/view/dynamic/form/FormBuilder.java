@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.MissingResourceException;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
-import org.broadleafcommerce.openadmin.dto.MapStructure;
 
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.NumberFormat;

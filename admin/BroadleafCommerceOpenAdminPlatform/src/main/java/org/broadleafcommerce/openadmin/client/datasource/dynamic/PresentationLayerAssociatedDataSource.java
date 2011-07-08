@@ -16,8 +16,8 @@
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;

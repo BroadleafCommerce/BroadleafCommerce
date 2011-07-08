@@ -20,11 +20,11 @@ import org.broadleafcommerce.admin.client.datasource.order.module.OrderItemEntit
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.OperationType;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;

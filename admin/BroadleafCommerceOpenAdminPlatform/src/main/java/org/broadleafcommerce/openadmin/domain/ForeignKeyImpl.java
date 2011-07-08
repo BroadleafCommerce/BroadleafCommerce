@@ -25,8 +25,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.openadmin.dto.ForeignKeyRestrictionType;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItem;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 

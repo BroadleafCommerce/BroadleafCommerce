@@ -2,7 +2,7 @@ package org.broadleafcommerce.openadmin.domain;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.openadmin.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
 
 public interface OperationTypes extends Serializable {
 

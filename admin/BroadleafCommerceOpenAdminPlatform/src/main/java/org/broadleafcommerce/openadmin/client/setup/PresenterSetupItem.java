@@ -16,7 +16,7 @@
 package org.broadleafcommerce.openadmin.client.setup;
 
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 
 /**
  * 

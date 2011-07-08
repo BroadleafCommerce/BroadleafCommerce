@@ -26,9 +26,9 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.w3c.dom.DOMException;

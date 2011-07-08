@@ -25,7 +25,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.openadmin.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
