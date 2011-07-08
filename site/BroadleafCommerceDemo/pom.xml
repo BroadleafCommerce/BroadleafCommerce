@@ -33,7 +33,7 @@
 				<configuration>
 					<style>DETAILED</style>
 					<modules>
-						<module>org.broadleafcommerce.gwt.demoAdmin</module>
+						<module>org.broadleafcommerce.admin.demoAdmin</module>
 					</modules>
 					<inplace>false</inplace>
 					<hostedWebapp>${webappDirectory}</hostedWebapp>

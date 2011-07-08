@@ -22,20 +22,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_MEDIA", indexes={
-		@Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
-})
+@Table(name="BLC_MEDIA")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class MediaImpl implements Media {
 	
@@ -48,10 +45,12 @@ public class MediaImpl implements Media {
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
+    @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Media Name", order=1, prominent=true)
     protected String name;
 
     @Column(name = "URL", nullable = false)
+    @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
     @AdminPresentation(friendlyName="Media Url", order=2, prominent=true)
     protected String url;
 
