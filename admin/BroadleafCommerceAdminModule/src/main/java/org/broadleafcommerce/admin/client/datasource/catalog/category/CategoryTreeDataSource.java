@@ -21,10 +21,10 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType;
-import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.OperationType;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.core.client.JavaScriptObject;

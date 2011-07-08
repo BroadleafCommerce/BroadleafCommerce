@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.widgets.tree.TreeGridField;

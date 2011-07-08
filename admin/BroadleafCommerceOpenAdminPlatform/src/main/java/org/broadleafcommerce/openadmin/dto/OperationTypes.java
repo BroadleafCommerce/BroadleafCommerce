@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.datasource.relations.operations;
+package org.broadleafcommerce.openadmin.dto;
 
 import java.io.Serializable;
 

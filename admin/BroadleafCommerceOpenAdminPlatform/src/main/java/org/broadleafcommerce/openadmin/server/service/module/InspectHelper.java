@@ -18,10 +18,10 @@ package org.broadleafcommerce.openadmin.server.service.module;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.results.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.datasource.results.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.datasource.results.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 
 /**

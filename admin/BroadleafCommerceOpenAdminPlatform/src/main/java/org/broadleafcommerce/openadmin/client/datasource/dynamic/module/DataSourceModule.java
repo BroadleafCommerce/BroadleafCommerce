@@ -16,9 +16,9 @@
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType;
-import org.broadleafcommerce.openadmin.client.datasource.results.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.OperationType;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;

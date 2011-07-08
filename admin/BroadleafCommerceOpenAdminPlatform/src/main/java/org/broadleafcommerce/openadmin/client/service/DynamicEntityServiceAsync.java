@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.openadmin.client.service;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.results.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
-import org.broadleafcommerce.openadmin.client.datasource.results.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;

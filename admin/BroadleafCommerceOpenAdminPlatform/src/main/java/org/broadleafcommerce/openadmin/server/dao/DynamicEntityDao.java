@@ -21,10 +21,10 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKey;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.results.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.datasource.results.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.hibernate.mapping.PersistentClass;
 
 /**

@@ -19,13 +19,13 @@ import java.util.HashMap;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKey;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
 import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItemType;
 
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.form.fields.FormItem;

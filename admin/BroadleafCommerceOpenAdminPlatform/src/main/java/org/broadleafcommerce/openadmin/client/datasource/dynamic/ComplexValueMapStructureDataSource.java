@@ -21,9 +21,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.widgets.form.fields.SelectItem;

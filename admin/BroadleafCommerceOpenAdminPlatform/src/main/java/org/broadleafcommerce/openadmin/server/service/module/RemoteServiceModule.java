@@ -18,14 +18,14 @@ package org.broadleafcommerce.openadmin.server.service.module;
 import java.util.List;
 import java.util.Map;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType;
-import org.broadleafcommerce.openadmin.client.datasource.results.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
-import org.broadleafcommerce.openadmin.client.datasource.results.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.datasource.results.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.datasource.results.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.OperationType;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService;
 

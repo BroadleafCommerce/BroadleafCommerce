@@ -16,9 +16,9 @@
 package org.broadleafcommerce.admin.client.datasource.catalog.category.module;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.JoinStructureClientModule;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 
 import com.smartgwt.client.data.Record;
 

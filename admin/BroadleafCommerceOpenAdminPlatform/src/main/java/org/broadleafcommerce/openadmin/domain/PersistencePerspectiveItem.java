@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.datasource.relations;
+package org.broadleafcommerce.openadmin.domain;
+
+import java.io.Serializable;
 
 /**
+ * Simple marker interface for persistence perspective members
  * 
  * @author jfischer
  *
  */
-public enum ForeignKeyRestrictionType {
-	ID_EQ,
-	COLLECTION_SIZE_EQ
+public interface PersistencePerspectiveItem extends Serializable {
+
+	public Long getId();
+
+	public void setId(Long id);
+	
 }

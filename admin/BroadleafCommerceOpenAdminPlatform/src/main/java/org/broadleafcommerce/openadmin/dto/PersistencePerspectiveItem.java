@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.datasource.relations;
+package org.broadleafcommerce.openadmin.dto;
 
 /**
+ * Simple marker interface for persistence perspective members
  * 
  * @author jfischer
  *
  */
-public enum PersistencePerspectiveItemType {
-	FOREIGNKEY,
-	JOINSTRUCTURE,
-	MAPSTRUCTURE
+public interface PersistencePerspectiveItem {
+
 }

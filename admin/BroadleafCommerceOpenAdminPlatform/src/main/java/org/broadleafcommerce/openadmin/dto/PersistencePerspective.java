@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.datasource.relations;
+package org.broadleafcommerce.openadmin.dto;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationTypes;
 
 /**
  * 

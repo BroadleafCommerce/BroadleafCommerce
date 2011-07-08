@@ -22,12 +22,12 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.JoinStructureClientModule;
-import org.broadleafcommerce.openadmin.client.datasource.relations.ForeignKey;
-import org.broadleafcommerce.openadmin.client.datasource.relations.JoinStructure;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationTypes;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.JoinStructure;
+import org.broadleafcommerce.openadmin.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItemType;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;

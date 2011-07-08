@@ -18,13 +18,13 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.JoinStructure;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.datasource.relations.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationType;
-import org.broadleafcommerce.openadmin.client.datasource.results.Entity;
-import org.broadleafcommerce.openadmin.client.datasource.results.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.JoinStructure;
+import org.broadleafcommerce.openadmin.dto.OperationType;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.dto.Property;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;

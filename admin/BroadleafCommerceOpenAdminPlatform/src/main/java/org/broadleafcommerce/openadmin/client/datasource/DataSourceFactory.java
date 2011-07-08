@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource;
 
-import org.broadleafcommerce.openadmin.client.datasource.relations.operations.OperationTypes;
+import org.broadleafcommerce.openadmin.dto.OperationTypes;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;

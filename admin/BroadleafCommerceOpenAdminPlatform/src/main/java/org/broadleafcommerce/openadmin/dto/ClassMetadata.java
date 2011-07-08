@@ -13,36 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.datasource.results;
+package org.broadleafcommerce.openadmin.dto;
 
 import java.io.Serializable;
+
 
 /**
  * 
  * @author jfischer
  *
  */
-public class PolymorphicEntity implements Serializable {
+public class ClassMetadata implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private String name;
-	private String type;
+	private String ceilingType;
+	private PolymorphicEntity[] polymorphicEntities; 
+	private Property[] properties;
 	
-	public String getName() {
-		return name;
+	public String getCeilingType() {
+		return ceilingType;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setCeilingType(String type) {
+		this.ceilingType = type;
 	}
 	
-	public String getType() {
-		return type;
+	public PolymorphicEntity[] getPolymorphicEntities() {
+		return polymorphicEntities;
 	}
 	
-	public void setType(String type) {
-		this.type = type;
+	public void setPolymorphicEntities(PolymorphicEntity[] polymorphicEntities) {
+		this.polymorphicEntities = polymorphicEntities;
+	}
+	
+	public Property[] getProperties() {
+		return properties;
+	}
+	
+	public void setProperties(Property[] property) {
+		this.properties = property;
 	}
 	
 }
