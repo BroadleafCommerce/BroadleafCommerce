@@ -24,12 +24,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
 
 /**
  * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
@@ -50,10 +50,7 @@ import org.hibernate.annotations.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_SKU_ATTRIBUTE", indexes={
-		@Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
-})
+@Table(name="BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SkuAttributeImpl implements SkuAttribute {
 
@@ -69,6 +66,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     /** The value. */
@@ -82,6 +80,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID")
+    @Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
     protected Sku sku;
 
     /* (non-Javadoc)

@@ -38,12 +38,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.sandbox.SandBoxSkuImpl;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -61,7 +61,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.Table;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -82,11 +81,7 @@ import org.hibernate.annotations.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_PRODUCT", indexes={
-		@Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-})
-//@Table(name = "BLC_PRODUCT")
+@Table(name="BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 public class ProductImpl implements Product {
@@ -107,6 +102,7 @@ public class ProductImpl implements Product {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty(name="productName")
+    @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Product Name", order=1, group="Product Description", prominent=true, columnWidth="25%", groupOrder=1)
     protected String name;
 
@@ -203,6 +199,7 @@ public class ProductImpl implements Product {
     /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
+    @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
     @AdminPresentation(friendlyName="Product Default Category", order=6, group="Product Description")
     protected Category defaultCategory;
 

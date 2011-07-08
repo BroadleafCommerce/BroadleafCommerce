@@ -36,6 +36,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
@@ -60,7 +61,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.Table;
 
 /**
  * The Class SandBoxSkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -80,13 +80,7 @@ import org.hibernate.annotations.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_SKU", indexes={
-		@Index(name="SKU_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"}),
-		@Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"}),
-		@Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"}),
-		@Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-})
+@Table(name="BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable
 public class SkuImpl implements Sku {
@@ -117,6 +111,7 @@ public class SkuImpl implements Sku {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty
+    @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Sku Name", order=1, group="Sku Description", prominent=true, columnWidth="25%", groupOrder=4)
     protected String name;
 
@@ -132,16 +127,19 @@ public class SkuImpl implements Sku {
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
+    @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
     @AdminPresentation(friendlyName="Sku Taxable", order=4, group="Sku Description", groupOrder=4)
     protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
+    @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
     @AdminPresentation(friendlyName="Sku Discountable", order=5, group="Sku Description", groupOrder=4)
     protected Character discountable;
 
     /** The available. */
     @Column(name = "AVAILABLE_FLAG")
+    @Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"})
     @AdminPresentation(friendlyName="Sku Available", order=6, group="Sku Description", groupOrder=4)
     protected Character available;
 
@@ -152,6 +150,7 @@ public class SkuImpl implements Sku {
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
+    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName="Sku End Date", order=8, group="Sku Description", groupOrder=4)
     protected Date activeEndDate;
     

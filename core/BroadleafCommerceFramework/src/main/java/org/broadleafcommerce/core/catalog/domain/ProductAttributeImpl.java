@@ -24,23 +24,20 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
 
 /**
  * The Class ProductAttributeImpl.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_PRODUCT_ATTRIBUTE", indexes={
-		@Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
-})
+@Table(name="BLC_PRODUCT_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class ProductAttributeImpl implements ProductAttribute {
 
@@ -56,6 +53,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Attribute Name", order=1, group="Description", prominent=true)
     protected String name;
 
@@ -72,6 +70,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
+    @Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product;
     
     /* (non-Javadoc)

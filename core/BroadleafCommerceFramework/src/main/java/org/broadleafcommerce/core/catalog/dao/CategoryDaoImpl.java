@@ -19,18 +19,18 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.persistence.BroadleafPersistenceContext;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCategoryDao")
 public class CategoryDaoImpl implements CategoryDao {
 
-    @BroadleafPersistenceContext(unitName="blPU", sandBoxUnitName="blSandboxPU")
+    @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")

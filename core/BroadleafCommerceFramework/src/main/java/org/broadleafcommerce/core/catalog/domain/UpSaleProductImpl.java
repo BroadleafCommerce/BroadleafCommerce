@@ -24,20 +24,17 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_PRODUCT_UP_SALE", indexes={
-		@Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"}),
-		@Index(name="UPSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
-})
+@Table(name="BLC_PRODUCT_UP_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class UpSaleProductImpl implements RelatedProduct {
 
@@ -58,10 +55,12 @@ public class UpSaleProductImpl implements RelatedProduct {
     
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
+    @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     private Product product = new ProductImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
+    @Index(name="UPSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct = new ProductImpl();
     
     public Long getId() {

@@ -34,6 +34,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
@@ -55,7 +56,6 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Table;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -74,11 +74,7 @@ import org.hibernate.annotations.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(appliesTo="BLC_CATEGORY", indexes={
-		@Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"}),
-		@Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"}),
-		@Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-})
+@Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryImpl implements Category {
 
@@ -96,6 +92,7 @@ public class CategoryImpl implements Category {
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName="Category Name", order=1, group="Description", prominent=true)
     protected String name;
 
@@ -106,6 +103,7 @@ public class CategoryImpl implements Category {
 
     /** The url key. */
     @Column(name = "URL_KEY")
+    @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
     protected String urlKey;
     
@@ -143,6 +141,7 @@ public class CategoryImpl implements Category {
     /** The default parent category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
+    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
     protected Category defaultParentCategory;
 
