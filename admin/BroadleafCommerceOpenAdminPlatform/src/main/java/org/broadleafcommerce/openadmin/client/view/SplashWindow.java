@@ -26,7 +26,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
  * @author jfischer
  *
  */
-public class SplashWindow extends Window implements SplashView {
+public class SplashWindow extends Window implements SplashView, Stoppable {
 	
 	private SimpleProgress simpleProgress;
 	
@@ -77,7 +77,10 @@ public class SplashWindow extends Window implements SplashView {
 	}
 	
 	public void stopProgress() {
-		simpleProgress.stopProgress();
+		simpleProgress.stopProgress(this);
+	}
+	
+	public void stop() {
 		hide();
 	}
 	

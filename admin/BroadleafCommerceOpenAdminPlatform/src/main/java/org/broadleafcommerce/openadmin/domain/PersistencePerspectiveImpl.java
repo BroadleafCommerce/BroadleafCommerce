@@ -68,7 +68,7 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 	protected String additionalForeignKeys;
 	
 	@ManyToMany(targetEntity = PersistencePerspectiveItemImpl.class, fetch=FetchType.EAGER)
-    @JoinTable(name = "BLC_SNDBX_PRSPCTV_ITEM_MAP", inverseJoinColumns = @JoinColumn(name = "PERSIST_PERSPECTIVE_ID", referencedColumnName = "PERSIST_PERSPECTIVE_ID"))
+    @JoinTable(name = "BLC_SNDBX_PRSPCTV_ITEM_MAP", inverseJoinColumns = @JoinColumn(name = "PERSIST_PERSPECT_ITEM_ID", referencedColumnName = "PERSIST_PERSPECT_ITEM_ID"))
     @MapKey(columns = {@Column(name = "PRSPCTV_ITEM_TYPE_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")

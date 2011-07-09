@@ -22,6 +22,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -55,6 +57,10 @@ public class PropertyImpl implements Property {
 	
 	@Column(name = "DISPLAY_VALUE")
 	protected String displayValue;
+	
+	@ManyToOne(targetEntity = EntityImpl.class)
+    @JoinColumn(name = "ENTITY_ID")
+	protected Entity entity;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.Property#getName()
@@ -102,6 +108,34 @@ public class PropertyImpl implements Property {
 	@Override
 	public void setDisplayValue(String displayValue) {
 		this.displayValue = displayValue;
+	}
+
+	/**
+	 * @return the entity
+	 */
+	public Entity getEntity() {
+		return entity;
+	}
+
+	/**
+	 * @param entity the entity to set
+	 */
+	public void setEntity(Entity entity) {
+		this.entity = entity;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override

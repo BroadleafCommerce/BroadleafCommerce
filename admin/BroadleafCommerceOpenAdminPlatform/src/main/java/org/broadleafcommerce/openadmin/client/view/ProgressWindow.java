@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.view;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Window;
 
 /**
@@ -25,7 +26,7 @@ import com.smartgwt.client.widgets.Window;
  * @author jfischer
  *
  */
-public class ProgressWindow extends Window {
+public class ProgressWindow extends Window implements Stoppable {
 	
 	private SimpleProgress simpleProgress;
 	
@@ -48,7 +49,10 @@ public class ProgressWindow extends Window {
 	}
 	
 	public void stopProgress() {
-		simpleProgress.stopProgress();
+		simpleProgress.stopProgress(this);
+	}
+	
+	public void stop() {
 		hide();
 	}
 	
