@@ -16,7 +16,6 @@
 package org.broadleafcommerce.openadmin.client.view;
 
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Progressbar;
 
 /**
@@ -29,7 +28,7 @@ public class SimpleProgress extends Progressbar {
 	private int barValue;
 	private Timer timer;
 	private boolean isActive = false;
-	private Double current = 100D;
+	private Double current = 1D;
 	
 	public SimpleProgress(Integer height) {
 		this(null, height);
@@ -42,18 +41,9 @@ public class SimpleProgress extends Progressbar {
         timer = new Timer() {  
             public void run() {
             	//asymptote calculation
-            	Double factor = 1/current;
-            	/*
-            	 * At 50 ms intervals, it should take 20 seconds
-            	 * to go through 100% of the progress using an
-            	 * increment of .25
-            	 */
-            	current -= .25D;
-                barValue += (int) (100D * factor);
-                if (barValue >= 100) { 
-                	current = 100D;
-                    barValue = 0;  
-                }  
+            	Double factor = 1D/current;
+            	current += .25D;
+                barValue = (int) (100 - (100D * factor));  
                 setPercentDone(barValue);
                 if(isActive)  
                     schedule(50); 
@@ -62,28 +52,33 @@ public class SimpleProgress extends Progressbar {
         setOpacity(50);
 	}
 	
-	private void stop(final Stoppable progressContainer) {
+	private void finalizeProgress(final Stoppable progressContainer) {
 		final IntContainer container = new IntContainer(100);
 		Timer timer = new Timer() {  
             public void run() { 
-                setPercentDone(container.getVal());
                 if(container.getVal() > 0) {  
+                	setPercentDone(container.getVal());
+                	container.setVal(-1);
+                    schedule(10); 
+                } else if (container.getVal() == -1){
                 	container.setVal(0);
-                    schedule(500); 
+                	schedule(500);
                 } else {
                 	setOpacity(50);
+                	setPercentDone(container.getVal());
                 	if (progressContainer != null) {
-                		progressContainer.stop();
+                		progressContainer.finalizeProgress();
                 	}
                 }
             }  
         };
-        timer.schedule(50);
+        timer.schedule(10);
 	}
 	
 	public void startProgress() {
 		isActive = true;
 		barValue = 0;  
+		current = 1D;
 		setOpacity(100);
         setPercentDone(barValue);
         timer.schedule(50);
@@ -92,13 +87,13 @@ public class SimpleProgress extends Progressbar {
 	public void stopProgress(Stoppable progressContainer) {
 		isActive = false;
 		timer.cancel();
-		stop(progressContainer);
+		finalizeProgress(progressContainer);
 	}
 	
 	public void stopProgress() {
 		isActive = false;
 		timer.cancel();
-		stop(null);
+		finalizeProgress(null);
 	}
 	
 	public Boolean isActive() {

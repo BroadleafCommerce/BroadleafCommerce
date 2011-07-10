@@ -80,7 +80,7 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
 		simpleProgress.stopProgress(this);
 	}
 	
-	public void stop() {
+	public void finalizeProgress() {
 		hide();
 	}
 	

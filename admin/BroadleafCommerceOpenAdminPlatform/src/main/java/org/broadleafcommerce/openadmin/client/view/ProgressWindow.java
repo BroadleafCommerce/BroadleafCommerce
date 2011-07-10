@@ -52,7 +52,7 @@ public class ProgressWindow extends Window implements Stoppable {
 		simpleProgress.stopProgress(this);
 	}
 	
-	public void stop() {
+	public void finalizeProgress() {
 		hide();
 	}
 	
