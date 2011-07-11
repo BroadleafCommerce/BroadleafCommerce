@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.admin.client.view.user;
 
-import org.broadleafcommerce.admin.client.AdminModule;
+import org.broadleafcommerce.admin.client.MerchandisingModule;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -54,7 +54,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.userListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(MerchandisingModule.ADMINMESSAGES.userListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -65,16 +65,16 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab(AdminModule.ADMINMESSAGES.userDetailsTitle());
+        Tab detailsTab = new Tab(MerchandisingModule.ADMINMESSAGES.userDetailsTitle());
         detailsTab.setID("userDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.userDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(MerchandisingModule.ADMINMESSAGES.userDetailsTitle(), entityDataSource);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
-        Tab userRolesTab = new Tab(AdminModule.ADMINMESSAGES.userRolesTitle()); 
+        Tab userRolesTab = new Tab(MerchandisingModule.ADMINMESSAGES.userRolesTitle()); 
         userRolesTab.setID("userUserRolesTab");
-        userRolesDisplay = new UserRoleView(AdminModule.ADMINMESSAGES.userRolesTitle(), false, false);
+        userRolesDisplay = new UserRoleView(MerchandisingModule.ADMINMESSAGES.userRolesTitle(), false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);
         

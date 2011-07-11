@@ -56,7 +56,7 @@ public class SimpleProgress extends Progressbar {
 		final IntContainer container = new IntContainer(100);
 		Timer timer = new Timer() {  
             public void run() { 
-                if(container.getVal() > 0) {  
+                if (container.getVal() > 0) {  
                 	setPercentDone(container.getVal());
                 	container.setVal(-1);
                     schedule(10); 

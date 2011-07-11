@@ -18,7 +18,7 @@ package org.broadleafcommerce.admin.client.presenter.customer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.admin.client.AdminModule;
+import org.broadleafcommerce.admin.client.CustomerCareModule;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
@@ -65,9 +65,9 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("username", AdminModule.ADMINMESSAGES.usernameDefault());
+		initialValues.put("username", CustomerCareModule.ADMINMESSAGES.usernameDefault());
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(AdminModule.ADMINMESSAGES.newCustomerTitle(), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		BLCMain.ENTITY_ADD.editNewRecord(CustomerCareModule.ADMINMESSAGES.newCustomerTitle(), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("username", event.getRecord().getAttribute("username"));
@@ -82,7 +82,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					SC.confirm(AdminModule.ADMINMESSAGES.confirmResetPassword(), new BooleanCallback() {
+					SC.confirm(CustomerCareModule.ADMINMESSAGES.confirmResetPassword(), new BooleanCallback() {
 						public void execute(Boolean value) {
 							if (value) {
 								BLCMain.NON_MODAL_PROGRESS.startProgress();
@@ -102,7 +102,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		AppServices.DYNAMIC_ENTITY.update(entity, tempPerspective, new String[]{"passwordUpdate"}, new AbstractCallback<Entity>() {
 									public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
-										SC.say(AdminModule.ADMINMESSAGES.resetPasswordSuccessful());
+										SC.say(CustomerCareModule.ADMINMESSAGES.resetPasswordSuccessful());
 									}	
 			            		}); 
 							}
@@ -132,7 +132,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 					getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 						"challengeQuestion", 
 						challengeQuestionSearchView, 
-						AdminModule.ADMINMESSAGES.challengeQuestionSearchPrompt(), 
+						CustomerCareModule.ADMINMESSAGES.challengeQuestionSearchPrompt(), 
 						display.getDynamicFormDisplay()
 					);
 			}

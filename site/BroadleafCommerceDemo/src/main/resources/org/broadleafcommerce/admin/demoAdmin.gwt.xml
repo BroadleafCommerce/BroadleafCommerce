@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
 	<inherits name="com.google.gwt.user.User" />
-	<inherits name="org.broadleafcommerce.admin.module" />
+	<inherits name="org.broadleafcommerce.admin.merchandisingModule" />
+	<inherits name="org.broadleafcommerce.admin.promotionModule" />
+	<inherits name="org.broadleafcommerce.admin.customerCareModule" />
 	
 	<extend-property name="locale" values="en_US"/>
 	

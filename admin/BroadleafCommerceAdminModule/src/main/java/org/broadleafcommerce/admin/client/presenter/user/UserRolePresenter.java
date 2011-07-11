@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.admin.client.presenter.user;
 
-import org.broadleafcommerce.admin.client.AdminModule;
+import org.broadleafcommerce.admin.client.MerchandisingModule;
 import org.broadleafcommerce.admin.client.view.user.UserRoleDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -117,7 +117,7 @@ public class UserRolePresenter implements SubPresentable {
 		display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					searchDialog.search(AdminModule.ADMINMESSAGES.userRolesTitle(), new SearchItemSelectedEventHandler() {
+					searchDialog.search(MerchandisingModule.ADMINMESSAGES.userRolesTitle(), new SearchItemSelectedEventHandler() {
 						public void onSearchItemSelected(SearchItemSelectedEvent event) {
 							display.getGrid().addData(event.getRecord());
 						}

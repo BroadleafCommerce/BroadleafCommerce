@@ -31,21 +31,21 @@ import com.smartgwt.client.widgets.events.ClickEvent;
  * @author jfischer
  *
  */
-public class AdminModule extends AbstractModule {
+public class MerchandisingModule extends AbstractModule {
 	
-	public static final AdminMessages ADMINMESSAGES = GWT.create(AdminMessages.class);
+	public static final MerchandisingMessages ADMINMESSAGES = GWT.create(MerchandisingMessages.class);
 	
 	public void onModuleLoad() {
-		ValidationFactoryManager.getInstance().getConstants().add(AdminModule.ADMINMESSAGES);
+		ValidationFactoryManager.getInstance().getConstants().add(MerchandisingModule.ADMINMESSAGES);
 		
-		setModuleTitle(AdminModule.ADMINMESSAGES.adminModuleTitle());
-		setModuleKey("BLCAdmin");
+		setModuleTitle(MerchandisingModule.ADMINMESSAGES.adminModuleTitle());
+		setModuleKey("BLCMerchandising");
 		
 		List<String> categoryRoles = new ArrayList<String>();
 		categoryRoles.add("ROLE_ADMIN");
 		categoryRoles.add("ROLE_MERCHANDISE_MANAGER");
 		setSection(
-			AdminModule.ADMINMESSAGES.categoryMainTitle(),
+			MerchandisingModule.ADMINMESSAGES.categoryMainTitle(),
 			"category",
 			"org.broadleafcommerce.admin.client.view.catalog.category.CategoryView",
 			"categoryPresenter",
@@ -57,7 +57,7 @@ public class AdminModule extends AbstractModule {
 		productRoles.add("ROLE_ADMIN");
 		productRoles.add("ROLE_MERCHANDISE_MANAGER");
 		setSection( 
-			AdminModule.ADMINMESSAGES.productMainTitle(),
+			MerchandisingModule.ADMINMESSAGES.productMainTitle(),
 			"product",
 			"org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuView",
 			"productPresenter",
@@ -65,50 +65,10 @@ public class AdminModule extends AbstractModule {
 			productRoles,
 			null
 		);
-		
-		List<String> orderRoles = new ArrayList<String>();
-		orderRoles.add("ROLE_ADMIN");
-		orderRoles.add("ROLE_CUSTOMER_SERVICE_REP");
-		setSection(
-			AdminModule.ADMINMESSAGES.orderMainTitle(),
-			"order",
-			"org.broadleafcommerce.admin.client.view.order.OrderView",
-			"orderPresenter",
-			"org.broadleafcommerce.admin.client.presenter.order.OrderPresenter",
-			orderRoles,
-			null
-		);
-		
-		List<String> customerRoles = new ArrayList<String>();
-		customerRoles.add("ROLE_ADMIN");
-		customerRoles.add("ROLE_CUSTOMER_SERVICE_REP");
-		setSection(
-			AdminModule.ADMINMESSAGES.customerMainTitle(),
-			"customer",
-			"org.broadleafcommerce.admin.client.view.customer.CustomerView",
-			"customerPresenter",
-			"org.broadleafcommerce.admin.client.presenter.customer.CustomerPresenter",
-			customerRoles,
-			null
-		);
-		
-		List<String> offerRoles = new ArrayList<String>();
-		offerRoles.add("ROLE_ADMIN");
-		offerRoles.add("ROLE_PROMOTION_MANAGER");
-		setSection(
-			AdminModule.ADMINMESSAGES.promotionMainTitle(),
-			"offer",
-			"org.broadleafcommerce.admin.client.view.promotion.OfferView",
-			"offerPresenter",
-			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
-			offerRoles,
-			null
-		);
-		
 		List<String> userManagementRoles = new ArrayList<String>();
 		userManagementRoles.add("ROLE_ADMIN");
 		setSection(
-			AdminModule.ADMINMESSAGES.userManagementMainTitle(),
+			MerchandisingModule.ADMINMESSAGES.userManagementMainTitle(),
 			"user",
 			"org.broadleafcommerce.admin.client.view.user.UserManagementView",
 			"userPresenter",

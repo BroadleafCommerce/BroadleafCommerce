@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.admin.client.AdminModule;
+import org.broadleafcommerce.admin.client.PromotionModule;
 import org.broadleafcommerce.admin.client.datasource.promotion.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
@@ -141,7 +141,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 	@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("name", AdminModule.ADMINMESSAGES.offerNameDefault());
+		initialValues.put("name", PromotionModule.ADMINMESSAGES.offerNameDefault());
 		initialValues.put("type", "ORDER_ITEM");
 		initialValues.put("value", 0);
 		initialValues.put("stackable", true);
@@ -316,8 +316,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onMouseMove(MouseMoveEvent event) {
 				if (currentHelp == null) {
 					currentHelp = createHelpWin(
-							AdminModule.ADMINMESSAGES.offerObtainSettingsHelpTitle(), 
-							AdminModule.ADMINMESSAGES.offerObtainSettingsHelpContent(),
+							PromotionModule.ADMINMESSAGES.offerObtainSettingsHelpTitle(), 
+							PromotionModule.ADMINMESSAGES.offerObtainSettingsHelpContent(),
 							true, 300, 200, getDisplay().getHelpButtonType().getAbsoluteLeft() + 26, getDisplay().getHelpButtonType().getAbsoluteTop()
 					);
 					currentHelp.show();
@@ -366,8 +366,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onMouseMove(MouseMoveEvent event) {
 				if (currentHelp == null) {
 					currentHelp = createHelpWin(
-							AdminModule.ADMINMESSAGES.bogoHelpTitle(), 
-							AdminModule.ADMINMESSAGES.bogoHelpContent(),
+							PromotionModule.ADMINMESSAGES.bogoHelpTitle(), 
+							PromotionModule.ADMINMESSAGES.bogoHelpContent(),
 							true, 300, 200, getDisplay().getHelpButtonBogo().getAbsoluteLeft() + 26, getDisplay().getHelpButtonBogo().getAbsoluteTop()
 					);
 					currentHelp.show();
