@@ -46,6 +46,10 @@ public final class BankersRounding {
     public static BigDecimal setScale(BigDecimal amount) {
         return setScale(DEFAULT_SCALE, amount);
     }
+    
+    public static BigDecimal setScale(BigDecimal amount, int scale) {
+        return setScale(scale, amount);
+    }
 
     public static BigDecimal setScale(double amount) {
         return setScale(DEFAULT_SCALE, new BigDecimal(amount));
