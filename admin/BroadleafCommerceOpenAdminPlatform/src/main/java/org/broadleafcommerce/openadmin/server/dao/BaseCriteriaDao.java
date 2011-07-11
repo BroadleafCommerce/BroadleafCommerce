@@ -34,7 +34,7 @@ public interface BaseCriteriaDao<T extends Serializable> {
 
 	public abstract int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
-	public abstract EntityManager getEntityManager();
+	public abstract EntityManager getStandardEntityManager();
 	
 	public abstract int count(PersistentEntityCriteria entityCriteria);
 	

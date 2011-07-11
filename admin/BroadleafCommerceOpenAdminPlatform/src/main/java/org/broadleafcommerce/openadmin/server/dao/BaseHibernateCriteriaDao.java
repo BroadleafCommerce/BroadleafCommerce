@@ -40,7 +40,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 	private static final Log LOG = LogFactory.getLog(BaseHibernateCriteriaDao.class);
 	
 	protected Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
-		Criteria criteria = ((HibernateEntityManager) getEntityManager()).getSession().createCriteria(entityClass);
+		Criteria criteria = ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
         entityCriteria.apply(criteria);
         
         return criteria;
@@ -80,7 +80,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
         return rowCount;
     }
     
-	public abstract EntityManager getEntityManager();
+	public abstract EntityManager getStandardEntityManager();
 	
 	public abstract Class<? extends Serializable> getEntityClass();
 

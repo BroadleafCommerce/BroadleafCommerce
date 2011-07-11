@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.domain;
+package org.broadleafcommerce.openadmin.server.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

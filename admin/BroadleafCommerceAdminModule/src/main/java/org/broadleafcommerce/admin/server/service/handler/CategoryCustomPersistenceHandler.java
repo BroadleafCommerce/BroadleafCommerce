@@ -93,12 +93,12 @@ public class CategoryCustomPersistenceHandler implements CustomPersistenceHandle
 			
 			{
 				//Use JPA 2.0 criteria support to load all Categories whose defaultParentCategory equals this one
-				CriteriaBuilder criteriaBuilder = dynamicEntityDao.getEntityManager().getCriteriaBuilder();
+				CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
 				CriteriaQuery<Category> query = criteriaBuilder.createQuery(Category.class);
 				Root<CategoryImpl> root= query.from(CategoryImpl.class);
 				query.where(criteriaBuilder.equal(root.get("defaultParentCategory"), category)); 
 				query.select(root); 
-				TypedQuery<Category> categoryQuery = dynamicEntityDao.getEntityManager().createQuery(query); 
+				TypedQuery<Category> categoryQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query); 
 				List<Category> categories = categoryQuery.getResultList();
 				if (!categories.isEmpty()) {
 					StringBuffer sb = new StringBuffer();
@@ -122,12 +122,12 @@ public class CategoryCustomPersistenceHandler implements CustomPersistenceHandle
 			
 			{
 				//Use JPA 2.0 criteria support to load all Products whose defaultCategory equals this one
-				CriteriaBuilder criteriaBuilder = dynamicEntityDao.getEntityManager().getCriteriaBuilder();
+				CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
 				CriteriaQuery<Product> query = criteriaBuilder.createQuery(Product.class);
 				Root<ProductImpl> root= query.from(ProductImpl.class);
 				query.where(criteriaBuilder.equal(root.get("defaultCategory"), category)); 
 				query.select(root); 
-				TypedQuery<Product> productQuery = dynamicEntityDao.getEntityManager().createQuery(query); 
+				TypedQuery<Product> productQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query); 
 				List<Product> products = productQuery.getResultList();
 				if (!products.isEmpty()) {
 					StringBuffer sb = new StringBuffer();

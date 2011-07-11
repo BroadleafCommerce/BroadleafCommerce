@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.domain;
+package org.broadleafcommerce.openadmin.server.domain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +87,12 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 	
 	@Column(name = "INCLUDE_FIELD_NAMES")
 	protected String includeFields;
+	
+	@Column(name = "SANDBOX")
+	protected String sandBox;
+	
+	@Column(name = "USE_SANDBOX")
+	protected Boolean useSandBox;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.PersistencePerspective#getId()
@@ -218,6 +224,22 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 		this.includeFields = includeFields;
 	}
 
+	public String getSandBox() {
+		return sandBox;
+	}
+
+	public void setSandBox(String sandBox) {
+		this.sandBox = sandBox;
+	}
+
+	public Boolean getUseSandBox() {
+		return useSandBox;
+	}
+
+	public void setUseSandBox(Boolean useSandBox) {
+		this.useSandBox = useSandBox;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -246,6 +268,10 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 		result = prime
 				* result
 				+ ((populateToOneFields == null) ? 0 : populateToOneFields
+						.hashCode());
+		result = prime
+				* result
+				+ ((sandBox == null) ? 0 : sandBox
 						.hashCode());
 		return result;
 	}
@@ -303,6 +329,11 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 			if (other.populateToOneFields != null)
 				return false;
 		} else if (!populateToOneFields.equals(other.populateToOneFields))
+			return false;
+		if (sandBox == null) {
+			if (other.sandBox != null)
+				return false;
+		} else if (!sandBox.equals(other.sandBox))
 			return false;
 		return true;
 	}

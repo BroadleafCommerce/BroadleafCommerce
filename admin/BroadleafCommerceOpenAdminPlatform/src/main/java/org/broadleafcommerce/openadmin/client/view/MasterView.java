@@ -85,6 +85,13 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         moduleStack.setAlign(Alignment.RIGHT);
         moduleStack.setLayoutBottomMargin(10);
         temp.addMember(moduleStack);
+        Label sandBoxTitle = new Label("Current Sandbox: " + modules.get(moduleKey).getCurrentSandBox());
+        sandBoxTitle.setWrap(false);
+        sandBoxTitle.setStyleName("label-bold");
+        moduleStack.addMember(sandBoxTitle);
+        HStack spacer1 = new HStack();
+        spacer1.setWidth(30);
+        moduleStack.addMember(spacer1);
         if (modules.size() > 1) {
 	        Menu modulesMenu = new Menu();  
 	        modulesMenu.setCanSelectParentItems(true); 

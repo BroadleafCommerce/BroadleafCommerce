@@ -71,10 +71,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
 	
-    protected EntityManager entityManager;
-	
+    protected EntityManager standardEntityManager;
 	protected SessionFactory sessionFactory;
-    
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
 
 	@Override
@@ -83,40 +81,40 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 	
 	public Serializable persist(Serializable entity) {
-		entityManager.persist(entity);
-		entityManager.flush();
+		standardEntityManager.persist(entity);
+		standardEntityManager.flush();
 		return entity;
 	}
 	
 	public Serializable merge(Serializable entity) {
-		Serializable response = entityManager.merge(entity);
-		entityManager.flush();
+		Serializable response = standardEntityManager.merge(entity);
+		standardEntityManager.flush();
 		return response;
 	}
 	
 	public void flush() {
-		entityManager.flush();
+		standardEntityManager.flush();
 	}
 	
 	public void detach(Serializable entity) {
-		entityManager.detach(entity);
+		standardEntityManager.detach(entity);
 	}
 	
 	public void refresh(Serializable entity) {
-		entityManager.refresh(entity);
+		standardEntityManager.refresh(entity);
 	}
  	
 	public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
-		return (Serializable) entityManager.find(entityClass, primaryKey);
+		return (Serializable) standardEntityManager.find(entityClass, primaryKey);
 	}
 	
 	public void remove(Serializable entity) {
-		entityManager.remove(entity);
-		entityManager.flush();
+		standardEntityManager.remove(entity);
+		standardEntityManager.flush();
 	}
 	
 	public void clear() {
-		entityManager.clear();
+		standardEntityManager.clear();
 	}
 	
 	/* (non-Javadoc)
@@ -886,12 +884,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 
 	@Override
-	public EntityManager getEntityManager() {
-		return entityManager;
+	public EntityManager getStandardEntityManager() {
+		return standardEntityManager;
 	}
 
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
+	public void setStandardEntityManager(EntityManager entityManager) {
+		this.standardEntityManager = entityManager;
 	}
 
 	public SessionFactory getSessionFactory() {

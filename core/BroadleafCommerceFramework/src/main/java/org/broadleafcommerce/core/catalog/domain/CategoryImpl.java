@@ -77,7 +77,7 @@ import org.hibernate.annotations.OrderBy;
 @Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryImpl implements Category {
-
+	
 	private static final long serialVersionUID = 1L;
 	
 	private static final Log LOG = LogFactory.getLog(CategoryImpl.class);

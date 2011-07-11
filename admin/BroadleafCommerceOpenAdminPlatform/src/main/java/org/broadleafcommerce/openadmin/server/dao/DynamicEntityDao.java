@@ -56,7 +56,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	
 	public void refresh(Serializable entity);
 	
-	public EntityManager getEntityManager();
+	public EntityManager getStandardEntityManager();
 	
 	public PersistentClass getPersistentClass(String targetClassName);
 	

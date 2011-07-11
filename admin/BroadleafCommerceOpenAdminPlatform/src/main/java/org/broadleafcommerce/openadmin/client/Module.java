@@ -33,5 +33,9 @@ public interface Module {
 	public void preDraw();
 	
 	public void postDraw();
+
+	public String getCurrentSandBox();
+
+	public void setCurrentSandBox(String currentSandBox);
 	
 }

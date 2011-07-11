@@ -53,6 +53,7 @@ public class BLCMain implements EntryPoint {
 	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
 	public static MasterView MASTERVIEW;
 	public static boolean ISNEW = true;
+	public static String currentModuleKey;
 	
 	public static final boolean DEBUG = true;
 	
@@ -77,6 +78,7 @@ public class BLCMain implements EntryPoint {
 			moduleKey = modules.keySet().iterator().next();
 		}
 		final String finalKey = moduleKey;
+		currentModuleKey = finalKey;
 		modules.get(finalKey).preDraw();
 		
 		AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {

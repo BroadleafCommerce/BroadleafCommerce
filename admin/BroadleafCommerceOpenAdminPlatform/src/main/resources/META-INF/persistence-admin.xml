@@ -38,15 +38,17 @@
 	</persistence-unit>
 	
 	<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
-		<class>org.broadleafcommerce.openadmin.domain.EntityImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.ForeignKeyImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.JoinStructureImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.MapStructureImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.OperationTypesImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.PersistencePerspectiveImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.PersistencePerspectiveItemImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.PropertyImpl</class>
-		<class>org.broadleafcommerce.openadmin.domain.SimpleValueMapStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.EntityImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.ForeignKeyImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.JoinStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.MapStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.OperationTypesImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveItemImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.PropertyImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="false"/>

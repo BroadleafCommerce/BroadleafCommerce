@@ -33,6 +33,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	protected LinkedHashMap<String, String[]> pages = new LinkedHashMap<String, String[]>();
 	protected String moduleTitle;
 	protected String moduleKey;
+	protected String currentSandBox = "test";
 	
 	public void registerModule() {
 		BLCMain.addModule(this);
@@ -52,6 +53,14 @@ public abstract class AbstractModule implements EntryPoint, Module {
 
 	public void setModuleKey(String moduleKey) {
 		this.moduleKey = moduleKey;
+	}
+
+	public String getCurrentSandBox() {
+		return currentSandBox;
+	}
+
+	public void setCurrentSandBox(String currentSandBox) {
+		this.currentSandBox = currentSandBox;
 	}
 
 	public void setSection(

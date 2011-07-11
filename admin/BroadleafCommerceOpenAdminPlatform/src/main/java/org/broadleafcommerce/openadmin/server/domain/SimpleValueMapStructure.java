@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.domain;
+package org.broadleafcommerce.openadmin.server.domain;
 
 public interface SimpleValueMapStructure extends MapStructure {
 

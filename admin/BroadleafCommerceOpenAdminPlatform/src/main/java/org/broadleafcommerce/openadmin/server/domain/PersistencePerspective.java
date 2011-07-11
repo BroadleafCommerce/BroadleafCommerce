@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.domain;
+package org.broadleafcommerce.openadmin.server.domain;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -91,4 +91,12 @@ public interface PersistencePerspective extends Serializable {
 	 */
 	public abstract void setIncludeFields(String includeFields);
 
+	public abstract String getSandBox();
+
+	public abstract void setSandBox(String sandBox);
+	
+	public Boolean getUseSandBox();
+
+	public void setUseSandBox(Boolean useSandBox);
+	
 }

@@ -92,13 +92,21 @@
 	</bean>
 	
 	<bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-		<property name="entityManager">
+		<property name="standardEntityManager">
 	        <bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
 	            <property name="entityManagerFactory" ref="entityManagerFactory"/>  
 	        </bean>
 	    </property>
 	    <property name="sessionFactory" ref="sessionFactory"/>
 		<property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao" />
+	</bean>
+	
+	<bean id="blSandBoxEntityDao" class="org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDaoImpl">
+	    <property name="sandBoxEntityManager">
+	        <bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
+	            <property name="entityManagerFactory" ref="blSandBoxEntityManagerFactory"/>  
+	        </bean>
+	    </property>
 	</bean>
 	
 	<bean id="blEJB3ConfigurationDao" class = "org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">

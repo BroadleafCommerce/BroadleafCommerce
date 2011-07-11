@@ -38,6 +38,8 @@ public class PersistencePerspective implements Serializable {
 	protected Boolean populateToOneFields = false;
 	protected String[] excludeFields = new String[]{};
 	protected String[] includeFields = new String[]{};
+	protected String sandBox;
+	protected Boolean useSandBox = true;
 	
 	public PersistencePerspective() {
 		//do nothing
@@ -115,6 +117,22 @@ public class PersistencePerspective implements Serializable {
 	public void setIncludeFields(String[] includeManyToOneFields) {
 		this.includeFields = includeManyToOneFields;
 		Arrays.sort(this.includeFields);
+	}
+
+	public String getSandBox() {
+		return sandBox;
+	}
+
+	public void setSandBox(String sandBox) {
+		this.sandBox = sandBox;
+	}
+
+	public Boolean getUseSandBox() {
+		return useSandBox;
+	}
+
+	public void setUseSandBox(Boolean useSandBox) {
+		this.useSandBox = useSandBox;
 	}
 
 }

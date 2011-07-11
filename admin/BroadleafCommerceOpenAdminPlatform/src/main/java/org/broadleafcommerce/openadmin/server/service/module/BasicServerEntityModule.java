@@ -452,12 +452,8 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 				primaryKey = getPrimaryKey(entity, mergedProperties);
 			}
 			Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			//dynamicEntityDao.clear();
-			//Object[] previousState = changeSetDao.getState(entity.getType(), instance);
 			instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 			instance = dynamicEntityDao.merge(instance);
-			//Object[] currentState = changeSetDao.getState(entity.getType(), instance);
-			//changeSetDao.saveChangeSet(entity.getType(), instance, (Serializable) primaryKey, currentState, previousState);
 			
 			List<Serializable> entityList = new ArrayList<Serializable>();
 			entityList.add(instance);
