@@ -344,7 +344,7 @@ public class FormBuilder {
 			formItem = new FloatItem();
 			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
-					return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
+					return value==null?"":NumberFormat.getFormat("0.00#").format(NumberFormat.getFormat("0.00#").parse(String.valueOf(value)));
 				}
 			});
 			break;

@@ -90,7 +90,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         	if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
         		gridFields[j].setCellFormatter(new CellFormatter() {
 					public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-						return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
+						return value==null?"":NumberFormat.getFormat("0.00#").format(NumberFormat.getFormat("0.00#").parse(String.valueOf(value)));
 					}
         		});
         	}
