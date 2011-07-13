@@ -96,12 +96,12 @@ public class SkuImpl implements Sku {
     protected Long id;
 
     /** The sale price. */
-    @Column(name = "SALE_PRICE")
+    @Column(name = "SALE_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Sku Sale Price", order=9, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal salePrice;
 
     /** The retail price. */
-    @Column(name = "RETAIL_PRICE", nullable=false)
+    @Column(name = "RETAIL_PRICE", nullable=false, precision=19, scale=5)
     @AdminPresentation(friendlyName="Sku Retail Price", order=10, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal retailPrice;
 
