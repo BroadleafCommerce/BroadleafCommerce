@@ -37,6 +37,7 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -57,6 +58,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Inspect
 	private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
 	
 	protected DynamicEntityDao dynamicEntityDao;
+	
+	@Resource(name="blSandBoxService")
+	protected SandBoxService sandBoxService;
 	
 	@Resource(name="blAdminSecurityRemoteService")
 	protected AdminSecurityServiceRemote adminRemoteSecurityService;
@@ -183,21 +187,21 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Inspect
 		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, dynamicEntityDao, entityClasses);
 	}
 
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException {
 		adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.FETCH);
 		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getFetchType());
 		return myModule.fetch(ceilingEntityFullyQualifiedClassname, cto, persistencePerspective, customCriteria);
 	}
 
-	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException {
 		adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.ADD);
 		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getAddType());
 		return myModule.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria);
 	}
 	
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity update(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException {
 		for (Property p : entity.getProperties()){
 			if (p.getName().equals("ceilingEntityFullyQualifiedClassname")){
 				adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
@@ -205,11 +209,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Inspect
 			}
 		}
 		
+		sandBoxService.saveSandBox(entity, persistencePerspective, sandBoxInfo);
+		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getUpdateType());
 		return myModule.update(entity, persistencePerspective, customCriteria);
 	}
 	
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public void remove(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException {
 		for (Property p : entity.getProperties()){
 			if (p.getName().equals("ceilingEntityFullyQualifiedClassname")){
 				adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
@@ -262,6 +268,14 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Inspect
 
 	public void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao) {
 		this.dynamicEntityDao = dynamicEntityDao;
+	}
+
+	public SandBoxService getSandBoxService() {
+		return sandBoxService;
+	}
+
+	public void setSandBoxService(SandBoxService sandBoxService) {
+		this.sandBoxService = sandBoxService;
 	}
 
 }

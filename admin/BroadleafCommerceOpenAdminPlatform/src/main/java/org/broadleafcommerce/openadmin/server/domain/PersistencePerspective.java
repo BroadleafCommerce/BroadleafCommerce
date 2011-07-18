@@ -1,10 +1,9 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 
 public interface PersistencePerspective extends Serializable {
@@ -30,15 +29,9 @@ public interface PersistencePerspective extends Serializable {
 	public abstract void setAdditionalNonPersistentProperties(
 			String additionalNonPersistentProperties);
 
-	/**
-	 * @return the additionalForeignKeys
-	 */
-	public abstract String getAdditionalForeignKeys();
+	public List<ForeignKey> getAdditionalForeignKeys();
 
-	/**
-	 * @param additionalForeignKeys the additionalForeignKeys to set
-	 */
-	public abstract void setAdditionalForeignKeys(String additionalForeignKeys);
+	public void setAdditionalForeignKeys(List<ForeignKey> additionalForeignKeys);
 
 	/**
 	 * @return the persistencePerspectiveItems
@@ -90,13 +83,5 @@ public interface PersistencePerspective extends Serializable {
 	 * @param includeFields the includeFields to set
 	 */
 	public abstract void setIncludeFields(String includeFields);
-
-	public abstract String getSandBox();
-
-	public abstract void setSandBox(String sandBox);
-	
-	public Boolean getUseSandBox();
-
-	public void setUseSandBox(Boolean useSandBox);
 	
 }

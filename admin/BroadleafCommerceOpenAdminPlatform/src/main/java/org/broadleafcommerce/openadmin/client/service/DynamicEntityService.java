@@ -19,6 +19,7 @@ import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.springframework.security.access.annotation.Secured;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
@@ -36,15 +37,15 @@ public interface DynamicEntityService extends RemoteService {
 	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException, ApplicationSecurityException;
 	
 	@Secured("PERMISSION_DEFAULT")
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
+	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
     
 	@Secured("PERMISSION_DEFAULT")
-	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
+	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
     
 	@Secured("PERMISSION_DEFAULT")
-    public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
+    public Entity update(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
     
 	@Secured("PERMISSION_DEFAULT")
-    public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
+    public void remove(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException, ApplicationSecurityException;
     
 }

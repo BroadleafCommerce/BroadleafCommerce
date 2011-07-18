@@ -42,6 +42,16 @@
 		<property name="persistenceUnitName" value="blSandboxPU"/>
 	</bean>
 	
+	<bean id="blTransactionManagerSandBox" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="blSandBoxEntityManagerFactory" />
+	</bean>
+
+	<tx:advice id="blTxAdviceSandBox" transaction-manager="blTransactionManagerSandBox">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+	
 	<aop:config>
 		<aop:pointcut id="blAdminSecurityServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.save*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceSaveOperation"/>
@@ -77,6 +87,11 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceRemoveOperation"/>
 	</aop:config>
 	
+	<aop:config>
+		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.SandBoxService.saveSandBox(..))"/>
+	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
+	</aop:config>
+	
 	<bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
 	
@@ -99,14 +114,6 @@
 	    </property>
 	    <property name="sessionFactory" ref="sessionFactory"/>
 		<property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao" />
-	</bean>
-	
-	<bean id="blSandBoxEntityDao" class="org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDaoImpl">
-	    <property name="sandBoxEntityManager">
-	        <bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
-	            <property name="entityManagerFactory" ref="blSandBoxEntityManagerFactory"/>  
-	        </bean>
-	    </property>
 	</bean>
 	
 	<bean id="blEJB3ConfigurationDao" class = "org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">

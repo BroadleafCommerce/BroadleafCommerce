@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,11 +29,11 @@ public class SandBoxItemImpl implements SandBoxItem {
     @Column(name = "SANDBOX_ITEM_ID")
     protected Long id;
     
-    @ManyToOne(targetEntity = EntityImpl.class)
+    @ManyToOne(targetEntity = EntityImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ENTITY_ID")
     protected Entity entity;
     
-    @ManyToOne(targetEntity = PersistencePerspectiveImpl.class)
+    @ManyToOne(targetEntity = PersistencePerspectiveImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSIST_PERSPECTIVE_ID")
     protected PersistencePerspective persistencePerspective;
 
@@ -87,6 +88,14 @@ public class SandBoxItemImpl implements SandBoxItem {
 	public void setPersistencePerspective(
 			PersistencePerspective persistencePerspective) {
 		this.persistencePerspective = persistencePerspective;
+	}
+
+	public SandBox getSandBox() {
+		return sandBox;
+	}
+
+	public void setSandBox(SandBox sandBox) {
+		this.sandBox = sandBox;
 	}
 
 	@Override

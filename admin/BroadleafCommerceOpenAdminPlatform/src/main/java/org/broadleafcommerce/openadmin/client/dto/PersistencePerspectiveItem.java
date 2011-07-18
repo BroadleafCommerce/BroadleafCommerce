@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.client.dto;
 
+import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
 /**
  * Simple marker interface for persistence perspective members
  * 
@@ -23,4 +25,6 @@ package org.broadleafcommerce.openadmin.client.dto;
  */
 public interface PersistencePerspectiveItem {
 
+	public void accept(PersistencePerspectiveItemVisitor visitor);
+	
 }

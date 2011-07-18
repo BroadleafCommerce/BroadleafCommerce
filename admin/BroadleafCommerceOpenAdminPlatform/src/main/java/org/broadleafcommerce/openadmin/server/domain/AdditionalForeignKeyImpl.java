@@ -1,42 +1,34 @@
-/*
- * Copyright 2008-2009 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.broadleafcommerce.openadmin.server.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-/**
- * 
- * @author jfischer
- *
- */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SNDBX_FRGN_KEY")
+@Table(name="BLC_SNDBX_ADDL_FRGN_KEY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
-public class ForeignKeyImpl extends PersistencePerspectiveItemImpl implements ForeignKey {
-
+public class AdditionalForeignKeyImpl implements ForeignKey {
+	
 	private static final long serialVersionUID = 1L;
+	
+	@Id
+    @GeneratedValue(generator = "AddlForeignKeyId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "AddlForeignKeyId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdditionalForeignKeyImpl", allocationSize = 50)
+    @Column(name = "ADDL_FOREIGN_KEY_ID")
+    protected Long id;
 	
 	@Column(name = "MANY_TO_FIELD")
 	protected String manyToField;
@@ -56,6 +48,9 @@ public class ForeignKeyImpl extends PersistencePerspectiveItemImpl implements Fo
 	@Column(name = "DISPLAY_VALUE_PROP")
 	protected String displayValueProperty = "name";
 	
+	@ManyToOne(targetEntity = PersistencePerspectiveImpl.class)
+    @JoinColumn(name = "PERSIST_PERSPECTIVE_ID")
+	protected PersistencePerspective persistencePerspective;
 	
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.ForeignKey#getManyToField()
@@ -161,6 +156,14 @@ public class ForeignKeyImpl extends PersistencePerspectiveItemImpl implements Fo
 		this.id = id;
 	}
 
+	public PersistencePerspective getPersistencePerspective() {
+		return persistencePerspective;
+	}
+
+	public void setPersistencePerspective(PersistencePerspective persistencePerspective) {
+		this.persistencePerspective = persistencePerspective;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -231,5 +234,4 @@ public class ForeignKeyImpl extends PersistencePerspectiveItemImpl implements Fo
 			return false;
 		return true;
 	}
-
 }

@@ -17,6 +17,8 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
 /**
  * 
  * @author jfischer
@@ -127,4 +129,7 @@ public class JoinStructure implements Serializable, PersistencePerspectiveItem {
 		this.inverse = inverse;
 	}
 	
+	public void accept(PersistencePerspectiveItemVisitor visitor) {
+        visitor.visit(this);
+    }
 }

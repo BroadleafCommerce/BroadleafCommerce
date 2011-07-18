@@ -17,4 +17,8 @@ public interface SandBox extends Serializable {
 
 	public abstract void setSandBoxItems(List<SandBoxItem> sandBoxItems);
 
+	public Long getAuthor();
+
+	public void setAuthor(Long author);
+	
 }

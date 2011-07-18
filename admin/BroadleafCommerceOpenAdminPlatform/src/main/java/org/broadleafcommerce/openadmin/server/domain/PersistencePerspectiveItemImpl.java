@@ -26,7 +26,7 @@ public class PersistencePerspectiveItemImpl implements PersistencePerspectiveIte
     @TableGenerator(name = "PersistencePerspectiveItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PersistencePerspectiveItemImpl", allocationSize = 50)
     @Column(name = "PERSIST_PERSPECT_ITEM_ID")
     protected Long id;
-
+	
 	/**
 	 * @return the id
 	 */

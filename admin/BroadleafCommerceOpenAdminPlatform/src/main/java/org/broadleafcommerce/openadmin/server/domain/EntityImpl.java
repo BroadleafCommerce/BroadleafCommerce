@@ -57,7 +57,7 @@ public class EntityImpl implements Entity {
     @Column(name = "TYPE")
 	protected String type;
 	
-	@OneToMany(mappedBy = "entity", targetEntity = PropertyImpl.class, cascade = {CascadeType.ALL}, fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "entity", targetEntity = PropertyImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     @BatchSize(size = 50)

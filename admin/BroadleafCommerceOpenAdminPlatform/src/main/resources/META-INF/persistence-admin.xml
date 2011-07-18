@@ -38,6 +38,7 @@
 	</persistence-unit>
 	
 	<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
+		<class>org.broadleafcommerce.openadmin.server.domain.AdditionalForeignKeyImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.EntityImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.ForeignKeyImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.JoinStructureImpl</class>

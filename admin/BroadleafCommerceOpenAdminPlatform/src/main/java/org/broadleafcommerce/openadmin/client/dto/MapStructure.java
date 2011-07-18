@@ -17,6 +17,8 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
 /**
  * 
  * @author jfischer
@@ -100,4 +102,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
 		this.deleteValueEntity = deleteValueEntity;
 	}
 
+	public void accept(PersistencePerspectiveItemVisitor visitor) {
+        visitor.visit(this);
+    }
 }

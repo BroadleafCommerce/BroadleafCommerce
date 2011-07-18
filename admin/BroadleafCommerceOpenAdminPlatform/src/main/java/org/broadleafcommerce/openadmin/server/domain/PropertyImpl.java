@@ -37,7 +37,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SNDBX_ENTITY")
+@Table(name="BLC_SNDBX_PROPERTY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class PropertyImpl implements Property {
 	
@@ -60,7 +60,7 @@ public class PropertyImpl implements Property {
 	
 	@ManyToOne(targetEntity = EntityImpl.class)
     @JoinColumn(name = "ENTITY_ID")
-	protected Entity entity;
+	protected org.broadleafcommerce.openadmin.server.domain.Entity entity;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.Property#getName()
@@ -113,14 +113,14 @@ public class PropertyImpl implements Property {
 	/**
 	 * @return the entity
 	 */
-	public Entity getEntity() {
+	public org.broadleafcommerce.openadmin.server.domain.Entity getEntity() {
 		return entity;
 	}
 
 	/**
 	 * @param entity the entity to set
 	 */
-	public void setEntity(Entity entity) {
+	public void setEntity(org.broadleafcommerce.openadmin.server.domain.Entity entity) {
 		this.entity = entity;
 	}
 

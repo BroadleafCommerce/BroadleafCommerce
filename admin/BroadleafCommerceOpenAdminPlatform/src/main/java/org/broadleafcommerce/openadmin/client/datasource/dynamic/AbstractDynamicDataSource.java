@@ -17,9 +17,11 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import java.util.HashMap;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallbackHandlerManager;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -39,6 +41,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	protected PersistencePerspective persistencePerspective;
 	protected DataSourceModule[] modules;
 	protected FormItemCallbackHandlerManager formItemCallbackHandlerManager = new FormItemCallbackHandlerManager();
+	protected boolean commitImmediately = false;
 	
 	/**
 	 * @param name
@@ -53,6 +56,14 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 			module.setDataSource(this);
 		}
 		this.modules = modules;
+	}
+	
+	public SandBoxInfo createSandBoxInfo() {
+		SandBoxInfo sandBoxInfo = new SandBoxInfo();
+		sandBoxInfo.setCommitImmediately(commitImmediately);
+		sandBoxInfo.setSandBox(BLCMain.getModule(BLCMain.currentModuleKey).getCurrentSandBox());
+		
+		return sandBoxInfo;
 	}
 
 	public HashMap<String, String> getPolymorphicEntities() {
@@ -89,4 +100,13 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 		String primaryKey = getPrimaryKeyFieldName();
 		return record.getAttribute(primaryKey);
 	}
+
+	public boolean isCommitImmediately() {
+		return commitImmediately;
+	}
+
+	public void setCommitImmediately(boolean commitImmediately) {
+		this.commitImmediately = commitImmediately;
+	}
+	
 }

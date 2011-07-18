@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.server.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,11 +33,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -64,10 +66,13 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 	@Column(name = "ADDL_NON_PERSIST_PROPS")
 	protected String additionalNonPersistentProperties;
 	
-	@Column(name = "ADDL_FOREIGN_KEYS")
-	protected String additionalForeignKeys;
+	@OneToMany(mappedBy = "persistencePerspective", targetEntity = AdditionalForeignKeyImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
+    @BatchSize(size = 50)
+	protected List<ForeignKey> additionalForeignKeys = new ArrayList<ForeignKey>();
 	
-	@ManyToMany(targetEntity = PersistencePerspectiveItemImpl.class, fetch=FetchType.EAGER)
+	@ManyToMany(targetEntity = PersistencePerspectiveItemImpl.class)
     @JoinTable(name = "BLC_SNDBX_PRSPCTV_ITEM_MAP", inverseJoinColumns = @JoinColumn(name = "PERSIST_PERSPECT_ITEM_ID", referencedColumnName = "PERSIST_PERSPECT_ITEM_ID"))
     @MapKey(columns = {@Column(name = "PRSPCTV_ITEM_TYPE_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -75,7 +80,7 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
     @BatchSize(size = 50)
 	protected Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
 	
-	@ManyToOne(targetEntity = OperationTypesImpl.class)
+	@ManyToOne(targetEntity = OperationTypesImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "OPERATION_TYPES_ID")
 	protected OperationTypes operationTypes;
 	
@@ -87,12 +92,6 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 	
 	@Column(name = "INCLUDE_FIELD_NAMES")
 	protected String includeFields;
-	
-	@Column(name = "SANDBOX")
-	protected String sandBox;
-	
-	@Column(name = "USE_SANDBOX")
-	protected Boolean useSandBox;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.PersistencePerspective#getId()
@@ -131,7 +130,7 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 	 * @see org.broadleafcommerce.openadmin.domain.PersistencePerspective#getAdditionalForeignKeys()
 	 */
 	@Override
-	public String getAdditionalForeignKeys() {
+	public List<ForeignKey> getAdditionalForeignKeys() {
 		return additionalForeignKeys;
 	}
 
@@ -139,7 +138,7 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 	 * @see org.broadleafcommerce.openadmin.domain.PersistencePerspective#setAdditionalForeignKeys(java.lang.String)
 	 */
 	@Override
-	public void setAdditionalForeignKeys(String additionalForeignKeys) {
+	public void setAdditionalForeignKeys(List<ForeignKey> additionalForeignKeys) {
 		this.additionalForeignKeys = additionalForeignKeys;
 	}
 
@@ -224,22 +223,6 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 		this.includeFields = includeFields;
 	}
 
-	public String getSandBox() {
-		return sandBox;
-	}
-
-	public void setSandBox(String sandBox) {
-		this.sandBox = sandBox;
-	}
-
-	public Boolean getUseSandBox() {
-		return useSandBox;
-	}
-
-	public void setUseSandBox(Boolean useSandBox) {
-		this.useSandBox = useSandBox;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -268,10 +251,6 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 		result = prime
 				* result
 				+ ((populateToOneFields == null) ? 0 : populateToOneFields
-						.hashCode());
-		result = prime
-				* result
-				+ ((sandBox == null) ? 0 : sandBox
 						.hashCode());
 		return result;
 	}
@@ -329,11 +308,6 @@ public class PersistencePerspectiveImpl implements PersistencePerspective {
 			if (other.populateToOneFields != null)
 				return false;
 		} else if (!populateToOneFields.equals(other.populateToOneFields))
-			return false;
-		if (sandBox == null) {
-			if (other.sandBox != null)
-				return false;
-		} else if (!sandBox.equals(other.sandBox))
 			return false;
 		return true;
 	}

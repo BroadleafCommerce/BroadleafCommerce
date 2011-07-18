@@ -17,6 +17,8 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
 
 /**
  * 
@@ -106,4 +108,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
 		this.displayValueProperty = displayValueProperty;
 	}
 
+	public void accept(PersistencePerspectiveItemVisitor visitor) {
+        visitor.visit(this);
+    }
 }

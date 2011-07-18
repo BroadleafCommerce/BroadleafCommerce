@@ -1,10 +1,8 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 
-public interface ForeignKey extends Serializable {
+public interface ForeignKey extends PersistencePerspectiveItem {
 
 	public abstract String getManyToField();
 
@@ -30,4 +28,8 @@ public interface ForeignKey extends Serializable {
 
 	public abstract void setDisplayValueProperty(String displayValueProperty);
 
+	public Long getId();
+
+	public void setId(Long id);
+	
 }

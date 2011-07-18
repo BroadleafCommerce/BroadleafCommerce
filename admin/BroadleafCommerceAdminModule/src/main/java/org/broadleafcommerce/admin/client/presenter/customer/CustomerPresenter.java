@@ -23,6 +23,7 @@ import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionL
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -99,7 +100,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		entity.setProperties(new Property[]{prop});
 			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
 			            		
-			            		AppServices.DYNAMIC_ENTITY.update(entity, tempPerspective, new String[]{"passwordUpdate"}, new AbstractCallback<Entity>() {
+			            		AppServices.DYNAMIC_ENTITY.update(entity, tempPerspective, ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).createSandBoxInfo(), new String[]{"passwordUpdate"}, new AbstractCallback<Entity>() {
 									public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
 										SC.say(CustomerCareModule.ADMINMESSAGES.resetPasswordSuccessful());

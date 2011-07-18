@@ -18,12 +18,12 @@ public interface Property extends Serializable {
 
 	public abstract void setDisplayValue(String displayValue);
 
-	public Entity getEntity();
+	public org.broadleafcommerce.openadmin.server.domain.Entity getEntity();
 
 	/**
 	 * @param entity the entity to set
 	 */
-	public void setEntity(Entity entity);
+	public void setEntity(org.broadleafcommerce.openadmin.server.domain.Entity entity);
 
 	/**
 	 * @return the id

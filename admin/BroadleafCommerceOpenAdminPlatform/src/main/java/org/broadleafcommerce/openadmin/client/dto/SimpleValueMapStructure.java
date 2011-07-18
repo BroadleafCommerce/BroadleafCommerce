@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.client.dto;
 
+import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
 /**
  * 
  * @author jfischer
@@ -61,4 +63,7 @@ public class SimpleValueMapStructure extends MapStructure {
 		this.valuePropertyFriendlyName = valuePropertyFriendlyName;
 	}
 	
+	public void accept(PersistencePerspectiveItemVisitor visitor) {
+        visitor.visit(this);
+    }
 }

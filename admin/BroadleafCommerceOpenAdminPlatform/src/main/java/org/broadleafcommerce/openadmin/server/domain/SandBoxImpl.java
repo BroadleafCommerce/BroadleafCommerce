@@ -6,20 +6,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,11 +39,10 @@ public class SandBoxImpl implements SandBox {
     @Index(name="SNDBX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
     protected String name;
     
-    @ManyToOne(targetEntity = AdminUserImpl.class)
-    @JoinColumn(name = "ADMIN_USER_ID")
-    protected AdminUser author;
+    @Column(name="AUTHOR")
+    protected Long author;
     
-    @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL}, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     @BatchSize(size = 50)
@@ -102,11 +96,11 @@ public class SandBoxImpl implements SandBox {
 		this.sandBoxItems = sandBoxItems;
 	}
 
-	public AdminUser getAuthor() {
+	public Long getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(AdminUser author) {
+	public void setAuthor(Long author) {
 		this.author = author;
 	}
 

@@ -16,4 +16,7 @@ public interface SandBoxItem extends Serializable {
 
 	public abstract void setPersistencePerspective(PersistencePerspective persistencePerspective);
 
+	public SandBox getSandBox();
+
+	public void setSandBox(SandBox sandBox);
 }
