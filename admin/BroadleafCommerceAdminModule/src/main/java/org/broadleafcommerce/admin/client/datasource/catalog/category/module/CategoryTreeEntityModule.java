@@ -72,7 +72,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
 		service.update(entity, persistencePerspective, dataSource.createSandBoxInfo(), null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);

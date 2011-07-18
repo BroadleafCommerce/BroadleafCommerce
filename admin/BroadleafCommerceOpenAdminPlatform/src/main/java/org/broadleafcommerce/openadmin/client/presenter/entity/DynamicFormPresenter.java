@@ -15,9 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
@@ -61,7 +65,9 @@ public class DynamicFormPresenter {
 		saveButtonHandlerRegistration=display.getSaveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					display.getFormOnlyDisplay().getForm().saveData();
+					DSRequest requestProperties = new DSRequest();
+					requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
+					display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
 					display.getSaveButton().disable();
 				}
 			}

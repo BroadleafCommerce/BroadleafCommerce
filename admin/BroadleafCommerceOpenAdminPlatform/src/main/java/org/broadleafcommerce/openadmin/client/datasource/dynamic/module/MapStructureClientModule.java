@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -92,9 +91,9 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
-        Entity tempEntity = buildEntity(temp);
+        Entity tempEntity = buildEntity(temp, request);
         final ListGridRecord record = associatedGrid.getSelectedRecord();
-    	Entity entity = buildEntity(record);
+    	Entity entity = buildEntity(record, request);
     	for (Property property : tempEntity.getProperties()) {
     		entity.findProperty(property.getName()).setValue(property.getValue());
     	}
@@ -153,9 +152,9 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
-        Entity tempEntity = buildEntity(temp);
+        Entity tempEntity = buildEntity(temp, request);
         final ListGridRecord record = associatedGrid.getRecord(associatedGrid.getRecordIndex(temp));
-    	Entity entity = buildEntity(record);
+    	Entity entity = buildEntity(record, request);
     	for (Property property : tempEntity.getProperties()) {
     		entity.findProperty(property.getName()).setValue(property.getValue());
     	}
@@ -248,7 +247,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 		BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
         service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);

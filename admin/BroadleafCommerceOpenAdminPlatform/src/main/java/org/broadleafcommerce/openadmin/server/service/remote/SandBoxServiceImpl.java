@@ -63,6 +63,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 			propertyImpl.setEntity(entityImpl);
 			propertyImpl.setName(property.getName());
 			propertyImpl.setValue(property.getValue());
+			propertyImpl.setIsDirty(property.getIsDirty());
 		}
 		final org.broadleafcommerce.openadmin.server.domain.PersistencePerspective persistencePerspectiveImpl = new PersistencePerspectiveImpl();
 		sandBoxItem.setPersistencePerspective(persistencePerspectiveImpl);

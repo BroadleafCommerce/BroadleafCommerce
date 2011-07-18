@@ -31,6 +31,7 @@ public class Property implements Serializable {
 	private String value;
 	private String displayValue;
 	private FieldMetadata metadata = new FieldMetadata();
+	private Boolean isDirty = false;
 
 	public String getName() {
 		return name;
@@ -62,6 +63,14 @@ public class Property implements Serializable {
 
 	public void setDisplayValue(String displayValue) {
 		this.displayValue = displayValue;
+	}
+
+	public Boolean getIsDirty() {
+		return isDirty;
+	}
+
+	public void setIsDirty(Boolean isDirty) {
+		this.isDirty = isDirty;
 	}
 
 	@Override

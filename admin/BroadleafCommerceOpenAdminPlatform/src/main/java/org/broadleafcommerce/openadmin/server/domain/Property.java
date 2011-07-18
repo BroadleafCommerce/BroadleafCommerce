@@ -34,4 +34,9 @@ public interface Property extends Serializable {
 	 * @param id the id to set
 	 */
 	public void setId(Long id);
+	
+	public Boolean getIsDirty();
+
+	public void setIsDirty(Boolean isDirty);
+	
 }

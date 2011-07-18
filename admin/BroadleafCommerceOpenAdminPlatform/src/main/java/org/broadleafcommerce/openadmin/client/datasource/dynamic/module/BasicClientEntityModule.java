@@ -40,7 +40,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
@@ -275,7 +274,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
         service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
@@ -318,7 +317,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
 		String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
@@ -365,7 +364,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
 		String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
@@ -494,9 +493,10 @@ public class BasicClientEntityModule implements DataSourceModule {
 		return response;
 	}
     
-    public Entity buildEntity(Record record) {
+    public Entity buildEntity(Record record, DSRequest request) {
 		Entity entity = new Entity();
 		entity.setType(record.getAttributeAsStringArray("_type"));
+		Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
 		List<Property> properties = new ArrayList<Property>();
 		String[] attributes = record.getAttributes();
 		for (String attribute : attributes) {
@@ -510,6 +510,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
 				}
 				property.setName(dataSource.getField(attribute).getAttribute("rawName"));
+				if (dirtyValues != null && dirtyValues.containsKey(property.getName())) {
+					property.setIsDirty(true);
+				}
 				properties.add(property);
 			}
 		}

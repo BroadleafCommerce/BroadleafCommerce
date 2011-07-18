@@ -51,7 +51,7 @@ public interface DataSourceModule {
 
 	public void setLinkedValue(String linkedValue);
 	
-	public Entity buildEntity(Record record);
+	public Entity buildEntity(Record record, DSRequest request);
 	
 	public CriteriaTransferObject getCto(DSRequest request);
 	

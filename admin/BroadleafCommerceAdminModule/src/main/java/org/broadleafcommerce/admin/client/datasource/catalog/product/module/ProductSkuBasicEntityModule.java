@@ -65,7 +65,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
 		BLCMain.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
         
         List<Property> newPropList = new ArrayList<Property>();
         {

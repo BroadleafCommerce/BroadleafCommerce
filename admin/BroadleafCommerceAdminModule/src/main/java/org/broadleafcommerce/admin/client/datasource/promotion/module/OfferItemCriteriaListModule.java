@@ -64,7 +64,7 @@ public class OfferItemCriteriaListModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         record.setAttribute("_type", new String[]{((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()});
-        Entity entity = buildEntity(record);
+        Entity entity = buildEntity(record, request);
         service.remove(entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);

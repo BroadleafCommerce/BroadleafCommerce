@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.FilterType;
@@ -61,46 +64,58 @@ public class OfferPresenterExtractor {
 		}
 	}
 	
+	protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
+		if (!record.getAttributeAsObject(fieldName).equals(value)) {
+			record.setAttribute(fieldName, value);
+			dirtyValues.put(fieldName, value);
+		}
+	}
+	
 	public void applyData(final Record selectedRecord) {
 		try {
-			selectedRecord.setAttribute("totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"));
-			selectedRecord.setAttribute("deliveryType",getDisplay().getDeliveryTypeRadio().getValue());
+			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
+			
+			setData(selectedRecord, "totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"), dirtyValues);
+			setData(selectedRecord, "deliveryType",getDisplay().getDeliveryTypeRadio().getValue(), dirtyValues);
 			if (getDisplay().getDeliveryTypeRadio().getValue().equals("CODE")) {
-				selectedRecord.setAttribute("offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim());
+				setData(selectedRecord, "offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim(), dirtyValues);
 			}
 			
 			final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
 			
-			extractCustomerData(selectedRecord);
-			extractOrderData(selectedRecord, type);
+			extractCustomerData(selectedRecord, dirtyValues);
+			extractOrderData(selectedRecord, type, dirtyValues);
 			
-			extractQualifierRuleType(selectedRecord);
-			extractTargetItemData(selectedRecord, type);
-			extractTargetRuleType(selectedRecord);
-			extractFulfillmentGroupData(selectedRecord, type);
+			extractQualifierRuleType(selectedRecord, dirtyValues);
+			extractTargetItemData(selectedRecord, type, dirtyValues);
+			extractTargetRuleType(selectedRecord, dirtyValues);
+			extractFulfillmentGroupData(selectedRecord, type, dirtyValues);
 			
 			for (FormItem formItem : getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getFields()) {
-				selectedRecord.setAttribute(formItem.getName(), formItem.getValue());
+				setData(selectedRecord, formItem.getName(), formItem.getValue(), dirtyValues);
 			}
 			
-			extractQualifierData(selectedRecord, type, true);
+			extractQualifierData(selectedRecord, type, true, dirtyValues);
+			
+			DSRequest requestProperties = new DSRequest();
+			requestProperties.setAttribute("dirtyValues", dirtyValues);
 			
 			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(selectedRecord, new DSCallback() {
 				public void execute(DSResponse response, Object rawData, DSRequest request) {
 					try {
-						extractQualifierData(selectedRecord, type, false);
+						extractQualifierData(selectedRecord, type, false, dirtyValues);
 						getDisplay().getDynamicFormDisplay().getSaveButton().disable();
 					} catch (IncompatibleMVELTranslationException e) {
 						SC.warn(e.getMessage());
 					}
 				}
-			});
+			}, requestProperties);
 		} catch (IncompatibleMVELTranslationException e) {
 			SC.warn(e.getMessage());
 		}
 	}
 	
-	protected void extractQualifierData(final Record selectedRecord, final String type, boolean isValidation) throws IncompatibleMVELTranslationException {
+	protected void extractQualifierData(final Record selectedRecord, final String type, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if ((getDisplay().getBogoRadio().getValue().equals("YES") && type.equals("ORDER_ITEM")) || getDisplay().getItemRuleRadio().getValue().equals("ITEM_RULE") && !type.equals("ORDER_ITEM")) {
 			for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
 				if (builder.getDirty()) {
@@ -114,8 +129,8 @@ public class OfferPresenterExtractor {
 					}
 					if (!isValidation) {
 						if (builder.getRecord() != null) {
-							builder.getRecord().setAttribute("quantity", quantity);
-							builder.getRecord().setAttribute("orderItemMatchRule", mvel);
+							setData(builder.getRecord(), "quantity", quantity, dirtyValues);
+							setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
 							presenter.offerItemCriteriaDataSource.updateData(builder.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
@@ -148,34 +163,34 @@ public class OfferPresenterExtractor {
 			}
 		}
 		if (type.equals("ORDER_ITEM")) {
-			selectedRecord.setAttribute("combinableWithOtherOffers", getDisplay().getOrderItemCombineRuleRadio().getValue().equals("YES"));
+			setData(selectedRecord, "combinableWithOtherOffers", getDisplay().getOrderItemCombineRuleRadio().getValue().equals("YES"), dirtyValues);
 		}
 	}
 
-	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
+	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (type.equals("FULFILLMENT_GROUP")) {
 			if (getDisplay().getFgRuleRadio().getValue().equals("FG_RULE")) {
 				if (!presenter.initializer.fgRuleIncompatible) {
-					selectedRecord.setAttribute("appliesToFulfillmentGroupRules", TRANSLATOR.createMVEL(getDisplay().getFulfillmentGroupFilterBuilder().getCriteria(), FilterType.FULFILLMENT_GROUP, getDisplay().getFulfillmentGroupFilterBuilder().getDataSource()));
+					setData(selectedRecord, "appliesToFulfillmentGroupRules", TRANSLATOR.createMVEL(getDisplay().getFulfillmentGroupFilterBuilder().getCriteria(), FilterType.FULFILLMENT_GROUP, getDisplay().getFulfillmentGroupFilterBuilder().getDataSource()), dirtyValues);
 				} else {
-					selectedRecord.setAttribute("appliesToFulfillmentGroupRules", getDisplay().getRawFGTextArea().getValue());
+					setData(selectedRecord, "appliesToFulfillmentGroupRules", getDisplay().getRawFGTextArea().getValue(), dirtyValues);
 				}
 			} else {
 				Object value = null;
-				selectedRecord.setAttribute("appliesToFulfillmentGroupRules", value);
+				setData(selectedRecord, "appliesToFulfillmentGroupRules", value, dirtyValues);
 				getDisplay().getFulfillmentGroupFilterBuilder().clearCriteria();
 				getDisplay().getRawFGTextArea().setValue("");
 			}
-			selectedRecord.setAttribute("combinableWithOtherOffers", getDisplay().getFgCombineRuleRadio().getValue().equals("YES"));
+			setData(selectedRecord, "combinableWithOtherOffers", getDisplay().getFgCombineRuleRadio().getValue().equals("YES"), dirtyValues);
 		} else {
 			Object value = null;
-			selectedRecord.setAttribute("appliesToFulfillmentGroupRules", value);
+			setData(selectedRecord, "appliesToFulfillmentGroupRules", value, dirtyValues);
 			getDisplay().getFulfillmentGroupFilterBuilder().clearCriteria();
 			getDisplay().getRawFGTextArea().setValue("");
 		}
 	}
 
-	protected void extractTargetRuleType(final Record selectedRecord) {
+	protected void extractTargetRuleType(final Record selectedRecord, Map<String, Object> dirtyValues) {
 		String offerItemTargetRuleType;
 		if (
 			getDisplay().getQualifyForAnotherPromoTargetRadio().getValue().equals("YES") &&
@@ -195,10 +210,10 @@ public class OfferPresenterExtractor {
 		} else {
 			offerItemTargetRuleType = "NONE";
 		}
-		selectedRecord.setAttribute("offerItemTargetRuleType", offerItemTargetRuleType);
+		setData(selectedRecord, "offerItemTargetRuleType", offerItemTargetRuleType, dirtyValues);
 	}
 
-	protected void extractTargetItemData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
+	protected void extractTargetItemData(final Record selectedRecord, final String type, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (type.equals("ORDER_ITEM")) {
 			String temp = getDisplay().getTargetItemBuilder().getItemQuantity().getValue().toString();
 			Integer quantity = Integer.parseInt(temp);
@@ -208,16 +223,16 @@ public class OfferPresenterExtractor {
 			} else {
 				mvel = TRANSLATOR.createMVEL(getDisplay().getTargetItemBuilder().getItemFilterBuilder().getCriteria(), FilterType.ORDER_ITEM, getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
 			}
-			selectedRecord.setAttribute("targetItemCriteria.quantity", quantity);
-			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", mvel);
+			setData(selectedRecord, "targetItemCriteria.quantity", quantity, dirtyValues);
+			setData(selectedRecord, "targetItemCriteria.orderItemMatchRule", mvel, dirtyValues);
 		} else {
-			selectedRecord.setAttribute("targetItemCriteria.quantity", 0);
+			setData(selectedRecord, "targetItemCriteria.quantity", 0, dirtyValues);
 			String attr = null;
-			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", attr);
+			setData(selectedRecord, "targetItemCriteria.orderItemMatchRule", attr, dirtyValues);
 		}
 	}
 
-	protected void extractQualifierRuleType(final Record selectedRecord) {
+	protected void extractQualifierRuleType(final Record selectedRecord, Map<String, Object> dirtyValues) {
 		String offerItemQualifierRuleType;
 		if (
 			getDisplay().getQualifyForAnotherPromoRadio().getValue().equals("YES") &&
@@ -237,37 +252,37 @@ public class OfferPresenterExtractor {
 		} else {
 			offerItemQualifierRuleType = "NONE";
 		}
-		selectedRecord.setAttribute("offerItemQualifierRuleType", offerItemQualifierRuleType);
+		setData(selectedRecord, "offerItemQualifierRuleType", offerItemQualifierRuleType, dirtyValues);
 	}
 
-	protected void extractOrderData(final Record selectedRecord, String type) throws IncompatibleMVELTranslationException {
+	protected void extractOrderData(final Record selectedRecord, String type, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getOrderRuleRadio().getValue().equals("ORDER_RULE")) {
 			if (!presenter.initializer.orderRuleIncompatible) {
-				selectedRecord.setAttribute("appliesToOrderRules", TRANSLATOR.createMVEL(getDisplay().getOrderFilterBuilder().getCriteria(), FilterType.ORDER, getDisplay().getOrderFilterBuilder().getDataSource()));
+				setData(selectedRecord, "appliesToOrderRules", TRANSLATOR.createMVEL(getDisplay().getOrderFilterBuilder().getCriteria(), FilterType.ORDER, getDisplay().getOrderFilterBuilder().getDataSource()), dirtyValues);
 			} else {
-				selectedRecord.setAttribute("appliesToOrderRules", getDisplay().getRawOrderTextArea().getValue());
+				setData(selectedRecord, "appliesToOrderRules", getDisplay().getRawOrderTextArea().getValue(), dirtyValues);
 			}
 		} else {
 			Object value = null;
-			selectedRecord.setAttribute("appliesToOrderRules", value);
+			setData(selectedRecord, "appliesToOrderRules", value, dirtyValues);
 			getDisplay().getOrderFilterBuilder().clearCriteria();
 			getDisplay().getRawOrderTextArea().setValue("");
 		}
 		if (type.equals("ORDER")) {
-			selectedRecord.setAttribute("combinableWithOtherOffers", getDisplay().getOrderCombineRuleRadio().getValue().equals("YES"));
+			setData(selectedRecord, "combinableWithOtherOffers", getDisplay().getOrderCombineRuleRadio().getValue().equals("YES"), dirtyValues);
 		}
 	}
 
-	protected void extractCustomerData(final Record selectedRecord) throws IncompatibleMVELTranslationException {
+	protected void extractCustomerData(final Record selectedRecord, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getCustomerRuleRadio().getValue().equals("CUSTOMER_RULE")) {
 			if (!presenter.initializer.customerRuleIncompatible) {
-				selectedRecord.setAttribute("appliesToCustomerRules", TRANSLATOR.createMVEL(getDisplay().getCustomerFilterBuilder().getCriteria(), FilterType.CUSTOMER, getDisplay().getCustomerFilterBuilder().getDataSource()));
+				setData(selectedRecord, "appliesToCustomerRules", TRANSLATOR.createMVEL(getDisplay().getCustomerFilterBuilder().getCriteria(), FilterType.CUSTOMER, getDisplay().getCustomerFilterBuilder().getDataSource()), dirtyValues);
 			} else {
-				selectedRecord.setAttribute("appliesToCustomerRules", getDisplay().getRawCustomerTextArea().getValue());
+				setData(selectedRecord, "appliesToCustomerRules", getDisplay().getRawCustomerTextArea().getValue(), dirtyValues);
 			}
 		} else {
 			Object value = null;
-			selectedRecord.setAttribute("appliesToCustomerRules", value);
+			setData(selectedRecord, "appliesToCustomerRules", value, dirtyValues);
 			getDisplay().getCustomerFilterBuilder().clearCriteria();
 			getDisplay().getRawCustomerTextArea().setValue("");
 		}

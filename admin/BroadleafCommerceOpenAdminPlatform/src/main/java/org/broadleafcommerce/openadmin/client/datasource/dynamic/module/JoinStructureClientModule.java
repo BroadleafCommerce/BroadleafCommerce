@@ -65,9 +65,9 @@ public class JoinStructureClientModule extends BasicClientEntityModule {
     }
 	
 	@Override
-	public Entity buildEntity(Record record) {
+	public Entity buildEntity(Record record, DSRequest request) {
 		JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-		Entity entity = super.buildEntity(record);
+		Entity entity = super.buildEntity(record, request);
 		//JoinStructure joinTable = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 		entity.setType(new String[]{joinTable.getJoinStructureEntityClassname()});
 		List<Property> properties = new ArrayList<Property>();

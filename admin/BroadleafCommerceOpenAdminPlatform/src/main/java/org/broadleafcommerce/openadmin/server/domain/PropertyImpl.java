@@ -58,6 +58,9 @@ public class PropertyImpl implements Property {
 	@Column(name = "DISPLAY_VALUE")
 	protected String displayValue;
 	
+	@Column(name = "IS_DIRTY")
+	protected Boolean isDirty = false;
+	
 	@ManyToOne(targetEntity = EntityImpl.class)
     @JoinColumn(name = "ENTITY_ID")
 	protected org.broadleafcommerce.openadmin.server.domain.Entity entity;
@@ -136,6 +139,14 @@ public class PropertyImpl implements Property {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Boolean getIsDirty() {
+		return isDirty;
+	}
+
+	public void setIsDirty(Boolean isDirty) {
+		this.isDirty = isDirty;
 	}
 
 	@Override

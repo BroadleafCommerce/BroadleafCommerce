@@ -97,7 +97,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
         final TreeNode newRecord = new TreeNode(data);
         persistencePerspective.getOperationTypes().setAddType(OperationType.ENTITY);
         final DataSourceModule entityModule = getCompatibleModule(OperationType.ENTITY);
-    	Entity entity = entityModule.buildEntity(newRecord);
+    	Entity entity = entityModule.buildEntity(newRecord, request);
     	//Add the new category entity
 		service.add(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
 			public void onSuccess(Entity result) {
@@ -108,7 +108,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 				
 				persistencePerspective.getOperationTypes().setAddType(OperationType.JOINSTRUCTURE);
 				DataSourceModule joinModule = getCompatibleModule(OperationType.JOINSTRUCTURE);
-				Entity entity = joinModule.buildEntity(record);
+				Entity entity = joinModule.buildEntity(record, request);
 				//Add the join table entry for the new category as well
 	        	service.add(joinModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, "temp" + requestId, request, response, CategoryTreeDataSource.this) {
 					public void onSuccess(Entity result) {
