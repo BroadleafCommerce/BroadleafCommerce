@@ -47,6 +47,7 @@ import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.persistence.BroadleafPersistenceContext;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.ConfigurationItem;
 import org.broadleafcommerce.presentation.ValidationConfiguration;
@@ -61,17 +62,21 @@ import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+import org.springframework.stereotype.Repository;
 
 /**
  * 
  * @author jfischer
  *
  */
+@Repository("blDynamicEntityDao")
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
 	
+	@BroadleafPersistenceContext(unitName = "blPU", sandBoxUnitName="blSandboxPU")
     protected EntityManager standardEntityManager;
+	
 	protected SessionFactory sessionFactory;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
 

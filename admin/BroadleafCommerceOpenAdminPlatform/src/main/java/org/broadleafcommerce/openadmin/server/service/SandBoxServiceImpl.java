@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.server.service.remote;
+package org.broadleafcommerce.openadmin.server.service;
 
 import javax.annotation.Resource;
 

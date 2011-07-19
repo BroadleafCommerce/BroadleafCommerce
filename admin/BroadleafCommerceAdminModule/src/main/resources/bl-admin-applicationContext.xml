@@ -13,7 +13,7 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
            
-    <bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService">
+    <bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService">
 		<constructor-arg>
 			<list>
 				<bean class="org.broadleafcommerce.openadmin.server.service.module.BasicServerEntityModule"/>
@@ -29,7 +29,6 @@
 				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
 			</list>
 		</property>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao" />
 	</bean>
 	
 </beans>

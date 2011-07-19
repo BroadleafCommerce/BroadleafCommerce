@@ -40,6 +40,10 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 	private static final Log LOG = LogFactory.getLog(BaseHibernateCriteriaDao.class);
 	
 	protected Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
+		/*
+		 * TODO I need to create some additional API on BroadleafEntityManager that will return a proxied criteria 
+		 * that fronts the two background entity managers
+		 */
 		Criteria criteria = ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
         entityCriteria.apply(criteria);
         

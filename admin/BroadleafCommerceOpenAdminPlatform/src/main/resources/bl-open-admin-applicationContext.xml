@@ -63,39 +63,36 @@
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService.inspect(..))"/>
+		<aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.inspect(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceInspectOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceFetchOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService.fetch(..))"/>
+		<aop:pointcut id="blRemoteServiceFetchOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.fetch(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceFetchOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceAddOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService.add(..))"/>
+		<aop:pointcut id="blRemoteServiceAddOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.add(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceAddOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceUpdateOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService.update(..))"/>
+		<aop:pointcut id="blRemoteServiceUpdateOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.update(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceUpdateOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService.remove(..))"/>
+		<aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.remove(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceRemoveOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.remote.SandBoxService.saveSandBox(..))"/>
+		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.SandBoxService.saveSandBox(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
 	</aop:config>
 	
-	<bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
-	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
-	
-	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService">
+	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService">
 		<constructor-arg>
 			<list>
 				<bean class="org.broadleafcommerce.openadmin.server.service.module.BasicServerEntityModule"/>
@@ -103,21 +100,19 @@
 				<bean class="org.broadleafcommerce.openadmin.server.service.module.MapStructureServerModule"/>
 			</list>
 		</constructor-arg>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao" />
 	</bean>
 	
 	<bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-		<property name="standardEntityManager">
-	        <bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
-	            <property name="entityManagerFactory" ref="entityManagerFactory"/>  
-	        </bean>
+	    <property name="sessionFactory">
+	    	<bean factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 	    </property>
-	    <property name="sessionFactory" ref="sessionFactory"/>
-		<property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao" />
-	</bean>
-	
-	<bean id="blEJB3ConfigurationDao" class = "org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
-		<property name="persistenceUnitInfo" ref="persistenceUnitInfo" />
+		<property name="ejb3ConfigurationDao">
+			<bean class = "org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
+				<property name="persistenceUnitInfo">
+					<bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+				</property>
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="blFieldManager" class="org.broadleafcommerce.openadmin.server.service.module.FieldManager" scope="prototype"/>

@@ -26,8 +26,8 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
-import org.broadleafcommerce.openadmin.server.service.remote.DynamicEntityRemoteService;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 

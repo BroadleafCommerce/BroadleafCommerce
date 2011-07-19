@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.remote;
+package org.broadleafcommerce.openadmin.server.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -45,6 +45,7 @@ import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServi
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.module.RemoteServiceModule;
+import org.springframework.stereotype.Service;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
@@ -53,10 +54,12 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  * @author jfischer
  *
  */
+@Service("blDynamicEntityRemoteService")
 public class DynamicEntityRemoteService implements DynamicEntityService, InspectHelper {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
 	
+	@Resource(name="blDynamicEntityDao")
 	protected DynamicEntityDao dynamicEntityDao;
 	
 	@Resource(name="blSandBoxService")

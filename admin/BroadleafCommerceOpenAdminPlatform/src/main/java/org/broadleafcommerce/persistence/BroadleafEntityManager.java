@@ -28,12 +28,15 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.metamodel.Metamodel;
 
+import org.hibernate.Session;
+import org.hibernate.ejb.HibernateEntityManager;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class BroadleafEntityManager implements EntityManager {
+public class BroadleafEntityManager implements HibernateEntityManager {
 	
 	protected final EntityManager standardManager;
 	protected final EntityManager sandboxManager;
@@ -427,6 +430,9 @@ public class BroadleafEntityManager implements EntityManager {
 		return standardManager.getMetamodel();
 	}
 
-	
+	@Override
+	public Session getSession() {
+		return ((HibernateEntityManager) standardManager).getSession();
+	}
 
 }
