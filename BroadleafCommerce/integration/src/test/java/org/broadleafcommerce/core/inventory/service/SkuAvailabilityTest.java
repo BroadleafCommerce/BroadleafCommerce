@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.core.inventory.service.AvailabilityService;
 import org.broadleafcommerce.core.inventory.service.dataprovider.SkuAvailabilityDataProvider;
+import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
@@ -49,10 +50,10 @@ public class SkuAvailabilityTest extends BaseTest {
         int backorderCount=0;
         int availableCount=0;
         for (SkuAvailability skuAvailability : skuAvailabilityList) {
-            if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("backordered")) {
+            if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals(AvailabilityStatusType.BACKORDERED)) {
                 backorderCount++;
             }
-            if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("available")) {
+            if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals(AvailabilityStatusType.AVAILABLE)) {
                 availableCount++;
             }
         }

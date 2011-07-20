@@ -28,6 +28,10 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.profile.vendor.service.type.ContainerShapeType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -61,33 +65,40 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @GeneratedValue(generator = "SkuAvailabilityId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SkuAvailabilityId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAvailabilityImpl", allocationSize = 50)
     @Column(name = "SKU_AVAILABILITY_ID")
+    @AdminPresentation(friendlyName="Sku Availability ID", group="Primary Key", hidden=true)
     protected Long id;
 
     /** The sale price. */
     @Column(name = "SKU_ID")
     @Index(name="SKUAVAIL_SKU_INDEX", columnNames={"SKU_ID"})
+    @AdminPresentation(friendlyName="Sku ID", hidden=true)
     protected Long skuId;
 
     /** The retail price. */
     @Column(name = "LOCATION_ID")
     @Index(name="SKUAVAIL_LOCATION_INDEX", columnNames={"LOCATION_ID"})
+    @AdminPresentation(friendlyName="Location ID", group="Description")
     protected Long locationId;
 
     /** The quantity on hand. */
     @Column(name = "QTY_ON_HAND")
+    @AdminPresentation(friendlyName="Quantity On Hand", group="Description")
     protected Integer quantityOnHand;
 
     /** The reserve quantity. */
     @Column(name = "RESERVE_QTY")
+    @AdminPresentation(friendlyName="Reserve Quantity", group="Description")
     protected Integer reserveQuantity;
 
     /** The description. */
     @Column(name = "AVAILABILITY_STATUS")
     @Index(name="SKUAVAIL_STATUS_INDEX", columnNames={"AVAILABILITY_STATUS"})
+    @AdminPresentation(friendlyName="Availability Status", group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType")
     protected String availabilityStatus;
 
     /** The date this product will be available. */
     @Column(name = "AVAILABILITY_DATE")
+    @AdminPresentation(friendlyName="Available Date", group="Description")
     protected Date availabilityDate;
 
     public Long getId() {
@@ -129,19 +140,15 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     public void setAvailabilityDate(Date availabilityDate) {
         this.availabilityDate = availabilityDate;
     }
-
-    /**
-     * Returns an implementation specific availability status.   This property can return null.
-     */
-    public String getAvailabilityStatus() {
-        return availabilityStatus;
+    
+    public AvailabilityStatusType getAvailabilityStatus() {
+        return AvailabilityStatusType.getInstance(availabilityStatus);
     }
 
-    /**
-     * Sets the availability status.
-     */
-    public void setAvailabilityStatus(String status) {
-        this.availabilityStatus = status;
+    public void setAvailabilityStatus(final AvailabilityStatusType availabilityStatus) {
+    	if (availabilityStatus != null) {
+    		this.availabilityStatus = availabilityStatus.getType();
+    	}
     }
 
     /**
