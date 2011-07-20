@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.server.service;
+package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import javax.annotation.Resource;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.module;
+package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -57,8 +56,8 @@ import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -75,20 +74,14 @@ import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
  * @author jfischer
  *
  */
-public class BasicServerEntityModule implements RemoteServiceModule, RecordHelper, ApplicationContextAware {
+public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware {
 
-	private static final Log LOG = LogFactory.getLog(BasicServerEntityModule.class);
+	private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 	
 	protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	protected DecimalFormat decimalFormat = new DecimalFormat("0.########");
-	
-	@Resource(name="blDynamicEntityDao")
-	protected DynamicEntityDao dynamicEntityDao;
-	
 	protected ApplicationContext applicationContext;
-	
-	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
-	protected DynamicEntityRemoteService dynamicEntityRemoteService;
+	protected PersistenceManager persistenceManager;
 
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
@@ -162,9 +155,9 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 					case FOREIGN_KEY :{
 						Serializable foreignInstance;
 						if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
 						} else {
-							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
 						}
 						
 						if (Collection.class.isAssignableFrom(returnType)) {
@@ -183,9 +176,9 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 					case ADDITIONAL_FOREIGN_KEY :{
 						Serializable foreignInstance;
 						if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
 						} else {
-							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
 						}
 						
 						if (Collection.class.isAssignableFrom(returnType)) {
@@ -233,16 +226,16 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 	}
 	
 	public Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
-		Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
-		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+		Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
+		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, persistenceManager.getDynamicEntityDao(), entityClasses);
 		Entity entity = getRecord(mergedProperties, record, null, null);
 		
 		return entity;
 	}
 	
 	public Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<Serializable> records) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
-		Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
-		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+		Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
+		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, persistenceManager.getDynamicEntityDao(), entityClasses);
 		Entity[] entities = getRecords(mergedProperties, records, null, null);
 		
 		return entities;
@@ -428,14 +421,14 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 	protected Entity update(Entity entity, Object primaryKey, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
 		try {
 			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
 				if (handler.canHandleUpdate(entity.getType()[0], customCriteria)) {
-					return handler.update(entity, persistencePerspective, customCriteria, dynamicEntityDao, this);
+					return handler.update(entity, persistencePerspective, customCriteria, persistenceManager.getDynamicEntityDao(), this);
 				}
 			}
 			
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(entity.getType()[0]);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				entity.getType()[0], 
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
@@ -451,9 +444,9 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 			if (primaryKey == null) {
 				primaryKey = getPrimaryKey(entity, mergedProperties);
 			}
-			Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			instance = createPopulatedInstance(instance, entity, mergedProperties, false);
-			instance = dynamicEntityDao.merge(instance);
+			instance = persistenceManager.getDynamicEntityDao().merge(instance);
 			
 			List<Serializable> entityList = new ArrayList<Serializable>();
 			entityList.add(instance);
@@ -603,7 +596,7 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 	
 	public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
 		PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), ceilingEntityFullyQualifiedClassname);
-        int totalRecords = dynamicEntityDao.count(countCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
+        int totalRecords = persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
 		return totalRecords;
 	}
 	
@@ -629,8 +622,8 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 	
 	public void updateMergedProperties(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
 		try{
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
@@ -657,14 +650,14 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
 		try {
 			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
 				if (handler.canHandleAdd(entity.getType()[0], customCriteria)) {
-					Entity response = handler.add(entity, persistencePerspective, customCriteria, dynamicEntityDao, this);
+					Entity response = handler.add(entity, persistencePerspective, customCriteria, persistenceManager.getDynamicEntityDao(), this);
 					return response;
 				}
 			}
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(entity.getType()[0]);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				entity.getType()[0], 
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
@@ -697,7 +690,7 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 			if (primaryKey == null) {
 				Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
 				instance = createPopulatedInstance(instance, entity, mergedProperties, false);
-				instance = dynamicEntityDao.persist(instance);
+				instance = persistenceManager.getDynamicEntityDao().persist(instance);
 				List<Serializable> entityList = new ArrayList<Serializable>();
 				entityList.add(instance);
 				
@@ -718,15 +711,15 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
 		try {
 			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
 				if (handler.canHandleRemove(entity.getType()[0], customCriteria)) {
-					handler.remove(entity, persistencePerspective, customCriteria, dynamicEntityDao, this);
+					handler.remove(entity, persistencePerspective, customCriteria, persistenceManager.getDynamicEntityDao(), this);
 					return;
 				}
 			}
 			
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(entity.getType()[0]);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				entity.getType()[0], 
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
@@ -740,7 +733,7 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 				""
 			);
 			Object primaryKey = getPrimaryKey(entity, mergedProperties);
-			Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			
 			switch(persistencePerspective.getOperationTypes().getRemoveType()) {
 			case FOREIGNKEY:
@@ -754,7 +747,7 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 					if (SupportedFieldType.FOREIGN_KEY.equals(mergedProperties.get(originalPropertyName).getFieldType())) {
 						String value = property.getValue();
 						ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
-						Serializable foreignInstance = dynamicEntityDao.retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
+						Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
 						Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
 						collection.remove(foreignInstance);
 						break;
@@ -762,7 +755,7 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 				}
 				break;
 			case ENTITY:
-				dynamicEntityDao.remove(instance);
+				persistenceManager.getDynamicEntityDao().remove(instance);
 				break;
 			}
 		} catch (ServiceException e) {
@@ -778,8 +771,8 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 		Entity[] payload;
 		int totalRecords;
 		try {
-			Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
@@ -794,16 +787,16 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 			);
 			
 			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
 				if (handler.canHandleFetch(ceilingEntityFullyQualifiedClassname, customCriteria)) {
-					DynamicResultSet results = handler.fetch(ceilingEntityFullyQualifiedClassname, persistencePerspective, cto, customCriteria, dynamicEntityDao, this);
+					DynamicResultSet results = handler.fetch(ceilingEntityFullyQualifiedClassname, persistencePerspective, cto, customCriteria, persistenceManager.getDynamicEntityDao(), this);
 					return results;
 				}
 			}
 			
 			BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
-			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
+			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
 			
 			payload = getRecords(mergedProperties, records, null, null);
 			totalRecords = getTotalRecords(ceilingEntityFullyQualifiedClassname, cto, ctoConverter);
@@ -819,17 +812,9 @@ public class BasicServerEntityModule implements RemoteServiceModule, RecordHelpe
 		
 		return results;
 	}
-	
-	public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
-		return customPersistenceHandlers;
-	}
 
-	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
-		this.customPersistenceHandlers = customPersistenceHandlers;
-	}
-
-	public void setDynamicEntityRemoteService(DynamicEntityRemoteService dynamicEntityRemoteService) {
-		this.dynamicEntityRemoteService = dynamicEntityRemoteService;
+	public void setPersistenceManager(PersistenceManager persistenceManager) {
+		this.persistenceManager = persistenceManager;
 	}
 	
 }

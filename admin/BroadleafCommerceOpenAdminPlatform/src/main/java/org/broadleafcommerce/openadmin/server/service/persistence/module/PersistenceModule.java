@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.module;
+package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +26,7 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
-import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
@@ -36,15 +35,13 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  * @author jfischer
  *
  */
-public interface RemoteServiceModule {
+public interface PersistenceModule {
 
 	public boolean isCompatible(OperationType operationType);
 	
 	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException;
 	
 	public void updateMergedProperties(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException;
-	
-	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers);
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException;
 	
@@ -54,6 +51,6 @@ public interface RemoteServiceModule {
 	
 	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException;
 	
-	public void setDynamicEntityRemoteService(DynamicEntityRemoteService dynamicEntityRemoteService);
+	public void setPersistenceManager(PersistenceManager persistenceManager);
 	
 }

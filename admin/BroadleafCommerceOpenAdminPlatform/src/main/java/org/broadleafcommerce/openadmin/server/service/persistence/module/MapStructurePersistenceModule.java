@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.module;
+package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -53,9 +53,9 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  * @author jfischer
  *
  */
-public class MapStructureServerModule extends BasicServerEntityModule {
+public class MapStructurePersistenceModule extends BasicPersistenceModule {
 
-	private static final Log LOG = LogFactory.getLog(MapStructureServerModule.class);
+	private static final Log LOG = LogFactory.getLog(MapStructurePersistenceModule.class);
 	
 	public boolean isCompatible(OperationType operationType) {
 		return OperationType.MAPSTRUCTURE.equals(operationType);
@@ -108,7 +108,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
         	}
 	    	propertyItem.setValue(strVal);
 	    	
-	    	PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getValueClassName());
+	    	PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
 	    	if (persistentClass == null) {
 	    		Property temp = new Property();
 	    		temp.setName(((SimpleValueMapStructure) mapStructure).getValuePropertyName());
@@ -135,10 +135,10 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 		try {	
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			if (mapStructure != null) {
-				PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getKeyClassName());
+				PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getKeyClassName());
 				Map<String, FieldMetadata> keyMergedProperties;
 				if (persistentClass == null) {
-					keyMergedProperties = dynamicEntityDao.getPropertiesForPrimitiveClass(
+					keyMergedProperties = persistenceManager.getDynamicEntityDao().getPropertiesForPrimitiveClass(
 						mapStructure.getKeyPropertyName(), 
 						mapStructure.getKeyPropertyFriendlyName(),
 						Class.forName(mapStructure.getKeyClassName()), 
@@ -147,7 +147,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 						metadataOverrides
 					);
 				} else {
-					keyMergedProperties = dynamicEntityDao.getMergedProperties(
+					keyMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 						mapStructure.getKeyClassName(), 
 						new Class[]{Class.forName(mapStructure.getKeyClassName())}, 
 						null, 
@@ -163,10 +163,10 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 				}
 				allMergedProperties.put(MergedPropertyType.MAPSTRUCTUREKEY, keyMergedProperties);
 				
-				persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getValueClassName());
+				persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
 				Map<String, FieldMetadata> valueMergedProperties;
 				if (persistentClass == null) {
-					valueMergedProperties = dynamicEntityDao.getPropertiesForPrimitiveClass(
+					valueMergedProperties = persistenceManager.getDynamicEntityDao().getPropertiesForPrimitiveClass(
 						((SimpleValueMapStructure) mapStructure).getValuePropertyName(), 
 						((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 						Class.forName(mapStructure.getValueClassName()), 
@@ -175,7 +175,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 						metadataOverrides
 					);
 				} else {
-					valueMergedProperties = dynamicEntityDao.getMergedProperties(
+					valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 						mapStructure.getValueClassName(), 
 						new Class[]{Class.forName(mapStructure.getValueClassName())}, 
 						null, 
@@ -206,14 +206,14 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 		try {
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
-			Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
 			FieldManager fieldManager = getFieldManager();
 			Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
 			
-			PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getValueClassName());
+			PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
 			Map<String, FieldMetadata> valueMergedProperties;
 			if (persistentClass == null) {
-				valueMergedProperties = dynamicEntityDao.getPropertiesForPrimitiveClass(
+				valueMergedProperties = persistenceManager.getDynamicEntityDao().getPropertiesForPrimitiveClass(
 					((SimpleValueMapStructure) mapStructure).getValuePropertyName(), 
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 					Class.forName(mapStructure.getValueClassName()), 
@@ -222,7 +222,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 					null
 				);
 			} else {
-				valueMergedProperties = dynamicEntityDao.getMergedProperties(
+				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					mapStructure.getValueClassName(), 
 					new Class[]{Class.forName(mapStructure.getValueClassName())}, 
 					null, 
@@ -240,7 +240,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 			if (persistentClass != null) {
 				Serializable valueInstance = (Serializable) Class.forName(mapStructure.getValueClassName()).newInstance();
 				valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
-				valueInstance = dynamicEntityDao.persist(valueInstance);
+				valueInstance = persistenceManager.getDynamicEntityDao().persist(valueInstance);
 				/*
 				 * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
 				 * additional types of primitive objects.
@@ -253,7 +253,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 				map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), convertedPrimitive);
 			}
 			
-			instance = dynamicEntityDao.merge(instance);
+			instance = persistenceManager.getDynamicEntityDao().merge(instance);
 			
 			return getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"))[0];
 		} catch (Exception e) {
@@ -288,14 +288,14 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 		try {
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
-			Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
 			FieldManager fieldManager = getFieldManager();
 			Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
 			
-			PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getValueClassName());
+			PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
 			Map<String, FieldMetadata> valueMergedProperties;
 			if (persistentClass == null) {
-				valueMergedProperties = dynamicEntityDao.getPropertiesForPrimitiveClass(
+				valueMergedProperties = persistenceManager.getDynamicEntityDao().getPropertiesForPrimitiveClass(
 					((SimpleValueMapStructure) mapStructure).getValuePropertyName(), 
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 					Class.forName(mapStructure.getValueClassName()), 
@@ -304,7 +304,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 					null
 				);
 			} else {
-				valueMergedProperties = dynamicEntityDao.getMergedProperties(
+				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					mapStructure.getValueClassName(), 
 					new Class[]{Class.forName(mapStructure.getValueClassName())}, 
 					null, 
@@ -335,7 +335,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 			}
 			
 			
-			instance = dynamicEntityDao.merge(instance);
+			instance = persistenceManager.getDynamicEntityDao().merge(instance);
 			
 			return getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"))[0];
 		} catch (Exception e) {
@@ -353,13 +353,13 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 		try {
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
-			Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
 			FieldManager fieldManager = getFieldManager();
 			Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
 			
 			Object value = map.remove(entity.findProperty("priorKey").getValue());
 			if (mapStructure.getDeleteValueEntity()) {
-				dynamicEntityDao.remove((Serializable) value);
+				persistenceManager.getDynamicEntityDao().remove((Serializable) value);
 			}
 		} catch (Exception e) {
 			LOG.error("Problem editing entity", e);
@@ -372,8 +372,8 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 		Entity[] payload;
 		int totalRecords;
 		try {
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
@@ -388,10 +388,10 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 			);
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
-			PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getValueClassName());
+			PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
 			Map<String, FieldMetadata> valueMergedProperties;
 			if (persistentClass == null) {
-				valueMergedProperties = dynamicEntityDao.getPropertiesForPrimitiveClass(
+				valueMergedProperties = persistenceManager.getDynamicEntityDao().getPropertiesForPrimitiveClass(
 					((SimpleValueMapStructure) mapStructure).getValuePropertyName(), 
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 					Class.forName(mapStructure.getValueClassName()), 
@@ -400,7 +400,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 					null
 				);
 			} else {
-				valueMergedProperties = dynamicEntityDao.getMergedProperties(
+				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					mapStructure.getValueClassName(), 
 					new Class[]{Class.forName(mapStructure.getValueClassName())}, 
 					null, 
@@ -421,7 +421,7 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 			if (totalRecords > 1) {
 				throw new ServiceException("Queries to retrieve an entity containing a MapStructure must return only 1 entity. Your query returned ("+totalRecords+") values.");
 			}
-			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
+			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
 			payload = getMapRecords(records.get(0), mapStructure, valueMergedProperties, null);
 		} catch (ServiceException e) {
 			LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);

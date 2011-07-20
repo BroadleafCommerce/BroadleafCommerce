@@ -31,8 +31,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
-import org.broadleafcommerce.openadmin.server.service.module.InspectHelper;
-import org.broadleafcommerce.openadmin.server.service.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 

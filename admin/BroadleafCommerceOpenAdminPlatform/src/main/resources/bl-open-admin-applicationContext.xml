@@ -13,6 +13,14 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+	    <property name="converters">
+	        <list>
+	            <bean class="org.broadleafcommerce.openadmin.server.util.TargetModeTypeConverter" />
+	        </list>
+	    </property>
+	</bean>
+	
     <context:component-scan base-package="org.broadleafcommerce.persistence"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
     
@@ -88,18 +96,38 @@
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.SandBoxService.saveSandBox(..))"/>
+		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService.saveSandBox(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
 	</aop:config>
 	
-	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService">
+	<bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.openadmin.server.service.module.BasicServerEntityModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.module.JoinStructureServerModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.module.MapStructureServerModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule" scope="prototype"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule" scope="prototype"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule" scope="prototype"/>
 			</list>
 		</constructor-arg>
+		<property name="targetEntityManagers">
+			<map>
+                <entry key="sandbox">
+                	<bean class = "org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean">
+			            <property name="entityManagerFactory" ref="entityManagerFactory"/>
+			            <property name="sandBoxEntityManagerFactory" ref="blMySandBoxEntityManagerFactory"/>
+			        </bean>
+                </entry>
+                <entry key="stage">
+                	<bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
+			            <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+			        </bean>
+                </entry>
+                <entry key="prod">
+                	<bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
+			            <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+			        </bean>
+                </entry>
+            </map>
+		</property>
 	</bean>
 	
 	<bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
@@ -115,6 +143,18 @@
 		</property>
 	</bean>
 
-	<bean id="blFieldManager" class="org.broadleafcommerce.openadmin.server.service.module.FieldManager" scope="prototype"/>
+	<bean id="blFieldManager" class="org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager" scope="prototype"/>
+	
+	<bean id="blMySandBoxEntityManagerFactory" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.ClonedLocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
+		<property name="persistenceUnitName" value="blMySandBoxPU"/>
+		<property name="clonePersistenceUnitName" value="blPU"/>
+		<property name="dataSource">
+			<bean class="org.broadleafcommerce.openadmin.server.service.persistence.datasource.SandBoxDataSource" destroy-method="close"/>
+		</property>
+	</bean>
 	
 </beans>

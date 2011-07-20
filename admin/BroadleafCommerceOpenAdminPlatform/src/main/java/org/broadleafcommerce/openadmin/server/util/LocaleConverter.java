@@ -1,4 +1,4 @@
-package org.broadleafcommerce.profile.core.util;
+package org.broadleafcommerce.openadmin.server.util;
 
 import java.util.Locale;
 

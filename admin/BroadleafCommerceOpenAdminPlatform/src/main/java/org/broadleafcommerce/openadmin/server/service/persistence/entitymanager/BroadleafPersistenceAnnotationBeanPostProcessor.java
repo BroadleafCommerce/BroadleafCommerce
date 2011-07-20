@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.persistence;
+package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.AnnotatedElement;

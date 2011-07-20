@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.server.service;
+package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;

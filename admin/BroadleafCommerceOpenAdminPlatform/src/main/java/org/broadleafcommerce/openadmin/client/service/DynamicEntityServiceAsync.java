@@ -31,7 +31,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DynamicEntityServiceAsync {
     
-	void inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues, AsyncCallback<DynamicResultSet> cb);
+	void inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues, AsyncCallback<DynamicResultSet> cb);
 	
 	void fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, AsyncCallback<DynamicResultSet> cb);
     

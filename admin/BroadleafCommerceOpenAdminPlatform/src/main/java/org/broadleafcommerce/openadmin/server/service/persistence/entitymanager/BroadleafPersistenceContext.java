@@ -1,4 +1,4 @@
-package org.broadleafcommerce.persistence;
+package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

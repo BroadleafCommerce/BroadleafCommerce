@@ -41,8 +41,8 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
-import org.broadleafcommerce.openadmin.server.service.module.InspectHelper;
-import org.broadleafcommerce.openadmin.server.service.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;

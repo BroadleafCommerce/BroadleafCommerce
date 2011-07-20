@@ -496,7 +496,7 @@
 				<artifactId>hsqldb</artifactId>
 				<version>1.8.0.10</version>
 				<type>jar</type>
-				<scope>test</scope>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -966,6 +966,13 @@
 				<groupId>org.gwtwidgets</groupId>
 				<artifactId>gwt-sl</artifactId>
 				<version>1.1</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.5.6</version>
+				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 		</dependencies>

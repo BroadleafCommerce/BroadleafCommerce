@@ -47,7 +47,6 @@ import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.persistence.BroadleafPersistenceContext;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.ConfigurationItem;
 import org.broadleafcommerce.presentation.ValidationConfiguration;
@@ -74,9 +73,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
 	
-	@BroadleafPersistenceContext(unitName = "blPU", sandBoxUnitName="blSandboxPU")
     protected EntityManager standardEntityManager;
-	
 	protected SessionFactory sessionFactory;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
 

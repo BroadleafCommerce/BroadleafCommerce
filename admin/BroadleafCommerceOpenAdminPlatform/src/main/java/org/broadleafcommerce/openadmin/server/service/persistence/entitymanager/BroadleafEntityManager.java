@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.persistence;
+package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
 import java.util.Map;
 
@@ -81,15 +81,14 @@ public class BroadleafEntityManager implements HibernateEntityManager {
 	 */
 	public <T> T find(Class<T> entityClass, Object primaryKey) {
 		T responseStandard = standardManager.find(entityClass, primaryKey);
-		SandBoxContext context = SandBoxContext.getSandBoxContext();
+		/*SandBoxContext context = SandBoxContext.getSandBoxContext();
 		T response;
 		if (context != null && (context.getSandBoxMode() == SandBoxMode.ADMIN || context.getSandBoxMode() == SandBoxMode.PREVIEW)) {
 			T responseSandBox = sandboxManager.find(entityClass, primaryKey);
 		} else {
 			response = responseStandard;
-		}
-		//TODO return the right proxy
-		return null;
+		}*/
+		return responseStandard;
 	}
 
 	/**

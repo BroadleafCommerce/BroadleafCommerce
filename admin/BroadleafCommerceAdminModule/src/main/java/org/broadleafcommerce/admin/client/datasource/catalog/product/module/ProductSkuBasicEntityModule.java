@@ -145,7 +145,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
     			overrideValues[j] = metadataOverrides.get(key);
     		}
     	}
-		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, customCriteria, overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				ClassMetadata metadata = result.getClassMetaData();

@@ -12,13 +12,13 @@
            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-           
-    <bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService">
+	
+	<bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.openadmin.server.service.module.BasicServerEntityModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.module.JoinStructureServerModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.module.MapStructureServerModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule" scope="prototype"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule" scope="prototype"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule" scope="prototype"/>
 			</list>
 		</constructor-arg>
 		<property name="customPersistenceHandlers">
@@ -29,6 +29,25 @@
 				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
 			</list>
 		</property>
+		<property name="targetEntityManagers">
+			<map>
+                <entry key="sandbox">
+                	<bean class = "org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean">
+			            <property name="entityManagerFactory" ref="entityManagerFactory"/>
+			            <property name="sandBoxEntityManagerFactory" ref="blMySandBoxEntityManagerFactory"/>
+			        </bean>
+                </entry>
+                <entry key="stage">
+                	<bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
+			            <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+			        </bean>
+                </entry>
+                <entry key="prod">
+                	<bean class = "org.springframework.orm.jpa.support.SharedEntityManagerBean">
+			            <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+			        </bean>
+                </entry>
+            </map>
+		</property>
 	</bean>
-	
 </beans>

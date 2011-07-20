@@ -541,7 +541,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     			overrideValues[j] = metadataOverrides.get(key);
     		}
     	}
-		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, customCriteria, overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
 			
 			@Override
 			protected void onOtherException(Throwable exception) {

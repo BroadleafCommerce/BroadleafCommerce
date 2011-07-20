@@ -58,6 +58,8 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	
 	public EntityManager getStandardEntityManager();
 	
+	public void setStandardEntityManager(EntityManager entityManager);
+	
 	public PersistentClass getPersistentClass(String targetClassName);
 	
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;

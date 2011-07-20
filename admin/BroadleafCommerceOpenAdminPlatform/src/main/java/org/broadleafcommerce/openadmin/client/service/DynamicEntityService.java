@@ -34,7 +34,7 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 public interface DynamicEntityService extends RemoteService {
     
 	@Secured("PERMISSION_DEFAULT")
-	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException, ApplicationSecurityException;
+	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException, ApplicationSecurityException;
 	
 	@Secured("PERMISSION_DEFAULT")
 	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException, ApplicationSecurityException;

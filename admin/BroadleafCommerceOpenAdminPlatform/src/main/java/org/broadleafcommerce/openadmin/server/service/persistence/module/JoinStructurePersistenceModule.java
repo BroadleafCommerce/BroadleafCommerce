@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.module;
+package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -45,9 +45,9 @@ import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
  * @author jfischer
  *
  */
-public class JoinStructureServerModule extends BasicServerEntityModule {
+public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	
-	private static final Log LOG = LogFactory.getLog(JoinStructureServerModule.class);
+	private static final Log LOG = LogFactory.getLog(JoinStructurePersistenceModule.class);
 	
 	public boolean isCompatible(OperationType operationType) {
 		return OperationType.JOINSTRUCTURE.equals(operationType);
@@ -81,7 +81,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 		try {
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 			if (joinStructure != null) {
-				Map<String, FieldMetadata> joinMergedProperties = dynamicEntityDao.getMergedProperties(
+				Map<String, FieldMetadata> joinMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					joinStructure.getJoinStructureEntityClassname(), 
 					new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
 					null, 
@@ -110,8 +110,8 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 		Entity payload;
 		try {
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
-			Map<String, FieldMetadata> mergedPropertiesTarget = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+			Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 
 				entities, 
 				null, 
@@ -124,7 +124,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 				null,
 				""
 			);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
 				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
 				null, 
@@ -154,7 +154,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(joinStructure.getInverse()?linkedPath:targetPath).getValue());
 			BaseCtoConverter ctoConverterInserted = getJoinStructureCtoConverter(persistencePerspective, ctoInserted, mergedProperties, joinStructure);
 			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> recordsInserted = dynamicEntityDao.query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+			List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
 			if (recordsInserted.size() > 0) {
 				payload = getRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, joinStructure.getTargetObjectPath())[0];
 			} else {
@@ -175,11 +175,11 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 					int totalRecords = getTotalRecords(joinStructure.getJoinStructureEntityClassname(), cto, ctoConverter);
 					fieldManager.setFieldValue(instance, joinStructure.getSortField(), Long.valueOf(totalRecords + 1));
 				}
-				instance = dynamicEntityDao.merge(instance);
-				dynamicEntityDao.flush();
-				dynamicEntityDao.clear();
+				instance = persistenceManager.getDynamicEntityDao().merge(instance);
+				persistenceManager.getDynamicEntityDao().flush();
+				persistenceManager.getDynamicEntityDao().clear();
 				
-				List<Serializable> recordsInserted2 = dynamicEntityDao.query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+				List<Serializable> recordsInserted2 = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
 				
 				payload = getRecords(mergedPropertiesTarget, recordsInserted2, mergedProperties, joinStructure.getTargetObjectPath())[0];
 			}
@@ -206,7 +206,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 				sortCriteria.setSortAscending(joinStructure.getSortAscending());
 			}
 			
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
 				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
 				null, 
@@ -221,7 +221,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 			);
 			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
 			
 			int index = 0;
 			Long myEntityId = Long.valueOf(entity.findProperty(joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty()).getValue());	
@@ -246,7 +246,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 			} else {
 				Serializable myRecord = records.get(index);
 				myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
-				dynamicEntityDao.merge(myRecord);
+				persistenceManager.getDynamicEntityDao().merge(myRecord);
 			}
 			
 			return entity;
@@ -263,7 +263,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 		}
 		try {
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
 				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
 				null, 
@@ -283,9 +283,9 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 			filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty()).getValue());
 			BaseCtoConverter ctoConverterInserted = getJoinStructureCtoConverter(persistencePerspective, ctoInserted, mergedProperties, joinStructure);
 			PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> recordsInserted = dynamicEntityDao.query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+			List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(joinStructure.getJoinStructureEntityClassname()));
 			
-			dynamicEntityDao.remove(recordsInserted.get(0));
+			persistenceManager.getDynamicEntityDao().remove(recordsInserted.get(0));
 		} catch (Exception e) {
 			LOG.error("Problem removing entity", e);
 			throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
@@ -298,8 +298,8 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 		Entity[] payload;
 		int totalRecords;
 		try {
-			Class<?>[] entities = dynamicEntityRemoteService.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
-			Map<String, FieldMetadata> mergedPropertiesTarget = dynamicEntityDao.getMergedProperties(
+			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+			Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 
 				entities, 
 				null, 
@@ -312,7 +312,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 				null,
 				""
 			);
-			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
 				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
 				null, 
@@ -327,7 +327,7 @@ public class JoinStructureServerModule extends BasicServerEntityModule {
 			);
 			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
 			payload = getRecords(mergedPropertiesTarget, records, mergedProperties, joinStructure.getTargetObjectPath());
 			totalRecords = getTotalRecords(joinStructure.getJoinStructureEntityClassname(), cto, ctoConverter);
 		} catch (Exception e) {
