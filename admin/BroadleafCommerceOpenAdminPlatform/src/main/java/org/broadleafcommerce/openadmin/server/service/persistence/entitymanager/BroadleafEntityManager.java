@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager
 
 import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
@@ -38,10 +37,10 @@ import org.hibernate.ejb.HibernateEntityManager;
  */
 public class BroadleafEntityManager implements HibernateEntityManager {
 	
-	protected final EntityManager standardManager;
-	protected final EntityManager sandboxManager;
+	protected final HibernateEntityManager standardManager;
+	protected final HibernateEntityManager sandboxManager;
 	
-	public BroadleafEntityManager(EntityManager standardManager, EntityManager sandboxManager) {
+	public BroadleafEntityManager(HibernateEntityManager standardManager, HibernateEntityManager sandboxManager) {
 		this.standardManager = standardManager;
 		this.sandboxManager = sandboxManager;
 	}
@@ -431,7 +430,7 @@ public class BroadleafEntityManager implements HibernateEntityManager {
 
 	@Override
 	public Session getSession() {
-		return ((HibernateEntityManager) standardManager).getSession();
+		return standardManager.getSession();
 	}
 
 }

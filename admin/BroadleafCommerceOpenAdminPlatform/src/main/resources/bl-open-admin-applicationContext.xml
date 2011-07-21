@@ -121,6 +121,7 @@
 	
 	<bean id="standardEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+        <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
 			        
 	<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxEntityManagerPoolFactoryBean">

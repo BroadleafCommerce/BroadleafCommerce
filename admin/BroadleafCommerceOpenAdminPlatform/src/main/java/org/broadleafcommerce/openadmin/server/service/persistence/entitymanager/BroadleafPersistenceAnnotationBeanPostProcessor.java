@@ -33,6 +33,7 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
@@ -212,7 +213,7 @@ public class BroadleafPersistenceAnnotationBeanPostProcessor extends Persistence
 				} else {
 					EntityManager standardManager = resolveEntityManager(requestingBeanName, this.unitName);
 					EntityManager sandboxManager = resolveEntityManager(requestingBeanName, this.sandBoxUnitName);
-					return new BroadleafEntityManager(standardManager, sandboxManager);
+					return new BroadleafEntityManager((HibernateEntityManager) standardManager, (HibernateEntityManager) sandboxManager);
 				}
 			}
 			else {
