@@ -74,10 +74,10 @@ public interface PersistenceManager {
 
 	public abstract void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao);
 
-	public abstract Map<TargetModeType, EntityManager> getTargetEntityManagers();
+	public abstract Map<TargetModeType, String> getTargetEntityManagers();
 
 	public abstract void setTargetEntityManagers(
-			Map<TargetModeType, EntityManager> targetEntityManagers);
+			Map<TargetModeType, String> targetEntityManagers);
 
 	public abstract TargetModeType getTargetMode();
 
@@ -88,4 +88,6 @@ public interface PersistenceManager {
 	public abstract void setCustomPersistenceHandlers(
 			List<CustomPersistenceHandler> customPersistenceHandlers);
 
+	public abstract void close() throws Exception;
+	
 }

@@ -492,13 +492,6 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>hsqldb</groupId>
-				<artifactId>hsqldb</artifactId>
-				<version>1.8.0.10</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.6.1</version>
@@ -972,6 +965,13 @@
 				<groupId>commons-pool</groupId>
 				<artifactId>commons-pool</artifactId>
 				<version>1.5.6</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>2.2.4</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>

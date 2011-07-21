@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.logging.Log;
@@ -26,27 +25,26 @@ import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-@Service("blPersistenceManager")
-public class PersistenceManagerImpl implements InspectHelper, PersistenceManager {
+public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
 	private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
 	
-	@Resource(name="blSandBoxService")
 	protected SandBoxService sandBoxService;
-	
-	@Resource(name="blDynamicEntityDao")
 	protected DynamicEntityDao dynamicEntityDao;
-	
 	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
 	protected PersistenceModule[] modules;
-	protected Map<TargetModeType, EntityManager> targetEntityManagers = new HashMap<TargetModeType, EntityManager>();
+	protected Map<TargetModeType, String> targetEntityManagers = new HashMap<TargetModeType, String>();
 	protected TargetModeType targetMode;
+	private ApplicationContext applicationContext;
 	
 	public PersistenceManagerImpl(PersistenceModule[] modules) {
 		this.modules = modules;
@@ -55,6 +53,19 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		}
 	}
 	
+	public void close() throws Exception {
+		Object temp = applicationContext.getBean("&"+targetEntityManagers.get(targetMode));
+		if (temp instanceof SandBoxEntityManagerPoolFactoryBean) {
+			((SandBoxEntityManagerPoolFactoryBean) temp).returnObject(dynamicEntityDao.getStandardEntityManager());
+		}
+	}
+	
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
 	 */
@@ -277,7 +288,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getTargetEntityManagers()
 	 */
 	@Override
-	public Map<TargetModeType, EntityManager> getTargetEntityManagers() {
+	public Map<TargetModeType, String> getTargetEntityManagers() {
 		return targetEntityManagers;
 	}
 
@@ -286,7 +297,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public void setTargetEntityManagers(
-			Map<TargetModeType, EntityManager> targetEntityManagers) {
+			Map<TargetModeType, String> targetEntityManagers) {
 		this.targetEntityManagers = targetEntityManagers;
 	}
 
@@ -303,7 +314,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public void setTargetMode(TargetModeType targetMode) {
-		EntityManager targetManager = targetEntityManagers.get(targetMode);
+		String targetManagerRef = targetEntityManagers.get(targetMode);
+		EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
 		if (targetManager == null) {
 			throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
 		}

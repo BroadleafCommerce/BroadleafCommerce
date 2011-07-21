@@ -34,6 +34,9 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
@@ -44,18 +47,24 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  *
  */
 @Service("blDynamicEntityRemoteService")
-public class DynamicEntityRemoteService implements DynamicEntityService {
+public class DynamicEntityRemoteService implements DynamicEntityService, ApplicationContextAware {
 	
+	public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
 	private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
-	
-	@Resource(name="blPersistenceManager")
-	protected PersistenceManager persistenceManager;
 	
 	@Resource(name="blAdminSecurityRemoteService")
 	protected AdminSecurityServiceRemote adminRemoteSecurityService;
 	
 	protected Map<String, FieldMetadata> metadataOverrides;
+	protected String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
+	private ApplicationContext applicationContext;
 	
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
 	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException {
 		try {
 			//use any override provided by the presentation layer
@@ -70,15 +79,21 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 			if (metadataOverrides == null && this.metadataOverrides != null) {
 				metadataOverrides = this.metadataOverrides;
 			}
-			
+		
+			PersistenceManager persistenceManager = null;
 			try {
 				SandBoxContext context = new SandBoxContext();
 				context.setSandBoxName(sandBoxInfo.getSandBox());
 				context.setSandBoxMode(SandBoxMode.ADMIN);
 				SandBoxContext.setSandBoxContext(context);
 				
+				persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+				persistenceManager.setTargetMode(TargetModeType.SANDBOX);
 				return persistenceManager.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, customCriteria, metadataOverrides);
 			} finally {
+				if (persistenceManager != null) {
+					persistenceManager.close();
+				}
 				SandBoxContext.setSandBoxContext(null);
 			}
 		} catch (ServiceException e) {
@@ -92,14 +107,24 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException {
 		adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.FETCH);
 		
+		PersistenceManager persistenceManager = null;
 		try {
 			SandBoxContext context = new SandBoxContext();
 			context.setSandBoxName(sandBoxInfo.getSandBox());
 			context.setSandBoxMode(SandBoxMode.ADMIN);
 			SandBoxContext.setSandBoxContext(context);
 			
+			persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+			persistenceManager.setTargetMode(TargetModeType.SANDBOX);
 			return persistenceManager.fetch(ceilingEntityFullyQualifiedClassname, cto, persistencePerspective, customCriteria);
 		} finally {
+			try {
+				if (persistenceManager != null) {
+					persistenceManager.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			SandBoxContext.setSandBoxContext(null);
 		}
 	}
@@ -107,14 +132,24 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) throws ServiceException {
 		adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.ADD);
 		
+		PersistenceManager persistenceManager = null;
 		try {
 			SandBoxContext context = new SandBoxContext();
 			context.setSandBoxName(sandBoxInfo.getSandBox());
 			context.setSandBoxMode(SandBoxMode.ADMIN);
 			SandBoxContext.setSandBoxContext(context);
 			
+			persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+			persistenceManager.setTargetMode(TargetModeType.SANDBOX);
 			return persistenceManager.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria);
 		} finally {
+			try {
+				if (persistenceManager != null) {
+					persistenceManager.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			SandBoxContext.setSandBoxContext(null);
 		}
 	}
@@ -127,14 +162,24 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 			}
 		}
 		
+		PersistenceManager persistenceManager = null;
 		try {
 			SandBoxContext context = new SandBoxContext();
 			context.setSandBoxName(sandBoxInfo.getSandBox());
 			context.setSandBoxMode(SandBoxMode.ADMIN);
 			SandBoxContext.setSandBoxContext(context);
 			
+			persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+			persistenceManager.setTargetMode(TargetModeType.SANDBOX);
 			return persistenceManager.update(entity, persistencePerspective, sandBoxInfo, customCriteria);
 		} finally {
+			try {
+				if (persistenceManager != null) {
+					persistenceManager.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			SandBoxContext.setSandBoxContext(null);
 		}
 	}
@@ -147,14 +192,24 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 			}
 		}
 		
+		PersistenceManager persistenceManager = null;
 		try {
 			SandBoxContext context = new SandBoxContext();
 			context.setSandBoxName(sandBoxInfo.getSandBox());
 			context.setSandBoxMode(SandBoxMode.ADMIN);
 			SandBoxContext.setSandBoxContext(context);
 			
+			persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+			persistenceManager.setTargetMode(TargetModeType.SANDBOX);
 			persistenceManager.remove(entity, persistencePerspective, customCriteria);
 		} finally {
+			try {
+				if (persistenceManager != null) {
+					persistenceManager.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			SandBoxContext.setSandBoxContext(null);
 		}
 	}
@@ -167,13 +222,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 		this.metadataOverrides = metadataOverrides;
 	}
 
-	public PersistenceManager getPersistenceManager() {
-		return persistenceManager;
+	public String getPersistenceManagerRef() {
+		return persistenceManagerRef;
 	}
 
-	public void setPersistenceManager(PersistenceManager persistenceManager) {
-		persistenceManager.setTargetMode(TargetModeType.SANDBOX);
-		this.persistenceManager = persistenceManager;
+	public void setPersistenceManagerRef(String persistenceManagerRef) {
+		this.persistenceManagerRef = persistenceManagerRef;
 	}
 
 }

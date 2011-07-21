@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.datasource;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,16 +13,20 @@ import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
+import org.hsqldb.server.ServerAcl.AclFormatException;
 
 public class SandBoxDataSource implements DataSource {
 	
 	public static final String DRIVERNAME = "org.hsqldb.jdbcDriver";
+	public static final int DEFAULTPORT = 40025;
+	public static final String DEFAULTADDRESS = "localhost";
 	
 	protected PrintWriter logWriter;
 	protected int loginTimeout = 5;
-	protected String tempFileDirectory;
 	protected GenericKeyedObjectPool sandboxDataBasePool;
 	protected Server server;
+	protected int port = DEFAULTPORT;
+	protected String address = DEFAULTADDRESS;
 	
 	public SandBoxDataSource() {
 		try {
@@ -29,13 +34,21 @@ public class SandBoxDataSource implements DataSource {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-		HsqlProperties p = new HsqlProperties();
-	    p.setProperty("server.remote_open",true);
-		server = new Server();
-	    server.setProperties(p);
-	    server.setLogWriter(null);
-	    server.setErrWriter(null);
-	    server.start();
+		try {
+			HsqlProperties p = new HsqlProperties();
+			p.setProperty("server.remote_open",true);
+			server = new Server();
+			server.setAddress(address);
+			server.setPort(port);
+			server.setProperties(p);
+			server.setLogWriter(logWriter==null?new PrintWriter(System.out):logWriter);
+			server.setErrWriter(logWriter==null?new PrintWriter(System.out):logWriter);
+			server.start();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (AclFormatException e) {
+			throw new RuntimeException(e);
+		}
 		sandboxDataBasePool = new GenericKeyedObjectPool(new PoolableSandBoxDataBaseFactory());
 	}
 	
@@ -45,14 +58,24 @@ public class SandBoxDataSource implements DataSource {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		try {
-			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/broadleaf;mem:broadleaf", "SA", "");
-			connection.prepareStatement("SHUTDOWN").execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
 	//GenericKeyedObjectPool methods
 
 	public int getMaxActive() {
@@ -196,7 +219,7 @@ public class SandBoxDataSource implements DataSource {
 
 		@Override
 		public Object makeObject(Object key) throws Exception {
-			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost/broadleaf_"+key+";mem:broadleaf_"+key, "SA", "");
+			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+key+";mem:broadleaf_"+key, "SA", "");
 			SandBoxConnection blcConnection = new SandBoxConnection(connection, sandboxDataBasePool, (String) key);
 			return blcConnection;
 		}
@@ -204,7 +227,11 @@ public class SandBoxDataSource implements DataSource {
 		@Override
 		public void destroyObject(Object key, Object obj) throws Exception {
 			Connection c = (Connection) obj;
-			c.prepareStatement("DROP SCHEMA " + key + " CASCADE").execute();
+			try {
+				c.prepareStatement("DROP SCHEMA " + key + " CASCADE").execute();
+			} finally {
+				c.prepareStatement("SHUTDOWN").execute();
+			}
 		}
 
 		@Override
