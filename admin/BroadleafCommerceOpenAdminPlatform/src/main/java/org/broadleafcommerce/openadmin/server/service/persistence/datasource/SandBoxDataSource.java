@@ -8,6 +8,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.pool.KeyedPoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
@@ -16,6 +18,8 @@ import org.hsqldb.persist.HsqlProperties;
 import org.hsqldb.server.ServerAcl.AclFormatException;
 
 public class SandBoxDataSource implements DataSource {
+	
+	private static final Log LOG = LogFactory.getLog(SandBoxDataSource.class);
 	
 	public static final String DRIVERNAME = "org.hsqldb.jdbcDriver";
 	public static final int DEFAULTPORT = 40025;
@@ -219,8 +223,12 @@ public class SandBoxDataSource implements DataSource {
 
 		@Override
 		public Object makeObject(Object key) throws Exception {
-			Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+key+";mem:broadleaf_"+key, "SA", "");
+			String jdbcUrl = "jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+key+";mem:broadleaf_"+key;
+			Connection connection = DriverManager.getConnection(jdbcUrl, "SA", "");
 			SandBoxConnection blcConnection = new SandBoxConnection(connection, sandboxDataBasePool, (String) key);
+			
+			LOG.info("Opening sandbox database at: " + jdbcUrl);
+			
 			return blcConnection;
 		}
 
@@ -228,9 +236,11 @@ public class SandBoxDataSource implements DataSource {
 		public void destroyObject(Object key, Object obj) throws Exception {
 			Connection c = (Connection) obj;
 			try {
-				c.prepareStatement("DROP SCHEMA " + key + " CASCADE").execute();
+				c.prepareStatement("DROP SCHEMA broadleaf_" + key + " CASCADE").execute();
 			} finally {
 				c.prepareStatement("SHUTDOWN").execute();
+				
+				LOG.info("Closing sandbox database at: jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+key+";mem:broadleaf_"+key);
 			}
 		}
 

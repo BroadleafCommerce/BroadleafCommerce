@@ -32,6 +32,8 @@ public class ClonedLocalContainerEntityManagerFactoryBean extends LocalContainer
         if (temp.getProperties() != null) {
         	Properties props = temp.getProperties();
         	if (props != null) {
+        		//make sure no default data is imported
+        		temp.getProperties().remove("hibernate.hbm2ddl.import_files");
         		checkProps:{
 	        		for (Object key : props.keySet()) {
 	        			if (key.equals("hibernate.hbm2ddl.auto")) {
@@ -39,6 +41,7 @@ public class ClonedLocalContainerEntityManagerFactoryBean extends LocalContainer
 	        				break checkProps;
 	        			}
 	        		}
+	        		//make sure the schema is auto created
 	        		temp.getProperties().setProperty("hibernate.hbm2ddl.auto", "create");
         		}
         	}
