@@ -134,7 +134,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 			    context.addImport("MVEL", MVEL.class);
 			    //            StringBuffer completeExpression = new StringBuffer(functions.toString());
 			    //            completeExpression.append(" ").append(expression);
-			    exp = MVEL.compileExpression(expression.toString(), context);
+			    exp = MVEL.compileExpression(expression, context);
 			}
 			EXPRESSION_CACHE.put(expression, exp);
 
@@ -144,7 +144,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 		} catch (Exception e) {
 			//Unable to execute the MVEL expression for some reason
 			//Return false, but notify about the bad expression through logs
-			LOG.error("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
+			LOG.info("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
 			return false;
 		}
 
