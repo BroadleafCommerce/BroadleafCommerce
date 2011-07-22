@@ -151,7 +151,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         for (String page : pages.keySet()) {
 	        Tab tab = new Tab(page); 
 	        tab.setAttribute("token", page);
-	        tab.setID(page);
+	        tab.setID(page.replace(' ', '_'));
 	        topTabSet.setShowPaneContainerEdges(false);
 	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])){
 	        	topTabSet.addTab(tab);
