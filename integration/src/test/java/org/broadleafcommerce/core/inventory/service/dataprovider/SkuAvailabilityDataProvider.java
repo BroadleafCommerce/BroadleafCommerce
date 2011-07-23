@@ -19,6 +19,7 @@ import java.util.Date;
 
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl;
+import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 import org.broadleafcommerce.profile.time.SystemTime;
 import org.testng.annotations.DataProvider;
 
@@ -39,14 +40,14 @@ public class SkuAvailabilityDataProvider {
 
     	long recordCount = 0;
 
-   		paramArray[0][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_NULL, AVAILABLE_TODAY, "available", null, new Integer(1));
-   		paramArray[1][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_ONE, AVAILABLE_TODAY, "available", null, new Integer(1));
+   		paramArray[0][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_NULL, AVAILABLE_TODAY, "AVAILABLE", null, new Integer(1));
+   		paramArray[1][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_1, LOCATION_ONE, AVAILABLE_TODAY, "AVAILABLE", null, new Integer(1));
    		paramArray[2][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_2, LOCATION_NULL, AVAILABLE_TODAY, null, new Integer(5), new Integer(1));
    		paramArray[3][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_2, LOCATION_ONE, AVAILABLE_TODAY, null, new Integer(5), new Integer(1));
    		paramArray[4][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_3, LOCATION_NULL, AVAILABLE_TODAY, null, new Integer(0), new Integer(1));
    		paramArray[5][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_3, LOCATION_ONE, AVAILABLE_TODAY, null, new Integer(0), new Integer(1));
-   		paramArray[6][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_NULL, AVAILABLE_NULL, "backordered", new Integer(0), new Integer(1));
-   		paramArray[7][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_ONE, AVAILABLE_NULL, "backordered", new Integer(0), new Integer(1));
+   		paramArray[6][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_NULL, AVAILABLE_NULL, "BACKORDERED", new Integer(0), new Integer(1));
+   		paramArray[7][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_4, LOCATION_ONE, AVAILABLE_NULL, "BACKORDERED", new Integer(0), new Integer(1));
    		paramArray[8][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_5, LOCATION_NULL, AVAILABLE_NULL, null, new Integer(5), null);
    		paramArray[9][0] = createSkuForSkuIdAndLocation(recordCount++, SKU_ID_5, LOCATION_ONE, AVAILABLE_NULL, null, new Integer(5), null);
 
@@ -59,7 +60,7 @@ public class SkuAvailabilityDataProvider {
         skuAvailability.setSkuId(skuId);
         skuAvailability.setLocationId(locationId);
         skuAvailability.setAvailabilityDate(availabilityDate);
-        skuAvailability.setAvailabilityStatus(availStatus);
+        skuAvailability.setAvailabilityStatus(availStatus==null?null:AvailabilityStatusType.getInstance(availStatus));
         skuAvailability.setQuantityOnHand(qoh);
         skuAvailability.setReserveQuantity(reserveQuantity);
         return skuAvailability;

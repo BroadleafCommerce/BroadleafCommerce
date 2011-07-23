@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 
@@ -360,7 +361,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		}
 		fieldMetadata.setMergedPropertyType(mergedPropertyType);
 		if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
-			Map<String, String> enumVals = new HashMap<String, String>();
+			Map<String, String> enumVals = new TreeMap<String, String>();
 			Class<?> broadleafEnumeration = Class.forName(presentationAttribute.getBroadleafEnumeration());
 			Method typeMethod = broadleafEnumeration.getMethod("getType", new Class<?>[]{});
 			Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType", new Class<?>[]{});
@@ -369,14 +370,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				boolean isStatic = Modifier.isStatic(field.getModifiers());
 				boolean isNameEqual = field.getType().getName().equals(broadleafEnumeration.getName());
 				if (isStatic && isNameEqual){
-					enumVals.put((String) typeMethod.invoke(field.get(null), new Object[]{}), (String) friendlyTypeMethod.invoke(field.get(null), new Object[]{}));
+					enumVals.put((String) friendlyTypeMethod.invoke(field.get(null), new Object[]{}), (String) typeMethod.invoke(field.get(null), new Object[]{}));
 				}
 			}
 			String[][] enumerationValues = new String[enumVals.size()][2];
 			int j = 0;
 			for (String key : enumVals.keySet()) {
-				enumerationValues[j][0] = key;
-				enumerationValues[j][1] = enumVals.get(key);
+				enumerationValues[j][0] = enumVals.get(key);
+				enumerationValues[j][1] = key;
 				j++;
 			}
 			fieldMetadata.setEnumerationValues(enumerationValues);

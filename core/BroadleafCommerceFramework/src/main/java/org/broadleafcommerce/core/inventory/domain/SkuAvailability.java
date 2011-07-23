@@ -17,6 +17,8 @@ package org.broadleafcommerce.core.inventory.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 /**
  * Implementations of this interface are used to hold data about SKU availability.
  * <br>
@@ -65,12 +67,12 @@ public interface SkuAvailability extends Serializable {
     /**
      * Returns an implementation specific availability status.   This property can return null.
      */
-    public String getAvailabilityStatus();
+    public AvailabilityStatusType getAvailabilityStatus();
 
     /**
      * Sets the availability status.
      */
-    public void setAvailabilityStatus(String status);
+    public void setAvailabilityStatus(AvailabilityStatusType status);
 
     /**
      * Returns the data the SKU will be available.
