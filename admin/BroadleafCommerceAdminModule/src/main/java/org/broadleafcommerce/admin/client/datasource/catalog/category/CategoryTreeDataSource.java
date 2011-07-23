@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.Entit
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -99,7 +100,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
         final DataSourceModule entityModule = getCompatibleModule(OperationType.ENTITY);
     	Entity entity = entityModule.buildEntity(newRecord, request);
     	//Add the new category entity
-		service.add(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
+		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) entityModule.buildRecord(result, true);
@@ -110,7 +111,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 				DataSourceModule joinModule = getCompatibleModule(OperationType.JOINSTRUCTURE);
 				Entity entity = joinModule.buildEntity(record, request);
 				//Add the join table entry for the new category as well
-	        	service.add(joinModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, "temp" + requestId, request, response, CategoryTreeDataSource.this) {
+	        	service.add(new PersistencePackage(joinModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, "temp" + requestId, request, response, CategoryTreeDataSource.this) {
 					public void onSuccess(Entity result) {
 						super.onSuccess(result);
 						processResponse(requestId, response);

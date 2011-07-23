@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -77,8 +78,10 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public void updateMergedProperties(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 			if (joinStructure != null) {
 				Map<String, FieldMetadata> joinMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -103,10 +106,14 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
 			LOG.warn("custom persistence handlers and custom criteria not supported for add types other than ENTITY");
 		}
+		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+		Entity entity = persistencePackage.getEntity();
 		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 		Entity payload;
 		try {
@@ -192,10 +199,13 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
 			LOG.warn("custom persistence handlers and custom criteria not supported for update types other than ENTITY");
 		}
+		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+		Entity entity = persistencePackage.getEntity();
 		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 		try {
 			CriteriaTransferObject cto = new CriteriaTransferObject();
@@ -257,10 +267,13 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public void remove(PersistencePackage persistencePackage) throws ServiceException {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
 			LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than ENTITY");
 		}
+		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+		Entity entity = persistencePackage.getEntity();
 		try {
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -293,7 +306,9 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 		Entity[] payload;
 		int totalRecords;

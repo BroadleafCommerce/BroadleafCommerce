@@ -20,7 +20,7 @@ import java.util.Map;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -35,20 +35,20 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  */
 public interface CustomPersistenceHandler {
 	
-	public Boolean canHandleInspect(String ceilingEntityFullyQualifiedClassname, String[] customCriteria);
-	public Boolean canHandleFetch(String ceilingEntityFullyQualifiedClassname, String[] customCriteria);
-	public Boolean canHandleAdd(String ceilingEntityFullyQualifiedClassname, String[] customCriteria);
-	public Boolean canHandleRemove(String ceilingEntityFullyQualifiedClassname, String[] customCriteria);
-	public Boolean canHandleUpdate(String ceilingEntityFullyQualifiedClassname, String[] customCriteria);
+	public Boolean canHandleInspect(PersistencePackage persistencePackage);
+	public Boolean canHandleFetch(PersistencePackage persistencePackage);
+	public Boolean canHandleAdd(PersistencePackage persistencePackage);
+	public Boolean canHandleRemove(PersistencePackage persistencePackage);
+	public Boolean canHandleUpdate(PersistencePackage persistencePackage);
 	
-	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException;
+	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException;
 
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
 	
-	public Entity add(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
 	
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
 	
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
 	
 }

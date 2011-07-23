@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -118,7 +119,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
         newProps = newPropList.toArray(newProps);
         entity.setProperties(newProps);
         
-        service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) buildRecord(result, false);
@@ -145,7 +146,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
     			overrideValues[j] = metadataOverrides.get(key);
     		}
     	}
-		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				ClassMetadata metadata = result.getClassMetaData();

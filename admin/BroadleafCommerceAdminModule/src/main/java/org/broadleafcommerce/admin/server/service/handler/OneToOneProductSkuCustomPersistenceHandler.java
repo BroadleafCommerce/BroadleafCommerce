@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -57,28 +58,35 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 	public static final String IDENTITYCRITERIA = "OneToOneProductSku";
 	private static final Log LOG = LogFactory.getLog(OneToOneProductSkuCustomPersistenceHandler.class);
 	
-	public Boolean canHandleFetch(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleFetch(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
 	}
 
-	public Boolean canHandleAdd(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
 	}
 
-	public Boolean canHandleRemove(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
 	}
 
-	public Boolean canHandleUpdate(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
 	}
 
-	public Boolean canHandleInspect(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleInspect(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
 	}
 
-	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Product.class);
 			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
@@ -132,8 +140,10 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 		}
 	}
 
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Product.class);
 			Map<String, FieldMetadata> productProperties = dynamicEntityDao.getMergedProperties(
 				Product.class.getName(), 
@@ -175,8 +185,10 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 		}
 	}
 
-	public Entity add(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		Entity entity = persistencePackage.getEntity();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Product productInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
 			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
 			productInstance = (Product) helper.createPopulatedInstance(productInstance, entity, productProperties, false);
@@ -211,8 +223,10 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 		}
 	}
 
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		Entity entity = persistencePackage.getEntity();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
 			Object primaryKey = helper.getPrimaryKey(entity, productProperties);
 			Product productInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
@@ -224,8 +238,10 @@ public class OneToOneProductSkuCustomPersistenceHandler implements CustomPersist
 		}
 	}
 
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		Entity entity = persistencePackage.getEntity();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
 			Object primaryKey = helper.getPrimaryKey(entity, productProperties);
 			Product productInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);

@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.Entit
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -65,7 +66,7 @@ public class OfferItemCriteriaListModule extends BasicClientEntityModule {
         TreeNode record = new TreeNode(data);
         record.setAttribute("_type", new String[]{((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()});
         Entity entity = buildEntity(record, request);
-        service.remove(entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {

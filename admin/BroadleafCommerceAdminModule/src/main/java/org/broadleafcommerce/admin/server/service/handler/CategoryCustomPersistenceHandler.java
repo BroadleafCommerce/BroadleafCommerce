@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -53,40 +54,43 @@ public class CategoryCustomPersistenceHandler implements CustomPersistenceHandle
 	
 	private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
 
-	public Boolean canHandleFetch(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleFetch(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public Boolean canHandleAdd(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public Boolean canHandleRemove(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("OrphanedCategoryListDataSource");
 	}
 
-	public Boolean canHandleUpdate(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public Boolean canHandleInspect(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleInspect(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
 		throw new RuntimeException("custom inspect not supported");
 	}
 
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		throw new RuntimeException("custom fetch not supported");
 	}
 
-	public Entity add(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		throw new RuntimeException("custom add not supported");
 	}
 
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		Entity entity = persistencePackage.getEntity();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> categoryProperties = getMergedProperties(Category.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
 			Object primaryKey = helper.getPrimaryKey(entity, categoryProperties);
 			Category category = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
@@ -158,7 +162,7 @@ public class CategoryCustomPersistenceHandler implements CustomPersistenceHandle
 		
 	}
 
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		throw new RuntimeException("custom update not supported");
 	}
 

@@ -7,6 +7,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
@@ -41,13 +42,16 @@ public class SandBoxServiceImpl implements SandBoxService {
 	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#saveSandBox(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo)
 	 */
 	@Override
-	public SandBox saveSandBox(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo) {
-		SandBox response = createSandBoxEntityFromDto(entity, persistencePerspective, sandBoxInfo);
+	public SandBox saveSandBox(PersistencePackage persistencePackage) {
+		SandBox response = createSandBoxEntityFromDto(persistencePackage);
 		response = sandBoxDao.merge(response);
 		return response;
 	}
 	
-	protected SandBox createSandBoxEntityFromDto(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo) {
+	protected SandBox createSandBoxEntityFromDto(PersistencePackage persistencePackage) {
+		SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
+		Entity entity = persistencePackage.getEntity();
+		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		SandBox sandBox = new SandBoxImpl();
 		sandBox.setName(sandBoxInfo.getSandBox());
 		SandBoxItem sandBoxItem = new SandBoxItemImpl();

@@ -20,6 +20,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSour
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -52,7 +53,7 @@ public class OrphanedCategoryListDataSource extends ListGridDataSource {
 	@Override
 	protected void executeFetch(final String requestId, DSRequest request, final DSResponse response) {
 		final DataSourceModule fetchModule = getCompatibleModule(persistencePerspective.getOperationTypes().getFetchType());
-		service.fetch(fetchModule.getCeilingEntityFullyQualifiedClassname(), fetchModule.getCto(request), persistencePerspective, createSandBoxInfo(), null, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, this) {
+		service.fetch(new PersistencePackage(fetchModule.getCeilingEntityFullyQualifiedClassname(), null, persistencePerspective, createSandBoxInfo(), null), fetchModule.getCto(request), new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, this) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = fetchModule.buildRecords(result, new String[]{root});

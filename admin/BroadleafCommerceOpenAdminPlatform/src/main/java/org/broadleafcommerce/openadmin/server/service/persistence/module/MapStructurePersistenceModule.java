@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -131,8 +132,10 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public void updateMergedProperties(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {	
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			if (mapStructure != null) {
 				PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getKeyClassName());
@@ -199,11 +202,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
 			LOG.warn("custom persistence handlers and custom criteria not supported for add types other than ENTITY");
 		}
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Entity entity = persistencePackage.getEntity();
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
 			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
@@ -281,11 +287,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
 			LOG.warn("custom persistence handlers and custom criteria not supported for update types other than ENTITY");
 		}
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Entity entity = persistencePackage.getEntity();
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
 			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
@@ -346,11 +355,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public void remove(PersistencePackage persistencePackage) throws ServiceException {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
 			LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than ENTITY");
 		}
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Entity entity = persistencePackage.getEntity();
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
 			
 			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
@@ -368,10 +380,12 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
 		Entity[] payload;
 		int totalRecords;
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 

@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -45,43 +46,45 @@ public class CustomerPasswordCustomPersistenceHandler implements CustomPersisten
 	@Resource(name="blCustomerService")
 	protected CustomerService customerService;
 
-	public Boolean canHandleFetch(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleFetch(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public Boolean canHandleAdd(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public Boolean canHandleRemove(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public Boolean canHandleUpdate(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+		String[] customCriteria = persistencePackage.getCustomCriteria();
 		return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("passwordUpdate");
 	}
 
-	public Boolean canHandleInspect(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
+	public Boolean canHandleInspect(PersistencePackage persistencePackage) {
 		return false;
 	}
 
-	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
 		throw new RuntimeException("custom inspect not supported");
 	}
 
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		throw new RuntimeException("custom fetch not supported");
 	}
 
-	public Entity add(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		throw new RuntimeException("custom add not supported");
 	}
 
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		throw new RuntimeException("custom remove not supported");
 	}
 
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+		Entity entity = persistencePackage.getEntity();
 		Customer customer = customerService.readCustomerByUsername(entity.findProperty("username").getValue());
 		if (StringUtils.isEmpty(customer.getEmailAddress())) {
 			throw new ServiceException("Unable to update password because an email address is not available for this customer. An email address is required to send the customer the new system generated password.");

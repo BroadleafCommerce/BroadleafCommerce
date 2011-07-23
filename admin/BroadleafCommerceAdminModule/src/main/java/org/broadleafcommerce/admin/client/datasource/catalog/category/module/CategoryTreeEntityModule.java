@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.Entit
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -73,7 +74,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		service.update(entity, persistencePerspective, dataSource.createSandBoxInfo(), null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				/*

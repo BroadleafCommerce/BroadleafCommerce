@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
@@ -68,7 +69,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 	public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		CriteriaTransferObject criteriaTransferObject = getCto(request);
 		final String parentCategoryId = criteriaTransferObject.get(criteriaTransferObject.getPropertyIdSet().iterator().next()).getFilterValues()[0];
-		service.fetch(ceilingEntityFullyQualifiedClassname, criteriaTransferObject, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), criteriaTransferObject, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = buildRecords(result, null);
@@ -104,7 +105,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
             	entity.setType(type);
             }
         }
-		service.update(entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				ListGridRecord myRecord = (ListGridRecord) updateRecord(result, (Record) temp, false);
@@ -165,7 +166,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
             	entity.setType(type);
             }
         }
-        service.remove(entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {
@@ -248,7 +249,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-        service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) buildRecord(result, false);
@@ -306,7 +307,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
     			overrideValues[j] = metadataOverrides.get(key);
     		}
     	}
-		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria, overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
 			
 			@Override
 			protected void onOtherException(Throwable exception) {

@@ -18,8 +18,7 @@ package org.broadleafcommerce.openadmin.client.service;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,14 +30,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DynamicEntityServiceAsync {
     
-	void inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues, AsyncCallback<DynamicResultSet> cb);
+	void inspect(PersistencePackage persistencePackage, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues, AsyncCallback<DynamicResultSet> cb);
 	
-	void fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, AsyncCallback<DynamicResultSet> cb);
+	void fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, AsyncCallback<DynamicResultSet> cb);
     
-    void add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, AsyncCallback<Entity> cb);
+    void add(PersistencePackage persistencePackage, AsyncCallback<Entity> cb);
     
-    void update(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, AsyncCallback<Entity> cb);
+    void update(PersistencePackage persistencePackage, AsyncCallback<Entity> cb);
     
-	void remove(Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria, AsyncCallback<Void> cb);
+	void remove(PersistencePackage persistencePackage, AsyncCallback<Void> cb);
     
 }

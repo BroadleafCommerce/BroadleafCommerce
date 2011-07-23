@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
@@ -100,7 +101,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		entity.setProperties(new Property[]{prop});
 			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
 			            		
-			            		AppServices.DYNAMIC_ENTITY.update(entity, tempPerspective, ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).createSandBoxInfo(), new String[]{"passwordUpdate"}, new AbstractCallback<Entity>() {
+			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage(null, entity, tempPerspective, ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).createSandBoxInfo(), new String[]{"passwordUpdate"}), new AbstractCallback<Entity>() {
 									public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
 										SC.say(CustomerCareModule.ADMINMESSAGES.resetPasswordSuccessful());

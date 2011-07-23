@@ -49,6 +49,7 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -418,15 +419,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		}
 	}
 	
-	protected Entity update(Entity entity, Object primaryKey, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	protected Entity update(PersistencePackage persistencePackage, Object primaryKey) throws ServiceException {
 		try {
+			Entity entity  = persistencePackage.getEntity();
 			//check to see if there is a custom handler registered
 			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleUpdate(entity.getType()[0], customCriteria)) {
-					return handler.update(entity, persistencePerspective, customCriteria, persistenceManager.getDynamicEntityDao(), this);
+				if (handler.canHandleUpdate(persistencePackage)) {
+					return handler.update(persistencePackage, persistenceManager.getDynamicEntityDao(), this);
 				}
 			}
 			
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				entity.getType()[0], 
@@ -620,8 +623,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		}
 	}
 	
-	public void updateMergedProperties(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try{
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				ceilingEntityFullyQualifiedClassname, 
@@ -643,19 +648,21 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		}
 	}
 	
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
-		return update(entity, null, persistencePerspective, customCriteria);
+	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+		return update(persistencePackage, null);
 	}
 
-	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
 		try {
 			//check to see if there is a custom handler registered
 			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleAdd(entity.getType()[0], customCriteria)) {
-					Entity response = handler.add(entity, persistencePerspective, customCriteria, persistenceManager.getDynamicEntityDao(), this);
+				if (handler.canHandleAdd(persistencePackage)) {
+					Entity response = handler.add(persistencePackage, persistenceManager.getDynamicEntityDao(), this);
 					return response;
 				}
 			}
+			Entity entity = persistencePackage.getEntity();
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				entity.getType()[0], 
@@ -696,7 +703,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				
 				return getRecords(mergedProperties, entityList, null, null)[0];
 			} else {
-				return update(entity, primaryKey, persistencePerspective, customCriteria);
+				return update(persistencePackage, primaryKey);
 			}
 		} catch (ServiceException e) {
 			LOG.error("Problem adding new entity", e);
@@ -708,16 +715,18 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public void remove(PersistencePackage persistencePackage) throws ServiceException {
 		try {
 			//check to see if there is a custom handler registered
 			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleRemove(entity.getType()[0], customCriteria)) {
-					handler.remove(entity, persistencePerspective, customCriteria, persistenceManager.getDynamicEntityDao(), this);
+				if (handler.canHandleRemove(persistencePackage)) {
+					handler.remove(persistencePackage, persistenceManager.getDynamicEntityDao(), this);
 					return;
 				}
 			}
 			
+			Entity entity = persistencePackage.getEntity();
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				entity.getType()[0], 
@@ -767,9 +776,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		}
 	}
 	
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
 		Entity[] payload;
 		int totalRecords;
+		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		try {
 			Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -788,8 +799,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			
 			//check to see if there is a custom handler registered
 			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleFetch(ceilingEntityFullyQualifiedClassname, customCriteria)) {
-					DynamicResultSet results = handler.fetch(ceilingEntityFullyQualifiedClassname, persistencePerspective, cto, customCriteria, persistenceManager.getDynamicEntityDao(), this);
+				if (handler.canHandleFetch(persistencePackage)) {
+					DynamicResultSet results = handler.fetch(persistencePackage, cto, persistenceManager.getDynamicEntityDao(), this);
 					return results;
 				}
 			}

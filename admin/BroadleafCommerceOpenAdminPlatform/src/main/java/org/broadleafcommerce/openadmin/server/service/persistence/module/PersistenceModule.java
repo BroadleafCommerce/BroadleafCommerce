@@ -23,7 +23,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -39,17 +39,17 @@ public interface PersistenceModule {
 
 	public boolean isCompatible(OperationType operationType);
 	
-	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException;
+	public Entity add(PersistencePackage persistencePackage) throws ServiceException;
 	
-	public void updateMergedProperties(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException;
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException;
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException;
 	
-	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException;
+	public Entity update(PersistencePackage persistencePackage) throws ServiceException;
 	
-	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException;
+	public void remove(PersistencePackage persistencePackage) throws ServiceException;
 	
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException;
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
 	
 	public void setPersistenceManager(PersistenceManager persistenceManager);
 	

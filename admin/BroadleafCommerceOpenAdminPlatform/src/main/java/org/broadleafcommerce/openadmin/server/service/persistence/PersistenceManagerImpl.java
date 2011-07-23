@@ -18,10 +18,10 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
@@ -37,7 +37,7 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
 	private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
-	
+
 	protected SandBoxService sandBoxService;
 	protected DynamicEntityDao dynamicEntityDao;
 	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
@@ -45,57 +45,75 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	protected Map<TargetModeType, String> targetEntityManagers = new HashMap<TargetModeType, String>();
 	protected TargetModeType targetMode;
 	private ApplicationContext applicationContext;
-	
+
 	public PersistenceManagerImpl(PersistenceModule[] modules) {
 		this.modules = modules;
 		for (PersistenceModule module : modules) {
 			module.setPersistenceManager(this);
 		}
 	}
-	
+
 	public void close() throws Exception {
-		Object temp = applicationContext.getBean("&"+targetEntityManagers.get(targetMode));
+		Object temp = applicationContext.getBean("&" + targetEntityManagers.get(targetMode));
 		if (temp instanceof SandBoxEntityManagerPoolFactoryBean) {
 			((SandBoxEntityManagerPoolFactoryBean) temp).returnObject(dynamicEntityDao.getStandardEntityManager());
 		}
 	}
-	
+
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
 	 */
 	@Override
 	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
 		return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getPolymorphicEntities(java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getPolymorphicEntities(java.lang.String)
 	 */
 	@Override
 	public Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException {
 		Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
 		return entities;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getSimpleMergedProperties(java.lang.String, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao, java.lang.Class)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getSimpleMergedProperties(java.lang.String,
+	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+	 * org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao,
+	 * java.lang.Class)
 	 */
 	@Override
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, dynamicEntityDao, entityClasses);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getMergedClassMetadata(java.lang.Class, java.util.Map)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getMergedClassMetadata(java.lang.Class, java.util.Map)
 	 */
 	@Override
-	public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {		
+	public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {
 		ClassMetadata classMetadata = new ClassMetadata();
 		PolymorphicEntity[] polyEntities = new PolymorphicEntity[entities.length];
 		int j = 0;
@@ -106,7 +124,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 			j++;
 		}
 		classMetadata.setPolymorphicEntities(polyEntities);
-		
+
 		List<Property> propertiesList = new ArrayList<Property>();
 		for (PersistenceModule module : modules) {
 			module.extractProperties(mergedProperties, propertiesList);
@@ -114,7 +132,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		/*
 		 * Insert inherited fields whose order has been specified
 		 */
-		for (int i=0;i<entities.length-1;i++) {
+		for (int i = 0; i < entities.length - 1; i++) {
 			for (Property myProperty : propertiesList) {
 				if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getPresentationAttributes().getOrder() != null) {
 					for (Property property : propertiesList) {
@@ -152,165 +170,215 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 			}
 		});
 		classMetadata.setProperties(properties);
-		
+
 		return classMetadata;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#inspect(java.lang.String, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, java.lang.String[], java.util.Map)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #inspect(java.lang.String,
+	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+	 * java.lang.String[], java.util.Map)
 	 */
 	@Override
-	public DynamicResultSet inspect(
-			String ceilingEntityFullyQualifiedClassname,
-			PersistencePerspective persistencePerspective,
-			String[] customCriteria,
-			Map<String, FieldMetadata> metadataOverrides)
-			throws ServiceException, ClassNotFoundException {
-		//check to see if there is a custom handler registered
+	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides) throws ServiceException, ClassNotFoundException {
+		// check to see if there is a custom handler registered
 		for (CustomPersistenceHandler handler : customPersistenceHandlers) {
-			if (handler.canHandleInspect(ceilingEntityFullyQualifiedClassname, customCriteria)) {
-				DynamicResultSet results = handler.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, customCriteria, metadataOverrides, dynamicEntityDao, this);
-				
+			if (handler.canHandleInspect(persistencePackage)) {
+				DynamicResultSet results = handler.inspect(persistencePackage, metadataOverrides, dynamicEntityDao, this);
+
 				return results;
 			}
 		}
-		
-		Class<?>[] entities = getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+
+		Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
 		Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-		for(PersistenceModule module : modules) {
-			module.updateMergedProperties(ceilingEntityFullyQualifiedClassname, persistencePerspective, allMergedProperties, metadataOverrides);
+		for (PersistenceModule module : modules) {
+			module.updateMergedProperties(persistencePackage, allMergedProperties, metadataOverrides);
 		}
 		ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
-		
+
 		DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
-		
+
 		return results;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#fetch(java.lang.String, com.anasoft.os.daofusion.cto.client.CriteriaTransferObject, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, java.lang.String[])
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #fetch(java.lang.String,
+	 * com.anasoft.os.daofusion.cto.client.CriteriaTransferObject,
+	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+	 * java.lang.String[])
 	 */
 	@Override
-	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname,
-			CriteriaTransferObject cto,
-			PersistencePerspective persistencePerspective,
-			String[] customCriteria) throws ServiceException {
-		PersistenceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getFetchType());
-		return myModule.fetch(ceilingEntityFullyQualifiedClassname, cto, persistencePerspective, customCriteria);
+	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
+		return myModule.fetch(persistencePackage, cto);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#add(java.lang.String, org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, java.lang.String[])
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #add(java.lang.String, org.broadleafcommerce.openadmin.client.dto.Entity,
+	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+	 * java.lang.String[])
 	 */
 	@Override
-	public Entity add(String ceilingEntityFullyQualifiedClassname,
-			Entity entity, PersistencePerspective persistencePerspective,
-			String[] customCriteria) throws ServiceException {
-		PersistenceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getAddType());
-		return myModule.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria);
+	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
+		return myModule.add(persistencePackage);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#update(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo, java.lang.String[])
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #update(org.broadleafcommerce.openadmin.client.dto.Entity,
+	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+	 * org.broadleafcommerce.openadmin.client.dto.SandBoxInfo,
+	 * java.lang.String[])
 	 */
 	@Override
-	public Entity update(Entity entity,
-			PersistencePerspective persistencePerspective,
-			SandBoxInfo sandBoxInfo, String[] customCriteria)
-			throws ServiceException {
-		
-		sandBoxService.saveSandBox(entity, persistencePerspective, sandBoxInfo);
-		
-		PersistenceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getUpdateType());
-		return myModule.update(entity, persistencePerspective, customCriteria);
+	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+
+		sandBoxService.saveSandBox(persistencePackage);
+
+		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
+		return myModule.update(persistencePackage);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#remove(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, java.lang.String[])
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #remove(org.broadleafcommerce.openadmin.client.dto.Entity,
+	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+	 * java.lang.String[])
 	 */
 	@Override
-	public void remove(Entity entity,
-			PersistencePerspective persistencePerspective,
-			String[] customCriteria) throws ServiceException {
-		PersistenceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getRemoveType());
-		myModule.remove(entity, persistencePerspective, customCriteria);
+	public void remove(PersistencePackage persistencePackage) throws ServiceException {
+		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
+		myModule.remove(persistencePackage);
 	}
-	
+
 	protected PersistenceModule getCompatibleModule(OperationType operationType) {
 		PersistenceModule myModule = null;
-		for(PersistenceModule module : modules) {
+		for (PersistenceModule module : modules) {
 			if (module.isCompatible(operationType)) {
 				myModule = module;
 				break;
 			}
 		}
-        if (myModule == null) {
-        	LOG.error("Unable to find a compatible remote service module for the operation type: " + operationType);
+		if (myModule == null) {
+			LOG.error("Unable to find a compatible remote service module for the operation type: " + operationType);
 			throw new RuntimeException("Unable to find a compatible remote service module for the operation type: " + operationType);
 		}
-        
-        return myModule;
+
+		return myModule;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getSandBoxService()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getSandBoxService()
 	 */
 	@Override
 	public SandBoxService getSandBoxService() {
 		return sandBoxService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#setSandBoxService(org.broadleafcommerce.openadmin.server.service.SandBoxService)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #setSandBoxService(org.broadleafcommerce.openadmin.server.service.
+	 * SandBoxService)
 	 */
 	@Override
 	public void setSandBoxService(SandBoxService sandBoxService) {
 		this.sandBoxService = sandBoxService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getDynamicEntityDao()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getDynamicEntityDao()
 	 */
 	@Override
 	public DynamicEntityDao getDynamicEntityDao() {
 		return dynamicEntityDao;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#setDynamicEntityDao(org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #setDynamicEntityDao(org.broadleafcommerce.openadmin.server.dao.
+	 * DynamicEntityDao)
 	 */
 	@Override
 	public void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao) {
 		this.dynamicEntityDao = dynamicEntityDao;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getTargetEntityManagers()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getTargetEntityManagers()
 	 */
 	@Override
 	public Map<TargetModeType, String> getTargetEntityManagers() {
 		return targetEntityManagers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#setTargetEntityManagers(java.util.Map)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #setTargetEntityManagers(java.util.Map)
 	 */
 	@Override
-	public void setTargetEntityManagers(
-			Map<TargetModeType, String> targetEntityManagers) {
+	public void setTargetEntityManagers(Map<TargetModeType, String> targetEntityManagers) {
 		this.targetEntityManagers = targetEntityManagers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getTargetMode()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getTargetMode()
 	 */
 	@Override
 	public TargetModeType getTargetMode() {
 		return targetMode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#setTargetMode(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #setTargetMode(java.lang.String)
 	 */
 	@Override
 	public void setTargetMode(TargetModeType targetMode) {
@@ -322,17 +390,25 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		dynamicEntityDao.setStandardEntityManager(targetManager);
 		this.targetMode = targetMode;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#getCustomPersistenceHandlers()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #getCustomPersistenceHandlers()
 	 */
 	@Override
 	public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
 		return customPersistenceHandlers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager#setCustomPersistenceHandlers(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+	 * #setCustomPersistenceHandlers(java.util.List)
 	 */
 	@Override
 	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
