@@ -24,4 +24,7 @@ public interface FulfillmentGroupService {
     FulfillmentGroup createEmptyFulfillmentGroup();
 
     FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
+
+    public void delete(FulfillmentGroup fulfillmentGroup);
+
 }
