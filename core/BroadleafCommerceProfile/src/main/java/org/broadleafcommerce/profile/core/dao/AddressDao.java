@@ -25,4 +25,6 @@ public interface AddressDao {
 
     public Address create();
 
+    public void delete(Address address);
+
 }

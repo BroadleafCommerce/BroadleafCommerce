@@ -38,4 +38,8 @@ public class AddressServiceImpl implements AddressService {
     public Address create() {
         return addressDao.create();
     }
+
+    public void delete(Address address) {
+        addressDao.delete(address);
+    }
 }

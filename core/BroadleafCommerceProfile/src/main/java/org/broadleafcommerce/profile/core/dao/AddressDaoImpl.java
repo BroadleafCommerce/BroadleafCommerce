@@ -43,4 +43,11 @@ public class AddressDaoImpl implements AddressDao {
     public Address create() {
         return (Address) entityConfiguration.createEntityInstance(Address.class.getName());
     }
+
+    public void delete(Address address) {
+    	if (!em.contains(address)) {
+    		address = readAddressById(address.getId());
+    	}
+        em.remove(address);
+    }
 }
