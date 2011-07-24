@@ -38,4 +38,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId) {
         return fulfillmentGroupDao.readFulfillmentGroupById(fulfillmentGroupId);
     }
+
+    public void delete(FulfillmentGroup fulfillmentGroup) {
+        fulfillmentGroupDao.delete(fulfillmentGroup);
+    }
 }
