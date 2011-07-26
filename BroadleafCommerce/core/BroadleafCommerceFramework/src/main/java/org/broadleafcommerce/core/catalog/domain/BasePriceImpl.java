@@ -72,7 +72,7 @@ public class BasePriceImpl implements BasePrice {
     protected Sku sku;
 
     /** The amount. */
-    @Column(name = "AMOUNT", nullable=false)
+    @Column(name = "AMOUNT", nullable=false, precision=19, scale=5)
     protected BigDecimal amount;
 
     /** The start date. */

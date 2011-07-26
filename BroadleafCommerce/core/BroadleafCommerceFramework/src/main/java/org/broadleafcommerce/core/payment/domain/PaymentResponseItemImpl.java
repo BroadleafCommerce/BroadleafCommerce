@@ -60,7 +60,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "USER_NAME", nullable=false)
     protected String userName;
 
-    @Column(name = "AMOUNT_PAID")
+    @Column(name = "AMOUNT_PAID", precision=19, scale=5)
     protected BigDecimal amountPaid;
 
     @Column(name = "AUTHORIZATION_CODE")
@@ -104,7 +104,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Transient
     protected String cvvCode;
 
-    @Column(name = "REMAINING_BALANCE")
+    @Column(name = "REMAINING_BALANCE", precision=19, scale=5)
     protected BigDecimal remainingBalance;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
