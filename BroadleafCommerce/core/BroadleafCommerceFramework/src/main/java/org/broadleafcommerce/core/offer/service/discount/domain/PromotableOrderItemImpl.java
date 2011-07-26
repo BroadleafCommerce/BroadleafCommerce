@@ -149,7 +149,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 			} else {
 				OfferItemRestrictionRuleType qualifierType = promotionQualifier.getPromotion().getOfferItemQualifierRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.TARGET.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
+                    qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
 				}
 			}
 		}
@@ -175,7 +175,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 				// it to be reused as a target.   
 				OfferItemRestrictionRuleType qualifierType = promotionDiscount.getPromotion().getOfferItemTargetRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
+                    qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
 				}
 			}
 		}
@@ -189,7 +189,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 			} else {
 				OfferItemRestrictionRuleType qualifierType = promotionQualifier.getPromotion().getOfferItemQualifierRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
+                    qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
 				}
 			}
 		}
@@ -205,12 +205,13 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 	
 	public void addPromotionDiscount(PromotableCandidateItemOffer candidatePromotion, OfferItemCriteria itemCriteria, int quantity) {
 		PromotionDiscount pd = lookupOrCreatePromotionDiscount(candidatePromotion);
-		if (pd == null) {
-			return;
-		}
-		pd.incrementQuantity(quantity);
-		pd.setItemCriteria(itemCriteria);
-		pd.setCandidateItemOffer(candidatePromotion);
+        if (pd == null) {
+            return;
+        }
+        pd.incrementQuantity(quantity);
+        pd.setItemCriteria(itemCriteria);
+        pd.setCandidateItemOffer(candidatePromotion);
+        candidatePromotion.addUse();
 	}
 	
 	public PromotionQualifier lookupOrCreatePromotionQualifier(PromotableCandidateItemOffer candidatePromotion) {

@@ -20,6 +20,7 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
     protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
 	protected CandidateItemOffer delegate;
 	protected PromotableOrderItem orderItem;
+    protected int uses = 0;
 	
 	public PromotableCandidateItemOfferImpl(CandidateItemOffer candidateItemOffer) {
 		this.delegate = candidateItemOffer;
@@ -107,8 +108,9 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
 		
 		int numberOfUsesForThisItemCriteria = calculateMaxUsesForItemCriteria(delegate.getOffer().getTargetItemCriteria(), getOffer());
 		maxMatchesFound = Math.min(maxMatchesFound, numberOfUsesForThisItemCriteria);
+        int offerMaxUses = getOffer().getMaxUses()==0?maxMatchesFound:getOffer().getMaxUses();
 
-		return Math.min(maxMatchesFound, getOffer().getMaxUses());
+		return Math.min(maxMatchesFound, offerMaxUses);
 	}
 	
 	public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion) {
@@ -161,4 +163,12 @@ public class PromotableCandidateItemOfferImpl implements PromotableCandidateItem
 	public PromotableOrderItem getOrderItem() {
 		return orderItem;
 	}
+
+    public int getUses() {
+        return uses;
+    }
+
+    public void addUse() {
+        uses++;
+    }
 }
