@@ -68,13 +68,13 @@ public class OfferAuditImpl implements OfferAudit {
     @Index(name="OFFERAUDIT_RELATED_INDEX", columnNames={"RELATED_ID"})
     protected Long relatedId;
 
-    @Column(name = "RELATED_RETAIL_PRICE")
+    @Column(name = "RELATED_RETAIL_PRICE", precision=19, scale=5)
     protected BigDecimal relatedRetailPrice;
 
-    @Column(name = "RELATED_SALE_PRICE")
+    @Column(name = "RELATED_SALE_PRICE", precision=19, scale=5)
     protected BigDecimal relatedSalePrice;
 
-    @Column(name = "RELATED_PRICE")
+    @Column(name = "RELATED_PRICE", precision=19, scale=5)
     protected BigDecimal relatedPrice;
 
     @Column(name = "REDEEMED_DATE")

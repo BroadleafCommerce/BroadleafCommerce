@@ -53,7 +53,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", precision=19, scale=5)
     protected BigDecimal amount;
 
     @Column(name = "NAME")

@@ -53,7 +53,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     @JoinColumn(name = "BUND_ORDER_ITEM_ID")
     protected BundleOrderItem bundleOrderItem;
 
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", precision=19, scale=5)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
