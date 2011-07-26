@@ -133,7 +133,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
      * cannot be applied to an Order that already contains an OrderAdjustment.  An offer with combinable
      * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
      *
-     * @param orderOffers a sorted list of CandidateOrderOffer
+     * @param qualifiedFGOffers a sorted list of CandidateOrderOffer
      * @param order the Order to apply the CandidateOrderOffers
      * @return true if order offer applied; otherwise false
      */
@@ -150,14 +150,24 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
     	}
     	List<FulfillmentGroupOfferPotential> potentials = new ArrayList<FulfillmentGroupOfferPotential>();
 		for (FulfillmentGroupOfferPotential potential : offerMap.keySet()) {
-			for (PromotableCandidateFulfillmentGroupOffer candidate : offerMap.get(potential)) {
+            List<PromotableCandidateFulfillmentGroupOffer> fgOffers = offerMap.get(potential);
+            Collections.sort(fgOffers, new BeanComparator("discountedAmount", Collections.reverseOrder()));
+		    Collections.sort(fgOffers, new BeanComparator("priority"));
+
+            if (potential.getOffer().getMaxUses() > 0 && fgOffers.size() > potential.getOffer().getMaxUses()) {
+                for (int j=potential.getOffer().getMaxUses();j<fgOffers.size();j++) {
+                    fgOffers.remove(j);
+                }
+            }
+			for (PromotableCandidateFulfillmentGroupOffer candidate : fgOffers) {
 				potential.setTotalSavings(potential.getTotalSavings().add(candidate.getFulfillmentGroup().getPriceBeforeAdjustments(candidate.getOffer().getApplyDiscountToSalePrice()).subtract(candidate.getDiscountedPrice())));
 				potential.setPriority(candidate.getOffer().getPriority());
 			}
+
 			potentials.add(potential);
 		}
 		
-		// Sort order offers by priority and discount
+		// Sort fg potentials by priority and discount
 		Collections.sort(potentials, new BeanComparator("totalSavings", Collections.reverseOrder()));
 	    Collections.sort(potentials, new BeanComparator("priority"));
 	    potentials = removeTrailingNotCombinableFulfillmentGroupOffers(potentials);

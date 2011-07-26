@@ -43,5 +43,8 @@ public interface PromotableCandidateItemOffer {
 	public void setOffer(Offer offer);
 	
 	public PromotableOrderItem getOrderItem();
-	
+
+    public int getUses();
+
+    public void addUse();
 }

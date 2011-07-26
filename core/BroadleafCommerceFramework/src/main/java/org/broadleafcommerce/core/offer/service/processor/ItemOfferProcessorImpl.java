@@ -340,10 +340,12 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 						if (receiveQtyNeeded > 0) {
 							int itemQtyAvailableToBeUsedAsTarget = chargeableItem.getQuantityAvailableToBeUsedAsTarget(promotion);
 							if (itemQtyAvailableToBeUsedAsTarget > 0) {
-								int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
-								receiveQtyNeeded -= qtyToMarkAsTarget;
-								//atLeastOneCriteriaMatched = true;
-								chargeableItem.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
+                                if (promotion.getMaxUses() == 0 || itemOffer.getUses() < promotion.getMaxUses()) {
+								    int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
+								    receiveQtyNeeded -= qtyToMarkAsTarget;
+								    //atLeastOneCriteriaMatched = true;
+								    chargeableItem.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
+                                }
 							}
 						}
 						

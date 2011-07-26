@@ -25,5 +25,6 @@ public interface PromotableCandidateFulfillmentGroupOffer {
 	public Offer getOffer();
 	
 	public PromotableFulfillmentGroup getFulfillmentGroup();
-	
+
+    public Money getDiscountedAmount();
 }

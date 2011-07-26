@@ -116,7 +116,7 @@ public class CandidateItemOfferTest extends TestCase {
 	
 	public void testCalculatePotentialSavings() throws Exception {
 		Money savings = promotableCandidate.calculatePotentialSavings();
-		assertTrue(savings.equals(new Money(2D)));
+		assertTrue(savings.equals(new Money(4D)));
 	}
 	
 	public void testCalculateSavingsForOrderItem() throws Exception {
@@ -134,12 +134,11 @@ public class CandidateItemOfferTest extends TestCase {
 	
 	public void testCalculateMaximumNumberOfUses() throws Exception {
 		int maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
-		//based on criteria, the max would be 2, but the maxUses on the offer limits it to 1
-		assertTrue(maxOfferUses == 1);
-		
-		offer.setMaxUses(2);
-		maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
 		assertTrue(maxOfferUses == 2);
+		
+		offer.setMaxUses(1);
+		maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
+		assertTrue(maxOfferUses == 1);
 	}
 	
 	public void testCalculateMaxUsesForItemCriteria() throws Exception {
