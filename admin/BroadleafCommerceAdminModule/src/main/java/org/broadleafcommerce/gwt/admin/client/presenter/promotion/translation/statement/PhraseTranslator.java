@@ -176,8 +176,8 @@ public class PhraseTranslator {
 	protected String[] extractSpecialComponents(String[] components, String key) {
 		String[] temp = new String[3];
 		int startsWithIndex = components[0].indexOf(key);
-		temp[0] = components[0].substring(0, startsWithIndex-1);
-		temp[1] = key;
+		temp[0] = components[0].substring(0, startsWithIndex);
+		temp[1] = key.substring(1, key.length());
 		temp[2] = components[0].substring(startsWithIndex + key.length() + 1, components[0].lastIndexOf(")"));
 		return temp;
 	}
