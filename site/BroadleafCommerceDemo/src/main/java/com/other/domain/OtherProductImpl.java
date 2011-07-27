@@ -15,18 +15,15 @@
  */
 package com.other.domain;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.core.catalog.domain.ProductSkuImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 
@@ -37,6 +34,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "OTHER_PRODUCT")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationOverrides(@AdminPresentationOverride(name="description", value=@AdminPresentation(friendlyName="My Company Description", order=2, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)))
 public class OtherProductImpl extends ProductSkuImpl implements OtherProduct {
 
 	private static final long serialVersionUID = 1L;
