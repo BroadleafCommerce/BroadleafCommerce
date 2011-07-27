@@ -15,6 +15,7 @@
 	<target name="gwt-run">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="false">
+            <arg value="-Pgwt"/>
 			<arg value="gwt:run"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir}"/>
 		</artifact:mvn>
@@ -24,6 +25,7 @@
 	<target name="gwt-debug">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
+            <arg value="-Pgwt"/>
 			<arg value="gwt:debug"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir}"/>
 		</artifact:mvn>
@@ -32,23 +34,9 @@
 	<!-- start the integrated gwt development server in debug mode inplace with the current codebase - add jrebel instrumentation -->
 	<target name="gwt-debug-jrebel">
 		<delete dir="target/broadleafdemo/WEB-INF/lib"/>
-		<!-- Make sure all the latest core java files are available to GWT for development mode compilation -->
-		<copy todir="target/broadleafdemo/WEB-INF/classes">
-			<fileset dir="../../admin/BroadleafCommerceAdminModule/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../admin/BroadleafCommerceAdminModule/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-		</copy>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
-			<arg value="gwt:debug"/>
+			<arg value="-Pgwt"/>
+            <arg value="gwt:debug"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}"/>
 		</artifact:mvn>
 	</target>
@@ -57,6 +45,7 @@
 	<target name="gwt-debug-yourkit">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
+            <arg value="-Pgwt"/>
 			<arg value="gwt:debug"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
 		</artifact:mvn>

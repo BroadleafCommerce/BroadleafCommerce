@@ -1,7 +1,5 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
-import javax.persistence.EntityManager;
-
 import org.apache.commons.pool.KeyedPoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
@@ -9,6 +7,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import javax.persistence.EntityManager;
 
 public class SandBoxEntityManagerPoolFactoryBean implements ApplicationContextAware, FactoryBean<EntityManager> {
 
@@ -22,7 +22,8 @@ public class SandBoxEntityManagerPoolFactoryBean implements ApplicationContextAw
 
 	@Override
 	public EntityManager getObject() throws Exception {
-		return (EntityManager) sandboxPool.borrowObject(SandBoxContext.getSandBoxContext().getSandBoxName());
+        String sandBoxName = SandBoxContext.getSandBoxContext().getSandBoxName();
+		return (EntityManager) sandboxPool.borrowObject(sandBoxName);
 	}
 
 	@Override
