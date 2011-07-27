@@ -4,8 +4,9 @@
 	<inherits name="org.broadleafcommerce.admin.merchandisingModule" />
 	<inherits name="org.broadleafcommerce.admin.promotionModule" />
 	<inherits name="org.broadleafcommerce.admin.customerCareModule" />
-	
-	<extend-property name="locale" values="en_US"/>
+    <inherits name="com.google.gwt.core.CompilerParameters"/>
+
+    <extend-property name="locale" values="en_US"/>
 	
 	<entry-point class="org.broadleafcommerce.openadmin.client.BLCLaunch" />
 	<!-- <set-property name="user.agent" value="gecko1_8" /> -->
