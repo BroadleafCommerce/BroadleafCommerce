@@ -87,7 +87,7 @@ public class PaymentLogImpl implements PaymentLog {
     @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnNames={"LOG_TYPE"})
     protected String logType;
 
-    @Column(name = "AMOUNT_PAID")
+    @Column(name = "AMOUNT_PAID", precision=19, scale=5)
     protected BigDecimal amountPaid;
 
     public Long getId() {

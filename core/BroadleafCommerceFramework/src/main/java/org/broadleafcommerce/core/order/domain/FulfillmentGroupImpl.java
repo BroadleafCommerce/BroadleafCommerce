@@ -104,15 +104,15 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName="Shipping Service", order=3, group="Description", prominent=true)
     protected String service;
 
-    @Column(name = "RETAIL_PRICE")
+    @Column(name = "RETAIL_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Retail Shipping Price", order=1, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailShippingPrice;
 
-    @Column(name = "SALE_PRICE")
+    @Column(name = "SALE_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Sale Shipping Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal saleShippingPrice;
 
-    @Column(name = "PRICE")
+    @Column(name = "PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Shipping Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal shippingPrice;   
 
@@ -130,27 +130,27 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
 
-    @Column(name = "CITY_TAX")
+    @Column(name = "CITY_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG City Tax", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal cityTax;
 
-    @Column(name = "COUNTY_TAX")
+    @Column(name = "COUNTY_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG County Tax", order=5, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal countyTax;
 
-    @Column(name = "STATE_TAX")
+    @Column(name = "STATE_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG State Tax", order=6, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal stateTax;
     
-    @Column(name = "DISTRICT_TAX")
+    @Column(name = "DISTRICT_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG District Tax", order=7, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal districtTax;
 
-    @Column(name = "COUNTRY_TAX")
+    @Column(name = "COUNTRY_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG Country Tax", order=8, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal countryTax;
 
-    @Column(name = "TOTAL_TAX")
+    @Column(name = "TOTAL_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG Total Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
@@ -168,11 +168,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
 
-    @Column(name = "MERCHANDISE_TOTAL")
+    @Column(name = "MERCHANDISE_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG Merchandise Total", order=10, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal merchandiseTotal;
 
-    @Column(name = "TOTAL")
+    @Column(name = "TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG Total", order=11, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal total;
 

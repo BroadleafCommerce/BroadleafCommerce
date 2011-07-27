@@ -53,7 +53,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected DiscreteOrderItem discreteOrderItem;
 
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", precision=19, scale=5)
     protected BigDecimal amount;
 
     @Column(name = "NAME")

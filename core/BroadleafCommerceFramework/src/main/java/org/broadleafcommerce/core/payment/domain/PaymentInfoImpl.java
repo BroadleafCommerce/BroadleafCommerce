@@ -79,7 +79,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     @AdminPresentation(friendlyName="Payment Phone", order=1, group="Phone")
     protected Phone phone;
 
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", precision=19, scale=5)
     @AdminPresentation(friendlyName="Payment Amount", order=3, group="Description", prominent=true, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal amount;
 

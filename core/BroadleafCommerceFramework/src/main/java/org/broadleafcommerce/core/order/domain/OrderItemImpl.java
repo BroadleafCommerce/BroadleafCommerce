@@ -83,15 +83,15 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
-    @Column(name = "RETAIL_PRICE")
+    @Column(name = "RETAIL_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Item Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
-    @Column(name = "SALE_PRICE")
+    @Column(name = "SALE_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Item Sale Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
-    @Column(name = "PRICE")
+    @Column(name = "PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName="Item Price", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal price;
 
