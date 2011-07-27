@@ -17,6 +17,7 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
 	protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
 	protected CandidateFulfillmentGroupOffer delegate;
 	protected PromotableFulfillmentGroup promotableFulfillmentGroup;
+    protected Money discountedAmount;
 	
 	public PromotableCandidateFulfillmentGroupOfferImpl(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
 		this.delegate = candidateFulfillmentGroupOffer;
@@ -36,22 +37,22 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
 
             if (delegate.getFulfillmentGroup().getRetailShippingPrice() != null) {
                 Money priceToUse = delegate.getFulfillmentGroup().getRetailShippingPrice();
-                Money discountAmount = new Money(0);
+                discountedAmount = new Money(0);
                 if ((delegate.getOffer().getApplyDiscountToSalePrice()) && (delegate.getFulfillmentGroup().getSaleShippingPrice() != null)) {
                     priceToUse = delegate.getFulfillmentGroup().getSaleShippingPrice();
                 }
 
                 if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountAmount = new Money(delegate.getOffer().getValue());
+                    discountedAmount = new Money(delegate.getOffer().getValue());
                 } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountAmount = priceToUse.subtract(new Money(delegate.getOffer().getValue()));
+                    discountedAmount = priceToUse.subtract(new Money(delegate.getOffer().getValue()));
                 } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                    discountAmount = priceToUse.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100")));
+                    discountedAmount = priceToUse.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100")));
                 }
-                if (discountAmount.greaterThan(priceToUse)) {
-                    discountAmount = priceToUse;
+                if (discountedAmount.greaterThan(priceToUse)) {
+                    discountedAmount = priceToUse;
                 }
-                priceToUse = priceToUse.subtract(discountAmount);
+                priceToUse = priceToUse.subtract(discountedAmount);
                 delegate.setDiscountedPrice(priceToUse);
             }
         }
@@ -72,11 +73,22 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
 		return delegate.getDiscountedPrice();
 	}
 
+    public Money getDiscountedAmount() {
+        if (delegate.getDiscountedPrice() == null) {
+            computeDiscountedPriceAndAmount();
+        }
+        return discountedAmount;
+    }
+
 	public Offer getOffer() {
 		return delegate.getOffer();
 	}
 	
 	public PromotableFulfillmentGroup getFulfillmentGroup() {
 		return promotableFulfillmentGroup;
+	}
+
+    public int getPriority() {
+		return delegate.getPriority();
 	}
 }
