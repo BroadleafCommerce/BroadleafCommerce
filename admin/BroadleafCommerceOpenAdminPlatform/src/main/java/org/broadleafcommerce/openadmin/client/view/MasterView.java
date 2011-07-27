@@ -232,5 +232,8 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	public void clearStatus() {
 		status.setContents("");
 	}
-	
+
+    public TabSet getModuleTabs() {
+        return topTabSet;
+    }
 }
