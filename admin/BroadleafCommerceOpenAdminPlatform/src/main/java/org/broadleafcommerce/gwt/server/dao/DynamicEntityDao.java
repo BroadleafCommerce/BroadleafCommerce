@@ -15,17 +15,16 @@
  */
 package org.broadleafcommerce.gwt.server.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.hibernate.mapping.PersistentClass;
+
+import javax.persistence.EntityManager;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 /**
  * 

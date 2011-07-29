@@ -15,27 +15,6 @@
  */
 package org.broadleafcommerce.gwt.server.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -48,12 +27,7 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldPresentationAttr
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.presentation.ConfigurationItem;
-import org.broadleafcommerce.presentation.ValidationConfiguration;
-
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -65,6 +39,16 @@ import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+
+import javax.persistence.EntityManager;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * 
@@ -188,7 +172,53 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
 		buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, metadataOverrides, mergedProperties, prefix);
-			
+
+        Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
+		//go in reverse order since I want the lowest subclass override
+		for (int i = entities.length-1;i >= 0; i--) {
+			AdminPresentationOverrides myOverrides = entities[i].getAnnotation(AdminPresentationOverrides.class);
+            if (myOverrides != null) {
+                for (AdminPresentationOverride myOverride : myOverrides.value()) {
+                    presentationOverrides.put(myOverride.name(), myOverride);
+                }
+            }
+		}
+
+        for (String propertyName : presentationOverrides.keySet()) {
+            if (mergedProperties.containsKey(propertyName)) {
+                FieldMetadata metadata = mergedProperties.get(propertyName);
+                FieldPresentationAttributes attr = metadata.getPresentationAttributes();
+                if (attr == null) {
+                    attr = new FieldPresentationAttributes();
+                    metadata.setPresentationAttributes(attr);
+                }
+                AdminPresentation annot = presentationOverrides.get(propertyName).value();
+				attr.setFriendlyName(annot.friendlyName());
+				attr.setSecurityLevel(annot.securityLevel());
+				attr.setHidden(annot.hidden());
+				attr.setOrder(annot.order());
+				attr.setExplicitFieldType(annot.fieldType());
+				attr.setGroup(annot.group());
+				attr.setGroupOrder(annot.groupOrder());
+				attr.setLargeEntry(annot.largeEntry());
+				attr.setProminent(annot.prominent());
+				attr.setColumnWidth(annot.columnWidth());
+				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
+				attr.setReadOnly(annot.readOnly());
+				if (annot.validationConfigurations().length != 0) {
+					ValidationConfiguration[] configurations = annot.validationConfigurations();
+					for (ValidationConfiguration configuration : configurations) {
+						ConfigurationItem[] items = configuration.configurationItems();
+						Map<String, String> itemMap = new HashMap<String, String>();
+						for (ConfigurationItem item : items) {
+							itemMap.put(item.itemName(), item.itemValue());
+						}
+						attr.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+					}
+				}
+            }
+        }
+
 		return mergedProperties;
 	}
 
@@ -205,19 +235,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Map<String, FieldMetadata> mergedProperties, 
 		String prefix
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
-		//go in reverse order since I want the lowest subclass override
-		for (int i = entities.length-1;i >= 0; i--) {
-			AdminPresentationOverrides myOverrides = entities[i].getAnnotation(AdminPresentationOverrides.class);
-            if (myOverrides != null) {
-                for (AdminPresentationOverride myOverride : myOverrides.value()) {
-                    presentationOverrides.put(myOverride.name(), myOverride);
-                }
-            }
-		}
-		
 		for (Class<?> clazz : entities) {
-			Map<String, FieldMetadata> props = getPropertiesForEntityClass(clazz, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, prefix, metadataOverrides, presentationOverrides);
+			Map<String, FieldMetadata> props = getPropertiesForEntityClass(clazz, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, prefix, metadataOverrides);
 			//first check all the properties currently in there to see if my entity inherits from them
 			for (Class<?> clazz2 : entities) {
 				if (!clazz2.getName().equals(clazz.getName())) {
@@ -403,14 +422,11 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return fieldMetadata;
 	}
 	
-	protected Map<String, FieldPresentationAttributes> getFieldPresentationAttributes(Class<?> targetClass, Map<String, AdminPresentationOverride> presentationOverrides) {
+	protected Map<String, FieldPresentationAttributes> getFieldPresentationAttributes(Class<?> targetClass) {
 		Map<String, FieldPresentationAttributes> attributes = new HashMap<String, FieldPresentationAttributes>();
 		Field[] fields = targetClass.getDeclaredFields();
 		for (Field field : fields) {
 			AdminPresentation annot = field.getAnnotation(AdminPresentation.class);
-			if (presentationOverrides != null && presentationOverrides.containsKey(field.getName())) {
-                annot = presentationOverrides.get(field.getName()).value();
-			}
 			if (annot != null) {
 				FieldPresentationAttributes attr = new FieldPresentationAttributes();
 				attr.setName(field.getName());
@@ -511,10 +527,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String[] includeFields, 
 		String[] excludeFields,
 		String prefix,
-		Map<String, FieldMetadata> metadataOverrides,
-		Map<String, AdminPresentationOverride> presentationOverrides
+		Map<String, FieldMetadata> metadataOverrides
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Map<String, FieldPresentationAttributes> presentationAttributes = getFieldPresentationAttributes(targetClass, presentationOverrides);
+		Map<String, FieldPresentationAttributes> presentationAttributes = getFieldPresentationAttributes(targetClass);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(targetClass);
 		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
 		List<String> propertyNames = new ArrayList<String>();
@@ -560,8 +575,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			includeFields, 
 			excludeFields,
 			prefix,
-			metadataOverrides,
-			presentationOverrides
+			metadataOverrides
 		);
 		FieldPresentationAttributes presentationAttribute = new FieldPresentationAttributes();
 		presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
@@ -592,8 +606,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String[] includeFields, 
 		String[] excludeFields,
 		String prefix,
-		Map<String, FieldMetadata> metadataOverrides,
-		Map<String, AdminPresentationOverride> presentationOverrides
+		Map<String, FieldMetadata> metadataOverrides
 	) throws HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		int j = 0;
 		for (String propertyName : propertyNames) {
@@ -618,7 +631,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				}
 				Class<?> returnedClass = type.getReturnedClass();
 				if (type.isComponentType() && includeField) {
-					buildComponentProperties(targetClass, foreignField, additionalForeignFields, additionalNonPersistentProperties, mergedPropertyType, metadata, fields, idProperty, populateManyToOneFields, includeFields, excludeFields, propertyName, type, returnedClass, metadataOverrides, presentationOverrides);
+					buildComponentProperties(targetClass, foreignField, additionalForeignFields, additionalNonPersistentProperties, mergedPropertyType, metadata, fields, idProperty, populateManyToOneFields, includeFields, excludeFields, propertyName, type, returnedClass, metadataOverrides);
 					continue;
 				}
 				/*
@@ -814,8 +827,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String propertyName, 
 		Type type, 
 		Class<?> returnedClass, 
-		Map<String, FieldMetadata> metadataOverrides,
-		Map<String, AdminPresentationOverride> presentationOverrides
+		Map<String, FieldMetadata> metadataOverrides
 	) throws MappingException, HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String[] componentProperties = ((ComponentType) type).getPropertyNames();
 		List<String> componentPropertyNames = new ArrayList<String>();
@@ -827,7 +839,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		for (Type componentType : componentTypes) {
 			componentPropertyTypes.add(componentType);
 		}
-		Map<String, FieldPresentationAttributes> componentPresentationAttributes = getFieldPresentationAttributes(returnedClass, presentationOverrides);
+		Map<String, FieldPresentationAttributes> componentPresentationAttributes = getFieldPresentationAttributes(returnedClass);
 		PersistentClass persistentClass = getPersistentClass(targetClass.getName());
 		@SuppressWarnings("unchecked")
 		Iterator<Property> componentPropertyIterator = ((Component) persistentClass.getProperty(propertyName).getValue()).getPropertyIterator();
@@ -849,8 +861,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			includeFields,
 			excludeFields,
 			propertyName + ".",
-			metadataOverrides,
-			presentationOverrides
+			metadataOverrides
 		);
 		Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>();
 		for (String key : newFields.keySet()) {
