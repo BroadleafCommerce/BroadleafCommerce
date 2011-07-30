@@ -24,9 +24,7 @@ import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.ConfigurationItem;
-import org.broadleafcommerce.presentation.ValidationConfiguration;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -170,7 +168,53 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
 		buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, metadataOverrides, mergedProperties, prefix);
-			
+
+        Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
+		//go in reverse order since I want the lowest subclass override
+		for (int i = entities.length-1;i >= 0; i--) {
+			AdminPresentationOverrides myOverrides = entities[i].getAnnotation(AdminPresentationOverrides.class);
+            if (myOverrides != null) {
+                for (AdminPresentationOverride myOverride : myOverrides.value()) {
+                    presentationOverrides.put(myOverride.name(), myOverride);
+                }
+            }
+		}
+
+        for (String propertyName : presentationOverrides.keySet()) {
+            if (mergedProperties.containsKey(propertyName)) {
+                FieldMetadata metadata = mergedProperties.get(propertyName);
+                FieldPresentationAttributes attr = metadata.getPresentationAttributes();
+                if (attr == null) {
+                    attr = new FieldPresentationAttributes();
+                    metadata.setPresentationAttributes(attr);
+                }
+                AdminPresentation annot = presentationOverrides.get(propertyName).value();
+				attr.setFriendlyName(annot.friendlyName());
+				attr.setSecurityLevel(annot.securityLevel());
+				attr.setHidden(annot.hidden());
+				attr.setOrder(annot.order());
+				attr.setExplicitFieldType(annot.fieldType());
+				attr.setGroup(annot.group());
+				attr.setGroupOrder(annot.groupOrder());
+				attr.setLargeEntry(annot.largeEntry());
+				attr.setProminent(annot.prominent());
+				attr.setColumnWidth(annot.columnWidth());
+				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
+				attr.setReadOnly(annot.readOnly());
+				if (annot.validationConfigurations().length != 0) {
+					ValidationConfiguration[] configurations = annot.validationConfigurations();
+					for (ValidationConfiguration configuration : configurations) {
+						ConfigurationItem[] items = configuration.configurationItems();
+						Map<String, String> itemMap = new HashMap<String, String>();
+						for (ConfigurationItem item : items) {
+							itemMap.put(item.itemName(), item.itemValue());
+						}
+						attr.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+					}
+				}
+            }
+        }
+
 		return mergedProperties;
 	}
 
