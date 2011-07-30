@@ -116,9 +116,23 @@
             </map>
 		</property>
 		<property name="sandBoxService" ref="blSandBoxService"/>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+		<property name="dynamicEntityDao">
+            <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
+                <property name="sessionFactory" ref="blSessionFactory"/>
+                <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
+                <property name="entityConfiguration" ref="blEntityConfiguration"/>
+            </bean>
+        </property>
 	</bean>
-	
+
+    <bean id="blSessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
+
+    <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
+        <property name="persistenceUnitInfo">
+            <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+        </property>
+    </bean>
+
 	<bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>  
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
@@ -164,20 +178,5 @@
 			</bean>
         </property>
     </bean>
-
-	<bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-	    <property name="sessionFactory">
-	    	<bean factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
-	    </property>
-		<property name="ejb3ConfigurationDao">
-			<bean class = "org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
-				<property name="persistenceUnitInfo">
-					<bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
-				</property>
-			</bean>
-		</property>
-	</bean>
-
-	<bean id="blFieldManager" class="org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager" scope="prototype"/>
 	
 </beans>

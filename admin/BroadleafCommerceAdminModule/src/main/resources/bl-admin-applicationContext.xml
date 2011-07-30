@@ -13,7 +13,7 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
-	<bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
+    <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
@@ -21,7 +21,7 @@
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
 			</list>
 		</constructor-arg>
-		<property name="customPersistenceHandlers">
+        <property name="customPersistenceHandlers">
 			<list>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
@@ -32,12 +32,18 @@
 		<property name="targetEntityManagers">
 			<map>
                 <entry key="sandbox" value="sandBoxEntityManagerPool"/>
-                <entry key="stage" value="standardEntityManager"/>
-                <entry key="prod" value="standardEntityManager"/>
+                <entry key="stage" value="prodEntityManager"/>
+                <entry key="prod" value="prodEntityManager"/>
             </map>
 		</property>
 		<property name="sandBoxService" ref="blSandBoxService"/>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+		<property name="dynamicEntityDao">
+            <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
+                <property name="sessionFactory" ref="blSessionFactory"/>
+                <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
+                <property name="entityConfiguration" ref="blEntityConfiguration"/>
+            </bean>
+        </property>
 	</bean>
 	
 </beans>

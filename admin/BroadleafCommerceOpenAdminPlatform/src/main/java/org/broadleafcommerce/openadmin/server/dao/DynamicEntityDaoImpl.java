@@ -22,6 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.ConfigurationItem;
 import org.broadleafcommerce.presentation.ValidationConfiguration;
@@ -36,7 +38,6 @@ import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
@@ -53,7 +54,6 @@ import java.util.*;
  * @author jfischer
  *
  */
-@Repository("blDynamicEntityDao")
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
@@ -61,6 +61,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected EntityManager standardEntityManager;
 	protected SessionFactory sessionFactory;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
+    protected EntityConfiguration entityConfiguration;
 
 	@Override
 	public Class<? extends Serializable> getEntityClass() {
@@ -893,5 +894,16 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	public void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao) {
 		this.ejb3ConfigurationDao = ejb3ConfigurationDao;
 	}
-    
+
+    public FieldManager getFieldManager() {
+        return new FieldManager(entityConfiguration, this);
+    }
+
+    public EntityConfiguration getEntityConfiguration() {
+        return entityConfiguration;
+    }
+
+    public void setEntityConfiguration(EntityConfiguration entityConfiguration) {
+        this.entityConfiguration = entityConfiguration;
+    }
 }

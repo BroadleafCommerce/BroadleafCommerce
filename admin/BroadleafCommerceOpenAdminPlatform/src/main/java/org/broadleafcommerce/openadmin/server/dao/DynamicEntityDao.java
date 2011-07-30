@@ -15,17 +15,18 @@
  */
 package org.broadleafcommerce.openadmin.server.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.mapping.PersistentClass;
+
+import javax.persistence.EntityManager;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 /**
  * 
@@ -63,5 +64,11 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	public PersistentClass getPersistentClass(String targetClassName);
 	
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+
+    public FieldManager getFieldManager();
+
+    public EntityConfiguration getEntityConfiguration();
+
+    public void setEntityConfiguration(EntityConfiguration entityConfiguration);
 	
 }

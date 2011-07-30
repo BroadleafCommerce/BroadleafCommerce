@@ -1,36 +1,22 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitorAdapter;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
-import org.broadleafcommerce.openadmin.server.domain.AdditionalForeignKeyImpl;
-import org.broadleafcommerce.openadmin.server.domain.EntityImpl;
-import org.broadleafcommerce.openadmin.server.domain.ForeignKeyImpl;
-import org.broadleafcommerce.openadmin.server.domain.JoinStructureImpl;
-import org.broadleafcommerce.openadmin.server.domain.MapStructureImpl;
-import org.broadleafcommerce.openadmin.server.domain.OperationTypesImpl;
-import org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveImpl;
-import org.broadleafcommerce.openadmin.server.domain.PropertyImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
-import org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructureImpl;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service("blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
@@ -59,7 +45,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 		sandBoxItem.setSandBox(sandBox);
 		org.broadleafcommerce.openadmin.server.domain.Entity entityImpl = new EntityImpl();
 		sandBoxItem.setEntity(entityImpl);
-		entityImpl.setType(StringUtils.join(entity.getType(),","));
+		entityImpl.setType(StringUtils.join(entity.getType(),','));
 		for (Property property : entity.getProperties()){
 			org.broadleafcommerce.openadmin.server.domain.Property propertyImpl = new PropertyImpl();
 			entityImpl.getProperties().add(propertyImpl);
@@ -82,10 +68,10 @@ public class SandBoxServiceImpl implements SandBoxService {
 			foreignKeyImpl.setRestrictionType(foreignKey.getRestrictionType());
 			((AdditionalForeignKeyImpl) foreignKeyImpl).setPersistencePerspective(persistencePerspectiveImpl);
 		}
-		persistencePerspectiveImpl.setAdditionalNonPersistentProperties(StringUtils.join(persistencePerspective.getAdditionalNonPersistentProperties(), ","));
+		persistencePerspectiveImpl.setAdditionalNonPersistentProperties(StringUtils.join(persistencePerspective.getAdditionalNonPersistentProperties(), ','));
 		persistencePerspectiveImpl.setPopulateToOneFields(persistencePerspective.getPopulateToOneFields());
-		persistencePerspectiveImpl.setExcludeFields(StringUtils.join(persistencePerspective.getExcludeFields(), ","));
-		persistencePerspectiveImpl.setIncludeFields(StringUtils.join(persistencePerspective.getIncludeFields(), ","));
+		persistencePerspectiveImpl.setExcludeFields(StringUtils.join(persistencePerspective.getExcludeFields(), ','));
+		persistencePerspectiveImpl.setIncludeFields(StringUtils.join(persistencePerspective.getIncludeFields(), ','));
 		org.broadleafcommerce.openadmin.server.domain.OperationTypes operationTypesImpl = new OperationTypesImpl();
 		persistencePerspectiveImpl.setOperationTypes(operationTypesImpl);
 		operationTypesImpl.setAddType(persistencePerspective.getOperationTypes().getAddType());

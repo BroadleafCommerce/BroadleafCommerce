@@ -15,20 +15,18 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.mapping.PersistentClass;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.hibernate.mapping.PersistentClass;
 
 /**
  * 
@@ -38,14 +36,15 @@ import org.hibernate.mapping.PersistentClass;
 public class FieldManager {
 	
 	private static final Log LOG = LogFactory.getLog(FieldManager.class);
-	
-	@Resource(name = "blEntityConfiguration")
+
     protected EntityConfiguration entityConfiguration;
-	
-	@Resource(name="blDynamicEntityDao")
 	protected DynamicEntityDao dynamicEntityDao;
-	
 	protected List<SortableValue> middleFields = new ArrayList<SortableValue>();
+
+    public FieldManager(EntityConfiguration entityConfiguration, DynamicEntityDao dynamicEntityDao) {
+        this.entityConfiguration = entityConfiguration;
+        this.dynamicEntityDao = dynamicEntityDao;
+    }
 
 	private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
         try {
