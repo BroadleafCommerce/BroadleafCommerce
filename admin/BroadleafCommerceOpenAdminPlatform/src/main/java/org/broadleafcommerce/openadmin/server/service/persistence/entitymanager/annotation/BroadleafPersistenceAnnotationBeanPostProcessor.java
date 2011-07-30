@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
+package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.annotation;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.AnnotatedElement;
@@ -33,6 +33,7 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.BroadleafEntityManager;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;

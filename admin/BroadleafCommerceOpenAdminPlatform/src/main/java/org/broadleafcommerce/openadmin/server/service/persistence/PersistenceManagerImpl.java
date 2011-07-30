@@ -25,7 +25,7 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
-import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxEntityManagerPoolFactoryBean;
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.springframework.beans.BeansException;

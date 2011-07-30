@@ -111,21 +111,37 @@
 		<property name="targetEntityManagers">
 			<map>
                 <entry key="sandbox" value="sandBoxEntityManagerPool"/>
-                <entry key="stage" value="standardEntityManager"/>
-                <entry key="prod" value="standardEntityManager"/>
+                <entry key="stage" value="prodEntityManager"/>
+                <entry key="prod" value="prodEntityManager"/>
             </map>
 		</property>
 		<property name="sandBoxService" ref="blSandBoxService"/>
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
 	</bean>
 	
-	<bean id="standardEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+	<bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>  
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
 			        
-	<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxEntityManagerPoolFactoryBean">
-		<property name="mySharedEntityManagerBeanRef" value="sandBoxEntityManager"/>
+	<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">
+        <property name="sandboxPool">
+            <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.KeyedEntityManagerPool">
+                <constructor-arg>
+                   <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.DefaultEntityManagerPool">
+                       <property name="mySharedEntityManagerBeanRef" value="sandBoxEntityManager"/>
+                       <property name="maxActive" value="5"/>
+                       <property name="minIdle" value="1"/>
+                       <property name="timeBetweenEvictionRunsMillis" value="10000"/>
+                   </bean>
+                </constructor-arg>
+                <property name="maxActive" value="1"/>
+                <property name="minIdle" value="0"/>
+                <property name="minEvictableIdleTimeMillis" value="600000"/>
+                <property name="timeBetweenEvictionRunsMillis" value="10000"/>
+                <property name="maxTotal" value="5"/>
+            </bean>
+        </property>
 	</bean>
 	
 	<bean id="sandBoxEntityManager" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean" scope="prototype">
@@ -138,13 +154,17 @@
 				<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
 				<property name="persistenceUnitName" value="blMySandBoxPU"/>
 				<property name="clonePersistenceUnitName" value="blPU"/>
-				<property name="dataSource" ref="blSandBoxDataSource"/>
+				<property name="dataSource">
+                    <bean id="sandBoxDataSource" class="org.broadleafcommerce.openadmin.server.service.persistence.datasource.SandBoxDataSource" destroy-method="close" scope="prototype">
+                        <property name="maxActive" value="3"/>
+                        <property name="minIdle" value="1"/>
+                        <property name="timeBetweenEvictionRunsMillis" value="10000"/>
+                    </bean>
+                </property>
 			</bean>
         </property>
     </bean>
-    
-    <bean id="blSandBoxDataSource" class="org.broadleafcommerce.openadmin.server.service.persistence.datasource.SandBoxDataSource" destroy-method="close"/>
-	
+
 	<bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
 	    <property name="sessionFactory">
 	    	<bean factory-bean="entityManagerFactory" factory-method="getSessionFactory" />

@@ -1,35 +1,19 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.datasource;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
+import org.apache.commons.pool.impl.GenericObjectPool;
+
+import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 
 public class SandBoxConnection implements Connection {
 	
 	private Connection delegate;
-	private GenericKeyedObjectPool connectionPool;
-	private String key;
+	private GenericObjectPool connectionPool;
 	
-	public SandBoxConnection(Connection delegate, GenericKeyedObjectPool connectionPool, String key) {
+	public SandBoxConnection(Connection delegate, GenericObjectPool connectionPool) {
 		this.delegate = delegate;
 		this.connectionPool = connectionPool;
-		this.key = key;
 	}
 
 	public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -74,7 +58,7 @@ public class SandBoxConnection implements Connection {
 
 	public void close() throws SQLException {
 		try {
-			connectionPool.returnObject(key, this);
+			connectionPool.returnObject(this);
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}

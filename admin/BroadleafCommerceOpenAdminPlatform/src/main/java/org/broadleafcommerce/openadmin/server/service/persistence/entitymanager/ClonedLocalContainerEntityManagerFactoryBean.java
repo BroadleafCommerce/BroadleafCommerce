@@ -1,20 +1,29 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
-import java.lang.reflect.Proxy;
-import java.util.Properties;
-
-import javax.persistence.spi.PersistenceUnitInfo;
-
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecorator;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 
-public class ClonedLocalContainerEntityManagerFactoryBean extends LocalContainerEntityManagerFactoryBean {
-	
-	protected String clonePersistenceUnitName;
+import javax.persistence.spi.PersistenceUnitInfo;
+import java.lang.reflect.Proxy;
+import java.util.Properties;
 
-	@Override
+public class ClonedLocalContainerEntityManagerFactoryBean extends LocalContainerEntityManagerFactoryBean implements ApplicationContextAware {
+
+    private ApplicationContext applicationContext;
+	protected String clonePersistenceUnitName;
+    protected String dataSourceRef;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
 	protected PersistenceUnitInfo determinePersistenceUnitInfo(PersistenceUnitManager persistenceUnitManager) {
 		PersistenceUnitInfo pui = persistenceUnitManager.obtainPersistenceUnitInfo(getClonePersistenceUnitName());
 		MutablePersistenceUnitInfo temp;
@@ -56,4 +65,12 @@ public class ClonedLocalContainerEntityManagerFactoryBean extends LocalContainer
 	public void setClonePersistenceUnitName(String clonePersistenceUnitName) {
 		this.clonePersistenceUnitName = clonePersistenceUnitName;
 	}
+
+    public String getDataSourceRef() {
+        return dataSourceRef;
+    }
+
+    public void setDataSourceRef(String dataSourceRef) {
+        this.dataSourceRef = dataSourceRef;
+    }
 }

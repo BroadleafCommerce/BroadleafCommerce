@@ -1,14 +1,11 @@
-package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
+package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.annotation;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
+import javax.persistence.PersistenceProperty;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.persistence.PersistenceProperty;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE, METHOD, FIELD})
 @Retention(RUNTIME)
