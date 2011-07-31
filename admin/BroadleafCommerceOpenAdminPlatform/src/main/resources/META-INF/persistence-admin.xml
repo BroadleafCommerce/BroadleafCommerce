@@ -38,6 +38,7 @@
 	</persistence-unit>
 	
 	<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/SandBoxIdGeneration.orm.xml</mapping-file>
 		<class>org.broadleafcommerce.openadmin.server.domain.AdditionalForeignKeyImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.EntityImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.ForeignKeyImpl</class>
@@ -50,6 +51,7 @@
 		<class>org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructureImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SandBoxIdGenerationImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="false"/>

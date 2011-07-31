@@ -13,41 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.core.dao;
+package org.broadleafcommerce.openadmin.server.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.IdGeneration;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxIdGeneration;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxIdGenerationImpl;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import javax.persistence.*;
 
-@Repository("blIdGenerationDao")
-public class IdGenerationDaoImpl implements IdGenerationDao {
+@Repository("blSandBoxIdGenerationDao")
+public class SandBoxIdGenerationDaoImpl implements SandBoxIdGenerationDao {
 
-    private static final Log LOG = LogFactory.getLog(IdGenerationDaoImpl.class);
+    private static final Log LOG = LogFactory.getLog(SandBoxIdGenerationDaoImpl.class);
 
-    protected Long defaultBatchSize = 100L;
-    protected Long defaultBatchStart = 1L;
+    protected Long defaultBatchSize = -20L;
+    protected Long defaultBatchStart = -1L;
 
-    @PersistenceContext(unitName = "blPU")
+    @PersistenceContext(unitName = "blSandboxPU")
     protected EntityManager em;
-
-    @Resource(name="blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    public IdGeneration findNextId(String idType) throws OptimisticLockException, Exception {
-        IdGeneration response;
-        Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
+    public SandBoxIdGeneration findNextId(String idType) throws OptimisticLockException, Exception {
+        SandBoxIdGeneration response;
+        Query query = em.createNamedQuery("BC_SNDBX_FIND_NEXT_ID");
         query.setParameter("idType", idType);
         query.setHint(getQueryCacheableKey(), false);
         try {
-            IdGeneration idGeneration =  (IdGeneration) query.getSingleResult();
-            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.SandBoxIdGeneration");
+            SandBoxIdGeneration idGeneration =  (SandBoxIdGeneration) query.getSingleResult();
+            response =  new SandBoxIdGenerationImpl();
             response.setBatchSize(idGeneration.getBatchSize());
             response.setBatchStart(idGeneration.getBatchStart());
             Long originalBatchStart = idGeneration.getBatchStart();
@@ -78,7 +74,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No row found in idGenerator table for " + idType + " creating row.");
             }
-            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.SandBoxIdGeneration");
+            response =  new SandBoxIdGenerationImpl();
             response.setType(idType);
             response.setBegin(null);
             response.setEnd(null);

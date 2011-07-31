@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
+
 import java.io.Serializable;
 
 public interface SandBoxItem extends Serializable {
@@ -19,4 +21,20 @@ public interface SandBoxItem extends Serializable {
 	public SandBox getSandBox();
 
 	public void setSandBox(SandBox sandBox);
+
+    public String getCeilingEntityFullyQualifiedClassname();
+
+    public void setCeilingEntityFullyQualifiedClassname(String ceilingEntityFullyQualifiedClassname);
+
+    public String getCustomCriteria();
+
+    public void setCustomCriteria(String customCriteria);
+
+    public ChangeType getChangeType();
+
+    public void setChangeType(ChangeType changeType);
+
+    public Long getTemporaryId();
+
+    public void setTemporaryId(Long temporaryId);
 }

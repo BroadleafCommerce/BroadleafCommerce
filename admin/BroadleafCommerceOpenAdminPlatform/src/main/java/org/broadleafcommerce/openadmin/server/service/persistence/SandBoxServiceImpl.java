@@ -14,6 +14,7 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspective
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitorAdapter;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,18 +24,26 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 	@Resource(name="blSandBoxEntityDao")
 	protected SandBoxEntityDao sandBoxDao;
+
+    @Resource(name="blSandBoxIdGenerationService")
+    protected SandBoxIdGenerationService sandBoxIdGenerationService;
 	
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#saveSandBox(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo)
 	 */
 	@Override
-	public SandBox saveSandBox(PersistencePackage persistencePackage) {
-		SandBox response = createSandBoxEntityFromDto(persistencePackage);
+	public PersistencePackage saveSandBox(PersistencePackage persistencePackage, ChangeType changeType) {
+		SandBox response = createSandBoxEntityFromDto(persistencePackage, changeType);
 		response = sandBoxDao.merge(response);
-		return response;
+		return createPersistencePackage(response);
 	}
+
+    protected PersistencePackage createPersistencePackage(SandBox sandBox) {
+        PersistencePackage pkg = new PersistencePackage();
+        return null;
+    }
 	
-	protected SandBox createSandBoxEntityFromDto(PersistencePackage persistencePackage) {
+	protected SandBox createSandBoxEntityFromDto(PersistencePackage persistencePackage, ChangeType changeType) {
 		SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
 		Entity entity = persistencePackage.getEntity();
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -43,6 +52,10 @@ public class SandBoxServiceImpl implements SandBoxService {
 		SandBoxItem sandBoxItem = new SandBoxItemImpl();
 		sandBox.getSandBoxItems().add(sandBoxItem);
 		sandBoxItem.setSandBox(sandBox);
+        sandBoxItem.setCeilingEntityFullyQualifiedClassname(persistencePackage.getCeilingEntityFullyQualifiedClassname());
+        sandBoxItem.setCustomCriteria(StringUtils.join(persistencePackage.getCustomCriteria(), ','));
+        sandBoxItem.setChangeType(changeType);
+        sandBoxItem.setTemporaryId(sandBoxIdGenerationService.findNextId("org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService"));
 		org.broadleafcommerce.openadmin.server.domain.Entity entityImpl = new EntityImpl();
 		sandBoxItem.setEntity(entityImpl);
 		entityImpl.setType(StringUtils.join(entity.getType(),','));

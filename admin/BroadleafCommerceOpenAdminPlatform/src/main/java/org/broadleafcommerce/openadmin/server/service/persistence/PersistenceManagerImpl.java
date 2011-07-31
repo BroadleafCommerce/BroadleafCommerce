@@ -1,38 +1,23 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import javax.persistence.EntityManager;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
@@ -250,7 +235,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
 
-		sandBoxService.saveSandBox(persistencePackage);
+		sandBoxService.saveSandBox(persistencePackage, ChangeType.UPDATE);
 
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
 		return myModule.update(persistencePackage);

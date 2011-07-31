@@ -30,10 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 
 /**
  * 
@@ -55,6 +52,7 @@ public class EntityImpl implements Entity {
     protected Long id;
     
     @Column(name = "TYPE")
+    @Index(name="SNDBX_ENTITY_TYPE", columnNames={"TYPE"})
 	protected String type;
 	
 	@OneToMany(mappedBy = "entity", targetEntity = PropertyImpl.class, cascade = {CascadeType.ALL})

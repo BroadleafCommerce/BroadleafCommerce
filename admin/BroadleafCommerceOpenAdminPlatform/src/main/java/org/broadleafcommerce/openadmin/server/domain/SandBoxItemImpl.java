@@ -1,19 +1,12 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -32,14 +25,28 @@ public class SandBoxItemImpl implements SandBoxItem {
     @ManyToOne(targetEntity = EntityImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "ENTITY_ID")
     protected Entity entity;
+
+    @Column(name = "SANDBOX_TEMP_ITEM_ID")
+    @Index(name="SNDBX_ITM_TMP_ID", columnNames={"SANDBOX_TEMP_ITEM_ID"})
+    protected Long temporaryId;
     
     @ManyToOne(targetEntity = PersistencePerspectiveImpl.class, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "PERSIST_PERSPECTIVE_ID")
+    @JoinColumn(name = "PERSIST_PERSPECTVE_ID")
     protected PersistencePerspective persistencePerspective;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "SANDBOX_ID")
 	protected SandBox sandBox;
+
+    @Column(name = "CEILING_ENTITY")
+    protected String ceilingEntityFullyQualifiedClassname;
+
+    @Column(name = "CUST_CRITERIA")
+	protected String customCriteria;
+
+    @Column(name = "CHANGE_TYPE")
+    @Index(name="SNDBX_ITM_CHG_TYPE", columnNames={"CHANGE_TYPE"})
+    protected ChangeType changeType;
     
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#getId()
@@ -90,15 +97,57 @@ public class SandBoxItemImpl implements SandBoxItem {
 		this.persistencePerspective = persistencePerspective;
 	}
 
+    @Override
 	public SandBox getSandBox() {
 		return sandBox;
 	}
 
+    @Override
 	public void setSandBox(SandBox sandBox) {
 		this.sandBox = sandBox;
 	}
 
-	@Override
+    @Override
+    public String getCeilingEntityFullyQualifiedClassname() {
+        return ceilingEntityFullyQualifiedClassname;
+    }
+
+    @Override
+    public void setCeilingEntityFullyQualifiedClassname(String ceilingEntityFullyQualifiedClassname) {
+        this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
+    }
+
+    @Override
+    public String getCustomCriteria() {
+        return customCriteria;
+    }
+
+    @Override
+    public void setCustomCriteria(String customCriteria) {
+        this.customCriteria = customCriteria;
+    }
+
+    @Override
+    public ChangeType getChangeType() {
+        return changeType;
+    }
+
+    @Override
+    public void setChangeType(ChangeType changeType) {
+        this.changeType = changeType;
+    }
+
+    @Override
+    public Long getTemporaryId() {
+        return temporaryId;
+    }
+
+    @Override
+    public void setTemporaryId(Long temporaryId) {
+        this.temporaryId = temporaryId;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
