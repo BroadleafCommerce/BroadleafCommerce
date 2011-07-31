@@ -2,6 +2,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -104,7 +106,17 @@ public class SandBoxImpl implements SandBox {
 		this.author = author;
 	}
 
-	@Override
+    @Override
+    public Set<AdminRole> getAllowedRoles() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setAllowedRoles(Set<AdminRole> allowedRoles) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
