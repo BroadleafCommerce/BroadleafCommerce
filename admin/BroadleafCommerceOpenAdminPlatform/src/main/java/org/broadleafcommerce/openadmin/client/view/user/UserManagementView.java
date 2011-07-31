@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.view.user;
+package org.broadleafcommerce.openadmin.client.view.user;
 
-import org.broadleafcommerce.gwt.admin.client.OpenAdminModule;
+import org.broadleafcommerce.openadmin.client.UserManagementModule;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -54,7 +54,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(OpenAdminModule.OPENADMINMESSAGES.userListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(UserManagementModule.OPENADMINMESSAGES.userListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -65,16 +65,16 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab(OpenAdminModule.OPENADMINMESSAGES.userDetailsTitle());
+        Tab detailsTab = new Tab(UserManagementModule.OPENADMINMESSAGES.userDetailsTitle());
         detailsTab.setID("userDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(OpenAdminModule.OPENADMINMESSAGES.userDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(UserManagementModule.OPENADMINMESSAGES.userDetailsTitle(), entityDataSource);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
-        Tab userRolesTab = new Tab(OpenAdminModule.OPENADMINMESSAGES.userRolesTitle()); 
+        Tab userRolesTab = new Tab(UserManagementModule.OPENADMINMESSAGES.userRolesTitle());
         userRolesTab.setID("userUserRolesTab");
-        userRolesDisplay = new UserRoleView(OpenAdminModule.OPENADMINMESSAGES.userRolesTitle(), false, false);
+        userRolesDisplay = new UserRoleView(UserManagementModule.OPENADMINMESSAGES.userRolesTitle(), false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);
         

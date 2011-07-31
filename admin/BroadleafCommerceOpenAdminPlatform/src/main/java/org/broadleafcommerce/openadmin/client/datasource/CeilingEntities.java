@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.datasource;
+package org.broadleafcommerce.openadmin.client.datasource;
 
 
 /**
@@ -21,10 +21,10 @@ package org.broadleafcommerce.gwt.admin.client.datasource;
  * @author bpolster
  *
  */
-public class EntityImplementations {
+public class CeilingEntities {
 	
-	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl";
-	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl";
-	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl";
+	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUser";
+	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRole";
+	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermission";
 	
 }

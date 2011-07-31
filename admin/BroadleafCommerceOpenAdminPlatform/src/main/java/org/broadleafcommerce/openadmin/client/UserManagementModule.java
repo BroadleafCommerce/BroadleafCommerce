@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client;
+package org.broadleafcommerce.openadmin.client;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
-import org.broadleafcommerce.openadmin.client.AbstractModule;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.OpenAdminMessages;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 
 import java.util.ArrayList;
@@ -31,24 +28,24 @@ import java.util.List;
  * @author jfischer
  *
  */
-public class OpenAdminModule extends AbstractModule {
+public class UserManagementModule extends AbstractModule {
 	
 	public static final OpenAdminMessages OPENADMINMESSAGES = GWT.create(OpenAdminMessages.class);
 	
 	public void onModuleLoad() {
-		ValidationFactoryManager.getInstance().getConstants().add(OpenAdminModule.OPENADMINMESSAGES);
+		ValidationFactoryManager.getInstance().getConstants().add(UserManagementModule.OPENADMINMESSAGES);
 		
-		setModuleTitle(OpenAdminModule.OPENADMINMESSAGES.adminModuleTitle());
+		setModuleTitle(UserManagementModule.OPENADMINMESSAGES.adminModuleTitle());
 		setModuleKey("BLCOpenAdmin");
 		
 		List<String> userManagementRoles = new ArrayList<String>();
 		userManagementRoles.add("ROLE_ADMIN");
 		setSection(
-			OpenAdminModule.OPENADMINMESSAGES.userManagementMainTitle(),
+			UserManagementModule.OPENADMINMESSAGES.userManagementMainTitle(),
 			"user",
-			"org.broadleafcommerce.gwt.admin.client.view.user.UserManagementView",
+			"UserManagementView",
 			"userPresenter",
-			"org.broadleafcommerce.gwt.admin.client.presenter.user.UserManagementPresenter",
+			"UserManagementPresenter",
 			userManagementRoles,
 			null
 		);
@@ -56,7 +53,7 @@ public class OpenAdminModule extends AbstractModule {
 
 		/*
                 setSection(
-			OpenAdminModule.OPENADMINMESSAGES.roleManagementMainTitle(),
+			UserManagementModule.OPENADMINMESSAGES.roleManagementMainTitle(),
 			"role",
 			"org.broadleafcommerce.gwt.admin.client.view.user.RoleManagementView",
 			"userPresenter",

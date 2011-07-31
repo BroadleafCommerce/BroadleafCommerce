@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.user;
+package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import org.broadleafcommerce.gwt.admin.client.OpenAdminModule;
-import org.broadleafcommerce.gwt.admin.client.view.user.UserRoleDisplay;
+import org.broadleafcommerce.openadmin.client.UserManagementModule;
+import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -117,7 +117,7 @@ public class UserRolePresenter implements SubPresentable {
 		display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					searchDialog.search(OpenAdminModule.OPENADMINMESSAGES.userRolesTitle(), new SearchItemSelectedEventHandler() {
+					searchDialog.search(UserManagementModule.OPENADMINMESSAGES.userRolesTitle(), new SearchItemSelectedEventHandler() {
 						public void onSearchItemSelected(SearchItemSelectedEvent event) {
 							display.getGrid().addData(event.getRecord());
 						}

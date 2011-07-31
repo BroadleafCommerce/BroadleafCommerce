@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.view.user;
+package org.broadleafcommerce.openadmin.client.datasource;
 
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  * 
- * @author jfischer
+ * @author bpolster
  *
  */
-public interface UserRoleDisplay {
-
-	public ToolStripButton getAddButton();
+public class EntityImplementations {
 	
-	public ListGrid getGrid();
-	
-	public ToolStripButton getRemoveButton();
-	
-	public ListGrid getExpansionGrid();
-	
-	public ToolStrip getToolBar();
+	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl";
+	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl";
+	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl";
 	
 }

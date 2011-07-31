@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.datasource.user;
+package org.broadleafcommerce.openadmin.client.datasource.user;
 
-import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
@@ -25,7 +24,6 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,20 +34,17 @@ import com.smartgwt.client.data.DataSource;
  * @author jfischer
  *
  */
-public class AdminPermissionListDataSourceFactory implements DataSourceFactory {
-
-	public static final String foreignKeyName = "allRoles";
+public class AdminUserListDataSourceFactory implements DataSourceFactory {
+	
 	public static ListGridDataSource dataSource = null;
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ADMIN_ROLE, null));
-			persistencePerspective.setPopulateToOneFields(true);
-
+			persistencePerspective.setPopulateToOneFields(false);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.ADMIN_PERMISSION, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new BasicClientEntityModule(CeilingEntities.ADMIN_USER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

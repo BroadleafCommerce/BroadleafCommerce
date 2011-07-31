@@ -2,7 +2,7 @@
 <module>
 	<inherits name="com.google.gwt.user.User" />
     <inherits name="org.broadleafcommerce.openadmin.openadmin"/>
-    <inherits name="org.broadleafcommerce.gwt.admin.userModule" />
+    <inherits name="org.broadleafcommerce.openadmin.userModule" />
 	<inherits name="org.broadleafcommerce.admin.merchandisingModule" />
 	<inherits name="org.broadleafcommerce.admin.promotionModule" />
 	<inherits name="org.broadleafcommerce.admin.customerCareModule" />

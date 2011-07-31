@@ -6,6 +6,6 @@
 	<inherits name="org.broadleafcommerce.openadmin.openadmin"/>
 
     <source path="client" />
-	<entry-point class="org.broadleafcommerce.gwt.admin.client.OpenAdminModule" />
+	<entry-point class="org.broadleafcommerce.openadmin.client.UserManagementModule" />
 	<!-- <set-property name="user.agent" value="gecko1_8" /> -->
 </module>
