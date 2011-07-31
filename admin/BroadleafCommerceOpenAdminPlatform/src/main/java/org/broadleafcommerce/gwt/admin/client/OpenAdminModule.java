@@ -13,59 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.client;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.broadleafcommerce.openadmin.client.AbstractModule;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+package org.broadleafcommerce.gwt.admin.client;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import org.broadleafcommerce.openadmin.client.AbstractModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.OpenAdminMessages;
+import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class MerchandisingModule extends AbstractModule {
+public class OpenAdminModule extends AbstractModule {
 	
-	public static final MerchandisingMessages ADMINMESSAGES = GWT.create(MerchandisingMessages.class);
+	public static final OpenAdminMessages OPENADMINMESSAGES = GWT.create(OpenAdminMessages.class);
 	
 	public void onModuleLoad() {
-		ValidationFactoryManager.getInstance().getConstants().add(MerchandisingModule.ADMINMESSAGES);
+		ValidationFactoryManager.getInstance().getConstants().add(OpenAdminModule.OPENADMINMESSAGES);
 		
-		setModuleTitle(MerchandisingModule.ADMINMESSAGES.adminModuleTitle());
-		setModuleKey("BLCMerchandising");
+		setModuleTitle(OpenAdminModule.OPENADMINMESSAGES.adminModuleTitle());
+		setModuleKey("BLCOpenAdmin");
 		
-		List<String> categoryRoles = new ArrayList<String>();
-		categoryRoles.add("ROLE_ADMIN");
-		categoryRoles.add("ROLE_MERCHANDISE_MANAGER");
+		List<String> userManagementRoles = new ArrayList<String>();
+		userManagementRoles.add("ROLE_ADMIN");
 		setSection(
-			MerchandisingModule.ADMINMESSAGES.categoryMainTitle(),
-			"category",
-			"org.broadleafcommerce.admin.client.view.catalog.category.CategoryView",
-			"categoryPresenter",
-			"org.broadleafcommerce.admin.client.presenter.catalog.category.CategoryPresenter",
-			categoryRoles,
+			OpenAdminModule.OPENADMINMESSAGES.userManagementMainTitle(),
+			"user",
+			"org.broadleafcommerce.gwt.admin.client.view.user.UserManagementView",
+			"userPresenter",
+			"org.broadleafcommerce.gwt.admin.client.presenter.user.UserManagementPresenter",
+			userManagementRoles,
 			null
 		);
-		List<String> productRoles = new ArrayList<String>();
-		productRoles.add("ROLE_ADMIN");
-		productRoles.add("ROLE_MERCHANDISE_MANAGER");
-		setSection( 
-			MerchandisingModule.ADMINMESSAGES.productMainTitle(),
-			"product",
-			"org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuView",
-			"productPresenter",
-			"org.broadleafcommerce.admin.client.presenter.catalog.product.OneToOneProductSkuPresenter",
-			productRoles,
-			null
-		);
+		
 
+		/*
+                setSection(
+			OpenAdminModule.OPENADMINMESSAGES.roleManagementMainTitle(),
+			"role",
+			"org.broadleafcommerce.gwt.admin.client.view.user.RoleManagementView",
+			"userPresenter",
+			"org.broadleafcommerce.gwt.admin.client.presenter.user.RoleManagementPresenter",
+			userManagementRoles,
+			null
+		);
+        */
 		
 		registerModule();
 	}
@@ -76,7 +75,7 @@ public class MerchandisingModule extends AbstractModule {
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
         sgwtHomeButton.setWidth(98);
         sgwtHomeButton.setHeight(50);
-        sgwtHomeButton.setPrompt(ADMINMESSAGES.blcProjectPage());
+        sgwtHomeButton.setPrompt(OPENADMINMESSAGES.blcProjectPage());
         sgwtHomeButton.setHoverStyle("interactImageHover");
         sgwtHomeButton.setShowRollOver(false);
         sgwtHomeButton.setShowDownIcon(false);
@@ -86,7 +85,7 @@ public class MerchandisingModule extends AbstractModule {
                 com.google.gwt.user.client.Window.open("http://www.broadleafcommerce.org", "sgwt", null);
             }
         });
-        BLCMain.MASTERVIEW.getTopBar().addMember(sgwtHomeButton, 1);  
+        BLCMain.MASTERVIEW.getTopBar().addMember(sgwtHomeButton, 1);
 	}
 
 }

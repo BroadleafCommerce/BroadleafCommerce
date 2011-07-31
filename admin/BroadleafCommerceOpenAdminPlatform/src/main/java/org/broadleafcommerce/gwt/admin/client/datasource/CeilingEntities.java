@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.client.view.user;
+package org.broadleafcommerce.gwt.admin.client.datasource;
 
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 /**
  * 
- * @author jfischer
+ * @author bpolster
  *
  */
-public interface UserManagementDisplay extends DynamicEditDisplay {
-
-	public DynamicFormDisplay getDynamicFormDisplay();
-
-	public DynamicEntityListDisplay getListDisplay();
+public class CeilingEntities {
 	
-	public UserRoleDisplay getUserRolesDisplay();
+	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUser";
+	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRole";
+	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermission";
 	
 }

@@ -42,8 +42,4 @@ public class EntityImplementations {
 	public static final String OFFER_CODE = "org.broadleafcommerce.core.offer.domain.OfferCodeImpl";
 	public static final String CHALLENGE_QUESTION = "org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl";
 	public static final String OFFER = "org.broadleafcommerce.core.offer.domain.OfferImpl";
-	public static final String ADMIN_USER = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl";
-	public static final String ADMIN_ROLE = "org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl";
-	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl";
-	
 }

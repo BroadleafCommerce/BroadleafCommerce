@@ -13,27 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.client.view.user;
+package org.broadleafcommerce.gwt.admin.client.view.user;
 
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface UserRoleDisplay {
+public interface UserManagementDisplay extends DynamicEditDisplay {
 
-	public ToolStripButton getAddButton();
+	public DynamicFormDisplay getDynamicFormDisplay();
+
+	public DynamicEntityListDisplay getListDisplay();
 	
-	public ListGrid getGrid();
-	
-	public ToolStripButton getRemoveButton();
-	
-	public ListGrid getExpansionGrid();
-	
-	public ToolStrip getToolBar();
+	public UserRoleDisplay getUserRolesDisplay();
 	
 }

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.client.datasource.user;
+package org.broadleafcommerce.gwt.admin.client.datasource.user;
 
-import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
