@@ -47,7 +47,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
         query.setHint(getQueryCacheableKey(), false);
         try {
             IdGeneration idGeneration =  (IdGeneration) query.getSingleResult();
-            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.SandBoxIdGeneration");
+            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.IdGeneration");
             response.setBatchSize(idGeneration.getBatchSize());
             response.setBatchStart(idGeneration.getBatchStart());
             Long originalBatchStart = idGeneration.getBatchStart();
@@ -78,7 +78,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No row found in idGenerator table for " + idType + " creating row.");
             }
-            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.SandBoxIdGeneration");
+            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.IdGeneration");
             response.setType(idType);
             response.setBegin(null);
             response.setEnd(null);

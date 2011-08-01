@@ -37,15 +37,15 @@ public class UserManagementModule extends AbstractModule {
 		
 		setModuleTitle(UserManagementModule.OPENADMINMESSAGES.adminModuleTitle());
 		setModuleKey("BLCOpenAdmin");
-		
+
 		List<String> userManagementRoles = new ArrayList<String>();
 		userManagementRoles.add("ROLE_ADMIN");
 		setSection(
 			UserManagementModule.OPENADMINMESSAGES.userManagementMainTitle(),
 			"user",
-			"UserManagementView",
+			"org.broadleafcommerce.openadmin.client.view.user.UserManagementView",
 			"userPresenter",
-			"UserManagementPresenter",
+			"org.broadleafcommerce.openadmin.client.presenter.user.UserManagementPresenter",
 			userManagementRoles,
 			null
 		);
