@@ -22,7 +22,7 @@
 	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/BroadleafCommerceFrameworkWeb/pom.xml" />
 	<artifact:pom id="demoPom" file="${releaseParentDir}/site/BroadleafCommerceDemo/pom.xml" />
 	<artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/BroadleafCommerceAdminModule/pom.xml" />
-	<artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/pom.xml" />
+	<artifact:pom id="UserManagementModulePom" file="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/pom.xml" />
 	<artifact:pom id="demoLauncherPom" file="${releaseParentDir}/site/BroadleafCommerceDemoLauncher/pom.xml" />
 	<artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
 	<artifact:pom id="integrationPom" file="${releaseParentDir}/integration/pom.xml" />
@@ -206,8 +206,8 @@
 		<artifact:dependencies filesetId="demoDeps2" pomRefId="demoPom" useScope="compile"/>
 		<artifact:dependencies filesetId="adminDeps" pomRefId="adminModulePom" useScope="runtime"/>
 		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminModulePom" useScope="compile"/>
-		<artifact:dependencies filesetId="openAdminDeps" pomRefId="openAdminModulePom" useScope="runtime"/>
-		<artifact:dependencies filesetId="openAdminDeps2" pomRefId="openAdminModulePom" useScope="compile"/>
+		<artifact:dependencies filesetId="openAdminDeps" pomRefId="UserManagementModulePom" useScope="runtime"/>
+		<artifact:dependencies filesetId="openAdminDeps2" pomRefId="UserManagementModulePom" useScope="compile"/>
 		<artifact:dependencies filesetId="distributionDeps" pomRefId="distributionPom" versionsId="distributionVersions" />
 		<artifact:dependencies filesetId="integrationDeps" pomRefId="integrationPom" />
 		<artifact:dependencies filesetId="demoLauncherDeps" pomRefId="demoLauncherPom" useScope="compile" />

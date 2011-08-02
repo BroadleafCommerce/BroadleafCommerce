@@ -13,6 +13,7 @@
 	<name>core</name>
 	<modules>
 		<module>BroadleafCommerceAdminModule</module>
+		<module>BroadleafCommerceContentManagementModule</module>
 		<module>BroadleafCommerceOpenAdminPlatform</module>
 	</modules>
 </project>

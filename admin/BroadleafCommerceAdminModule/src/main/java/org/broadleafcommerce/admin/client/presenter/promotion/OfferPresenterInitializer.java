@@ -15,9 +15,11 @@
  */
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.LinkedHashMap;
-
-import org.broadleafcommerce.admin.client.PromotionModule;
+import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.data.*;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import org.broadleafcommerce.admin.client.MerchandisingModule;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.MVELToAdvancedCriteriaTranslator;
 import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
@@ -25,15 +27,7 @@ import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.data.AdvancedCriteria;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -144,7 +138,7 @@ public class OfferPresenterInitializer {
 				}
 			} catch (IncompatibleMVELTranslationException e) {
 				GWT.log("Could not translate MVEL", e);
-				BLCMain.MASTERVIEW.getStatus().setContents(PromotionModule.ADMINMESSAGES.mvelTranslationProblem());
+				BLCMain.MASTERVIEW.getStatus().setContents(MerchandisingModule.PROMOTION_MESSAGES.mvelTranslationProblem());
 				getDisplay().getTargetItemBuilder().setIncompatibleMVEL(true);
 				getDisplay().getTargetItemBuilder().getItemFilterBuilder().setVisible(false);
 				getDisplay().getTargetItemBuilder().getRawItemForm().setVisible(true);
@@ -194,7 +188,7 @@ public class OfferPresenterInitializer {
 			} catch (IncompatibleMVELTranslationException e) {
 				customerRuleIncompatible = true;
 				GWT.log("Could not translate MVEL", e);
-				BLCMain.MASTERVIEW.getStatus().setContents(PromotionModule.ADMINMESSAGES.mvelTranslationProblem());
+				BLCMain.MASTERVIEW.getStatus().setContents(MerchandisingModule.PROMOTION_MESSAGES.mvelTranslationProblem());
 				getDisplay().getRawCustomerTextArea().setValue(customerRules);
 			}
 		}
@@ -217,7 +211,7 @@ public class OfferPresenterInitializer {
 			} catch (IncompatibleMVELTranslationException e) {
 				fgRuleIncompatible = true;
 				GWT.log("Could not translate MVEL", e);
-				BLCMain.MASTERVIEW.getStatus().setContents(PromotionModule.ADMINMESSAGES.mvelTranslationProblem());
+				BLCMain.MASTERVIEW.getStatus().setContents(MerchandisingModule.PROMOTION_MESSAGES.mvelTranslationProblem());
 				getDisplay().getRawFGTextArea().setValue(fgRules);
 			}
 		}
@@ -254,7 +248,7 @@ public class OfferPresenterInitializer {
 			} catch (IncompatibleMVELTranslationException e) {
 				orderRuleIncompatible = true;
 				GWT.log("Could not translate MVEL", e);
-				BLCMain.MASTERVIEW.getStatus().setContents(PromotionModule.ADMINMESSAGES.mvelTranslationProblem());
+				BLCMain.MASTERVIEW.getStatus().setContents(MerchandisingModule.PROMOTION_MESSAGES.mvelTranslationProblem());
 				getDisplay().getRawOrderTextArea().setValue(orderRules);
 			}
 		}
@@ -305,7 +299,7 @@ public class OfferPresenterInitializer {
 								}
 							} catch (IncompatibleMVELTranslationException e) {
 								GWT.log("Could not translate MVEL", e);
-								BLCMain.MASTERVIEW.getStatus().setContents(PromotionModule.ADMINMESSAGES.mvelTranslationProblem());
+								BLCMain.MASTERVIEW.getStatus().setContents(MerchandisingModule.PROMOTION_MESSAGES.mvelTranslationProblem());
 								display.setIncompatibleMVEL(true);
 								display.getItemFilterBuilder().setVisible(false);
 								display.getRawItemForm().setVisible(true);

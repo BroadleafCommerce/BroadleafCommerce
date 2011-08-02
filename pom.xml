@@ -102,7 +102,7 @@
 		<module>integration</module>
 		<module>site</module>
 		<module>admin</module>
-	</modules>
+    </modules>
 	<dependencies>
 	</dependencies>
 	<reporting>
@@ -246,6 +246,21 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-admin-module</artifactId>
+				<version>1.5.0-M3-SNAPSHOT</version>
+				<type>jar</type>
+				<scope>compile</scope>
+				<classifier>sources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.broadleafcommerce</groupId>
+				<artifactId>broadleaf-contentmanagement-module</artifactId>
+				<version>1.5.0-M3-SNAPSHOT</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.broadleafcommerce</groupId>
+				<artifactId>broadleaf-contentmanagent-module</artifactId>
 				<version>1.5.0-M3-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>

@@ -15,38 +15,12 @@
  */
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.admin.client.PromotionModule;
-import org.broadleafcommerce.admin.client.datasource.promotion.CustomerListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OrderItemListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OrderListDataSourceFactory;
-import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
-import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.MouseMoveEvent;
-import com.smartgwt.client.widgets.events.MouseMoveHandler;
-import com.smartgwt.client.widgets.events.MouseOutEvent;
-import com.smartgwt.client.widgets.events.MouseOutHandler;
+import com.smartgwt.client.widgets.events.*;
 import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
 import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
@@ -58,6 +32,21 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.admin.client.MerchandisingModule;
+import org.broadleafcommerce.admin.client.datasource.promotion.*;
+import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
+import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -141,7 +130,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 	@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("name", PromotionModule.ADMINMESSAGES.offerNameDefault());
+		initialValues.put("name", MerchandisingModule.PROMOTION_MESSAGES.offerNameDefault());
 		initialValues.put("type", "ORDER_ITEM");
 		initialValues.put("value", 0);
 		initialValues.put("stackable", true);
@@ -316,8 +305,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onMouseMove(MouseMoveEvent event) {
 				if (currentHelp == null) {
 					currentHelp = createHelpWin(
-							PromotionModule.ADMINMESSAGES.offerObtainSettingsHelpTitle(), 
-							PromotionModule.ADMINMESSAGES.offerObtainSettingsHelpContent(),
+							MerchandisingModule.PROMOTION_MESSAGES.offerObtainSettingsHelpTitle(),
+							MerchandisingModule.PROMOTION_MESSAGES.offerObtainSettingsHelpContent(),
 							true, 300, 200, getDisplay().getHelpButtonType().getAbsoluteLeft() + 26, getDisplay().getHelpButtonType().getAbsoluteTop()
 					);
 					currentHelp.show();
@@ -366,8 +355,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onMouseMove(MouseMoveEvent event) {
 				if (currentHelp == null) {
 					currentHelp = createHelpWin(
-							PromotionModule.ADMINMESSAGES.bogoHelpTitle(), 
-							PromotionModule.ADMINMESSAGES.bogoHelpContent(),
+							MerchandisingModule.PROMOTION_MESSAGES.bogoHelpTitle(),
+							MerchandisingModule.PROMOTION_MESSAGES.bogoHelpContent(),
 							true, 300, 200, getDisplay().getHelpButtonBogo().getAbsoluteLeft() + 26, getDisplay().getHelpButtonBogo().getAbsoluteTop()
 					);
 					currentHelp.show();

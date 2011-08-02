@@ -15,19 +15,6 @@
  */
 package org.broadleafcommerce.admin.client.view.promotion;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.broadleafcommerce.admin.client.PromotionModule;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -47,6 +34,18 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.admin.client.MerchandisingModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 
@@ -142,12 +141,12 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 		leftVerticalLayout.setWidth("30%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(PromotionModule.ADMINMESSAGES.promotionsListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(MerchandisingModule.PROMOTION_MESSAGES.promotionsListTitle(), entityDataSource, false, false);
 		//listDisplay.getToolBar().addFill();
 		cloneButton = new ToolStripButton();  
 		cloneButton.setDisabled(true);
 		cloneButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_right.png"); 
-		cloneButton.setPrompt(PromotionModule.ADMINMESSAGES.clonePromotionHelp());
+		cloneButton.setPrompt(MerchandisingModule.PROMOTION_MESSAGES.clonePromotionHelp());
 		//listDisplay.getToolBar().addButton(cloneButton);
         //listDisplay.getToolBar().addSpacer(6);
         leftVerticalLayout.addMember(listDisplay);
@@ -156,10 +155,10 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         rightVerticalLayout.setID("offerRightVerticalLayout");
         rightVerticalLayout.setHeight100();
         rightVerticalLayout.setWidth("70%");
-        dynamicFormDisplay = new DynamicFormView(PromotionModule.ADMINMESSAGES.promotionDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(MerchandisingModule.PROMOTION_MESSAGES.promotionDetailsTitle(), entityDataSource);
         
         dynamicFormDisplay.getToolbar().addFill();
-        advancedButton = new ToolStripButton(PromotionModule.ADMINMESSAGES.advancedCriteriaButtonTitle());
+        advancedButton = new ToolStripButton(MerchandisingModule.PROMOTION_MESSAGES.advancedCriteriaButtonTitle());
         advancedButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/settings.png");   
         advancedButton.setActionType(SelectionType.CHECKBOX);
         advancedButton.setDisabled(true);
@@ -168,7 +167,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutLeftMargin(10);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutTopMargin(10);
         
-        Label basicInformationLabel = new Label(PromotionModule.ADMINMESSAGES.basicPromotionLabel());
+        Label basicInformationLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.basicPromotionLabel());
         basicInformationLabel.setHeight(30);
         basicInformationLabel.setBackgroundColor("#eaeaea");
         basicInformationLabel.setStyleName("label-bold");
@@ -177,7 +176,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         VLayout restrictLayout = new VLayout();
         restrictLayout.setID("offerRestrictLayout");
         restrictLayout.setLayoutLeftMargin(10);
-        Label restrictLabel = new Label(PromotionModule.ADMINMESSAGES.restrictOnlyPromotionLabel());
+        Label restrictLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.restrictOnlyPromotionLabel());
         restrictLabel.setWrap(false);
         restrictLabel.setHeight(30);
         restrictLabel.setBackgroundColor("#eaeaea");
@@ -190,13 +189,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         restrictRuleRadio.setWrap(false);
         restrictRuleRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> restrictMap = new LinkedHashMap<String, String>();
-        restrictMap.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        restrictMap.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        restrictMap.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        restrictMap.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         restrictRuleRadio.setValueMap(restrictMap);
         restrictForm.setFields(restrictRuleRadio);
         restrictLayout.addMember(restrictForm);
         
-        restrictionSectionView = new SectionView(PromotionModule.ADMINMESSAGES.advancedRestrictionsViewTitle());  
+        restrictionSectionView = new SectionView(MerchandisingModule.PROMOTION_MESSAGES.advancedRestrictionsViewTitle());
         restrictionSectionView.setVisible(false);
         restrictionSectionView.setWidth("98%");
         restrictionSectionView.getContentLayout().addMember(restrictLayout);
@@ -209,7 +208,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerObtainHStack.setID("offerCustomerObtainHStack");
         customerObtainHStack.setWidth100();
         customerObtainHStack.setHeight(30);
-        Label customerObtainLabel = new Label(PromotionModule.ADMINMESSAGES.customerObtainLabel());
+        Label customerObtainLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.customerObtainLabel());
         customerObtainLabel.setWrap(false);
         customerObtainLabel.setHeight(30);
         customerObtainLabel.setBackgroundColor("#eaeaea");
@@ -234,18 +233,18 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         deliveryTypeRadio.setDisabled(true);
         deliveryTypeRadio.setDefaultValue("AUTOMATIC");
         LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
-        valueMap.put("AUTOMATIC", PromotionModule.ADMINMESSAGES.deliveryTypeEnumAutomatic());
-        valueMap.put("CODE", PromotionModule.ADMINMESSAGES.deliveryTypeEnumCode());
-        valueMap.put("MANUAL", PromotionModule.ADMINMESSAGES.deliveryTypeEnumManual());
+        valueMap.put("AUTOMATIC", MerchandisingModule.PROMOTION_MESSAGES.deliveryTypeEnumAutomatic());
+        valueMap.put("CODE", MerchandisingModule.PROMOTION_MESSAGES.deliveryTypeEnumCode());
+        valueMap.put("MANUAL", MerchandisingModule.PROMOTION_MESSAGES.deliveryTypeEnumManual());
         deliveryTypeRadio.setValueMap(valueMap);
         codeField = new TextItem();
-        codeField.setTitle(PromotionModule.ADMINMESSAGES.offerCodeFieldTitle());
+        codeField.setTitle(MerchandisingModule.PROMOTION_MESSAGES.offerCodeFieldTitle());
         codeField.setWrapTitle(false);
         codeField.setDisabled(true);
         customerObtainForm.setFields(deliveryTypeRadio, codeField);
         customerLayout.addMember(customerObtainForm);
         
-        Label whichCustomerLabel = new Label(PromotionModule.ADMINMESSAGES.whichCustomerLabel());
+        Label whichCustomerLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.whichCustomerLabel());
         whichCustomerLabel.setWrap(false);
         whichCustomerLabel.setHeight(30);
         whichCustomerLabel.setBackgroundColor("#eaeaea");
@@ -259,8 +258,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerRuleRadio.setDisabled(true);
         customerRuleRadio.setDefaultValue("ALL");
         LinkedHashMap<String, String> valueMap3 = new LinkedHashMap<String, String>();
-        valueMap3.put("ALL", PromotionModule.ADMINMESSAGES.allCustomerRadioChoice());
-        valueMap3.put("CUSTOMER_RULE", PromotionModule.ADMINMESSAGES.buildCustomerRadioChoice());
+        valueMap3.put("ALL", MerchandisingModule.PROMOTION_MESSAGES.allCustomerRadioChoice());
+        valueMap3.put("CUSTOMER_RULE", MerchandisingModule.PROMOTION_MESSAGES.buildCustomerRadioChoice());
         customerRuleRadio.setValueMap(valueMap3);
         whichCustomerForm.setFields(customerRuleRadio);
         
@@ -287,7 +286,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerLayout.addMember(customerFilterBuilder);
         customerLayout.setLayoutBottomMargin(10);
         
-        SectionView sectionStack = new SectionView(PromotionModule.ADMINMESSAGES.customerSectionViewTitle()); 
+        SectionView sectionStack = new SectionView(MerchandisingModule.PROMOTION_MESSAGES.customerSectionViewTitle());
         sectionStack.setID("offerSectionStack");
         sectionStack.setWidth("98%");
         sectionStack.getContentLayout().addMember(customerLayout);
@@ -296,7 +295,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         VLayout orderSectionLayout = new VLayout();
         orderSectionLayout.setID("offerOrderSectionLayout");
         orderSectionLayout.setLayoutLeftMargin(10);
-        Label orderLabel = new Label(PromotionModule.ADMINMESSAGES.orderSectionLabel());
+        Label orderLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.orderSectionLabel());
         orderLabel.setWrap(false);
         orderLabel.setHeight(30);
         orderLabel.setBackgroundColor("#eaeaea");
@@ -310,8 +309,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderRuleRadio.setDisabled(true);
         orderRuleRadio.setDefaultValue("NONE");
         LinkedHashMap<String, String> orderMap = new LinkedHashMap<String, String>();
-        orderMap.put("NONE", PromotionModule.ADMINMESSAGES.noneOrderRadioChoice());
-        orderMap.put("ORDER_RULE", PromotionModule.ADMINMESSAGES.buildOrderRadioChoice());
+        orderMap.put("NONE", MerchandisingModule.PROMOTION_MESSAGES.noneOrderRadioChoice());
+        orderMap.put("ORDER_RULE", MerchandisingModule.PROMOTION_MESSAGES.buildOrderRadioChoice());
         orderRuleRadio.setValueMap(orderMap);
         orderForm.setFields(orderRuleRadio);
         orderSectionLayout.addMember(orderForm);
@@ -336,7 +335,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderFilterBuilder.setValidateOnChange(false);
         orderSectionLayout.addMember(orderFilterBuilder);
         
-        orderCombineLabel = new Label(PromotionModule.ADMINMESSAGES.orderCombineLabel());
+        orderCombineLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.orderCombineLabel());
         orderCombineLabel.setVisible(false);
         orderCombineLabel.setWrap(false);
         orderCombineLabel.setHeight(30);
@@ -351,13 +350,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderCombineRuleRadio.setWrap(false);
         orderCombineRuleRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> orderCombineMap = new LinkedHashMap<String, String>();
-        orderCombineMap.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        orderCombineMap.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        orderCombineMap.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        orderCombineMap.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         orderCombineRuleRadio.setValueMap(orderCombineMap);
         orderCombineForm.setFields(orderCombineRuleRadio);
         orderSectionLayout.addMember(orderCombineForm);
         
-        SectionView sectionStack2 = new SectionView(PromotionModule.ADMINMESSAGES.orderQualificationSectionViewTitle());
+        SectionView sectionStack2 = new SectionView(MerchandisingModule.PROMOTION_MESSAGES.orderQualificationSectionViewTitle());
         sectionStack2.setID("offerSectionStack2");
         sectionStack2.setWidth("98%");
         sectionStack2.getContentLayout().addMember(orderSectionLayout);
@@ -367,7 +366,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         itemSectionLayout.setID("offerItemSectionLayout");
         itemSectionLayout.setLayoutLeftMargin(10);
         
-        orderItemCombineLabel = new Label(PromotionModule.ADMINMESSAGES.orderItemCombineLabel());
+        orderItemCombineLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.orderItemCombineLabel());
         orderItemCombineLabel.setVisible(false);
         orderItemCombineLabel.setWrap(false);
         orderItemCombineLabel.setHeight(30);
@@ -382,8 +381,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderItemCombineRuleRadio.setWrap(false);
         orderItemCombineRuleRadio.setDefaultValue("YES");
         LinkedHashMap<String, String> orderItemCombineMap = new LinkedHashMap<String, String>();
-        orderItemCombineMap.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        orderItemCombineMap.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        orderItemCombineMap.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        orderItemCombineMap.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         orderItemCombineRuleRadio.setValueMap(orderItemCombineMap);
         orderItemCombineForm.setFields(orderItemCombineRuleRadio);
         itemSectionLayout.addMember(orderItemCombineForm);
@@ -394,7 +393,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         hStackBogo.setID("offerHStackBogo");
         hStackBogo.setWidth100();
         hStackBogo.setHeight(30);
-        bogoQuestionLabel = new Label(PromotionModule.ADMINMESSAGES.bogoQuestionLabel());
+        bogoQuestionLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.bogoQuestionLabel());
         bogoQuestionLabel.setWrap(false);
         bogoQuestionLabel.setHeight(30);
         bogoQuestionLabel.setBackgroundColor("#eaeaea");
@@ -417,8 +416,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         bogoRadio.setWrap(false);
         bogoRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> valueMapBogo = new LinkedHashMap<String, String>();
-        valueMapBogo.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        valueMapBogo.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        valueMapBogo.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        valueMapBogo.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         bogoRadio.setValueMap(valueMapBogo);
         stepBogoForm.setFields(bogoRadio);
         bogoQuestionLayout.addMember(stepBogoForm);
@@ -426,7 +425,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         requiredItemsLayout = new VLayout();
         requiredItemsLayout.setVisible(false);
-        requiredItemsLabel = new Label(PromotionModule.ADMINMESSAGES.requiredItemsLabel());
+        requiredItemsLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.requiredItemsLabel());
         requiredItemsLabel.setWrap(false);
         requiredItemsLabel.setHeight(30);
         requiredItemsLabel.setBackgroundColor("#eaeaea");
@@ -441,8 +440,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         itemRuleRadio.setWrap(false);
         itemRuleRadio.setDefaultValue("NONE");
         LinkedHashMap<String, String> valueMapItem = new LinkedHashMap<String, String>();
-        valueMapItem.put("NONE", PromotionModule.ADMINMESSAGES.noneItemRadioChoice());
-        valueMapItem.put("ITEM_RULE", PromotionModule.ADMINMESSAGES.buildItemRadioChoice());
+        valueMapItem.put("NONE", MerchandisingModule.PROMOTION_MESSAGES.noneItemRadioChoice());
+        valueMapItem.put("ITEM_RULE", MerchandisingModule.PROMOTION_MESSAGES.buildItemRadioChoice());
         itemRuleRadio.setValueMap(valueMapItem);
         stepItemForm.setFields(itemRuleRadio);
         orderItemLayout.addMember(stepItemForm);
@@ -459,7 +458,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         buttonLayout.setLayoutTopMargin(15);
         addItemButton = new Button();
         addItemButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
-        addItemButton.setTitle(PromotionModule.ADMINMESSAGES.newItemRuleButtonTitle());
+        addItemButton.setTitle(MerchandisingModule.PROMOTION_MESSAGES.newItemRuleButtonTitle());
         addItemButton.setWidth(136);
         addItemButton.setWrap(false);
         buttonLayout.addMember(addItemButton);
@@ -475,7 +474,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         advancedItemCriteria = new VLayout();
         advancedItemCriteria.setVisible(false);
         newItemBuilderLayout.addMember(advancedItemCriteria);
-        Label receiveFromAnotherPromoLabel = new Label(PromotionModule.ADMINMESSAGES.receiveFromAnotherPromoLabel());
+        Label receiveFromAnotherPromoLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.receiveFromAnotherPromoLabel());
         receiveFromAnotherPromoLabel.setWrap(false);
         receiveFromAnotherPromoLabel.setHeight(30);
         receiveFromAnotherPromoLabel.setBackgroundColor("#eaeaea");
@@ -487,13 +486,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         receiveFromAnotherPromoRadio.setWrap(false);
         receiveFromAnotherPromoRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> valueMap4 = new LinkedHashMap<String, String>();
-        valueMap4.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        valueMap4.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        valueMap4.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        valueMap4.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         receiveFromAnotherPromoRadio.setValueMap(valueMap4);
         receiveFromAnotherPromoForm.setFields(receiveFromAnotherPromoRadio);
         advancedItemCriteria.addMember(receiveFromAnotherPromoForm);
         
-        Label qualifiyForAnotherPromoLabel = new Label(PromotionModule.ADMINMESSAGES.qualifiyForAnotherPromoLabel());
+        Label qualifiyForAnotherPromoLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.qualifiyForAnotherPromoLabel());
         qualifiyForAnotherPromoLabel.setWrap(false);
         qualifiyForAnotherPromoLabel.setHeight(30);
         qualifiyForAnotherPromoLabel.setBackgroundColor("#eaeaea");
@@ -505,8 +504,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         qualifyForAnotherPromoRadio.setWrap(false);
         qualifyForAnotherPromoRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> valueMap5 = new LinkedHashMap<String, String>();
-        valueMap5.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        valueMap5.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        valueMap5.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        valueMap5.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         qualifyForAnotherPromoRadio.setValueMap(valueMap5);
         qualifyForAnotherPromoForm.setFields(qualifyForAnotherPromoRadio);
         advancedItemCriteria.addMember(qualifyForAnotherPromoForm);
@@ -514,7 +513,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         itemSectionLayout.addMember(requiredItemsLayout);
         itemSectionLayout.setLayoutBottomMargin(10);
         
-        itemQualificationSectionView = new SectionView(PromotionModule.ADMINMESSAGES.itemQualificationSectionTitle());  
+        itemQualificationSectionView = new SectionView(MerchandisingModule.PROMOTION_MESSAGES.itemQualificationSectionTitle());
         itemQualificationSectionView.setWidth("98%");
         itemQualificationSectionView.getContentLayout().addMember(itemSectionLayout);
         itemQualificationSectionView.setVisible(false);
@@ -522,7 +521,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         targetItemsLayout = new VLayout();
         targetItemsLayout.setLayoutLeftMargin(10);
-        targetItemsLabel = new Label(PromotionModule.ADMINMESSAGES.targetItemsLabel());
+        targetItemsLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.targetItemsLabel());
         targetItemsLabel.setWrap(false);
         targetItemsLabel.setHeight(30);
         targetItemsLabel.setBackgroundColor("#eaeaea");
@@ -536,7 +535,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         advancedItemCriteriaTarget = new VLayout();
         advancedItemCriteriaTarget.setVisible(false);
         targetItemsLayout.addMember(advancedItemCriteriaTarget);
-        Label receiveFromAnotherPromoTargetLabel = new Label(PromotionModule.ADMINMESSAGES.receiveFromAnotherPromoTargetLabel());
+        Label receiveFromAnotherPromoTargetLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.receiveFromAnotherPromoTargetLabel());
         receiveFromAnotherPromoTargetLabel.setWrap(false);
         receiveFromAnotherPromoTargetLabel.setHeight(30);
         receiveFromAnotherPromoTargetLabel.setBackgroundColor("#eaeaea");
@@ -548,13 +547,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         receiveFromAnotherPromoTargetRadio.setWrap(false);
         receiveFromAnotherPromoTargetRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> valueMap6 = new LinkedHashMap<String, String>();
-        valueMap6.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        valueMap6.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        valueMap6.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        valueMap6.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         receiveFromAnotherPromoTargetRadio.setValueMap(valueMap6);
         receiveFromAnotherPromoTargetForm.setFields(receiveFromAnotherPromoTargetRadio);
         advancedItemCriteriaTarget.addMember(receiveFromAnotherPromoTargetForm);
         
-        Label qualifiyForAnotherPromoTargetLabel = new Label(PromotionModule.ADMINMESSAGES.qualifiyForAnotherPromoTargetLabel());
+        Label qualifiyForAnotherPromoTargetLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.qualifiyForAnotherPromoTargetLabel());
         qualifiyForAnotherPromoTargetLabel.setWrap(false);
         qualifiyForAnotherPromoTargetLabel.setHeight(30);
         qualifiyForAnotherPromoTargetLabel.setBackgroundColor("#eaeaea");
@@ -566,13 +565,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         qualifyForAnotherPromoTargetRadio.setWrap(false);
         qualifyForAnotherPromoTargetRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> valueMap7 = new LinkedHashMap<String, String>();
-        valueMap7.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        valueMap7.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        valueMap7.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        valueMap7.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         qualifyForAnotherPromoTargetRadio.setValueMap(valueMap7);
         qualifyForAnotherPromoTargetForm.setFields(qualifyForAnotherPromoTargetRadio);
         advancedItemCriteriaTarget.addMember(qualifyForAnotherPromoTargetForm);
         
-        itemTargetSectionView = new SectionView(PromotionModule.ADMINMESSAGES.itemTargetSectionTitle());  
+        itemTargetSectionView = new SectionView(MerchandisingModule.PROMOTION_MESSAGES.itemTargetSectionTitle());
         itemTargetSectionView.setVisible(false);
         itemTargetSectionView.setWidth("98%");
         itemTargetSectionView.getContentLayout().addMember(targetItemsLayout);
@@ -581,7 +580,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgQuestionLayout = new VLayout();
         fgQuestionLayout.setLayoutLeftMargin(10);
         
-        Label fgCombineLabel = new Label(PromotionModule.ADMINMESSAGES.fgCombineLabel());
+        Label fgCombineLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.fgCombineLabel());
         fgCombineLabel.setWrap(false);
         fgCombineLabel.setHeight(30);
         fgCombineLabel.setBackgroundColor("#eaeaea");
@@ -594,13 +593,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgCombineRuleRadio.setWrap(false);
         fgCombineRuleRadio.setDefaultValue("NO");
         LinkedHashMap<String, String> valueMapCombineFG = new LinkedHashMap<String, String>();
-        valueMapCombineFG.put("YES", PromotionModule.ADMINMESSAGES.yesRadioChoice());
-        valueMapCombineFG.put("NO", PromotionModule.ADMINMESSAGES.noRadioChoice());
+        valueMapCombineFG.put("YES", MerchandisingModule.PROMOTION_MESSAGES.yesRadioChoice());
+        valueMapCombineFG.put("NO", MerchandisingModule.PROMOTION_MESSAGES.noRadioChoice());
         fgCombineRuleRadio.setValueMap(valueMapCombineFG);
         fgCombineForm.setFields(fgCombineRuleRadio);
         fgQuestionLayout.addMember(fgCombineForm);
         
-        stepFGLabel = new Label(PromotionModule.ADMINMESSAGES.stepFGLabel());
+        stepFGLabel = new Label(MerchandisingModule.PROMOTION_MESSAGES.stepFGLabel());
         stepFGLabel.setWrap(false);
         stepFGLabel.setHeight(30);
         stepFGLabel.setBackgroundColor("#eaeaea");
@@ -613,8 +612,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgRuleRadio.setWrap(false);
         fgRuleRadio.setDefaultValue("ALL");
         LinkedHashMap<String, String> valueMapFG = new LinkedHashMap<String, String>();
-        valueMapFG.put("ALL", PromotionModule.ADMINMESSAGES.allFGRadioChoice());
-        valueMapFG.put("FG_RULE", PromotionModule.ADMINMESSAGES.buildFGRadioChoice());
+        valueMapFG.put("ALL", MerchandisingModule.PROMOTION_MESSAGES.allFGRadioChoice());
+        valueMapFG.put("FG_RULE", MerchandisingModule.PROMOTION_MESSAGES.buildFGRadioChoice());
         fgRuleRadio.setValueMap(valueMapFG);
         stepFGForm.setFields(fgRuleRadio);
         fgQuestionLayout.addMember(stepFGForm);
@@ -638,7 +637,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         fgQuestionLayout.addMember(rawFGForm);
         
-        fgSectionView = new SectionView(PromotionModule.ADMINMESSAGES.fgSectionViewTitle());  
+        fgSectionView = new SectionView(MerchandisingModule.PROMOTION_MESSAGES.fgSectionViewTitle());
         fgSectionView.setVisible(false);
         fgSectionView.setWidth("98%");
         fgSectionView.getContentLayout().addMember(fgQuestionLayout);

@@ -15,16 +15,15 @@
  */
 package org.broadleafcommerce.admin.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.widgets.ImgButton;
+import com.smartgwt.client.widgets.events.ClickEvent;
 import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.widgets.ImgButton;
-import com.smartgwt.client.widgets.events.ClickEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -34,6 +33,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 public class MerchandisingModule extends AbstractModule {
 	
 	public static final MerchandisingMessages ADMINMESSAGES = GWT.create(MerchandisingMessages.class);
+	public static final PromotionMessages PROMOTION_MESSAGES = GWT.create(PromotionMessages.class);
 	
 	public void onModuleLoad() {
 		ValidationFactoryManager.getInstance().getConstants().add(MerchandisingModule.ADMINMESSAGES);
@@ -63,6 +63,22 @@ public class MerchandisingModule extends AbstractModule {
 			"productPresenter",
 			"org.broadleafcommerce.admin.client.presenter.catalog.product.OneToOneProductSkuPresenter",
 			productRoles,
+			null
+		);
+
+
+        ValidationFactoryManager.getInstance().getConstants().add(MerchandisingModule.PROMOTION_MESSAGES);
+
+		List<String> offerRoles = new ArrayList<String>();
+		offerRoles.add("ROLE_ADMIN");
+		offerRoles.add("ROLE_PROMOTION_MANAGER");
+		setSection(
+			MerchandisingModule.PROMOTION_MESSAGES.promotionMainTitle(),
+			"offer",
+			"org.broadleafcommerce.admin.client.view.promotion.OfferView",
+			"offerPresenter",
+			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
+			offerRoles,
 			null
 		);
 
