@@ -21,6 +21,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.openadmin.server.domain.visitor.PersistencePerspectiveItemVisitor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -227,4 +228,8 @@ public class MapStructureImpl extends PersistencePerspectiveItemImpl implements 
 		return true;
 	}
 
+    @Override
+    public void accept(PersistencePerspectiveItemVisitor visitor) {
+        visitor.visit(this);
+    }
 }

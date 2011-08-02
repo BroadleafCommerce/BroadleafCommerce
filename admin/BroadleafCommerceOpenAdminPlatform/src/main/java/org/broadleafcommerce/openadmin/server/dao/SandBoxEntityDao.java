@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 
 public interface SandBoxEntityDao {
 
@@ -8,7 +9,12 @@ public interface SandBoxEntityDao {
 
 	public abstract SandBox merge(SandBox entity);
 
-	public abstract SandBox retrieve(Class<SandBox> entityClass,
-			Object primaryKey);
+	public abstract SandBox retrieve(Object primaryKey);
+
+    public SandBox readSandBoxByName(String name);
+
+    public SandBoxItem retrieveSandBoxByTemporaryId(Object temporaryId);
+
+    public void deleteItem(SandBoxItem sandBoxItem);
 
 }

@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.server.domain.visitor.PersistencePerspectiveItemVisitor;
+
 import java.io.Serializable;
 
 /**
@@ -28,5 +30,7 @@ public interface PersistencePerspectiveItem extends Serializable {
 	public Long getId();
 
 	public void setId(Long id);
-	
+
+    public void accept(PersistencePerspectiveItemVisitor visitor);
+    
 }

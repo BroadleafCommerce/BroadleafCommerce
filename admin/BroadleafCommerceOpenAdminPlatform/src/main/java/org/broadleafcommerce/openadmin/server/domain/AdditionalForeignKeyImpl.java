@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
+import org.broadleafcommerce.openadmin.server.domain.visitor.PersistencePerspectiveItemVisitor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -234,4 +235,9 @@ public class AdditionalForeignKeyImpl implements ForeignKey {
 			return false;
 		return true;
 	}
+
+    @Override
+    public void accept(PersistencePerspectiveItemVisitor visitor) {
+        visitor.visit(this);
+    }
 }

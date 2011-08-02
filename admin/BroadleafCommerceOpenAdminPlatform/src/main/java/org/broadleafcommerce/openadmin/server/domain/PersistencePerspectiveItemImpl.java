@@ -10,6 +10,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.openadmin.server.domain.visitor.PersistencePerspectiveItemVisitor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -72,4 +73,7 @@ public class PersistencePerspectiveItemImpl implements PersistencePerspectiveIte
 		return true;
 	}
 
+    public void accept(PersistencePerspectiveItemVisitor visitor) {
+        //do nothing
+    }
 }
