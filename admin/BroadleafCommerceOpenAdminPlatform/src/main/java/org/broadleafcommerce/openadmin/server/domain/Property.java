@@ -1,8 +1,8 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
-import javax.persistence.Entity;
+import java.io.Serializable;
 
 public interface Property extends Serializable {
 
@@ -38,5 +38,8 @@ public interface Property extends Serializable {
 	public Boolean getIsDirty();
 
 	public void setIsDirty(Boolean isDirty);
-	
+
+    public SupportedFieldType getSecondaryType();
+
+    public void setSecondaryType(SupportedFieldType secondaryType);
 }

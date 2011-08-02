@@ -15,20 +15,8 @@
  */
 package org.broadleafcommerce.pricing.service.module;
 
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
 import org.broadleafcommerce.money.Money;
@@ -40,6 +28,11 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceT
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxItemResponse;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
+
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Tax module that utilizes the Broadleaf Commerce API for CyberSource
@@ -120,10 +113,10 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		setCurrency(order, taxRequest);
 		CyberSourceBillingRequest billingRequest = createBillingRequest(order.getPaymentInfos().get(0));
 		taxRequest.setBillingRequest(billingRequest);
-		String myNexus = StringUtils.join(nexus.toArray(), ",");
-		if (StringUtils.isNotEmpty(myNexus)) taxRequest.setNexus(myNexus);
-		String myNoNexus = StringUtils.join(nonexus.toArray(), ",");
-		if (StringUtils.isNotEmpty(myNoNexus)) taxRequest.setNoNexus(myNoNexus);
+		String myNexus = StringUtils.join(nexus.toArray(new String[]{}), ',');
+		if (!StringUtils.isEmpty(myNexus)) taxRequest.setNexus(myNexus);
+		String myNoNexus = StringUtils.join(nonexus.toArray(new String[]{}), ',');
+		if (!StringUtils.isEmpty(myNoNexus)) taxRequest.setNoNexus(myNoNexus);
 		taxRequest.setOrderAcceptanceCity(orderAcceptanceCity);
 		taxRequest.setOrderAcceptanceCounty(orderAcceptanceCounty);
 		taxRequest.setOrderAcceptanceCountry(orderAcceptanceCountry);

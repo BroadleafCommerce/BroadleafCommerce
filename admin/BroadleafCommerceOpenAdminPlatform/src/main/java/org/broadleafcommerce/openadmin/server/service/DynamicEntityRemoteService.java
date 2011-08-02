@@ -76,7 +76,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             try {
                 SandBoxContext context = new SandBoxContext();
                 context.setSandBoxName(persistencePackage.getSandBoxInfo().getSandBox());
-                context.setSandBoxMode(SandBoxMode.ADMIN);
+                context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
                 SandBoxContext.setSandBoxContext(context);
 
                 persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -105,7 +105,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         try {
             SandBoxContext context = new SandBoxContext();
             context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(SandBoxMode.ADMIN);
+            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -132,7 +132,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         try {
             SandBoxContext context = new SandBoxContext();
             context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(SandBoxMode.ADMIN);
+            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -164,7 +164,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         try {
             SandBoxContext context = new SandBoxContext();
             context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(SandBoxMode.ADMIN);
+            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -196,7 +196,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         try {
             SandBoxContext context = new SandBoxContext();
             context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(SandBoxMode.ADMIN);
+            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);

@@ -15,18 +15,16 @@
  */
 package org.broadleafcommerce.openadmin.server.dao;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.DualEntityManager;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
-import org.hibernate.ejb.HibernateEntityManager;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import javax.persistence.EntityManager;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Inspired by the com.anasoft.os.daofusion.AbstractHibernateEntityDao class by vojtech.szocs.
@@ -41,10 +39,9 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 	
 	protected Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
 		/*
-		 * TODO I need to create some additional API on BroadleafEntityManager that will return a proxied criteria 
-		 * that fronts the two background entity managers
+		 * TODO this method should return a proxied Criteria instance that will return a mixed list
 		 */
-		Criteria criteria = ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
+		Criteria criteria = ((DualEntityManager) getStandardEntityManager()).getStandardManager().getSession().createCriteria(entityClass);
         entityCriteria.apply(criteria);
         
         return criteria;

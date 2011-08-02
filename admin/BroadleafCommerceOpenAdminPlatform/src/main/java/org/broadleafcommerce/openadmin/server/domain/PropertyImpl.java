@@ -27,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -64,6 +65,9 @@ public class PropertyImpl implements Property {
 	@ManyToOne(targetEntity = EntityImpl.class)
     @JoinColumn(name = "ENTITY_ID")
 	protected org.broadleafcommerce.openadmin.server.domain.Entity entity;
+
+    @Column(name = "SECONDARY_TYPE")
+    protected SupportedFieldType secondaryType;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.Property#getName()
@@ -149,7 +153,15 @@ public class PropertyImpl implements Property {
 		this.isDirty = isDirty;
 	}
 
-	@Override
+    public SupportedFieldType getSecondaryType() {
+        return secondaryType;
+    }
+
+    public void setSecondaryType(SupportedFieldType secondaryType) {
+        this.secondaryType = secondaryType;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

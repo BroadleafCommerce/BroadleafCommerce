@@ -238,12 +238,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
         PersistencePackage savedPackage = null;
-        try {
-            savedPackage = sandBoxService.saveSandBox(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
-        } catch (SandBoxException e) {
-            throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
+        if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
+            try {
+                savedPackage = sandBoxService.saveSandBox(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
+            } catch (SandBoxException e) {
+                throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
+            }
+        } else {
+            savedPackage = persistencePackage;
         }
 
+        //TODO try detaching and clearing out all the one-to-many collections before persisting to the sandbox database
         return myModule.update(savedPackage);
 	}
 

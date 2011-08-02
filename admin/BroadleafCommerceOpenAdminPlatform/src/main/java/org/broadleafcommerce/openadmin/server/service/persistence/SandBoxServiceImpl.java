@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.*;
@@ -12,8 +13,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
-import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
-import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitorAdapter;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
@@ -48,7 +48,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         SandBoxItem item;
         switch (changeType) {
             default: {
-                item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType);
+                item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, null);
                 sandBox.getSandBoxItems().add(item);
                 sandBoxDao.persist(sandBox);
                 break;
@@ -62,7 +62,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 }
                 item = sandBoxDao.retrieveSandBoxByTemporaryId(primaryKey);
                 if (item == null) {
-                    item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType);
+                    item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, primaryKey);
                     sandBox.getSandBoxItems().add(item);
                 } else {
                     List<org.broadleafcommerce.openadmin.server.domain.Property> savedProperties = item.getEntity().getProperties();
@@ -97,50 +97,81 @@ public class SandBoxServiceImpl implements SandBoxService {
                     sandBox.getSandBoxItems().remove(item);
                     sandBoxDao.deleteItem(item);
                 }
-                item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType);
+                item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, primaryKey);
                 sandBox.getSandBoxItems().add(item);
                 sandBoxDao.merge(sandBox);
                 break;
             }
         }
-		return createPersistencePackage(sandBox, item);
-	}
+        try {
+            return createPersistencePackage(sandBox, item, persistenceManager);
+        } catch (Exception e) {
+            throw new SandBoxException(e);
+        }
+    }
 
-    protected Object getPrimaryKey(PersistencePackage persistencePackage, PersistenceManager persistenceManager, RecordHelper helper) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Entity dtoEntity = persistencePackage.getEntity();
-        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+    protected String getPrimaryKeyProperty(Entity dtoEntity, PersistencePerspective dtoPersistencePerspective, PersistenceManager persistenceManager) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
         Class<?>[] entities = persistenceManager.getPolymorphicEntities(dtoEntity.getType()[0]);
         Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
             dtoEntity.getType()[0],
             entities,
-            (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-            persistencePerspective.getAdditionalNonPersistentProperties(),
-            persistencePerspective.getAdditionalForeignKeys(),
+            (ForeignKey) dtoPersistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+            dtoPersistencePerspective.getAdditionalNonPersistentProperties(),
+            dtoPersistencePerspective.getAdditionalForeignKeys(),
             MergedPropertyType.PRIMARY,
-            persistencePerspective.getPopulateToOneFields(),
-            persistencePerspective.getIncludeFields(),
-            persistencePerspective.getExcludeFields(),
+            dtoPersistencePerspective.getPopulateToOneFields(),
+            dtoPersistencePerspective.getIncludeFields(),
+            dtoPersistencePerspective.getExcludeFields(),
+            null,
+            ""
+        );
+        String idProperty = null;
+		for (String property : mergedProperties.keySet()) {
+			if (mergedProperties.get(property).getFieldType().equals(SupportedFieldType.ID) && property.indexOf(".") < 0) {
+				idProperty = property;
+				break;
+			}
+		}
+
+        return idProperty;
+    }
+
+    protected Object getPrimaryKey(PersistencePackage persistencePackage, PersistenceManager persistenceManager, RecordHelper helper) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Entity dtoEntity = persistencePackage.getEntity();
+        PersistencePerspective dtoPersistencePerspective = persistencePackage.getPersistencePerspective();
+        Class<?>[] entities = persistenceManager.getPolymorphicEntities(dtoEntity.getType()[0]);
+        Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
+            dtoEntity.getType()[0],
+            entities,
+            (ForeignKey) dtoPersistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+            dtoPersistencePerspective.getAdditionalNonPersistentProperties(),
+            dtoPersistencePerspective.getAdditionalForeignKeys(),
+            MergedPropertyType.PRIMARY,
+            dtoPersistencePerspective.getPopulateToOneFields(),
+            dtoPersistencePerspective.getIncludeFields(),
+            dtoPersistencePerspective.getExcludeFields(),
             null,
             ""
         );
         return helper.getPrimaryKey(dtoEntity, mergedProperties);
     }
 
-    protected PersistencePackage createPersistencePackage(SandBox sandBox, SandBoxItem sandBoxItem) {
+    protected String[] getSplitArray(String item, String delim) {
+        String[] response = item==null?null:item.split(delim);
+        if (!ArrayUtils.isEmpty(response) && response[0].equals("")) {
+            response = new String[]{};
+        }
+        return response;
+    }
+
+    protected PersistencePackage createPersistencePackage(SandBox sandBox, SandBoxItem sandBoxItem, PersistenceManager persistenceManager) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         PersistencePackage pkg = new PersistencePackage();
         pkg.setCeilingEntityFullyQualifiedClassname(sandBoxItem.getCeilingEntityFullyQualifiedClassname());
-        pkg.setCustomCriteria(sandBoxItem.getCustomCriteria()==null?null:sandBoxItem.getCustomCriteria().split(","));
+        pkg.setCustomCriteria(getSplitArray(sandBoxItem.getCustomCriteria(),","));
         org.broadleafcommerce.openadmin.server.domain.Entity persistentEntity = sandBoxItem.getEntity();
         Entity dtoEntity = new Entity();
         pkg.setEntity(dtoEntity);
-        dtoEntity.setType(persistentEntity.getType()==null?null:persistentEntity.getType().split(","));
-        Property[] dtoPropertyList = new Property[persistentEntity.getProperties().size()];
-        List<org.broadleafcommerce.openadmin.server.domain.Property> persistentPropertyList = persistentEntity.getProperties();
-        for (int j=0;j<dtoPropertyList.length;j++) {
-            Property dtoProperty = createDtoProperty(persistentPropertyList.get(j));
-            dtoPropertyList[j] = dtoProperty;
-        }
-        dtoEntity.setProperties(dtoPropertyList);
+        dtoEntity.setType(getSplitArray(persistentEntity.getType(),","));
         SandBoxInfo info = new SandBoxInfo();
         pkg.setSandBoxInfo(info);
         info.setSandBox(sandBox.getName());
@@ -161,9 +192,9 @@ public class SandBoxServiceImpl implements SandBoxService {
             dtoForeignKeyList[j] = dtoForeignKey;
         }
         dtoPersistencePerspective.setAdditionalForeignKeys(dtoForeignKeyList);
-        dtoPersistencePerspective.setAdditionalNonPersistentProperties(persistentPersistencePerspective.getAdditionalNonPersistentProperties()==null?null:persistentPersistencePerspective.getAdditionalNonPersistentProperties().split(","));
-        dtoPersistencePerspective.setExcludeFields(persistentPersistencePerspective.getExcludeFields()==null?null:persistentPersistencePerspective.getExcludeFields().split(","));
-        dtoPersistencePerspective.setIncludeFields(persistentPersistencePerspective.getIncludeFields()==null?null:persistentPersistencePerspective.getIncludeFields().split(","));
+        dtoPersistencePerspective.setAdditionalNonPersistentProperties(getSplitArray(persistentPersistencePerspective.getAdditionalNonPersistentProperties(),","));
+        dtoPersistencePerspective.setExcludeFields(getSplitArray(persistentPersistencePerspective.getExcludeFields(),","));
+        dtoPersistencePerspective.setIncludeFields(getSplitArray(persistentPersistencePerspective.getIncludeFields(),","));
         OperationTypes dtoOperationTypes = new OperationTypes();
         dtoPersistencePerspective.setOperationTypes(dtoOperationTypes);
         dtoOperationTypes.setAddType(persistentPersistencePerspective.getOperationTypes().getAddType());
@@ -233,16 +264,29 @@ public class SandBoxServiceImpl implements SandBoxService {
             };
             persistentPersistencePerspectiveItem.accept(visitor);
         }
+        Property[] dtoPropertyList = new Property[persistentEntity.getProperties().size()];
+        List<org.broadleafcommerce.openadmin.server.domain.Property> persistentPropertyList = persistentEntity.getProperties();
+        String primaryKeyProperty = getPrimaryKeyProperty(dtoEntity, dtoPersistencePerspective, persistenceManager);
+        for (int j=0;j<dtoPropertyList.length;j++) {
+            Property dtoProperty = createDtoProperty(persistentPropertyList.get(j), primaryKeyProperty, sandBoxItem.getTemporaryId());
+            dtoPropertyList[j] = dtoProperty;
+        }
+        dtoEntity.setProperties(dtoPropertyList);
 
         return pkg;
     }
 
-    protected Property createDtoProperty(org.broadleafcommerce.openadmin.server.domain.Property persistentProperty) {
+    protected Property createDtoProperty(org.broadleafcommerce.openadmin.server.domain.Property persistentProperty, String primaryKeyProperty, Object primaryKey) {
         Property property = new Property();
         property.setDisplayValue(persistentProperty.getDisplayValue());
         property.setIsDirty(persistentProperty.getIsDirty());
         property.setName(persistentProperty.getName());
-        property.setValue(persistentProperty.getValue());
+        property.getMetadata().setSecondaryType(persistentProperty.getSecondaryType());
+        if (persistentProperty.getName().equals(primaryKeyProperty)) {
+            property.setValue(primaryKey.toString());
+        } else {
+            property.setValue(persistentProperty.getValue());
+        }
         return property;
     }
 
@@ -256,7 +300,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         return sandBox;
     }
 	
-	protected SandBoxItem createSandBoxItemFromDto(SandBox sandBox, PersistencePackage persistencePackage, ChangeType changeType) {
+	protected SandBoxItem createSandBoxItemFromDto(SandBox sandBox, PersistencePackage persistencePackage, ChangeType changeType, Object primaryKey) {
 		SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
 		Entity dtoEntity = persistencePackage.getEntity();
 		PersistencePerspective dtoPersistencePerspective = persistencePackage.getPersistencePerspective();
@@ -266,7 +310,11 @@ public class SandBoxServiceImpl implements SandBoxService {
         sandBoxItem.setCeilingEntityFullyQualifiedClassname(persistencePackage.getCeilingEntityFullyQualifiedClassname());
         sandBoxItem.setCustomCriteria(StringUtils.join(persistencePackage.getCustomCriteria(), ','));
         sandBoxItem.setChangeType(changeType);
-        sandBoxItem.setTemporaryId(sandBoxIdGenerationService.findNextId("org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService"));
+        Long temporaryId = (Long) primaryKey;
+        if (temporaryId == null) {
+            temporaryId = sandBoxIdGenerationService.findNextId("org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService");
+        }
+        sandBoxItem.setTemporaryId(temporaryId);
 		org.broadleafcommerce.openadmin.server.domain.Entity persistentEntity = new EntityImpl();
 		sandBoxItem.setEntity(persistentEntity);
 		persistentEntity.setType(StringUtils.join(dtoEntity.getType(), ','));
@@ -278,6 +326,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 			persistentProperty.setName(dtoProperty.getName());
 			persistentProperty.setValue(dtoProperty.getValue());
 			persistentProperty.setIsDirty(dtoProperty.getIsDirty());
+            persistentProperty.setSecondaryType(dtoProperty.getMetadata().getSecondaryType());
 		}
 		final org.broadleafcommerce.openadmin.server.domain.PersistencePerspective persistentPersistencePerspective = new PersistencePerspectiveImpl();
 		sandBoxItem.setPersistencePerspective(persistentPersistencePerspective);
@@ -305,7 +354,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 		persistentOperationTypes.setUpdateType(dtoPersistencePerspective.getOperationTypes().getUpdateType());
 		for (final PersistencePerspectiveItemType type : dtoPersistencePerspective.getPersistencePerspectiveItems().keySet()) {
 			PersistencePerspectiveItem dtoPersistencePerspectiveItem = dtoPersistencePerspective.getPersistencePerspectiveItems().get(type);
-			PersistencePerspectiveItemVisitor visitor = new PersistencePerspectiveItemVisitorAdapter() {
+			org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor visitor = new org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitorAdapter() {
 
 				@Override
 				public void visit(JoinStructure dtoJoinStructure) {

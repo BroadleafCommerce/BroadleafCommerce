@@ -1,13 +1,14 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.orm.jpa.EntityManagerFactoryAccessor;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.lang.reflect.Proxy;
 
 public class SandBoxSharedEntityManagerBean extends EntityManagerFactoryAccessor implements FactoryBean<EntityManager>, InitializingBean {
 
@@ -27,7 +28,9 @@ public class SandBoxSharedEntityManagerBean extends EntityManagerFactoryAccessor
 		Class[] ifcs = new Class[] {HibernateEntityManager.class};
 		EntityManager standardEm = SharedEntityManagerCreator.createSharedEntityManager(emf, getJpaPropertyMap(), ifcs);
 		EntityManager sandBoxEm = SharedEntityManagerCreator.createSharedEntityManager(sandBox, getJpaPropertyMap(), ifcs);
-		this.shared = new BroadleafEntityManager((HibernateEntityManager) standardEm, (HibernateEntityManager) sandBoxEm);
+        BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardEm, (HibernateEntityManager) sandBoxEm);
+        HibernateEntityManager proxy = (HibernateEntityManager) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{HibernateEntityManager.class, DualEntityManager.class}, handler);
+		this.shared = proxy;
 	}
 
 	public EntityManager getObject() {

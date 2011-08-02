@@ -15,25 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.annotation;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.PersistenceProperty;
-import javax.persistence.PersistenceUnit;
-
-import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.BroadleafEntityManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.BroadleafEntityManagerInvocationHandler;
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.DualEntityManager;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -49,6 +32,14 @@ import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcesso
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
+
+import javax.persistence.*;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Modification of behavior defined in PersistenceAnnotationBeanPostProcessor to support the Broadleaf
@@ -214,7 +205,9 @@ public class BroadleafPersistenceAnnotationBeanPostProcessor extends Persistence
 				} else {
 					EntityManager standardManager = resolveEntityManager(requestingBeanName, this.unitName);
 					EntityManager sandboxManager = resolveEntityManager(requestingBeanName, this.sandBoxUnitName);
-					return new BroadleafEntityManager((HibernateEntityManager) standardManager, (HibernateEntityManager) sandboxManager);
+                    BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardManager, (HibernateEntityManager) sandboxManager);
+                    HibernateEntityManager proxy = (HibernateEntityManager) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{HibernateEntityManager.class, DualEntityManager.class}, handler);
+					return proxy;
 				}
 			}
 			else {
