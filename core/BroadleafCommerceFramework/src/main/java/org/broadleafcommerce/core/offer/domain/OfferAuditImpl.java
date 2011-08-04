@@ -32,7 +32,9 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.money.Money;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_OFFER_AUDIT")
@@ -42,8 +44,19 @@ public class OfferAuditImpl implements OfferAudit {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OfferAuditId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OfferAuditId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferAuditImpl", allocationSize = 50)
+    @GeneratedValue(generator= "OfferAuditId")
+    @GenericGenerator(
+        name="OfferAuditId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="OfferAuditImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferAuditImpl")
+        }
+    )
     @Column(name = "OFFER_AUDIT_ID")
     protected Long id;
 

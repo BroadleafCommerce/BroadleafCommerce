@@ -15,6 +15,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -100,19 +101,20 @@ public class HibernateCleaner {
 
             TransactionStatus status = txManager.getTransaction(def);
             try {
-                if (idField != null && idField.get(originalBean) != null) {
-                    Object temp = em.find(originalBean.getClass(), idField.get(originalBean));
+                final Serializable primaryKey = (Serializable) idField.get(originalBean);
+                if (idField != null && primaryKey != null) {
+                    Object temp = em.find(originalBean.getClass(), primaryKey);
                     if (temp != null && method.getName().equals("merge")) {
                         targetBean = em.merge(targetBean);
                     } else {
                         SessionImplementor session = (SessionImplementor) em.getDelegate();
                         EntityPersister persister = session.getEntityPersister(targetBean.getClass().getName(), targetBean);
                         IdentifierProperty ip = persister.getEntityMetamodel().getIdentifierProperty();
-                        IdentifierValue backupUnsavedValue = setUnsavedValue(ip, IdentifierValue.ANY);
-
-                        em.persist(targetBean);
-
-                        setUnsavedValue(ip, backupUnsavedValue);
+                        synchronized (ip) {
+                            IdentifierValue backupUnsavedValue = setUnsavedValue(ip, IdentifierValue.ANY);
+                            em.persist(targetBean);
+                            setUnsavedValue(ip, backupUnsavedValue);
+                        }
                     }
                 } else {
                     targetBean = method.invoke(em, targetBean);

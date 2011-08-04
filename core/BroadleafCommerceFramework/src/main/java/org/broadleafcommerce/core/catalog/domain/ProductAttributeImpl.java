@@ -28,9 +28,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 /**
  * The Class ProductAttributeImpl.
@@ -46,8 +44,19 @@ public class ProductAttributeImpl implements ProductAttribute {
     
     /** The id. */
     @Id
-    @GeneratedValue(generator = "ProductAttributeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ProductAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductAttributeImpl", allocationSize = 50)
+    @GeneratedValue(generator= "ProductAttributeId")
+    @GenericGenerator(
+        name="ProductAttributeId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="ProductAttributeImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl")
+        }
+    )
     @Column(name = "PRODUCT_ATTRIBUTE_ID")
     protected Long id;
     

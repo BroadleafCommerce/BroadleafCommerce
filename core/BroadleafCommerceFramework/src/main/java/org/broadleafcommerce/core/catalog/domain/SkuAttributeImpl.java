@@ -27,9 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 /**
  * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
@@ -59,8 +57,19 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "SkuAttributeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SkuAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAttributeImpl", allocationSize = 50)
+    @GeneratedValue(generator= "SkuAttributeId")
+    @GenericGenerator(
+        name="SkuAttributeId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="SkuAttributeImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl")
+        }
+    )
     @Column(name = "SKU_ATTR_ID")
     protected Long id;
     

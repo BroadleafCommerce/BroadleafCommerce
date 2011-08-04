@@ -54,13 +54,7 @@ import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 import org.compass.annotations.SupportUnmarshall;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.*;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -92,8 +86,19 @@ public class ProductImpl implements Product {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "ProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductImpl", allocationSize = 50)
+    @GeneratedValue(generator= "ProductId")
+    @GenericGenerator(
+        name="ProductId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="ProductImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductImpl")
+        }
+    )
     @Column(name = "PRODUCT_ID")
     @SearchableId
     @AdminPresentation(friendlyName="Product ID", group="Primary Key", hidden=true)

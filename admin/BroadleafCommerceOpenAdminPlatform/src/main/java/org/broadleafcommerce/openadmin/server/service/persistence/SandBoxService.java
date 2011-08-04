@@ -2,6 +2,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
@@ -17,5 +18,7 @@ public interface SandBoxService {
     public SandBoxIdGenerationService getSandBoxIdGenerationService();
 
     public void setSandBoxIdGenerationService(SandBoxIdGenerationService sandBoxIdGenerationService);
+
+    public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 
 }

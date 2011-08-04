@@ -25,10 +25,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -39,8 +38,19 @@ public class MediaImpl implements Media {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "MediaId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "MediaId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "MediaId", allocationSize = 50)
+    @GeneratedValue(generator= "MediaId")
+    @GenericGenerator(
+        name="MediaId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="MediaId"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.media.domain.MediaImpl")
+        }
+    )
     @Column(name = "MEDIA_ID")
     protected Long id;
 

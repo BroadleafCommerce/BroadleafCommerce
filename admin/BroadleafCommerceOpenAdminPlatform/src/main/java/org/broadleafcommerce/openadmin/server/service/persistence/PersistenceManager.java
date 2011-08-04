@@ -1,21 +1,14 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 public interface PersistenceManager {
 
@@ -58,5 +51,7 @@ public interface PersistenceManager {
 	public abstract void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers);
 
 	public abstract void close() throws Exception;
+
+    public Entity updateDirtyState(Entity mergedEntity) throws ClassNotFoundException;
 
 }

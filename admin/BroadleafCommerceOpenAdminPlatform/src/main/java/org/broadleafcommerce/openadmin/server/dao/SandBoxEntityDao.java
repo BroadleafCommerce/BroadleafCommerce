@@ -13,7 +13,7 @@ public interface SandBoxEntityDao {
 
     public SandBox readSandBoxByName(String name);
 
-    public SandBoxItem retrieveSandBoxByTemporaryId(Object temporaryId);
+    public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 
     public void deleteItem(SandBoxItem sandBoxItem);
 

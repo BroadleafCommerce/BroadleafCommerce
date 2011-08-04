@@ -4,21 +4,22 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
+import org.hibernate.SessionFactory;
+import org.hibernate.type.Type;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,6 +36,14 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Resource(name="blSandBoxIdGenerationService")
     protected SandBoxIdGenerationService sandBoxIdGenerationService;
+
+    @Override
+    public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
+        return sandBoxDao.retrieveSandBoxItemByTemporaryId(temporaryId);
+    }
+
+    @Resource(name="blSessionFactory")
+    protected SessionFactory sessionFactory;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#saveSandBox(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo)
@@ -56,11 +65,12 @@ public class SandBoxServiceImpl implements SandBoxService {
             case UPDATE: {
                 Object primaryKey = null;
                 try {
-                    primaryKey = getPrimaryKey(persistencePackage, persistenceManager, helper);
+                    Map idMetadata = getIdMetadata(Class.forName(persistencePackage.getEntity().getType()[0]));
+                    primaryKey = getPrimaryKey(idMetadata, persistencePackage.getEntity().findProperty((String) idMetadata.get("name")).getValue());
                 } catch (Exception e) {
                     throw new SandBoxException(e);
                 }
-                item = sandBoxDao.retrieveSandBoxByTemporaryId(primaryKey);
+                item = sandBoxDao.retrieveSandBoxItemByTemporaryId(primaryKey);
                 if (item == null) {
                     item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, primaryKey);
                     sandBox.getSandBoxItems().add(item);
@@ -88,11 +98,12 @@ public class SandBoxServiceImpl implements SandBoxService {
             case DELETE: {
                 Object primaryKey = null;
                 try {
-                    primaryKey = getPrimaryKey(persistencePackage, persistenceManager, helper);
+                    Map idMetadata = getIdMetadata(Class.forName(persistencePackage.getEntity().getType()[0]));
+                    primaryKey = getPrimaryKey(idMetadata, persistencePackage.getEntity().findProperty((String) idMetadata.get("name")).getValue());
                 } catch (Exception e) {
                     throw new SandBoxException(e);
                 }
-                item = sandBoxDao.retrieveSandBoxByTemporaryId(primaryKey);
+                item = sandBoxDao.retrieveSandBoxItemByTemporaryId(primaryKey);
                 if (item != null) {
                     sandBox.getSandBoxItems().remove(item);
                     sandBoxDao.deleteItem(item);
@@ -110,50 +121,27 @@ public class SandBoxServiceImpl implements SandBoxService {
         }
     }
 
-    protected String getPrimaryKeyProperty(Entity dtoEntity, PersistencePerspective dtoPersistencePerspective, PersistenceManager persistenceManager) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
-        Class<?>[] entities = persistenceManager.getPolymorphicEntities(dtoEntity.getType()[0]);
-        Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-            dtoEntity.getType()[0],
-            entities,
-            (ForeignKey) dtoPersistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-            dtoPersistencePerspective.getAdditionalNonPersistentProperties(),
-            dtoPersistencePerspective.getAdditionalForeignKeys(),
-            MergedPropertyType.PRIMARY,
-            dtoPersistencePerspective.getPopulateToOneFields(),
-            dtoPersistencePerspective.getIncludeFields(),
-            dtoPersistencePerspective.getExcludeFields(),
-            null,
-            ""
-        );
-        String idProperty = null;
-		for (String property : mergedProperties.keySet()) {
-			if (mergedProperties.get(property).getFieldType().equals(SupportedFieldType.ID) && property.indexOf(".") < 0) {
-				idProperty = property;
-				break;
-			}
-		}
+    protected Map<String, Class<?>> getIdMetadata(Class<?> entityClass) {
+        Map response = new HashMap();
+        org.hibernate.metadata.ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
+        String idProperty = metadata.getIdentifierPropertyName();
+        response.put("name", idProperty);
+        Type idType = metadata.getIdentifierType();
+        response.put("type", idType);
 
-        return idProperty;
+        return response;
     }
 
-    protected Object getPrimaryKey(PersistencePackage persistencePackage, PersistenceManager persistenceManager, RecordHelper helper) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Entity dtoEntity = persistencePackage.getEntity();
-        PersistencePerspective dtoPersistencePerspective = persistencePackage.getPersistencePerspective();
-        Class<?>[] entities = persistenceManager.getPolymorphicEntities(dtoEntity.getType()[0]);
-        Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-            dtoEntity.getType()[0],
-            entities,
-            (ForeignKey) dtoPersistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-            dtoPersistencePerspective.getAdditionalNonPersistentProperties(),
-            dtoPersistencePerspective.getAdditionalForeignKeys(),
-            MergedPropertyType.PRIMARY,
-            dtoPersistencePerspective.getPopulateToOneFields(),
-            dtoPersistencePerspective.getIncludeFields(),
-            dtoPersistencePerspective.getExcludeFields(),
-            null,
-            ""
-        );
-        return helper.getPrimaryKey(dtoEntity, mergedProperties);
+    protected Object getPrimaryKey(Map idMetadata, String value) {
+        Type idType = (Type) idMetadata.get("type");
+        Object response;
+        if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
+            response = Long.valueOf(value);
+        } else {
+            response = value;
+        }
+
+        return response;
     }
 
     protected String[] getSplitArray(String item, String delim) {
@@ -266,7 +254,8 @@ public class SandBoxServiceImpl implements SandBoxService {
         }
         Property[] dtoPropertyList = new Property[persistentEntity.getProperties().size()];
         List<org.broadleafcommerce.openadmin.server.domain.Property> persistentPropertyList = persistentEntity.getProperties();
-        String primaryKeyProperty = getPrimaryKeyProperty(dtoEntity, dtoPersistencePerspective, persistenceManager);
+        Map idMetadata = getIdMetadata(Class.forName(dtoEntity.getType()[0]));
+        String primaryKeyProperty = (String) idMetadata.get("name");
         for (int j=0;j<dtoPropertyList.length;j++) {
             Property dtoProperty = createDtoProperty(persistentPropertyList.get(j), primaryKeyProperty, sandBoxItem.getTemporaryId());
             dtoPropertyList[j] = dtoProperty;

@@ -15,29 +15,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -48,14 +25,17 @@ import org.broadleafcommerce.profile.cache.HydratedCacheManager;
 import org.broadleafcommerce.profile.cache.HydratedCacheManagerImpl;
 import org.broadleafcommerce.profile.util.DateUtil;
 import org.broadleafcommerce.profile.util.UrlUtil;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.*;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -84,8 +64,19 @@ public class CategoryImpl implements Category {
 	
 	/** The id. */
     @Id
-    @GeneratedValue(generator = "CategoryId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CategoryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryImpl", allocationSize = 50)
+    @GeneratedValue(generator= "CategoryId")
+    @GenericGenerator(
+        name="CategoryId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CategoryImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryImpl")
+        }
+    )
     @Column(name = "CATEGORY_ID")
     @AdminPresentation(friendlyName="Category ID", group="Primary Key", hidden=true)
     protected Long id;

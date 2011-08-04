@@ -30,6 +30,7 @@ public class Entity implements Serializable {
 
 	private String[] type;
 	private Property[] properties;
+    private boolean isDirty = false;
 	
 	public String[] getType() {
 		return type;
@@ -93,4 +94,12 @@ public class Entity implements Serializable {
 		newProps[newProps.length - 1] = property;
 		setProperties(newProps);
 	}
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        isDirty = dirty;
+    }
 }

@@ -64,7 +64,7 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
     }
 
     @Override
-	public SandBoxItem retrieveSandBoxByTemporaryId(Object temporaryId) {
+	public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
 		Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMPORARY_ID");
         query.setParameter("temporaryId", temporaryId);
         SandBoxItem response = null;
@@ -78,7 +78,7 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 
     public void deleteItem(SandBoxItem sandBoxItem) {
     	if (!sandBoxEntityManager.contains(sandBoxItem)) {
-    		sandBoxItem = retrieveSandBoxByTemporaryId(sandBoxItem.getTemporaryId());
+    		sandBoxItem = retrieveSandBoxItemByTemporaryId(sandBoxItem.getTemporaryId());
     	}
         sandBoxEntityManager.remove(sandBoxItem);
     }

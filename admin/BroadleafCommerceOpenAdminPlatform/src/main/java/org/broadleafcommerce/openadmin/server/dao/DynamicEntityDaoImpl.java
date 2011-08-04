@@ -527,6 +527,17 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		fields.get(propertyName).setPrecision(100);
 		return fields;
 	}
+
+    public Map<String, Class<?>> getIdMetadata(Class<?> entityClass) {
+        Map response = new HashMap();
+        ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
+        String idProperty = metadata.getIdentifierPropertyName();
+        response.put("name", idProperty);
+        Type idType = metadata.getIdentifierType();
+        response.put("type", idType);
+
+        return response;
+    }
 	
 	@SuppressWarnings("unchecked")
 	protected Map<String, FieldMetadata> getPropertiesForEntityClass(
@@ -542,16 +553,17 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Map<String, FieldMetadata> metadataOverrides
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldPresentationAttributes> presentationAttributes = getFieldPresentationAttributes(targetClass);
+        Map idMetadata = getIdMetadata(targetClass);
 		ClassMetadata metadata = sessionFactory.getClassMetadata(targetClass);
 		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
 		List<String> propertyNames = new ArrayList<String>();
-		String idProperty = metadata.getIdentifierPropertyName();
+		String idProperty = (String) idMetadata.get("name");
 		for (String propertyName : metadata.getPropertyNames()) {
 			propertyNames.add(propertyName);
 		}
 		propertyNames.add(idProperty);
 		List<Type> propertyTypes = new ArrayList<Type>();
-		Type idType = metadata.getIdentifierType();
+		Type idType = (Type) idMetadata.get("type");
 		for (Type propertyType : metadata.getPropertyTypes()) {
 			propertyTypes.add(propertyType);
 		}

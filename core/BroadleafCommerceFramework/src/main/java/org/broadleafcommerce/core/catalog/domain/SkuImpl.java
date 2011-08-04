@@ -54,13 +54,7 @@ import org.broadleafcommerce.profile.util.DateUtil;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.*;
 
 /**
  * The Class SandBoxSkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -91,8 +85,19 @@ public class SkuImpl implements Sku {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "SkuId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SkuId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxSkuImpl", allocationSize = 50)
+    @GeneratedValue(generator= "SkuId")
+    @GenericGenerator(
+        name="SkuId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="SkuImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuImpl")
+        }
+    )
     @Column(name = "SKU_ID")
     @SearchableId
     @AdminPresentation(friendlyName="Sku ID", group="Primary Key", hidden=true)

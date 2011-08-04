@@ -32,9 +32,7 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.money.Money;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_FG_OFFER")
@@ -45,8 +43,19 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CandidateFGOfferId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CandidateFGOfferId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CandidateFulfillmentGroupOfferImpl", allocationSize = 50)
+    @GeneratedValue(generator= "CandidateFGOfferId")
+    @GenericGenerator(
+        name="CandidateFGOfferId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CandidateFulfillmentGroupOfferImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl")
+        }
+    )
     @Column(name = "CANDIDATE_FG_OFFER_ID")
     protected Long id;
 

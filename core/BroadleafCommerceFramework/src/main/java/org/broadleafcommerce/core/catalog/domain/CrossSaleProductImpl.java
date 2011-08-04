@@ -28,9 +28,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -41,8 +39,19 @@ public class CrossSaleProductImpl implements RelatedProduct {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "CrossSaleProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CrossSaleProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CrossSaleProductImpl", allocationSize = 50)
+    @GeneratedValue(generator= "CrossSaleProductId")
+    @GenericGenerator(
+        name="CrossSaleProductId",
+        strategy="org.broadleafcommerce.openadmin.server.service.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CrossSaleProductImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl")
+        }
+    )
     @Column(name = "CROSS_SALE_PRODUCT_ID")
     private Long id;
 	

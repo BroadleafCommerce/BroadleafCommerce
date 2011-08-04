@@ -4,8 +4,12 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
@@ -13,6 +17,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
+import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -248,9 +253,35 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             savedPackage = persistencePackage;
         }
 
-        //TODO try detaching and clearing out all the one-to-many collections before persisting to the sandbox database
-        return myModule.update(savedPackage);
-	}
+        Entity mergedEntity = myModule.update(savedPackage);
+        try {
+            return updateDirtyState(mergedEntity);
+        } catch (ClassNotFoundException e) {
+            throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
+        }
+    }
+
+    @Override
+    public Entity updateDirtyState(Entity mergedEntity) throws ClassNotFoundException {
+        Map idMetadata = dynamicEntityDao.getIdMetadata(Class.forName(mergedEntity.getType()[0]));
+        Type idType = (Type) idMetadata.get("type");
+        Object id = mergedEntity.findProperty((String) idMetadata.get("name")).getValue();
+        if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
+            id = Long.valueOf(id.toString());
+        }
+        SandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
+        if (item != null) {
+            mergedEntity.setDirty(true);
+            for (org.broadleafcommerce.openadmin.server.domain.Property persistentProperty : item.getEntity().getProperties()) {
+                if (persistentProperty.getIsDirty()) {
+                    Property dtoProperty = mergedEntity.findProperty(persistentProperty.getName());
+                    dtoProperty.setIsDirty(true);
+                }
+            }
+        }
+
+        return mergedEntity;
+    }
 
 	/*
 	 * (non-Javadoc)

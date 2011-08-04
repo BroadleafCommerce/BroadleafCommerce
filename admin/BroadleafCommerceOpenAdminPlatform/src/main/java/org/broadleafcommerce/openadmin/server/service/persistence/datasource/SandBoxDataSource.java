@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
 import org.hsqldb.server.ServerAcl.AclFormatException;
@@ -205,7 +204,7 @@ public class SandBoxDataSource implements DataSource {
 			Connection connection = DriverManager.getConnection(jdbcUrl, "SA", "");
 			SandBoxConnection blcConnection = new SandBoxConnection(connection, sandboxDataBasePool);
 			
-			LOG.info("Opening sandbox database at: " + jdbcUrl);
+			LOG.info("Opening sandbox connection at: " + jdbcUrl);
 			
 			return blcConnection;
 		}

@@ -28,7 +28,9 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CUSTOMER_OFFER_XREF")
@@ -38,8 +40,19 @@ public class CustomerOfferImpl implements CustomerOffer {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerOfferId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CustomerOfferId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerOfferImpl", allocationSize = 50)
+    @GeneratedValue(generator= "CustomerOfferId")
+    @GenericGenerator(
+        name="CustomerOfferId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CustomerOfferImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl")
+        }
+    )
     @Column(name = "CUSTOMER_OFFER_ID")
     protected Long id;
 

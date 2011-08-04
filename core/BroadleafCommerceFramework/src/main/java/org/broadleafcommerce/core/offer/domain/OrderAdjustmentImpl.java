@@ -33,9 +33,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_ORDER_ADJUSTMENT")
@@ -46,8 +44,19 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderAdjustmentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderAdjustmentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderAdjustmentImpl", allocationSize = 50)
+    @GeneratedValue(generator= "OrderAdjustmentId")
+    @GenericGenerator(
+        name="OrderAdjustmentId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="OrderAdjustmentImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl")
+        }
+    )
     @Column(name = "ORDER_ADJUSTMENT_ID")
     protected Long id;
 
