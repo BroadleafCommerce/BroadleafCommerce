@@ -4,6 +4,10 @@ import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
 import org.hibernate.ejb.HibernateEntityManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -19,30 +23,89 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
 
     protected final HibernateEntityManager standardManager;
 	protected final HibernateEntityManager sandboxManager;
+    protected final PlatformTransactionManager standardTransactionManager;
+    protected final PlatformTransactionManager sandboxTransactionManager;
+    protected final HibernateCleaner cleaner;
 
-	public BroadleafEntityManagerInvocationHandler(HibernateEntityManager standardManager, HibernateEntityManager sandboxManager) {
+	public BroadleafEntityManagerInvocationHandler(HibernateEntityManager standardManager, HibernateEntityManager sandboxManager, HibernateCleaner cleaner) {
 		this.standardManager = standardManager;
 		this.sandboxManager = sandboxManager;
+        standardTransactionManager = new org.springframework.orm.jpa.JpaTransactionManager(standardManager.getEntityManagerFactory());
+        sandboxTransactionManager = new org.springframework.orm.jpa.JpaTransactionManager(sandboxManager.getEntityManagerFactory());
+        this.cleaner = cleaner;
 	}
 
+    protected Object executeInTransaction(Executable executable, PlatformTransactionManager txManager) throws Throwable {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("SandBoxTx");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+        Object response;
+        TransactionStatus status = txManager.getTransaction(def);
+        try {
+          response = executable.execute();
+        } catch (Throwable ex) {
+          txManager.rollback(status);
+          throw ex;
+        }
+        txManager.commit(status);
+
+        return response;
+    }
+
     @Override
-    public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
+    public Object invoke(Object o, final Method method, final Object[] objects) throws Throwable {
         SandBoxContext context = SandBoxContext.getSandBoxContext();
         boolean isSandBox = context != null && context.getSandBoxMode() == SandBoxMode.SANDBOX_COMMIT;
-        HibernateEntityManager managerToUse = isSandBox?sandboxManager:standardManager;
         if (
-            method.getName().equals("persist") ||
-            method.getName().equals("remove") ||
             method.getName().equals("merge") ||
+            method.getName().equals("persist")
+        ) {
+            if (isSandBox) {
+                Object[] converted = new Object[]{cleaner.convertBean(objects[0], method, sandboxManager, sandboxTransactionManager)};
+                return converted[0];
+            } else {
+                return executeInTransaction(new Executable() {
+                    @Override
+                    public Object execute() throws Throwable {
+                        return method.invoke(standardManager, objects);
+                    }
+                }, standardTransactionManager);
+            }
+        }
+        if (
+            method.getName().equals("remove") ||
             method.getName().equals("flush") ||
+            method.getName().equals("lock")
+        ) {
+            if (isSandBox) {
+                return executeInTransaction(new Executable() {
+                    @Override
+                    public Object execute() throws Throwable {
+                        return method.invoke(sandboxManager, objects);
+                    }
+                }, sandboxTransactionManager);
+            } else {
+                return executeInTransaction(new Executable() {
+                    @Override
+                    public Object execute() throws Throwable {
+                        return method.invoke(standardManager, objects);
+                    }
+                }, standardTransactionManager);
+            }
+        }
+        if (
             method.getName().equals("setFlushMode") ||
             method.getName().equals("getFlushMode") ||
-            method.getName().equals("lock") ||
             method.getName().equals("getLockMode") ||
             method.getName().equals("joinTransaction") ||
             method.getName().equals("getTransaction")
         ) {
-            return method.invoke(managerToUse, objects);
+            if (isSandBox) {
+                return method.invoke(sandboxManager, objects);
+            } else {
+                return method.invoke(standardManager, objects);
+            }
         }
         if (
             method.getName().equals("find") ||
@@ -136,5 +199,11 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             return sandboxManager;
         }
         throw new SandBoxException("Unrecognized EntityManager method sent to proxy: " + method.getName());
+    }
+
+    public interface Executable {
+
+        public Object execute() throws Throwable;
+
     }
 }

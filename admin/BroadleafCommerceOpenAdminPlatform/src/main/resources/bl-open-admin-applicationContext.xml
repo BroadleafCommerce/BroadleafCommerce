@@ -157,6 +157,10 @@
             </bean>
         </property>
 	</bean>
+
+    <bean id="blHibernateCleaner" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.HibernateCleaner">
+        <constructor-arg ref="blSessionFactory"/>
+    </bean>
 	
 	<bean id="sandBoxEntityManager" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean" scope="prototype">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
@@ -177,6 +181,7 @@
                 </property>
 			</bean>
         </property>
+        <property name="cleaner" ref="blHibernateCleaner"/>
     </bean>
 	
 </beans>

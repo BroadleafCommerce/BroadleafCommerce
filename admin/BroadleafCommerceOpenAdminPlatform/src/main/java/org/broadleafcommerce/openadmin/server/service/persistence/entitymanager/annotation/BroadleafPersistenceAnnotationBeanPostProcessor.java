@@ -17,6 +17,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager
 
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.BroadleafEntityManagerInvocationHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.DualEntityManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.HibernateCleaner;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -59,8 +60,7 @@ public class BroadleafPersistenceAnnotationBeanPostProcessor extends Persistence
 
 	private static final long serialVersionUID = 1L;
 	
-	private transient final Map<Class<?>, InjectionMetadata> injectionMetadataCache =
-		new ConcurrentHashMap<Class<?>, InjectionMetadata>();
+	private transient final Map<Class<?>, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<Class<?>, InjectionMetadata>();
 	
 	@Override
 	public PropertyValues postProcessPropertyValues(
@@ -205,7 +205,7 @@ public class BroadleafPersistenceAnnotationBeanPostProcessor extends Persistence
 				} else {
 					EntityManager standardManager = resolveEntityManager(requestingBeanName, this.unitName);
 					EntityManager sandboxManager = resolveEntityManager(requestingBeanName, this.sandBoxUnitName);
-                    BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardManager, (HibernateEntityManager) sandboxManager);
+                    BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardManager, (HibernateEntityManager) sandboxManager, (HibernateCleaner) getBeanFactory().getBean("blHibernateCleaner"));
                     HibernateEntityManager proxy = (HibernateEntityManager) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{HibernateEntityManager.class, DualEntityManager.class}, handler);
 					return proxy;
 				}

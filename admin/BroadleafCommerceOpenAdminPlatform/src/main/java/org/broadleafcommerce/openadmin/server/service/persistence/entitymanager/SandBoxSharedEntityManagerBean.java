@@ -14,6 +14,7 @@ public class SandBoxSharedEntityManagerBean extends EntityManagerFactoryAccessor
 
 	private HibernateEntityManager shared;
 	protected EntityManagerFactory sandBoxEntityManagerFactory;
+    protected HibernateCleaner cleaner;
 
 	@SuppressWarnings("rawtypes")
 	public final void afterPropertiesSet() {
@@ -28,7 +29,7 @@ public class SandBoxSharedEntityManagerBean extends EntityManagerFactoryAccessor
 		Class[] ifcs = new Class[] {HibernateEntityManager.class};
 		EntityManager standardEm = SharedEntityManagerCreator.createSharedEntityManager(emf, getJpaPropertyMap(), ifcs);
 		EntityManager sandBoxEm = SharedEntityManagerCreator.createSharedEntityManager(sandBox, getJpaPropertyMap(), ifcs);
-        BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardEm, (HibernateEntityManager) sandBoxEm);
+        BroadleafEntityManagerInvocationHandler handler = new BroadleafEntityManagerInvocationHandler((HibernateEntityManager) standardEm, (HibernateEntityManager) sandBoxEm, cleaner);
         HibernateEntityManager proxy = (HibernateEntityManager) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{HibernateEntityManager.class, DualEntityManager.class}, handler);
 		this.shared = proxy;
 	}
@@ -54,4 +55,11 @@ public class SandBoxSharedEntityManagerBean extends EntityManagerFactoryAccessor
 		this.sandBoxEntityManagerFactory = sandBoxEntityManagerFactory;
 	}
 
+    public HibernateCleaner getCleaner() {
+        return cleaner;
+    }
+
+    public void setCleaner(HibernateCleaner cleaner) {
+        this.cleaner = cleaner;
+    }
 }
