@@ -75,7 +75,8 @@ public class HibernateCleaner {
                 field.setAccessible(true);
                 Type fieldType = types.get(field.getName());
                 if (fieldType.isCollectionType() || fieldType.isAnyType()) {
-                    field.set(targetBean, null);
+                    //field.set(targetBean, null);
+                    //do nothing
                 } else if(fieldType.isEntityType()) {
                     Object newOriginalBean = field.get(originalBean);
                     if (newOriginalBean == null) {
@@ -95,15 +96,21 @@ public class HibernateCleaner {
             }
         }
         if (txManager != null) {
+            Object temp = null;
+            if (idField == null) {
+                throw new Exception("Unable to find an identity field for the entity: " + originalBean.getClass().getName());
+            }
+            final Serializable primaryKey = (Serializable) idField.get(originalBean);
+            if (primaryKey != null) {
+                 temp = em.find(originalBean.getClass(), primaryKey);
+            }
+
             DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-            def.setName("SandBoxTx");
-            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
             TransactionStatus status = txManager.getTransaction(def);
             try {
-                final Serializable primaryKey = (Serializable) idField.get(originalBean);
-                if (idField != null && primaryKey != null) {
-                    Object temp = em.find(originalBean.getClass(), primaryKey);
+                if (primaryKey != null) {
                     if (temp != null && method.getName().equals("merge")) {
                         targetBean = em.merge(targetBean);
                     } else {
