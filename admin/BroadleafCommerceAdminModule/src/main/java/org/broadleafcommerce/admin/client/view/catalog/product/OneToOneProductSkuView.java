@@ -16,6 +16,7 @@
 package org.broadleafcommerce.admin.client.view.catalog.product;
 
 import org.broadleafcommerce.admin.client.MerchandisingModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -61,7 +62,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(MerchandisingModule.ADMINMESSAGES.productsListTitle(), entityDataSource);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
@@ -75,8 +76,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         Tab detailsTab = new Tab("Details");
         detailsTab.setID("productSkuDetailsTab");
         
-        dynamicFormDisplay = new DynamicFormView(MerchandisingModule.ADMINMESSAGES.productDetailsTitle(), entityDataSource);
-        attributesDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.productAttributesTitle(), false, true);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productDetailsTitle"), entityDataSource);
+        attributesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productAttributesTitle"), false, true);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(attributesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
@@ -90,15 +91,15 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         crossLayout.setBackgroundColor("#eaeaea");
         crossLayout.setOverflow(Overflow.AUTO);
         
-        crossSaleDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.crossSaleProductsTitle(), true, true);
+        crossSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("crossSaleProductsTitle"), true, true);
         crossLayout.addMember(crossSaleDisplay);
         
-        upSaleDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.upsaleProductsTitle(), true, true);
+        upSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("upsaleProductsTitle"), true, true);
         crossLayout.addMember(upSaleDisplay);
         
         crossSaleTab.setPane(crossLayout);
         
-        Tab mediaTab = new Tab(MerchandisingModule.ADMINMESSAGES.mediaTabTitle()); 
+        Tab mediaTab = new Tab(BLCMain.getMessageManager().getString("mediaTabTitle"));
         mediaTab.setID("productSkuMediaTab");
         
         VLayout mediaLayout = new VLayout();
@@ -108,7 +109,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         mediaLayout.setBackgroundColor("#eaeaea");
         mediaLayout.setOverflow(Overflow.AUTO);
         
-        mediaDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.mediaListTitle(), false, true);
+        mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
         mediaLayout.addMember(mediaDisplay);
         
         mediaTab.setPane(mediaLayout);
@@ -123,7 +124,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         categoriesLayout.setBackgroundColor("#eaeaea");
         categoriesLayout.setOverflow(Overflow.AUTO);
         
-        allCategoriesDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.allParentCategoriesListTitle(), false, false);
+        allCategoriesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("allParentCategoriesListTitle"), false, false);
         categoriesLayout.addMember(allCategoriesDisplay);
         
         categoriesTab.setPane(categoriesLayout);

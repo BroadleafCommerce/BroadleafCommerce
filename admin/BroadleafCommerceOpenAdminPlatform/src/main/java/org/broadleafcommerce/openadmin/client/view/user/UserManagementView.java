@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.view.user;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.UserManagementModule;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
@@ -54,7 +55,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(UserManagementModule.OPENADMINMESSAGES.userListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("userListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -65,16 +66,16 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab(UserManagementModule.OPENADMINMESSAGES.userDetailsTitle());
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("userDetailsTitle"));
         detailsTab.setID("userDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(UserManagementModule.OPENADMINMESSAGES.userDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("userDetailsTitle"), entityDataSource);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
-        Tab userRolesTab = new Tab(UserManagementModule.OPENADMINMESSAGES.userRolesTitle());
+        Tab userRolesTab = new Tab(BLCMain.getMessageManager().getString("userRolesTitle"));
         userRolesTab.setID("userUserRolesTab");
-        userRolesDisplay = new UserRoleView(UserManagementModule.OPENADMINMESSAGES.userRolesTitle(), false, false);
+        userRolesDisplay = new UserRoleView(BLCMain.getMessageManager().getString("userRolesTitle"), false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);
         

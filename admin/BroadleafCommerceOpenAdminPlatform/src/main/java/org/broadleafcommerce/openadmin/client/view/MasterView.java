@@ -127,12 +127,12 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         HStack spacer = new HStack();
         spacer.setWidth(30);
         moduleStack.addMember(spacer);
-        Label userName = new Label(BLCMain.OPENADMINMESSAGES.currentUser() + ": <B>" + SecurityManager.USER.getUserName() + "</B>");
+        Label userName = new Label(BLCMain.getMessageManager().getString("currentUser") + ": <B>" + SecurityManager.USER.getUserName() + "</B>");
         userName.setWrap(false);
         userName.setStyleName("label-bold");
         moduleStack.addMember(userName);
         IButton logout = new IButton();
-        logout.setTitle(BLCMain.OPENADMINMESSAGES.logout());
+        logout.setTitle(BLCMain.getMessageManager().getString("logout"));
         logout.setWidth(60);
         logout.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             public void onClick(ClickEvent event) {

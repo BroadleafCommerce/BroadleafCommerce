@@ -15,26 +15,22 @@
  */
 package org.broadleafcommerce.openadmin.client;
 
-import java.util.LinkedHashMap;
-
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
+import com.smartgwt.client.core.KeyIdentifier;
+import com.smartgwt.client.util.KeyCallback;
+import com.smartgwt.client.util.Page;
+import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
-import org.broadleafcommerce.openadmin.client.view.MasterView;
-import org.broadleafcommerce.openadmin.client.view.ProgressWindow;
-import org.broadleafcommerce.openadmin.client.view.SimpleProgress;
-import org.broadleafcommerce.openadmin.client.view.SplashView;
-import org.broadleafcommerce.openadmin.client.view.SplashWindow;
+import org.broadleafcommerce.openadmin.client.view.*;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.core.KeyIdentifier;
-import com.smartgwt.client.util.KeyCallback;
-import com.smartgwt.client.util.Page;
-import com.smartgwt.client.util.SC;
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -43,7 +39,10 @@ import com.smartgwt.client.util.SC;
  */
 public class BLCMain implements EntryPoint {
 	
-	public static final OpenAdminMessages OPENADMINMESSAGES = GWT.create(OpenAdminMessages.class);
+	public static final MessageManager MESSAGE_MANAGER = new MessageManager();
+    static {
+        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
+    }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>();
 	
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
@@ -99,7 +98,7 @@ public class BLCMain implements EntryPoint {
         }); 
 	}
 
-	public void onModuleLoad() {	
+	public void onModuleLoad() {
 		if (!GWT.isScript()) { 
 		    KeyIdentifier debugKey = new KeyIdentifier(); 
 		    debugKey.setCtrlKey(true); 
@@ -111,6 +110,10 @@ public class BLCMain implements EntryPoint {
 		    });
 		}
 	}
+
+    public static MessageManager getMessageManager() {
+        return MESSAGE_MANAGER;
+    }
 
 	/**
      * Log a debug.

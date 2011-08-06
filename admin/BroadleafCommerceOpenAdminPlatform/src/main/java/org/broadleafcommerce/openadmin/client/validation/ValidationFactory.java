@@ -15,21 +15,20 @@
  */
 package org.broadleafcommerce.openadmin.client.validation;
 
-import java.util.List;
-import java.util.Map;
-
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.smartgwt.client.widgets.form.validator.Validator;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface ValidationFactory {
+public interface ValidationFactory extends Serializable {
 
 	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems);
 	
-	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, List<ConstantsWithLookup> constants, String fieldName);
+	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName);
 	
 }

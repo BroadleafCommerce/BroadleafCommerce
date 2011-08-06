@@ -16,6 +16,7 @@
 package org.broadleafcommerce.admin.client.view.customer;
 
 import org.broadleafcommerce.admin.client.CustomerCareModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
@@ -54,15 +55,15 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(CustomerCareModule.ADMINMESSAGES.customerListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("customerListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
         
-        dynamicFormDisplay = new DynamicFormView(CustomerCareModule.ADMINMESSAGES.customerDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("customerDetailsTitle"), entityDataSource);
         dynamicFormDisplay.setWidth("50%");
         ToolStrip toolbar = dynamicFormDisplay.getToolbar();
         toolbar.addFill();
         Label label = new Label();
-        label.setContents(CustomerCareModule.ADMINMESSAGES.resetPasswordPrompt());
+        label.setContents(BLCMain.getMessageManager().getString("resetPasswordPrompt"));
         label.setWrap(false);
         toolbar.addMember(label);
         

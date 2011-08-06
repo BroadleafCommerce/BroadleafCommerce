@@ -58,19 +58,20 @@ public class EntitySearchDialog extends Window {
 		this.setVisible(false);
         
 		searchGrid = new ListGrid();
-		dataSource.setAssociatedGrid(searchGrid);
-		dataSource.setupGridFields(new String[]{}, new Boolean[]{});
+        searchGrid.setAutoFetchData(false);
         searchGrid.setAlternateRecordStyles(true);
         searchGrid.setSelectionType(SelectionStyle.SINGLE);
-        searchGrid.setAutoFetchData(false);
-        searchGrid.setDataSource(dataSource);
         searchGrid.setShowAllColumns(false);
         searchGrid.setShowAllRecords(false);
         searchGrid.setDrawAllMaxCells(20);
         searchGrid.setShowFilterEditor(true);
         searchGrid.setHeight(230);
-        searchGrid.setEmptyMessage(BLCMain.OPENADMINMESSAGES.emptyMessage());
+        searchGrid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
         searchGrid.setCanGroupBy(false);
+
+        dataSource.setAssociatedGrid(searchGrid);
+		dataSource.setupGridFields(new String[]{}, new Boolean[]{});
+        searchGrid.setDataSource(dataSource);
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {

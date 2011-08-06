@@ -200,7 +200,7 @@ public class SandBoxDataSource implements DataSource {
 
 		@Override
 		public Object makeObject() throws Exception {
-			String jdbcUrl = "jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+uuid+";mem:broadleaf_"+uuid;
+            String jdbcUrl = getJDBCUrl();
 			Connection connection = DriverManager.getConnection(jdbcUrl, "SA", "");
 			SandBoxConnection blcConnection = new SandBoxConnection(connection, sandboxDataBasePool);
 			
@@ -217,7 +217,7 @@ public class SandBoxDataSource implements DataSource {
             } catch (Exception e) {
                 e.printStackTrace();
 			} finally {
-				LOG.info("Closing sandbox database at: jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+uuid+";mem:broadleaf_"+uuid);
+				LOG.info("Closing sandbox database at: " + getJDBCUrl());
 			}
 		}
 
@@ -239,4 +239,8 @@ public class SandBoxDataSource implements DataSource {
 		
 	}
 
+    public String getJDBCUrl() {
+        String jdbcUrl = "jdbc:hsqldb:hsql://localhost:40025/broadleaf_"+uuid+";mem:broadleaf_"+uuid;
+        return jdbcUrl;
+    }
 }

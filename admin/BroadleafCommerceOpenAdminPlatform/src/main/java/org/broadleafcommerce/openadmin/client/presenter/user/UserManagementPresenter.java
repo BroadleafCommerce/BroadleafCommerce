@@ -15,19 +15,16 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.UserManagementModule;
-import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionListDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.user.AdminRoleListDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.user.AdminUserListDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
-import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionListDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.user.AdminRoleListDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.user.AdminUserListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
@@ -35,10 +32,11 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
+import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
 
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -60,7 +58,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(UserManagementModule.OPENADMINMESSAGES.newAdminUserTitle(), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newAdminUserTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("login", event.getRecord().getAttribute("login"));

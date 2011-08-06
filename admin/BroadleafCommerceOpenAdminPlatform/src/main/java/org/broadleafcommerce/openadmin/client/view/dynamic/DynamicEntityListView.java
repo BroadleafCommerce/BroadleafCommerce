@@ -15,12 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.ListGridEditEvent;
@@ -33,6 +27,11 @@ import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -40,7 +39,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
  *
  */
 public class DynamicEntityListView extends VLayout implements DynamicEntityListDisplay {
-	
+
 	protected ToolStripButton addButton;
 	protected ToolStripButton removeButton;
 	protected ComboBoxItem entityType = new ComboBoxItem();
@@ -90,6 +89,7 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
             toolBar.addFormItem(entityType);
         }
         addMember(toolBar);
+
         grid = new ListGrid();
         grid.setCanReorderRecords(canReorder);
         grid.setAlternateRecordStyles(true);
@@ -107,7 +107,7 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         grid.setShowFilterEditor(true);
         grid.setCanGroupBy(false);
         grid.setDataPageSize(10);
-        grid.setEmptyMessage(BLCMain.OPENADMINMESSAGES.emptyMessage());
+        grid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
         }

@@ -15,20 +15,20 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.google.gwt.i18n.client.NumberFormat;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.data.Hilite;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.google.gwt.i18n.client.NumberFormat;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.grid.CellFormatter;
-import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -152,6 +152,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         		pos++;
         	}
         }
+        getAssociatedGrid().setHilites(hilites);
 	}
 	
 }

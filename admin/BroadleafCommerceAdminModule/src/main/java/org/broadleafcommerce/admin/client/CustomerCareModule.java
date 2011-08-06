@@ -15,16 +15,15 @@
  */
 package org.broadleafcommerce.admin.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.broadleafcommerce.openadmin.client.AbstractModule;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import org.broadleafcommerce.openadmin.client.AbstractModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -33,19 +32,17 @@ import com.smartgwt.client.widgets.events.ClickEvent;
  */
 public class CustomerCareModule extends AbstractModule {
 	
-	public static final CustomerCareMessages ADMINMESSAGES = GWT.create(CustomerCareMessages.class);
-	
 	public void onModuleLoad() {
-		ValidationFactoryManager.getInstance().getConstants().add(CustomerCareModule.ADMINMESSAGES);
+        addConstants(GWT.<ConstantsWithLookup>create(CustomerCareMessages.class));
 		
-		setModuleTitle(CustomerCareModule.ADMINMESSAGES.adminModuleTitle());
+		setModuleTitle(BLCMain.getMessageManager().getString("adminModuleTitle"));
 		setModuleKey("BLCCustomerCare");
 		
 		List<String> orderRoles = new ArrayList<String>();
 		orderRoles.add("ROLE_ADMIN");
 		orderRoles.add("ROLE_CUSTOMER_SERVICE_REP");
 		setSection(
-			CustomerCareModule.ADMINMESSAGES.orderMainTitle(),
+            BLCMain.getMessageManager().getString("orderMainTitle"),
 			"order",
 			"org.broadleafcommerce.admin.client.view.order.OrderView",
 			"orderPresenter",
@@ -58,7 +55,7 @@ public class CustomerCareModule extends AbstractModule {
 		customerRoles.add("ROLE_ADMIN");
 		customerRoles.add("ROLE_CUSTOMER_SERVICE_REP");
 		setSection(
-			CustomerCareModule.ADMINMESSAGES.customerMainTitle(),
+            BLCMain.getMessageManager().getString("customerMainTitle"),
 			"customer",
 			"org.broadleafcommerce.admin.client.view.customer.CustomerView",
 			"customerPresenter",
@@ -76,7 +73,7 @@ public class CustomerCareModule extends AbstractModule {
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
         sgwtHomeButton.setWidth(98);
         sgwtHomeButton.setHeight(50);
-        sgwtHomeButton.setPrompt(ADMINMESSAGES.blcProjectPage());
+        sgwtHomeButton.setPrompt(BLCMain.getMessageManager().getString("blcProjectPage"));
         sgwtHomeButton.setHoverStyle("interactImageHover");
         sgwtHomeButton.setShowRollOver(false);
         sgwtHomeButton.setShowDownIcon(false);

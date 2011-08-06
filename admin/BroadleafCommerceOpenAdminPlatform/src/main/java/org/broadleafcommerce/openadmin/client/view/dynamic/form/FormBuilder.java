@@ -15,22 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
-
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
@@ -39,18 +23,15 @@ import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
-import com.smartgwt.client.widgets.form.fields.BooleanItem;
-import com.smartgwt.client.widgets.form.fields.DateTimeItem;
-import com.smartgwt.client.widgets.form.fields.FloatItem;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.HiddenItem;
-import com.smartgwt.client.widgets.form.fields.IntegerItem;
-import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.SectionItem;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.form.fields.TextAreaItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.validator.Validator;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+
+import java.util.*;
 
 /**
  * 
@@ -255,18 +236,15 @@ public class FormBuilder {
 						otherItem.setName(otherFieldName);
 						String title = field.getAttribute("friendlyName") +" Repeat";
 						//check to see if we have an i18N version of the new title
-						List<ConstantsWithLookup> constants = ValidationFactoryManager.getInstance().getConstants();
-						for (ConstantsWithLookup constant : constants) {
-							try {
-								String val = constant.getString(title);
-								if (val != null) {
-									title = val;
-									break;
-								}
-							} catch (MissingResourceException e) {
-								//do nothing
-							}
-						}
+                        try {
+                            String val = BLCMain.getMessageManager().getString(title);
+                            if (val != null) {
+                                title = val;
+                                break;
+                            }
+                        } catch (MissingResourceException e) {
+                            //do nothing
+                        }
 						otherItem.setTitle(title);
 						otherItem.setRequired(field.getRequired());
 						if (!sections.containsKey(group)) {

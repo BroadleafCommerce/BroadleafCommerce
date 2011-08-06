@@ -16,6 +16,7 @@
 package org.broadleafcommerce.admin.client.view.catalog.category;
 
 import org.broadleafcommerce.admin.client.MerchandisingModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -70,7 +71,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
 		
-		listDisplay = new DynamicEntityTreeView(MerchandisingModule.ADMINMESSAGES.categoryListTitle(), entityDataSource);
+		listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("categoryListTitle"), entityDataSource);
 		listDisplay.setShowResizeBar(true);
         leftVerticalLayout.addMember(listDisplay);
         
@@ -92,7 +93,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         abandonedCategoryTopBar.addButton(removeOrphanedButton);
         abandonedCategoryTopBar.addSpacer(6);
         Label abandonedLabel = new Label();
-        abandonedLabel.setContents(MerchandisingModule.ADMINMESSAGES.orphanCategoryListTitle());
+        abandonedLabel.setContents(BLCMain.getMessageManager().getString("orphanCategoryListTitle"));
         abandonedLabel.setWrap(false);
         abandonedCategoryTopBar.addMember(abandonedLabel);
         abandonedCategoryVerticalLayout.addMember(abandonedCategoryTopBar);
@@ -118,14 +119,14 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         Tab detailsTab = new Tab("Details");
         detailsTab.setID("categoryDetailsTab");
         
-        dynamicFormDisplay = new DynamicFormView(MerchandisingModule.ADMINMESSAGES.categoryDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("categoryDetailsTitle"), entityDataSource);
         
-        allCategoriesDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.allChildCategoriesListTitle(), true, false);
+        allCategoriesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("allChildCategoriesListTitle"), true, false);
         
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(allCategoriesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
-        Tab featuredTab = new Tab(MerchandisingModule.ADMINMESSAGES.productsTabTitle()); 
+        Tab featuredTab = new Tab(BLCMain.getMessageManager().getString("productsTabTitle"));
         featuredTab.setID("categoryFeaturedTab");
         
         VLayout featuredLayout = new VLayout();
@@ -135,15 +136,15 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         featuredLayout.setBackgroundColor("#eaeaea");
         featuredLayout.setOverflow(Overflow.AUTO);
         
-        featuredDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.featuredProductsListTitle(), true, true);
+        featuredDisplay = new GridStructureView(BLCMain.getMessageManager().getString("featuredProductsListTitle"), true, true);
         featuredLayout.addMember(featuredDisplay);
         
-        allProductsDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.allProductsListTitle(), true, false);
+        allProductsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("allProductsListTitle"), true, false);
         featuredLayout.addMember(allProductsDisplay);
         
         featuredTab.setPane(featuredLayout);
         
-        Tab mediaTab = new Tab(MerchandisingModule.ADMINMESSAGES.mediaTabTitle()); 
+        Tab mediaTab = new Tab(BLCMain.getMessageManager().getString("mediaTabTitle"));
         mediaTab.setID("categoryMediaTab");
         
         VLayout mediaLayout = new VLayout();
@@ -153,7 +154,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         mediaLayout.setBackgroundColor("#eaeaea");
         mediaLayout.setOverflow(Overflow.AUTO);
         
-        mediaDisplay = new GridStructureView(MerchandisingModule.ADMINMESSAGES.mediaListTitle(), false, true);
+        mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
         mediaLayout.addMember(mediaDisplay);
         
         mediaTab.setPane(mediaLayout);

@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
-import com.google.gwt.core.client.EntryPoint;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 
@@ -62,6 +62,10 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	public void setCurrentSandBox(String currentSandBox) {
 		this.currentSandBox = currentSandBox;
 	}
+
+    public void addConstants(ConstantsWithLookup constants) {
+        BLCMain.MESSAGE_MANAGER.addConstants(constants);
+    }
 
 	public void setSection(
 		String sectionTitle, 

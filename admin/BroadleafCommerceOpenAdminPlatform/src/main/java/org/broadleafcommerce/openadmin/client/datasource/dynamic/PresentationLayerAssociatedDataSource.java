@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
+import com.smartgwt.client.data.Hilite;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
@@ -30,6 +31,13 @@ import com.smartgwt.client.widgets.grid.ListGrid;
  */
 public class PresentationLayerAssociatedDataSource extends DynamicEntityDataSource {
 
+    public static Hilite[] hilites = new Hilite[] {
+        new Hilite() {{
+            setCssText("background-color: #fffedc;");
+            setId("listGridDirtyPropertyHilite");
+        }}
+    };
+    
 	protected ListGrid associatedGrid;
 	
 	/**

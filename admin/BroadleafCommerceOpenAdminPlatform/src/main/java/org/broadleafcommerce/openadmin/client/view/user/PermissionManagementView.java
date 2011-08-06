@@ -22,7 +22,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
-import org.broadleafcommerce.openadmin.client.UserManagementModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -52,7 +52,7 @@ public class PermissionManagementView extends HLayout implements Instantiable, P
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(UserManagementModule.OPENADMINMESSAGES.permissionListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("permissionListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -63,9 +63,9 @@ public class PermissionManagementView extends HLayout implements Instantiable, P
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab(UserManagementModule.OPENADMINMESSAGES.permissionDetailsTitle());
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("permissionDetailsTitle"));
         detailsTab.setID("permissionDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(UserManagementModule.OPENADMINMESSAGES.permissionDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("permissionDetailsTitle"), entityDataSource);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);

@@ -16,6 +16,7 @@
 package org.broadleafcommerce.admin.client.view.order;
 
 import org.broadleafcommerce.admin.client.CustomerCareModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -67,7 +68,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(CustomerCareModule.ADMINMESSAGES.ordersListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("ordersListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
@@ -78,43 +79,43 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab(CustomerCareModule.ADMINMESSAGES.orderDetailsTabTitle());
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("orderDetailsTabTitle"));
         detailsTab.setID("orderDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(CustomerCareModule.ADMINMESSAGES.orderDetailsTitle(), entityDataSource);
-        orderAdjustmentDisplay = new GridStructureView(CustomerCareModule.ADMINMESSAGES.orderAdjustmentsTitle(), false, false);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("orderDetailsTitle"), entityDataSource);
+        orderAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderAdjustmentsTitle"), false, false);
         ((FormOnlyView) ((DynamicFormView) dynamicFormDisplay).getFormOnlyDisplay()).addMember(orderAdjustmentDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
-        Tab orderItemsTab = new Tab(CustomerCareModule.ADMINMESSAGES.orderItemsTabTitle()); 
+        Tab orderItemsTab = new Tab(BLCMain.getMessageManager().getString("orderItemsTabTitle"));
         orderItemsTab.setID("orderOrderItemsTab");
-        orderItemsDisplay = new OrderItemView(CustomerCareModule.ADMINMESSAGES.orderItemsListTitle(), false, false);
+        orderItemsDisplay = new OrderItemView(BLCMain.getMessageManager().getString("orderItemsListTitle"), false, false);
         orderItemsTab.setPane(orderItemsDisplay);
-        orderItemFeeDisplay = new GridStructureView(CustomerCareModule.ADMINMESSAGES.orderItemFeeListTitle(), false, false);
+        orderItemFeeDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderItemFeeListTitle"), false, false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemFeeDisplay);
-        orderItemAdjustmentDisplay = new GridStructureView(CustomerCareModule.ADMINMESSAGES.orderItemAdjustmentsListTitle(), false, false);
+        orderItemAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderItemAdjustmentsListTitle"), false, false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemAdjustmentDisplay);
         topTabSet.addTab(orderItemsTab);
         
-        Tab fgTab = new Tab(CustomerCareModule.ADMINMESSAGES.fgTabTitle()); 
+        Tab fgTab = new Tab(BLCMain.getMessageManager().getString("fgTabTitle"));
         fgTab.setID("orderFgTab");
-        fulfillmentGroupDisplay = new SubItemView(CustomerCareModule.ADMINMESSAGES.fgListTitle(), false, false);
-        fulfillmentGroupAdjustmentDisplay = new GridStructureView(CustomerCareModule.ADMINMESSAGES.fgAdjustmentsListTitle(), false, false);
+        fulfillmentGroupDisplay = new SubItemView(BLCMain.getMessageManager().getString("fgListTitle"), false, false);
+        fulfillmentGroupAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("fgAdjustmentsListTitle"), false, false);
         ((FormOnlyView) ((SubItemView) fulfillmentGroupDisplay).getFormOnlyDisplay()).addMember(fulfillmentGroupAdjustmentDisplay);
         fgTab.setPane(fulfillmentGroupDisplay);
         topTabSet.addTab(fgTab);
         
-        Tab paymentInfoTab = new Tab(CustomerCareModule.ADMINMESSAGES.paymentInfoTabTitle()); 
+        Tab paymentInfoTab = new Tab(BLCMain.getMessageManager().getString("paymentInfoTabTitle"));
         paymentInfoTab.setID("orderPaymentInfoTab");
-        paymentInfoDisplay = new SubItemView(CustomerCareModule.ADMINMESSAGES.paymentInfoListTitle(), false, false);
-        additionalAttributesDisplay = new GridStructureView(CustomerCareModule.ADMINMESSAGES.additionalAttributesListTitle(), false, false);
+        paymentInfoDisplay = new SubItemView(BLCMain.getMessageManager().getString("paymentInfoListTitle"), false, false);
+        additionalAttributesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("additionalAttributesListTitle"), false, false);
         ((FormOnlyView) ((SubItemView) paymentInfoDisplay).getFormOnlyDisplay()).addMember(additionalAttributesDisplay);
         paymentInfoTab.setPane(paymentInfoDisplay);
         topTabSet.addTab(paymentInfoTab);
         
-        Tab offerCodesTab = new Tab(CustomerCareModule.ADMINMESSAGES.offerCodeTabTitle()); 
+        Tab offerCodesTab = new Tab(BLCMain.getMessageManager().getString("offerCodeTabTitle"));
         offerCodesTab.setID("orderOfferCodesTab");
-        offerCodeDisplay = new SubItemView(CustomerCareModule.ADMINMESSAGES.offerCodeListTitle(), false, false);
+        offerCodeDisplay = new SubItemView(BLCMain.getMessageManager().getString("offerCodeListTitle"), false, false);
         offerCodesTab.setPane(offerCodeDisplay);
         topTabSet.addTab(offerCodesTab);
         

@@ -39,7 +39,6 @@
 		<property name="sandBoxService" ref="blSandBoxService"/>
 		<property name="dynamicEntityDao">
             <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-                <property name="sessionFactory" ref="blSessionFactory"/>
                 <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
                 <property name="entityConfiguration" ref="blEntityConfiguration"/>
             </bean>

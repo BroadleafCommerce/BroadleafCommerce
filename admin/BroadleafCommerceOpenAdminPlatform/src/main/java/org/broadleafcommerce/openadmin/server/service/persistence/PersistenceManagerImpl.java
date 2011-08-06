@@ -254,30 +254,30 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         Entity mergedEntity = myModule.update(savedPackage);
-        try {
-            return updateDirtyState(mergedEntity);
-        } catch (ClassNotFoundException e) {
-            throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
-        }
+        return updateDirtyState(mergedEntity);
     }
 
     @Override
-    public Entity updateDirtyState(Entity mergedEntity) throws ClassNotFoundException {
-        Map idMetadata = dynamicEntityDao.getIdMetadata(Class.forName(mergedEntity.getType()[0]));
-        Type idType = (Type) idMetadata.get("type");
-        Object id = mergedEntity.findProperty((String) idMetadata.get("name")).getValue();
-        if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
-            id = Long.valueOf(id.toString());
-        }
-        SandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
-        if (item != null) {
-            mergedEntity.setDirty(true);
-            for (org.broadleafcommerce.openadmin.server.domain.Property persistentProperty : item.getEntity().getProperties()) {
-                if (persistentProperty.getIsDirty()) {
-                    Property dtoProperty = mergedEntity.findProperty(persistentProperty.getName());
-                    dtoProperty.setIsDirty(true);
+    public Entity updateDirtyState(Entity mergedEntity) throws ServiceException {
+        try {
+            Map idMetadata = dynamicEntityDao.getIdMetadata(Class.forName(mergedEntity.getType()[0]));
+            Type idType = (Type) idMetadata.get("type");
+            Object id = mergedEntity.findProperty((String) idMetadata.get("name")).getValue();
+            if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
+                id = Long.valueOf(id.toString());
+            }
+            SandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
+            if (item != null) {
+                mergedEntity.setDirty(true);
+                for (org.broadleafcommerce.openadmin.server.domain.Property persistentProperty : item.getEntity().getProperties()) {
+                    if (persistentProperty.getIsDirty()) {
+                        Property dtoProperty = mergedEntity.findProperty(persistentProperty.getName());
+                        dtoProperty.setIsDirty(true);
+                    }
                 }
             }
+        } catch (Exception e) {
+            throw new ServiceException("Unable to evaluate the dirty state for entity: " + mergedEntity.getType()[0], e);
         }
 
         return mergedEntity;

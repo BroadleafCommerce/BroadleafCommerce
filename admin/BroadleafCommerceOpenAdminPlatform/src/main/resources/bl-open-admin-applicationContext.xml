@@ -118,7 +118,6 @@
 		<property name="sandBoxService" ref="blSandBoxService"/>
 		<property name="dynamicEntityDao">
             <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-                <property name="sessionFactory" ref="blSessionFactory"/>
                 <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
                 <property name="entityConfiguration" ref="blEntityConfiguration"/>
             </bean>
@@ -151,16 +150,12 @@
                 </constructor-arg>
                 <property name="maxActive" value="1"/>
                 <property name="minIdle" value="0"/>
-                <property name="minEvictableIdleTimeMillis" value="600000"/>
+                <property name="minEvictableIdleTimeMillis" value="60000000"/>
                 <property name="timeBetweenEvictionRunsMillis" value="10000"/>
                 <property name="maxTotal" value="5"/>
             </bean>
         </property>
 	</bean>
-
-    <bean id="blHibernateCleaner" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.HibernateCleaner">
-        <constructor-arg ref="blSessionFactory"/>
-    </bean>
 	
 	<bean id="sandBoxEntityManager" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean" scope="prototype">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>

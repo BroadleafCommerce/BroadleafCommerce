@@ -15,11 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.client.view;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Window;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 
 /**
  * 
@@ -36,7 +34,7 @@ public class ProgressWindow extends Window implements Stoppable {
     	setShowMinimizeButton(false);  
     	setIsModal(true);   
     	centerInPage();
-    	setTitle(BLCMain.OPENADMINMESSAGES.contactingServerTitle());
+    	setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
     	setShowCloseButton(false);
     	simpleProgress = new SimpleProgress(24);    
     	addItem(simpleProgress);

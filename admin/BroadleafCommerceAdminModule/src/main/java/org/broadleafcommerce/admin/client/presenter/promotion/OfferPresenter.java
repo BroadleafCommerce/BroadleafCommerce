@@ -130,7 +130,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 	@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("name", MerchandisingModule.PROMOTION_MESSAGES.offerNameDefault());
+		initialValues.put("name", BLCMain.getMessageManager().getString("offerNameDefault"));
 		initialValues.put("type", "ORDER_ITEM");
 		initialValues.put("value", 0);
 		initialValues.put("stackable", true);
@@ -305,8 +305,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onMouseMove(MouseMoveEvent event) {
 				if (currentHelp == null) {
 					currentHelp = createHelpWin(
-							MerchandisingModule.PROMOTION_MESSAGES.offerObtainSettingsHelpTitle(),
-							MerchandisingModule.PROMOTION_MESSAGES.offerObtainSettingsHelpContent(),
+							BLCMain.getMessageManager().getString("offerObtainSettingsHelpTitle"),
+							BLCMain.getMessageManager().getString("offerObtainSettingsHelpContent"),
 							true, 300, 200, getDisplay().getHelpButtonType().getAbsoluteLeft() + 26, getDisplay().getHelpButtonType().getAbsoluteTop()
 					);
 					currentHelp.show();
@@ -355,8 +355,8 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onMouseMove(MouseMoveEvent event) {
 				if (currentHelp == null) {
 					currentHelp = createHelpWin(
-							MerchandisingModule.PROMOTION_MESSAGES.bogoHelpTitle(),
-							MerchandisingModule.PROMOTION_MESSAGES.bogoHelpContent(),
+							BLCMain.getMessageManager().getString("bogoHelpTitle"),
+							BLCMain.getMessageManager().getString("bogoHelpContent"),
 							true, 300, 200, getDisplay().getHelpButtonBogo().getAbsoluteLeft() + 26, getDisplay().getHelpButtonBogo().getAbsoluteTop()
 					);
 					currentHelp.show();

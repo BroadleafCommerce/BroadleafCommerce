@@ -1,9 +1,13 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
+import org.broadleafcommerce.openadmin.server.service.persistence.datasource.SandBoxDataSource;
 import org.hibernate.ejb.HibernateEntityManager;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -20,6 +24,8 @@ import java.lang.reflect.Method;
  * To change this template use File | Settings | File Templates.
  */
 public class BroadleafEntityManagerInvocationHandler implements InvocationHandler {
+
+    private static final Log LOG = LogFactory.getLog(BroadleafEntityManagerInvocationHandler.class);
 
     protected final HibernateEntityManager standardManager;
 	protected final HibernateEntityManager sandboxManager;
@@ -53,6 +59,17 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
         return response;
     }
 
+    protected void logInvocation(String prefix, HibernateEntityManager em, String methodName) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(prefix);
+        sb.append(" \"");
+        sb.append(methodName);
+        sb.append("\" on sandbox destination: ");
+        sb.append(((SandBoxDataSource) ((EntityManagerFactoryInfo) sandboxManager.getEntityManagerFactory()).getDataSource()).getJDBCUrl());
+
+        LOG.info(sb.toString());
+    }
+
     @Override
     public Object invoke(Object o, final Method method, final Object[] objects) throws Throwable {
         SandBoxContext context = SandBoxContext.getSandBoxContext();
@@ -62,8 +79,13 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             method.getName().equals("persist")
         ) {
             if (isSandBox) {
-                Object[] converted = new Object[]{cleaner.convertBean(objects[0], method, sandboxManager, sandboxTransactionManager)};
-                return converted[0];
+                logInvocation("Executing", sandboxManager, method.getName());
+                try {
+                    Object[] converted = new Object[]{cleaner.convertBean(objects[0], method, sandboxManager, sandboxTransactionManager)};
+                    return converted[0];
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
+                }
             } else {
                 return executeInTransaction(new Executable() {
                     @Override
@@ -82,7 +104,12 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
                 return executeInTransaction(new Executable() {
                     @Override
                     public Object execute() throws Throwable {
-                        return method.invoke(sandboxManager, objects);
+                        logInvocation("Executing", sandboxManager, method.getName());
+                        try {
+                            return method.invoke(sandboxManager, objects);
+                        } finally {
+                            logInvocation("Completed", sandboxManager, method.getName());
+                        }
                     }
                 }, sandboxTransactionManager);
             } else {
@@ -102,7 +129,12 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             method.getName().equals("getTransaction")
         ) {
             if (isSandBox) {
-                return method.invoke(sandboxManager, objects);
+                logInvocation("Executing", sandboxManager, method.getName());
+                try {
+                    return method.invoke(sandboxManager, objects);
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
+                }
             } else {
                 return method.invoke(standardManager, objects);
             }
@@ -113,24 +145,34 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             method.getName().equals("unwrap")
         ) {
             if (isSandBox) {
-                Object response = method.invoke(sandboxManager, objects);
-                if (response != null) {
-                    return response;
+                logInvocation("Executing", sandboxManager, method.getName());
+                try {
+                    Object response = method.invoke(sandboxManager, objects);
+                    if (response != null) {
+                        return response;
+                    }
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
                 }
             }
+            LOG.info(method.getName() + " not successful on sandbox, trying standard entity manager instead");
             return method.invoke(standardManager, objects);
         }
         if (
             method.getName().equals("refresh")
         ) {
             if (isSandBox) {
+                logInvocation("Executing", sandboxManager, method.getName());
                 try {
                     return method.invoke(sandboxManager, objects);
                 } catch (Exception e) {
                     //TODO remove this stack trace later
                     e.printStackTrace();
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
                 }
             }
+            LOG.info(method.getName() + " not successful on sandbox, trying standard entity manager instead");
             return method.invoke(standardManager, objects);
         }
         if (
@@ -139,14 +181,24 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             method.getName().equals("setProperty") ||
             method.getName().equals("close")
         ) {
-            method.invoke(sandboxManager, objects);
+            logInvocation("Executing", sandboxManager, method.getName());
+            try {
+                method.invoke(sandboxManager, objects);
+            } finally {
+                logInvocation("Completed", sandboxManager, method.getName());
+            }
             return method.invoke(standardManager, objects);
         }
         if (
             method.getName().equals("detach")
         ) {
             if (sandboxManager.contains(objects[0])) {
-                sandboxManager.detach(objects[0]);
+                logInvocation("Executing", sandboxManager, method.getName());
+                try {
+                    sandboxManager.detach(objects[0]);
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
+                }
             }
             if (standardManager.contains(objects[0])) {
                 standardManager.detach(objects[0]);
@@ -157,9 +209,14 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             method.getName().equals("contains")
         ) {
             if (isSandBox) {
-                boolean contains = sandboxManager.contains(objects[0]);
-                if (contains) {
-                    return true;
+                logInvocation("Executing", sandboxManager, method.getName());
+                try {
+                    boolean contains = sandboxManager.contains(objects[0]);
+                    if (contains) {
+                        return true;
+                    }
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
                 }
             }
             return standardManager.contains(objects[0]);
@@ -168,9 +225,14 @@ public class BroadleafEntityManagerInvocationHandler implements InvocationHandle
             method.getName().equals("isOpen")
         ) {
             if (isSandBox) {
-                boolean isOpen = sandboxManager.isOpen();
-                if (!isOpen) {
-                    return false;
+                logInvocation("Executing", sandboxManager, method.getName());
+                try {
+                    boolean isOpen = sandboxManager.isOpen();
+                    if (!isOpen) {
+                        return false;
+                    }
+                } finally {
+                    logInvocation("Completed", sandboxManager, method.getName());
                 }
             }
             return standardManager.isOpen();

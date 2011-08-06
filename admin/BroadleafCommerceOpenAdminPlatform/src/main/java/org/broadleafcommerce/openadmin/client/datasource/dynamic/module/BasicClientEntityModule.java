@@ -19,7 +19,6 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -293,6 +292,11 @@ public class BasicClientEntityModule implements DataSourceModule {
         service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
+
+                TreeNode record = (TreeNode) buildRecord(result, false);
+				TreeNode[] recordList = new TreeNode[]{record};
+				response.setData(recordList);
+
 				if (cb != null) {
 					cb.onSuccess(dataSource);
 				}
@@ -435,6 +439,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
 				//dataSource.getFormItemCallbackHandlerManager().setDisplayValue(attributeName, id, property.getDisplayValue());
 			}
+            if (property.getIsDirty()) {
+                record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
+            }
 		}
 		String[] entityType = entity.getType();
 		record.setAttribute("_type", entityType);
@@ -608,6 +615,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		for (Property property : metadata.getProperties()) {
 			String mergedPropertyType = property.getMetadata().getMergedPropertyType().toString();
 			if (Arrays.binarySearch(includeTypes, MergedPropertyType.valueOf(mergedPropertyType)) >= 0) {
+                Boolean isDirty = property.getIsDirty();
 				String rawName = property.getName();
 				String propertyName = rawName;
 				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
@@ -627,18 +635,15 @@ public class BasicClientEntityModule implements DataSourceModule {
 					friendlyName = property.getName();
 				} else {
 					//check if the friendly name is an i18N key
-					List<ConstantsWithLookup> constants = ValidationFactoryManager.getInstance().getConstants();
-					for (ConstantsWithLookup constant : constants) {
-						try {
-							String val = constant.getString(friendlyName);
-							if (val != null) {
-								friendlyName = val;
-								break;
-							}
-						} catch (MissingResourceException e) {
-							//do nothing
-						}
-					}
+                    try {
+                        String val = BLCMain.getMessageManager().getString(friendlyName);
+                        if (val != null) {
+                            friendlyName = val;
+                            break;
+                        }
+                    } catch (MissingResourceException e) {
+                        //do nothing
+                    }
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
@@ -803,6 +808,11 @@ public class BasicClientEntityModule implements DataSourceModule {
 				if (enumerationClass != null) {
 					field.setAttribute("enumerationClass", enumerationClass);
 				}
+                if (isDirty != null) {
+                    field.setAttribute("isEdited", isDirty);
+                } else {
+                    field.setAttribute("isEdited", false);
+                }
 				field.setAttribute("inheritedFromType", inheritedFromType);
 				field.setAttribute("availableToTypes", availableToTypes);
 				field.setAttribute("fieldType", fieldType);

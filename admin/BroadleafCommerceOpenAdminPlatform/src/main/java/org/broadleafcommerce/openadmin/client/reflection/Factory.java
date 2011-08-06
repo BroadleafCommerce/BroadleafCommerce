@@ -15,12 +15,14 @@
  */
 package org.broadleafcommerce.openadmin.client.reflection;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public interface Factory {
+public interface Factory extends Serializable {
 
 	Object newInstance(String className);
 

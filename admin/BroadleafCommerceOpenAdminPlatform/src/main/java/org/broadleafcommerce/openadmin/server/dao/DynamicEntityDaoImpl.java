@@ -29,6 +29,7 @@ import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Component;
 import org.hibernate.mapping.PersistentClass;
@@ -57,7 +58,6 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
 	
     protected EntityManager standardEntityManager;
-	protected SessionFactory sessionFactory;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
     protected EntityConfiguration entityConfiguration;
 
@@ -108,7 +108,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	 */
 	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
 		List<Class<?>> entities = new ArrayList<Class<?>>();
-		for (Object item : sessionFactory.getAllClassMetadata().values()) {
+		for (Object item : getSessionFactory().getAllClassMetadata().values()) {
 			ClassMetadata metadata = (ClassMetadata) item;
 			Class<?> mappedClass = metadata.getMappedClass(EntityMode.POJO);
 			if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
@@ -528,8 +528,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return fields;
 	}
 
+    protected SessionFactory getSessionFactory() {
+        return ((HibernateEntityManager) standardEntityManager).getSession().getSessionFactory();
+    }
+
     public Map<String, Class<?>> getIdMetadata(Class<?> entityClass) {
         Map response = new HashMap();
+        SessionFactory sessionFactory = getSessionFactory();
         ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
         String idProperty = metadata.getIdentifierPropertyName();
         response.put("name", idProperty);
@@ -554,7 +559,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldPresentationAttributes> presentationAttributes = getFieldPresentationAttributes(targetClass);
         Map idMetadata = getIdMetadata(targetClass);
-		ClassMetadata metadata = sessionFactory.getClassMetadata(targetClass);
+		ClassMetadata metadata = getSessionFactory().getClassMetadata(targetClass);
 		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
 		List<String> propertyNames = new ArrayList<String>();
 		String idProperty = (String) idMetadata.get("name");
@@ -735,7 +740,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, propertyIterator, SupportedFieldType.DECIMAL, type, targetClass, presentationAttribute, mergedPropertyType, metadataOverrides));
 		} else if ((explicitType != null && explicitType.equals(SupportedFieldType.FOREIGN_KEY)) || foreignField != null && isPropertyForeignKey) {
 			ClassMetadata foreignMetadata;
-			foreignMetadata = sessionFactory.getClassMetadata(Class.forName(foreignField.getForeignKeyClass()));
+			foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(foreignField.getForeignKeyClass()));
 			Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
 			if (foreignResponseType.equals(String.class)) {
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, propertyIterator, SupportedFieldType.FOREIGN_KEY, SupportedFieldType.STRING, type, targetClass, presentationAttribute, mergedPropertyType, metadataOverrides));
@@ -748,7 +753,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fields.get(propertyName).setForeignKeyDisplayValueProperty(foreignField.getDisplayValueProperty());
 		} else if ((explicitType != null && explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) || additionalForeignFields != null && additionalForeignKeyIndexPosition >= 0) {
 			ClassMetadata foreignMetadata;
-			foreignMetadata = sessionFactory.getClassMetadata(Class.forName(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass()));
+			foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass()));
 			Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
 			if (foreignResponseType.equals(String.class)) {
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, propertyIterator, SupportedFieldType.ADDITIONAL_FOREIGN_KEY, SupportedFieldType.STRING, type, targetClass, presentationAttribute, mergedPropertyType, metadataOverrides));
@@ -933,14 +938,6 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
 	public void setStandardEntityManager(EntityManager entityManager) {
 		this.standardEntityManager = entityManager;
-	}
-
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 	public EJB3ConfigurationDao getEjb3ConfigurationDao() {

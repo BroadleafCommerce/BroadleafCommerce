@@ -10,6 +10,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.tuple.IdentifierProperty;
 import org.hibernate.type.Type;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -27,14 +28,10 @@ import java.util.*;
  * Time: 1:41 PM
  * To change this template use File | Settings | File Templates.
  */
+@Service("blHibernateCleaner")
 public class HibernateCleaner {
 
-    protected final SessionFactory sessionFactory;
     protected Map typePool = Collections.synchronizedMap(new LRUMap(1000));
-
-    public HibernateCleaner(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public Object convertBean(Object originalBean, Method method, HibernateEntityManager em, PlatformTransactionManager txManager) throws Throwable {
         Class<?> starterClass = originalBean.getClass();
@@ -46,6 +43,7 @@ public class HibernateCleaner {
     }
 
     protected void performConvert(Object originalBean, Object targetBean, Field[] fields, Method method, HibernateEntityManager em, PlatformTransactionManager txManager) throws Throwable {
+        SessionFactory sessionFactory = em.getSession().getSessionFactory();
         ClassMetadata metadata = sessionFactory.getClassMetadata(originalBean.getClass());
         String idProperty = metadata.getIdentifierPropertyName();
         if (!typePool.containsKey(originalBean.getClass().getName())) {

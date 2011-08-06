@@ -22,7 +22,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
-import org.broadleafcommerce.openadmin.client.UserManagementModule;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -52,7 +52,7 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView(UserManagementModule.OPENADMINMESSAGES.roleListTitle(), entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("roleListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
         TabSet topTabSet = new TabSet();  
@@ -63,9 +63,9 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab(UserManagementModule.OPENADMINMESSAGES.roleDetailsTitle());
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("roleDetailsTitle"));
         detailsTab.setID("roleDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(UserManagementModule.OPENADMINMESSAGES.roleDetailsTitle(), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("roleDetailsTitle"), entityDataSource);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);

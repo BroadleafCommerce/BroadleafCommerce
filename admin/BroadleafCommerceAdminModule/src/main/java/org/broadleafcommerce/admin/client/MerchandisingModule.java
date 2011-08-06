@@ -16,11 +16,11 @@
 package org.broadleafcommerce.admin.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +32,18 @@ import java.util.List;
  */
 public class MerchandisingModule extends AbstractModule {
 	
-	public static final MerchandisingMessages ADMINMESSAGES = GWT.create(MerchandisingMessages.class);
-	public static final PromotionMessages PROMOTION_MESSAGES = GWT.create(PromotionMessages.class);
-	
 	public void onModuleLoad() {
-		ValidationFactoryManager.getInstance().getConstants().add(MerchandisingModule.ADMINMESSAGES);
+        addConstants(GWT.<ConstantsWithLookup>create(MerchandisingMessages.class));
+        addConstants(GWT.<ConstantsWithLookup>create(PromotionMessages.class));
 		
-		setModuleTitle(MerchandisingModule.ADMINMESSAGES.adminModuleTitle());
+		setModuleTitle(BLCMain.getMessageManager().getString("adminModuleTitle"));
 		setModuleKey("BLCMerchandising");
 		
 		List<String> categoryRoles = new ArrayList<String>();
 		categoryRoles.add("ROLE_ADMIN");
 		categoryRoles.add("ROLE_MERCHANDISE_MANAGER");
 		setSection(
-			MerchandisingModule.ADMINMESSAGES.categoryMainTitle(),
+            BLCMain.getMessageManager().getString("categoryMainTitle"),
 			"category",
 			"org.broadleafcommerce.admin.client.view.catalog.category.CategoryView",
 			"categoryPresenter",
@@ -56,8 +54,8 @@ public class MerchandisingModule extends AbstractModule {
 		List<String> productRoles = new ArrayList<String>();
 		productRoles.add("ROLE_ADMIN");
 		productRoles.add("ROLE_MERCHANDISE_MANAGER");
-		setSection( 
-			MerchandisingModule.ADMINMESSAGES.productMainTitle(),
+		setSection(
+            BLCMain.getMessageManager().getString("productMainTitle"),
 			"product",
 			"org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuView",
 			"productPresenter",
@@ -66,14 +64,11 @@ public class MerchandisingModule extends AbstractModule {
 			null
 		);
 
-
-        ValidationFactoryManager.getInstance().getConstants().add(MerchandisingModule.PROMOTION_MESSAGES);
-
 		List<String> offerRoles = new ArrayList<String>();
 		offerRoles.add("ROLE_ADMIN");
 		offerRoles.add("ROLE_PROMOTION_MANAGER");
 		setSection(
-			MerchandisingModule.PROMOTION_MESSAGES.promotionMainTitle(),
+            BLCMain.getMessageManager().getString("promotionMainTitle"),
 			"offer",
 			"org.broadleafcommerce.admin.client.view.promotion.OfferView",
 			"offerPresenter",
@@ -82,7 +77,6 @@ public class MerchandisingModule extends AbstractModule {
 			null
 		);
 
-		
 		registerModule();
 	}
 
@@ -92,7 +86,7 @@ public class MerchandisingModule extends AbstractModule {
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
         sgwtHomeButton.setWidth(98);
         sgwtHomeButton.setHeight(50);
-        sgwtHomeButton.setPrompt(ADMINMESSAGES.blcProjectPage());
+        sgwtHomeButton.setPrompt(BLCMain.getMessageManager().getString("blcProjectPage"));
         sgwtHomeButton.setHoverStyle("interactImageHover");
         sgwtHomeButton.setShowRollOver(false);
         sgwtHomeButton.setShowDownIcon(false);

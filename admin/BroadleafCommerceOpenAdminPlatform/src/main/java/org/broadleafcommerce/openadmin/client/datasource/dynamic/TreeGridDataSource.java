@@ -141,6 +141,7 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         		pos++;
         	}
         }
+        getAssociatedGrid().setHilites(hilites);
 	}
 	
 	@Override

@@ -15,17 +15,15 @@
  */
 package org.broadleafcommerce.openadmin.client.validation;
 
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-
+import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.widgets.form.validator.RegExpValidator;
+import com.smartgwt.client.widgets.form.validator.Validator;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Factory;
 import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
-import com.smartgwt.client.widgets.form.validator.RegExpValidator;
-import com.smartgwt.client.widgets.form.validator.Validator;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -40,7 +38,7 @@ public class BroadleafDefaultValidationFactory implements ValidationFactory {
 		return true;
 	}
 
-	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, List<ConstantsWithLookup> constants, String fieldName) {
+	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
 		Object response = factory.newInstance(validatorClassname);
 		if (response == null) {
 			throw new RuntimeException("Unable to instantiate the item from the Factory using classname: (" + validatorClassname + "). Are you sure this classname is correct?");
@@ -51,16 +49,11 @@ public class BroadleafDefaultValidationFactory implements ValidationFactory {
 		}
 		if (configurationItems.containsKey("errorMessageKey")) {
 			String message = null;
-			for (ConstantsWithLookup constant : constants) {
-				try {
-					message = constant.getString(configurationItems.get("errorMessageKey"));
-					if (message != null) {
-						break;
-					}
-				} catch (MissingResourceException e) {
-					//do nothing
-				}
-			}
+            try {
+                message = BLCMain.getMessageManager().getString(configurationItems.get("errorMessageKey"));
+            } catch (MissingResourceException e) {
+                //do nothing
+            }
 			if (message != null) {
 				((RegExpValidator) valid).setErrorMessage(message);
 			}

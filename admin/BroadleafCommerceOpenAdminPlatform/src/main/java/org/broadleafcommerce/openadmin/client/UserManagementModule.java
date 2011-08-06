@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.client;
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,18 +29,14 @@ import java.util.List;
  */
 public class UserManagementModule extends AbstractModule {
 	
-	public static final OpenAdminMessages OPENADMINMESSAGES = GWT.create(OpenAdminMessages.class);
-	
 	public void onModuleLoad() {
-		ValidationFactoryManager.getInstance().getConstants().add(UserManagementModule.OPENADMINMESSAGES);
-		
-		setModuleTitle(UserManagementModule.OPENADMINMESSAGES.adminModuleTitle());
+		setModuleTitle(BLCMain.getMessageManager().getString("adminModuleTitle"));
 		setModuleKey("BLCOpenAdmin");
 		
 		List<String> userManagementRoles = new ArrayList<String>();
 		userManagementRoles.add("ROLE_ADMIN");
 		setSection(
-			UserManagementModule.OPENADMINMESSAGES.userManagementMainTitle(),
+            BLCMain.getMessageManager().getString("userManagementMainTitle"),
 			"user",
 			"org.broadleafcommerce.openadmin.client.view.user.UserManagementView",
 			"userPresenter",
@@ -51,7 +46,7 @@ public class UserManagementModule extends AbstractModule {
 		);
 
         setSection(
-			UserManagementModule.OPENADMINMESSAGES.roleManagementMainTitle(),
+            BLCMain.getMessageManager().getString("roleManagementMainTitle"),
 			"role",
 			"org.broadleafcommerce.openadmin.client.view.user.RoleManagementView",
 			"rolePresenter",
@@ -61,7 +56,7 @@ public class UserManagementModule extends AbstractModule {
 		);
 		
         setSection(
-			UserManagementModule.OPENADMINMESSAGES.permissionManagementMainTitle(),
+            BLCMain.getMessageManager().getString("permissionManagementMainTitle"),
 			"permission",
 			"org.broadleafcommerce.openadmin.client.view.user.PermissionManagementView",
 			"permissionPresenter",
@@ -80,7 +75,7 @@ public class UserManagementModule extends AbstractModule {
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
         sgwtHomeButton.setWidth(98);
         sgwtHomeButton.setHeight(50);
-        sgwtHomeButton.setPrompt(OPENADMINMESSAGES.blcProjectPage());
+        sgwtHomeButton.setPrompt(BLCMain.getMessageManager().getString("blcProjectPage"));
         sgwtHomeButton.setHoverStyle("interactImageHover");
         sgwtHomeButton.setShowRollOver(false);
         sgwtHomeButton.setShowDownIcon(false);

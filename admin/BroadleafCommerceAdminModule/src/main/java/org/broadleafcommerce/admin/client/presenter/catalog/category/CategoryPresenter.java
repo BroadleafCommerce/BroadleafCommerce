@@ -87,9 +87,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("defaultParentCategory", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
-		initialValues.put("name", MerchandisingModule.ADMINMESSAGES.defaultCategoryName());
+		initialValues.put("name", BLCMain.getMessageManager().getString("defaultCategoryName"));
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(MerchandisingModule.ADMINMESSAGES.newCategoryTitle(), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
@@ -166,7 +166,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		getDisplay().getRemoveOrphanedButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					SC.confirm(MerchandisingModule.ADMINMESSAGES.confirmDelete(), new BooleanCallback() {
+					SC.confirm(BLCMain.getMessageManager().getString("confirmDelete"), new BooleanCallback() {
 						public void execute(Boolean value) {
 							if (value) {
 								getDisplay().getOrphanedCategoryGrid().removeSelectedData();
@@ -236,7 +236,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildCategoriesDS", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, ((CategoryDisplay) getDisplay()).getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), MerchandisingModule.ADMINMESSAGES.categorySearchTitle());
+				allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, ((CategoryDisplay) getDisplay()).getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchTitle"));
 				allChildCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
@@ -269,22 +269,22 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("featuredProductsDS", new FeaturedProductListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				featuredPresenter = new EditableJoinStructurePresenter(((CategoryDisplay) getDisplay()).getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), MerchandisingModule.ADMINMESSAGES.productSearchTitle(), MerchandisingModule.ADMINMESSAGES.setPromotionMessageTitle(), "promotionMessage");
+				featuredPresenter = new EditableJoinStructurePresenter(((CategoryDisplay) getDisplay()).getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				childProductsPresenter = new SimpleSearchJoinStructurePresenter(((CategoryDisplay) getDisplay()).getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), MerchandisingModule.ADMINMESSAGES.productSearchPrompt());
+				childProductsPresenter = new SimpleSearchJoinStructurePresenter(((CategoryDisplay) getDisplay()).getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
 				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("mediaMapDS", new MediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				Map<String, Object> initialValues = new HashMap<String, Object>();
-				initialValues.put("name", MerchandisingModule.ADMINMESSAGES.mediaNameDefault());
-				initialValues.put("label", MerchandisingModule.ADMINMESSAGES.mediaLabelDefault());
-				mediaPresenter = new MapStructurePresenter(((CategoryDisplay) getDisplay()).getMediaDisplay(), getMediaEntityView(), MerchandisingModule.ADMINMESSAGES.newMediaTitle(), initialValues);
+				initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
+				initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
+				mediaPresenter = new MapStructurePresenter(((CategoryDisplay) getDisplay()).getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
 				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "name", "url", "label"}, new Boolean[]{true, true, true, true});
 			}
 		}));
@@ -314,9 +314,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	
 	protected LinkedHashMap<String, String> getMediaMapKeys() {
 		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
-		keys.put("small", MerchandisingModule.ADMINMESSAGES.mediaSizeSmall());
-		keys.put("medium", MerchandisingModule.ADMINMESSAGES.mediaSizeMedium());
-		keys.put("large", MerchandisingModule.ADMINMESSAGES.mediaSizeLarge());
+		keys.put("small", BLCMain.getMessageManager().getString("mediaSizeSmall"));
+		keys.put("medium", BLCMain.getMessageManager().getString("mediaSizeMedium"));
+		keys.put("large", BLCMain.getMessageManager().getString("mediaSizeLarge"));
 		
 		return keys;
 	}
