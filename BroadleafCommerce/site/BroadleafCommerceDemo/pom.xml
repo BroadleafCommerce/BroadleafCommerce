@@ -95,6 +95,48 @@
 			</plugin>
 		</plugins>
 	</build>
+    <profiles>
+        <profile>
+            <id>gwt</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-resource</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                                <configuration>
+                                    <resources>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/java</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
