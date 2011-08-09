@@ -45,5 +45,6 @@ public class EntityImplementations {
 	public static final String ADMIN_USER = "org.broadleafcommerce.gwt.server.security.domain.AdminUserImpl";
 	public static final String ADMIN_ROLE = "org.broadleafcommerce.gwt.server.security.domain.AdminRoleImpl";
 	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.gwt.server.security.domain.AdminPermissionImpl";
+    public static final String DISCRETEORDERITEMFEEPRICE = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl";
 	
 }

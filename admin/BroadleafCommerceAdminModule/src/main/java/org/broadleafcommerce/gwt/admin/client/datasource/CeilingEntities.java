@@ -44,5 +44,6 @@ public class CeilingEntities {
 	public static final String ADMIN_USER = "org.broadleafcommerce.gwt.server.security.domain.AdminUser";
 	public static final String ADMIN_ROLE = "org.broadleafcommerce.gwt.server.security.domain.AdminRole";
 	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.gwt.server.security.domain.AdminPermission";
+    public static final String DISCRETE_ORDER_ITEM_FEE_PRICE = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice";
 	
 }

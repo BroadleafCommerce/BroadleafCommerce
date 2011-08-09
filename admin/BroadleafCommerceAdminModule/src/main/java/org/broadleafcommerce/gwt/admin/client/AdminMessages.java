@@ -57,6 +57,7 @@ public interface AdminMessages extends ConstantsWithLookup {
 	public String newOrderAdjustmentTitle();
 	public String newOrderItemAdjustmentTitle();
 	public String newFGAdjustmentTitle();
+    public String newOrderItemFeeTitle();
 	public String offerNameDefault();
 	public String newOfferTitle();
 	public String offerObtainSettingsHelpTitle();
