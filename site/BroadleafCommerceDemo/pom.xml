@@ -40,7 +40,7 @@
                     <hostedWebapp>${webappDirectory}</hostedWebapp>
                     <bindAddress>0.0.0.0</bindAddress>
                     <debugPort>8001</debugPort>
-                    <runTarget>admin.html</runTarget>
+                    <runTarget>broadleafdemo/admin.html</runTarget>
                 </configuration>
             </plugin>
             <plugin>
@@ -129,6 +129,22 @@
                                             <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources</directory>
                                             <targetPath>./</targetPath>
                                         </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceContentManagementModule/src/main/java</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceContentManagementModule/src/main/resources</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/TechFestSampleModule/src/main/java</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/TechFestSampleModule/src/main/resources</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
                                     </resources>
                                 </configuration>
                             </execution>
@@ -190,6 +206,42 @@
                     <artifactId>cobertura</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>cobertura</groupId>
+                    <artifactId>cobertura</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
+            <classifier>sources</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>cobertura</groupId>
+                    <artifactId>cobertura</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>techfest-sample-module</artifactId>
+            <version>1.5.0-M3-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>techfest-sample-module</artifactId>
+            <version>1.5.0-M3-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
