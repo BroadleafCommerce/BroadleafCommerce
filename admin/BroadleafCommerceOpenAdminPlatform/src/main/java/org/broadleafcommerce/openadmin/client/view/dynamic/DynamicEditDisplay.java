@@ -18,8 +18,6 @@ package org.broadleafcommerce.openadmin.client.view.dynamic;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
-import com.smartgwt.client.data.DataSource;
-
 /**
  * 
  * @author jfischer
@@ -27,8 +25,6 @@ import com.smartgwt.client.data.DataSource;
  */
 public interface DynamicEditDisplay extends Display {
 
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources);
-	
 	public DynamicFormDisplay getDynamicFormDisplay();
 	
 	public DynamicEntityListDisplay getListDisplay();

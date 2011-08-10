@@ -15,11 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.SelectionStyle;
@@ -32,6 +27,10 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * 

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.view;
 
+import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
 
 /**
@@ -23,6 +24,8 @@ import com.smartgwt.client.widgets.Canvas;
  *
  */
 public interface Display {
+
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources);
 
 	public abstract Canvas asCanvas();
 

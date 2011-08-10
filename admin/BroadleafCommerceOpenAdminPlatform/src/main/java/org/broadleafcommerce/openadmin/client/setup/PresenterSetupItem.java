@@ -80,7 +80,11 @@ public class PresenterSetupItem {
 	}
 
 	protected void invoke() {
-		factory.createDataSource(name, operationTypes, additionalItems, adapter);
+        if (factory != null) {
+		    factory.createDataSource(name, operationTypes, additionalItems, adapter);
+        } else {
+            adapter.onSuccess(null);
+        }
 	}
 
 	@Override

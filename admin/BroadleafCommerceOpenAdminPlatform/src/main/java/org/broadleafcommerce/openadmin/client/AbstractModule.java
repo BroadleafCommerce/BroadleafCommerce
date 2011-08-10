@@ -17,6 +17,7 @@ package org.broadleafcommerce.openadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
+import org.broadleafcommerce.openadmin.client.presenter.entity.PassthroughEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
@@ -45,6 +46,9 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	
 	public void setModuleTitle(String moduleTitle) {
 		this.moduleTitle = moduleTitle;
+        if (moduleKey == null) {
+            moduleKey = moduleTitle;
+        }
 	}
 	
 	public String getModuleKey() {
@@ -65,6 +69,22 @@ public abstract class AbstractModule implements EntryPoint, Module {
 
     public void addConstants(ConstantsWithLookup constants) {
         BLCMain.MESSAGE_MANAGER.addConstants(constants);
+    }
+
+
+    public void setSection(
+            String sectionTitle,
+            String sectionViewKey,
+            String sectionViewClass,
+            List<String> sectionRoles
+    ) {
+        setSection(sectionTitle,
+                sectionViewKey,
+                sectionViewClass,
+                sectionViewKey + "-presenter",
+                PassthroughEntityPresenter.class.getName(),
+                sectionRoles,
+                null);
     }
 
 	public void setSection(
