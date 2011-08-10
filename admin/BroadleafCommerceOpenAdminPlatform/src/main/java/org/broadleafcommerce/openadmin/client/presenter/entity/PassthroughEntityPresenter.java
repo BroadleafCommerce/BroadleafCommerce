@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.presenter.entity;
 import com.google.gwt.event.shared.HandlerManager;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
@@ -48,8 +49,24 @@ public class PassthroughEntityPresenter implements EntityPresenter, Instantiable
 
     @Override
     public void postSetup(Canvas container) {
-        loaded=true;
+        BLCMain.ISNEW = false;
+		if (containsDisplay(container)) {
+			display.show();
+		} else {
+			container.addChild(display.asCanvas());
+			loaded = true;
+		}
+		if (BLCMain.MODAL_PROGRESS.isActive()) {
+			BLCMain.MODAL_PROGRESS.stopProgress();
+		}
+		if (BLCMain.SPLASH_PROGRESS.isActive()) {
+			BLCMain.SPLASH_PROGRESS.stopProgress();
+		}
     }
+
+    protected Boolean containsDisplay(Canvas container) {
+		return container.contains(display.asCanvas());
+	}
 
     @Override
     public HandlerManager getEventBus() {
