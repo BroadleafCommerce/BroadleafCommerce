@@ -58,6 +58,7 @@ public interface CustomerCareMessages extends ConstantsWithLookup {
 	public String newOrderAdjustmentTitle();
 	public String newOrderItemAdjustmentTitle();
 	public String newFGAdjustmentTitle();
+    public String newOrderItemFeeTitle();
 	public String usernameDefault();
 	public String newCustomerTitle();
 	public String confirmResetPassword();

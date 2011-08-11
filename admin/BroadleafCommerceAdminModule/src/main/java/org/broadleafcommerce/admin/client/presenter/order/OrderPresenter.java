@@ -15,23 +15,12 @@
  */
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.admin.client.CustomerCareModule;
-import org.broadleafcommerce.admin.client.datasource.order.BundledOrderItemListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.FulfillmentGroupAdjustmentListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.FulfillmentGroupListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.OfferCodeListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.OrderAdjustmentListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.OrderItemAdjustmentListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.OrderItemFeesDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.OrderItemListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.OrderListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.PaymentAdditionalAttributesDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.PaymentInfoListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.order.StateListDataSourceFactory;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.admin.client.datasource.order.*;
 import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
@@ -48,11 +37,8 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -275,10 +261,10 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdditionalFeesDS", new OrderItemFeesDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("discreteOrderItemFeePriceDS", new DiscreteOrderItemFeePriceDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				feesPresenter = new SimpleMapStructurePresenter(getDisplay().getOrderItemFeeDisplay(), null);
-				feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{false, false});
+				feesPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderItemFeeDisplay(), BLCMain.getMessageManager().getString("newOrderItemFeeTitle"));
+				feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "amount", "reportingCode"}, new Boolean[]{false, false, false});
 				feesPresenter.setReadOnly(true);
 			}
 		}));
