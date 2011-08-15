@@ -15,12 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view;
 
-import java.util.LinkedHashMap;
-
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.Module;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -51,6 +45,12 @@ import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
 import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.Module;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -87,10 +87,28 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         temp.addMember(moduleStack);
         if (modules.size() > 1) {
 	        Menu modulesMenu = new Menu();  
-	        modulesMenu.setCanSelectParentItems(true); 
-	        MenuItem[] menuItems = new MenuItem[modules.size()];
+	        modulesMenu.setCanSelectParentItems(true);
+
+            // Only show menu items for modules the user has access to
+            Collection<Module> allowedModules = modules.values();
+
+          //  for (Iterator<Module> iterator = allowedModules.iterator(); iterator.hasNext(); ) {
+          //      Module testModule =  iterator.next();
+          //      if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(testModule.getModuleKey())) {
+          //          iterator.remove();
+          //          if (moduleKey != null && moduleKey.equals(testModule.getModuleKey())) {
+          //              moduleKey = null;
+          //          }
+          //      }
+          //  }
+
+            if (moduleKey == null && allowedModules.size() > 0) {
+                moduleKey = allowedModules.iterator().next().getModuleKey();
+            }
+
+	        MenuItem[] menuItems = new MenuItem[allowedModules.size()];
 	        int j = 0;
-	        for (Module module : modules.values()) {
+	        for (Module module : allowedModules) {
 	        	MenuItem tempMenuItem = new MenuItem(module.getModuleTitle());
 	        	tempMenuItem.setAttribute("key", module.getModuleKey());
 	        	menuItems[j] = tempMenuItem;

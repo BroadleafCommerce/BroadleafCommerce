@@ -15,9 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.security;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 
@@ -32,6 +30,7 @@ public class SecurityManager {
 	
 	private Map<String, List<String>> roleSecuredSections = new HashMap<String, List<String>>();
 	private Map<String, List<String>> permissionSecuredSections = new HashMap<String, List<String>>();
+    private Map<String, HashSet<String>> moduleSectionList = new HashMap<String, HashSet<String>>();
 	private Map<String, String> securedFields = new HashMap<String, String>();
 
 	public static SecurityManager getInstance() {
@@ -41,9 +40,15 @@ public class SecurityManager {
 		return SecurityManager.manager;
 	}
 	
-	public void registerSection(String sectionViewKey, List<String> roles, List<String> permissions){
+	public void registerSection(String moduleKey, String sectionViewKey, List<String> roles, List<String> permissions){
 		roleSecuredSections.put(sectionViewKey, roles);
 		permissionSecuredSections.put(sectionViewKey, permissions);
+        HashSet<String> currentSections = moduleSectionList.get(sectionViewKey);
+        if (currentSections == null) {
+            currentSections = new HashSet<String>();
+            moduleSectionList.put(moduleKey, currentSections);
+        }
+        currentSections.add(sectionViewKey);
 	}
 	
 	public void registerField(String fieldName, String securityLevel){
@@ -65,6 +70,20 @@ public class SecurityManager {
 			}
 		}
 		
+		return false;
+	}
+
+    public boolean isUserAuthorizedToViewModule(String moduleKey) {
+        Set moduleSections = moduleSectionList.get(moduleKey);
+        if (moduleSections != null) {
+            for (Iterator<String> iterator = moduleSections.iterator(); iterator.hasNext(); ) {
+                String sectionKey =  iterator.next();
+                if (isUserAuthorizedToViewSection(sectionKey)) {
+                    return true;
+                }
+            }
+        }
+
 		return false;
 	}
 	

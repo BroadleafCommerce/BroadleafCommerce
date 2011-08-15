@@ -15,74 +15,28 @@
  */
 package org.broadleafcommerce.openadmin.client.view.user;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.TabSet;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
 /**
  * 
  * @author bpolster
  *
  */
-public class PermissionManagementView extends HLayout implements Instantiable, PermissionManagementDisplay {
+public class PermissionManagementView extends BasicListDetailView implements PermissionManagementDisplay {
 
-	protected DynamicFormView dynamicFormDisplay;
-	protected DynamicEntityListView listDisplay;
+    @Override
+    public String getViewPrefix() {
+        return "permission";
+    }
 
-	public PermissionManagementView() {
-		setHeight100();
-		setWidth100();
-	}
-	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("permissionLeftVerticalLayout");
-		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
-		leftVerticalLayout.setShowResizeBar(true);
-        
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("permissionListTitle"), entityDataSource, false, false);
-        leftVerticalLayout.addMember(listDisplay);
+    @Override
+    public String getFormTitle() {
+        return BLCMain.getMessageManager().getString("permissionDetailsTitle");
+    }
 
-        TabSet topTabSet = new TabSet();  
-        topTabSet.setID("permissionTopTabSet");
-        topTabSet.setTabBarPosition(Side.TOP);  
-        topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
-        topTabSet.setWidth("50%");  
-        topTabSet.setHeight100();
-        topTabSet.setPaneMargin(0);
-        
-        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("permissionDetailsTitle"));
-        detailsTab.setID("permissionDetailsTab");
-        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("permissionDetailsTitle"), entityDataSource);
-        
-        detailsTab.setPane(dynamicFormDisplay);
-        topTabSet.addTab(detailsTab);
-        
-        addMember(leftVerticalLayout);
-        addMember(topTabSet);
-	}
+    @Override
+    public String getListTitle() {
+        return BLCMain.getMessageManager().getString("permissionListTitle");
+    }
 
-	public Canvas asCanvas() {
-		return this;
-	}
-
-	public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
-	}
-	
-	public DynamicEntityListDisplay getListDisplay() {
-		return listDisplay;
-	}
 }

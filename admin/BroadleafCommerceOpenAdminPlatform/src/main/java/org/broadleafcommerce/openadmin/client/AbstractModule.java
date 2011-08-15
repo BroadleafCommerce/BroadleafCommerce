@@ -74,14 +74,14 @@ public abstract class AbstractModule implements EntryPoint, Module {
 
     public void setSection(
             String sectionTitle,
-            String sectionViewKey,
+            String viewKey,
             String sectionViewClass,
             List<String> sectionRoles
     ) {
         setSection(sectionTitle,
-                sectionViewKey,
+                viewKey,
                 sectionViewClass,
-                sectionViewKey + "-presenter",
+                sectionViewClass + "-presenter",
                 PassthroughEntityPresenter.class.getName(),
                 sectionRoles,
                 null);
@@ -100,7 +100,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		ModuleFactory moduleFactory = ModuleFactory.getInstance();
 		moduleFactory.put(sectionViewKey, sectionViewClass);
 		moduleFactory.put(sectionPresenterKey, sectionPresenterClass);
-		SecurityManager.getInstance().registerSection(sectionViewKey, sectionRoles, sectionPermissions);
+		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionRoles, sectionPermissions);
 	}
 	
 	public void setSecurity(
@@ -108,7 +108,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		List<String> sectionRoles,
 		List<String> sectionPermissions
 	) {
-		SecurityManager.getInstance().registerSection(sectionViewKey, sectionRoles, sectionPermissions);
+		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionRoles, sectionPermissions);
 	}
 	
 	public void removeSection(

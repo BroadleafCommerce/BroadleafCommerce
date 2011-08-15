@@ -15,14 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
-import org.broadleafcommerce.openadmin.client.view.Display;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
@@ -37,6 +31,17 @@ import com.smartgwt.client.widgets.grid.events.CellSavedEvent;
 import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
+import org.broadleafcommerce.openadmin.client.view.Display;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -58,6 +63,10 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 	
 	protected Boolean disabled = false;
+
+    private String newItemTitle = "Create new item";
+    private Criteria fetchAfterAddCriteria = new Criteria();
+    private String[] gridFields;
 	
 	public void setStartState() {
 		if (!disabled) {
@@ -180,9 +189,21 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 		((PresentationLayerAssociatedDataSource) entityDataSource).setAssociatedGrid(display.getListDisplay().getGrid());
 	}
 
-	protected abstract void changeSelection(Record selectedRecord);
-	
-	protected abstract void addClicked();
+	protected void changeSelection(Record selectedRecord) {
+        // place holder
+    }
+
+	protected void addClicked() {
+		Map<String, Object> initialValues = new HashMap<String, Object>();
+		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+			public void onNewItemCreated(NewItemCreatedEvent event) {
+                if (fetchAfterAddCriteria != null) {
+				    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
+                }
+			}
+		}, "90%", null, null);
+	}
 	
 	protected void removeClicked() {
 		SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
@@ -223,5 +244,17 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	public Boolean getLoaded() {
 		return loaded;
 	}
+
+    public void setAddNewItemTitle(String newItemTitle) {
+        this.newItemTitle = newItemTitle;
+    }
+
+    public void setFetchAfterAddCriteria(Criteria criteria) {
+        this.fetchAfterAddCriteria = criteria;
+    }
+
+    public void setGridFields(String[] gridFields) {
+        this.gridFields = gridFields;
+    }
 
 }

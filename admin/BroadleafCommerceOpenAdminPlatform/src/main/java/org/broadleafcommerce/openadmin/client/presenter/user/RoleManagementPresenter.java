@@ -16,7 +16,7 @@
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminRoleListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
@@ -31,21 +31,10 @@ import org.broadleafcommerce.openadmin.client.view.user.RoleManagementDisplay;
  *
  */
 public class RoleManagementPresenter extends DynamicEntityPresenter implements Instantiable {
-	
-	@Override
-	protected void changeSelection(final Record selectedRecord) {
-		// TODO:  load permissions
-	}
-	
-	@Override
-	protected void addClicked() {
-		// do nothing
-	}
-	
-	@Override
-	public void bind() {
-		super.bind();
-	}
+
+    public RoleManagementPresenter() {
+        setAddNewItemTitle(BLCMain.getMessageManager().getString("newRoleTitle"));
+    }
 
 	public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {

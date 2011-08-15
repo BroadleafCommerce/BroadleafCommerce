@@ -16,14 +16,13 @@
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.user.PermissionManagementDisplay;
 
 /**
  * 
@@ -31,21 +30,11 @@ import org.broadleafcommerce.openadmin.client.view.user.PermissionManagementDisp
  *
  */
 public class PermissionManagementPresenter extends DynamicEntityPresenter implements Instantiable {
-	
-	@Override
-	protected void changeSelection(final Record selectedRecord) {
-		// do nothing
-	}
-	
-	@Override
-	protected void addClicked() {
-		// do nothing
-	}
-	
-	@Override
-	public void bind() {
-		super.bind();
-	}
+
+    public PermissionManagementPresenter() {
+        setAddNewItemTitle(BLCMain.getMessageManager().getString("newPermissionTitle"));
+        setGridFields(new String[]{"name","description"});
+    }
 
 	public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
@@ -55,11 +44,4 @@ public class PermissionManagementPresenter extends DynamicEntityPresenter implem
 			}
 		}));
 	}
-
-	@Override
-	public PermissionManagementDisplay getDisplay() {
-		return (PermissionManagementDisplay) display;
-
-	}
-	
 }

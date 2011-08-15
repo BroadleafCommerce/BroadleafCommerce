@@ -31,16 +31,15 @@ public class PersistencePerspective implements Serializable {
 	 
 	private static final long serialVersionUID = 1L;
 	
-	protected String[] additionalNonPersistentProperties;
-	protected ForeignKey[] additionalForeignKeys;
+	protected String[] additionalNonPersistentProperties = new String[]{};
+	protected ForeignKey[] additionalForeignKeys = new ForeignKey[]{};
 	protected Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
-	protected OperationTypes operationTypes;
+	protected OperationTypes operationTypes = new OperationTypes();
 	protected Boolean populateToOneFields = false;
 	protected String[] excludeFields = new String[]{};
 	protected String[] includeFields = new String[]{};
 	
 	public PersistencePerspective() {
-		//do nothing
 	}
 	
 	public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalNonPersistentForeignKeys) {

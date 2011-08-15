@@ -15,17 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 /**
  * 
@@ -58,6 +54,7 @@ public class DynamicFormPresenter {
 		display.getSaveButton().disable();
 		display.getFormOnlyDisplay().getForm().disable();
 		display.getRefreshButton().disable();
+        display.getFormOnlyDisplay().getForm().clearValues();
 		display.getFormOnlyDisplay().getForm().reset();
 	}
 	

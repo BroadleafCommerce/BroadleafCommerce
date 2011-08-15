@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.client.setup.AppController;
 import org.broadleafcommerce.openadmin.client.view.*;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 /**
@@ -72,27 +73,36 @@ public class BLCMain implements EntryPoint {
 		SPLASH_PROGRESS = null;
 	}
 	
-	public static void drawCurrentState(String moduleKey) {
-		if (moduleKey == null) {
-			moduleKey = modules.keySet().iterator().next();
-		}
-		final String finalKey = moduleKey;
-		currentModuleKey = finalKey;
-		modules.get(finalKey).preDraw();
-		
+	public static void drawCurrentState(final String requestedModuleKey) {
 		AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
             	SecurityManager.USER  = result;
-            	
+
                 if (result == null) {
                 	SC.say("This page cannot be accessed without first successfully logging in.");
                 } else {
-            		MASTERVIEW = new MasterView(finalKey, modules);
-            		MASTERVIEW.draw();
-            		
-                	AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(finalKey).getPages());
-                	modules.get(finalKey).postDraw();
+                    String moduleKey = requestedModuleKey;
+
+                    for (Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext(); ) {
+                        Module currentModule = iterator.next();
+                        if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(currentModule.getModuleKey())) {
+                              modules.remove(currentModule.getModuleKey());
+                        }
+
+                    }
+
+                    if (moduleKey == null) {
+                        moduleKey = modules.keySet().iterator().next();
+                    }
+
+                    currentModuleKey = moduleKey;
+                    modules.get(currentModuleKey).preDraw();
+                    MASTERVIEW = new MasterView(moduleKey, modules);
+                    MASTERVIEW.draw();
+
+                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(moduleKey).getPages());
+                    modules.get(moduleKey).postDraw();
                 }
             }
         }); 
