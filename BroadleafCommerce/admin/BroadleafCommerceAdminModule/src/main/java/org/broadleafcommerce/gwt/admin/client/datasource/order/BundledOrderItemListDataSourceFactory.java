@@ -58,10 +58,12 @@ public class BundledOrderItemListDataSourceFactory implements DataSourceFactory 
 					"product.longDescription",
 					"product.activeStartDate",
 					"product.activeEndDate",
+                    "product.sku",
 					"sku.name",
 					"sku.salePrice",
 					"sku.retailPrice",
-					"orderItemType"
+					"orderItemType",
+                    "bundleOrderItem"
 				}
 			);
 			DataSourceModule[] modules = new DataSourceModule[]{

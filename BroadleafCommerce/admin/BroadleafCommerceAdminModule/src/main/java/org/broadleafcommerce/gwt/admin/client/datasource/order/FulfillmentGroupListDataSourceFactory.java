@@ -47,6 +47,11 @@ public class FulfillmentGroupListDataSourceFactory implements DataSourceFactory 
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey("address.state", EntityImplementations.STATE, null), new ForeignKey("address.country", EntityImplementations.COUNTRY, null)});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ORDER, null));
 			persistencePerspective.setPopulateToOneFields(true);
+            persistencePerspective.setExcludeFields(
+				new String[]{
+					"order"
+				}
+			);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.FULFILLMENT_GROUP, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
