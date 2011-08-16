@@ -30,7 +30,7 @@ public abstract class AbstractCyberSourcePaymentService extends AbstractCyberSou
 	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
 		RequestMessage request = new RequestMessage();
         request.setMerchantID(getMerchantId());
-        request.setMerchantReferenceCode(getIdGenerationService().findNextId("org.broadleafcommerce.vendor.cybersource.service.CyberSourcePaymentService").toString());
+        request.setMerchantReferenceCode(getIdGenerationService().findNextId("org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourcePaymentService").toString());
         request.setClientLibrary("Java Axis WSS4J");
         request.setClientLibraryVersion(getLibVersion());
         request.setClientEnvironment(
