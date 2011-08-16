@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
-import org.hibernate.mapping.Component;
 import org.hibernate.mapping.PersistentClass;
 
 import javax.annotation.Resource;
@@ -61,7 +60,6 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        Component component = null;
 		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Field field = null;
 
