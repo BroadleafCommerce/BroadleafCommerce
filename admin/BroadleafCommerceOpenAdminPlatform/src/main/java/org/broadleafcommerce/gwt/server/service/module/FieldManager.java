@@ -15,20 +15,20 @@
  */
 package org.broadleafcommerce.gwt.server.service.module;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.config.EntityConfiguration;
+import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
+import org.hibernate.mapping.Component;
+import org.hibernate.mapping.PersistentClass;
+
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.config.EntityConfiguration;
-import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
-import org.hibernate.mapping.PersistentClass;
 
 /**
  * 
@@ -59,13 +59,15 @@ public class FieldManager {
             return null;
         }
     }
-	
-	public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
+
+    public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        Component component = null;
 		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Field field = null;
 
         while (tokens.hasMoreTokens()) {
-            field = getSingleField(clazz, tokens.nextToken());
+            String propertyName = tokens.nextToken();
+            field = getSingleField(clazz, propertyName);
             if (field != null && tokens.hasMoreTokens()) {
             	Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
             	if (entities.length > 0) {
@@ -81,7 +83,10 @@ public class FieldManager {
 	            	} else {
 	            		clazz = field.getType();
 	            	}
-            	}
+            	} else {
+                    //may be an embedded class - try the class directly
+                    clazz = field.getType();
+                }
             } else {
             	break;
             }
