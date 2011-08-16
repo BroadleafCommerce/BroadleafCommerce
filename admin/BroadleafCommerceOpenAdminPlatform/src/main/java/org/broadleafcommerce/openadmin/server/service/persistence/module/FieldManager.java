@@ -58,13 +58,14 @@ public class FieldManager {
             return null;
         }
     }
-	
-	public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
+
+    public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
 		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Field field = null;
 
         while (tokens.hasMoreTokens()) {
-            field = getSingleField(clazz, tokens.nextToken());
+            String propertyName = tokens.nextToken();
+            field = getSingleField(clazz, propertyName);
             if (field != null && tokens.hasMoreTokens()) {
             	Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
             	if (entities.length > 0) {
@@ -80,7 +81,10 @@ public class FieldManager {
 	            	} else {
 	            		clazz = field.getType();
 	            	}
-            	}
+            	} else {
+                    //may be an embedded class - try the class directly
+                    clazz = field.getType();
+                }
             } else {
             	break;
             }
