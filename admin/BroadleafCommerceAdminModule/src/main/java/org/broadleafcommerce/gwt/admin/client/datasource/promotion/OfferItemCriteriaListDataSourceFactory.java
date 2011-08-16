@@ -47,6 +47,11 @@ public class OfferItemCriteriaListDataSourceFactory implements DataSourceFactory
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.OFFER, null));
 			persistencePerspective.setPopulateToOneFields(false);
+            persistencePerspective.setExcludeFields(
+				new String[]{
+                    "offer"
+				}
+			);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new OfferItemCriteriaListModule(CeilingEntities.OFFER_ITEM_CRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

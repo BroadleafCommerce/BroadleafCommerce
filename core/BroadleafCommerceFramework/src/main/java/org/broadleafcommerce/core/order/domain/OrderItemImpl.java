@@ -100,7 +100,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected int quantity;
     
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true, groupOrder = 1)
     protected String name;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
@@ -127,7 +127,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
-    @AdminPresentation(friendlyName="Item Type", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderItemType")
+    @AdminPresentation(friendlyName="Item Type", order=2, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderItemType", groupOrder = 1)
     protected String orderItemType;
 
     public Money getRetailPrice() {

@@ -622,31 +622,33 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					presentationAttributes.containsKey(propertyName)
 					//(type.isEntityType() && !isLazy)
 			) {
-				Boolean includeField = testFieldInclusion(includeFields, excludeFields, prefix, propertyName, isPropertyForeignKey, additionalForeignKeyIndexPosition);
-				
+				Boolean includeField = testFieldInclusion(includeFields, excludeFields, prefix, propertyName);
+
 				FieldPresentationAttributes presentationAttribute = presentationAttributes.get(propertyName);
 				SupportedFieldType explicitType = null;
 				if (presentationAttribute != null) {
 					explicitType = presentationAttribute.getExplicitFieldType();
 				}
 				Class<?> returnedClass = type.getReturnedClass();
-				if (type.isComponentType() && includeField) {
-					buildComponentProperties(targetClass, foreignField, additionalForeignFields, additionalNonPersistentProperties, mergedPropertyType, metadata, fields, idProperty, populateManyToOneFields, includeFields, excludeFields, propertyName, type, returnedClass, metadataOverrides);
-					continue;
-				}
-				/*
-				 * Currently we do not support ManyToOne fields whose class type is the same
-				 * as the target type, since this forms an infinite loop and will cause a stack overflow.
-				 */
-				if (
-					type.isEntityType() && 
-					!returnedClass.isAssignableFrom(targetClass) &&
-					populateManyToOneFields &&
-					includeField
-				) {
-					buildEntityProperties(fields, foreignField, additionalForeignFields, additionalNonPersistentProperties, populateManyToOneFields, includeFields, excludeFields, propertyName, returnedClass, targetClass, prefix, metadataOverrides);
-					continue;
-				}
+                checkProp: {
+                    if (type.isComponentType() && includeField) {
+                        buildComponentProperties(targetClass, foreignField, additionalForeignFields, additionalNonPersistentProperties, mergedPropertyType, metadata, fields, idProperty, populateManyToOneFields, includeFields, excludeFields, propertyName, type, returnedClass, metadataOverrides);
+                        break checkProp;
+                    }
+                    /*
+                     * Currently we do not support ManyToOne fields whose class type is the same
+                     * as the target type, since this forms an infinite loop and will cause a stack overflow.
+                     */
+                    if (
+                        type.isEntityType() &&
+                        !returnedClass.isAssignableFrom(targetClass) &&
+                        populateManyToOneFields &&
+                        includeField
+                    ) {
+                        buildEntityProperties(fields, foreignField, additionalForeignFields, additionalNonPersistentProperties, populateManyToOneFields, includeFields, excludeFields, propertyName, returnedClass, targetClass, prefix, metadataOverrides);
+                        break checkProp;
+                    }
+                }
 				//Don't include this property if it failed manyToOne inclusion and is not a specified foreign key
 				if (includeField || isPropertyForeignKey || additionalForeignKeyIndexPosition >= 0) {
 					buildProperty(targetClass, foreignField, additionalForeignFields, mergedPropertyType, propertyIterator, fields, idProperty, prefix, metadataOverrides, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, presentationAttribute, explicitType, returnedClass);
@@ -738,9 +740,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		//return type not supported - just skip this property
 	}
 
-	protected Boolean testFieldInclusion(String[] includeFields, String[] excludeFields, String prefix, String propertyName, boolean isPropertyForeignKey, int additionalForeignKeyIndexPosition) {
+	protected Boolean testFieldInclusion(String[] includeFields, String[] excludeFields, String prefix, String propertyName) {
 		//Test if this property is on the excluded or included list
-		Boolean includeField = !isPropertyForeignKey && additionalForeignKeyIndexPosition < 0 && checkPropertyForInclusion(includeFields, excludeFields, prefix + propertyName);
+		Boolean includeField = checkPropertyForInclusion(includeFields, excludeFields, prefix + propertyName);
 		if (includeField) {
 			//check to make sure we're not locked into an infinite recursion
 			if (!StringUtils.isEmpty(prefix) && prefix.contains(propertyName)) {
@@ -752,7 +754,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					if (pos >= 0) {
 						start += pos + propertyName.length();
 						count++;
-						if (count > 6) {
+						if (count > 1) {
 							includeField = false;
 							eof = true;
 						}
