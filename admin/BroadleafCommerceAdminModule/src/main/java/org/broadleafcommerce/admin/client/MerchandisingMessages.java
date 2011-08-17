@@ -65,5 +65,5 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
 	public String cancelButtonTitle();
 	public String categoryMainTitle();
 	public String productMainTitle();
-    public String adminModuleTitle();
+    public String merchandisingModuleTitle();
 }

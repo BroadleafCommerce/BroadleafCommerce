@@ -48,7 +48,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
             @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
             @Parameter(name="segment_column_name", value="ID_NAME"),
             @Parameter(name="value_column_name", value="ID_VAL"),
-            @Parameter(name="segment_value", value="SandBoxFeaturedProductImpl"),
+            @Parameter(name="segment_value", value="FeaturedProductImpl"),
             @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl")
         }

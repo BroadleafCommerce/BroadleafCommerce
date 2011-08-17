@@ -30,7 +30,7 @@ import java.util.List;
 public class UserManagementModule extends AbstractModule {
 	
 	public void onModuleLoad() {
-		setModuleTitle(BLCMain.getMessageManager().getString("adminModuleTitle"));
+		setModuleTitle(BLCMain.getMessageManager().getString("userAdminModuleTitle"));
 		setModuleKey("BLCOpenAdmin");
 		
 		List<String> userManagementRoles = new ArrayList<String>();

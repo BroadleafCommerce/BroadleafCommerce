@@ -35,7 +35,7 @@ public class CustomerCareModule extends AbstractModule {
 	public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(CustomerCareMessages.class));
 		
-		setModuleTitle(BLCMain.getMessageManager().getString("adminModuleTitle"));
+		setModuleTitle(BLCMain.getMessageManager().getString("customerCareModuleTitle"));
 		setModuleKey("BLCCustomerCare");
 		
 		List<String> orderRoles = new ArrayList<String>();

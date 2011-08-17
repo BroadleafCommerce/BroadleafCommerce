@@ -19,19 +19,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxIdGenerationDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxIdGeneration;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.persistence.OptimisticLockException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service("blSandBoxIdGenerationService")
+//@Service("blSandBoxIdGenerationService")
 public class SandBoxIdGenerationServiceImpl implements SandBoxIdGenerationService {
 
     private static final Log LOG = LogFactory.getLog(SandBoxIdGenerationServiceImpl.class);
 
-    @Resource(name="blSandBoxIdGenerationDao")
+    //@Resource(name="blSandBoxIdGenerationDao")
     protected SandBoxIdGenerationDao sandBoxIdGenerationDao;
 
     protected Map<String, Id> idTypeIdMap = new HashMap<String, Id>();

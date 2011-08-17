@@ -36,7 +36,7 @@ public class MerchandisingModule extends AbstractModule {
         addConstants(GWT.<ConstantsWithLookup>create(MerchandisingMessages.class));
         addConstants(GWT.<ConstantsWithLookup>create(PromotionMessages.class));
 		
-		setModuleTitle(BLCMain.getMessageManager().getString("adminModuleTitle"));
+		setModuleTitle(BLCMain.getMessageManager().getString("merchandisingModuleTitle"));
 		setModuleKey("BLCMerchandising");
 		
 		List<String> categoryRoles = new ArrayList<String>();

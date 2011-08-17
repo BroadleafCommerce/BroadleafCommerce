@@ -37,7 +37,7 @@
         </properties>
 	</persistence-unit>
 	
-	<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
+	<!--<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
         <mapping-file>config/bc/jpa/domain/SandBoxIdGeneration.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SandBox.orm.xml</mapping-file>
 		<class>org.broadleafcommerce.openadmin.server.domain.AdditionalForeignKeyImpl</class>
@@ -63,5 +63,5 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
-	</persistence-unit>
+	</persistence-unit>-->
 </persistence>

@@ -10,7 +10,6 @@ public interface PromotionMessages extends ConstantsWithLookup {
 
 	public String promotionMainTitle();
 	public String blcProjectPage();
-	public String adminModuleTitle();
 	public String promotionsListTitle();
 	public String clonePromotionHelp();
 	public String promotionDetailsTitle();

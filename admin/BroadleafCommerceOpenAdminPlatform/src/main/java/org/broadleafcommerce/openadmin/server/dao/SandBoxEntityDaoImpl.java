@@ -9,10 +9,10 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-@Repository("blSandBoxEntityDao")
+//@Repository("blSandBoxEntityDao")
 public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 
-	@PersistenceContext(unitName = "blSandboxPU")
+	//@PersistenceContext(unitName = "blSandboxPU")
 	protected EntityManager sandBoxEntityManager;
 	
 	/* (non-Javadoc)

@@ -4,19 +4,13 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.domain.*;
-import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -242,7 +236,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
-        PersistencePackage savedPackage = null;
+        /*PersistencePackage savedPackage = null;
         if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
             try {
                 savedPackage = sandBoxService.saveSandBox(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
@@ -253,8 +247,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             savedPackage = persistencePackage;
         }
 
-        Entity mergedEntity = myModule.update(savedPackage);
-        return updateDirtyState(mergedEntity);
+        Entity mergedEntity = myModule.update(savedPackage);*/
+        Entity mergedEntity = myModule.update(persistencePackage);
+        //return updateDirtyState(mergedEntity);
+        return mergedEntity;
     }
 
     @Override

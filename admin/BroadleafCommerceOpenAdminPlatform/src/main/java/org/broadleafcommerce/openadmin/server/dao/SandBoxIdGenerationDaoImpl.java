@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 
-@Repository("blSandBoxIdGenerationDao")
+//@Repository("blSandBoxIdGenerationDao")
 public class SandBoxIdGenerationDaoImpl implements SandBoxIdGenerationDao {
 
     private static final Log LOG = LogFactory.getLog(SandBoxIdGenerationDaoImpl.class);
@@ -31,7 +31,7 @@ public class SandBoxIdGenerationDaoImpl implements SandBoxIdGenerationDao {
     protected Long defaultBatchSize = -20L;
     protected Long defaultBatchStart = -1L;
 
-    @PersistenceContext(unitName = "blSandboxPU")
+    //@PersistenceContext(unitName = "blSandboxPU")
     protected EntityManager em;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";

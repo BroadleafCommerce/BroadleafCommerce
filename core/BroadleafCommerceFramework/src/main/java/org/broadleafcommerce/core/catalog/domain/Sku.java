@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.money.Money;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.money.Money;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -29,9 +29,9 @@ import org.broadleafcommerce.money.Money;
  * <br>
  * <br>
  * You should implement this class if you want to make significant changes to how the
- * class is persisted.  If you just want to add additional fields then you should extend {@link SandBoxSkuImpl}.
+ * class is persisted.  If you just want to add additional fields then you should extend {@link SkuImpl}.
  *
- * @see {@link SandBoxSkuImpl}, {@link Money}
+ * @see {@link SkuImpl}, {@link Money}
  * @author btaylor
  *
  */

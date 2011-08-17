@@ -41,7 +41,7 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
 	public String orderItemCombineLabel();
 	public String confirmResetPassword();
 	public String resetPasswordSuccessful();
-	public String adminModuleTitle();
+	public String userAdminModuleTitle();
 	public String blcProjectPage();
 	public String rolesTitle();
 	public String roleListTitle();

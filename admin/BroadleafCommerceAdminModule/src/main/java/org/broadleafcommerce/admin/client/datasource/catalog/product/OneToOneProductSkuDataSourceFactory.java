@@ -48,7 +48,7 @@ public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 				new ProductSkuBasicEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-            dataSource.setCommitImmediately(false);
+            //dataSource.setCommitImmediately(false);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

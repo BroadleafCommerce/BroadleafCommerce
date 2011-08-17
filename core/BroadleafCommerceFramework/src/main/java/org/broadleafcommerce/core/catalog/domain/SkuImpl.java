@@ -15,31 +15,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -55,15 +30,26 @@ import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
- * The Class SandBoxSkuImpl is the default implementation of {@link Sku}. A SKU is a
+ * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
  * specific item that can be sold including any specific attributes of the item
  * such as color or size. <br>
  * <br>
  * If you want to add fields specific to your implementation of
  * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the SandBoxSkuImpl then you should implement
+ * need to make significant changes to the SkuImpl then you should implement
  * your own version of {@link Sku}. <br>
  * <br>
  * This implementation uses a Hibernate implementation of JPA configured through

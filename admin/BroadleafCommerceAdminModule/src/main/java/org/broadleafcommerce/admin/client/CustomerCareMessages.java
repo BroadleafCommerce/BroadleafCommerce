@@ -28,7 +28,7 @@ import com.google.gwt.i18n.client.LocalizableResource.Generate;
 @DefaultLocale("en_US")
 public interface CustomerCareMessages extends ConstantsWithLookup {
 
-	public String adminModuleTitle();
+	public String customerCareModuleTitle();
 	public String orderMainTitle();
 	public String customerMainTitle();
 	public String blcProjectPage();

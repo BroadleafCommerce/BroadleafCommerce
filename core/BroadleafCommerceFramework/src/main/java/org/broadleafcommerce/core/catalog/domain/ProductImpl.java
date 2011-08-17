@@ -71,7 +71,7 @@ import org.hibernate.annotations.*;
  * annotations. The Entity references the following tables: BLC_PRODUCT,
  * BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
  * @author btaylor
- * @see {@link Product}, {@link SandBoxSkuImpl}, {@link CategoryImpl}
+ * @see {@link Product}, {@link SkuImpl}, {@link CategoryImpl}
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

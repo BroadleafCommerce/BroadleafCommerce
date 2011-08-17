@@ -25,7 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * The Class SandBoxCategoryXrefImpl is for testing purposes only.  It helps autogenerate the cross reference table
+ * The Class CategoryXrefImpl is for testing purposes only.  It helps autogenerate the cross reference table
  * properly with the DISPLY_ORDER column
 
  * @author krosenberg

@@ -390,51 +390,53 @@ public class BasicClientEntityModule implements DataSourceModule {
 		}
 		for (Property property : entity.getProperties()){
 			String attributeName = property.getName();
-			if (
-				property.getValue() != null && 
-				dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
-			) {
-				record.setAttribute(attributeName, formatter.parse(property.getValue()));
-			} else if (
-				dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
-			) {
-				if (property.getValue() == null) {
-					record.setAttribute(attributeName, false);
-				} else {
-					String lower = property.getValue().toLowerCase();
-					if (lower.equals("y") || lower.equals("yes") || lower.equals("true") || lower.equals("1")) {
-						record.setAttribute(attributeName, true);
-					} else {
-						record.setAttribute(attributeName, false);
-					}
-				}
-			} else if (
-				dataSource.getField(attributeName).getAttributeAsString("fieldType").equals(SupportedFieldType.PASSWORD.toString())
-			) {
-				String propertyValue = property.getValue();
-				record.setAttribute(attributeName, propertyValue);
-				if (dataSource.getField(attributeName).getValidators() != null && dataSource.getField(attributeName).getValidators().length > 0) {
-					for (Validator validator : dataSource.getField(attributeName).getValidators()) {
-						if (validator.getAttribute("type").equals("matchesField") && validator.getAttribute("otherField") != null) {
-							record.setAttribute(validator.getAttribute("otherField"), propertyValue);
-							break;
-						}
-					}
-				}
-			} else if (
-				property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
-				property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
-			) {
-				record.setAttribute(attributeName, linkedValue);
-			} else {
-				String propertyValue;
-				if (property.getName().equals(dataSource.getPrimaryKeyFieldName())) {
-					record.setAttribute(dataSource.getPrimaryKeyFieldName(), id);
-				} else {
-					propertyValue = property.getValue();
-					record.setAttribute(attributeName, propertyValue);
-				}
-			}
+            if (dataSource.getField(attributeName) != null) {
+                if (
+                    property.getValue() != null &&
+                    dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
+                ) {
+                    record.setAttribute(attributeName, formatter.parse(property.getValue()));
+                } else if (
+                    dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
+                ) {
+                    if (property.getValue() == null) {
+                        record.setAttribute(attributeName, false);
+                    } else {
+                        String lower = property.getValue().toLowerCase();
+                        if (lower.equals("y") || lower.equals("yes") || lower.equals("true") || lower.equals("1")) {
+                            record.setAttribute(attributeName, true);
+                        } else {
+                            record.setAttribute(attributeName, false);
+                        }
+                    }
+                } else if (
+                    dataSource.getField(attributeName).getAttributeAsString("fieldType").equals(SupportedFieldType.PASSWORD.toString())
+                ) {
+                    String propertyValue = property.getValue();
+                    record.setAttribute(attributeName, propertyValue);
+                    if (dataSource.getField(attributeName).getValidators() != null && dataSource.getField(attributeName).getValidators().length > 0) {
+                        for (Validator validator : dataSource.getField(attributeName).getValidators()) {
+                            if (validator.getAttribute("type").equals("matchesField") && validator.getAttribute("otherField") != null) {
+                                record.setAttribute(validator.getAttribute("otherField"), propertyValue);
+                                break;
+                            }
+                        }
+                    }
+                } else if (
+                    property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
+                    property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
+                ) {
+                    record.setAttribute(attributeName, linkedValue);
+                } else {
+                    String propertyValue;
+                    if (property.getName().equals(dataSource.getPrimaryKeyFieldName())) {
+                        record.setAttribute(dataSource.getPrimaryKeyFieldName(), id);
+                    } else {
+                        propertyValue = property.getValue();
+                        record.setAttribute(attributeName, propertyValue);
+                    }
+                }
+            }
 			if (property.getDisplayValue() != null) {
 				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
 				//dataSource.getFormItemCallbackHandlerManager().setDisplayValue(attributeName, id, property.getDisplayValue());

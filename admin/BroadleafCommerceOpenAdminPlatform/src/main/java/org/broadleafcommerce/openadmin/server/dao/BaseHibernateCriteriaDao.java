@@ -18,9 +18,9 @@ package org.broadleafcommerce.openadmin.server.dao;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.DualEntityManager;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
+import org.hibernate.ejb.HibernateEntityManager;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
@@ -41,7 +41,8 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 		/*
 		 * TODO this method should return a proxied Criteria instance that will return a mixed list
 		 */
-		Criteria criteria = ((DualEntityManager) getStandardEntityManager()).getStandardManager().getSession().createCriteria(entityClass);
+		//Criteria criteria = ((DualEntityManager) getStandardEntityManager()).getStandardManager().getSession().createCriteria(entityClass);
+        Criteria criteria = ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
         entityCriteria.apply(criteria);
         
         return criteria;

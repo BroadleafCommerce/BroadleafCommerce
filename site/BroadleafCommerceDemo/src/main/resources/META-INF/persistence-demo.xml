@@ -12,7 +12,7 @@
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.hbm2ddl.import_files" value="/import_standard.sql"/>
         </properties>
 	</persistence-unit>
@@ -22,13 +22,13 @@
 		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
         </properties>
 	</persistence-unit>
 	
-	<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
+	<!--<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<non-jta-data-source>jdbc/webSandbox</non-jta-data-source>
 		<exclude-unlisted-classes/>
@@ -37,5 +37,5 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="true"/>
         </properties>
-	</persistence-unit>
+	</persistence-unit>-->
 </persistence>

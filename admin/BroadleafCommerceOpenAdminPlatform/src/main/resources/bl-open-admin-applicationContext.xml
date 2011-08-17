@@ -110,12 +110,13 @@
 		</constructor-arg>
 		<property name="targetEntityManagers">
 			<map>
-                <entry key="sandbox" value="sandBoxEntityManagerPool"/>
+                <!--<entry key="sandbox" value="sandBoxEntityManagerPool"/>-->
+                <entry key="sandbox" value="prodEntityManager"/>
                 <entry key="stage" value="prodEntityManager"/>
                 <entry key="prod" value="prodEntityManager"/>
             </map>
 		</property>
-		<property name="sandBoxService" ref="blSandBoxService"/>
+		<!--<property name="sandBoxService" ref="blSandBoxService"/>-->
 		<property name="dynamicEntityDao">
             <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
                 <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
@@ -137,7 +138,7 @@
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
 			        
-	<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">
+	<!--<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">
         <property name="sandboxPool">
             <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.KeyedEntityManagerPool">
                 <constructor-arg>
@@ -177,6 +178,6 @@
 			</bean>
         </property>
         <property name="cleaner" ref="blHibernateCleaner"/>
-    </bean>
+    </bean>-->
 	
 </beans>

@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.FilterType;
@@ -26,12 +29,8 @@ import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.form.fields.FormItem;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -65,7 +64,9 @@ public class OfferPresenterExtractor {
 	}
 	
 	protected void setData(Record record, String fieldName, Object value, Map<String, Object> dirtyValues) {
-		if (!record.getAttributeAsObject(fieldName).equals(value)) {
+        String attr = record.getAttribute(fieldName);
+        String val = value==null?null:String.valueOf(value);
+		if (attr != val && (attr == null || val == null || !attr.equals(val))) {
 			record.setAttribute(fieldName, value);
 			dirtyValues.put(fieldName, value);
 		}

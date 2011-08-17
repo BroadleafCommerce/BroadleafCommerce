@@ -20,29 +20,27 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service("blSandBoxService")
+//@Service("blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
 
-	@Resource(name="blSandBoxEntityDao")
+	//@Resource(name="blSandBoxEntityDao")
 	protected SandBoxEntityDao sandBoxDao;
 
-    @Resource(name="blSandBoxIdGenerationService")
+    //@Resource(name="blSandBoxIdGenerationService")
     protected SandBoxIdGenerationService sandBoxIdGenerationService;
 
-    @Override
+    //@Override
     public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
         return sandBoxDao.retrieveSandBoxItemByTemporaryId(temporaryId);
     }
 
-    @Resource(name="blSessionFactory")
+    //@Resource(name="blSessionFactory")
     protected SessionFactory sessionFactory;
 
 	/* (non-Javadoc)
