@@ -27,12 +27,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 /**
- * The Class SkuAttributeImpl is the default implentation of {@link SkuAttribute}.
+ * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
  * A SKU Attribute is a designator on a SKU that differentiates it from other similar SKUs
  * (for example: Blue attribute for hat).
  * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
@@ -50,7 +48,7 @@ import org.hibernate.annotations.Index;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU_ATTRIBUTE")
+@Table(name="BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SkuAttributeImpl implements SkuAttribute {
 
@@ -59,17 +57,22 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "SkuAttributeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SkuAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAttributeImpl", allocationSize = 50)
+    @GeneratedValue(generator= "SkuAttributeId")
+    @GenericGenerator(
+        name="SkuAttributeId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="SkuAttributeImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl")
+        }
+    )
     @Column(name = "SKU_ATTR_ID")
     protected Long id;
-
-    /** The sku. */
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
-    @JoinColumn(name = "SKU_ID")
-    @Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
-    protected Sku sku;
-
+    
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="SKUATTR_NAME_INDEX", columnNames={"NAME"})
@@ -82,6 +85,12 @@ public class SkuAttributeImpl implements SkuAttribute {
     /** The searchable. */
     @Column(name = "SEARCHABLE")
     protected Boolean searchable;
+  
+    /** The sku. */
+    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
+    @JoinColumn(name = "SKU_ID")
+    @Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
+    protected Sku sku;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
@@ -124,21 +133,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
-     */
-    public Sku getSku() {
-        return sku;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSku(org.broadleafcommerce.core.catalog.domain.Sku)
-     */
-    public void setSku(Sku sku) {
-        this.sku = sku;
-    }
-
+    
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
      */
@@ -159,6 +154,20 @@ public class SkuAttributeImpl implements SkuAttribute {
     @Override
     public String toString() {
         return value;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
+     */
+    public Sku getSku() {
+        return sku;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSku(org.broadleafcommerce.core.catalog.domain.Sku)
+     */
+    public void setSku(Sku sku) {
+        this.sku = sku;
     }
 
     @Override

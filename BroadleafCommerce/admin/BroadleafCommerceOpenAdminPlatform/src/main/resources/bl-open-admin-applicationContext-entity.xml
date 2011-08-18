@@ -14,8 +14,8 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
     <!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminPermission" class="org.broadleafcommerce.gwt.server.security.domain.AdminPermissionImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminRole" class="org.broadleafcommerce.gwt.server.security.domain.AdminRoleImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminUser" class="org.broadleafcommerce.gwt.server.security.domain.AdminUserImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.openadmin.server.security.domain.AdminPermission" class="org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.openadmin.server.security.domain.AdminRole" class="org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.openadmin.server.security.domain.AdminUser" class="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl" scope="prototype"/>
 	
 </beans>

@@ -35,9 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.money.Money;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
@@ -49,8 +47,19 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CandidateItemOfferId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CandidateItemOfferId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CandidateItemOfferImpl", allocationSize = 50)
+    @GeneratedValue(generator= "CandidateItemOfferId")
+    @GenericGenerator(
+        name="CandidateItemOfferId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CandidateItemOfferImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl")
+        }
+    )
     @Column(name = "CANDIDATE_ITEM_OFFER_ID")
     protected Long id;
 

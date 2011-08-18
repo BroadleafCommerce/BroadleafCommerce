@@ -81,11 +81,11 @@
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
 		<property name="alwaysUseFullPath" value="true" />
-		<!-- property name="interceptors">
+		<!-- dtoProperty name="interceptors">
 			<list>
 				<ref bean="catalogDisplayInterceptor" />
 			</list>
-		</property -->
+		</dtoProperty -->
 		<property name="mappings">
 			<props>
 				<prop key="/welcome.htm">store</prop>

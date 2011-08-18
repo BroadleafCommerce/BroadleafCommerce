@@ -20,7 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 
 /**
@@ -43,7 +43,7 @@ public @interface AdminPresentation {
 	String friendlyName();
 	
 	/**
-	 * If a security level is specified, it is registered with org.broadleafcommerce.gwt.client.security.SecurityManager
+	 * If a security level is specified, it is registered with org.broadleafcommerce.openadmin.client.security.SecurityManager
 	 * The SecurityManager checks the permission of the current user to 
 	 * determine if this field should be disabled based on the specified level.
 	 * 

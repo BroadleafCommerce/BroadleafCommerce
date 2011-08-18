@@ -12,24 +12,38 @@
            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-           
-    <bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService">
+	
+    <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicServerEntityModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureServerModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.MapStructureServerModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
 			</list>
 		</constructor-arg>
-		<property name="customPersistenceHandlers">
+        <property name="customPersistenceHandlers">
 			<list>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.OfferCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.gwt.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
 			</list>
 		</property>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao" />
+		<property name="targetEntityManagers">
+			<map>
+                <!--<entry key="sandbox" value="sandBoxEntityManagerPool"/>-->
+                <entry key="sandbox" value="prodEntityManager"/>
+                <entry key="stage" value="prodEntityManager"/>
+                <entry key="prod" value="prodEntityManager"/>
+            </map>
+		</property>
+		<!--<property name="sandBoxService" ref="blSandBoxService"/>-->
+		<property name="dynamicEntityDao">
+            <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
+                <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
+                <property name="entityConfiguration" ref="blEntityConfiguration"/>
+            </bean>
+        </property>
 	</bean>
 	
 </beans>

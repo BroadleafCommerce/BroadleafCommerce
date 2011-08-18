@@ -15,14 +15,8 @@
  */
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
@@ -48,6 +42,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/store")
@@ -287,19 +287,19 @@ public class CatalogController {
     @SuppressWarnings("unchecked")
     private List<Product> sortProducts (CatalogSort catalogSort, List<Product> displayProducts) {
         if (catalogSort.getSort().equals("priceL")) {
-            Collections.sort(displayProducts, new BeanComparator("skus[0].salePrice"));
+            Collections.sort(displayProducts, new BeanComparator("skus[0].salePrice", new NullComparator()));
         }
         else if (catalogSort.getSort().equals("priceH")) {
-            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("skus[0].salePrice")));
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("skus[0].salePrice", new NullComparator())));
         }
         else if (catalogSort.getSort().equals("manufacturerA")) {
-            Collections.sort(displayProducts, new BeanComparator("manufacturer"));
+            Collections.sort(displayProducts, new BeanComparator("manufacturer", new NullComparator()));
         }
         else if (catalogSort.getSort().equals("manufacturerZ")) {
-            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("manufacturer")));
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("manufacturer", new NullComparator())));
         }
         else if (catalogSort.getSort().equals("featured")) {
-            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("promoMessage")));
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("promoMessage", new NullComparator())));
         }
 
         return displayProducts;

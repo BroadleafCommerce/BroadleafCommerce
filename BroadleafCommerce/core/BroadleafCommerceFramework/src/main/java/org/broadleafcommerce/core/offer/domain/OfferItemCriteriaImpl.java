@@ -32,6 +32,8 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * 
@@ -47,8 +49,19 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 	public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OfferItemCriteriaId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OfferItemCriteriaId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferItemCriteriaImpl", allocationSize = 50)
+    @GeneratedValue(generator= "OfferItemCriteriaId")
+    @GenericGenerator(
+        name="OfferItemCriteriaId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="OfferItemCriteriaImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl")
+        }
+    )
     @Column(name = "OFFER_ITEM_CRITERIA_ID")
     @AdminPresentation(friendlyName="Item Criteria Id", group="Description", hidden=true)
     protected Long id;

@@ -15,17 +15,17 @@
  */
 package org.broadleafcommerce.profile.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class DependencyLicenseCopy extends Copy {
 
@@ -58,7 +58,7 @@ public class DependencyLicenseCopy extends Copy {
     			    	}
     			    	String[] specificParts = new String[parts.length-1];
     			    	System.arraycopy(parts, 0, specificParts, 0, specificParts.length);
-    			    	String specificFilePart = StringUtils.join(specificParts, "/") + "/license.txt";
+    			    	String specificFilePart = StringUtils.join(specificParts, '/') + "/license.txt";
     			    	File specificFile = new File(licenseDir, specificFilePart);
     			    	File specificDestinationFile = new File(destDir, specificFilePart);
     			    	if (specificFile.exists()) {
@@ -68,7 +68,7 @@ public class DependencyLicenseCopy extends Copy {
     			    	
     			    	String[] generalParts = new String[3];
     			    	System.arraycopy(parts, 0, generalParts, 0, 3);
-    			    	String generalFilePart = StringUtils.join(generalParts, "/") + "/license.txt";
+    			    	String generalFilePart = StringUtils.join(generalParts, '/') + "/license.txt";
     			    	File generalFile = new File(licenseDir, generalFilePart);
     			    	if (generalFile.exists()) {
     			    		fileUtils.copyFile(generalFile, specificDestinationFile);
@@ -77,7 +77,7 @@ public class DependencyLicenseCopy extends Copy {
     			    	
     			    	String[] moreGeneralParts = new String[2];
     			    	System.arraycopy(parts, 0, moreGeneralParts, 0, 2);
-    			    	String moreGeneralFilePart = StringUtils.join(moreGeneralParts, "/") + "/license.txt";
+    			    	String moreGeneralFilePart = StringUtils.join(moreGeneralParts, '/') + "/license.txt";
     			    	File moreGeneralFile = new File(licenseDir, moreGeneralFilePart);
     			    	if (moreGeneralFile.exists()) {
     			    		fileUtils.copyFile(moreGeneralFile, specificDestinationFile);

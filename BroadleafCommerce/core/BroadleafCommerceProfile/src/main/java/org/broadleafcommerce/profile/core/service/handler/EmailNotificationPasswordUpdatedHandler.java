@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.gwt.server.security.util.PasswordReset;
+import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.type.LocaleType;
 import org.broadleafcommerce.profile.email.service.EmailService;

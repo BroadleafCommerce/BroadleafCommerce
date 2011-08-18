@@ -24,11 +24,10 @@
 		<mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ContentDetails.orm.xml</mapping-file>
-        <class>org.broadleafcommerce.core.catalog.domain.BasePriceImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
         <class>org.broadleafcommerce.core.media.domain.MediaImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryProductImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.CategoryXref</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>

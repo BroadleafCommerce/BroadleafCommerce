@@ -15,29 +15,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -48,14 +25,17 @@ import org.broadleafcommerce.profile.cache.HydratedCacheManager;
 import org.broadleafcommerce.profile.cache.HydratedCacheManagerImpl;
 import org.broadleafcommerce.profile.util.DateUtil;
 import org.broadleafcommerce.profile.util.UrlUtil;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.*;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -63,7 +43,7 @@ import org.hibernate.annotations.OrderBy;
  * <br>
  * If you want to add fields specific to your implementation of
  * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the CategoryImpl then you should implment
+ * need to make significant changes to the CategoryImpl then you should implement
  * your own version of {@link Category}. <BR>
  * <BR>
  * This implementation uses a Hibernate implementation of JPA configured through
@@ -74,18 +54,29 @@ import org.hibernate.annotations.OrderBy;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CATEGORY")
+@Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryImpl implements Category {
-
-    private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
-    /** The Constant serialVersionUID.  */
-    private static final long serialVersionUID = 1L;
-
-    /** The id. */
+	
+	private static final long serialVersionUID = 1L;
+	
+	private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
+	
+	/** The id. */
     @Id
-    @GeneratedValue(generator = "CategoryId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CategoryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryImpl", allocationSize = 50)
+    @GeneratedValue(generator= "CategoryId")
+    @GenericGenerator(
+        name="CategoryId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CategoryImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryImpl")
+        }
+    )
     @Column(name = "CATEGORY_ID")
     @AdminPresentation(friendlyName="Category ID", group="Primary Key", hidden=true)
     protected Long id;
@@ -106,14 +97,7 @@ public class CategoryImpl implements Category {
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
     protected String urlKey;
-
-    /** The default parent category. */
-    @ManyToOne(targetEntity = CategoryImpl.class)
-    @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
-    protected Category defaultParentCategory;
-
+    
     /** The description. */
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName="Category Description", order=5, group="Description", largeEntry=true)
@@ -133,11 +117,29 @@ public class CategoryImpl implements Category {
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName="Category Display Template", order=4, group="Description")
     protected String displayTemplate;
+    
+    /** The long description. */
+    @Column(name = "LONG_DESCRIPTION")
+    @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
+    protected String longDescription;
+    
+    @Transient
+    protected Map<String, List<Category>> childCategoryURLMap;
+    
+    @Transient
+    protected List<Category> childCategories = new ArrayList<Category>();
+    
+    /** The default parent category. */
+    @ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
+    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
+    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
+    protected Category defaultParentCategory;
 
     /** The all child categories. */
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})  
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
@@ -146,7 +148,7 @@ public class CategoryImpl implements Category {
     /** The all parent categories. */	
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
@@ -155,7 +157,7 @@ public class CategoryImpl implements Category {
     /** The all parent categories. */	
     @ManyToMany(targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
@@ -179,22 +181,11 @@ public class CategoryImpl implements Category {
     @BatchSize(size = 50)
     protected Map<String, Media> categoryMedia = new HashMap<String , Media>();
 
-    /** The long description. */
-    @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
-    protected String longDescription;
-
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
-    
-    @Transient
-    protected Map<String, List<Category>> childCategoryURLMap;
-    
-    @Transient
-    protected List<Category> childCategories = new ArrayList<Category>();
 
     /*
      * (non-Javadoc)
@@ -228,26 +219,7 @@ public class CategoryImpl implements Category {
     public void setName(final String name) {
         this.name = name;
     }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#getDefaultParentCategory()
-     */
-    public Category getDefaultParentCategory() {
-        return defaultParentCategory;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setDefaultParentCategory
-     * (org.broadleafcommerce.core.catalog.domain.Category)
-     */
-    public void setDefaultParentCategory(final Category defaultParentCategory) {
-        this.defaultParentCategory = defaultParentCategory;
-    }
-
+    
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Category#getUrl()
@@ -398,6 +370,42 @@ public class CategoryImpl implements Category {
     public void setDisplayTemplate(final String displayTemplate) {
         this.displayTemplate = displayTemplate;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.core.catalog.domain.Category#getLongDescription()
+     */
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.core.catalog.domain.Category#setLongDescription(java.lang.String)
+     */
+    public void setLongDescription(final String longDescription) {
+        this.longDescription = longDescription;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.core.catalog.domain.Category#getDefaultParentCategory()
+     */
+    public Category getDefaultParentCategory() {
+        return defaultParentCategory;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.core.catalog.domain.Category#setDefaultParentCategory
+     * (org.broadleafcommerce.core.catalog.domain.Category)
+     */
+    public void setDefaultParentCategory(final Category defaultParentCategory) {
+        this.defaultParentCategory = defaultParentCategory;
+    }
 
     /**
      * Gets the child categories.
@@ -429,8 +437,6 @@ public class CategoryImpl implements Category {
     	}    	
     }
 
-
-    
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Category#getChildCategories()
@@ -502,23 +508,6 @@ public class CategoryImpl implements Category {
     	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
     		this.categoryImages.put(me.getKey(), me.getValue());
     	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getLongDescription()
-     */
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setLongDescription(java.lang.String)
-     */
-    public void setLongDescription(final String longDescription) {
-        this.longDescription = longDescription;
     }
 
     /*
@@ -639,8 +628,8 @@ public class CategoryImpl implements Category {
     		this.categoryMedia.put(me.getKey(), me.getValue());
     	}
     }
-
-	@Override
+    
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

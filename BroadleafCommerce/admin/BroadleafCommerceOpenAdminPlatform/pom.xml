@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>admin</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-M3-SNAPSHOT</version>
+		<version>1.5.0-CHNGST-SNAPSHOT</version>
 	</parent>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>broadleaf-open-admin-platform</artifactId>
-	<version>1.5.0-M3-SNAPSHOT</version>
+	<version>1.5.0-CHNGST-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>BroadleafCommerceOpenAdminPlatform</name>
 	<url>http://maven.apache.org</url>
@@ -177,6 +177,14 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
 		</dependency>
 	</dependencies>
 </project>

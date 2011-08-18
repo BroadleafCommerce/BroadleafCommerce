@@ -44,12 +44,9 @@ import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -60,8 +57,19 @@ public class OfferImpl implements Offer {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OfferId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OfferId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferImpl", allocationSize = 50)
+    @GeneratedValue(generator= "OfferId")
+    @GenericGenerator(
+        name="OfferId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="OfferImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferImpl")
+        }
+    )
     @Column(name = "OFFER_ID")
     @AdminPresentation(friendlyName="Offer Id", order=1, group="Description", groupOrder=1, hidden=true)
     protected Long id;

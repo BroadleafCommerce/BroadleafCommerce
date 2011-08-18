@@ -21,8 +21,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
-import org.broadleafcommerce.gwt.server.security.util.PasswordReset;
+import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
+import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;

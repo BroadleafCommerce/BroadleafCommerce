@@ -54,13 +54,7 @@ import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 import org.compass.annotations.SupportUnmarshall;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.*;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -81,19 +75,30 @@ import org.hibernate.annotations.MapKey;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT")
+@Table(name="BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 public class ProductImpl implements Product {
 
-    private static final Log LOG = LogFactory.getLog(ProductImpl.class);
+	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "ProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductImpl", allocationSize = 50)
+    @GeneratedValue(generator= "ProductId")
+    @GenericGenerator(
+        name="ProductId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="ProductImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductImpl")
+        }
+    )
     @Column(name = "PRODUCT_ID")
     @SearchableId
     @AdminPresentation(friendlyName="Product ID", group="Primary Key", hidden=true)
@@ -146,8 +151,23 @@ public class ProductImpl implements Product {
     /** The product weight **/
     @Embedded
     protected ProductWeight weight = new ProductWeight();
+    
+    @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
+    @AdminPresentation(friendlyName="Is Featured Product", order=6, group="Product Description", prominent=false)
+    protected boolean isFeaturedProduct = false;
 
-    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @Column(name = "IS_MACHINE_SORTABLE")
+    @AdminPresentation(friendlyName="Is Product Machine Sortable", order=7, group="Product Description", prominent=false)
+    protected boolean isMachineSortable = true;
+    
+    /** The skus. */
+    @Transient
+    protected List<Sku> skus = new ArrayList<Sku>();
+    
+    @Transient
+    protected String promoMessage;
+
+	@OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
@@ -194,27 +214,12 @@ public class ProductImpl implements Product {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
-
-    @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName="Is Featured Product", order=6, group="Product Description", prominent=false)
-    protected boolean isFeaturedProduct = false;
-
-    @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName="Is Product Machine Sortable", order=7, group="Product Description", prominent=false)
-    protected boolean isMachineSortable = true;
     
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
-
-    /** The skus. */
-    @Transient
-    protected List<Sku> skus = new ArrayList<Sku>();
-    
-    @Transient
-    protected String promoMessage;
 
     /*
      * (non-Javadoc)
@@ -333,7 +338,125 @@ public class ProductImpl implements Product {
         }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
+    
+    public String getModel() {
+        return model;
+    }
 
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public ProductDimension getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(ProductDimension dimension) {
+    	this.dimension = dimension;
+    }
+
+    public BigDecimal getWidth() {
+        return dimension==null?null:dimension.getWidth();
+    }
+
+    public void setWidth(BigDecimal width) {
+        dimension.setWidth(width);
+    }
+
+    public BigDecimal getHeight() {
+        return dimension==null?null:dimension.getHeight();
+    }
+
+    public void setHeight(BigDecimal height) {
+        dimension.setHeight(height);
+    }
+
+    public BigDecimal getDepth() {
+        return dimension==null?null:dimension.getDepth();
+    }
+
+    public void setDepth(BigDecimal depth) {
+        dimension.setDepth(depth);
+    }
+
+    public void setGirth(BigDecimal girth) {
+        dimension.setGirth(girth);
+    }
+
+    public BigDecimal getGirth() {
+        return dimension==null?null:dimension.getGirth();
+    }
+
+    public ContainerSizeType getSize() {
+        return dimension==null?null:dimension.getSize();
+    }
+
+    public void setSize(ContainerSizeType size) {
+        dimension.setSize(size);
+    }
+
+    public ContainerShapeType getContainer() {
+        return dimension==null?null:dimension.getContainer();
+    }
+
+    public void setContainer(ContainerShapeType container) {
+        dimension.setContainer(container);
+    }
+
+    /**
+     * Returns the product dimensions as a String (assumes measurements are in inches)
+     * @return a String value of the product dimensions
+     */
+    public String getDimensionString() {
+        return dimension==null?null:dimension.getDimensionString();
+    }
+    
+    public boolean isFeaturedProduct() {
+        return isFeaturedProduct;
+    }
+
+    public void setFeaturedProduct(boolean isFeaturedProduct) {
+        this.isFeaturedProduct = isFeaturedProduct;
+    }
+
+    public boolean isMachineSortable() {
+        return isMachineSortable;
+    }
+
+    public void setMachineSortable(boolean isMachineSortable) {
+        this.isMachineSortable = isMachineSortable;
+    }
+
+    public ProductWeight getWeight() {
+        return weight;
+    }
+
+    public void setWeight(ProductWeight weight) {
+        this.weight = weight;
+    }
+
+	/**
+	 * @return the promoMessage
+	 */
+	public String getPromoMessage() {
+		return promoMessage;
+	}
+
+	/**
+	 * @param promoMessage the promoMessage to set
+	 */
+	public void setPromoMessage(String promoMessage) {
+		this.promoMessage = promoMessage;
+	}
+	
     /**
      * Gets the all skus.
      * @return the all skus
@@ -458,86 +581,6 @@ public class ProductImpl implements Product {
         }    	
     }
 
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-    public ProductDimension getDimension() {
-        return dimension;
-    }
-
-    public void setDimension(ProductDimension dimension) {
-    	this.dimension = dimension;
-    }
-
-    public BigDecimal getWidth() {
-        return dimension==null?null:dimension.getWidth();
-    }
-
-    public void setWidth(BigDecimal width) {
-        dimension.setWidth(width);
-    }
-
-    public BigDecimal getHeight() {
-        return dimension==null?null:dimension.getHeight();
-    }
-
-    public void setHeight(BigDecimal height) {
-        dimension.setHeight(height);
-    }
-
-    public BigDecimal getDepth() {
-        return dimension==null?null:dimension.getDepth();
-    }
-
-    public void setDepth(BigDecimal depth) {
-        dimension.setDepth(depth);
-    }
-
-    public void setGirth(BigDecimal girth) {
-        dimension.setGirth(girth);
-    }
-
-    public BigDecimal getGirth() {
-        return dimension==null?null:dimension.getGirth();
-    }
-
-    public ContainerSizeType getSize() {
-        return dimension==null?null:dimension.getSize();
-    }
-
-    public void setSize(ContainerSizeType size) {
-        dimension.setSize(size);
-    }
-
-    public ContainerShapeType getContainer() {
-        return dimension==null?null:dimension.getContainer();
-    }
-
-    public void setContainer(ContainerShapeType container) {
-        dimension.setContainer(container);
-    }
-
-    /**
-     * Returns the product dimensions as a String (assumes measurements are in inches)
-     * @return a String value of the product dimensions
-     */
-    public String getDimensionString() {
-        return dimension==null?null:dimension.getDimensionString();
-    }
-
     public List<RelatedProduct> getUpSaleProducts() {
         return upSaleProducts;
     }
@@ -548,30 +591,6 @@ public class ProductImpl implements Product {
         	this.upSaleProducts.add(relatedProduct);
         }
         this.upSaleProducts = upSaleProducts;
-    }
-
-    public boolean isFeaturedProduct() {
-        return isFeaturedProduct;
-    }
-
-    public void setFeaturedProduct(boolean isFeaturedProduct) {
-        this.isFeaturedProduct = isFeaturedProduct;
-    }
-
-    public boolean isMachineSortable() {
-        return isMachineSortable;
-    }
-
-    public void setMachineSortable(boolean isMachineSortable) {
-        this.isMachineSortable = isMachineSortable;
-    }
-
-    public ProductWeight getWeight() {
-        return weight;
-    }
-
-    public void setWeight(ProductWeight weight) {
-        this.weight = weight;
     }
 
     public List<ProductAttribute> getProductAttributes() {
@@ -616,15 +635,6 @@ public class ProductImpl implements Product {
         } else if (!skus.equals(other.skus))
             return false;
         return true;
-    }
-    
-    public String getPromoMessage() {
-        if (promoMessage==null) return "";
-        return promoMessage;
-    }
-
-    public void setPromoMessage(String promoMessage) {
-        this.promoMessage = promoMessage;
     }
 
 }

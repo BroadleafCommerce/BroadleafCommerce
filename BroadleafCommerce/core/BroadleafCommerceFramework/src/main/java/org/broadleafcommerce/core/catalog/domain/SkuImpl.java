@@ -15,29 +15,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -45,19 +22,25 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.util.DateUtil;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -77,19 +60,30 @@ import org.hibernate.annotations.MapKey;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SKU")
+@Table(name="BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable
 public class SkuImpl implements Sku {
-
-    private static final Log LOG = LogFactory.getLog(SkuImpl.class);
+	
+	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "SkuId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SkuId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuImpl", allocationSize = 50)
+    @GeneratedValue(generator= "SkuId")
+    @GenericGenerator(
+        name="SkuId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="SkuImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.SkuImpl")
+        }
+    )
     @Column(name = "SKU_ID")
     @SearchableId
     @AdminPresentation(friendlyName="Sku ID", group="Primary Key", hidden=true)
@@ -142,15 +136,18 @@ public class SkuImpl implements Sku {
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName="Sku Start Date", order=7, group="Sku Description", groupOrder=4)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
+    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName="Sku End Date", order=8, group="Sku Description", groupOrder=4)
     protected Date activeEndDate;
-
+    
+    @Transient
+    protected DynamicSkuPrices dynamicPrices = null;
+	
     /** The sku images. */
     @CollectionOfElements
     @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
@@ -164,18 +161,19 @@ public class SkuImpl implements Sku {
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_SKU_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
-    //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
-
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
     protected List<Product> allParentProducts = new ArrayList<Product>();
     
-    @Transient
-    protected DynamicSkuPrices dynamicPrices = null;
+    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<SkuAttribute> skuAttributes  = new ArrayList<SkuAttribute>();
 
     /*
      * (non-Javadoc)
@@ -472,7 +470,7 @@ public class SkuImpl implements Sku {
         }
         return this.isActive() && product.isActive() && category.isActive();
     }
-
+    
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSkuImages()
@@ -527,7 +525,21 @@ public class SkuImpl implements Sku {
         this.allParentProducts = allParentProducts;
     }
 
-    @Override
+    /**
+	 * @return the skuAttributes
+	 */
+	public List<SkuAttribute> getSkuAttributes() {
+		return skuAttributes;
+	}
+
+	/**
+	 * @param skuAttributes the skuAttributes to set
+	 */
+	public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
+		this.skuAttributes = skuAttributes;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
