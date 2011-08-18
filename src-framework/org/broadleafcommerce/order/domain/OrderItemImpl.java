@@ -196,6 +196,9 @@ public class OrderItemImpl implements OrderItem {
 
     public void removeAllCandidateItemOffers() {
         if (candidateItemOffers != null) {
+            for (CandidateItemOffer candidate : candidateItemOffers) {
+                candidate.setOrderItem(null);
+            }
             candidateItemOffers.clear();
         }
     }
@@ -290,6 +293,9 @@ public class OrderItemImpl implements OrderItem {
     public int removeAllAdjustments() {
         int removedAdjustmentCount = 0;
         if (orderItemAdjustments != null) {
+            for (OrderItemAdjustment adjustment : orderItemAdjustments) {
+                adjustment.setOrderItem(null);
+            }
             removedAdjustmentCount = orderItemAdjustments.size();
             orderItemAdjustments.clear();
         }

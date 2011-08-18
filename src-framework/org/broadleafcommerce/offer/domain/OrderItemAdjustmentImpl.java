@@ -50,7 +50,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Column(name = "ORDER_ITEM_ADJUSTMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 

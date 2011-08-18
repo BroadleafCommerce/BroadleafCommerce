@@ -51,7 +51,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
     @Column(name = "CANDIDATE_ITEM_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 

@@ -321,6 +321,9 @@ public class OrderImpl implements Order {
 
     public void removeAllCandidateOrderOffers() {
         if (candidateOrderOffers != null) {
+            for (CandidateOrderOffer candidate : candidateOrderOffers) {
+                candidate.setOrder(null);
+            }
             candidateOrderOffers.clear();
         }
     }
@@ -435,6 +438,9 @@ public class OrderImpl implements Order {
 
     public void removeAllOrderAdjustments() {
         if (orderAdjustments != null) {
+            for (OrderAdjustment adjustment : orderAdjustments) {
+                adjustment.setOrder(null);
+            }
             orderAdjustments.clear();
         }
         adjustmentPrice = null;

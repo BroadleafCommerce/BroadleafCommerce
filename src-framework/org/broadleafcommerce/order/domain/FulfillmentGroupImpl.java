@@ -249,6 +249,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     public void removeAllCandidateOffers() {
         if (candidateOffers != null) {
+            for (CandidateFulfillmentGroupOffer offer : candidateOffers) {
+                offer.setFulfillmentGroup(null);
+            }
             candidateOffers.clear();
         }
     }
@@ -272,6 +275,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     public void removeAllAdjustments() {
         if (fulfillmentGroupAdjustments != null) {
+            for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
+                adjustment.setFulfillmentGroup(null);
+            }
             fulfillmentGroupAdjustments.clear();
         }
         adjustmentPrice = null;
