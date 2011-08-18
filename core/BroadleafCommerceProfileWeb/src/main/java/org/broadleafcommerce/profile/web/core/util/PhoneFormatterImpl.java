@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service("blPhoneFormatter")
 public class PhoneFormatterImpl implements PhoneFormatter {
     public void formatPhoneNumber(Phone phone) {
-        if(phone != null && StringUtils.isNotEmpty(phone.getPhoneNumber())){
+        if(phone != null && !StringUtils.isEmpty(phone.getPhoneNumber())){
             phone.setPhoneNumber(formatTelephoneNumber(phone.getPhoneNumber()));
         }
     }

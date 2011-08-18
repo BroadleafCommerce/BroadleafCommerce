@@ -1,10 +1,5 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -14,6 +9,11 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.money.Money;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -63,7 +63,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     	for (OrderItemAdjustment adjustment : delegate.getOrderItemAdjustments()) {
     		temp = temp.subtract(adjustment.getValue());
     	}
-    	adjustmentPrice = temp.lessThan(delegate.getRetailPrice())?temp.getAmount():null;
+    	adjustmentPrice = temp.lessThan(delegate.getRetailPrice())?temp.getAmount():delegate.getRetailPrice().getAmount();
     }
     
     public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment) {

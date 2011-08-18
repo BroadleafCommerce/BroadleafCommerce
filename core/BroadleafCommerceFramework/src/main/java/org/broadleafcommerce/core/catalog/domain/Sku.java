@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.money.Money;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.money.Money;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -216,4 +216,8 @@ public interface Sku extends Serializable {
     public void setAllParentProducts(List<Product> allParentProducts);
 
     public boolean isActive(Product product, Category category);
+    
+    List<SkuAttribute> getSkuAttributes();
+
+	void setSkuAttributes(List<SkuAttribute> skuAttributes);
 }

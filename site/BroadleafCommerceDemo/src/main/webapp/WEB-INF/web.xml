@@ -37,7 +37,7 @@
 	
 	<!--<filter>
 		<filter-name>changeSetInViewFilter</filter-name>
-		<filter-class>org.broadleafcommerce.gwt.server.changeset.ChangeSetInViewFilter</filter-class>
+		<filter-class>org.broadleafcommerce.openadmin.server.changeset.ChangeSetInViewFilter</filter-class>
 	</filter>-->
 
 	<filter>

@@ -25,24 +25,32 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.envers.Audited;
+import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_MEDIA")
+@Table(name="BLC_MEDIA")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class MediaImpl implements Media {
+	
+	private static final long serialVersionUID = 1L;
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "MediaId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "MediaId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "MediaId", allocationSize = 50)
+	@Id
+    @GeneratedValue(generator= "MediaId")
+    @GenericGenerator(
+        name="MediaId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="MediaId"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.media.domain.MediaImpl")
+        }
+    )
     @Column(name = "MEDIA_ID")
     protected Long id;
 
@@ -91,5 +99,53 @@ public class MediaImpl implements Media {
     public void setUrl(String url) {
         this.url = url;
     }
+    
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MediaImpl other = (MediaImpl) obj;
+
+		if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+		
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
+			return false;
+		return true;
+	}
 
 }

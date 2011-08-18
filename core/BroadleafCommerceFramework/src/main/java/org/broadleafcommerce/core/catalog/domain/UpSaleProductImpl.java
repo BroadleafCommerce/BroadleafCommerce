@@ -28,24 +28,40 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT_UP_SALE")
+@Table(name="BLC_PRODUCT_UP_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class UpSaleProductImpl implements RelatedProduct {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(generator = "UpSaleProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "UpSaleProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "UpSaleProductImpl", allocationSize = 50)
+    @GeneratedValue(generator= "UpSaleProductId")
+    @GenericGenerator(
+        name="UpSaleProductId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="UpSaleProductImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl")
+        }
+    )
     @Column(name = "UP_SALE_PRODUCT_ID")
     private Long id;
+	
+	@Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Upsale Promotion Message", largeEntry=true)
+    private String promotionMessage;
 
+    @Column(name = "SEQUENCE")
+    private Long sequence;
+    
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
@@ -55,51 +71,44 @@ public class UpSaleProductImpl implements RelatedProduct {
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     @Index(name="UPSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct = new ProductImpl();
-
-    @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName="Upsale Promotion Message", largeEntry=true)
-    private String promotionMessage;
-
-    @Column(name = "SEQUENCE")
-    private Long sequence;
-
+    
     public Long getId() {
         return id;
+    } 
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getPromotionMessage() {
+        return promotionMessage;
+    }
+    
+    public void setPromotionMessage(String promotionMessage) {
+        this.promotionMessage = promotionMessage;
+    }
+    
+    public Long getSequence() {
+        return sequence;
+    }
+    
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public String getPromotionMessage() {
-        return promotionMessage;
-    }
-
     public Product getRelatedProduct() {
         return relatedSaleProduct;
-    }
-
-    public Long getSequence() {
-        return sequence;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    }   
 
     public void setProduct(Product product) {
         this.product = product;
     }
 
-    public void setPromotionMessage(String promotionMessage) {
-        this.promotionMessage = promotionMessage;
-    }
-
     public void setRelatedProduct(Product relatedSaleProduct) {
         this.relatedSaleProduct = relatedSaleProduct;
-    }
-
-    public void setSequence(Long sequence) {
-        this.sequence = sequence;
     }
 }

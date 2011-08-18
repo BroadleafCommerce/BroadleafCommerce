@@ -28,9 +28,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -42,12 +40,30 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
 	/** The id. */
     @Id
-    @GeneratedValue(generator = "FeaturedProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FeaturedProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FeaturedProductImpl", allocationSize = 50)
+    @GeneratedValue(generator= "FeaturedProductId")
+    @GenericGenerator(
+        name="FeaturedProductId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="FeaturedProductImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl")
+        }
+    )
     @Column(name = "FEATURED_PRODUCT_ID")
     protected Long id;
+    
+    @Column(name = "SEQUENCE")
+    protected Long sequence;
 
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
+    protected String promotionMessage;
+    
+	@ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="PRODFEATURED_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category = new CategoryImpl();
@@ -56,20 +72,29 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product = new ProductImpl();
-
-    @Column(name = "SEQUENCE")
-    protected Long sequence;
-
-    @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
-    protected String promotionMessage;
-
+    
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
+    
+    public Long getSequence() {
+    	return this.sequence;
+    }
+
+    public String getPromotionMessage() {
+        return promotionMessage;
+    }
+
+    public void setPromotionMessage(String promotionMessage) {
+        this.promotionMessage = promotionMessage;
     }
 
     public Category getCategory() {
@@ -87,20 +112,5 @@ public class FeaturedProductImpl implements FeaturedProduct {
     public void setProduct(Product product) {
         this.product = product;
     }
-
-    public void setSequence(Long sequence) {
-        this.sequence = sequence;
-    }
     
-    public Long getSequence() {
-    	return this.sequence;
-    }
-
-    public String getPromotionMessage() {
-        return promotionMessage;
-    }
-
-    public void setPromotionMessage(String promotionMessage) {
-        this.promotionMessage = promotionMessage;
-    }
 }

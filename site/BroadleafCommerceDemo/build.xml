@@ -117,7 +117,8 @@
 			
         <echo message="Starting Data Base..." />  
         <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
-            <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>  
+            <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>
+        	<arg  line="-database.1 file:data/broadleaf_sndbx -dbname.1 broadleaf_sndbx"/>
         </java>  
     </target>
 	
@@ -130,7 +131,7 @@
 		</path>
 		
         <echo message="Execute SQL on new Data Base..." />  
-        <sql  
+		<sql  
             autocommit="true"  
             print="true"  
             classpathref="build.runtime.classpath"  
@@ -139,7 +140,17 @@
             userid="sa"  
             password="">
             <transaction>SHUTDOWN</transaction>  
-        </sql>  
+        </sql> 
+        <sql  
+            autocommit="true"  
+            print="true"  
+            classpathref="build.runtime.classpath"  
+            driver="org.hsqldb.jdbcDriver"  
+            url="jdbc:hsqldb:hsql://localhost/broadleaf_sndbx;ifexists=true"  
+            userid="sa"  
+            password="">
+            <transaction>SHUTDOWN</transaction>  
+        </sql>   
         <echo message="SQL Executed on data base..." />  
     </target>
 

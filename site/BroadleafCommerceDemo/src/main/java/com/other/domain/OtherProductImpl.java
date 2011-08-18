@@ -15,20 +15,15 @@
  */
 package com.other.domain;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.core.catalog.domain.ProductSkuImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.presentation.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 

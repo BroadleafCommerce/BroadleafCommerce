@@ -361,12 +361,11 @@ public interface Product extends Serializable {
 
     void setContainer(ContainerShapeType container);
     
-    String getPromoMessage();
-    
-    void setPromoMessage(String promoMessage);
-    
     List<ProductAttribute> getProductAttributes();
 
 	void setProductAttributes(List<ProductAttribute> productAttributes);
 	
+	public String getPromoMessage();
+
+	public void setPromoMessage(String promoMessage);
 }

@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>core</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-M3-SNAPSHOT</version>
+		<version>1.5.0-CHNGST-SNAPSHOT</version>
 	</parent>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>broadleaf-instrument</artifactId>
 	<name>BroadleafCommerceInstrument</name>
-	<version>1.5.0-M3-SNAPSHOT</version>
+	<version>1.5.0-CHNGST-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

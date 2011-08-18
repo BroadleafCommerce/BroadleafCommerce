@@ -19,12 +19,12 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOrderItemDao")

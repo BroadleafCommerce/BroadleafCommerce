@@ -37,7 +37,7 @@
 	</named-query>
 
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
-		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductImpl categoryProduct
+		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
 		AND categoryProduct.categoryProductXref.product.activeStartDate &lt;= :currentDate
 		AND (categoryProduct.categoryProductXref.product.activeEndDate &gt; :currentDate OR categoryProduct.categoryProductXref.product.activeEndDate = null)
@@ -46,7 +46,7 @@
 	</named-query>
 	
 	<named-query name="BC_READ_PRODUCTS_BY_CATEGORY" >
-		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductImpl categoryProduct
+		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
 		ORDER BY categoryProduct.displayOrder
 		</query>

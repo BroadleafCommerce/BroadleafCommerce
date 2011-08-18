@@ -18,12 +18,13 @@ package org.broadleafcommerce.core.catalog.dao;
 import java.util.List;
 
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 
 public interface CategoryXrefDao {
 
-    public List<CategoryXref> readXrefsByCategoryId(Long categoryId);
-    public List<CategoryXref> readXrefsBySubCategoryId(Long subCategoryId);
+    public List<CategoryXrefImpl> readXrefsByCategoryId(Long categoryId);
+    public List<CategoryXrefImpl> readXrefsBySubCategoryId(Long subCategoryId);
     public CategoryXref readXrefByIds(Long categoryId, Long subCategoryId);
-    public CategoryXref save(CategoryXref categoryXref);	
-    public void delete(CategoryXref categoryXref);
+    public CategoryXref save(CategoryXrefImpl categoryXref);	
+    public void delete(CategoryXrefImpl categoryXref);
 }

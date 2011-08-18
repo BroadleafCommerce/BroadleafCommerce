@@ -3,13 +3,13 @@
 	<parent>
 		<artifactId>BroadleafCommerce</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-M3-SNAPSHOT</version>
+		<version>1.5.0-CHNGST-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>integration</artifactId>
 	<name>integration</name>
-	<version>1.5.0-M3-SNAPSHOT</version>
+	<version>1.5.0-CHNGST-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
@@ -262,7 +262,7 @@
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>hsqldb</groupId>
+			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 		</dependency>
 		<dependency>

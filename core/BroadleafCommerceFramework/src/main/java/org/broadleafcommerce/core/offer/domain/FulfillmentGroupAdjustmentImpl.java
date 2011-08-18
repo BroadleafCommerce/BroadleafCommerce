@@ -33,9 +33,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_FG_ADJUSTMENT")
@@ -46,8 +44,19 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FGAdjustmentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FGAdjustmentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupAdjustmentImpl", allocationSize = 50)
+    @GeneratedValue(generator= "FGAdjustmentId")
+    @GenericGenerator(
+        name="FGAdjustmentId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="FulfillmentGroupAdjustmentImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl")
+        }
+    )
     @Column(name = "FG_ADJUSTMENT_ID")
     protected Long id;
 

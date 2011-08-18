@@ -5,7 +5,7 @@
 	<artifactId>BroadleafCommerce</artifactId>
 	<packaging>pom</packaging>
 	<name>BroadleafCommerce</name>
-	<version>1.5.0-M3-SNAPSHOT</version>
+	<version>1.5.0-CHNGST-SNAPSHOT</version>
 	<description>BroadleafCommerce Maven Build </description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +41,11 @@
 					<artifactId>gwt-maven-plugin</artifactId>
 					<version>2.1.0-1</version>
 				</plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -97,7 +102,7 @@
 		<module>integration</module>
 		<module>site</module>
 		<module>admin</module>
-	</modules>
+    </modules>
 	<dependencies>
 	</dependencies>
 	<reporting>
@@ -148,49 +153,49 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-instrument</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-usps-schemas</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-usps</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-cybersource-api</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-cybersource</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 				<classifier>sources</classifier>
@@ -198,21 +203,21 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile-web</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 				<classifier>sources</classifier>
@@ -220,28 +225,28 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework-web</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-demo</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>war</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-admin-module</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-admin-module</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 				<classifier>sources</classifier>
@@ -249,14 +254,14 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-open-admin-platform</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-open-admin-platform</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 				<classifier>sources</classifier>
@@ -264,14 +269,14 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>integration</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-demo-launcher</artifactId>
-				<version>1.5.0-M3-SNAPSHOT</version>
+				<version>1.5.0-CHNGST-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
@@ -448,6 +453,13 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+            <dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.8.0</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymock</artifactId>
@@ -490,13 +502,6 @@
 				<version>1.2.2</version>
 				<type>jar</type>
 				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>hsqldb</groupId>
-				<artifactId>hsqldb</artifactId>
-				<version>1.8.0.10</version>
-				<type>jar</type>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -546,18 +551,6 @@
 				<version>2.4.1</version>
 				<type>jar</type>
 				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.adobe.flex.framework</groupId>
-				<artifactId>flex-framework</artifactId>
-				<version>3.1.0.2710</version>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>org.jvnet</groupId>
-				<artifactId>animal-sniffer-annotation</artifactId>
-				<version>1.0</version>
-				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>jstl</groupId>
@@ -966,6 +959,20 @@
 				<groupId>org.gwtwidgets</groupId>
 				<artifactId>gwt-sl</artifactId>
 				<version>1.1</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.5.6</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>2.2.4</version>
+				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 		</dependencies>

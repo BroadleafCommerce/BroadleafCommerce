@@ -22,8 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCategoryXrefDao")
@@ -37,7 +38,7 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @SuppressWarnings("unchecked")
-    public List<CategoryXref> readXrefsByCategoryId(Long categoryId){
+    public List<CategoryXrefImpl> readXrefsByCategoryId(Long categoryId){
     	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID");
     	query.setParameter("categoryId", categoryId);
     	return query.getResultList();
@@ -45,24 +46,24 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
     }
     
     @SuppressWarnings("unchecked")
-    public List<CategoryXref> readXrefsBySubCategoryId(Long subCategoryId){
+    public List<CategoryXrefImpl> readXrefsBySubCategoryId(Long subCategoryId){
     	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID");
     	query.setParameter("subCategoryId", subCategoryId);
     	return query.getResultList();
     }
     
-    public CategoryXref readXrefByIds(Long categoryId, Long subCategoryId){
+    public CategoryXrefImpl readXrefByIds(Long categoryId, Long subCategoryId){
     	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_IDS");
     	query.setParameter("categoryId", categoryId);
     	query.setParameter("subCategoryId", subCategoryId);
-    	return (CategoryXref)query.getSingleResult();
+    	return (CategoryXrefImpl)query.getSingleResult();
     }
     
-    public CategoryXref save(CategoryXref categoryXref){
+    public CategoryXref save(CategoryXrefImpl categoryXref){
     	return em.merge(categoryXref);
     }
     
-    public void delete(CategoryXref categoryXref){
+    public void delete(CategoryXrefImpl categoryXref){
     	if (!em.contains(categoryXref)) {
     		categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(),
     				                     categoryXref.getCategoryXrefPK().getSubCategory().getId());

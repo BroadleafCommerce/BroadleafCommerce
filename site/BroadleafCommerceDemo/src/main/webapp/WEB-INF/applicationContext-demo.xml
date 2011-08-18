@@ -29,6 +29,7 @@
             <map>
                 <entry key="jdbc/web" value-ref="webDS"/>
                 <entry key="jdbc/webSecure" value-ref="webDS"/>
+                <!--<entry key="jdbc/webSandbox" value-ref="webSandboxDS"/>-->
             </map>
         </property>
         <property name="defaultDataSource" ref="webDS"/>
@@ -40,6 +41,13 @@
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>
+	
+	<!--<bean id="webSandboxDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf_sndbx;ifexists=true" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>-->
 	
 	<bean id="blCacheManager"
           class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">

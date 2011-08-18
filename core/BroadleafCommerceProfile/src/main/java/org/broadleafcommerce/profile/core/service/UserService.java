@@ -17,7 +17,7 @@ package org.broadleafcommerce.profile.core.service;
 
 import java.util.List;
 
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
+import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
 import org.broadleafcommerce.profile.core.domain.User;
 import org.broadleafcommerce.profile.core.domain.UserRole;
 

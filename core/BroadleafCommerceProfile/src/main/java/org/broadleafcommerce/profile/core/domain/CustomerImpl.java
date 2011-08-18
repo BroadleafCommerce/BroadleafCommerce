@@ -30,7 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.common.domain.Auditable;
 import org.broadleafcommerce.profile.core.domain.listener.AuditableListener;

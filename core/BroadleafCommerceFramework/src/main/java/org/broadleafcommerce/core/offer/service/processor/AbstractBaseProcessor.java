@@ -64,9 +64,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     	}
     	
     	if (offer.getType().equals(OfferType.ORDER_ITEM)) {
-	    	if (offer.getTargetItemCriteria() == null) {
-	    		throw new RuntimeException("Invalid promotion data : Order Item promotions must specify a target criteria. This promotion does not appear to have a target criteria.");
-	    	}
+	    	//if (offer.getTargetItemCriteria() == null) {
+	    		//throw new RuntimeException("Invalid promotion data : Order Item promotions must specify a target criteria. This promotion does not appear to have a target criteria.");
+	    	//}
     		checkForItemRequirements(candidates, offer.getTargetItemCriteria(), promotableOrderItems, false);
     	}
     	
@@ -102,7 +102,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 	protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem discreteOrderItem) {
         boolean appliesToItem = false;
 
-        if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
+        if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("discreteOrderItem", discreteOrderItem.getDelegate());
             Boolean expressionOutcome = executeExpression(criteria.getOrderItemMatchRule(), vars);

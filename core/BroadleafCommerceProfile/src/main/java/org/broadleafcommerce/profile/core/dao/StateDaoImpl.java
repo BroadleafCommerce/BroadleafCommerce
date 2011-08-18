@@ -22,7 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.config.EntityConfiguration;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.springframework.stereotype.Repository;

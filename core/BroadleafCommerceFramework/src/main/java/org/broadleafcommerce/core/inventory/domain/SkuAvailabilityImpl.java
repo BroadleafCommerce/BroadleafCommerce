@@ -29,9 +29,8 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
-import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.vendor.service.type.ContainerShapeType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;

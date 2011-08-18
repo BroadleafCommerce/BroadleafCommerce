@@ -31,7 +31,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -41,8 +43,19 @@ public class OfferInfoImpl implements OfferInfo {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OfferInfoId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OfferInfoId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferInfoImpl", allocationSize = 50)
+    @GeneratedValue(generator= "OfferInfoId")
+    @GenericGenerator(
+        name="OfferInfoId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="OfferInfoImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferInfoImpl")
+        }
+    )
     @Column(name = "OFFER_INFO_ID")
     protected Long id;
 
