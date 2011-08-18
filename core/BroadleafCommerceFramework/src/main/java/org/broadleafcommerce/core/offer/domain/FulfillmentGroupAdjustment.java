@@ -25,5 +25,7 @@ public interface FulfillmentGroupAdjustment extends Adjustment {
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason);
 
     public void setValue(Money value);
+
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
     
 }

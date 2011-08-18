@@ -1,27 +1,22 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.OrderItemPriceComparator;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitorAdapter;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PromotableOrderImpl implements PromotableOrder {
 
@@ -137,6 +132,9 @@ public class PromotableOrderImpl implements PromotableOrder {
 
     public void removeAllOrderAdjustments() {
         if (delegate.getOrderAdjustments() != null) {
+            for (OrderAdjustment adjustment : delegate.getOrderAdjustments()) {
+                adjustment.setOrder(null);
+            }
             delegate.getOrderAdjustments().clear();
         }
         adjustmentPrice = null;
@@ -233,6 +231,9 @@ public class PromotableOrderImpl implements PromotableOrder {
 
     public void removeAllCandidateOrderOffers() {
         if (delegate.getCandidateOrderOffers() != null) {
+            for (CandidateOrderOffer candidate : delegate.getCandidateOrderOffers()) {
+                candidate.setOrder(null);
+            }
             delegate.getCandidateOrderOffers().clear();
         }
     }

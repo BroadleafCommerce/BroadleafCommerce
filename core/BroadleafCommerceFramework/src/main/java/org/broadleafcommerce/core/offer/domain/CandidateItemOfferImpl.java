@@ -63,7 +63,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @Column(name = "CANDIDATE_ITEM_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
     @Index(name="CANDIDATE_ITEM_INDEX", columnNames={"ORDER_ITEM_ID"})
     protected OrderItem orderItem;
