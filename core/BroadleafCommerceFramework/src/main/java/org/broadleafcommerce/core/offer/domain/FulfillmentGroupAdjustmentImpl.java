@@ -60,7 +60,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @Column(name = "FG_ADJUSTMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     @Index(name="FGADJUSTMENT_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;

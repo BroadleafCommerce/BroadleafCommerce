@@ -59,7 +59,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     @Column(name = "CANDIDATE_FG_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     @Index(name="CANDIDATE_FG_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;

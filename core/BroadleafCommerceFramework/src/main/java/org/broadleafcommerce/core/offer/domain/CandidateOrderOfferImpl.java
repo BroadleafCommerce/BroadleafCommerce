@@ -59,7 +59,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @Column(name = "CANDIDATE_ORDER_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="CANDIDATE_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
