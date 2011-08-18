@@ -311,6 +311,9 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     
     public void removeAllCandidateItemOffers() {
         if (getCandidateItemOffers() != null) {
+            for (CandidateItemOffer candidate : getCandidateItemOffers()) {
+                candidate.setOrderItem(null);
+            }
             getCandidateItemOffers().clear();
         }
     }
@@ -318,6 +321,9 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     public int removeAllAdjustments() {
     	int removedAdjustmentCount = 0;
         if (getOrderItemAdjustments() != null) {
+            for (OrderItemAdjustment adjustment : getOrderItemAdjustments()) {
+                adjustment.setOrderItem(null);
+            }
         	removedAdjustmentCount = getOrderItemAdjustments().size();
             getOrderItemAdjustments().clear();
         }
