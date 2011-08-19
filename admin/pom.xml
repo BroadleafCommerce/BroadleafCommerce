@@ -14,5 +14,6 @@
 	<modules>
 		<module>BroadleafCommerceAdminModule</module>
 		<module>BroadleafCommerceOpenAdminPlatform</module>
+        <module>BroadleafCommerceCMSModule</module>
 	</modules>
 </project>

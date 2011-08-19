@@ -122,6 +122,14 @@
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
+                                            <directory>../../admin/BroadleafCommerceContentManagementModule/src/main/java</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceContentManagementModule/src/main/resources</directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
                                             <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources</directory>
                                             <targetPath>./</targetPath>
                                         </resource>
@@ -183,6 +191,27 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-admin-module</artifactId>
+            <classifier>sources</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>cobertura</groupId>
+                    <artifactId>cobertura</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>cobertura</groupId>
+                    <artifactId>cobertura</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
             <classifier>sources</classifier>
             <exclusions>
                 <exclusion>

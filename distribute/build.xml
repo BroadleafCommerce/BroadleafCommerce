@@ -157,6 +157,9 @@
 			<fileset dir="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/target">
 				<include name="*sources.jar" />
 			</fileset>
+            <fileset dir="${releaseParentDir}/admin/BroadleafCommerceContentManagementModule/target">
+				<include name="*sources.jar" />
+			</fileset>
 			<fileset dir="${releaseParentDir}/core/BroadleafCommerceFramework/target">
 				<include name="*sources.jar" />
 			</fileset>
