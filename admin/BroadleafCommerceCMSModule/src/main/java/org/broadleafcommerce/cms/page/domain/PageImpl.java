@@ -32,26 +32,9 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class PageImpl implements Page {
+public class PageImpl extends PageFolderImpl implements Page {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(generator = "PageId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageImpl", allocationSize = 10)
-    @Column(name = "PAGE_ID")
-    protected Long id;
-
-    @ManyToOne(targetEntity = PageFolderImpl.class)
-    @JoinColumn(name="PARENT_FOLDER_ID")
-    protected PageFolder parentFolder;
-
-    @ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")
-    protected Site site;
-
-    @Column (name = "FULL_URL")
-    protected String fullUrl;
 
     @Column (name = "PAGE_FILE_NAME")
     protected String pageFileName;
@@ -74,46 +57,6 @@ public class PageImpl implements Page {
 
     @Column (name = "DELETED_FLAG")
     protected Boolean deletedFlag = false;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public PageFolder getParentFolder() {
-        return parentFolder;
-    }
-
-    @Override
-    public void setParentFolder(PageFolder parentFolder) {
-        this.parentFolder = parentFolder;
-    }
-
-    @Override
-    public Site getSite() {
-        return site;
-    }
-
-    @Override
-    public void setSite(Site site) {
-        this.site = site;
-    }
-
-    @Override
-    public String getFullUrl() {
-        return fullUrl;
-    }
-
-    @Override
-    public void setFullUrl(String fullUrl) {
-        this.fullUrl = fullUrl;
-    }
 
     @Override
     public String getPageFileName() {

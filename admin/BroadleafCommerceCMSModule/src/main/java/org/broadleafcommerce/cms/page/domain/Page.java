@@ -1,28 +1,11 @@
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.site.domain.Site;
-
 import java.util.Map;
 
 /**
  * Created by bpolster.
  */
-public interface Page {
-    public Long getId();
-
-    public void setId(Long id);
-
-    public PageFolder getParentFolder();
-
-    public void setParentFolder(PageFolder parentFolder);
-
-    public Site getSite();
-
-    public void setSite(Site site);
-
-    public String getFullUrl();
-
-    public void setFullUrl(String fullUrl);
+public interface Page extends PageFolder {
 
     public String getPageFileName();
 

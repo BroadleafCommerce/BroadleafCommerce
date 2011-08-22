@@ -57,9 +57,6 @@ public class PageFolderImpl implements PageFolder {
     @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = PageFolderImpl.class)
     protected List<PageFolder> subFolders;
 
-    @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = PageImpl.class)
-    protected List<Page> pages;
-
     @Column (name = "DELETED_FLAG")
     protected Boolean deletedFlag = false;
 
@@ -112,17 +109,6 @@ public class PageFolderImpl implements PageFolder {
     public void setSubFolders(List<PageFolder> subFolders) {
         this.subFolders = subFolders;
     }
-
-    @Override
-    public List<Page> getPages() {
-        return pages;
-    }
-
-    @Override
-    public void setPages(List<Page> pages) {
-        this.pages = pages;
-    }
-
 
     @Override
     public Boolean getDeletedFlag() {
