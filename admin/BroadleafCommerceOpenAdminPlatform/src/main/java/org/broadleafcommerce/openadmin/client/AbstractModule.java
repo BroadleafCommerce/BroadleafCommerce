@@ -71,7 +71,6 @@ public abstract class AbstractModule implements EntryPoint, Module {
         BLCMain.MESSAGE_MANAGER.addConstants(constants);
     }
 
-
     public void setSection(
             String sectionTitle,
             String viewKey,

@@ -122,11 +122,11 @@
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceContentManagementModule/src/main/java</directory>
+                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/java</directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceContentManagementModule/src/main/resources</directory>
+                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/resources</directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
