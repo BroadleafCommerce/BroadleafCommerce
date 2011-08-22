@@ -212,9 +212,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     	removeAllCandidateOrderOffers();
         if (getDiscountableDiscreteOrderItems() != null) {
             for (PromotableOrderItem item : getDiscountableDiscreteOrderItems()) {
-            	if (item.getDelegate().getCandidateItemOffers() != null) {
-            		item.getDelegate().getCandidateItemOffers().clear();
-                }
+                item.getDelegate().removeAllCandidateItemOffers();
             }
         }
 
