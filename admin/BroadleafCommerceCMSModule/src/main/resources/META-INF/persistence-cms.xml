@@ -5,7 +5,24 @@
              version="2.0">
 	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
 		<!-- mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file -->
-        <!-- class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class -->
+        <class>org.broadleafcommerce.cms.site.domain.SiteImpl</class>
+        <class>org.broadleafcommerce.cms.message.domain.ContentMessageImpl</class>
+        <class>org.broadleafcommerce.cms.message.domain.ContentMessageValueImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldGroupImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldDataImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageFolderImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageTemplateImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetDataImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
 
         <exclude-unlisted-classes/>
         <properties>

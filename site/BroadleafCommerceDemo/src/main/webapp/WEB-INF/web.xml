@@ -16,6 +16,7 @@
 		<param-value>
 			classpath:/bl-open-admin-applicationContext.xml
             classpath:/bl-admin-applicationContext.xml
+            classpath:/bl-cms-applicationContext.xml
             /WEB-INF/applicationContext-demo.xml
             /WEB-INF/applicationContext-email.xml
             /WEB-INF/applicationContext-search.xml
