@@ -11,6 +11,7 @@
 		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserPermissionXref</class>
 		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserRoleXref</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SiteImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

@@ -7,6 +7,8 @@ import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,12 +31,17 @@ public class SandBoxImpl implements SandBox {
     
     @Column(name="AUTHOR")
     protected Long author;
+
+    @ManyToOne(targetEntity = SiteImpl.class)
+    @JoinTable(name = "BLC_SITE_SANDBOX", joinColumns = @JoinColumn(name = "SANDBOX_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
+    protected Site site;
     
   //  @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
   // @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   //  @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
   //  @BatchSize(size = 50)
-  //  protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
+    @Transient
+    protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getId()
@@ -71,18 +78,18 @@ public class SandBoxImpl implements SandBox {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getSandBoxItems()
 	 */
-//	@Override
-//	public List<SandBoxItem> getSandBoxItems() {
-//		return sandBoxItems;
-//	}
+	@Override
+	public List<SandBoxItem> getSandBoxItems() {
+		return sandBoxItems;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#setSandBoxItems(java.util.List)
 	 */
-//	@Override
-//	public void setSandBoxItems(List<SandBoxItem> sandBoxItems) {
-//		this.sandBoxItems = sandBoxItems;
-//	}
+	@Override
+	public void setSandBoxItems(List<SandBoxItem> sandBoxItems) {
+		this.sandBoxItems = sandBoxItems;
+	}
 
 	public Long getAuthor() {
 		return author;
@@ -100,6 +107,16 @@ public class SandBoxImpl implements SandBox {
     @Override
     public void setAllowedRoles(Set<AdminRole> allowedRoles) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Site getSite() {
+        return site;
+    }
+
+    @Override
+    public void setSite(Site site) {
+        this.site = site;
     }
 
     @Override

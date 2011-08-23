@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.site.domain.Site;
-import org.broadleafcommerce.cms.site.domain.SiteImpl;
+import org.broadleafcommerce.openadmin.server.domain.Site;
+import org.broadleafcommerce.openadmin.server.domain.SiteImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 

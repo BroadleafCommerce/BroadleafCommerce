@@ -1,8 +1,4 @@
-package org.broadleafcommerce.cms.site.domain;
-
-import org.broadleafcommerce.cms.message.domain.ContentMessage;
-
-import java.util.List;
+package org.broadleafcommerce.openadmin.server.domain;
 
 /**
  * Created by bpolster.
@@ -24,11 +20,7 @@ public interface Site {
 
     public void setSiteIdentifierValue(String siteIdentifierValue);
 
-    public String getSandboxName();
+    public SandBox getProductionSandbox();
 
-    public void setSandboxName(String sandboxName);
-
-    public List<ContentMessage> getContentMessages();
-
-    public void setContentMessages(List<ContentMessage> contentMessages);
+    public void setProductionSandbox(SandBox sandbox);
 }

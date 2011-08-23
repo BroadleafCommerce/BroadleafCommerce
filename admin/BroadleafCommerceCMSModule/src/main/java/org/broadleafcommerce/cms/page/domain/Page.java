@@ -36,4 +36,8 @@ public interface Page extends PageFolder {
     public SandBox getSandbox();
 
     public void setSandbox(SandBox sandbox);
+
+    public Long getOriginalPageId();
+
+    public void setOriginalPageId(Long originalPageId);
 }

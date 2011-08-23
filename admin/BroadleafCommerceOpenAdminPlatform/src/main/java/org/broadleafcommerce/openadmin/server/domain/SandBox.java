@@ -3,6 +3,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 public interface SandBox extends Serializable {
@@ -22,9 +23,9 @@ public interface SandBox extends Serializable {
 
 	public abstract void setName(String name);
 
-	//public abstract List<SandBoxItem> getSandBoxItems();
+	public abstract List<SandBoxItem> getSandBoxItems();
 
-	//public abstract void setSandBoxItems(List<SandBoxItem> sandBoxItems);
+	public abstract void setSandBoxItems(List<SandBoxItem> sandBoxItems);
 
 	public Long getAuthor();
 
@@ -48,6 +49,10 @@ public interface SandBox extends Serializable {
 	public Set<AdminRole> getAllowedRoles();
 
 	public void setAllowedRoles(Set<AdminRole> allowedRoles);
+
+    public Site getSite();
+
+    public void setSite(Site site);
 }
 
 

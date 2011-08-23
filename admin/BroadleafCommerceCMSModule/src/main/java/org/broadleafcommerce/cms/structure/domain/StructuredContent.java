@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.site.domain.Site;
+import org.broadleafcommerce.openadmin.server.domain.Site;
 
 import java.util.Date;
 import java.util.List;

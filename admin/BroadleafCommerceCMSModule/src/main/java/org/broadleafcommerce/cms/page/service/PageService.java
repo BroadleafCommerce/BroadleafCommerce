@@ -1,9 +1,23 @@
+/*
+ * Copyright 2008-20011 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.broadleafcommerce.cms.page.service;
 
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
-import org.broadleafcommerce.cms.site.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.List;
@@ -37,27 +51,13 @@ public interface PageService {
 
 
     /**
-     * Returns the Page associated with the given path, site, and locale.
-     * Null values can be passed in for all parameters except the path
-     * indicating that the default site, locale, and sandbox should be
-     * used.
-     *
-     * @param path - The full path for which to return the content page.
-     * @param pageFolder - The page's parent folder.
-     * @param sandboxName - The sandboxName to add this page.
-     * @return The associated page or null if no matching page is found.
-     */
-    public Page findPageByPath(String path, PageFolder pageFolder, Site site, String sandboxName);
-
-
-
-    /**
      * Merges sandbox and site production content
      * @param
      * @param parentFolder if null then root folder for the site.
+     * @param locale - the locale to include (null is typical for non-internationalized sites)
      * @return
      */
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox, Locale locale, PageFolder parentFolder);
+    public List<PageFolder> findPageFolderChildren(SandBox sandbox, PageFolder parentFolder, Locale locale);
 
 
     /**

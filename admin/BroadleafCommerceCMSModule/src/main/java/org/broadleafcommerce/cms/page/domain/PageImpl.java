@@ -64,6 +64,9 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Column (name = "ARCHIVED_FLAG")
     protected Boolean archivedFlag = false;
 
+    @Column (name = "ORIGINAL_PAGE_ID")
+    protected Long originalPageId;
+
     @Override
     public PageTemplate getPageTemplate() {
         return pageTemplate;
@@ -132,6 +135,16 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Override
     public void setSandbox(SandBox sandbox) {
         this.sandbox = sandbox;
+    }
+
+    @Override
+    public Long getOriginalPageId() {
+        return originalPageId;
+    }
+
+    @Override
+    public void setOriginalPageId(Long originalPageId) {
+        this.originalPageId = originalPageId;
     }
 }
 

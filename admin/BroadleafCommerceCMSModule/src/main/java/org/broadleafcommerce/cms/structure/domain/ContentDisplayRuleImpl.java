@@ -15,15 +15,10 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.message.domain.ContentMessage;
-import org.broadleafcommerce.cms.message.domain.ContentMessageImpl;
-import org.broadleafcommerce.cms.site.domain.Site;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * Created by bpolster.

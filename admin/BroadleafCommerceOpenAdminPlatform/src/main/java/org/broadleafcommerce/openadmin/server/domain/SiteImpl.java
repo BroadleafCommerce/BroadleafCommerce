@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.site.domain;
+package org.broadleafcommerce.openadmin.server.domain;
 
-import org.broadleafcommerce.cms.message.domain.ContentMessage;
-import org.broadleafcommerce.cms.message.domain.ContentMessageImpl;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
 
 /**
  * Created by bpolster.
@@ -50,13 +47,9 @@ public class SiteImpl implements Site {
     @Column (name = "SITE_IDENTIFIER_VALUE")
     protected String siteIdentifierValue;
 
-    @Column (name = "SANDBOX_NAME")
-    protected String sandboxName;
-
-    @OneToMany(targetEntity = ContentMessageImpl.class)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @BatchSize(size = 20)
-    protected List<ContentMessage> contentMessages;
+    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
+    protected SandBox productionSandbox;
 
     @Override
     public Long getId() {
@@ -99,23 +92,13 @@ public class SiteImpl implements Site {
     }
 
     @Override
-    public String getSandboxName() {
-        return sandboxName;
+    public SandBox getProductionSandbox() {
+        return productionSandbox;
     }
 
     @Override
-    public void setSandboxName(String sandboxName) {
-        this.sandboxName = sandboxName;
-    }
-
-    @Override
-    public List<ContentMessage> getContentMessages() {
-        return contentMessages;
-    }
-
-    @Override
-    public void setContentMessages(List<ContentMessage> contentMessages) {
-        this.contentMessages = contentMessages;
+    public void setProductionSandbox(SandBox productionSandbox) {
+        this.productionSandbox = productionSandbox;
     }
 }
 

@@ -5,7 +5,6 @@
              version="2.0">
 	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
 		<!-- mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file -->
-        <class>org.broadleafcommerce.cms.site.domain.SiteImpl</class>
         <class>org.broadleafcommerce.cms.message.domain.ContentMessageImpl</class>
         <class>org.broadleafcommerce.cms.message.domain.ContentMessageValueImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
