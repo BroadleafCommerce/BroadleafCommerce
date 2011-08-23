@@ -15,16 +15,15 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.widgets.tree.TreeGridField;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.tree.TreeGridField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -69,6 +68,9 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         	}
         }
         int availableSlots = fieldNames==null?4:fieldNames.length;
+        if (availableSlots == 0 && prominentFields.size() == 0) {
+            throw new RuntimeException("You have explicitly specified zero length array for fieldsNames and have no fields defined as prominent via AdminPresentation annotation. Cannot proceed with a tree grid without defining at least one column to show.");
+        }
         for (DataSourceField field : prominentFields) {
         	String columnWidth = field.getAttribute("columnWidth");
         	gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);

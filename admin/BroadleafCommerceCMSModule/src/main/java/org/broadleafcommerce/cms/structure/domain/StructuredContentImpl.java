@@ -51,8 +51,9 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "LANGUAGE_CODE")
     protected String languageCode;
 
-    @ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")
+    /*@ManyToOne(targetEntity = SiteImpl.class)
+    @JoinColumn(name="SITE_ID")*/
+    @Transient
     protected Site site;
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)

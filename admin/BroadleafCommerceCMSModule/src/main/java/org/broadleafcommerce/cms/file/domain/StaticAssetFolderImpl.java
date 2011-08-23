@@ -47,8 +47,9 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @JoinColumn(name="PARENT_FOLDER_ID")
     protected StaticAssetFolder parentFolder;
 
-    @ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")
+    /*@ManyToOne(targetEntity = SiteImpl.class)
+    @JoinColumn(name="SITE_ID")*/
+    @Transient
     protected Site site;
 
     @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = StaticAssetFolderImpl.class)

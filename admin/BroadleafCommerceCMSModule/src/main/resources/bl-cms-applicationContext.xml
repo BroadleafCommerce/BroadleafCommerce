@@ -36,4 +36,36 @@
 		</property>
 	</bean -->
 
+    <bean id="blPageService" class="org.broadleafcommerce.cms.admin.server.service.handler.PageServiceProxyFactoryBean"/>
+
+    <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
+		<constructor-arg>
+			<list>
+                <!--Add any custom persistence modules here -->
+                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
+			</list>
+		</constructor-arg>
+        <property name="customPersistenceHandlers">
+			<list>
+                <!--Add any custom persistence modules here -->
+                <bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.cms.admin.server.service.handler.PagesCustomPersistenceHandler"/>
+			</list>
+		</property>
+		<property name="targetEntityManagers">
+			<map>
+                <!--configure target entity managers here-->
+                <entry key="sandbox" value="prodEntityManager"/>
+                <entry key="stage" value="prodEntityManager"/>
+                <entry key="prod" value="prodEntityManager"/>
+            </map>
+		</property>
+		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+	</bean>
+
 </beans>

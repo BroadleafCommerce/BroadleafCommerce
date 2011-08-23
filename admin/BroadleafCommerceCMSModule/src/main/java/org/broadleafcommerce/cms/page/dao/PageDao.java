@@ -26,7 +26,8 @@ import java.util.Map;
  * Created by bpolster.
  */
 public interface PageDao {
-    public Page readPageById(Long id);
+
+    public PageFolder readPageById(Long id);
 
     public Map<String, PageField> readPageFieldsByPageId(Long pageId);
 

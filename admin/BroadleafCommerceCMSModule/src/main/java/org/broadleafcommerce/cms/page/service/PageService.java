@@ -36,7 +36,7 @@ public interface PageService {
      * @param pageId - The id of the page.
      * @return The associated page.
      */
-    public Page findPageById(Long pageId);
+    public PageFolder findPageById(Long pageId);
 
 
     /**

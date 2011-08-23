@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.page.domain;
 import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -43,9 +44,11 @@ public class PageImpl extends PageFolderImpl implements Page {
     protected PageTemplate pageTemplate;
 
     @Column (name = "META_KEYWORDS")
+    @AdminPresentation(friendlyName="Meta Keywords", order=1, group="Page")
     protected String metaKeywords;
 
     @Column (name = "META_DESCRIPTION")
+    @AdminPresentation(friendlyName="Meta Description", order=2, group="Page")
     protected String metaDescription;
 
     @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = {CascadeType.ALL})
@@ -54,17 +57,22 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
 
-    @ManyToOne (targetEntity = SandBoxImpl.class)
+    /*@ManyToOne (targetEntity = SandBoxImpl.class)
     @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
+    @AdminPresentation(friendlyName="Page SandBox", order=3, group="Page", hidden = true)*/
+    @Transient
     protected SandBox sandbox;
 
     @Column (name = "DELETED_FLAG")
+    @AdminPresentation(friendlyName="Deleted", order=4, group="Page", hidden = true)
     protected Boolean deletedFlag = false;
 
     @Column (name = "ARCHIVED_FLAG")
+    @AdminPresentation(friendlyName="Archived", order=5, group="Page", hidden = true)
     protected Boolean archivedFlag = false;
 
     @Column (name = "ORIGINAL_PAGE_ID")
+    @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", hidden = true)
     protected Long originalPageId;
 
     @Override

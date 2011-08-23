@@ -45,8 +45,8 @@ public class PageDaoImpl implements PageDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @Override
-    public Page readPageById(Long id) {
-        return (Page) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.Page"), id);
+    public PageFolder readPageById(Long id) {
+        return (PageFolder) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.PageFolder"), id);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class PageDaoImpl implements PageDao {
     @Override
     public void delete(Page page) {
         if (!em.contains(page)) {
-            page = readPageById(page.getId());
+            page = (Page) readPageById(page.getId());
         }
         em.remove(page);
     }

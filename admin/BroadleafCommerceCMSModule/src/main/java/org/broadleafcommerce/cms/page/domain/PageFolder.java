@@ -3,20 +3,17 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface PageFolder {
+public interface PageFolder extends Serializable {
 
     public Long getId();
 
     public void setId(Long id);
-
-    public String getPath();
-
-    public void setPath(String path);
 
     public PageFolder getParentFolder();
 
@@ -33,4 +30,10 @@ public interface PageFolder {
     public Boolean getDeletedFlag();
 
     public void setDeletedFlag(Boolean deletedFlag);
+
+    public boolean hasChildFolders();
+
+    public String getName();
+
+    public void setName(String name);
 }

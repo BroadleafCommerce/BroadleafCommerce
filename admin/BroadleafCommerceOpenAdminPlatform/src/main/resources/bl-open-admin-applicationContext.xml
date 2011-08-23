@@ -103,11 +103,17 @@
 	<bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
+                <!--Add any custom persistence modules here -->
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
 			</list>
 		</constructor-arg>
+        <property name="customPersistenceHandlers">
+			<list>
+                <!--Add custom persistence handlers here -->
+			</list>
+		</property>
 		<property name="targetEntityManagers">
 			<map>
                 <!--<entry key="sandbox" value="sandBoxEntityManagerPool"/>-->
@@ -117,13 +123,13 @@
             </map>
 		</property>
 		<!--<property name="sandBoxService" ref="blSandBoxService"/>-->
-		<property name="dynamicEntityDao">
-            <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-                <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
-                <property name="entityConfiguration" ref="blEntityConfiguration"/>
-            </bean>
-        </property>
+		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
 	</bean>
+
+    <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
+        <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
+        <property name="entityConfiguration" ref="blEntityConfiguration"/>
+    </bean>
 
     <bean id="blSessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 

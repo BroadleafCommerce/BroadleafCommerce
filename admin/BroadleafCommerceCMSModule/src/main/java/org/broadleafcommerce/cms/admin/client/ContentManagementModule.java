@@ -41,10 +41,13 @@ public class ContentManagementModule extends AbstractModule {
 		cmsRoles.add("ROLE_CONTENT_MANAGER");
 
         setSection(
-			BLCMain.getMessageManager().getString("assetListTitle"),
-			"fileBasedAssetView",
-			"org.broadleafcommerce.cms.admin.client.asset.view.FileBasedAssetView",
-			cmsRoles
+            BLCMain.getMessageManager().getString("pagesTitle"),
+			"pages",
+			"org.broadleafcommerce.cms.admin.client.view.pages.PagesView",
+			"pagesPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter",
+			cmsRoles,
+			null
 		);
 
         registerModule();

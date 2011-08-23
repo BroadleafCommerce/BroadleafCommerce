@@ -17,10 +17,13 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.SiteImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,21 +43,24 @@ public class PageFolderImpl implements PageFolder {
     @Column(name = "PAGE_FOLDER_ID")
     protected Long id;
 
-    @Column (name = "PATH")
-    protected String path;
+    @Column(name = "NAME", nullable=false)
+    @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true)
+    protected String name;
 
     @ManyToOne(targetEntity = PageFolderImpl.class)
     @JoinColumn(name="PARENT_FOLDER_ID")
     protected PageFolder parentFolder;
 
-    @ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")
+    /*@ManyToOne(targetEntity = SiteImpl.class)
+    @JoinColumn(name="SITE_ID")*/
+    @Transient
     protected Site site;
 
     @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = PageFolderImpl.class)
-    protected List<PageFolder> subFolders;
+    protected List<PageFolder> subFolders = new ArrayList<PageFolder>();
 
     @Column (name = "DELETED_FLAG")
+    @AdminPresentation(friendlyName="Deleted", order=2, group="Description", hidden = true)
     protected Boolean deletedFlag = false;
 
     @Override
@@ -68,13 +74,13 @@ public class PageFolderImpl implements PageFolder {
     }
 
     @Override
-    public String getPath() {
-        return path;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setPath(String path) {
-        this.path = path;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -116,5 +122,17 @@ public class PageFolderImpl implements PageFolder {
     public void setDeletedFlag(Boolean deletedFlag) {
         this.deletedFlag = deletedFlag;
     }
+
+
+    @Override
+    public boolean hasChildFolders(){
+        for (PageFolder folder : subFolders) {
+            if (PageFolderImpl.class.getName().equals(folder.getClass().getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 

@@ -46,7 +46,7 @@ public class PageServiceImpl implements PageService {
      * @return The associated page.
      */
     @Override
-    public Page findPageById(Long pageId) {
+    public PageFolder findPageById(Long pageId) {
         return pageDao.readPageById(pageId);
     }
 
@@ -134,7 +134,7 @@ public class PageServiceImpl implements PageService {
             return pageDao.addPage(clonedPage);
         } else if (checkForProductionSandbox(destSandbox)) {
             // Moving to production
-            Page existingPage = findPageById(page.getOriginalPageId());
+            Page existingPage = (Page) findPageById(page.getOriginalPageId());
             existingPage.setArchivedFlag(true);
             pageDao.updatePage(existingPage);
 

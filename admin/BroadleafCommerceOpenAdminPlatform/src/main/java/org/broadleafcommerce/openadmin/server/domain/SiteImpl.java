@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -39,16 +40,20 @@ public class SiteImpl implements Site {
     protected Long id;
 
     @Column (name = "NAME")
+    @AdminPresentation(friendlyName="Site Name", order=1, group="Site")
     protected String name;
 
     @Column (name = "SITE_IDENTIFIER_TYPE")
+    @AdminPresentation(friendlyName="Site Identifier Type", order=2, group="Site")
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
+    @AdminPresentation(friendlyName="Site Identifier Value", order=3, group="Site")
     protected String siteIdentifierValue;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
+    @AdminPresentation(friendlyName="Production SandBox", order=4, group="Site", hidden = true)
     protected SandBox productionSandbox;
 
     @Override

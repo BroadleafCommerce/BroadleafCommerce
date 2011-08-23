@@ -43,4 +43,12 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String newStructuredContentTitle();
     public String deleteStructuredContentTitle();
 
+
+
+    public String pagesTitle();
+    public String detailsTitle();
+    public String allChildItemsTitle();
+    public String defaultPageName();
+    public String newItemTitle();
+
 }
