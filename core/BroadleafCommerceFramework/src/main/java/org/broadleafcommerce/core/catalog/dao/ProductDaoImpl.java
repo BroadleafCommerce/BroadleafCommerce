@@ -26,9 +26,8 @@ import javax.persistence.Query;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 @Repository("blProductDao")

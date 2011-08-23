@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.profile.time.SystemTime;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 

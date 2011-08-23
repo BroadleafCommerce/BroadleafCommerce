@@ -20,7 +20,7 @@ import java.util.Date;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
-import org.broadleafcommerce.profile.time.SystemTime;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.testng.annotations.DataProvider;
 
 public class SkuAvailabilityDataProvider {
