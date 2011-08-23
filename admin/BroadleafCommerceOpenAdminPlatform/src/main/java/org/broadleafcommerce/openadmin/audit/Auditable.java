@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.common.domain;
+package org.broadleafcommerce.openadmin.audit;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.broadleafcommerce.presentation.AdminPresentation;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.broadleafcommerce.presentation.AdminPresentation;
+import java.io.Serializable;
+import java.util.Date;
 
 @Embeddable
 public class Auditable implements Serializable {

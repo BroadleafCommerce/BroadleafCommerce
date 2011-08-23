@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.core.domain.listener;
+package org.broadleafcommerce.openadmin.audit;
 
-import java.lang.reflect.Field;
-import java.util.Calendar;
+import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-
-import org.broadleafcommerce.profile.common.domain.Auditable;
-import org.broadleafcommerce.profile.time.SystemTime;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import java.lang.reflect.Field;
+import java.util.Calendar;
 
 public class AuditableListener {
 
