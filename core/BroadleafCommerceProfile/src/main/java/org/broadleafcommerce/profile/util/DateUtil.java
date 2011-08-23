@@ -17,7 +17,7 @@ package org.broadleafcommerce.profile.util;
 
 import java.util.Date;
 
-import org.broadleafcommerce.profile.time.SystemTime;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 
 public class DateUtil {
 

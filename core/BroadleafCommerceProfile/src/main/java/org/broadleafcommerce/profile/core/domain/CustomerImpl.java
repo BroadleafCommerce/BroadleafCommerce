@@ -15,29 +15,17 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import java.util.Locale;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.common.domain.Auditable;
-import org.broadleafcommerce.profile.core.domain.listener.AuditableListener;
 import org.broadleafcommerce.profile.core.service.type.LocaleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
+import java.util.Locale;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
