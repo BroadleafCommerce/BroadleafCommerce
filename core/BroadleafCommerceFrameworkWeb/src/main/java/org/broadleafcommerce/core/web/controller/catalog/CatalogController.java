@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.core.web.catalog.CatalogSort;
 import org.broadleafcommerce.core.web.order.model.WishlistRequest;
 import org.broadleafcommerce.core.web.search.SearchFilterUtil;
-import org.broadleafcommerce.profile.time.SystemTime;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
