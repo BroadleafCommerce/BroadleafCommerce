@@ -20,7 +20,7 @@
         	<package name="org.broadleafcommerce.taglib"></package>
         	<package name="org.broadleafcommerce.test"></package>
         	<package name="org.broadleafcommerce.vendor"></package>
-        	<package name="org.broadleafcommerce.profile.time"></package>
+        	<package name="org.broadleafcommerce.openadmin.time.time"></package>
         </packages>
     </test>
 </suite>
