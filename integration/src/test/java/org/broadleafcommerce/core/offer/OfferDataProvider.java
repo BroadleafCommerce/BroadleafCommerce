@@ -24,8 +24,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.profile.time.SystemTime;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.testng.annotations.DataProvider;
 
 
