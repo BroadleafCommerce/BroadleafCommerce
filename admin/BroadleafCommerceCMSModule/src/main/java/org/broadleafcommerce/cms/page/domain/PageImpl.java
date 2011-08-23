@@ -15,8 +15,9 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.site.domain.Site;
-import org.broadleafcommerce.cms.site.domain.SiteImpl;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -30,14 +31,12 @@ import java.util.Map;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(value = { AuditableListener.class })
 @Table(name = "BLC_PAGE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class PageImpl extends PageFolderImpl implements Page {
 
     private static final long serialVersionUID = 1L;
-
-    @Column (name = "PAGE_FILE_NAME")
-    protected String pageFileName;
 
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
@@ -55,18 +54,15 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
 
+    @ManyToOne (targetEntity = SandBoxImpl.class)
+    @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
+    protected SandBox sandbox;
+
     @Column (name = "DELETED_FLAG")
     protected Boolean deletedFlag = false;
 
-    @Override
-    public String getPageFileName() {
-        return pageFileName;
-    }
-
-    @Override
-    public void setPageFileName(String pageFileName) {
-        this.pageFileName = pageFileName;
-    }
+    @Column (name = "ARCHIVED_FLAG")
+    protected Boolean archivedFlag = false;
 
     @Override
     public PageTemplate getPageTemplate() {
@@ -116,6 +112,26 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Override
     public void setDeletedFlag(Boolean deletedFlag) {
         this.deletedFlag = deletedFlag;
+    }
+
+    @Override
+    public Boolean getArchivedFlag() {
+        return archivedFlag;
+    }
+
+    @Override
+    public void setArchivedFlag(Boolean archivedFlag) {
+        this.archivedFlag = archivedFlag;
+    }
+
+    @Override
+    public SandBox getSandbox() {
+        return sandbox;
+    }
+
+    @Override
+    public void setSandbox(SandBox sandbox) {
+        this.sandbox = sandbox;
     }
 }
 

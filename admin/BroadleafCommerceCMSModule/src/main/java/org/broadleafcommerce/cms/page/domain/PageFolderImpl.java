@@ -15,9 +15,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
-import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.site.domain.Site;
 import org.broadleafcommerce.cms.site.domain.SiteImpl;
 import org.hibernate.annotations.Cache;
@@ -43,8 +40,8 @@ public class PageFolderImpl implements PageFolder {
     @Column(name = "PAGE_FOLDER_ID")
     protected Long id;
 
-    @Column (name = "FOLDER_NAME")
-    protected String folderName;
+    @Column (name = "PATH")
+    protected String path;
 
     @ManyToOne(targetEntity = PageFolderImpl.class)
     @JoinColumn(name="PARENT_FOLDER_ID")
@@ -71,13 +68,13 @@ public class PageFolderImpl implements PageFolder {
     }
 
     @Override
-    public String getFolderName() {
-        return folderName;
+    public String getPath() {
+        return path;
     }
 
     @Override
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override

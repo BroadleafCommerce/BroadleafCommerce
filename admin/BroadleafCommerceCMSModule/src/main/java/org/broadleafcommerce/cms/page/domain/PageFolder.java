@@ -13,9 +13,9 @@ public interface PageFolder {
 
     public void setId(Long id);
 
-    public String getFolderName();
+    public String getPath();
 
-    public void setFolderName(String folderName);
+    public void setPath(String path);
 
     public PageFolder getParentFolder();
 

@@ -1,10 +1,8 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 public interface SandBox extends Serializable {
@@ -24,9 +22,9 @@ public interface SandBox extends Serializable {
 
 	public abstract void setName(String name);
 
-	public abstract List<SandBoxItem> getSandBoxItems();
+	//public abstract List<SandBoxItem> getSandBoxItems();
 
-	public abstract void setSandBoxItems(List<SandBoxItem> sandBoxItems);
+	//public abstract void setSandBoxItems(List<SandBoxItem> sandBoxItems);
 
 	public Long getAuthor();
 

@@ -1,27 +1,13 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,11 +30,11 @@ public class SandBoxImpl implements SandBox {
     @Column(name="AUTHOR")
     protected Long author;
     
-    @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
-    @BatchSize(size = 50)
-    protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
+  //  @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
+  // @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+  //  @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
+  //  @BatchSize(size = 50)
+  //  protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getId()
@@ -85,18 +71,18 @@ public class SandBoxImpl implements SandBox {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getSandBoxItems()
 	 */
-	@Override
-	public List<SandBoxItem> getSandBoxItems() {
-		return sandBoxItems;
-	}
+//	@Override
+//	public List<SandBoxItem> getSandBoxItems() {
+//		return sandBoxItems;
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#setSandBoxItems(java.util.List)
 	 */
-	@Override
-	public void setSandBoxItems(List<SandBoxItem> sandBoxItems) {
-		this.sandBoxItems = sandBoxItems;
-	}
+//	@Override
+//	public void setSandBoxItems(List<SandBoxItem> sandBoxItems) {
+//		this.sandBoxItems = sandBoxItems;
+//	}
 
 	public Long getAuthor() {
 		return author;
