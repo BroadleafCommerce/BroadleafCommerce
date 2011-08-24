@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.w3c.dom.DOMException;
 
+import javax.persistence.Embedded;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -479,7 +480,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		return primaryKey;
 	}
 	
-	public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties) {
+	public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties) throws ClassNotFoundException {
 		BaseCtoConverter ctoConverter = new BaseCtoConverter();
 		for (String propertyName : mergedProperties.keySet()) {
 			AssociationPath associationPath;
@@ -489,13 +490,28 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				property = propertyName.substring(dotIndex + 1, propertyName.length());
 				String prefix = propertyName.substring(0, dotIndex);
 				StringTokenizer tokens = new StringTokenizer(prefix, ".");
-				AssociationPathElement[] elements = new AssociationPathElement[tokens.countTokens()];
-				int j = 0;
-				while (tokens.hasMoreElements()) {
-					elements[j] = new AssociationPathElement(tokens.nextToken());
-					j++;
-				}
-				associationPath = new AssociationPath(elements);
+                List<AssociationPathElement> elementList = new ArrayList<AssociationPathElement>();
+                Class clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
+                StringBuffer sb = new StringBuffer();
+                while(tokens.hasMoreElements()) {
+                    String token = tokens.nextToken();
+                    sb.append(token);
+                    Field field = getFieldManager().getField(clazz, sb.toString());
+                    Embedded embedded = field.getAnnotation(Embedded.class);
+                    if (embedded != null) {
+                        sb.append(".");
+                    } else {
+                        elementList.add(new AssociationPathElement(sb.toString()));
+                        sb = new StringBuffer();
+                    }
+                }
+                if (elementList.size() > 0) {
+                    AssociationPathElement[] elements = elementList.toArray(new AssociationPathElement[]{});
+                    associationPath = new AssociationPath(elements);
+                } else {
+                    property = sb.toString() + property;
+				    associationPath = AssociationPath.ROOT;
+                }
 			} else {
 				property = propertyName;
 				associationPath = AssociationPath.ROOT;
