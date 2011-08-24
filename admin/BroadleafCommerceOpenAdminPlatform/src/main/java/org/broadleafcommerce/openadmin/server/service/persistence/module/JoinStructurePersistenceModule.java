@@ -15,31 +15,20 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.service.ServiceException;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
-
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -60,7 +49,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		}
 	}
 
-	protected BaseCtoConverter getJoinStructureCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, JoinStructure joinStructure) {
+	protected BaseCtoConverter getJoinStructureCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, JoinStructure joinStructure) throws ClassNotFoundException {
 		BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, joinStructure.getJoinStructureEntityClassname(), mergedProperties);
 		ctoConverter.addLongEQMapping(joinStructure.getJoinStructureEntityClassname(), joinStructure.getName(), AssociationPath.ROOT, joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty());
 		ctoConverter.addLongEQMapping(joinStructure.getJoinStructureEntityClassname(), joinStructure.getName() + "Target", AssociationPath.ROOT, joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty());

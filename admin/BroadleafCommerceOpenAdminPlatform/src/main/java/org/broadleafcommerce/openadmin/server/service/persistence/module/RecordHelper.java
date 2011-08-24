@@ -15,17 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -33,7 +23,15 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.w3c.dom.DOMException;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -42,7 +40,7 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  */
 public interface RecordHelper {
 
-	public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties);
+	public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties) throws ClassNotFoundException;
 	
 	public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException;
 	

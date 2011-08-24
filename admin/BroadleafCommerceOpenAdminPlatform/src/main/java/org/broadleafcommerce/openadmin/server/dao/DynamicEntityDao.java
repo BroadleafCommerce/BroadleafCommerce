@@ -22,10 +22,12 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.type.Type;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,5 +74,9 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
     public void setEntityConfiguration(EntityConfiguration entityConfiguration);
 
     public Map<String, Class<?>> getIdMetadata(Class<?> entityClass);
+
+    public List<Type> getPropertyTypes(Class<?> entityClass);
+
+    public List<String> getPropertyNames(Class<?> entityClass);
 
 }

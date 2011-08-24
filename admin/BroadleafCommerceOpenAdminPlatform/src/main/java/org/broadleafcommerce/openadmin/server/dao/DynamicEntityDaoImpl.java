@@ -543,7 +543,25 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
         return response;
     }
-	
+
+    public List<String> getPropertyNames(Class<?> entityClass) {
+        ClassMetadata metadata = getSessionFactory().getClassMetadata(entityClass);
+        List<String> propertyNames = new ArrayList<String>();
+        for (String propertyName : metadata.getPropertyNames()) {
+			propertyNames.add(propertyName);
+		}
+        return propertyNames;
+    }
+
+    public List<Type> getPropertyTypes(Class<?> entityClass) {
+        ClassMetadata metadata = getSessionFactory().getClassMetadata(entityClass);
+        List<Type> propertyTypes = new ArrayList<Type>();
+        for (Type propertyType : metadata.getPropertyTypes()) {
+			propertyTypes.add(propertyType);
+		}
+        return propertyTypes;
+    }
+
 	@SuppressWarnings("unchecked")
 	protected Map<String, FieldMetadata> getPropertiesForEntityClass(
 		Class<?> targetClass, 
@@ -559,19 +577,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldPresentationAttributes> presentationAttributes = getFieldPresentationAttributes(targetClass);
         Map idMetadata = getIdMetadata(targetClass);
-		ClassMetadata metadata = getSessionFactory().getClassMetadata(targetClass);
 		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
-		List<String> propertyNames = new ArrayList<String>();
 		String idProperty = (String) idMetadata.get("name");
-		for (String propertyName : metadata.getPropertyNames()) {
-			propertyNames.add(propertyName);
-		}
+		List<String> propertyNames = getPropertyNames(targetClass);
 		propertyNames.add(idProperty);
-		List<Type> propertyTypes = new ArrayList<Type>();
 		Type idType = (Type) idMetadata.get("type");
-		for (Type propertyType : metadata.getPropertyTypes()) {
-			propertyTypes.add(propertyType);
-		}
+        List<Type> propertyTypes = getPropertyTypes(targetClass);
 		propertyTypes.add(idType);
 		
 		PersistentClass persistentClass = getPersistentClass(targetClass.getName());
@@ -594,8 +605,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			additionalNonPersistentProperties,
 			mergedPropertyType, 
 			presentationAttributes, 
-			iter, 
-			metadata, 
+			iter,
 			fields, 
 			propertyNames, 
 			propertyTypes, 
@@ -625,8 +635,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String[] additionalNonPersistentProperties,
 		MergedPropertyType mergedPropertyType, 
 		Map<String, FieldPresentationAttributes> presentationAttributes, 
-		Iterator<Property> propertyIterator, 
-		ClassMetadata metadata, 
+		Iterator<Property> propertyIterator,
 		Map<String, FieldMetadata> fields, 
 		List<String> propertyNames, 
 		List<Type> propertyTypes, 
@@ -661,7 +670,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				Class<?> returnedClass = type.getReturnedClass();
                 checkProp: {
                     if (type.isComponentType() && includeField) {
-                        buildComponentProperties(targetClass, foreignField, additionalForeignFields, additionalNonPersistentProperties, mergedPropertyType, metadata, fields, idProperty, populateManyToOneFields, includeFields, excludeFields, propertyName, type, returnedClass, metadataOverrides);
+                        buildComponentProperties(targetClass, foreignField, additionalForeignFields, additionalNonPersistentProperties, mergedPropertyType, fields, idProperty, populateManyToOneFields, includeFields, excludeFields, propertyName, type, returnedClass, metadataOverrides);
                         break checkProp;
                     }
                     /*
@@ -848,8 +857,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		ForeignKey foreignField, 
 		ForeignKey[] additionalForeignFields, 
 		String[] additionalNonPersistentProperties, 
-		MergedPropertyType mergedPropertyType, 
-		ClassMetadata metadata, 
+		MergedPropertyType mergedPropertyType,
 		Map<String, FieldMetadata> fields, 
 		String idProperty, 
 		Boolean populateManyToOneFields, 
@@ -882,8 +890,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			additionalNonPersistentProperties,
 			mergedPropertyType,  
 			componentPresentationAttributes, 
-			componentPropertyIterator, 
-			metadata, 
+			componentPropertyIterator,
 			newFields, 
 			componentPropertyNames, 
 			componentPropertyTypes, 
