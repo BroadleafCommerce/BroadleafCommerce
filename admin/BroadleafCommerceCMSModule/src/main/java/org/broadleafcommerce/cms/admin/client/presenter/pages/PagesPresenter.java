@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class PagesPresenter extends DynamicEntityPresenter implements Instantiable {
 
-	protected String rootId = "1";
+	protected String rootId = null;
 	protected String rootName = "Root";
 
 	protected HashMap<String, Object> library = new HashMap<String, Object>();

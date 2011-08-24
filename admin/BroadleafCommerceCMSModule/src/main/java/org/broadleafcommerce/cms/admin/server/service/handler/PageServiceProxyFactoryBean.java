@@ -9,9 +9,7 @@ import org.springframework.beans.factory.FactoryBean;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -108,7 +106,9 @@ public class PageServiceProxyFactoryBean implements FactoryBean<PageService> {
             if (method.getName().equals("findPageById")) {
                 return library.get((Long) objects[0]);
             } else if (method.getName().equals("findPageFolderChildren")) {
-                List<PageFolder> response = new ArrayList<PageFolder>();
+                if (objects[1]==null) {
+                    return rootStructure.getSubFolders();
+                }
                 return ((PageFolder) objects[1]).getSubFolders();
             }
             throw new Exception("Operation not supported: " + method.getName());

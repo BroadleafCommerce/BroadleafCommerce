@@ -31,22 +31,26 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return true;
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return true;
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-        return true;
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return true;
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -59,7 +63,10 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String parentCategoryId = cto.get(PagesTreeDataSourceFactory.parentFolderForeignKey).getFilterValues()[0];
-            PageFolder pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
+            PageFolder pageOrFolder = null;
+            if (parentCategoryId != null) {
+                pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
+            }
             List<PageFolder> folders = pageService.findPageFolderChildren(null, pageOrFolder, null);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(folders);

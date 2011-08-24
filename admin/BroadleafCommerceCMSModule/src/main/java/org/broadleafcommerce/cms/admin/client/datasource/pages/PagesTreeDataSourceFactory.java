@@ -21,7 +21,7 @@ import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -35,7 +35,7 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
 
 	public static final String hasChildrenProperty = "hasChildFolders";
 	public static final String parentFolderForeignKey = "parentFolder";
-	public static PagesTreeDataSource dataSource = null;
+	public static TreeGridDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
@@ -43,9 +43,9 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {hasChildrenProperty}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.PAGES, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new PagesClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-			dataSource = new PagesTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
+			dataSource = new TreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {
