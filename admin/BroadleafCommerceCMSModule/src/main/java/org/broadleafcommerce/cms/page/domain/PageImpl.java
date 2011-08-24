@@ -57,10 +57,9 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
 
-    /*@ManyToOne (targetEntity = SandBoxImpl.class)
+    @ManyToOne (targetEntity = SandBoxImpl.class)
     @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
-    @AdminPresentation(friendlyName="Page SandBox", order=3, group="Page", hidden = true)*/
-    @Transient
+    @AdminPresentation(friendlyName="Page SandBox", order=3, group="Page", hidden = true)
     protected SandBox sandbox;
 
     @Column (name = "DELETED_FLAG")
@@ -74,6 +73,10 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Column (name = "ORIGINAL_PAGE_ID")
     @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", hidden = true)
     protected Long originalPageId;
+
+    public PageImpl() {
+        folderFlag = false;
+    }
 
     @Override
     public PageTemplate getPageTemplate() {
@@ -153,6 +156,27 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Override
     public void setOriginalPageId(Long originalPageId) {
         this.originalPageId = originalPageId;
+    }
+
+    @Override
+    public Page cloneEntity() {
+        PageImpl newPage = new PageImpl();
+        newPage.archivedFlag = archivedFlag;
+        newPage.deletedFlag = deletedFlag;
+        newPage.pageTemplate = pageTemplate;
+        newPage.metaDescription = metaDescription;
+        newPage.metaKeywords = metaKeywords;
+        newPage.sandbox = sandbox;
+        newPage.originalPageId = originalPageId;
+
+
+        for (PageField oldPageField: pageFields.values()) {
+            PageField newPageField = oldPageField.cloneEntity();
+            newPageField.setPage(newPage);
+            newPage.getPageFields().put(newPageField.getFieldKey(), newPageField);
+        }
+
+        return newPage;
     }
 }
 

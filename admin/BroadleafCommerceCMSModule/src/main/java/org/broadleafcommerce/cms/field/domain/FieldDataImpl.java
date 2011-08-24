@@ -78,5 +78,12 @@ public class FieldDataImpl implements FieldData {
             stringValue = null;
         }
     }
+
+    @Override
+    public FieldData cloneEntity() {
+        FieldDataImpl newFieldData = new FieldDataImpl();
+        newFieldData.setValue(this.getValue());
+        return newFieldData;
+    }
 }
 

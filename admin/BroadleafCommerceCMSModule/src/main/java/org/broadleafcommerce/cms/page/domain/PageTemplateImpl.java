@@ -51,7 +51,7 @@ public class PageTemplateImpl implements PageTemplate {
     protected String templatePath;
 
     @Column (name = "LANGUAGE_CODE")
-    protected String languageCode;
+    protected String languageCode="default";
 
     @OneToMany(targetEntity = FieldGroupImpl.class)
     @JoinTable(name = "BLC_TEMPLATE_FIELD_GROUPS", joinColumns = @JoinColumn(name = "PAGE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))

@@ -15,6 +15,7 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
@@ -425,5 +426,23 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     public void setSandBoxIdGenerationService(SandBoxIdGenerationService sandBoxIdGenerationService) {
         this.sandBoxIdGenerationService = sandBoxIdGenerationService;
+    }
+
+    @Override
+    public SandBox retrieveSandBoxByUserId(AdminUser adminUser) {
+        // TODO: Code sandbox retrieval logic
+        SandBoxImpl sandbox = new SandBoxImpl();
+        sandbox.setId(1l);
+        sandbox.setName("user:test");
+        sandbox.setAuthor(adminUser.getId());
+        return sandbox;
+    }
+
+    @Override
+    public SandBox retrieveSandBoxByName(String name) {
+        // TODO: Code sandbox retrieval logic
+        SandBox sandbox = retrieveSandBoxByUserId(null);
+        sandbox.setName(name);
+        return sandbox;
     }
 }

@@ -16,11 +16,9 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.openadmin.server.domain.SiteImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -62,6 +60,10 @@ public class PageFolderImpl implements PageFolder {
     @Column (name = "DELETED_FLAG")
     @AdminPresentation(friendlyName="Deleted", order=2, group="Description", hidden = true)
     protected Boolean deletedFlag = false;
+
+    @Column (name = "IS_FOLDER_FLAG")
+    @AdminPresentation(friendlyName="Is Folder", order=3, group="Folder Flag", hidden = true)
+    protected Boolean folderFlag = true;
 
     @Override
     public Long getId() {
@@ -132,6 +134,11 @@ public class PageFolderImpl implements PageFolder {
             }
         }
         return false;
+    }
+
+    @Override
+    public Boolean isFolder() {
+        return folderFlag;
     }
 
 }

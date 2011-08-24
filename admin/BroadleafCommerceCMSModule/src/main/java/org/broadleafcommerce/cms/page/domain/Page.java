@@ -40,4 +40,6 @@ public interface Page extends PageFolder {
     public Long getOriginalPageId();
 
     public void setOriginalPageId(Long originalPageId);
+
+    public Page cloneEntity();
 }

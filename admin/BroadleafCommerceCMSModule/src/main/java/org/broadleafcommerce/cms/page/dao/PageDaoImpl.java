@@ -18,7 +18,9 @@ package org.broadleafcommerce.cms.page.dao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -26,15 +28,18 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by bpolster.
  */
 @Repository("blPageDao")
 public class PageDaoImpl implements PageDao {
+
+    private static SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    {
+        DUMMY_SANDBOX.setId(-1l);
+    }
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -50,16 +55,61 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Map<String, PageField> readPageFieldsByPageId(Long pageId) {
-        // TODO: query
-        return null;
+    public Map<String, PageField> readPageFieldsByPage(Page page) {
+        Query query = em.createNamedQuery("BC_READ_PAGE_FIELDS_BY_PAGE_ID");
+        query.setParameter("page", page);
+
+        List<PageField> pageFields = (List<PageField>) query.getResultList();
+        Map<String, PageField> pageFieldMap = new HashMap<String, PageField>();
+        for (PageField pageField : pageFields) {
+            pageFieldMap.put(pageField.getFieldKey(), pageField);
+        }
+        return pageFieldMap;
     }
 
     @Override
-    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder) {
-        Query query = em.createNamedQuery("BC_READ_PAGE_FOLDER_CHILDREN");
+    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String languageCode, SandBox userSandBox, SandBox productionSandBox) {
+        Query query = em.createNamedQuery("BC_READ_PAGE_FOLDER_CHILD_PAGES");
         query.setParameter("parentFolder", parentFolder);
+        query.setParameter("userSandbox", userSandBox == null ? DUMMY_SANDBOX : userSandBox);
+        query.setParameter("productionSandbox", productionSandBox == null ? DUMMY_SANDBOX : productionSandBox);
+        query.setParameter("languageCode", languageCode);
+
+        List<Page> childPages = query.getResultList();
+        filterPagesForSandbox(userSandBox, productionSandBox, childPages);
+
+        Query query2 = em.createNamedQuery("BC_READ_PAGE_FOLDER_CHILD_FOLDERS");
+        query2.setParameter("parentFolder", parentFolder);
+
+        List<PageFolder> childFolders = query2.getResultList();
+        childFolders.addAll(childPages);
+
         return query.getResultList();
+    }
+
+    private void filterPagesForSandbox(SandBox userSandBox, SandBox productionSandBox, List<Page> pageList) {
+        if (userSandBox != null) {
+
+            List<Long> removeIds = new ArrayList<Long>();
+            for (Page page : pageList) {
+                if (page.getOriginalPageId() != null) {
+                    removeIds.add(page.getOriginalPageId());
+                }
+
+                if (page.getDeletedFlag()) {
+                    removeIds.add(page.getId());
+                }
+            }
+
+            Iterator<Page> pageIterator = pageList.iterator();
+
+            while (pageIterator.hasNext()) {
+                Page page = pageIterator.next();
+                if (removeIds.contains(page.getId())) {
+                  pageIterator.remove();
+                }
+            }
+        }
     }
 
     @Override
@@ -88,5 +138,12 @@ public class PageDaoImpl implements PageDao {
     @Override
     public PageFolder addPageFolder(PageFolder pageFolder) {
         return (Page) em.merge(pageFolder);
+    }
+
+    @Override
+    public List<PageTemplate> retrieveAllPageTemplates(String languageCode) {
+        Query query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE");
+        query.setParameter("languageCode", languageCode);
+        return query.getResultList();
     }
 }

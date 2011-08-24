@@ -18,6 +18,8 @@ package org.broadleafcommerce.cms.page.dao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.List;
 import java.util.Map;
@@ -29,9 +31,9 @@ public interface PageDao {
 
     public PageFolder readPageById(Long id);
 
-    public Map<String, PageField> readPageFieldsByPageId(Long pageId);
+    public Map<String, PageField> readPageFieldsByPage(Page page);
 
-    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder);
+    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String languageCode, SandBox userSandbox, SandBox productionSandBox);
 
     public Page updatePage(Page page);
 
@@ -42,4 +44,6 @@ public interface PageDao {
     public Page addPage(Page clonedPage);
 
     public PageFolder addPageFolder(PageFolder pageFolder);
+
+    public List<PageTemplate> retrieveAllPageTemplates(String languageCode);
 }

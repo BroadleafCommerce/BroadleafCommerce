@@ -99,5 +99,19 @@ public class PageFieldImpl implements PageField {
     public void setFieldDataList(List<FieldData> fieldDataList) {
         this.fieldDataList = fieldDataList;
     }
+
+    @Override
+    public PageField cloneEntity() {
+        PageFieldImpl newPageField = new PageFieldImpl();
+        newPageField.fieldKey = fieldKey;
+        newPageField.page = page;
+
+        for (FieldData oldPageData: fieldDataList) {
+            FieldData newFieldData = oldPageData.cloneEntity();
+            newPageField.fieldDataList.add(newFieldData);
+        }
+        return newPageField;
+    }
+
 }
 

@@ -18,10 +18,10 @@ package org.broadleafcommerce.cms.page.service;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -52,12 +52,13 @@ public interface PageService {
 
     /**
      * Merges sandbox and site production content
-     * @param
+     * @param sandbox - the sandbox to find pages (null indicates pages that are in production for
+     *                  sites that are single tennant.
      * @param parentFolder if null then root folder for the site.
-     * @param locale - the locale to include (null is typical for non-internationalized sites)
+     * @param languageCode - the locale to include (null is typical for non-internationalized sites)
      * @return
      */
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox, PageFolder parentFolder, Locale locale);
+    public List<PageFolder> findPageFolderChildren(SandBox sandbox, PageFolder parentFolder, String languageCode);
 
 
     /**
@@ -128,10 +129,17 @@ public interface PageService {
 
 
     /**
-     *
+     * Adds a sub-folder to the passed in parentFolder
      * @param pageFolder
      * @return
      */
     public PageFolder addPageFolder(PageFolder pageFolder, PageFolder parentFolder);
+
+
+    /**
+     * Returns the list of pageTemplates available for the passed in language.
+     */
+    public List<PageTemplate> retrieveAllPageTemplates(String language);
+
 
 }

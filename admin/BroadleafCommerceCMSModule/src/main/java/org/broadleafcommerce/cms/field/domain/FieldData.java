@@ -11,4 +11,6 @@ public interface FieldData {
     public String getValue();
 
     public void setValue(String value);
+
+    public FieldData cloneEntity();
 }

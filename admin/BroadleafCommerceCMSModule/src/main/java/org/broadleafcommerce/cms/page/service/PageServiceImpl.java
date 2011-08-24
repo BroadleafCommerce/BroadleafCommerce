@@ -21,12 +21,12 @@ import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -60,7 +60,8 @@ public class PageServiceImpl implements PageService {
      */
     @Override
     public Map<String, PageField> findPageFieldsByPageId(Long pageId) {
-        return pageDao.readPageFieldsByPageId(pageId);
+        Page page = (Page) findPageById(pageId);
+        return pageDao.readPageFieldsByPage(page);
     }
 
     /**
@@ -71,10 +72,22 @@ public class PageServiceImpl implements PageService {
      * @return
      */
     @Override
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, Locale locale) {
-        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder);
-        // TODO: Filter for sandbox
-        // TODO: Filter for locale (pages only)
+    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, String languageCode) {
+        SandBox productionSandbox = null;
+        SandBox userSandbox = sandbox;
+
+        if (languageCode == null) {
+            languageCode = "default";
+        }
+
+        if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
+            productionSandbox = sandbox.getSite().getProductionSandbox();
+            if (userSandbox.getId().equals(productionSandbox.getId())) {
+                userSandbox = null;
+            }
+        }
+
+        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder, languageCode, userSandbox, productionSandbox);
         return pageFolders;
     }
 
@@ -128,7 +141,7 @@ public class PageServiceImpl implements PageService {
             return pageDao.updatePage(page);
         } else if (checkForProductionSandbox(page.getSandbox())) {
             // Moving from production to destSandbox
-            Page clonedPage = clonePage(page);
+            Page clonedPage = page.cloneEntity();
             clonedPage.setOriginalPageId(page.getId());
             clonedPage.setSandbox(destSandbox);
             return pageDao.addPage(clonedPage);
@@ -173,10 +186,6 @@ public class PageServiceImpl implements PageService {
         return productionSandbox;
     }
 
-    private Page clonePage(Page page) {
-        // TODO:  Clone page code goes here.
-        return page;
-    }
 
     /**
      * If deleting and item where page.originalPageId != null
@@ -224,5 +233,13 @@ public class PageServiceImpl implements PageService {
     public PageFolder addPageFolder(PageFolder pageFolder, PageFolder parentFolder) {
         pageFolder.setParentFolder(parentFolder);
         return pageDao.addPageFolder(pageFolder);
+    }
+
+    @Override
+    public List<PageTemplate> retrieveAllPageTemplates(String languageCode) {
+        if (languageCode == null) {
+            languageCode = "default";
+        }
+        return pageDao.retrieveAllPageTemplates(languageCode);
     }
 }
