@@ -42,4 +42,9 @@ public interface Page extends PageFolder {
     public void setOriginalPageId(Long originalPageId);
 
     public Page cloneEntity();
+
+    public String getFullUrl();
+
+    public void setFullUrl(String fullUrl);
+
 }

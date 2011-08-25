@@ -69,8 +69,14 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String languageCode, SandBox userSandBox, SandBox productionSandBox) {
-        Query query = em.createNamedQuery("BC_READ_PAGE_FOLDER_CHILD_PAGES");
-        query.setParameter("parentFolder", parentFolder);
+        String queryPrefix = "BC_READ_";
+        if (parentFolder == null) {
+                queryPrefix = "BC_READ_NULL_";
+        }
+        Query query = em.createNamedQuery(queryPrefix + "PAGE_FOLDER_CHILD_PAGES");
+        if (parentFolder != null) {
+            query.setParameter("parentFolder", parentFolder);
+        }
         query.setParameter("userSandbox", userSandBox == null ? DUMMY_SANDBOX : userSandBox);
         query.setParameter("productionSandbox", productionSandBox == null ? DUMMY_SANDBOX : productionSandBox);
         query.setParameter("languageCode", languageCode);
@@ -78,13 +84,14 @@ public class PageDaoImpl implements PageDao {
         List<Page> childPages = query.getResultList();
         filterPagesForSandbox(userSandBox, productionSandBox, childPages);
 
-        Query query2 = em.createNamedQuery("BC_READ_PAGE_FOLDER_CHILD_FOLDERS");
-        query2.setParameter("parentFolder", parentFolder);
-
+        Query query2 = em.createNamedQuery(queryPrefix + "PAGE_FOLDER_CHILD_FOLDERS");
+        if (parentFolder != null) {
+            query2.setParameter("parentFolder", parentFolder);
+        }
         List<PageFolder> childFolders = query2.getResultList();
         childFolders.addAll(childPages);
 
-        return query.getResultList();
+        return childFolders;
     }
 
     private void filterPagesForSandbox(SandBox userSandBox, SandBox productionSandBox, List<Page> pageList) {

@@ -43,6 +43,10 @@ public class PageImpl extends PageFolderImpl implements Page {
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
     protected PageTemplate pageTemplate;
 
+    @Column (name = "FULL_URL")
+    @AdminPresentation(friendlyName="Full Url", order=1, group="Page", hidden=true)
+    protected String fullUrl;
+
     @Column (name = "META_KEYWORDS")
     @AdminPresentation(friendlyName="Meta Keywords", order=1, group="Page")
     protected String metaKeywords;
@@ -61,10 +65,6 @@ public class PageImpl extends PageFolderImpl implements Page {
     @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
     @AdminPresentation(friendlyName="Page SandBox", order=3, group="Page", hidden = true)
     protected SandBox sandbox;
-
-    @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName="Deleted", order=4, group="Page", hidden = true)
-    protected Boolean deletedFlag = false;
 
     @Column (name = "ARCHIVED_FLAG")
     @AdminPresentation(friendlyName="Archived", order=5, group="Page", hidden = true)
@@ -119,16 +119,6 @@ public class PageImpl extends PageFolderImpl implements Page {
     }
 
     @Override
-    public Boolean getDeletedFlag() {
-        return deletedFlag;
-    }
-
-    @Override
-    public void setDeletedFlag(Boolean deletedFlag) {
-        this.deletedFlag = deletedFlag;
-    }
-
-    @Override
     public Boolean getArchivedFlag() {
         return archivedFlag;
     }
@@ -158,6 +148,14 @@ public class PageImpl extends PageFolderImpl implements Page {
         this.originalPageId = originalPageId;
     }
 
+    public String getFullUrl() {
+        return fullUrl;
+    }
+
+    public void setFullUrl(String fullUrl) {
+        this.fullUrl = fullUrl;
+    }
+
     @Override
     public Page cloneEntity() {
         PageImpl newPage = new PageImpl();
@@ -168,6 +166,7 @@ public class PageImpl extends PageFolderImpl implements Page {
         newPage.metaKeywords = metaKeywords;
         newPage.sandbox = sandbox;
         newPage.originalPageId = originalPageId;
+        newPage.fullUrl = fullUrl;
 
 
         for (PageField oldPageField: pageFields.values()) {

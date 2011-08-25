@@ -13,8 +13,7 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-	<context:component-scan base-package="org.broadleafcommerce.core">
-        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.controller.*"/>
+	<context:component-scan base-package="org.broadleafcommerce.cms">
     </context:component-scan>
 
 
@@ -36,7 +35,7 @@
 		</property>
 	</bean -->
 
-    <bean id="blPageService" class="org.broadleafcommerce.cms.admin.server.service.handler.PageServiceProxyFactoryBean"/>
+    <!-- bean id="blPageService" class="org.broadleafcommerce.cms.admin.server.service.handler.PageServiceProxyFactoryBean"/ -->
 
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>

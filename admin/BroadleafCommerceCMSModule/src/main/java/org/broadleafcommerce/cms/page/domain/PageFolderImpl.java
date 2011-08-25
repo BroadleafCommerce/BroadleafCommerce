@@ -38,7 +38,7 @@ public class PageFolderImpl implements PageFolder {
     @Id
     @GeneratedValue(generator = "PageFolderId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PageFolderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageFolderImpl", allocationSize = 10)
-    @Column(name = "PAGE_FOLDER_ID")
+    @Column(name = "ID")
     protected Long id;
 
     @Column(name = "NAME", nullable=false)

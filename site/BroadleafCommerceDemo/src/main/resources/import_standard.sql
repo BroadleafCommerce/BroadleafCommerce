@@ -2115,3 +2115,31 @@ INSERT INTO BLC_RATING_DETAIL (RATING_DETAIL_ID, RATING, CUSTOMER_ID, RATING_SUM
 INSERT INTO BLC_REVIEW_DETAIL (REVIEW_DETAIL_ID, HELPFUL_COUNT, NOT_HELPFUL_COUNT, REVIEW_STATUS, REVIEW_TEXT, CUSTOMER_ID, RATING_SUMMARY_ID, RATING_DETAIL_ID, REVIEW_SUBMITTED_DATE) VALUES (1,0,0,'APPROVED','I bought this grinder after seeing it recommended on another site. Unfortunately, I quickly discovered that this grinder does not do a good job of fine grinding.',1,1,1,CURRENT_DATE);
 INSERT INTO BLC_REVIEW_DETAIL (REVIEW_DETAIL_ID, HELPFUL_COUNT, NOT_HELPFUL_COUNT, REVIEW_STATUS, REVIEW_TEXT, CUSTOMER_ID, RATING_SUMMARY_ID, RATING_DETAIL_ID, REVIEW_SUBMITTED_DATE) VALUES (2,0,0,'APPROVED','This coffee grinder is very inconvenient to use--getting the ground coffee out of the machine is difficult and messy. Removing the coffee requires a tiny spoon',1,1,2,CURRENT_DATE);
 INSERT INTO BLC_REVIEW_DETAIL (REVIEW_DETAIL_ID, HELPFUL_COUNT, NOT_HELPFUL_COUNT, REVIEW_STATUS, REVIEW_TEXT, CUSTOMER_ID, RATING_SUMMARY_ID, RATING_DETAIL_ID, REVIEW_SUBMITTED_DATE) VALUES (3,0,0,'APPROVED','I''ve had nothing but good from this grinder and would recommend it. I AM drinking more coffee because it produces such a fine smooth cup. I shake it around as',1,1,3,CURRENT_DATE);
+
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LANGUAGE_CODE, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (1, 'default', 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/templates/basic.jsp') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LANGUAGE_CODE, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (2, 'default', 'Blank Template', 'Use this template to completely control the page contents.', '/templates/blank.jsp') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LANGUAGE_CODE, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (3, 'English', 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/templates/basic.jsp') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LANGUAGE_CODE, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (4, 'English', 'Blank Template', 'Use this template to completely control the page contents.', '/templates/blank.jsp') ;
+
+
+
+-- About Us Page
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (1, 'about_us', null, false ,false);
+INSERT INTO BLC_PAGE (ID, PAGE_TEMPLATE_ID, FULL_URL, META_DESCRIPTION, META_KEYWORDS, ARCHIVED_FLAG) VALUES (1, 1, '/about_us','Information about the company', 'information,company', false);
+
+-- FAQ Page
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (2, 'faq', null, false ,false);
+INSERT INTO BLC_PAGE (ID, PAGE_TEMPLATE_ID, FULL_URL, META_DESCRIPTION, META_KEYWORDS, ARCHIVED_FLAG) VALUES (2, 1, '/faq','Frequently asked questions.', 'question', false);
+
+-- News Folder
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (3, 'news', null, false ,true);
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (4, 'Jan2011', 3, false ,true);
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (5, 'Feb2011', 3, false ,true);
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (6, 'Mar2011', 3, false ,true);
+
+-- News Page for January
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (7, 'merger_announcement', 4, false ,false);
+INSERT INTO BLC_PAGE (ID, PAGE_TEMPLATE_ID, FULL_URL, META_DESCRIPTION, META_KEYWORDS, ARCHIVED_FLAG) VALUES (7, 1, '/merger_announcement','Company X merges with company y.', 'merger', false);
+INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (8, 'new_ceo', 4, false ,false);
+INSERT INTO BLC_PAGE (ID, PAGE_TEMPLATE_ID, FULL_URL, META_DESCRIPTION, META_KEYWORDS, ARCHIVED_FLAG) VALUES (8, 1, '/new_ceo','Company X hires new ceo.', 'hire, ceo', false);
+

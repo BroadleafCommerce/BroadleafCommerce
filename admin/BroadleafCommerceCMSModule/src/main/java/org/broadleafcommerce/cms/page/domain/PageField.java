@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by bpolster.
  */
-public interface PageField extends Serializable {
+public interface PageField extends Serializable{
     public Long getId();
 
     public void setId(Long id);

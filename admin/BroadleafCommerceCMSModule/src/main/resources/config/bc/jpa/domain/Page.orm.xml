@@ -20,12 +20,32 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_NULL_PAGE_FOLDER_CHILD_FOLDERS" >
+		<query>SELECT pageFolder
+               FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
+               WHERE pageFolder.parentFolder is null AND
+                     pageFolder.folderFlag = true
+		</query>
+	</named-query>
+
     <named-query name="BC_READ_PAGE_FOLDER_CHILD_PAGES" >
 		<query>SELECT page
                FROM org.broadleafcommerce.cms.page.domain.PageImpl page
                LEFT JOIN page.pageTemplate pageTemplate
                WHERE
                   page.parentFolder = :parentFolder AND
+                  (pageTemplate.languageCode = :languageCode OR pageTemplate.languageCode is null) AND
+                  (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null) AND
+                  page.archivedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_NULL_PAGE_FOLDER_CHILD_PAGES" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               LEFT JOIN page.pageTemplate pageTemplate
+               WHERE
+                  page.parentFolder is null AND
                   (pageTemplate.languageCode = :languageCode OR pageTemplate.languageCode is null) AND
                   (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null) AND
                   page.archivedFlag = false
