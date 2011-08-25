@@ -67,4 +67,12 @@
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
 	</bean>
 
+    <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
+		<property name="entityContexts">
+			<list>
+				<value>classpath:bl-cms-applicationContext-entity.xml</value>
+			</list>
+		</property>
+	</bean>
+
 </beans>
