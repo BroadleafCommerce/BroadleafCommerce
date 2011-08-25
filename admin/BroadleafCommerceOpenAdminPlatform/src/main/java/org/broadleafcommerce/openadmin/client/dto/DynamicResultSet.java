@@ -41,6 +41,15 @@ public class DynamicResultSet implements Serializable {
         this.totalRecords = totalRecords;
     }
 
+    public DynamicResultSet(Entity[] records, Integer totalRecords) {
+        this.records = records;
+        this.totalRecords = totalRecords;
+    }
+
+    public DynamicResultSet(ClassMetadata classMetaData) {
+        this.classMetaData = classMetaData;
+    }
+
 	public ClassMetadata getClassMetaData() {
 		return classMetaData;
 	}

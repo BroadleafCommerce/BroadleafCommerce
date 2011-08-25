@@ -226,6 +226,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, dynamicEntityDao, entityClasses);
 	}
 
+    public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<Serializable> records) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
+        return getRecords(primaryMergedProperties, records, null, null);
+    }
+
 	public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {
 		String idProperty = null;
 		getIdProperty:{

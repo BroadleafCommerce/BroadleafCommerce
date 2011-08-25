@@ -73,9 +73,9 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> pageProperties = getMergedProperties(PageFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
-            Entity[] pageEntities = helper.getRecords(pageProperties, convertedList, null, null);
+            Entity[] pageEntities = helper.getRecords(pageProperties, convertedList);
 
-            DynamicResultSet response = new DynamicResultSet(null, pageEntities, pageEntities.length);
+            DynamicResultSet response = new DynamicResultSet(pageEntities, pageEntities.length);
 
             return response;
         } catch (Exception e) {

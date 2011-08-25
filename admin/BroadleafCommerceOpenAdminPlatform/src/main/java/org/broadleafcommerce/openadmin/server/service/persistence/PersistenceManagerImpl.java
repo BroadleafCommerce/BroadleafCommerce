@@ -187,7 +187,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		}
 		ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
 
-		DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
+		DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
 		return results;
 	}
