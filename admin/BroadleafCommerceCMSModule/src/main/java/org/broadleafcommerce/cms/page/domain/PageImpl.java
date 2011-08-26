@@ -41,6 +41,7 @@ public class PageImpl extends PageFolderImpl implements Page {
 
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
+    @AdminPresentation(friendlyName="Page Template", order=1, group="Page")
     protected PageTemplate pageTemplate;
 
     @Column (name = "FULL_URL")
@@ -48,11 +49,11 @@ public class PageImpl extends PageFolderImpl implements Page {
     protected String fullUrl;
 
     @Column (name = "META_KEYWORDS")
-    @AdminPresentation(friendlyName="Meta Keywords", order=1, group="Page")
+    @AdminPresentation(friendlyName="Meta Keywords", order=2, group="Page")
     protected String metaKeywords;
 
     @Column (name = "META_DESCRIPTION")
-    @AdminPresentation(friendlyName="Meta Description", order=2, group="Page")
+    @AdminPresentation(friendlyName="Meta Description", order=3, group="Page")
     protected String metaDescription;
 
     @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = {CascadeType.ALL})

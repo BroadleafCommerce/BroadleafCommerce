@@ -10,5 +10,6 @@ package org.broadleafcommerce.cms.admin.client.datasource;
 public class EntityImplementations {
 
     public static final String PAGES = "org.broadleafcommerce.cms.page.domain.PageFolderImpl";
+    public static final String PAGETEMPLATE = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl";
 
 }

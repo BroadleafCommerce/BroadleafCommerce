@@ -17,21 +17,23 @@ package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -42,10 +44,10 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 
 	protected String rootId = null;
 	protected String rootName = "Root";
-
 	protected HashMap<String, Object> library = new HashMap<String, Object>();
 
-	@Override
+
+	/*@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("parentFolder", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
@@ -56,7 +58,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 				//do nothing
 			}
 		}, "90%", null, null);
-	}
+	}*/
 
 	@Override
 	protected void removeClicked() {
@@ -74,97 +76,35 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
-		/*final AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		if (categorySearchDataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(selectedRecord)).equals(rootId)){
-			formPresenter.disable();
-			display.getListDisplay().getRemoveButton().disable();
-		}
-		allChildCategoriesPresenter.load(selectedRecord, dataSource, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				try {
-					if (response.getErrors().size() > 0) {
-						getDisplay().getInsertOrphanButton().disable();
-					}
-				} catch (Exception e) {
-					if (getDisplay().getOrphanedCategoryGrid().getSelectedRecord() != null) {
-						getDisplay().getInsertOrphanButton().enable();
-					}
-					allChildCategoriesPresenter.enable();
-					allChildCategoriesPresenter.setStartState();
-					mediaPresenter.load(selectedRecord, dataSource, null);
-				}
-			}
-		});
-		display.getListDisplay().getAddButton().disable();
-		featuredPresenter.load(selectedRecord, dataSource, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				display.getListDisplay().getAddButton().enable();
-			}
-		});
-		childProductsPresenter.load(selectedRecord, dataSource, null);
-		getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();*/
+        String pageType = selectedRecord.getAttributeAsStringArray("_type")[0];
+        if (pageType.equals("org.broadleafcommerce.cms.page.domain.PageImpl")) {
+            getDisplay().getAddPageButton().disable();
+            getDisplay().getAddPageFolderButton().disable();
+        } else {
+            getDisplay().getAddPageButton().enable();
+            getDisplay().getAddPageFolderButton().enable();
+        }
 	}
 
 	@Override
 	public void bind() {
 		super.bind();
-		/*featuredPresenter.bind();
-		mediaPresenter.bind();
-		allChildCategoriesPresenter.bind();
-		childProductsPresenter.bind();
-		((TreeGrid) display.getListDisplay().getGrid()).addDataArrivedHandler(new com.smartgwt.client.widgets.tree.events.DataArrivedHandler() {
-			public void onDataArrived(com.smartgwt.client.widgets.tree.events.DataArrivedEvent event) {
-				Record[] records = event.getParentNode().getAttributeAsRecordArray("children");
-				for (Record record : records) {
-					String hasChildren = ((TreeNode) record).getAttribute(PagesTreeDataSourceFactory.hasChildrenProperty);
-					if (hasChildren != null && !Boolean.parseBoolean(hasChildren)) {
-						((TreeGrid) display.getListDisplay().getGrid()).getTree().loadChildren((TreeNode) record);
-					}
-				}
-			}
+        getDisplay().getAddPageButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    //do something
+                }
+            }
         });
-		getDisplay().getRemoveOrphanedButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					SC.confirm(BLCMain.getMessageManager().getString("confirmDelete"), new BooleanCallback() {
-						public void execute(Boolean value) {
-							if (value) {
-								getDisplay().getOrphanedCategoryGrid().removeSelectedData();
-								getDisplay().getRemoveOrphanedButton().disable();
-								getDisplay().getInsertOrphanButton().disable();
-							}
-						}
-					});
-				}
-			}
-		});
-		getDisplay().getInsertOrphanButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					getDisplay().getAllCategoriesDisplay().getGrid().addData(getDisplay().getOrphanedCategoryGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							reloadParentTreeNodeRecords(true);
-							getDisplay().getOrphanedCategoryGrid().invalidateCache();
-							getDisplay().getRemoveOrphanedButton().disable();
-							getDisplay().getInsertOrphanButton().disable();
-						}
-					});
-				}
-			}
-		});
-		getDisplay().getOrphanedCategoryGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					getDisplay().getRemoveOrphanedButton().enable();
-					if (display.getListDisplay().getGrid().getSelectedRecord() != null && !getDisplay().getAllCategoriesDisplay().getGrid().isDisabled()) {
-						getDisplay().getInsertOrphanButton().enable();
-					}
-				} else {
-					getDisplay().getRemoveOrphanedButton().disable();
-					getDisplay().getInsertOrphanButton().disable();
-				}
-			}
-		});*/
+        getDisplay().getAddPageFolderButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    //do something
+                }
+            }
+        });
 	}
 
 	public void setup() {
@@ -174,80 +114,24 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 				((TreeGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
 			}
 		}));
-		/*getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearch", new CategorySearchDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.JOINSTRUCTURE, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearch", new PageTemplateListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				categorySearchDataSource = (ListGridDataSource) result;
-				categorySearchDataSource.resetProminenceOnly(
-					"name",
-					"urlKey",
-					"activeStartDate",
-					"activeEndDate"
+				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
+				pageTemplateDataSource.resetProminenceOnly(
+					"templateName",
+					"templatePath",
+					"languageCode"
 				);
-				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
-				library.put("categorySearchView", categorySearchView);
-				((DynamicEntityDataSource) ((CategoryDisplay) getDisplay()).getListDisplay().getGrid().getDataSource()).
+				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource);
+				((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"defaultParentCategory", 
-					categorySearchView, 
-					"Category Search", 
-					((CategoryDisplay) getDisplay()).getDynamicFormDisplay()
+					"pageTemplate",
+					pageTemplateSearchView,
+					"Page Template Search",
+					getDisplay().getDynamicFormDisplay()
 				);
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildCategoriesDS", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				allChildCategoriesPresenter = new AllChildCategoriesPresenter(PagesPresenter.this, ((CategoryDisplay) getDisplay()).getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchTitle"));
-				allChildCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orphanedCategoriesDS", new OrphanedCategoryListDataSourceFactory(), null, new Object[]{rootId}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid().setDataSource(result);
-				((ListGridDataSource) result).setAssociatedGrid(((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid());
-				((ListGridDataSource) result).setupGridFields(new String[]{"name", "urlKey"}, new Boolean[]{false, false});
-				
-				Criteria myCriteria = new Criteria();
-				myCriteria.addCriteria(OrphanedCategoryListDataSourceFactory.foreignKeyName, "0");
-				
-				((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid().fetchData(myCriteria);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productSearchDS", new ProductListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				ListGridDataSource productSearchDataSource = (ListGridDataSource) result;
-				productSearchDataSource.resetPermanentFieldVisibility(
-					"name",
-					"description",
-					"model",
-					"manufacturer",
-					"activeStartDate",
-					"activeEndDate"
-				);
-				EntitySearchDialog productSearchView = new EntitySearchDialog(productSearchDataSource);
-				library.put("productSearchView", productSearchView);
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("featuredProductsDS", new FeaturedProductListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				featuredPresenter = new EditableJoinStructurePresenter(((CategoryDisplay) getDisplay()).getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
-				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				childProductsPresenter = new SimpleSearchJoinStructurePresenter(((CategoryDisplay) getDisplay()).getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
-				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("mediaMapDS", new MediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>();
-				initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
-				initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new MapStructurePresenter(((CategoryDisplay) getDisplay()).getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
-				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "name", "url", "label"}, new Boolean[]{true, true, true, true});
-			}
-		}));*/
 	}
 
 	@Override

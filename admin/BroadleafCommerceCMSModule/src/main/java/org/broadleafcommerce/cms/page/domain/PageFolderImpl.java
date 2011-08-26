@@ -125,17 +125,6 @@ public class PageFolderImpl implements PageFolder {
         this.deletedFlag = deletedFlag;
     }
 
-
-    @Override
-    public boolean hasChildFolders(){
-        for (PageFolder folder : subFolders) {
-            if (PageFolderImpl.class.getName().equals(folder.getClass().getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public Boolean isFolder() {
         return folderFlag;

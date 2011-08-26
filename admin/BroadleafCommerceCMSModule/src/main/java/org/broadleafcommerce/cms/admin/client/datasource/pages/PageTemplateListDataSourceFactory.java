@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008-2009 the original author or authors.
  *
@@ -19,11 +18,14 @@ package org.broadleafcommerce.cms.admin.client.datasource.pages;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 /**
@@ -31,27 +33,18 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class PagesTreeDataSourceFactory implements DataSourceFactory {
-
-	public static final String parentFolderForeignKey = "parentFolder";
-    public static final String pageTemplateForeignKey = "pageTemplate";
-	public static TreeGridDataSource dataSource = null;
-
+public class PageTemplateListDataSourceFactory implements DataSourceFactory {
+	
+	public static ListGridDataSource dataSource = null;
+	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{new ForeignKey(pageTemplateForeignKey, EntityImplementations.PAGETEMPLATE, null, ForeignKeyRestrictionType.ID_EQ, "templateName")});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.PAGES, null));
-            DataSourceModule[] modules = new DataSourceModule[]{
-				new PagesClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+			DataSourceModule[] modules = new DataSourceModule[]{
+				new BasicClientEntityModule(CeilingEntities.PAGETEMPLATE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-            persistencePerspective.setPopulateToOneFields(true);
-            persistencePerspective.setExcludeFields(new String[]{
-                "site",
-                "pageTemplate",
-                "sandbox"
-            });
-			dataSource = new TreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
+			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

@@ -31,8 +31,6 @@ public interface PageFolder extends Serializable {
 
     public void setDeletedFlag(Boolean deletedFlag);
 
-    public boolean hasChildFolders();
-
     public String getName();
 
     public void setName(String name);
