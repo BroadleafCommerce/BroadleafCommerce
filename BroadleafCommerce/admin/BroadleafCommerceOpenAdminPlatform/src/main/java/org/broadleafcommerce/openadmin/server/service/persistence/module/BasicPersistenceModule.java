@@ -493,10 +493,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 List<AssociationPathElement> elementList = new ArrayList<AssociationPathElement>();
                 Class clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
                 StringBuffer sb = new StringBuffer();
+                StringBuffer pathBuilder = new StringBuffer();
                 while(tokens.hasMoreElements()) {
                     String token = tokens.nextToken();
                     sb.append(token);
-                    Field field = getFieldManager().getField(clazz, sb.toString());
+                    pathBuilder.append(token);
+                    Field field = getFieldManager().getField(clazz, pathBuilder.toString());
                     Embedded embedded = field.getAnnotation(Embedded.class);
                     if (embedded != null) {
                         sb.append(".");
@@ -504,6 +506,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         elementList.add(new AssociationPathElement(sb.toString()));
                         sb = new StringBuffer();
                     }
+                    pathBuilder.append(".");
                 }
                 if (elementList.size() > 0) {
                     AssociationPathElement[] elements = elementList.toArray(new AssociationPathElement[]{});
