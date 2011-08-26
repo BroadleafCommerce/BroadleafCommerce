@@ -328,7 +328,7 @@ public class FormBuilder {
 			break;
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
+			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
@@ -342,7 +342,7 @@ public class FormBuilder {
 			break;
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
+			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
