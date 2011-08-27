@@ -42,9 +42,9 @@ import com.smartgwt.client.widgets.layout.HLayout;
  */
 public class EntitySearchDialog extends Window {
 		
-	private ListGrid searchGrid;
-	private IButton saveButton;
-	private SearchItemSelectedEventHandler handler;
+	protected ListGrid searchGrid;
+	protected IButton saveButton;
+	protected SearchItemSelectedEventHandler handler;
 	
 	public EntitySearchDialog(ListGridDataSource dataSource) {
 		super();
@@ -118,4 +118,27 @@ public class EntitySearchDialog extends Window {
 		show();
 	}
 
+    public SearchItemSelectedEventHandler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(SearchItemSelectedEventHandler handler) {
+        this.handler = handler;
+    }
+
+    public IButton getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(IButton saveButton) {
+        this.saveButton = saveButton;
+    }
+
+    public ListGrid getSearchGrid() {
+        return searchGrid;
+    }
+
+    public void setSearchGrid(ListGrid searchGrid) {
+        this.searchGrid = searchGrid;
+    }
 }

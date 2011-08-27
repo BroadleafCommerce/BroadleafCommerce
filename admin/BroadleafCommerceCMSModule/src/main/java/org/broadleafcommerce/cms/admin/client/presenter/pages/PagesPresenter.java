@@ -22,10 +22,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -116,6 +113,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 String newLocaleName = (String) event.getValue();
                 ((PagesTreeDataSource) library.get("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeName", newLocaleName));
                 getDisplay().getListDisplay().getGrid().invalidateCache();
+                ((PageTemplateListDataSource) library.get("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeName", newLocaleName));
+                ((PageTemplateListDataSource) library.get("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
             }
         });
 	}
@@ -135,10 +134,9 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearch", new PageTemplateListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
-				pageTemplateDataSource.resetProminenceOnly(
+				pageTemplateDataSource.resetPermanentFieldVisibility(
 					"templateName",
-					"templatePath",
-					"languageCode"
+					"templatePath"
 				);
 				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource);
 				((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).
@@ -148,6 +146,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 					"Page Template Search",
 					getDisplay().getDynamicFormDisplay()
 				);
+                library.put("pageTemplateSearchDS", result);
 			}
 		}));
 	}
