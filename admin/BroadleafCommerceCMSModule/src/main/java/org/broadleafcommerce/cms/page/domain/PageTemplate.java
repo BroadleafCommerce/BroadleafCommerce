@@ -26,9 +26,9 @@ public interface PageTemplate extends Serializable {
 
     public void setTemplatePath(String templatePath);
 
-    public String getLanguageCode();
+    public Locale getLocale();
 
-    public void setLanguageCode(String languageCode);
+    public void setLocale(Locale locale);
 
     public List<FieldGroup> getFieldGroups();
 

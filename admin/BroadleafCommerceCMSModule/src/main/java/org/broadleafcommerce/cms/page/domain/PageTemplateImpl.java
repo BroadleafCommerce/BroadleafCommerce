@@ -50,8 +50,9 @@ public class PageTemplateImpl implements PageTemplate {
     @Column (name = "TEMPLATE_PATH")
     protected String templatePath;
 
-    @Column (name = "LANGUAGE_CODE")
-    protected String languageCode="default";
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_ID")
+    protected Locale locale;
 
     @OneToMany(targetEntity = FieldGroupImpl.class)
     @JoinTable(name = "BLC_TEMPLATE_FIELD_GROUPS", joinColumns = @JoinColumn(name = "PAGE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
@@ -101,13 +102,13 @@ public class PageTemplateImpl implements PageTemplate {
     }
 
     @Override
-    public String getLanguageCode() {
-        return languageCode;
+    public Locale getLocale() {
+        return locale;
     }
 
     @Override
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     @Override

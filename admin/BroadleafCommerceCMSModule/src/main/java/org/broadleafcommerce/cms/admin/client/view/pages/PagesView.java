@@ -8,16 +8,12 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
-import org.broadleafcommerce.cms.admin.client.ContentManagementModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.Location;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
-
-import java.util.LinkedHashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,15 +46,12 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
 		listDisplay.setShowResizeBar(true);
         Canvas[] members = listDisplay.getToolBar().getMembers();
 
-        Location[] locales = ((ContentManagementModule) BLCMain.getModule(BLCMain.currentModuleKey)).getLocales();
         currentLocale.setShowTitle(false);
         currentLocale.setWidth(120);
-        LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
-        for (Location locale : locales) {
-            valueMap.put(locale.getLocaleCode(), locale.getLocaleName());
-        }
-        currentLocale.setValueMap(valueMap);
-        currentLocale.setDefaultValue(locales[0].getLocaleCode());
+        currentLocale.setOptionDataSource(additionalDataSources[0]);
+        currentLocale.setDisplayField("friendlyName");
+        currentLocale.setValueField("localeName");
+        currentLocale.setDefaultToFirstOption(true);
         listDisplay.getToolBar().addFormItem(currentLocale, 6);
         listDisplay.getToolBar().getMember(7).destroy();
         listDisplay.getToolBar().getMember(1).destroy();

@@ -19,7 +19,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.view.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,11 +53,4 @@ public class ContentManagementModule extends AbstractModule {
         registerModule();
     }
 
-    public Location[] getLocales() {
-        return new Location[]{
-            new Location("en_US", "US English"),
-            new Location("en_CA", "Canadian English"),
-            new Location("es_ES", "Spanish")
-        };
-    }
 }

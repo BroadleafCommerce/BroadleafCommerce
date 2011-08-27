@@ -72,12 +72,12 @@ public class PageServiceImpl implements PageService {
      * @return
      */
     @Override
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, String languageCode) {
+    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, String localeName) {
         SandBox productionSandbox = null;
         SandBox userSandbox = sandbox;
 
-        if (languageCode == null) {
-            languageCode = "default";
+        if (localeName == null) {
+            localeName = "default";
         }
 
         if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
@@ -87,7 +87,7 @@ public class PageServiceImpl implements PageService {
             }
         }
 
-        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder, languageCode, userSandbox, productionSandbox);
+        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder, localeName, userSandbox, productionSandbox);
         return pageFolders;
     }
 
@@ -236,10 +236,10 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
-    public List<PageTemplate> retrieveAllPageTemplates(String languageCode) {
-        if (languageCode == null) {
-            languageCode = "default";
+    public List<PageTemplate> retrieveAllPageTemplates(String localeName) {
+        if (localeName == null) {
+            localeName = "default";
         }
-        return pageDao.retrieveAllPageTemplates(languageCode);
+        return pageDao.retrieveAllPageTemplates(localeName);
     }
 }

@@ -19,6 +19,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
@@ -110,8 +111,13 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pagesTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
-				setupDisplayItems(top);
-				((TreeGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
+                library.put("pageTreeDS", top);
+			}
+		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource top) {
+				setupDisplayItems((DataSource) library.get("pageTreeDS"), top);
+				((TreeGridDataSource) library.get("pageTreeDS")).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearch", new PageTemplateListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {

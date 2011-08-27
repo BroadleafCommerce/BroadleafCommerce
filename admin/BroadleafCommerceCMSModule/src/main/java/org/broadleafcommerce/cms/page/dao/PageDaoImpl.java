@@ -68,7 +68,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String languageCode, SandBox userSandBox, SandBox productionSandBox) {
+    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String localeName, SandBox userSandBox, SandBox productionSandBox) {
         String queryPrefix = "BC_READ_";
         if (parentFolder == null) {
                 queryPrefix = "BC_READ_NULL_";
@@ -79,7 +79,7 @@ public class PageDaoImpl implements PageDao {
         }
         query.setParameter("userSandbox", userSandBox == null ? DUMMY_SANDBOX : userSandBox);
         query.setParameter("productionSandbox", productionSandBox == null ? DUMMY_SANDBOX : productionSandBox);
-        query.setParameter("languageCode", languageCode);
+        query.setParameter("localeName", localeName);
 
         List<Page> childPages = query.getResultList();
         filterPagesForSandbox(userSandBox, productionSandBox, childPages);
@@ -148,9 +148,9 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<PageTemplate> retrieveAllPageTemplates(String languageCode) {
+    public List<PageTemplate> retrieveAllPageTemplates(String localeName) {
         Query query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE");
-        query.setParameter("languageCode", languageCode);
+        query.setParameter("localeName", localeName);
         return query.getResultList();
     }
 }

@@ -14,6 +14,7 @@
         <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageTemplateImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetDataImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl</class>
