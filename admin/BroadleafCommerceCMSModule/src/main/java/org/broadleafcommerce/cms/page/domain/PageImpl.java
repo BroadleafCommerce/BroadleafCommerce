@@ -49,11 +49,11 @@ public class PageImpl extends PageFolderImpl implements Page {
     protected String fullUrl;
 
     @Column (name = "META_KEYWORDS")
-    @AdminPresentation(friendlyName="Meta Keywords", order=2, group="Page")
+    @AdminPresentation(friendlyName="Meta Keywords", order=2, group="Page", largeEntry = true)
     protected String metaKeywords;
 
     @Column (name = "META_DESCRIPTION")
-    @AdminPresentation(friendlyName="Meta Description", order=3, group="Page")
+    @AdminPresentation(friendlyName="Meta Description", order=3, group="Page", largeEntry = true)
     protected String metaDescription;
 
     @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = {CascadeType.ALL})

@@ -73,7 +73,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             convertedList.addAll(folders);
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> pageProperties = getMergedProperties(PageFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+            Map<String, FieldMetadata> pageProperties = getMergedProperties(PageFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getAdditionalForeignKeys());
             Entity[] pageEntities = helper.getRecords(pageProperties, convertedList);
 
             DynamicResultSet response = new DynamicResultSet(pageEntities, pageEntities.length);
@@ -94,14 +94,14 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         return super.update(persistencePackage, dynamicEntityDao, helper);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
-    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
 			ceilingEntityFullyQualifiedClass.getName(),
 			entities,
 			null,
 			new String[]{},
-			new ForeignKey[]{},
+			additionalForeignKeys,
 			MergedPropertyType.PRIMARY,
 			populateManyToOneFields,
 			includeManyToOneFields,
