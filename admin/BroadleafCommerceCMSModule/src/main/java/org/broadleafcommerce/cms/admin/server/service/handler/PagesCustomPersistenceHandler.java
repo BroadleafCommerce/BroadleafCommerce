@@ -67,7 +67,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             if (parentCategoryId != null) {
                 pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
             }
-            List<PageFolder> folders = pageService.findPageFolderChildren(null, pageOrFolder, null);
+            String localeName = cto.get("pageTemplate.locale.localeName").getFilterValues()[0];
+            List<PageFolder> folders = pageService.findPageFolderChildren(null, pageOrFolder, localeName);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(folders);
 

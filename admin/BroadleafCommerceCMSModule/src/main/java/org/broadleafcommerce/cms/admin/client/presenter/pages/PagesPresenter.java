@@ -15,12 +15,16 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -104,6 +108,14 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 if (event.isLeftButtonDown()) {
                     //do something
                 }
+            }
+        });
+        getDisplay().getCurrentLocale().addChangedHandler(new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                String newLocaleName = (String) event.getValue();
+                ((PagesTreeDataSource) library.get("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeName", newLocaleName));
+                getDisplay().getListDisplay().getGrid().invalidateCache();
             }
         });
 	}

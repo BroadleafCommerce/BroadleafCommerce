@@ -3,6 +3,7 @@ package org.broadleafcommerce.cms.admin.client.datasource.pages;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
@@ -39,6 +40,8 @@ public class PagesClientEntityModule extends BasicClientEntityModule {
     @Override
     public void executeFetch(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
         BLCMain.NON_MODAL_PROGRESS.startProgress();
+        Criteria criteria = request.getCriteria();
+        criteria.addCriteria(((PagesTreeDataSource) dataSource).permanentCriteria);
 		CriteriaTransferObject cto = getCto(request);
 		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
             public void onSuccess(DynamicResultSet result) {

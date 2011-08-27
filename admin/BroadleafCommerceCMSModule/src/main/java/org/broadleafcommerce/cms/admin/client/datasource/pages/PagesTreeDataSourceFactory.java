@@ -35,7 +35,7 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
 
 	public static final String parentFolderForeignKey = "parentFolder";
     public static final String pageTemplateForeignKey = "pageTemplate";
-	public static TreeGridDataSource dataSource = null;
+	public static PagesTreeDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
@@ -51,7 +51,7 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
                 "pageTemplate",
                 "sandbox"
             });
-			dataSource = new TreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
+			dataSource = new PagesTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {
