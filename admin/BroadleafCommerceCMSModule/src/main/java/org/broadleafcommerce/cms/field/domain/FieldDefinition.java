@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+
 /**
  * Created by bpolster.
  */
@@ -27,9 +29,9 @@ public interface FieldDefinition {
 
     public void setName(String name);
 
-    public String getFieldType();
+    public SupportedFieldType getFieldType();
 
-    public void setFieldType(String fieldType);
+    public void setFieldType(SupportedFieldType fieldType);
 
     public String getSecurityLevel();
 

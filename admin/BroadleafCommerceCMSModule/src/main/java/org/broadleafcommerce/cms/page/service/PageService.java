@@ -38,6 +38,13 @@ public interface PageService {
      */
     public PageFolder findPageById(Long pageId);
 
+    /**
+     * Returns the page template with the passed in id.
+     *
+     * @param id - the id of the page template
+     * @return The associated page template.
+     */
+    public PageTemplate findPageTemplateById(Long id);
 
     /**
      * Returns the page-fields associated with the passed in page-id.

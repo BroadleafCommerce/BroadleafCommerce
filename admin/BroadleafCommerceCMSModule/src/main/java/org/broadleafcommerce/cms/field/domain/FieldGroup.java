@@ -33,14 +33,6 @@ public interface FieldGroup {
 
     public void setInitCollapsedFlag(Boolean initCollapsedFlag);
 
-    public String getEnumerationName();
-
-    public void setEnumerationName(String enumerationName);
-
-    public Boolean getAllowMultiples();
-
-    public void setAllowMultiples(Boolean allowMultiples);
-
     public List<FieldDefinition> getFieldDefinitions();
 
     public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions);

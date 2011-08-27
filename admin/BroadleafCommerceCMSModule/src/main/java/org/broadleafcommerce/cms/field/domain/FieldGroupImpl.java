@@ -45,12 +45,6 @@ public class FieldGroupImpl implements FieldGroup {
     @Column (name = "INIT_COLLAPSED_FLAG")
     protected Boolean initCollapsedFlag = false;
 
-    @Column (name = "ENUMERATION_NAME")
-    protected String enumerationName;
-
-    @Column (name = "ALLOW_MULTIPLES")
-    protected Boolean allowMultiples = false;
-
     @OneToMany(targetEntity = FieldDefinitionImpl.class)
     @JoinTable(name = "BLC_FIELD_GROUP_FIELDS", joinColumns = @JoinColumn(name = "FIELD_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DEFINITION_ID", referencedColumnName = "FIELD_DEFINITION_ID"))
     @OrderColumn(name = "FIELD_ORDER")
@@ -86,26 +80,6 @@ public class FieldGroupImpl implements FieldGroup {
     @Override
     public void setInitCollapsedFlag(Boolean initCollapsedFlag) {
         this.initCollapsedFlag = initCollapsedFlag;
-    }
-
-    @Override
-    public String getEnumerationName() {
-        return enumerationName;
-    }
-
-    @Override
-    public void setEnumerationName(String enumerationName) {
-        this.enumerationName = enumerationName;
-    }
-
-    @Override
-    public Boolean getAllowMultiples() {
-        return allowMultiples;
-    }
-
-    @Override
-    public void setAllowMultiples(Boolean allowMultiples) {
-        this.allowMultiples = allowMultiples;
     }
 
     @Override

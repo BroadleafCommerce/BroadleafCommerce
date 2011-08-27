@@ -55,6 +55,11 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
+    public PageTemplate readPageTemplateById(Long id) {
+        return (PageTemplate) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.PageTemplate"), id);
+    }
+
+    @Override
     public Map<String, PageField> readPageFieldsByPage(Page page) {
         Query query = em.createNamedQuery("BC_READ_PAGE_FIELDS_BY_PAGE_ID");
         query.setParameter("page", page);

@@ -31,6 +31,8 @@ public interface PageDao {
 
     public PageFolder readPageById(Long id);
 
+    public PageTemplate readPageTemplateById(Long id);
+
     public Map<String, PageField> readPageFieldsByPage(Page page);
 
     public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String localeName, SandBox userSandbox, SandBox productionSandBox);

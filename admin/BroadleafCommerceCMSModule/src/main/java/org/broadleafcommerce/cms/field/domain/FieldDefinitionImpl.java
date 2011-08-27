@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -88,13 +89,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
     }
 
     @Override
-    public String getFieldType() {
-        return fieldType;
+    public SupportedFieldType getFieldType() {
+        return fieldType!=null?SupportedFieldType.valueOf(fieldType):null;
     }
 
     @Override
-    public void setFieldType(String fieldType) {
-        this.fieldType = fieldType;
+    public void setFieldType(SupportedFieldType fieldType) {
+        this.fieldType = fieldType!=null?fieldType.toString():null;
     }
 
     @Override

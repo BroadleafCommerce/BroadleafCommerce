@@ -35,8 +35,6 @@
 		</property>
 	</bean -->
 
-    <!-- bean id="blPageService" class="org.broadleafcommerce.cms.admin.server.service.handler.PageServiceProxyFactoryBean"/ -->
-
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>

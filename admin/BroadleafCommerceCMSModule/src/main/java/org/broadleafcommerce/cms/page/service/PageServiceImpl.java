@@ -50,6 +50,11 @@ public class PageServiceImpl implements PageService {
         return pageDao.readPageById(pageId);
     }
 
+    @Override
+    public PageTemplate findPageTemplateById(Long id) {
+        return pageDao.readPageTemplateById(id);
+    }
+
     /**
      * Returns the page-fields associated with the passed in page-id.
      * This is preferred over the direct access from Page so that the
