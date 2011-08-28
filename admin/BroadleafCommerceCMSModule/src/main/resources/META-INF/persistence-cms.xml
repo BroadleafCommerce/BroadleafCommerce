@@ -23,6 +23,8 @@
         <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.PageTemplateFieldGroupXrefImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldGroupFieldDefinitionXrefImpl</class>
 
         <exclude-unlisted-classes/>
         <properties>

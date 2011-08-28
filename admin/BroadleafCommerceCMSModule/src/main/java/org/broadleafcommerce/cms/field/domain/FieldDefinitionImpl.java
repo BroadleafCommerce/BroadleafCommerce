@@ -41,6 +41,9 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column (name = "NAME")
     protected String name;
 
+    @Column (name = "FRIENDLY_NAME")
+    protected String friendlyName;
+
     @Column (name = "FIELD_TYPE")
     protected String fieldType;
 
@@ -50,14 +53,17 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column (name = "HIDDEN_FLAG")
     protected Boolean hiddenFlag = false;
 
-    @Column (name = "VALIDATION_REGEX")
+    @Column (name = "VLDTN_REGEX")
     protected String validationRegEx;
+
+    @Column (name = "VLDTN_ERROR_MSSG_KEY")
+    protected String validationErrorMesageKey;
 
     @Column (name = "MAX_LENGTH")
     protected Integer maxLength;
 
     @Column (name = "COLUMN_WIDTH")
-    protected Integer columnWidth;
+    protected String columnWidth;
 
     @Column (name = "TEXT_AREA_FLAG")
     protected Boolean textAreaFlag = false;
@@ -139,12 +145,12 @@ public class FieldDefinitionImpl implements FieldDefinition {
     }
 
     @Override
-    public Integer getColumnWidth() {
+    public String getColumnWidth() {
         return columnWidth;
     }
 
     @Override
-    public void setColumnWidth(Integer columnWidth) {
+    public void setColumnWidth(String columnWidth) {
         this.columnWidth = columnWidth;
     }
 
@@ -176,6 +182,26 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Override
     public void setAllowMultiples(Boolean allowMultiples) {
         this.allowMultiples = allowMultiples;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    @Override
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    @Override
+    public String getValidationErrorMesageKey() {
+        return validationErrorMesageKey;
+    }
+
+    @Override
+    public void setValidationErrorMesageKey(String validationErrorMesageKey) {
+        this.validationErrorMesageKey = validationErrorMesageKey;
     }
 }
 

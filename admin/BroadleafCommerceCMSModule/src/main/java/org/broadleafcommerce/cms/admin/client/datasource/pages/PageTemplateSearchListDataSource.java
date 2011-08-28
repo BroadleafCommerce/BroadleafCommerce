@@ -9,9 +9,9 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 /**
  * Created by jfischer
  */
-public class PageTemplateListDataSource extends ListGridDataSource {
+public class PageTemplateSearchListDataSource extends ListGridDataSource {
 
-    public PageTemplateListDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
+    public PageTemplateSearchListDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
         super(name, persistencePerspective, service, modules);
     }
 

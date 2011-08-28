@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
  * Created by bpolster.
  */
 public interface FieldDefinition {
+
     public Long getId();
 
     public void setId(Long id);
@@ -49,9 +50,9 @@ public interface FieldDefinition {
 
     public void setMaxLength(Integer maxLength);
 
-    public Integer getColumnWidth();
+    public String getColumnWidth();
 
-    public void setColumnWidth(Integer columnWidth);
+    public void setColumnWidth(String columnWidth);
 
     public Boolean getTextAreaFlag();
 
@@ -64,4 +65,13 @@ public interface FieldDefinition {
     public Boolean getAllowMultiples();
 
     public void setAllowMultiples(Boolean allowMultiples);
+
+    public String getFriendlyName();
+
+    public void setFriendlyName(String friendlyName);
+
+    public String getValidationErrorMesageKey();
+
+    public void setValidationErrorMesageKey(String validationErrorMesageKey);
+
 }

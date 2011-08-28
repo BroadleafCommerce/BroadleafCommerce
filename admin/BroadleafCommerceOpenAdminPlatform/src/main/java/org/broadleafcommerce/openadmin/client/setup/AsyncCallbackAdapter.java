@@ -39,7 +39,9 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
 
 	public final void onSuccess(DataSource dataSource) {
 		onSetupSuccess(dataSource);
-		manager.next();
+        if (manager != null) {
+		    manager.next();
+        }
 	}
 	
 	public abstract void onSetupSuccess(DataSource dataSource);

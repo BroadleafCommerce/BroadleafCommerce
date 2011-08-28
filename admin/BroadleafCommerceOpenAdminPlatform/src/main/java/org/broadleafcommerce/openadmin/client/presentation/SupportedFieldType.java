@@ -35,6 +35,5 @@ public enum SupportedFieldType {
 	MONEY,
 	BROADLEAF_ENUMERATION,
 	EMPTY_ENUMERATION,
-    HTML,
-    LARGE_STRING;
+    HTML;
 }

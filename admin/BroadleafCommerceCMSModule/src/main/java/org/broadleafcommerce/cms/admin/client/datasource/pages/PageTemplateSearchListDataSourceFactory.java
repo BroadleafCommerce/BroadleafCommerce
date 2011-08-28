@@ -31,19 +31,19 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class PageTemplateListDataSourceFactory implements DataSourceFactory {
+public class PageTemplateSearchListDataSourceFactory implements DataSourceFactory {
 	
-	public static PageTemplateListDataSource dataSource = null;
+	public static PageTemplateSearchListDataSource dataSource = null;
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new PageTemplateClientEntityModule(CeilingEntities.PAGETEMPLATE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new PageTemplateSearchClientEntityModule(CeilingEntities.PAGETEMPLATE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
             persistencePerspective.setPopulateToOneFields(true);
-			dataSource = new PageTemplateListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+			dataSource = new PageTemplateSearchListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

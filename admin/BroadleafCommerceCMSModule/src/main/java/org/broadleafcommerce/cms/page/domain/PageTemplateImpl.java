@@ -17,11 +17,13 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OrderBy;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 
 /**
@@ -54,9 +56,10 @@ public class PageTemplateImpl implements PageTemplate {
     @JoinColumn(name = "LOCALE_ID")
     protected Locale locale;
 
-    @OneToMany(targetEntity = FieldGroupImpl.class)
-    @JoinTable(name = "BLC_TEMPLATE_FIELD_GROUPS", joinColumns = @JoinColumn(name = "PAGE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
-    @OrderColumn(name = "group_order")
+    @ManyToMany(targetEntity = FieldGroupImpl.class)
+    @JoinTable(name = "BLC_TEMPLATE_FIELD_GROUPS", joinColumns = @JoinColumn(name = "PAGE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(clause = "GROUP_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     protected List<FieldGroup> fieldGroups;

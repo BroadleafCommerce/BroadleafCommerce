@@ -18,6 +18,8 @@ package org.broadleafcommerce.cms.admin.client.presenter.pages;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
@@ -34,6 +36,8 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
 import java.util.HashMap;
 
@@ -82,6 +86,20 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         if (pageType.equals("org.broadleafcommerce.cms.page.domain.PageImpl")) {
             getDisplay().getAddPageButton().disable();
             getDisplay().getAddPageFolderButton().disable();
+            //load the page template form
+            PageTemplateFormListDataSourceFactory.createDataSource("pageTemplateFormDS", new String[]{"constructForm", selectedRecord.getAttribute("pageTemplate")}, new AsyncCallbackAdapter() {
+                @Override
+                public void onSetupSuccess(DataSource dataSource) {
+                    Canvas legacyForm = ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getMember("pageTemplateForm");
+                    if (legacyForm != null) {
+                        legacyForm.destroy();
+                    }
+                    FormOnlyView formOnlyView = new FormOnlyView(dataSource);
+                    formOnlyView.setID("pageTemplateForm");
+                    formOnlyView.setOverflow(Overflow.VISIBLE);
+                    ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).addMember(formOnlyView);
+                }
+            });
         } else {
             getDisplay().getAddPageButton().enable();
             getDisplay().getAddPageFolderButton().enable();
@@ -113,8 +131,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 String newLocaleName = (String) event.getValue();
                 ((PagesTreeDataSource) library.get("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeName", newLocaleName));
                 getDisplay().getListDisplay().getGrid().invalidateCache();
-                ((PageTemplateListDataSource) library.get("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeName", newLocaleName));
-                ((PageTemplateListDataSource) library.get("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
+                ((PageTemplateSearchListDataSource) library.get("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeName", newLocaleName));
+                ((PageTemplateSearchListDataSource) library.get("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
             }
         });
 	}
@@ -131,7 +149,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 				((TreeGridDataSource) library.get("pageTreeDS")).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearch", new PageTemplateListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearch", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
 				pageTemplateDataSource.resetPermanentFieldVisibility(

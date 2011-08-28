@@ -379,6 +379,12 @@ public class FormBuilder {
 			formItem = new PasswordItem();
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
+        case HTML:
+            formItem = new RichTextItem();
+            formItem.setHeight(300);
+		    formItem.setColSpan(4);
+			formItem.setWidth("700");
+            break;
 		default:
 			if (!largeEntry) {
 				formItem = new TextItem();

@@ -15,11 +15,13 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OrderBy;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 
 /**
@@ -45,9 +47,10 @@ public class FieldGroupImpl implements FieldGroup {
     @Column (name = "INIT_COLLAPSED_FLAG")
     protected Boolean initCollapsedFlag = false;
 
-    @OneToMany(targetEntity = FieldDefinitionImpl.class)
-    @JoinTable(name = "BLC_FIELD_GROUP_FIELDS", joinColumns = @JoinColumn(name = "FIELD_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DEFINITION_ID", referencedColumnName = "FIELD_DEFINITION_ID"))
-    @OrderColumn(name = "FIELD_ORDER")
+    @ManyToMany(targetEntity = FieldDefinitionImpl.class)
+    @JoinTable(name = "BLC_FIELD_GROUP_FIELDS", joinColumns = @JoinColumn(name = "FIELD_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DEFINITION_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(clause = "FIELD_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     protected List<FieldDefinition> fieldDefinitions;
