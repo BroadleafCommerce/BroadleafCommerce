@@ -17,8 +17,11 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldData;
 import org.broadleafcommerce.cms.field.domain.FieldDataImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,9 +51,11 @@ public class PageFieldImpl implements PageField {
     @JoinColumn(name="PAGE_ID")
     protected Page page;
 
-    @OneToMany(targetEntity = FieldDataImpl.class)
-    @JoinTable(name = "BLC_PAGE_FIELD_DATA", joinColumns = @JoinColumn(name = "PAGE_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DATA_ID"))
+    @OneToMany(mappedBy = "pageField", targetEntity = FieldDataImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "FIELD_ORDER")
+    @BatchSize(size = 20)
     private List<FieldData> fieldDataList = new ArrayList<FieldData>();
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -73,6 +74,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Column (name = "ALLOW_MULTIPLES")
     protected Boolean allowMultiples = false;
+
+    @ManyToOne(targetEntity = FieldGroupImpl.class)
+    @JoinColumn(name = "FIELD_GROUP_ID")
+	protected FieldGroup fieldGroup;
+
+    @Column(name="FIELD_ORDER")
+    protected int fieldOrder;
 
     @Override
     public Long getId() {
@@ -202,6 +210,26 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Override
     public void setValidationErrorMesageKey(String validationErrorMesageKey) {
         this.validationErrorMesageKey = validationErrorMesageKey;
+    }
+
+    @Override
+    public FieldGroup getFieldGroup() {
+        return fieldGroup;
+    }
+
+    @Override
+    public void setFieldGroup(FieldGroup fieldGroup) {
+        this.fieldGroup = fieldGroup;
+    }
+
+    @Override
+    public int getFieldOrder() {
+        return fieldOrder;
+    }
+
+    @Override
+    public void setFieldOrder(int fieldOrder) {
+        this.fieldOrder = fieldOrder;
     }
 }
 

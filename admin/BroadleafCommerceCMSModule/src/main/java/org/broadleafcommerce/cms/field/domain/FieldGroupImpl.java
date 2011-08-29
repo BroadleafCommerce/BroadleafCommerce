@@ -15,13 +15,14 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.hibernate.annotations.*;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.List;
 
 /**
@@ -47,13 +48,19 @@ public class FieldGroupImpl implements FieldGroup {
     @Column (name = "INIT_COLLAPSED_FLAG")
     protected Boolean initCollapsedFlag = false;
 
-    @ManyToMany(targetEntity = FieldDefinitionImpl.class)
-    @JoinTable(name = "BLC_FIELD_GROUP_FIELDS", joinColumns = @JoinColumn(name = "FIELD_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DEFINITION_ID", nullable = true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "FIELD_ORDER")
+    @OneToMany(mappedBy = "fieldGroup", targetEntity = FieldDefinitionImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @OrderColumn(name = "FIELD_ORDER")
     @BatchSize(size = 20)
     protected List<FieldDefinition> fieldDefinitions;
+
+    @ManyToOne(targetEntity = PageTemplateImpl.class)
+    @JoinColumn(name = "PAGE_TEMPLATE_ID")
+	protected PageTemplate pageTemplate;
+
+    @Column(name="GROUP_ORDER")
+    protected int groupOrder;
 
     @Override
     public Long getId() {
@@ -93,6 +100,26 @@ public class FieldGroupImpl implements FieldGroup {
     @Override
     public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions) {
         this.fieldDefinitions = fieldDefinitions;
+    }
+
+    @Override
+    public PageTemplate getPageTemplate() {
+        return pageTemplate;
+    }
+
+    @Override
+    public void setPageTemplate(PageTemplate pageTemplate) {
+        this.pageTemplate = pageTemplate;
+    }
+
+    @Override
+    public int getGroupOrder() {
+        return groupOrder;
+    }
+
+    @Override
+    public void setGroupOrder(int groupOrder) {
+        this.groupOrder = groupOrder;
     }
 }
 

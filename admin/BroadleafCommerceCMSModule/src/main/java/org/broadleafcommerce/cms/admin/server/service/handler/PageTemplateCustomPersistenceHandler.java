@@ -1,9 +1,14 @@
 package org.broadleafcommerce.cms.admin.server.service.handler;
 
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.field.domain.FieldData;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
@@ -13,6 +18,7 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -167,6 +173,47 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             });
 		    metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
+
+            return results;
+        } catch (Exception e) {
+            LOG.error(e);
+            throw new ServiceException("Unable to perform inspect for entity: "+ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    @Override
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        try {
+            String pageId = persistencePackage.getCustomCriteria()[1];
+            Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
+            Map<String, PageField> pageFieldMap = page.getPageFields();
+            Entity entity = new Entity();
+            entity.setType(new String[]{PageTemplateImpl.class.getName()});
+            List<Property> propertiesList = new ArrayList<Property>();
+            for (String key : pageFieldMap.keySet()) {
+                Property property = new Property();
+                propertiesList.add(property);
+                property.setName(key);
+                PageField pageField = pageFieldMap.get(key);
+                List<FieldData> fieldDataList = pageField.getFieldDataList();
+                String value;
+                if (!CollectionUtils.isEmpty(fieldDataList)) {
+                    //TODO add support for multiple values
+                    value = fieldDataList.get(0).getValue();
+                } else {
+                    value = null;
+                }
+                property.setValue(value);
+            }
+            Property property = new Property();
+            propertiesList.add(property);
+            property.setName("id");
+            property.setValue(pageId);
+
+            entity.setProperties(propertiesList.toArray(new Property[]{}));
+
+            DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
             return results;
         } catch (Exception e) {

@@ -74,4 +74,12 @@ public interface FieldDefinition {
 
     public void setValidationErrorMesageKey(String validationErrorMesageKey);
 
+    public FieldGroup getFieldGroup();
+
+    public void setFieldGroup(FieldGroup fieldGroup);
+
+    public int getFieldOrder();
+
+    public void setFieldOrder(int fieldOrder);
+
 }

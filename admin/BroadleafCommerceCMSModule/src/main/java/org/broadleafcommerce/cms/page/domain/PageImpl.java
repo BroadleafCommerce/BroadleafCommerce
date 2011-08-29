@@ -19,11 +19,14 @@ import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.MapKey;
+import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,10 +59,12 @@ public class PageImpl extends PageFolderImpl implements Page {
     @AdminPresentation(friendlyName="Meta Description", order=3, group="Page", largeEntry = true)
     protected String metaDescription;
 
-    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = {CascadeType.ALL})
-    @MapKey(name = "fieldKey")
+    @ManyToMany(targetEntity = PageFieldImpl.class)
+    @JoinTable(name = "BLC_PAGE_FIELD_MAP", inverseJoinColumns = @JoinColumn(name = "PAGE_FIELD_ID", referencedColumnName = "PAGE_FIELD_ID"))
+    @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @BatchSize(size = 20)
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
 
     @ManyToOne (targetEntity = SandBoxImpl.class)

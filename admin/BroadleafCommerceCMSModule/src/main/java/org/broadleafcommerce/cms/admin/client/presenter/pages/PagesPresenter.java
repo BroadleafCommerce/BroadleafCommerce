@@ -15,9 +15,7 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.*;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -26,6 +24,7 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
@@ -87,17 +86,26 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             getDisplay().getAddPageButton().disable();
             getDisplay().getAddPageFolderButton().disable();
             //load the page template form
+            BLCMain.NON_MODAL_PROGRESS.startProgress();
             PageTemplateFormListDataSourceFactory.createDataSource("pageTemplateFormDS", new String[]{"constructForm", selectedRecord.getAttribute("pageTemplate")}, new AsyncCallbackAdapter() {
                 @Override
-                public void onSetupSuccess(DataSource dataSource) {
+                public void onSetupSuccess(final DataSource dataSource) {
                     Canvas legacyForm = ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getMember("pageTemplateForm");
                     if (legacyForm != null) {
                         legacyForm.destroy();
                     }
-                    FormOnlyView formOnlyView = new FormOnlyView(dataSource);
+                    final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
                     formOnlyView.setID("pageTemplateForm");
                     formOnlyView.setOverflow(Overflow.VISIBLE);
                     ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).addMember(formOnlyView);
+                    ((PageTemplateFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
+                    BLCMain.NON_MODAL_PROGRESS.startProgress();
+                    formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            formOnlyView.getForm().enable();
+                        }
+                    });
                 }
             });
         } else {
