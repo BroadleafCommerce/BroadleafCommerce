@@ -186,36 +186,63 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
-            Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
-            Map<String, PageField> pageFieldMap = page.getPageFields();
-            Entity entity = new Entity();
-            entity.setType(new String[]{PageTemplateImpl.class.getName()});
-            List<Property> propertiesList = new ArrayList<Property>();
-            for (String key : pageFieldMap.keySet()) {
-                Property property = new Property();
-                propertiesList.add(property);
-                property.setName(key);
-                PageField pageField = pageFieldMap.get(key);
-                List<FieldData> fieldDataList = pageField.getFieldDataList();
-                String value;
-                if (!CollectionUtils.isEmpty(fieldDataList)) {
-                    //TODO add support for multiple values
-                    value = fieldDataList.get(0).getValue();
-                } else {
-                    value = null;
-                }
-                property.setValue(value);
-            }
-            Property property = new Property();
-            propertiesList.add(property);
-            property.setName("id");
-            property.setValue(pageId);
-
-            entity.setProperties(propertiesList.toArray(new Property[]{}));
-
+            Entity entity = fetchEntityBasedOnId(pageId);
             DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
             return results;
+        } catch (Exception e) {
+            LOG.error(e);
+            throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    protected Entity fetchEntityBasedOnId(String pageId) throws Exception {
+        Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
+        Map<String, PageField> pageFieldMap = page.getPageFields();
+        Entity entity = new Entity();
+        entity.setType(new String[]{PageTemplateImpl.class.getName()});
+        List<Property> propertiesList = new ArrayList<Property>();
+        for (String key : pageFieldMap.keySet()) {
+            Property property = new Property();
+            propertiesList.add(property);
+            property.setName(key);
+            PageField pageField = pageFieldMap.get(key);
+            List<FieldData> fieldDataList = pageField.getFieldDataList();
+            String value;
+            if (!CollectionUtils.isEmpty(fieldDataList)) {
+                //TODO add support for multiple values
+                value = fieldDataList.get(0).getValue();
+            } else {
+                value = null;
+            }
+            property.setValue(value);
+        }
+        Property property = new Property();
+        propertiesList.add(property);
+        property.setName("id");
+        property.setValue(pageId);
+
+        entity.setProperties(propertiesList.toArray(new Property[]{}));
+
+        return entity;
+    }
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        try {
+            String pageId = persistencePackage.getCustomCriteria()[1];
+            Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
+            Map<String, PageField> pageFieldMap = page.getPageFields();
+            for (Property property : persistencePackage.getEntity().getProperties()) {
+                PageField pageField = pageFieldMap.get(property.getName());
+                if (pageField != null) {
+                    FieldData fieldData = pageField.getFieldDataList().get(0);
+                    fieldData.setValue(property.getValue());
+                }
+            }
+
+            return fetchEntityBasedOnId(pageId);
         } catch (Exception e) {
             LOG.error(e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;

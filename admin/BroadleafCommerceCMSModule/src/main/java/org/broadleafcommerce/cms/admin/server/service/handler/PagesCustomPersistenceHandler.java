@@ -49,8 +49,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return false;
     }
 
     @Override
@@ -87,11 +86,6 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         super.remove(persistencePackage, dynamicEntityDao, helper);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        return super.update(persistencePackage, dynamicEntityDao, helper);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {

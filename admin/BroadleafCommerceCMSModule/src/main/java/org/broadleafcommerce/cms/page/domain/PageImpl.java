@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
@@ -42,6 +43,9 @@ public class PageImpl extends PageFolderImpl implements Page {
 
     private static final long serialVersionUID = 1L;
 
+    @Embedded
+    protected Auditable auditable = new Auditable();
+    
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
     @AdminPresentation(friendlyName="Page Template", order=1, group="Page")

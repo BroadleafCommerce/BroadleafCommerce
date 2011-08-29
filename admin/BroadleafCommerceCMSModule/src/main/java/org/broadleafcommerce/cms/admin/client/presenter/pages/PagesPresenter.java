@@ -15,11 +15,15 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
@@ -50,7 +54,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	protected String rootId = null;
 	protected String rootName = "Root";
 	protected HashMap<String, Object> library = new HashMap<String, Object>();
-
+    protected HandlerRegistration saveButtonHandlerRegistration;
+    protected HandlerRegistration itemChangedHandlerRegistration;
 
 	/*@Override
 	protected void addClicked() {
@@ -90,11 +95,16 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             PageTemplateFormListDataSourceFactory.createDataSource("pageTemplateFormDS", new String[]{"constructForm", selectedRecord.getAttribute("pageTemplate")}, new AsyncCallbackAdapter() {
                 @Override
                 public void onSetupSuccess(final DataSource dataSource) {
-                    Canvas legacyForm = ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getMember("pageTemplateForm");
+                    Canvas legacyForm = ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
                     if (legacyForm != null) {
                         legacyForm.destroy();
                     }
                     final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
+                    formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
+                        public void onItemChanged(ItemChangedEvent event) {
+                            getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                        }
+                    });
                     formOnlyView.setID("pageTemplateForm");
                     formOnlyView.setOverflow(Overflow.VISIBLE);
                     ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).addMember(formOnlyView);
@@ -117,6 +127,44 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	@Override
 	public void bind() {
 		super.bind();
+        formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                //save the regular entity form and the page template form
+                if (event.isLeftButtonDown()) {
+                    DSRequest requestProperties = new DSRequest();
+                    requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+                    getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            try {
+								if (!response.getErrors().isEmpty()) {
+									//do nothing
+								}
+							} catch (Exception e) {
+                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                                DynamicForm form = legacyForm.getForm();
+                                PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
+                                Record selectedRecord = form.getValuesAsRecord();
+                                dataSource.setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
+                                form.saveData(new DSCallback() {
+                                    @Override
+                                    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                        try {
+                                            if (!response.getErrors().isEmpty()) {
+                                                //do nothing
+                                            }
+                                        } catch (Exception e) {
+                                            getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                        }
+                                    }
+                                });
+							}
+                        }
+                    }, requestProperties);
+                }
+            }
+        });
         getDisplay().getAddPageButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

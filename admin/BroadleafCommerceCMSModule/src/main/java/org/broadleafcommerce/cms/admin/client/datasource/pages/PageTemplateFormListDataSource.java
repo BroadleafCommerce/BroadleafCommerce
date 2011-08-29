@@ -32,4 +32,9 @@ public class PageTemplateFormListDataSource extends DynamicEntityDataSource {
     protected void executeFetch(String requestId, DSRequest request, DSResponse response, String[] customCriteria, AsyncCallback<DataSource> cb) {
         super.executeFetch(requestId, request, response, this.customCriteria, cb);
     }
+
+    @Override
+    protected void executeUpdate(String requestId, DSRequest request, DSResponse response, String[] customCriteria, AsyncCallback<DataSource> cb) {
+        super.executeUpdate(requestId, request, response, this.customCriteria, cb);
+    }
 }
