@@ -72,9 +72,17 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 
 	@Override
 	protected void removeClicked() {
-		display.getListDisplay().getGrid().removeSelectedData();
-		formPresenter.disable();
-		display.getListDisplay().getRemoveButton().disable();
+		display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+            @Override
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                Canvas legacyForm = ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                if (legacyForm != null) {
+                    legacyForm.destroy();
+                }
+                formPresenter.disable();
+		        display.getListDisplay().getRemoveButton().disable();
+            }
+        }, null);
 	}
 
 	@Override
