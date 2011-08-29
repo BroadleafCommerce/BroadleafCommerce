@@ -2,10 +2,13 @@ package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.cms.page.domain.PageField;
 
+import java.io.Serializable;
+
 /**
  * Created by bpolster.
  */
-public interface FieldData {
+public interface FieldData extends Serializable {
+    
     public Long getId();
 
     public void setId(Long id);

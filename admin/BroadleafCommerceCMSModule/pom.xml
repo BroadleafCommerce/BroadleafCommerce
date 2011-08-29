@@ -52,6 +52,10 @@
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-open-admin-platform</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

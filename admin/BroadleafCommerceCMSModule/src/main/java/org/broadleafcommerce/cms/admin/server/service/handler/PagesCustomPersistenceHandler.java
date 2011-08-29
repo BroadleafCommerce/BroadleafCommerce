@@ -1,7 +1,9 @@
 package org.broadleafcommerce.cms.admin.server.service.handler;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.lang.SerializationUtils;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
+import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.openadmin.client.dto.*;
@@ -43,13 +45,13 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return false;
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return false;
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -83,11 +85,6 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         }
     }
 
-    @Override
-    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        super.remove(persistencePackage, dynamicEntityDao, helper);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
     protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
@@ -106,4 +103,27 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 		return mergedProperties;
 	}
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            //disconnect from the Hibernate Session
+            adminInstance = (Page) SerializationUtils.clone(adminInstance);
+			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            adminInstance = pageService.updatePage(adminInstance, null);
+
+			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+			return adminEntity;
+		} catch (Exception e) {
+			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+		}
+    }
 }

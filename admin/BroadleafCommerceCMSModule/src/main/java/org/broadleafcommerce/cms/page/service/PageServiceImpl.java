@@ -205,12 +205,8 @@ public class PageServiceImpl implements PageService {
      */
     @Override
     public void deletePage(Page page, SandBox destinationSandbox) {
-        if (page.getOriginalPageId() != null) {
-            pageDao.delete(page);
-        } else {
-            page.setDeletedFlag(true);
-            updatePage(page, destinationSandbox);
-        }
+        page.setDeletedFlag(true);
+        updatePage(page, destinationSandbox);
     }
 
     /**

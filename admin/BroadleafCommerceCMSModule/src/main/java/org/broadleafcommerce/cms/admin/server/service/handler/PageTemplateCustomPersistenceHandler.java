@@ -2,6 +2,7 @@ package org.broadleafcommerce.cms.admin.server.service.handler;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldData;
@@ -55,7 +56,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-        return canHandleFetch(persistencePackage);
+        return false;
     }
 
     @Override
@@ -234,6 +235,16 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             String pageId = persistencePackage.getCustomCriteria()[1];
             Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
             Map<String, PageField> pageFieldMap = page.getPageFields();
+            //populate the lazy collections
+            for (Property property : persistencePackage.getEntity().getProperties()) {
+                PageField pageField = pageFieldMap.get(property.getName());
+                if (pageField != null) {
+                    FieldData fieldData = pageField.getFieldDataList().get(0);
+                }
+            }
+            //disconnect the page from the Hibernate session
+            page = (Page) SerializationUtils.clone(page);
+            pageFieldMap = page.getPageFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 PageField pageField = pageFieldMap.get(property.getName());
                 if (pageField != null) {
@@ -241,6 +252,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     fieldData.setValue(property.getValue());
                 }
             }
+            pageService.updatePage(page, null);
 
             return fetchEntityBasedOnId(pageId);
         } catch (Exception e) {
