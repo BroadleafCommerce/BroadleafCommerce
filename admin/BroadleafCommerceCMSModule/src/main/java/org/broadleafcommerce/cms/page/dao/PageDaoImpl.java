@@ -149,7 +149,7 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public PageFolder addPageFolder(PageFolder pageFolder) {
-        return (Page) em.merge(pageFolder);
+        return (PageFolder) em.merge(pageFolder);
     }
 
     @Override
@@ -158,4 +158,5 @@ public class PageDaoImpl implements PageDao {
         query.setParameter("localeName", localeName);
         return query.getResultList();
     }
+
 }

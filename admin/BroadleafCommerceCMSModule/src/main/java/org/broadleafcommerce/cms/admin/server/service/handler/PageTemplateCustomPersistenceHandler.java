@@ -5,13 +5,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.field.domain.FieldData;
-import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
+import org.broadleafcommerce.cms.field.domain.*;
+import org.broadleafcommerce.cms.page.domain.*;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
@@ -46,7 +41,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return canHandleFetch(persistencePackage);
+        return false;
     }
 
     @Override
@@ -95,6 +90,16 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     fieldMetadata.setCollection(false);
                     fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                     fieldMetadata.setLength(definition.getMaxLength());
+                    if (definition.getFieldEnumeration() != null && !CollectionUtils.isEmpty(definition.getFieldEnumeration().getEnumerationItems())) {
+                        int count = definition.getFieldEnumeration().getEnumerationItems().size();
+                        String[][] enumItems = new String[count][2];
+                        for (int j=0;j<count;j++) {
+                            FieldEnumerationItem item = definition.getFieldEnumeration().getEnumerationItems().get(j);
+                            enumItems[j][0] = item.getName();
+                            enumItems[j][1] = item.getFriendlyName();
+                        }
+                        fieldMetadata.setEnumerationValues(enumItems);
+                    }
                     FieldPresentationAttributes attributes = new FieldPresentationAttributes();
                     fieldMetadata.setPresentationAttributes(attributes);
                     attributes.setName(definition.getName());
@@ -104,6 +109,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     attributes.setHidden(definition.getHiddenFlag());
                     attributes.setGroup(group.getName());
                     attributes.setGroupOrder(groupCount);
+                    attributes.setGroupCollapsed(group.getInitCollapsedFlag());
                     attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                     attributes.setLargeEntry(definition.getTextAreaFlag());
                     attributes.setProminent(false);
@@ -234,22 +240,54 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
             Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
-            Map<String, PageField> pageFieldMap = page.getPageFields();
-            //populate the lazy collections
-            for (Property property : persistencePackage.getEntity().getProperties()) {
-                PageField pageField = pageFieldMap.get(property.getName());
-                if (pageField != null) {
-                    FieldData fieldData = pageField.getFieldDataList().get(0);
+            //build up some fields before we detach page from the session
+            List<String> templateFieldNames = new ArrayList<String>();
+            for (FieldGroup group : page.getPageTemplate().getFieldGroups()) {
+                for (FieldDefinition definition: group.getFieldDefinitions()) {
+                    templateFieldNames.add(definition.getName());
                 }
             }
-            //disconnect the page from the Hibernate session
+            for (String key : page.getPageFields().keySet()) {
+                PageField pageField = page.getPageFields().get(key);
+                pageField.getFieldDataList().size();
+            }
+            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
             page = (Page) SerializationUtils.clone(page);
-            pageFieldMap = page.getPageFields();
+            Map<String, PageField> pageFieldMap = page.getPageFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
-                PageField pageField = pageFieldMap.get(property.getName());
-                if (pageField != null) {
-                    FieldData fieldData = pageField.getFieldDataList().get(0);
-                    fieldData.setValue(property.getValue());
+                if (templateFieldNames.contains(property.getName())) {
+                    PageField pageField = pageFieldMap.get(property.getName());
+                    if (pageField != null) {
+                        if (!CollectionUtils.isEmpty(pageField.getFieldDataList())) {
+                            FieldData fieldData = pageField.getFieldDataList().get(0);
+                            fieldData.setValue(property.getValue());
+                        } else {
+                            FieldData fieldData = new FieldDataImpl();
+                            fieldData.setPageField(pageField);
+                            pageField.getFieldDataList().add(fieldData);
+                            fieldData.setValue(property.getValue());
+                        }
+                    } else {
+                        pageField = new PageFieldImpl();
+                        pageFieldMap.put(property.getName(), pageField);
+                        pageField.setFieldKey(property.getName());
+                        pageField.setPage(page);
+                        FieldData fieldData = new FieldDataImpl();
+                        fieldData.setPageField(pageField);
+                        pageField.getFieldDataList().add(fieldData);
+                        fieldData.setValue(property.getValue());
+                    }
+                }
+            }
+            List<String> removeItems = new ArrayList<String>();
+            for (String key : pageFieldMap.keySet()) {
+                if (persistencePackage.getEntity().findProperty(key)==null) {
+                    removeItems.add(key);
+                }
+            }
+            if (removeItems.size() > 0) {
+                for (String removeKey : removeItems) {
+                    pageFieldMap.remove(removeKey);
                 }
             }
             pageService.updatePage(page, null);

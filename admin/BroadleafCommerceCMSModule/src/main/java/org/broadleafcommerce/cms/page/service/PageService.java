@@ -148,5 +148,4 @@ public interface PageService {
      */
     public List<PageTemplate> retrieveAllPageTemplates(String localeName);
 
-
 }

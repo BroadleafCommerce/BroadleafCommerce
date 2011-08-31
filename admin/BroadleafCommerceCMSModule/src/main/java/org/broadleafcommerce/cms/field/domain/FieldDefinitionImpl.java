@@ -16,7 +16,10 @@
 package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -69,8 +72,9 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column (name = "TEXT_AREA_FLAG")
     protected Boolean textAreaFlag = false;
 
-    @Column (name = "ENUMERATION_NAME")
-    protected String enumerationName;
+    @ManyToOne (targetEntity = FieldEnumerationImpl.class)
+    @JoinColumn(name = "FIELD_ENUM_ID")
+    protected FieldEnumeration fieldEnumeration;
 
     @Column (name = "ALLOW_MULTIPLES")
     protected Boolean allowMultiples = false;
@@ -173,16 +177,6 @@ public class FieldDefinitionImpl implements FieldDefinition {
     }
 
     @Override
-    public String getEnumerationName() {
-        return enumerationName;
-    }
-
-    @Override
-    public void setEnumerationName(String enumerationName) {
-        this.enumerationName = enumerationName;
-    }
-
-    @Override
     public Boolean getAllowMultiples() {
         return allowMultiples;
     }
@@ -230,6 +224,16 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Override
     public void setFieldOrder(int fieldOrder) {
         this.fieldOrder = fieldOrder;
+    }
+
+    @Override
+    public FieldEnumeration getFieldEnumeration() {
+        return fieldEnumeration;
+    }
+
+    @Override
+    public void setFieldEnumeration(FieldEnumeration fieldEnumeration) {
+        this.fieldEnumeration = fieldEnumeration;
     }
 }
 

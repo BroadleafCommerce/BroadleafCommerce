@@ -48,4 +48,5 @@ public interface PageDao {
     public PageFolder addPageFolder(PageFolder pageFolder);
 
     public List<PageTemplate> retrieveAllPageTemplates(String localeName);
+
 }

@@ -20,6 +20,7 @@ import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
 
@@ -48,7 +49,7 @@ public class PageImpl extends PageFolderImpl implements Page {
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
-    @AdminPresentation(friendlyName="Page Template", order=1, group="Page")
+    @AdminPresentation(friendlyName="Page Template", order=1, group="Page", requiredOverride = RequiredOverride.REQUIRED)
     protected PageTemplate pageTemplate;
 
     @Column (name = "FULL_URL")
@@ -169,6 +170,11 @@ public class PageImpl extends PageFolderImpl implements Page {
     @Override
     public Page cloneEntity() {
         PageImpl newPage = new PageImpl();
+        newPage.name=name;
+        newPage.parentFolder=parentFolder;
+        newPage.site=site;
+        newPage.folderFlag=folderFlag;
+
         newPage.archivedFlag = archivedFlag;
         newPage.deletedFlag = deletedFlag;
         newPage.pageTemplate = pageTemplate;

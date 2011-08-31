@@ -243,4 +243,5 @@ public class PageServiceImpl implements PageService {
         }
         return pageDao.retrieveAllPageTemplates(localeName);
     }
+
 }

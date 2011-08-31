@@ -623,10 +623,15 @@ public class BasicClientEntityModule implements DataSourceModule {
 				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
 				String secondaryFieldType = property.getMetadata().getSecondaryType()==null?null:property.getMetadata().getSecondaryType().toString();
 				Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
-				Boolean required = property.getMetadata().getRequired();
-				if (required == null) {
-					required = false;
-				}
+                Boolean required;
+                if (property.getMetadata().getPresentationAttributes().getRequiredOverride() != null) {
+                    required = property.getMetadata().getPresentationAttributes().getRequiredOverride();
+                } else {
+                    required = property.getMetadata().getRequired();
+                    if (required == null) {
+                        required = false;
+                    }
+                }
 				Boolean mutable = property.getMetadata().getMutable();
 				String inheritedFromType = property.getMetadata().getInheritedFromType();
 				String[] availableToTypes = property.getMetadata().getAvailableToTypes();
@@ -651,6 +656,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
+                Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
 				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
 				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
 				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
@@ -749,6 +755,17 @@ public class BasicClientEntityModule implements DataSourceModule {
 	        		field.setValueMap(valueMap);
 	        		//field.setValidOperators(getBasicEnumerationOperators());
 					break;
+                case EXPLICIT_ENUMERATION:
+					field = new DataSourceEnumField(propertyName, friendlyName);
+					field.setCanEdit(mutable);
+					field.setRequired(required);
+					LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
+					for (int j=0; j<enumerationValues.length; j++) {
+						valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
+					}
+	        		field.setValueMap(valueMap2);
+	        		//field.setValidOperators(getBasicEnumerationOperators());
+					break;
 				case PASSWORD:
 					field = new DataSourcePasswordField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
@@ -789,6 +806,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 				if (groupOrder != null) {
 					field.setAttribute("formGroupOrder", groupOrder);
 				}
+                if (groupCollapsed != null) {
+                    field.setAttribute("formGroupCollapsed", groupCollapsed);
+                }
 				if (largeEntry != null) {
 					field.setAttribute("largeEntry", largeEntry);
 				}
@@ -805,6 +825,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setAttribute("columnWidth", columnWidth);
 				}
 				if (enumerationValues != null) {
+					field.setAttribute("enumerationValues", enumerationValues);
+				}
+                if (enumerationValues != null) {
 					field.setAttribute("enumerationValues", enumerationValues);
 				}
 				if (enumerationClass != null) {

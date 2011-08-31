@@ -47,6 +47,7 @@ public class FormBuilder {
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
 		form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
+        Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
 		DataSourceField[] fields = dataSource.getFields();
 		Boolean originalEdit = canEdit;
@@ -60,6 +61,9 @@ public class FormBuilder {
         	if (fieldType != null && !field.getHidden()) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
+                if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {
+                    sectionCollapsed.put(group, field.getAttributeAsBoolean("formGroupCollapsed"));
+                }
 	    		Integer groupOrder = null;
 	    		if (temp != null) {
 	    			groupOrder = Integer.valueOf(temp);
@@ -90,19 +94,23 @@ public class FormBuilder {
         	canEdit = originalEdit;
         }
         
-        groupFields(form, sections, sectionNames);
+        groupFields(form, sections, sectionNames, sectionCollapsed);
 	}
 	
 	public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
 		form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
+        Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
 		DataSourceField[] fields = dataSource.getFields();
         for (DataSourceField field : fields) {
         	String fieldType = field.getAttribute("fieldType");
         	if (fieldType != null && !field.getHidden()) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
+                if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {
+                    sectionCollapsed.put(group, field.getAttributeAsBoolean("formGroupCollapsed"));
+                }
 	    		Integer groupOrder = null;
 	    		if (temp != null) {
 	    			groupOrder = Integer.valueOf(temp);
@@ -133,11 +141,11 @@ public class FormBuilder {
         	}
         }
         
-        groupFields(form, sections, sectionNames);
+        groupFields(form, sections, sectionNames, sectionCollapsed);
 	}
 
-	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, final Map<String, Integer> sectionNames) {
-		if (sections.size() > 1) {
+	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, final Map<String, Integer> sectionNames, Map<String, Boolean> sectionCollapsed) {
+		if (sections.size() > 0) {
         	int j=0;
         	List<FormItem> allItems = new ArrayList<FormItem>();
         	String[] groups = new String[sectionNames.size()];
@@ -169,7 +177,7 @@ public class FormBuilder {
         	for (String group : groups) {
         		SectionItem section = new SectionItem();  
                 section.setDefaultValue(group);  
-                section.setSectionExpanded(true); 
+                section.setSectionExpanded(sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group));
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
@@ -362,6 +370,15 @@ public class FormBuilder {
 				valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
 			}
 			formItem.setValueMap(valueMap);
+			break;
+        case EXPLICIT_ENUMERATION:
+			formItem = new SelectItem();
+			LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
+			String[][] enumerationValues2 = (String[][]) field.getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues2.length; j++) {
+				valueMap2.put(enumerationValues2[j][0], enumerationValues2[j][1]);
+			}
+			formItem.setValueMap(valueMap2);
 			break;
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();

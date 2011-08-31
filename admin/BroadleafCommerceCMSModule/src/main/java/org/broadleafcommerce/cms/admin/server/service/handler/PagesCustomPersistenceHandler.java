@@ -5,6 +5,7 @@ import org.apache.commons.lang.SerializationUtils;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
+import org.broadleafcommerce.cms.page.domain.PageFolderImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -57,7 +58,26 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        return super.add(persistencePackage, dynamicEntityDao, helper);    //To change body of overridden methods use File | Settings | File Templates.
+        Entity entity  = persistencePackage.getEntity();
+		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			PageFolder adminInstance = (PageFolder) Class.forName(entity.getType()[0]).newInstance();
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(PageFolder.class);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			adminInstance = (PageFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            if (PageFolderImpl.class.getName().equals(entity.getType()[0])) {
+                pageService.addPageFolder(adminInstance, adminInstance.getParentFolder());
+            } else {
+                pageService.addPage((Page) adminInstance, adminInstance.getParentFolder(), null);
+            }
+
+			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+			return adminEntity;
+		} catch (Exception e) {
+			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+		}
     }
 
     @Override
@@ -114,7 +134,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            //disconnect from the Hibernate Session
+            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
             adminInstance = (Page) SerializationUtils.clone(adminInstance);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 

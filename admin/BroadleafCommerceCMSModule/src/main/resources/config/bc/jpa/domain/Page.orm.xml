@@ -15,7 +15,8 @@
 		<query>SELECT pageFolder
                FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
                WHERE pageFolder.parentFolder = :parentFolder AND
-                     pageFolder.folderFlag = true
+                     pageFolder.folderFlag = true AND
+                     pageFolder.deletedFlag = false
 		</query>
 	</named-query>
 
@@ -23,7 +24,8 @@
 		<query>SELECT pageFolder
                FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
                WHERE pageFolder.parentFolder is null AND
-                     pageFolder.folderFlag = true
+                     pageFolder.folderFlag = true AND
+                     pageFolder.deletedFlag = false
 		</query>
 	</named-query>
 
@@ -35,7 +37,8 @@
                   page.parentFolder = :parentFolder AND
                   (pageTemplate.locale.localeName = :localeName OR pageTemplate.locale.localeName is null) AND
                   (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null) AND
-                  page.archivedFlag = false
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
 		</query>
 	</named-query>
 
@@ -47,7 +50,8 @@
                   page.parentFolder is null AND
                   (pageTemplate.locale.localeName = :localeName OR pageTemplate.locale.localeName is null) AND
                   (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null) AND
-                  page.archivedFlag = false
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
 		</query>
 	</named-query>
 

@@ -195,12 +195,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setOrder(annot.order());
 				attr.setExplicitFieldType(annot.fieldType());
 				attr.setGroup(annot.group());
+                attr.setGroupCollapsed(annot.groupCollapsed());
 				attr.setGroupOrder(annot.groupOrder());
 				attr.setLargeEntry(annot.largeEntry());
 				attr.setProminent(annot.prominent());
 				attr.setColumnWidth(annot.columnWidth());
 				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
 				attr.setReadOnly(annot.readOnly());
+                attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
 				if (annot.validationConfigurations().length != 0) {
 					ValidationConfiguration[] configurations = annot.validationConfigurations();
 					for (ValidationConfiguration configuration : configurations) {
@@ -344,6 +346,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     		if (localMetadata.getPresentationAttributes().getGroupOrder() != null) {
     			serverMetadata.getPresentationAttributes().setGroupOrder(localMetadata.getPresentationAttributes().getGroupOrder());
     		}
+            if (localMetadata.getPresentationAttributes().getGroupCollapsed() != null) {
+    			serverMetadata.getPresentationAttributes().setGroupCollapsed(localMetadata.getPresentationAttributes().getGroupCollapsed());
+    		}
     	}
     }
 	
@@ -449,11 +454,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setExplicitFieldType(annot.fieldType());
 				attr.setGroup(annot.group());
 				attr.setGroupOrder(annot.groupOrder());
+                attr.setGroupCollapsed(annot.groupCollapsed());
 				attr.setLargeEntry(annot.largeEntry());
 				attr.setProminent(annot.prominent());
 				attr.setColumnWidth(annot.columnWidth());
 				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
 				attr.setReadOnly(annot.readOnly());
+                attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
 				if (annot.validationConfigurations().length != 0) {
 					ValidationConfiguration[] configurations = annot.validationConfigurations();
 					for (ValidationConfiguration configuration : configurations) {

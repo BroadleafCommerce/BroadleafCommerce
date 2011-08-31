@@ -17,10 +17,12 @@ package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
+import java.io.Serializable;
+
 /**
  * Created by bpolster.
  */
-public interface FieldDefinition {
+public interface FieldDefinition extends Serializable {
 
     public Long getId();
 
@@ -58,9 +60,9 @@ public interface FieldDefinition {
 
     public void setTextAreaFlag(Boolean textAreaFlag);
 
-    public String getEnumerationName();
+    public FieldEnumeration getFieldEnumeration();
 
-    public void setEnumerationName(String enumerationName);
+    public void setFieldEnumeration(FieldEnumeration fieldEnumeration);
 
     public Boolean getAllowMultiples();
 

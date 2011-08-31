@@ -15,11 +15,11 @@
  */
 package org.broadleafcommerce.openadmin.client.dto;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 /**
  * 
@@ -37,6 +37,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private Boolean hidden;
 	private String group;
 	private Integer groupOrder;
+    private Boolean groupCollapsed;
 	private SupportedFieldType explicitFieldType;
 	private Boolean largeEntry;
 	private Boolean prominent;
@@ -44,6 +45,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private String broadleafEnumeration;
 	private Boolean readOnly;
 	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>();
+    private Boolean requiredOverride;
 	
 	public String getName() {
 		return name;
@@ -158,4 +160,19 @@ public class FieldPresentationAttributes implements Serializable {
 		this.validationConfigurations = validationConfigurations;
 	}
 
+    public Boolean getRequiredOverride() {
+        return requiredOverride;
+    }
+
+    public void setRequiredOverride(Boolean requiredOverride) {
+        this.requiredOverride = requiredOverride;
+    }
+
+    public Boolean getGroupCollapsed() {
+        return groupCollapsed;
+    }
+
+    public void setGroupCollapsed(Boolean groupCollapsed) {
+        this.groupCollapsed = groupCollapsed;
+    }
 }
