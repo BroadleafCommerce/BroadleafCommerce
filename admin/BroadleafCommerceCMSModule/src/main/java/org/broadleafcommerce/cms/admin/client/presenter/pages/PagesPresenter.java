@@ -33,7 +33,6 @@ import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
@@ -63,7 +62,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	protected String rootId = null;
 	protected String rootName = "Root";
     protected HandlerRegistration saveButtonHandlerRegistration;
-    protected HandlerRegistration itemChangedHandlerRegistration;
+    protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
 
 	@Override
@@ -133,6 +132,19 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	public void bind() {
 		super.bind();
         formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
+        refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (event.isLeftButtonDown()) {
+					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
+                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                    if (legacyForm != null) {
+                        legacyForm.getForm().reset();
+                    }
+					getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+				}
+			}
+        });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 //save the regular entity form and the page template form
@@ -176,7 +188,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 if (event.isLeftButtonDown()) {
                     getPresenterSequenceSetupManager().getDataSource("pageTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGEIMPL);
                     Map<String, Object> initialValues = new HashMap<String, Object>();
-                    initialValues.put("parentFolder", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
+                    initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
                     initialValues.put("name", BLCMain.getMessageManager().getString("defaultPageName"));
                     initialValues.put("_type", new String[]{EntityImplementations.PAGEIMPL});
                     BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
