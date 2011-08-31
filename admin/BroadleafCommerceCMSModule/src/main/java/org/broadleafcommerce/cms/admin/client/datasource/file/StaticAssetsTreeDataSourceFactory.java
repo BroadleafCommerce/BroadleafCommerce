@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008-2009 the original author or authors.
  *
@@ -14,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.admin.client.datasource.artifacts;
+package org.broadleafcommerce.cms.admin.client.datasource.file;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ColumnTreeDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -30,10 +30,10 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class ArtifactsTreeDataSourceFactory implements DataSourceFactory {
+public class StaticAssetsTreeDataSourceFactory implements DataSourceFactory {
 
 	public static final String parentFolderForeignKey = "parentFolder";
-	public static ArtifactsTreeDataSource dataSource = null;
+	public static ColumnTreeDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
@@ -41,16 +41,14 @@ public class ArtifactsTreeDataSourceFactory implements DataSourceFactory {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.PAGEFOLDERIMPL, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-				new ArtifactsClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new StaticAssetsClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
             persistencePerspective.setPopulateToOneFields(true);
             persistencePerspective.setExcludeFields(new String[]{
                 "site",
-                "pageTemplate",
-                "sandbox",
-                "auditable"
+                "sandbox"
             });
-			dataSource = new ArtifactsTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (String) additionalItems[0], (String) additionalItems[1]);
+			dataSource = new ColumnTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

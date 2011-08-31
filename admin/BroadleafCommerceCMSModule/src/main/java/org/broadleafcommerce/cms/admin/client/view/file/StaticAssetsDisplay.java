@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.client.view.artifacts;
+package org.broadleafcommerce.cms.admin.client.view.file;
 
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -8,7 +8,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
 /**
  * Created by jfischer
  */
-public interface ArtifactsDisplay {
+public interface StaticAssetsDisplay {
     DynamicEntityColumnTreeDisplay getListDisplay();
 
     DynamicFormDisplay getDynamicFormDisplay();

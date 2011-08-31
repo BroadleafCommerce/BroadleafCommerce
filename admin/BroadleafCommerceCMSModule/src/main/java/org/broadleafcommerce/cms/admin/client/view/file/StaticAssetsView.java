@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.client.view.artifacts;
+package org.broadleafcommerce.cms.admin.client.view.file;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
@@ -17,7 +17,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 /**
  * Created by jfischer
  */
-public class ArtifactsView extends VLayout implements Instantiable, ArtifactsDisplay {
+public class StaticAssetsView extends VLayout implements Instantiable, StaticAssetsDisplay {
 
     protected DynamicEntityColumnTreeView listDisplay;
     protected DynamicFormView dynamicFormDisplay;
@@ -25,7 +25,7 @@ public class ArtifactsView extends VLayout implements Instantiable, ArtifactsDis
     protected ToolStripButton addPageFolderButton;
     protected ToolStripButton addPageButton;
 
-    public ArtifactsView() {
+    public StaticAssetsView() {
 		setHeight100();
 		setWidth100();
 	}

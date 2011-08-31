@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.client.datasource.artifacts;
+package org.broadleafcommerce.cms.admin.client.datasource.file;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,13 +27,13 @@ import java.util.Map;
  * Time: 12:30 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ArtifactsClientEntityModule extends BasicClientEntityModule {
+public class StaticAssetsClientEntityModule extends BasicClientEntityModule {
 
-    public ArtifactsClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+    public StaticAssetsClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
         super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
     }
 
-    public ArtifactsClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
+    public StaticAssetsClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
         super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, metadataOverrides);
     }
 
@@ -41,7 +41,6 @@ public class ArtifactsClientEntityModule extends BasicClientEntityModule {
     public void executeFetch(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
         BLCMain.NON_MODAL_PROGRESS.startProgress();
         Criteria criteria = request.getCriteria();
-        criteria.addCriteria(((ArtifactsTreeDataSource) dataSource).permanentCriteria);
 		CriteriaTransferObject cto = getCto(request);
 		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
             public void onSuccess(DynamicResultSet result) {
@@ -50,7 +49,7 @@ public class ArtifactsClientEntityModule extends BasicClientEntityModule {
 
                 //mark page items as leaf nodes
                 for (TreeNode node : recordList) {
-                    if ("org.broadleafcommerce.cms.page.domain.PageImpl".equals(node.getAttribute("_type"))) {
+                    if ("org.broadleafcommerce.cms.file.domain.StatiAssetImpl".equals(node.getAttribute("_type"))) {
                         node.setIsFolder(false);
                     }
                 }
