@@ -312,13 +312,17 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 			@Override
 			protected void onOtherException(Throwable exception) {
 				super.onOtherException(exception);
-				cb.onFailure(exception);
+                if (cb != null) {
+				    cb.onFailure(exception);
+                }
 			}
 
 			@Override
 			protected void onSecurityException(ApplicationSecurityException exception) {
 				super.onSecurityException(exception);
-				cb.onFailure(exception);
+                if (cb != null) {
+				    cb.onFailure(exception);
+                }
 			}
 
 			public void onSuccess(DynamicResultSet result) {
@@ -351,8 +355,10 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 					dataSource.getPolymorphicEntities().put(type, name);
 				}
 				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
-				
-				cb.onSuccess(dataSource);
+
+                if (cb != null) {
+				    cb.onSuccess(dataSource);
+                }
 			}
 		});
 	}

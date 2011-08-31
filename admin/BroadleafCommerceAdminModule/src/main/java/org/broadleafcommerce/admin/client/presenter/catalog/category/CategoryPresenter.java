@@ -29,7 +29,6 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductList
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
@@ -59,7 +58,6 @@ import java.util.Map;
 public class CategoryPresenter extends DynamicEntityPresenter implements Instantiable {
 	
 	protected MapStructureEntityEditDialog mapEntityAdd = null;
-	protected ListGridDataSource categorySearchDataSource = null;
 	protected String rootId = "1";
 	protected String rootName = "Store";
 	
@@ -72,14 +70,14 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("defaultParentCategory", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
+		initialValues.put("defaultParentCategory", getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultCategoryName"));
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getDefaultNewEntityFullyQualifiedClassname()});
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
-				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
+				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), null);
 			}
 		}, "90%", null, null);
 	}
@@ -100,8 +98,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
-		final AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		if (categorySearchDataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(selectedRecord)).equals(rootId)){
+		final AbstractDynamicDataSource dataSource = getPresenterSequenceSetupManager().getDataSource("categoryTreeDS");
+		if (getPresenterSequenceSetupManager().getDataSource("categorySearchDS").stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(selectedRecord)).equals(rootId)){
 			formPresenter.disable();
 			display.getListDisplay().getRemoveButton().disable();
 		}
@@ -200,9 +198,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				((TreeGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearch", new CategorySearchDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.JOINSTRUCTURE, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearchDS", new CategorySearchDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.JOINSTRUCTURE, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				categorySearchDataSource = (ListGridDataSource) result;
+				ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
 				categorySearchDataSource.resetProminenceOnly(
 					"name",
 					"urlKey",
@@ -211,7 +209,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				);
 				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
 				library.put("categorySearchView", categorySearchView);
-				((DynamicEntityDataSource) ((CategoryDisplay) getDisplay()).getListDisplay().getGrid().getDataSource()).
+				getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 					"defaultParentCategory", 
 					categorySearchView, 
@@ -277,12 +275,12 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	}
 	
 	public void reloadAllChildRecordsForId(String id) {
-		String startingId = categorySearchDataSource.stripDuplicateAllowSpecialCharacters(id);
+		String startingId = getPresenterSequenceSetupManager().getDataSource("categorySearchDS").stripDuplicateAllowSpecialCharacters(id);
 		RecordList resultSet = display.getListDisplay().getGrid().getRecordList();
 		if (resultSet != null) {
 			Record[] myRecords = resultSet.toArray();
 			for (Record myRecord : myRecords) {
-				String myId = categorySearchDataSource.stripDuplicateAllowSpecialCharacters(((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(myRecord));
+				String myId = getPresenterSequenceSetupManager().getDataSource("categorySearchDS").stripDuplicateAllowSpecialCharacters(getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(myRecord));
 				if (startingId.equals(myId)) {
 					((TreeGrid) display.getListDisplay().getGrid()).getTree().reloadChildren((TreeNode) myRecord);
 				}
@@ -292,7 +290,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 
 	public void reloadParentTreeNodeRecords(boolean disableCategoryButton) {
 		TreeNode parentRecord = (TreeNode) display.getListDisplay().getGrid().getSelectedRecord();
-		reloadAllChildRecordsForId(((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(parentRecord));
+		reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(parentRecord));
 		if (disableCategoryButton) {
 			getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();
 		}

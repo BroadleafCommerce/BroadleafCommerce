@@ -107,7 +107,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 		this.associatedRecord = associatedRecord;
 		this.associatedDataSource = associatedDataSource;
 		String id = associatedDataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+		((PresentationLayerAssociatedDataSource) categoryPresenter.getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS")).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
 				setStartState();
 				if (cb != null) {
@@ -151,7 +151,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 				if (newIndex > originalIndex) {
 					newIndex--;
 				}
-				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) categoryPresenter.getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS")).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 				record.setAttribute(joinStructure.getSortField(), newIndex);
 				display.getGrid().updateData(record, new DSCallback() {
 					public void execute(DSResponse response, Object rawData, DSRequest request) {

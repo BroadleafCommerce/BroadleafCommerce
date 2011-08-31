@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.setup;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 /**
  * 
@@ -40,6 +41,7 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
 	public final void onSuccess(DataSource dataSource) {
 		onSetupSuccess(dataSource);
         if (manager != null) {
+            manager.addDataSource((DynamicEntityDataSource) dataSource);
 		    manager.next();
         }
 	}

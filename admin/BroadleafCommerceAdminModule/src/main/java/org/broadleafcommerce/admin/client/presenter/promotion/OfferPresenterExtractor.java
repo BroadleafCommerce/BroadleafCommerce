@@ -27,7 +27,6 @@ import org.broadleafcommerce.admin.client.presenter.promotion.translation.Filter
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class OfferPresenterExtractor {
 	
 	public void removeItemQualifer(final ItemBuilderDisplay builder) {
 		if (builder.getRecord() != null) {
-			presenter.offerItemCriteriaDataSource.removeData(builder.getRecord(), new DSCallback() {
+			presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
 				public void execute(DSResponse response, Object rawData, DSRequest request) {
 					getDisplay().removeItemBuilder(builder);
 				}
@@ -132,7 +131,7 @@ public class OfferPresenterExtractor {
 						if (builder.getRecord() != null) {
 							setData(builder.getRecord(), "quantity", quantity, dirtyValues);
 							setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
-							presenter.offerItemCriteriaDataSource.updateData(builder.getRecord(), new DSCallback() {
+							presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
 								}
@@ -141,10 +140,10 @@ public class OfferPresenterExtractor {
 							final Record temp = new Record();
 							temp.setAttribute("quantity", quantity);
 							temp.setAttribute("orderItemMatchRule", mvel);
-							temp.setAttribute("_type", new String[]{((DynamicEntityDataSource) presenter.offerItemCriteriaDataSource).getDefaultNewEntityFullyQualifiedClassname()});
-							temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.entityDataSource.getPrimaryKeyValue(selectedRecord));
+							temp.setAttribute("_type", new String[]{presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").getDefaultNewEntityFullyQualifiedClassname()});
+							temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.getPresenterSequenceSetupManager().getDataSource("offerDS").getPrimaryKeyValue(selectedRecord));
 							temp.setAttribute("id", "");
-							presenter.offerItemCriteriaDataSource.addData(temp, new DSCallback() {
+							presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").addData(temp, new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
 									builder.setRecord(temp);

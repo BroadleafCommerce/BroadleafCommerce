@@ -32,7 +32,6 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.admin.client.MerchandisingModule;
 import org.broadleafcommerce.admin.client.datasource.promotion.*;
 import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
@@ -42,6 +41,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 
 import java.util.Date;
@@ -55,13 +55,9 @@ import java.util.Map;
  */
 public class OfferPresenter extends DynamicEntityPresenter implements Instantiable {
 	
-	protected ListGridDataSource entityDataSource;
-	protected ListGridDataSource orderItemDataSource;
 	protected Window currentHelp = null;
-	protected DynamicEntityDataSource offerItemCriteriaDataSource;
 	protected OfferPresenterInitializer initializer;
 	protected OfferPresenterExtractor extractor;
-	protected HashMap<String, Object> library = new HashMap<String, Object>();
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -246,13 +242,13 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getAdvancedButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (((ToolStripButton) event.getSource()).getSelected()) {
-					entityDataSource.resetPermanentFieldVisibilityBasedOnType(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttributeAsStringArray("_type"));
-					entityDataSource.permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "uses", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
+					getPresenterSequenceSetupManager().getDataSource("offerDS").resetPermanentFieldVisibilityBasedOnType(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttributeAsStringArray("_type"));
+					getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "uses", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
 					getDisplay().getAdvancedItemCriteria().setVisible(true);
 					getDisplay().getAdvancedItemCriteriaTarget().setVisible(true);
 					getDisplay().getRestrictionSectionView().setVisible(true);
 				} else {
-					entityDataSource.resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
+					getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
 					getDisplay().getAdvancedItemCriteria().setVisible(false);
 					getDisplay().getAdvancedItemCriteriaTarget().setVisible(false);
 					getDisplay().getRestrictionSectionView().setVisible(false);
@@ -265,7 +261,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 						values.remove(key);
 					}
 				}
-				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(entityDataSource, true, true, false);
+				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("offerDS"), true, true, false);
 				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(getDisplay().getListDisplay().getGrid().getSelectedRecord());
 				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValues(values);
 				rebindFormItems(display.getListDisplay().getGrid().getSelectedRecord());
@@ -283,7 +279,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 							getDisplay().getListDisplay().getRemoveButton().disable();
 						} else {
 							formPresenter.setStartState();
-							entityDataSource.resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
+							getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
 							getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getDisplay().getListDisplay().getGrid().getDataSource(), true, true, false);
 							getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
 							getDisplay().getListDisplay().getRemoveButton().enable();
@@ -380,7 +376,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					final ItemBuilderDisplay display = getDisplay().addItemBuilder(orderItemDataSource);
+					final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
 					bindItemBuilderEvents(display);
 					display.setDirty(true);
 					getDisplay().getDynamicFormDisplay().getSaveButton().enable();
@@ -464,41 +460,26 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerDS", new OfferListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
-				entityDataSource = (ListGridDataSource) top;
-			}
-		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				library.put("offerOrderDS", result);
-			}
-		}));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerDS", new OfferListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				orderItemDataSource = (ListGridDataSource) result;
 				((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
-				library.put("offerOrderItemDS", result);
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerFGDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				library.put("offerFGDS", result);
-			}
-		}));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerFGDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				((DynamicEntityDataSource) result).permanentlyShowFields("id");
-				((ListGridDataSource) entityDataSource).permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
-				((ListGridDataSource) entityDataSource).resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
-				setupDisplayItems(entityDataSource, (DataSource) library.get("offerOrderDS"), (DataSource) library.get("offerOrderItemDS"), (DataSource) library.get("offerFGDS"), result);
-				((ListGridDataSource) entityDataSource).setupGridFields(new String[]{"name"}, new Boolean[]{true});
+				((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("offerDS")).permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
+				((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("offerDS")).resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
+				setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("offerDS"), getPresenterSequenceSetupManager().getDataSource("offerOrderDS"), getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"), getPresenterSequenceSetupManager().getDataSource("offerFGDS"), result);
+				((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("offerDS")).setupGridFields(new String[]{"name"}, new Boolean[]{true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemCriteriaDS", new OfferItemCriteriaListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				offerItemCriteriaDataSource = (DynamicEntityDataSource) result;
-				initializer = new OfferPresenterInitializer(OfferPresenter.this, offerItemCriteriaDataSource, orderItemDataSource);
+				initializer = new OfferPresenterInitializer(OfferPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("offerOrderItemDS"));
 				extractor = new OfferPresenterExtractor(OfferPresenter.this);
 			}
 		}));

@@ -34,7 +34,6 @@ import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
@@ -45,6 +44,7 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPres
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
@@ -62,7 +62,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 
 	protected String rootId = null;
 	protected String rootName = "Root";
-	protected HashMap<String, Object> library = new HashMap<String, Object>();
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration itemChangedHandlerRegistration;
     protected Record currentPageRecord;
@@ -175,15 +174,15 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGEIMPL);
+                    getPresenterSequenceSetupManager().getDataSource("pageTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGEIMPL);
                     Map<String, Object> initialValues = new HashMap<String, Object>();
                     initialValues.put("parentFolder", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
                     initialValues.put("name", BLCMain.getMessageManager().getString("defaultPageName"));
                     initialValues.put("_type", new String[]{EntityImplementations.PAGEIMPL});
-                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
                             TreeNode parentRecord = (TreeNode) display.getListDisplay().getGrid().getSelectedRecord();
-		                    reloadAllChildRecordsForId(((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(parentRecord));
+		                    reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(parentRecord));
                         }
                     }, "90%", null, null);
                 }
@@ -193,15 +192,15 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGES);
+                    getPresenterSequenceSetupManager().getDataSource("pageTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGES);
                     Map<String, Object> initialValues = new HashMap<String, Object>();
-                    initialValues.put("parentFolder", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
+                    initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
                     initialValues.put("name", BLCMain.getMessageManager().getString("defaultPageName"));
                     initialValues.put("_type", new String[]{EntityImplementations.PAGES});
-                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
                             TreeNode parentRecord = (TreeNode) display.getListDisplay().getGrid().getSelectedRecord();
-		                    reloadAllChildRecordsForId(((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(parentRecord));
+		                    reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(parentRecord));
                         }
                     }, "90%", null, null);
                 }
@@ -211,10 +210,10 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onChanged(ChangedEvent event) {
                 String newLocaleName = (String) event.getValue();
-                ((PagesTreeDataSource) library.get("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeName", newLocaleName));
+                ((PagesTreeDataSource) getPresenterSequenceSetupManager().getDataSource("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeName", newLocaleName));
                 getDisplay().getListDisplay().getGrid().invalidateCache();
-                ((PageTemplateSearchListDataSource) library.get("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeName", newLocaleName));
-                ((PageTemplateSearchListDataSource) library.get("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
+                ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeName", newLocaleName));
+                ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
             }
         });
 	}
@@ -227,7 +226,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             if (resultSet != null) {
                 Record[] myRecords = resultSet.toArray();
                 for (Record myRecord : myRecords) {
-                    String myId = ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(myRecord);
+                    String myId = getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(myRecord);
                     if (id.equals(myId)) {
                         ((TreeGrid) display.getListDisplay().getGrid()).getTree().reloadChildren((TreeNode) myRecord);
                     }
@@ -237,18 +236,14 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pagesTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource top) {
-                library.put("pageTreeDS", top);
-			}
-		}));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
-				setupDisplayItems((DataSource) library.get("pageTreeDS"), top);
-				((TreeGridDataSource) library.get("pageTreeDS")).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
+				setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), top);
+				((TreeGridDataSource) getPresenterSequenceSetupManager().getDataSource("pageTreeDS")).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearch", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearchDS", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;
 				pageTemplateDataSource.resetPermanentFieldVisibility(
@@ -256,22 +251,21 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 					"templatePath"
 				);
 				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource);
-				((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).
+				getPresenterSequenceSetupManager().getDataSource("pageTreeDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"pageTemplate",
-					pageTemplateSearchView,
-					"Page Template Search",
-					getDisplay().getDynamicFormDisplay(),
-                    new FormItemCallback() {
-                        @Override
-                        public void execute(FormItem formItem) {
-                            if (currentPageRecord != null) {
-                                loadTemplateForm(currentPageRecord);
+                        "pageTemplate",
+                        pageTemplateSearchView,
+                        "Page Template Search",
+                        getDisplay().getDynamicFormDisplay(),
+                        new FormItemCallback() {
+                            @Override
+                            public void execute(FormItem formItem) {
+                                if (currentPageRecord != null) {
+                                    loadTemplateForm(currentPageRecord);
+                                }
                             }
                         }
-                    }
-				);
-                library.put("pageTemplateSearchDS", result);
+                );
 			}
 		}));
 	}
