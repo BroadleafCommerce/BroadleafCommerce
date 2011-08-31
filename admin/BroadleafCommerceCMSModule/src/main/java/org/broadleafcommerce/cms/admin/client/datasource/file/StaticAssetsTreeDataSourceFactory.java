@@ -39,9 +39,9 @@ public class StaticAssetsTreeDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.PAGEFOLDERIMPL, null));
+			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.STATICASSETFOLDERIMPL, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-				new StaticAssetsClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new StaticAssetsClientEntityModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
             persistencePerspective.setPopulateToOneFields(true);
             persistencePerspective.setExcludeFields(new String[]{

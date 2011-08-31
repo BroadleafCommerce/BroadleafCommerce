@@ -12,5 +12,6 @@ public class EntityImplementations {
     public static final String PAGEFOLDERIMPL = "org.broadleafcommerce.cms.page.domain.PageFolderImpl";
     public static final String PAGEIMPL = "org.broadleafcommerce.cms.page.domain.PageImpl";
     public static final String PAGETEMPLATE = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl";
+    public static final String STATICASSETFOLDERIMPL = "org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl";
 
 }
