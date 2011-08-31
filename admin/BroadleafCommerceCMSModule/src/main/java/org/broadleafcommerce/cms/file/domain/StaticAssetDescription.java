@@ -1,16 +1,17 @@
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.cms.page.domain.Locale;
+
+import java.io.Serializable;
+
 /**
  * Created by bpolster.
  */
-public interface StaticAssetDescription {
+public interface StaticAssetDescription extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);
-
-    public String getLanguageCode();
-
-    public void setLanguageCode(String languageCode);
 
     public String getDescription();
 
@@ -23,4 +24,15 @@ public interface StaticAssetDescription {
     public StaticAsset getStaticAsset();
 
     public void setStaticAsset(StaticAsset staticAsset);
+
+    public StaticAssetDescription cloneEntity();
+
+    public String getFieldKey();
+
+    public void setFieldKey(String fieldKey);
+
+    public Locale getLocale();
+
+    public void setLocale(Locale locale);
+
 }

@@ -40,8 +40,8 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @Column(name = "STATIC_ASSET_FOLDER_ID")
     protected Long id;
 
-    @Column (name = "FOLDER_NAME")
-    protected String folderName;
+    @Column (name = "NAME")
+    protected String name;
 
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
     @JoinColumn(name="PARENT_FOLDER_ID")
@@ -55,9 +55,6 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = StaticAssetFolderImpl.class)
     protected List<StaticAssetFolder> subFolders;
 
-    @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = StaticAssetImpl.class)
-    protected List<StaticAsset> staticAssets;
-
     @Column (name = "DELETED_FLAG")
     protected Boolean deletedFlag = false;
 
@@ -69,16 +66,6 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public String getFolderName() {
-        return folderName;
-    }
-
-    @Override
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
     }
 
     @Override
@@ -112,17 +99,6 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     }
 
     @Override
-    public List<StaticAsset> getStaticAssets() {
-        return staticAssets;
-    }
-
-    @Override
-    public void setStaticAssets(List<StaticAsset> staticAssets) {
-        this.staticAssets = staticAssets;
-    }
-
-
-    @Override
     public Boolean getDeletedFlag() {
         return deletedFlag;
     }
@@ -130,6 +106,16 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @Override
     public void setDeletedFlag(Boolean deletedFlag) {
         this.deletedFlag = deletedFlag;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

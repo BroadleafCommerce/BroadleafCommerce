@@ -15,8 +15,11 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.cms.message.domain.ContentMessageValue;
-import org.broadleafcommerce.cms.message.domain.ContentMessageValueImpl;
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -32,17 +35,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATIC_ASSET")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-
-public class StaticAssetImpl implements StaticAsset {
-
-    @Id
-    @GeneratedValue(generator = "StaticAssetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StaticAssetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetImpl", allocationSize = 10)
-    @Column(name = "STATIC_ASSET_ID")
-    protected Long id;
-
-    @Column(name = "FILE_NAME")
-    protected String fileName;
+public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsset {
 
     @Column(name ="FULL_URL")
     protected String fullUrl;
@@ -54,31 +47,23 @@ public class StaticAssetImpl implements StaticAsset {
     @JoinColumn(name = "PARENT_FOLDER_ID")
     protected StaticAssetFolder parentFolder;
 
-    @OneToOne(targetEntity = StaticAssetDataImpl.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "STATIC_ASSET_DATA_ID")
-    protected StaticAssetData staticAssetData;
-
-    @OneToMany(mappedBy = "staticAsset", targetEntity = StaticAssetDescriptionImpl.class, cascade = {CascadeType.ALL})
-    @MapKey(name = "languageCode")
+    @ManyToMany(targetEntity = StaticAssetDescriptionImpl.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "BLC_ASSET_DESC_MAP", inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID", referencedColumnName = "STATIC_ASSET_DESC_ID"))
+    @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @BatchSize(size = 20)
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne (targetEntity = SandBoxImpl.class)
+    @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
+    protected SandBox sandbox;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column (name = "ARCHIVED_FLAG")
+    protected Boolean archivedFlag = false;
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+    @Column (name = "ORIGINAL_ASSET_ID")
+    protected Long originalAssetId;
 
     public String getFullUrl() {
         return fullUrl;
@@ -104,19 +89,57 @@ public class StaticAssetImpl implements StaticAsset {
         this.parentFolder = parentFolder;
     }
 
-    public StaticAssetData getStaticAssetData() {
-        return staticAssetData;
-    }
-
-    public void setStaticAssetData(StaticAssetData staticAssetData) {
-        this.staticAssetData = staticAssetData;
-    }
-
     public Map<String, StaticAssetDescription> getContentMessageValues() {
         return contentMessageValues;
     }
 
     public void setContentMessageValues(Map<String, StaticAssetDescription> contentMessageValues) {
         this.contentMessageValues = contentMessageValues;
+    }
+
+    public Boolean getArchivedFlag() {
+        return archivedFlag;
+    }
+
+    public void setArchivedFlag(Boolean archivedFlag) {
+        this.archivedFlag = archivedFlag;
+    }
+
+    public Long getOriginalAssetId() {
+        return originalAssetId;
+    }
+
+    public void setOriginalAssetId(Long originalAssetId) {
+        this.originalAssetId = originalAssetId;
+    }
+
+    public SandBox getSandbox() {
+        return sandbox;
+    }
+
+    public void setSandbox(SandBox sandbox) {
+        this.sandbox = sandbox;
+    }
+
+    @Override
+    public StaticAsset cloneEntity() {
+        StaticAssetImpl asset = new StaticAssetImpl();
+        asset.name = name;
+        asset.parentFolder = parentFolder;
+        asset.site = site;
+        asset.archivedFlag = archivedFlag;
+        asset.deletedFlag = deletedFlag;
+        asset.fullUrl = fullUrl;
+        asset.fileSize = fileSize;
+        asset.sandbox = sandbox;
+        asset.originalAssetId = originalAssetId;
+
+        for (StaticAssetDescription oldAssetDescription : contentMessageValues.values()) {
+            StaticAssetDescription newAssetDescription = oldAssetDescription.cloneEntity();
+            newAssetDescription.setStaticAsset(asset);
+            asset.getContentMessageValues().put(newAssetDescription.getFieldKey(), newAssetDescription);
+        }
+
+        return asset;
     }
 }

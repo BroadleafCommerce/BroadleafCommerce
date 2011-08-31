@@ -1,0 +1,27 @@
+package org.broadleafcommerce.cms.admin.client.view.artifacts;
+
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityColumnTreeDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+
+/**
+ * Created by jfischer
+ */
+public interface ArtifactsDisplay {
+    DynamicEntityColumnTreeDisplay getListDisplay();
+
+    DynamicFormDisplay getDynamicFormDisplay();
+
+    ToolStripButton getAddPageButton();
+
+    void setAddPageButton(ToolStripButton addPageButton);
+
+    ToolStripButton getAddPageFolderButton();
+
+    void setAddPageFolderButton(ToolStripButton addPageFolderButton);
+
+    ComboBoxItem getCurrentLocale();
+
+    void setCurrentLocale(ComboBoxItem currentLocale);
+}

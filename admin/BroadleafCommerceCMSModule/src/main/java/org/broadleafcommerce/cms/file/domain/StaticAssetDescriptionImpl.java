@@ -15,12 +15,15 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import org.broadleafcommerce.cms.field.domain.FieldData;
+import org.broadleafcommerce.cms.page.domain.Locale;
+import org.broadleafcommerce.cms.page.domain.LocaleImpl;
+import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import javax.persistence.metamodel.StaticMetamodel;
 
 /**
  * Created by bpolster.
@@ -36,11 +39,12 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @Id
     @GeneratedValue(generator = "StaticAssetDescriptionId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "StaticAssetDescriptionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetDescriptionId", allocationSize = 10)
-    @Column(name = "STATIC_ASSET_DESCRIPTION_ID")
+    @Column(name = "STATIC_ASSET_DESC_ID")
     protected Long id;
 
-    @Column (name = "LANGUAGE_CODE")
-    protected String languageCode;
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_ID")
+    protected Locale locale;
 
     @Column (name = "DESCRIPTION")
     protected String description;
@@ -52,6 +56,9 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @JoinColumn (name = "STATIC_ASSET_ID")
     protected StaticAsset staticAsset;
 
+    @Column (name = "FIELD_KEY")
+    protected String fieldKey;
+
     @Override
     public Long getId() {
         return id;
@@ -60,16 +67,6 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public String getLanguageCode() {
-        return languageCode;
-    }
-
-    @Override
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
     }
 
     @Override
@@ -100,6 +97,37 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @Override
     public void setStaticAsset(StaticAsset staticAsset) {
         this.staticAsset = staticAsset;
+    }
+
+    @Override
+    public String getFieldKey() {
+        return fieldKey;
+    }
+
+    @Override
+    public void setFieldKey(String fieldKey) {
+        this.fieldKey = fieldKey;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    @Override
+    public StaticAssetDescription cloneEntity() {
+        StaticAssetDescriptionImpl newAssetDescription = new StaticAssetDescriptionImpl();
+        newAssetDescription.locale = locale;
+        newAssetDescription.description = description;
+        newAssetDescription.longDescription = longDescription;
+        newAssetDescription.staticAsset = staticAsset;
+
+        return newAssetDescription;
     }
 }
 

@@ -3,19 +3,17 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface StaticAssetFolder {
+public interface StaticAssetFolder extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);
-
-    public String getFolderName();
-
-    public void setFolderName(String folderName);
 
     public StaticAssetFolder getParentFolder();
 
@@ -29,11 +27,12 @@ public interface StaticAssetFolder {
 
     public void setSubFolders(List<StaticAssetFolder> subFolders);
 
-    public List<StaticAsset> getStaticAssets();
-
-    public void setStaticAssets(List<StaticAsset> staticAssets);
-
     public Boolean getDeletedFlag();
 
     public void setDeletedFlag(Boolean deletedFlag);
+
+    public String getName();
+
+    public void setName(String name);
+
 }

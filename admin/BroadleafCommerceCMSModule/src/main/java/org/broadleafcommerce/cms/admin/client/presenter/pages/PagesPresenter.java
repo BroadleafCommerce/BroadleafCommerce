@@ -204,11 +204,11 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    getPresenterSequenceSetupManager().getDataSource("pageTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGES);
+                    getPresenterSequenceSetupManager().getDataSource("pageTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.PAGEFOLDERIMPL);
                     Map<String, Object> initialValues = new HashMap<String, Object>();
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
                     initialValues.put("name", BLCMain.getMessageManager().getString("defaultPageName"));
-                    initialValues.put("_type", new String[]{EntityImplementations.PAGES});
+                    initialValues.put("_type", new String[]{EntityImplementations.PAGEFOLDERIMPL});
                     BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
                             TreeNode parentRecord = (TreeNode) display.getListDisplay().getGrid().getSelectedRecord();
