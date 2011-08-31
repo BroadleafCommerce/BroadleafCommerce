@@ -28,7 +28,7 @@ public class FieldEnumerationImpl implements FieldEnumeration {
     @Column (name = "NAME")
     protected String name;
 
-    @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldDefinitionImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldEnumerationItemImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "FIELD_ORDER")

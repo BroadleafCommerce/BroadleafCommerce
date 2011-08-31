@@ -1,9 +1,12 @@
 package org.broadleafcommerce.cms.field.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by jfischer
  */
-public interface FieldEnumerationItem {
+public interface FieldEnumerationItem extends Serializable {
+    
     FieldEnumeration getFieldEnumeration();
 
     void setFieldEnumeration(FieldEnumeration fieldEnumeration);
