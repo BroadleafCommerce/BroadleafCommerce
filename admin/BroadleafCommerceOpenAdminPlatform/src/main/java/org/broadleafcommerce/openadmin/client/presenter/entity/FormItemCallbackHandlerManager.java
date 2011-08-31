@@ -41,7 +41,7 @@ public class FormItemCallbackHandlerManager {
 	protected HashMap<String, FormItemCallback> callbacks = new HashMap<String, FormItemCallback>();
 
     public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay) {
-        addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay);
+        addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null);
     }
 
 	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
