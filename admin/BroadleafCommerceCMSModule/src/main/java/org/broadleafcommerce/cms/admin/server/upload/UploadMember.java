@@ -1,6 +1,6 @@
-package org.broadleafcommerce.cms.admin.server.contoller;
+package org.broadleafcommerce.cms.admin.server.upload;
 
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by jfischer
@@ -8,7 +8,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 public class UploadMember {
 
     private String name;
-    private CommonsMultipartFile fileData;
+    private MultipartFile file;
     private String callbackName;
 
     public String getName() {
@@ -19,12 +19,12 @@ public class UploadMember {
         this.name = name;
     }
 
-    public CommonsMultipartFile getFileData() {
-        return fileData;
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public void setFileData(CommonsMultipartFile fileData) {
-        this.fileData = fileData;
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     public String getCallbackName() {

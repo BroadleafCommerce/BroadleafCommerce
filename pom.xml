@@ -993,7 +993,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.2.2</version>
+                <version>1.2.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>

@@ -61,13 +61,16 @@ public class FileUploadDialog extends Window {
 		stack.setWidth100();
 		stack.setLayoutRightMargin(20);
 
-		dynamicForm = new DynamicForm(); 
+		dynamicForm = new DynamicForm();
+        dynamicForm.setEncoding(Encoding.MULTIPART);
+        dynamicForm.setTarget("hidden_frame");
+        dynamicForm.setAction("cms.upload.service");
 		dynamicForm.setNumCols(4);
         dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
         HTMLPane hiddenFrame = new HTMLPane();
-        hiddenFrame.setContents("<iframe name=\"hidden_frame\"></iframe>");
-        //hiddenFrame.setVisible(false);
+        hiddenFrame.setHeight(0);
+        hiddenFrame.setContents("<iframe height=\"0\" name=\"hidden_frame\" style=\"visibility: hidden\"></iframe>");
         stack.addMember(hiddenFrame);
         addItem(stack);
         
@@ -157,8 +160,5 @@ public class FileUploadDialog extends Window {
 	
 	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
 		FormBuilder.buildForm(dataSource, dynamicForm, false);
-        dynamicForm.setEncoding(Encoding.MULTIPART);
-        dynamicForm.setTarget("hidden_frame");
-        dynamicForm.setAction("cms.upload.service");
 	}
 }
