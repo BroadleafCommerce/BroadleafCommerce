@@ -15,13 +15,14 @@
  */
 package org.broadleafcommerce.openadmin.server.cto;
 
-import java.util.Date;
-
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.cto.server.FilterAndSortMapping;
 import com.anasoft.os.daofusion.cto.server.FilterValueConverter;
 import com.anasoft.os.daofusion.cto.server.NestedPropertyCriteriaBasedConverter;
 import com.anasoft.os.daofusion.util.FilterValueConverters;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 
@@ -48,12 +49,12 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
         }
     };
     
-    public static final FilterValueConverter<Double> DECIMAL = new FilterValueConverter<Double>() {
-        public Double convert(String stringValue) {
+    public static final FilterValueConverter<BigDecimal> DECIMAL = new FilterValueConverter<BigDecimal>() {
+        public BigDecimal convert(String stringValue) {
         	if (stringValue == null) {
         		return null;
         	}
-            return Double.valueOf(stringValue);
+            return new BigDecimal(stringValue);
         }
     };
     
@@ -66,7 +67,7 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
     
     public void addDecimalMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
-        addMapping(mappingGroupName, new FilterAndSortMapping<Double>(
+        addMapping(mappingGroupName, new FilterAndSortMapping<BigDecimal>(
                 propertyId, associationPath, targetPropertyName,
                 FilterCriterionProviders.BETWEEN, DECIMAL));
     }
