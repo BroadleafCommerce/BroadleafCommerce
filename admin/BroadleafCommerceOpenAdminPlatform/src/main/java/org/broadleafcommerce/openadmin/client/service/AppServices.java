@@ -25,6 +25,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
  */
 public class AppServices {
 
+    public static final UploadServiceAsync UPLOAD = GWT.create(UploadService.class);
     public static final AdminSecurityServiceAsync SECURITY = GWT.create(AdminSecurityService.class);
     public static final DynamicEntityServiceAsync DYNAMIC_ENTITY = GWT.create(DynamicEntityService.class);
     static {
@@ -33,6 +34,9 @@ public class AppServices {
         
         ServiceDefTarget endpoint2 = (ServiceDefTarget) SECURITY;
         endpoint2.setServiceEntryPoint("security.service");
+
+        ServiceDefTarget endpoint3 = (ServiceDefTarget) UPLOAD;
+        endpoint3.setServiceEntryPoint("cms.upload.progress.service");
     }
     
 }

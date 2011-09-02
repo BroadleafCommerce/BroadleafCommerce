@@ -13,27 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.admin.client.view.file;
+package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Encoding;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
 
 import java.util.Map;
 
@@ -46,6 +49,7 @@ public class FileUploadDialog extends Window {
 
 	private DynamicForm dynamicForm;
 	private NewItemCreatedEventHandler handler;
+    private Element synthesizedFrame;
 
 	public FileUploadDialog() {
 		this.setIsModal(true);
@@ -53,9 +57,9 @@ public class FileUploadDialog extends Window {
 		this.setShowMinimizeButton(false);
 		this.setWidth(600);
 		this.setAutoHeight();
-		this.setHeight(300);
+		this.setHeight(320);
 		this.setCanDragResize(true);
-		this.setOverflow(Overflow.VISIBLE);
+		this.setOverflow(Overflow.HIDDEN);
 		
 		VStack stack = new VStack();
 		stack.setWidth100();
@@ -68,10 +72,6 @@ public class FileUploadDialog extends Window {
 		dynamicForm.setNumCols(4);
         dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
-        HTMLPane hiddenFrame = new HTMLPane();
-        hiddenFrame.setHeight(0);
-        hiddenFrame.setContents("<iframe height=\"0\" name=\"hidden_frame\" style=\"visibility: hidden\"></iframe>");
-        stack.addMember(hiddenFrame);
         addItem(stack);
         
         IButton saveButton = new IButton("Upload");
@@ -81,9 +81,14 @@ public class FileUploadDialog extends Window {
                     String callbackName = JavaScriptMethodHelper.registerCallbackFunction(new JavaScriptMethodCallback() {
                         public void execute(JavaScriptObject obj) {
                             //uploadFinished(obj);
+                            UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
+                            progress.stopProgress();
                             SC.say("Uploaded!");
                         }
                     });
+                    UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
+                    progress.setCallbackName(callbackName);
+                    progress.startProgress();
                     dynamicForm.getField("callbackName").setValue(callbackName);
                     dynamicForm.submitForm();
 
@@ -123,7 +128,23 @@ public class FileUploadDialog extends Window {
         hLayout.setLayoutBottomMargin(40);
         vLayout.addMember(hLayout);
         addItem(vLayout);
+        createFrame();
 	}
+
+    private void createFrame() {
+        // Attach a hidden IFrame to the form. This is the target iframe to
+        // which
+        // the form will be submitted. We have to create the iframe using
+        // innerHTML,
+        // because setting an iframe's 'name' property dynamically doesn't work
+        // on
+        // most browsers.
+        Element dummy = Document.get().createDivElement();
+        dummy.setInnerHTML("<iframe src=\"javascript:''\" name='hidden_frame' style='position:absolute;width:0;height:0;border:0'>");
+
+        synthesizedFrame = dummy.getFirstChildElement();
+        Document.get().getBody().appendChild(synthesizedFrame);
+    }
 	
 	@SuppressWarnings("rawtypes")
 	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, NewItemCreatedEventHandler handler, String[] fieldNames) {

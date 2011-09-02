@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.server.upload;
+package org.broadleafcommerce.openadmin.server.service.upload;
 
 /**
  * Created by jfischer

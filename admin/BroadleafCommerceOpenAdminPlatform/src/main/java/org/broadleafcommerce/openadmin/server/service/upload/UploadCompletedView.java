@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.server.upload;
+package org.broadleafcommerce.openadmin.server.service.upload;
 
 
 import org.springframework.web.servlet.View;
@@ -25,7 +25,7 @@ public class UploadCompletedView implements View {
         sb.append("window.top.");
         sb.append(model.get("callbackName"));
         sb.append("();");
-        sb.append("</script></head><body></body></html>");
+        sb.append("</script></head><body>Upload Completed</body></html>");
 
         OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
         writer.write(sb.toString());

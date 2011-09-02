@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.client.view.file;
+package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
 import com.google.gwt.core.client.JavaScriptObject;
 

@@ -21,7 +21,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.view.file.FileUploadDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
 import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
@@ -57,7 +57,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                         public void onNewItemCreated(NewItemCreatedEvent event) {
                             //do something
                         }
-                    }, "90%", new String[]{"file", "name", "callbackName"}, null);
+                    }, null, new String[]{"file", "name", "callbackName"}, null);
 				}
 			}
         });

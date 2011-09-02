@@ -1,7 +1,6 @@
 package org.broadleafcommerce.cms.admin.server.service.handler;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
@@ -29,9 +28,9 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAsset.class);
 			Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
-				StaticAssetFolder.class.getName(),
+				StaticAsset.class.getName(),
 				entityClasses,
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
 				persistencePerspective.getAdditionalNonPersistentProperties(),
@@ -60,6 +59,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             attributes.setProminent(false);
             attributes.setBroadleafEnumeration("");
             attributes.setReadOnly(false);
+            attributes.setHidden(true);
 
             mergedProperties.put("file", fieldMetadata);
 
@@ -79,6 +79,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             attributes2.setProminent(false);
             attributes2.setBroadleafEnumeration("");
             attributes2.setReadOnly(false);
+            attributes2.setHidden(true);
 
             mergedProperties.put("callbackName", fieldMetadata2);
 

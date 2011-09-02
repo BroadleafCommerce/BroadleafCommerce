@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
 
 import java.util.*;
 
@@ -46,6 +47,7 @@ public class FormBuilder {
 	
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
 		form.setDataSource(dataSource);
+        form.setCellPadding(8);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
         Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
@@ -294,6 +296,12 @@ public class FormBuilder {
 			displayFormItem = new HiddenItem();
 			displayFormItem.setName("__display_"+field.getName());
 			break;
+        case UPLOAD:
+            displayFormItem = new CanvasItem();
+            ((CanvasItem) displayFormItem).setCanvas(new UploadStatusProgress(100, 20));
+            displayFormItem.setName("__display_"+field.getName());
+            displayFormItem.setShowTitle(false);
+            displayFormItem.setColSpan(2);
 		}
 		return displayFormItem;
 	}
@@ -404,7 +412,6 @@ public class FormBuilder {
             break;
         case UPLOAD:
             formItem = new UploadItem();
-            formItem.setColSpan(4);
             break;
         case HIDDEN:
             formItem = new HiddenItem();

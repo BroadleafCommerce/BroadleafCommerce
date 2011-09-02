@@ -19,6 +19,8 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -38,9 +40,11 @@ import java.util.Map;
 public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsset {
 
     @Column(name ="FULL_URL")
+    @AdminPresentation(friendlyName="Full URL", order=2, group = "Asset Details", readOnly = true)
     protected String fullUrl;
 
     @Column(name = "FILE_SIZE")
+    @AdminPresentation(friendlyName="File Size", order=3, group = "Asset Details", readOnly = true)
     protected Integer fileSize;
 
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
@@ -60,9 +64,11 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     protected SandBox sandbox;
 
     @Column (name = "ARCHIVED_FLAG")
+    @AdminPresentation(friendlyName="Archived Flag", hidden = true)
     protected Boolean archivedFlag = false;
 
     @Column (name = "ORIGINAL_ASSET_ID")
+    @AdminPresentation(friendlyName="Original Asset ID", hidden = true)
     protected Long originalAssetId;
 
     public StaticAssetImpl() {

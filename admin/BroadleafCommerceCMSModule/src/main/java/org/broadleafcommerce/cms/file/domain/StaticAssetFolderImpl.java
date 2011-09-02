@@ -41,7 +41,8 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @Column(name = "STATIC_ASSET_FOLDER_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column (name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName="Item Name", order=1, group = "Asset Details")
     protected String name;
 
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
@@ -57,10 +58,11 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     protected List<StaticAssetFolder> subFolders;
 
     @Column (name = "DELETED_FLAG")
+    @AdminPresentation(friendlyName="Deleted Flag", hidden = true)
     protected Boolean deletedFlag = false;
 
     @Column (name = "IS_FOLDER_FLAG")
-    @AdminPresentation(friendlyName="Is Folder", order=3, group="Folder Flag", hidden = true)
+    @AdminPresentation(friendlyName="Is Folder", hidden = true)
     protected Boolean folderFlag = true;
 
     @Override

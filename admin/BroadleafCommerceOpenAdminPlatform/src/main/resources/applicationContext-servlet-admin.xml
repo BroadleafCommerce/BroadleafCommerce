@@ -9,11 +9,39 @@
     
     <aop:config/>
     
+    <bean id="multipartResolver" class="org.broadleafcommerce.openadmin.server.service.upload.UploadMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="100000"/>
+    </bean>
+
+    <bean id="uploadController" class="org.broadleafcommerce.openadmin.server.service.upload.UploadController">
+        <property name="commandClass" value="org.broadleafcommerce.openadmin.server.service.upload.UploadMember"/>
+        <property name="formView" value="uploadCompletedView"/>
+        <property name="successView" value="uploadCompletedView"/>
+    </bean>
+
+    <bean id="uploadCompletedView" class="org.broadleafcommerce.openadmin.server.service.upload.UploadCompletedView"/>
+
+    <bean id="uploadViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+        <property name="order" value="1"/>
+    </bean>
+
+    <bean id="uploadUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="1"/>
+        <property name="alwaysUseFullPath" value="true"></property>
+        <property name="mappings">
+            <map>
+                <entry key="/**/cms.upload.service" value-ref="uploadController"/>
+            </map>
+        </property>
+    </bean>
+
     <bean id="urlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler">
         <property name="mappings">
             <map>
                 <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService" />
                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService" />
+                <entry key="/**/cms.upload.progress.service" value-ref="blUploadRemoteService" />
             </map>
         </property>
         <property name="serviceExporterFactory">
