@@ -39,7 +39,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
 
     @Id
     @GeneratedValue(generator = "ChallengeQuestionId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ChallengeQuestionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerImpl", allocationSize = 50)
+    @TableGenerator(name = "ChallengeQuestionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ChallengeQuestionImpl", allocationSize = 50)
     @Column(name = "QUESTION_ID")
     protected Long id;
 
