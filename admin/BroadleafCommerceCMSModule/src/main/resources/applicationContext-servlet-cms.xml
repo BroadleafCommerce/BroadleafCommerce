@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/aop      http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <aop:config/>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="100000"/>
+    </bean>
+
+    <bean id="uploadController" class="org.broadleafcommerce.cms.admin.server.contoller.UploadController"/>
+
+    <bean id="uploadCompletedView" class="org.broadleafcommerce.cms.admin.server.contoller.UploadCompletedView"/>
+
+    <bean id="cmsViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+        <property name="order" value="0"/>
+    </bean>
+    
+    <bean id="cmsUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="1" />
+		<property name="alwaysUseFullPath" value="true"></property>
+		<property name="mappings">
+			<map>
+				<entry key="/**/cms.upload.service" value-ref="uploadController" />
+			</map>
+		</property>
+	</bean>
+	
+</beans>

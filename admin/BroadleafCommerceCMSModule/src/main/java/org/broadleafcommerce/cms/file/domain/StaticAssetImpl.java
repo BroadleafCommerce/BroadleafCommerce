@@ -65,6 +65,10 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @Column (name = "ORIGINAL_ASSET_ID")
     protected Long originalAssetId;
 
+    public StaticAssetImpl() {
+        folderFlag = false;
+    }
+
     public String getFullUrl() {
         return fullUrl;
     }

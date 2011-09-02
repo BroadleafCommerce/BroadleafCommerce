@@ -89,6 +89,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-dev:2.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-user:2.1.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
   </component>
 </module>
 

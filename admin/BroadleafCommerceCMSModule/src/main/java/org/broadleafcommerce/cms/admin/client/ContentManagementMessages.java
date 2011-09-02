@@ -51,4 +51,6 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String defaultPageName();
     public String newItemTitle();
 
+    public String staticAssetsTitle();
+
 }

@@ -21,6 +21,8 @@ import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ColumnTreeDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -33,7 +35,7 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 public class StaticAssetsTreeDataSourceFactory implements DataSourceFactory {
 
 	public static final String parentFolderForeignKey = "parentFolder";
-	public static ColumnTreeDataSource dataSource = null;
+	public static ListGridDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
@@ -41,14 +43,14 @@ public class StaticAssetsTreeDataSourceFactory implements DataSourceFactory {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.STATICASSETFOLDERIMPL, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-				new StaticAssetsClientEntityModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new BasicClientEntityModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
             persistencePerspective.setPopulateToOneFields(true);
             persistencePerspective.setExcludeFields(new String[]{
                 "site",
                 "sandbox"
             });
-			dataSource = new ColumnTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

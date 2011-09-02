@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008-2009 the original author or authors.
  *
@@ -14,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.admin.client.datasource.pages;
+package org.broadleafcommerce.cms.admin.client.datasource.file;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ColumnTreeDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -30,28 +31,25 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class PagesTreeDataSourceFactory implements DataSourceFactory {
+public class StaticAssetsFolderTreeDataSourceFactory implements DataSourceFactory {
 
 	public static final String parentFolderForeignKey = "parentFolder";
-    public static final String pageTemplateForeignKey = "pageTemplate";
-	public static PagesTreeDataSource dataSource = null;
+	public static TreeGridDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{new ForeignKey(pageTemplateForeignKey, EntityImplementations.PAGETEMPLATE, null, ForeignKeyRestrictionType.ID_EQ, "templateName")});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.PAGEFOLDERIMPL, null));
+			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{});
+			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.STATICASSETFOLDERIMPL, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-				new PagesClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new StaticAssetsFolderClientEntityModule(CeilingEntities.STATICFOLDERASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
             persistencePerspective.setPopulateToOneFields(true);
             persistencePerspective.setExcludeFields(new String[]{
                 "site",
-                "pageTemplate",
-                "sandbox",
-                "auditable"
+                "sandbox"
             });
-			dataSource = new PagesTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null);
+			dataSource = new TreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

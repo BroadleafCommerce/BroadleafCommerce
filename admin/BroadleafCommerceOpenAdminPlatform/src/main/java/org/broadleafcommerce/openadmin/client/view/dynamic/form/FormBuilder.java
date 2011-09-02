@@ -402,6 +402,13 @@ public class FormBuilder {
 		    formItem.setColSpan(4);
 			formItem.setWidth("700");
             break;
+        case UPLOAD:
+            formItem = new UploadItem();
+            formItem.setColSpan(4);
+            break;
+        case HIDDEN:
+            formItem = new HiddenItem();
+            break;
 		default:
 			if (!largeEntry) {
 				formItem = new TextItem();

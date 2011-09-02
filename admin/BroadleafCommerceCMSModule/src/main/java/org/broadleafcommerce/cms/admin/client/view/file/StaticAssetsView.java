@@ -1,27 +1,26 @@
 package org.broadleafcommerce.cms.admin.client.view.file;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityColumnTreeDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityColumnTreeView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
 /**
  * Created by jfischer
  */
-public class StaticAssetsView extends VLayout implements Instantiable, StaticAssetsDisplay {
+public class StaticAssetsView extends HLayout implements Instantiable, StaticAssetsDisplay {
 
-    protected DynamicEntityColumnTreeView listDisplay;
-    protected DynamicFormView dynamicFormDisplay;
-    protected ToolStripButton addPageFolderButton;
-    protected ToolStripButton addPageButton;
+    protected DynamicEntityTreeView treeDisplay;
+    protected DynamicFormView treeDynamicFormDisplay;
+    protected DynamicEntityListView listDisplay;
+    protected DynamicFormView listDynamicFormDisplay;
 
     public StaticAssetsView() {
 		setHeight100();
@@ -29,33 +28,37 @@ public class StaticAssetsView extends VLayout implements Instantiable, StaticAss
 	}
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
-		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("pagesLeftVerticalLayout");
-		leftVerticalLayout.setHeight("50%");
-		leftVerticalLayout.setWidth100();
-		leftVerticalLayout.setShowResizeBar(true);
+		VLayout treeGridLayout = new VLayout();
+		treeGridLayout.setID("staticFolderAssetsGridLayout");
+		treeGridLayout.setHeight100();
+		treeGridLayout.setWidth("40%");
+		treeGridLayout.setShowResizeBar(true);
 
-		listDisplay = new DynamicEntityColumnTreeView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource);
-        Canvas[] members = listDisplay.getToolBar().getMembers();
+		treeDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource, true);
+        treeDisplay.setHeight("80%");
+        treeDisplay.setShowResizeBar(true);
+        treeDisplay.getToolBar().getMember(6).destroy();
+        treeDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
+        treeDynamicFormDisplay.setHeight("20%");
+        treeGridLayout.addMember(treeDisplay);
+        treeGridLayout.addMember(treeDynamicFormDisplay);
 
-        listDisplay.getToolBar().getMember(7).destroy();
-        listDisplay.getToolBar().getMember(1).destroy();
-        addPageFolderButton = new ToolStripButton();
-        addPageFolderButton.setDisabled(true);
-        addPageFolderButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/folder_open.png");
-        listDisplay.getToolBar().addButton(addPageFolderButton, 1);
-        addPageButton = new ToolStripButton();
-        addPageButton.setDisabled(true);
-        addPageButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/file.png");
-        listDisplay.getToolBar().addButton(addPageButton, 2);
-        listDisplay.getToolBar().addMember(new ToolStripSeparator(), 3);
+        VLayout listGridLayout = new VLayout();
+		listGridLayout.setID("staticAssetsGridLayout");
+		listGridLayout.setHeight100();
+		listGridLayout.setWidth("60%");
+		listGridLayout.setShowResizeBar(true);
 
-        leftVerticalLayout.addMember(listDisplay);
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), additionalDataSources[0]);
+        listDisplay.setHeight("60%");
+        listDisplay.setShowResizeBar(true);
+        listDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), additionalDataSources[0]);
+        listDynamicFormDisplay.setHeight("40%");
+        listGridLayout.addMember(listDisplay);
+        listGridLayout.addMember(listDynamicFormDisplay);
 
-        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
-
-        addMember(leftVerticalLayout);
-        addMember(dynamicFormDisplay);
+        addMember(treeGridLayout);
+        addMember(listGridLayout);
 	}
 
     public Canvas asCanvas() {
@@ -63,32 +66,22 @@ public class StaticAssetsView extends VLayout implements Instantiable, StaticAss
 	}
 
 	@Override
-    public DynamicEntityColumnTreeDisplay getListDisplay() {
-		return listDisplay;
+    public DynamicEntityListDisplay getListDisplay() {
+		return treeDisplay;
 	}
 
     @Override
     public DynamicFormDisplay getDynamicFormDisplay() {
-		return dynamicFormDisplay;
+		return treeDynamicFormDisplay;
 	}
 
     @Override
-    public ToolStripButton getAddPageButton() {
-        return addPageButton;
-    }
+    public DynamicEntityListDisplay getListLeafDisplay() {
+		return listDisplay;
+	}
 
     @Override
-    public void setAddPageButton(ToolStripButton addPageButton) {
-        this.addPageButton = addPageButton;
-    }
-
-    @Override
-    public ToolStripButton getAddPageFolderButton() {
-        return addPageFolderButton;
-    }
-
-    @Override
-    public void setAddPageFolderButton(ToolStripButton addPageFolderButton) {
-        this.addPageFolderButton = addPageFolderButton;
-    }
+    public DynamicFormDisplay getDynamicFormLeafDisplay() {
+		return listDynamicFormDisplay;
+	}
 }

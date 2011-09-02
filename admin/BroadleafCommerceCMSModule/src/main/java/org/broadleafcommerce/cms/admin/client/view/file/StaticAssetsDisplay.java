@@ -1,25 +1,16 @@
 package org.broadleafcommerce.cms.admin.client.view.file;
 
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditColumnTreeDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityColumnTreeDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 /**
  * Created by jfischer
  */
-public interface StaticAssetsDisplay extends DynamicEditColumnTreeDisplay  {
+public interface StaticAssetsDisplay extends DynamicEditDisplay {
 
-    DynamicEntityColumnTreeDisplay getListDisplay();
+    public DynamicEntityListDisplay getListLeafDisplay();
 
-    DynamicFormDisplay getDynamicFormDisplay();
-
-    ToolStripButton getAddPageButton();
-
-    void setAddPageButton(ToolStripButton addPageButton);
-
-    ToolStripButton getAddPageFolderButton();
-
-    void setAddPageFolderButton(ToolStripButton addPageFolderButton);
+    public DynamicFormDisplay getDynamicFormLeafDisplay();
 
 }

@@ -27,13 +27,13 @@ import java.util.Map;
  * Time: 12:30 PM
  * To change this template use File | Settings | File Templates.
  */
-public class StaticAssetsClientEntityModule extends BasicClientEntityModule {
+public class StaticAssetsFolderClientEntityModule extends BasicClientEntityModule {
 
-    public StaticAssetsClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+    public StaticAssetsFolderClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
         super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
     }
 
-    public StaticAssetsClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
+    public StaticAssetsFolderClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
         super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, metadataOverrides);
     }
 

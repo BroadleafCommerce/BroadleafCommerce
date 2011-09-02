@@ -53,6 +53,8 @@
 				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.service.handler.PageTemplateCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.cms.admin.server.service.handler.PagesCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.service.handler.StaticAssetFolderCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.service.handler.StaticAssetCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="targetEntityManagers">

@@ -17,6 +17,7 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.SiteImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -57,6 +58,10 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
 
     @Column (name = "DELETED_FLAG")
     protected Boolean deletedFlag = false;
+
+    @Column (name = "IS_FOLDER_FLAG")
+    @AdminPresentation(friendlyName="Is Folder", order=3, group="Folder Flag", hidden = true)
+    protected Boolean folderFlag = true;
 
     @Override
     public Long getId() {
@@ -116,6 +121,16 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public Boolean getFolderFlag() {
+        return folderFlag;
+    }
+
+    @Override
+    public void setFolderFlag(Boolean folderFlag) {
+        this.folderFlag = folderFlag;
     }
 }
 

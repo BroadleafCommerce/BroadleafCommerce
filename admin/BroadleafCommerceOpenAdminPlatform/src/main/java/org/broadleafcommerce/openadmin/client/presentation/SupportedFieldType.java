@@ -36,5 +36,7 @@ public enum SupportedFieldType {
 	BROADLEAF_ENUMERATION,
     EXPLICIT_ENUMERATION,
 	EMPTY_ENUMERATION,
-    HTML;
+    HTML,
+    UPLOAD,
+    HIDDEN;
 }

@@ -35,4 +35,8 @@ public interface StaticAssetFolder extends Serializable {
 
     public void setName(String name);
 
+    public Boolean getFolderFlag();
+
+    public void setFolderFlag(Boolean folderFlag);
+
 }
