@@ -52,12 +52,12 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 				if (event.isLeftButtonDown()) {
 					Map<String, Object> initialValues = new HashMap<String, Object>();
                     initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname()});
-                    initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
+                    //initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
                     FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
                             //do something
                         }
-                    }, "90%", new String[]{"file", "name"}, null);
+                    }, "90%", new String[]{"file", "name", "callbackName"}, null);
 				}
 			}
         });

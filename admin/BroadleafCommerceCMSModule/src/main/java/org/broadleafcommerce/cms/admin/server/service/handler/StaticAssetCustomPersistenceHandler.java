@@ -3,7 +3,6 @@ package org.broadleafcommerce.cms.admin.server.service.handler;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
-import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -49,7 +48,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             fieldMetadata.setFieldType(SupportedFieldType.UPLOAD);
             fieldMetadata.setMutable(true);
             fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
-            fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
+            fieldMetadata.setAvailableToTypes(new String[] {StaticAssetImpl.class.getName()});
             fieldMetadata.setCollection(false);
             fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
             FieldPresentationAttributes attributes = new FieldPresentationAttributes();
@@ -68,7 +67,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             fieldMetadata2.setFieldType(SupportedFieldType.HIDDEN);
             fieldMetadata2.setMutable(true);
             fieldMetadata2.setInheritedFromType(StaticAssetImpl.class.getName());
-            fieldMetadata2.setAvailableToTypes(new String[]{PageTemplateImpl.class.getName()});
+            fieldMetadata2.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
             fieldMetadata2.setCollection(false);
             fieldMetadata2.setMergedPropertyType(MergedPropertyType.PRIMARY);
             FieldPresentationAttributes attributes2 = new FieldPresentationAttributes();
@@ -80,7 +79,6 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             attributes2.setProminent(false);
             attributes2.setBroadleafEnumeration("");
             attributes2.setReadOnly(false);
-            attributes2.setHidden(true);
 
             mergedProperties.put("callbackName", fieldMetadata2);
 

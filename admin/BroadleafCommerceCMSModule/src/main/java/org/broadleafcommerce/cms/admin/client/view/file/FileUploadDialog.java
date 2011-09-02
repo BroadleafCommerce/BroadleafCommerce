@@ -67,7 +67,7 @@ public class FileUploadDialog extends Window {
         stack.addMember(dynamicForm);
         HTMLPane hiddenFrame = new HTMLPane();
         hiddenFrame.setContents("<iframe name=\"hidden_frame\"></iframe>");
-        hiddenFrame.setVisible(false);
+        //hiddenFrame.setVisible(false);
         stack.addMember(hiddenFrame);
         addItem(stack);
         
