@@ -7,6 +7,8 @@
 		        // General options
 		        mode : "textareas",
 		        theme : "advanced",
+		        height: 700,
+		        width: 800,
 		        plugins : "autolink,lists,spellchecker,pagebreak,style,table,save,advhr,advimage,advlink,iespell,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras",
 		        // Theme options
 		        theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
@@ -22,7 +24,7 @@
 		                var dom = ed.dom;
 		                var doc = ed.getDoc();
 
-		                tinymce.dom.Event.add(doc, 'blur', function(e) {
+		                tinymce.dom.Event.add(doc, 'keypress', function(e) {
  							window.parent.enableSaveButton();
  						});
 		            });
@@ -33,7 +35,7 @@
    </head>
    <body>
 		<form method="post" action="somepage">
-		        <textarea id="richTextContent" name="content" style="width:100%;height:475px;"></textarea>
+		        <textarea id="richTextContent" name="content"></textarea>
 		</form>
    </body>
 </html>
