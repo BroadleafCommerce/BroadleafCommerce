@@ -48,6 +48,8 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -122,6 +124,12 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     @Override
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         formOnlyView.getForm().enable();
+                        for (FormItem formItem : formOnlyView.getForm().getFields()) {
+                        	if (formItem instanceof RichTextCanvasItem) {
+                        		formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
+                        	}
+                        	
+                        }
                     }
                 });
             }
@@ -148,9 +156,19 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 //save the regular entity form and the page template form
-                if (event.isLeftButtonDown()) {
+                if (event.isLeftButtonDown()) { 
                     DSRequest requestProperties = new DSRequest();
                     requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+                    
+                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                    DynamicForm form = legacyForm.getForm();
+                    for (FormItem formItem : form.getFields()) {
+                    	if (formItem instanceof RichTextCanvasItem) {
+                    		form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
+                    	}
+                    	
+                    }
+                    
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {

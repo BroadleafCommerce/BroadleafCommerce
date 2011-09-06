@@ -19,6 +19,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -405,10 +406,16 @@ public class FormBuilder {
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
-            formItem = new RichTextItem();
-            formItem.setHeight(300);
-		    formItem.setColSpan(4);
-			formItem.setWidth("700");
+        	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
+        	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane();
+        	//TODO: probably should not hard code the context path
+        	richTextHTMLPane.setContentsURL("/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/richTextFullFeatured.html");
+        	richTextHTMLPane.setContentsType(ContentsType.PAGE);
+        	richTextHTMLPane.setWidth(700);
+        	richTextHTMLPane.setHeight(380);
+        	richTextCanvasItem.setCanvas(richTextHTMLPane);
+        	
+        	formItem = richTextCanvasItem;
             break;
         case UPLOAD:
             formItem = new UploadItem();

@@ -83,7 +83,20 @@ public class DynamicFormPresenter {
 				display.getSaveButton().enable();
 			}
 		});
+		
+		exposeNativeEnableSaveButton();
 	}
+	
+	public void enableSaveButton() {
+		display.getSaveButton().enable();
+	}
+
+	private native void exposeNativeEnableSaveButton() /*-{
+		var currentDynamicFormPresenter = this;
+		$wnd.enableSaveButton = function() {
+			currentDynamicFormPresenter.@org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter::enableSaveButton()();
+		}
+	}-*/;
 
 	public HandlerRegistration getSaveButtonHandlerRegistration() {
 		return saveButtonHandlerRegistration;
