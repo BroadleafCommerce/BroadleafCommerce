@@ -412,11 +412,23 @@ public class FormBuilder {
         	richTextHTMLPane.setContentsURL("/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/richTextFullFeatured.html");
         	richTextHTMLPane.setContentsType(ContentsType.PAGE);
         	richTextHTMLPane.setWidth(700);
-        	richTextHTMLPane.setHeight(380);
+        	richTextHTMLPane.setHeight(450);
         	richTextCanvasItem.setCanvas(richTextHTMLPane);
         	
         	formItem = richTextCanvasItem;
             break;
+        case HTML_BASIC:
+        	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
+        	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane();
+        	//TODO: probably should not hard code the context path
+        	basicRichTextHTMLPane.setContentsURL("/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/richTextBasic.html");
+        	basicRichTextHTMLPane.setContentsType(ContentsType.PAGE); 
+        	basicRichTextHTMLPane.setWidth(300);
+        	basicRichTextHTMLPane.setHeight(175);
+        	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
+        	
+        	formItem = basicRichTextCanvasItem;
+        	break;
         case UPLOAD:
             formItem = new UploadItem();
             break;

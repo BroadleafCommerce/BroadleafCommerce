@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/reset.css" />
 
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/layout.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/navigation.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/style.css" />

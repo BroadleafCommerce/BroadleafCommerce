@@ -51,6 +51,10 @@
 		<property name="viewName" value="catalog/store" />
 	</bean>	
 
+	<bean id="cmsMainTemplate" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+		<property name="viewName" value="templates/mainTemplate" />
+	</bean>	
+
 	<bean id="catalogController" class="org.broadleafcommerce.core.web.controller.catalog.CatalogController">
 		<property name="catalogService" ref="blCatalogService"/>
 		<property name="ratingService" ref="blRatingService" />
@@ -103,6 +107,7 @@
 				<prop key="/account/*">myAccountController</prop>
 				<prop key="/rating/*">blRatingController</prop>
 				<prop key="/wishlist/*">blWishlistController</prop>
+				<prop key="/cms/mainTemplate.htm">cmsMainTemplate</prop>
 			</props>
 		</property>
 	</bean>
