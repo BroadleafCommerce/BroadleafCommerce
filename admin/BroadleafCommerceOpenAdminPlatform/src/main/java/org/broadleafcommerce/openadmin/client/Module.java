@@ -37,5 +37,13 @@ public interface Module {
 	public String getCurrentSandBox();
 
 	public void setCurrentSandBox(String currentSandBox);
+
+	public String getHtmlEditorIFramePath();
+
+	public void setHtmlEditorIFramePath(String htmlEditorIFramePath);
+
+	public String getBasicHtmlEditorIFramePath();
+
+	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath);
 	
 }

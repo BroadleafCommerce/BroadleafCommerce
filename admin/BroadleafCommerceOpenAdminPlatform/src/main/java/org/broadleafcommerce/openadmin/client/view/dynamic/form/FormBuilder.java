@@ -408,8 +408,7 @@ public class FormBuilder {
         case HTML:
         	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
         	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane();
-        	//TODO: probably should not hard code the context path
-        	richTextHTMLPane.setContentsURL("/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/richTextFullFeatured.html");
+        	richTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getHtmlEditorIFramePath());
         	richTextHTMLPane.setContentsType(ContentsType.PAGE);
         	richTextHTMLPane.setWidth(700);
         	richTextHTMLPane.setHeight(450);
@@ -420,8 +419,7 @@ public class FormBuilder {
         case HTML_BASIC:
         	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
         	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane();
-        	//TODO: probably should not hard code the context path
-        	basicRichTextHTMLPane.setContentsURL("/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/richTextBasic.html");
+        	basicRichTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getBasicHtmlEditorIFramePath());
         	basicRichTextHTMLPane.setContentsType(ContentsType.PAGE); 
         	basicRichTextHTMLPane.setWidth(300);
         	basicRichTextHTMLPane.setHeight(175);

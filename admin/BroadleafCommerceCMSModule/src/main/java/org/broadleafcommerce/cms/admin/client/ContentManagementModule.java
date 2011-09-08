@@ -62,6 +62,8 @@ public class ContentManagementModule extends AbstractModule {
 			null
 		);
 
+        setHtmlEditorIFramePath("/broadleafdemo/richTextFullFeatured.html");
+        setBasicHtmlEditorIFramePath("/broadleafdemo/richTextBasic.html");
         registerModule();
     }
 
