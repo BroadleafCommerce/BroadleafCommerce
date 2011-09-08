@@ -49,16 +49,7 @@ public class RichTextHTMLPane extends HTMLPane {
 	public static native void setRichTextValue(Node iframeNode, String value) /*-{
 		var currentIFrameNode = iframeNode;
 		var currentValue = value;
-		console.log("setRichTextValue");
-		console.log(currentValue);
 		iframeNode.onload = function() {
-//			console.log(currentIFrameNode);
-//			console.log(currentIFrameNode.contentWindow);
-//			console.log(currentIFrameNode.contentWindow.document.getElementById('richTextContent'));
-//			console.log(currentIFrameNode.contentWindow.tinyMCE);
-//			console.log(currentIFrameNode.contentWindow.tinyMCE.get);
-//			console.log(currentIFrameNode.contentWindow.tinyMCE.get('richTextContent'));
-			
 			currentIFrameNode.contentWindow.tinyMCE.get('richTextContent').setContent(currentValue);
 		}
 	}-*/;
