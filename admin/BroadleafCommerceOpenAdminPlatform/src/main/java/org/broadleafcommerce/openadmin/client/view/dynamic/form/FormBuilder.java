@@ -413,6 +413,8 @@ public class FormBuilder {
         	richTextHTMLPane.setWidth(700);
         	richTextHTMLPane.setHeight(450);
         	richTextCanvasItem.setCanvas(richTextHTMLPane);
+            richTextCanvasItem.setShowTitle(true);
+            richTextCanvasItem.setColSpan(3);
         	
         	formItem = richTextCanvasItem;
             break;
@@ -424,6 +426,7 @@ public class FormBuilder {
         	basicRichTextHTMLPane.setWidth(300);
         	basicRichTextHTMLPane.setHeight(175);
         	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
+            basicRichTextCanvasItem.setShowTitle(true);
         	
         	formItem = basicRichTextCanvasItem;
         	break;
