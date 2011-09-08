@@ -15,48 +15,34 @@
  */
 package org.broadleafcommerce.core.checkout.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.Country;
-import org.broadleafcommerce.profile.core.domain.CountryImpl;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
+import org.broadleafcommerce.profile.core.domain.*;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.encryption.EncryptionModule;
 import org.broadleafcommerce.profile.time.SystemTime;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CheckoutTest extends BaseTest {
 
@@ -77,6 +63,9 @@ public class CheckoutTest extends BaseTest {
     
     @Resource
     private OrderItemService orderItemService;
+
+    @Resource
+    private SecurePaymentInfoService securePaymentInfoService;
 
     @SuppressWarnings("serial")
 	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
@@ -153,6 +142,8 @@ public class CheckoutTest extends BaseTest {
 
         CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
 
+            private String referenceNumber = "1234";
+
 			public String getCvvCode() {
 				return "123";
 			}
@@ -198,7 +189,7 @@ public class CheckoutTest extends BaseTest {
 			}
 
 			public String getReferenceNumber() {
-				return "1234";
+				return referenceNumber;
 			}
 
 			public void setEncryptionModule(EncryptionModule encryptionModule) {
@@ -206,7 +197,7 @@ public class CheckoutTest extends BaseTest {
 			}
 
 			public void setReferenceNumber(String referenceNumber) {
-				//do nothing
+				this.referenceNumber = referenceNumber;
 			}
         	
         };
@@ -215,6 +206,25 @@ public class CheckoutTest extends BaseTest {
         map.put(payment, cc);
 
         CheckoutResponse response = checkoutService.performCheckout(order, map);
+        //The DummyCreditCardModule changed the reference Number - make sure it's represented
+        for(PaymentInfo paymentInfo : response.getInfos().keySet()) {
+            assert(paymentInfo.getReferenceNumber().equals("abc123"));
+            assert(response.getInfos().get(paymentInfo).getReferenceNumber().equals("abc123"));
+        }
+
+        //confirm that the secure payment info items are not persisted
+        Referenced referenced = null;
+        try {
+            referenced = securePaymentInfoService.findSecurePaymentInfo("abc123", PaymentInfoType.CREDIT_CARD);
+        } catch (Exception e) {
+            //do nothing
+        }
+        try {
+            referenced = securePaymentInfoService.findSecurePaymentInfo("1234", PaymentInfoType.CREDIT_CARD);
+        } catch (Exception e) {
+            //do nothing
+        }
+        assert(referenced == null);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
