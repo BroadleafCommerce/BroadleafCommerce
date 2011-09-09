@@ -24,9 +24,32 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!--<bean id="blcContentFilter" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+	</bean>-->
 
-    <bean id="blcContentFilter" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+    <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+		<property name="persistenceUnitName" value="blCMSStorage"/>
 	</bean>
+
+	<bean id="blTransactionManagerAssetStorageInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="blEntityManagerFactoryAssetStorageInfo" />
+	</bean>
+
+	<tx:advice id="blTxAdviceAssetStorageInfo" transaction-manager="blTransactionManagerAssetStorageInfo">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+
+    <aop:config>
+	    <aop:pointcut id="blAssetStorageServiceOperation" expression="execution(* org.broadleafcommerce.cms.file.service.StaticAssetStorageService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdviceAssetStorageInfo" pointcut-ref="blAssetStorageServiceOperation"/>
+	</aop:config>
 
 	<!--         TODO: Uncomment once cache is defined.
 	bean id="blCacheManager" class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">

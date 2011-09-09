@@ -16,16 +16,19 @@
 package org.broadleafcommerce.cms.admin.client.presenter.file;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.*;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
@@ -44,10 +47,28 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 
     public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();
     protected HandlerRegistration leafAddClickHandlerRegistration;
+    protected SubPresentable leafAssetPresenter;
+
+    @Override
+	protected void changeSelection(final Record selectedRecord) {
+		leafAssetPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), new DSCallback() {
+			public void execute(DSResponse response, Object rawData, DSRequest request) {
+				try {
+					if (response.getErrors().size() > 0) {
+						leafAssetPresenter.disable();
+					}
+				} catch (Exception e) {
+					leafAssetPresenter.enable();
+                    leafAssetPresenter.setStartState();
+				}
+			}
+		});
+	}
 
     @Override
 	public void bind() {
 		super.bind();
+        leafAssetPresenter.bind();
         leafAddClickHandlerRegistration = getDisplay().getListLeafDisplay().getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
@@ -56,12 +77,14 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                     initialValues.put("operation", "add");
                     initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
                     initialValues.put("ceilingEntityFullyQualifiedClassname", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname());
-                    //initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
+                    initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
                     FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
-                            //do something
+                            Criteria myCriteria = new Criteria();
+				            myCriteria.addCriteria("name", event.getRecord().getAttribute("name"));
+				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria);
                         }
-                    }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname"}, null);
+                    }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder"}, null);
 				}
 			}
         });
@@ -73,6 +96,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
+                leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
+				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "fullUrl", "fileSize"}, new Boolean[]{true, false, false});
             }
         }));
 	}

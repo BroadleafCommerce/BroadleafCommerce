@@ -3,6 +3,9 @@ package org.broadleafcommerce.cms.admin.server.handler;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -10,7 +13,11 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.upload.UploadedFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import java.sql.Blob;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +25,12 @@ import java.util.Map;
  * Created by jfischer
  */
 public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    @Resource(name="blStaticAssetService")
+	protected StaticAssetService staticAssetService;
+
+    @Resource(name="blStaticAssetStorageService")
+	protected StaticAssetStorageService staticAssetStorageService;
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -35,7 +48,30 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             throw new ServiceException("Could not detect an uploaded file.");
         }
 
-        return super.add(persistencePackage, dynamicEntityDao, helper);
+        Entity entity  = persistencePackage.getEntity();
+		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			StaticAsset adminInstance = (StaticAsset) Class.forName(entity.getType()[0]).newInstance();
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            MultipartFile upload = UploadedFile.getUpload().get("file");
+            adminInstance.setFileSize(upload.getSize());
+            adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), null);
+
+			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            StaticAssetStorage storage = staticAssetStorageService.create();
+            storage.setFullUrl(adminInstance.getFullUrl());
+            Blob uploadBlob = staticAssetStorageService.createBlob(upload);
+            storage.setFileData(uploadBlob);
+            storage = staticAssetStorageService.save(storage);
+
+			return adminEntity;
+		} catch (Exception e) {
+			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+		}
     }
 
     @Override
@@ -84,6 +120,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             mergedProperties.put("operation", createHiddenField("operation"));
             mergedProperties.put("sandbox", createHiddenField("sandbox"));
             mergedProperties.put("ceilingEntityFullyQualifiedClassname", createHiddenField("ceilingEntityFullyQualifiedClassname"));
+            mergedProperties.put("parentFolder", createHiddenField("parentFolder"));
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);

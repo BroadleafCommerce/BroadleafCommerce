@@ -24,6 +24,8 @@ import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,6 +67,22 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Override
     public StaticAsset addStaticAsset(StaticAsset staticAsset, StaticAssetFolder parentFolder, SandBox destinationSandbox) {
         staticAsset.setSandbox(destinationSandbox);
+
+        List<String> parentFolders = new ArrayList<String>();
+        while (parentFolder != null) {
+            parentFolders.add(parentFolder.getName());
+            parentFolder = parentFolder.getParentFolder();
+        }
+        Collections.reverse(parentFolders);
+        StringBuffer sb = new StringBuffer();
+        sb.append("/");
+        for (String folderName : parentFolders) {
+            sb.append(folderName);
+            sb.append("/");
+        }
+        sb.append(staticAsset.getName());
+        staticAsset.setFullUrl(sb.toString());
+
         return staticAssetDao.updateStaticAsset(staticAsset);
     }
 

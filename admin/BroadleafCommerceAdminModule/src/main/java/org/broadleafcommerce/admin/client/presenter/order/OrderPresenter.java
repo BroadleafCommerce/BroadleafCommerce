@@ -23,7 +23,6 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.admin.client.datasource.order.*;
 import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
@@ -61,11 +60,11 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
-		orderItemPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		fulfillmentGroupPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		paymentInfoPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		offerCodePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		orderAdjustmentPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
+		orderItemPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		fulfillmentGroupPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		paymentInfoPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		offerCodePresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		orderAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
 	}
 	
 	@Override

@@ -44,8 +44,8 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     protected String fullUrl;
 
     @Column(name = "FILE_SIZE")
-    @AdminPresentation(friendlyName="File Size", order=3, group = "Asset Details", readOnly = true)
-    protected Integer fileSize;
+    @AdminPresentation(friendlyName="File Size (Bytes)", order=3, group = "Asset Details", readOnly = true)
+    protected Long fileSize;
 
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
     @JoinColumn(name = "PARENT_FOLDER_ID")
@@ -60,7 +60,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
+    @JoinColumn(name = "SANDBOX_ID")
     protected SandBox sandbox;
 
     @Column (name = "ARCHIVED_FLAG")
@@ -83,11 +83,11 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         this.fullUrl = fullUrl;
     }
 
-    public Integer getFileSize() {
+    public Long getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(Integer fileSize) {
+    public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
     }
 

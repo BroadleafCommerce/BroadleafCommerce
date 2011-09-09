@@ -73,7 +73,7 @@ public class PageImpl extends PageFolderImpl implements Page {
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinTable(name = "BLC_SANDBOX_PAGE",joinColumns = @JoinColumn(name = "PAGE_ID"),inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID"))
+    @JoinColumn(name="SANDBOX_ID")
     @AdminPresentation(friendlyName="Page SandBox", order=3, group="Page", hidden = true)
     protected SandBox sandbox;
 

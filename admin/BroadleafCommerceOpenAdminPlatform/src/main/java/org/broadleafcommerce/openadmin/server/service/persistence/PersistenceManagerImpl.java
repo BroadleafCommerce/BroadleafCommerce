@@ -89,7 +89,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, dynamicEntityDao, entityClasses);
+		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, entityClasses);
 	}
 
 	/*

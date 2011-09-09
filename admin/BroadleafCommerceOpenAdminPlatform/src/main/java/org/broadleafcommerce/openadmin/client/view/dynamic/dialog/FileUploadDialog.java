@@ -18,12 +18,18 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Encoding;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
@@ -31,12 +37,18 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.jso.EntityJSO;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.setup.AppController;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
 
@@ -75,18 +87,64 @@ public class FileUploadDialog extends Window {
         dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
         addItem(stack);
-        
-        IButton saveButton = new IButton("Upload");
+
+        final IButton cancelButton = new IButton("Cancel");
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+            	hide();
+            }
+        });
+
+        final IButton saveButton = new IButton("Upload");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {  
             	if (dynamicForm.validate()) {
                     String callbackName = JavaScriptMethodHelper.registerCallbackFunction(new JavaScriptMethodCallback() {
                         public void execute(JavaScriptObject obj) {
-                            EntityJSO jso = EntityJSO.buildEntity(new JSONObject(obj).toString());
-                            //uploadFinished(obj);
-                            UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
-                            progress.stopProgress();
-                            SC.say("Uploaded!");
+                            try {
+                                String jsObj = JSON.encode(obj);
+                                JSONObject entityJs = JSONParser.parse(jsObj).isObject();
+                                JSONValue errorJs = entityJs.get("error");
+
+                                if (errorJs != null) {
+                                    SC.warn(errorJs.isString().stringValue());
+                                } else {
+                                    Entity entity = new Entity();
+                                    String type = entityJs.get("type").isString().stringValue();
+                                    entity.setType(new String[]{type});
+
+                                    JSONArray propArrayJs = entityJs.get("properties").isArray();
+                                    int length = propArrayJs.size();
+                                    Property[] props = new Property[length];
+                                    for (int j=0; j<=length-1; j++) {
+                                        JSONObject propJs = propArrayJs.get(j).isObject();
+                                        Property property = new Property();
+                                        property.setName(propJs.get("name").isString().stringValue());
+                                        property.setValue(propJs.get("value").isString().stringValue());
+                                        props[j] = property;
+                                    }
+                                    entity.setProperties(props);
+                                    DataSourceModule module = ((DynamicEntityDataSource) dynamicForm.getDataSource()).getCompatibleModule(OperationType.ENTITY);
+                                    Record record = module.buildRecord(entity, false);
+                                    if (handler != null) {
+                                        AppController.getInstance().getEventBus().addHandler(NewItemCreatedEvent.TYPE, handler);
+                                        try {
+                                            AppController.getInstance().getEventBus().fireEvent(new NewItemCreatedEvent((ListGridRecord) record, dynamicForm.getDataSource()));
+                                        } finally {
+                                            AppController.getInstance().getEventBus().removeHandler(NewItemCreatedEvent.TYPE, handler);
+                                        }
+                                    }
+                                }
+                            } finally {
+                                UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
+                                progress.stopProgress();
+                                Timer timer = new Timer() {
+                                    public void run() {
+                                        hide();
+                                    }
+                                };
+                                timer.schedule(500);
+                            }
                         }
                     });
                     UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
@@ -94,30 +152,10 @@ public class FileUploadDialog extends Window {
                     progress.startProgress();
                     dynamicForm.getField("callbackName").setValue(callbackName);
                     dynamicForm.submitForm();
-
-            		/*dynamicForm.saveData(new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							TreeNode record = new TreeNode(request.getData());
-							if (handler != null) {
-								AppController.getInstance().getEventBus().addHandler(NewItemCreatedEvent.TYPE, handler);
-								try {
-									AppController.getInstance().getEventBus().fireEvent(new NewItemCreatedEvent((ListGridRecord) record, dynamicForm.getDataSource()));
-								} finally {
-									AppController.getInstance().getEventBus().removeHandler(NewItemCreatedEvent.TYPE, handler);
-								}
-							}
-						}
-            		});*/
-            		//hide();
+                    saveButton.disable();
+                    cancelButton.disable();
             	}
             }
-        });  
-
-        IButton cancelButton = new IButton("Cancel");  
-        cancelButton.addClickHandler(new ClickHandler() {  
-            public void onClick(ClickEvent event) {  
-            	hide();
-            }  
         });
         
         VLayout vLayout = new VLayout();

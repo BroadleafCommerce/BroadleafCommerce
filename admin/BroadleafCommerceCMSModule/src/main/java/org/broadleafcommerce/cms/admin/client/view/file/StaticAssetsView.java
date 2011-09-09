@@ -6,9 +6,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.*;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
@@ -19,8 +17,8 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 
     protected DynamicEntityTreeView treeDisplay;
     protected DynamicFormView treeDynamicFormDisplay;
-    protected DynamicEntityListView listDisplay;
-    protected DynamicFormView listDynamicFormDisplay;
+    protected SubItemView listDisplay;
+    //protected DynamicFormView listDynamicFormDisplay;
 
     public StaticAssetsView() {
 		setHeight100();
@@ -48,14 +46,16 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		listGridLayout.setHeight100();
 		listGridLayout.setWidth("60%");
 
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), additionalDataSources[0]);
-        listDisplay.setHeight("60%");
-        listDisplay.setShowResizeBar(true);
-        listDisplay.getToolBar().getMember(6).destroy();
-        listDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), additionalDataSources[0]);
-        listDynamicFormDisplay.setHeight("40%");
+        listDisplay = new SubItemView(BLCMain.getMessageManager().getString("pagesTitle"), false, true);
+
+		//listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), additionalDataSources[0]);
+        //listDisplay.setHeight("60%");
+        //listDisplay.setShowResizeBar(true);
+        listDisplay.getToolbar().getMember(6).destroy();
+        //listDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), additionalDataSources[0]);
+        //listDynamicFormDisplay.setHeight("40%");
         listGridLayout.addMember(listDisplay);
-        listGridLayout.addMember(listDynamicFormDisplay);
+        //listGridLayout.addMember(listDynamicFormDisplay);
 
         addMember(treeGridLayout);
         addMember(listGridLayout);
@@ -76,6 +76,11 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 	}
 
     @Override
+    public SubItemDisplay getListLeafDisplay() {
+		return listDisplay;
+	}
+
+    /*@Override
     public DynamicEntityListDisplay getListLeafDisplay() {
 		return listDisplay;
 	}
@@ -83,5 +88,5 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
     @Override
     public DynamicFormDisplay getDynamicFormLeafDisplay() {
 		return listDynamicFormDisplay;
-	}
+	}*/
 }

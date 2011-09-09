@@ -2,10 +2,7 @@ package org.broadleafcommerce.openadmin.server.service.upload;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
@@ -43,6 +40,7 @@ public class UploadController extends SimpleFormController {
             }
 
             PersistencePackage persistencePackage = new PersistencePackage();
+            persistencePackage.setPersistencePerspective(new PersistencePerspective());
             String ceilingEntity = (String) mpvs.getPropertyValue("ceilingEntityFullyQualifiedClassname").getValue();
             String sandbox = (String) mpvs.getPropertyValue("sandbox").getValue();
             callbackName = (String) mpvs.getPropertyValue("callbackName").getValue();
@@ -102,7 +100,7 @@ public class UploadController extends SimpleFormController {
         StringBuffer sb = new StringBuffer();
         sb.append("{\"type\" : \"");
         sb.append(entity.getType()[0]);
-        sb.append("\", {\"properties\" : [");
+        sb.append("\", \"properties\" : [");
         for (int j=0;j<entity.getProperties().length;j++) {
             sb.append("{\"name\" : \"");
             sb.append(entity.getProperties()[j].getName());

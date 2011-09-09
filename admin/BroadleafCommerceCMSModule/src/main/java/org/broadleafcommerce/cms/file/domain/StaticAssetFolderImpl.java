@@ -36,9 +36,9 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StaticAssetFolderId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StaticAssetFolderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetFolderImpl", allocationSize = 10)
-    @Column(name = "STATIC_ASSET_FOLDER_ID")
+    @GeneratedValue(generator = "StaticAssetId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "StaticAssetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetFolderImpl", allocationSize = 10)
+    @Column(name = "STATIC_ASSET_ID")
     protected Long id;
 
     @Column (name = "NAME", nullable = false)

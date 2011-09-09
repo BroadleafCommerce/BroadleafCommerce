@@ -11,11 +11,11 @@ public interface StaticAsset extends StaticAssetFolder {
 
     public String getFullUrl();
 
-    public Integer getFileSize();
+    public Long getFileSize();
 
     public void setFullUrl(String fullUrl);
 
-    public void setFileSize(Integer fileSize);
+    public void setFileSize(Long fileSize);
 
     public Map<String, StaticAssetDescription> getContentMessageValues();
 
