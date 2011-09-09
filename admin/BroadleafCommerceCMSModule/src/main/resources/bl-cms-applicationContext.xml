@@ -51,10 +51,10 @@
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.service.handler.PageTemplateCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.cms.admin.server.service.handler.PagesCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.service.handler.StaticAssetFolderCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.service.handler.StaticAssetCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="targetEntityManagers">

@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.json.client.JSONObject;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Encoding;
@@ -34,6 +35,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.jso.EntityJSO;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
@@ -80,6 +82,7 @@ public class FileUploadDialog extends Window {
             	if (dynamicForm.validate()) {
                     String callbackName = JavaScriptMethodHelper.registerCallbackFunction(new JavaScriptMethodCallback() {
                         public void execute(JavaScriptObject obj) {
+                            EntityJSO jso = EntityJSO.buildEntity(new JSONObject(obj).toString());
                             //uploadFinished(obj);
                             UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
                             progress.stopProgress();

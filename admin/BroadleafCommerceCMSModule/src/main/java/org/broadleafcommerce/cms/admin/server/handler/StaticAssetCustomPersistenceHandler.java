@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.server.service.handler;
+package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
@@ -9,6 +9,7 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,20 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
         return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(StaticAsset.class.getName());
+    }
+
+    @Override
+    public Boolean canHandleAdd(PersistencePackage persistencePackage) {
+        return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(StaticAssetImpl.class.getName());
+    }
+
+    @Override
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        if (!persistencePackage.getEntity().isMultiPartAvailableOnThread()) {
+            throw new ServiceException("Could not detect an uploaded file.");
+        }
+
+        return super.add(persistencePackage, dynamicEntityDao, helper);
     }
 
     @Override
@@ -65,25 +80,10 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
             mergedProperties.put("file", fieldMetadata);
 
-            FieldMetadata fieldMetadata2 = new FieldMetadata();
-            fieldMetadata2.setFieldType(SupportedFieldType.HIDDEN);
-            fieldMetadata2.setMutable(true);
-            fieldMetadata2.setInheritedFromType(StaticAssetImpl.class.getName());
-            fieldMetadata2.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
-            fieldMetadata2.setCollection(false);
-            fieldMetadata2.setMergedPropertyType(MergedPropertyType.PRIMARY);
-            FieldPresentationAttributes attributes2 = new FieldPresentationAttributes();
-            fieldMetadata2.setPresentationAttributes(attributes2);
-            attributes2.setName("callbackName");
-            attributes2.setFriendlyName("callbackName");
-            attributes2.setGroup("Upload");
-            attributes2.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-            attributes2.setProminent(false);
-            attributes2.setBroadleafEnumeration("");
-            attributes2.setReadOnly(false);
-            attributes2.setHidden(true);
-
-            mergedProperties.put("callbackName", fieldMetadata2);
+            mergedProperties.put("callbackName", createHiddenField("callbackName"));
+            mergedProperties.put("operation", createHiddenField("operation"));
+            mergedProperties.put("sandbox", createHiddenField("sandbox"));
+            mergedProperties.put("ceilingEntityFullyQualifiedClassname", createHiddenField("ceilingEntityFullyQualifiedClassname"));
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
@@ -93,5 +93,26 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 		} catch (Exception e) {
 			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
+    }
+
+    protected FieldMetadata createHiddenField(String name) {
+        FieldMetadata fieldMetadata = new FieldMetadata();
+        fieldMetadata.setFieldType(SupportedFieldType.HIDDEN);
+        fieldMetadata.setMutable(true);
+        fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
+        fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
+        fieldMetadata.setCollection(false);
+        fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        FieldPresentationAttributes attributes = new FieldPresentationAttributes();
+        fieldMetadata.setPresentationAttributes(attributes);
+        attributes.setName(name);
+        attributes.setFriendlyName(name);
+        attributes.setGroup("Upload");
+        attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        attributes.setProminent(false);
+        attributes.setBroadleafEnumeration("");
+        attributes.setReadOnly(false);
+        attributes.setHidden(true);
+        return fieldMetadata;
     }
 }

@@ -47,11 +47,11 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		listGridLayout.setID("staticAssetsGridLayout");
 		listGridLayout.setHeight100();
 		listGridLayout.setWidth("60%");
-		listGridLayout.setShowResizeBar(true);
 
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), additionalDataSources[0]);
         listDisplay.setHeight("60%");
         listDisplay.setShowResizeBar(true);
+        listDisplay.getToolBar().getMember(6).destroy();
         listDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), additionalDataSources[0]);
         listDynamicFormDisplay.setHeight("40%");
         listGridLayout.addMember(listDisplay);

@@ -11,6 +11,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -204,6 +205,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleFetch(persistencePackage)) {
+                DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return results;
+            }
+        }
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
 		return myModule.fetch(persistencePackage, cto);
 	}
@@ -219,6 +227,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleAdd(persistencePackage)) {
+                Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return response;
+            }
+        }
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
 		return myModule.add(persistencePackage);
 	}
@@ -235,6 +250,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleAdd(persistencePackage)) {
+                Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return response;
+            }
+        }
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
         /*PersistencePackage savedPackage = null;
         if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
@@ -290,6 +312,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleRemove(persistencePackage)) {
+                handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return;
+            }
+        }
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
 		myModule.remove(persistencePackage);
 	}

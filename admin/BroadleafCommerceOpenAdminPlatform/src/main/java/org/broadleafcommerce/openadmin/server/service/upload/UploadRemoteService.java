@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.server.service.upload.service;
+package org.broadleafcommerce.openadmin.server.service.upload;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
-import org.broadleafcommerce.openadmin.client.service.UploadService;
-import org.broadleafcommerce.openadmin.server.service.upload.UploadProgressListener;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.client.service.UploadService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -29,7 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  *
  */
 @Service("blUploadRemoteService")
-public class UploadServiceRemote implements UploadService {
+public class UploadRemoteService implements UploadService {
 
     @Override
     public Double getPercentUploadComplete(String callbackName) throws ServiceException, ApplicationSecurityException {

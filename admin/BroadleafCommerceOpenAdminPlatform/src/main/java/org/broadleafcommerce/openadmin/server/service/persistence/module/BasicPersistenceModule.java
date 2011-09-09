@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -408,13 +407,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 	protected Entity update(PersistencePackage persistencePackage, Object primaryKey) throws ServiceException {
 		try {
 			Entity entity  = persistencePackage.getEntity();
-			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleUpdate(persistencePackage)) {
-					return handler.update(persistencePackage, persistenceManager.getDynamicEntityDao(), this);
-				}
-			}
-			
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -445,9 +437,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			entityList.add(instance);
 			
 			return getRecords(mergedProperties, entityList, null, null)[0];
-		} catch (ServiceException e) {
-			LOG.error("Problem editing entity", e);
-			throw e;
 		} catch (Exception e) {
 			LOG.error("Problem editing entity", e);
 			throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
@@ -662,13 +651,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
 		try {
-			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleAdd(persistencePackage)) {
-					Entity response = handler.add(persistencePackage, persistenceManager.getDynamicEntityDao(), this);
-					return response;
-				}
-			}
 			Entity entity = persistencePackage.getEntity();
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
@@ -725,14 +707,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 	@SuppressWarnings("rawtypes")
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
 		try {
-			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleRemove(persistencePackage)) {
-					handler.remove(persistencePackage, persistenceManager.getDynamicEntityDao(), this);
-					return;
-				}
-			}
-			
 			Entity entity = persistencePackage.getEntity();
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
@@ -775,9 +749,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistenceManager.getDynamicEntityDao().remove(instance);
 				break;
 			}
-		} catch (ServiceException e) {
-			LOG.error("Problem removing entity", e);
-			throw e;
 		} catch (Exception e) {
 			LOG.error("Problem removing entity", e);
 			throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
@@ -805,23 +776,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				""
 			);
 			
-			//check to see if there is a custom handler registered
-			for (CustomPersistenceHandler handler : persistenceManager.getCustomPersistenceHandlers()) {
-				if (handler.canHandleFetch(persistencePackage)) {
-					DynamicResultSet results = handler.fetch(persistencePackage, cto, persistenceManager.getDynamicEntityDao(), this);
-					return results;
-				}
-			}
-			
 			BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
 			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
 			
 			payload = getRecords(mergedProperties, records, null, null);
 			totalRecords = getTotalRecords(ceilingEntityFullyQualifiedClassname, cto, ctoConverter);
-		} catch (ServiceException e) {
-			LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
-			throw e;
 		} catch (Exception e) {
 			LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
 			throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);

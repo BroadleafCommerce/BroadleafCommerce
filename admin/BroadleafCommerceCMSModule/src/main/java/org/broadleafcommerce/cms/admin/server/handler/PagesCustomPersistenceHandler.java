@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.admin.server.service.handler;
+package org.broadleafcommerce.cms.admin.server.handler;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.SerializationUtils;

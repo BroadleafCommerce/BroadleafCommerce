@@ -1,6 +1,5 @@
-package org.broadleafcommerce.cms.admin.server.service.handler;
+package org.broadleafcommerce.cms.admin.server.handler;
 
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.openadmin.client.dto.*;

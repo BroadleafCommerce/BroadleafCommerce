@@ -15,9 +15,7 @@
     </bean>
 
     <bean id="uploadController" class="org.broadleafcommerce.openadmin.server.service.upload.UploadController">
-        <property name="commandClass" value="org.broadleafcommerce.openadmin.server.service.upload.UploadMember"/>
-        <property name="formView" value="uploadCompletedView"/>
-        <property name="successView" value="uploadCompletedView"/>
+        <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
     </bean>
 
     <bean id="uploadCompletedView" class="org.broadleafcommerce.openadmin.server.service.upload.UploadCompletedView"/>
