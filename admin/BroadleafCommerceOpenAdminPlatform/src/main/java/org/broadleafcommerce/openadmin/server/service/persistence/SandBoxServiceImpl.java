@@ -21,13 +21,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@Service("blSandBoxService")
+@Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
 
 	//@Resource(name="blSandBoxEntityDao")
@@ -49,7 +50,14 @@ public class SandBoxServiceImpl implements SandBoxService {
 	 */
 	@Override
 	public PersistencePackage saveSandBox(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException {
-        SandBox sandBox = sandBoxDao.readSandBoxByName(persistencePackage.getSandBoxInfo().getSandBox());
+        // TODO:  Determine best way to get "site" passed to this point.
+        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
+        Site site = null;
+        if (sandBoxInfo.getSiteId() != null) {
+            site = new SiteImpl();
+            site.setId(sandBoxInfo.getSiteId());
+        }
+        SandBox sandBox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, sandBoxInfo.getSandBox());
         if (sandBox == null) {
             sandBox = createSandBox(persistencePackage);
         }
@@ -429,20 +437,54 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public SandBox retrieveSandBoxByUserId(AdminUser adminUser) {
-        // TODO: Code sandbox retrieval logic
-        SandBoxImpl sandbox = new SandBoxImpl();
-        sandbox.setId(1l);
-        sandbox.setName("user:test");
-        sandbox.setAuthor(adminUser.getId());
-        return sandbox;
+    public SandBox retrieveSandboxById(Long sandboxId) {
+        return sandBoxDao.retrieve(sandboxId);
     }
 
     @Override
-    public SandBox retrieveSandBoxByName(String name) {
-        // TODO: Code sandbox retrieval logic
-        SandBox sandbox = retrieveSandBoxByUserId(null);
-        sandbox.setName(name);
-        return sandbox;
+    public SandBox retrieveProductionSandBox(Site site) {
+        if (site == null) {
+            return null;
+        } else {
+            return site.getProductionSandbox();
+        }
+    }
+
+    @Override
+    public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {
+        SandBox userSandbox = null;
+        if (adminUser.getCurrentSandbox() != null) {
+            userSandbox = adminUser.getCurrentSandbox();
+        } else {
+            userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
+
+            if (userSandbox == null) {
+                SandBoxImpl sandBox = new SandBoxImpl();
+                sandBox.setSite(site);
+                sandBox.setName(adminUser.getLogin());
+                sandBox.setSandBoxType(SandBoxType.USER);
+                sandBox.setAuthor(adminUser.getId());
+                sandBoxDao.persist(sandBox);
+            }
+        }
+
+        return userSandbox;
+    }
+
+
+    public SandBox retrieveApprovalSandBox(Site site) {
+        return sandBoxDao.retrieveSandBoxByType(site, SandBoxType.APPROVAL);
+    }
+
+    public void promoteSandBox(SandBox sandBox) {
+        // TODO: This method should check to see if the list of items
+        // can be promoted and determine the promote destination.
+        // The logic can vary by sandBoxItem type.
+    }
+
+    public void promoteSelectedSandBoxItems(List<SandBoxItem> sandBoxItems) {
+        // TODO: This method should check to see if the list of items
+        // can be promoted and determine the promote destination.
+        // The logic can vary by sandBoxItem type.
     }
 }

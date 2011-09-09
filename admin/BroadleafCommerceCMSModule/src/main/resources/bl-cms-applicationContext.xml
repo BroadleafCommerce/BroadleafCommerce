@@ -25,6 +25,9 @@
 		</property>
 	</bean>
 
+    <bean id="blcContentFilter" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+	</bean>
+
 	<!--         TODO: Uncomment once cache is defined.
 	bean id="blCacheManager" class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
 		<property name="shared" value="true"/>

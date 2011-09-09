@@ -49,4 +49,5 @@ public interface PageDao {
 
     public List<PageTemplate> retrieveAllPageTemplates(String localeName);
 
+    public Page findPageByURI(SandBox productionSandbox, String uri);
 }

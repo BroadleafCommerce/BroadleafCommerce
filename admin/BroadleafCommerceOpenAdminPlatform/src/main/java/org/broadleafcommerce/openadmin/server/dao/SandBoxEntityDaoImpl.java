@@ -1,7 +1,6 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -39,8 +38,8 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 	 * @see org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao#retrieve(java.lang.Class, java.lang.Object)
 	 */
 	@Override
-	public SandBox retrieve(Object primaryKey) {
-		return sandBoxEntityManager.find(SandBox.class, primaryKey);
+	public SandBox retrieve(Long id) {
+		return sandBoxEntityManager.find(SandBox.class, id);
 	}
 	
 	public EntityManager getSandBoxEntityManager() {
@@ -50,18 +49,6 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 	public void setSandBoxEntityManager(EntityManager sandBoxEntityManager) {
 		this.sandBoxEntityManager = sandBoxEntityManager;
 	}
-
-    public SandBox readSandBoxByName(String name) {
-        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_NAME");
-        query.setParameter("name", name);
-        SandBox response = null;
-        try {
-            response = (SandBox) query.getSingleResult();
-        } catch (NoResultException e) {
-            //do nothing - there is no sandbox
-        }
-        return response;
-    }
 
     @Override
 	public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
@@ -81,5 +68,33 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
     		sandBoxItem = retrieveSandBoxItemByTemporaryId(sandBoxItem.getTemporaryId());
     	}
         sandBoxEntityManager.remove(sandBoxItem);
+    }
+
+
+    public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType) {
+        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE");
+        query.setParameter("site", site);
+        query.setParameter("sandboxType", sandboxType.getType());
+        SandBox response = null;
+        try {
+            response = (SandBox) query.getSingleResult();
+        } catch (NoResultException e) {
+            //do nothing - there is no sandbox
+        }
+        return response;
+    }
+
+    public SandBox retrieveNamedSandBox(Site site, SandBoxType sandBoxType, String sandboxName) {
+        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE_AND_NAME");
+        query.setParameter("site", site);
+        query.setParameter("sandboxType", sandBoxType.getType());
+        query.setParameter("sandboxName", sandboxName);
+        SandBox response = null;
+        try {
+            response = (SandBox) query.getSingleResult();
+        } catch (NoResultException e) {
+            //do nothing - there is no sandbox
+        }
+        return response;
     }
 }

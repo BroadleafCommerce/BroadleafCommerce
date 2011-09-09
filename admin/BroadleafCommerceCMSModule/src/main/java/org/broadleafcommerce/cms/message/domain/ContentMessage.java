@@ -10,13 +10,17 @@ public interface ContentMessage {
 
     public void setDescription(String description);
 
-    public Character getKeyEditableFlag();
+    public Boolean getKeyEditableFlag();
 
-    public void setKeyEditableFlag(Character keyEditableFlag);
+    public void setKeyEditableFlag(Boolean keyEditableFlag);
 
-    public Character getDeleted();
+    public Boolean getDeletedFlag();
 
-    public void setDeleted(Character deleted);
+    public void setDeletedFlag(Boolean deletedFlag);
+
+    public Boolean getArchivedFlag();
+
+    public void setArchivedFlag(Boolean archivedFlag);
 
     public void addContentValue(ContentMessageValue contentMessageValue);
 

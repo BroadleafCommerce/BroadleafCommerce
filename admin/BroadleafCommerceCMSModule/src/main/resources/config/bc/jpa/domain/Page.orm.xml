@@ -63,4 +63,29 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_PAGE_BY_URI" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               LEFT JOIN page.pageTemplate pageTemplate
+               WHERE
+                  page.fullUrl = :uri AND
+                  page.sandbox is null AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_BY_URI_AND_SANDBOX" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               LEFT JOIN page.pageTemplate pageTemplate
+               WHERE
+                  page.fullUrl = :uri AND
+                  page.sandbox = :sandbox AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
+		</query>
+	</named-query>
+
+
 </entity-mappings>

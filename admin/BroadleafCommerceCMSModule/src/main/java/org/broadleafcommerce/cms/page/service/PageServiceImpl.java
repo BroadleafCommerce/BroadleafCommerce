@@ -23,6 +23,7 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -242,6 +243,36 @@ public class PageServiceImpl implements PageService {
             localeName = "default";
         }
         return pageDao.retrieveAllPageTemplates(localeName);
+    }
+
+    /**
+     * Retrieve the page if one is available for the passed in uri.
+     */
+    @Override
+    public Page findPageByURI(SandBox currentSandbox, String uri) {
+        if (uri != null) {
+            // TODO: Optimize production page lookup
+            SandBox productionSandbox = null;
+            if (currentSandbox != null && currentSandbox.getSite() != null) {
+                productionSandbox = currentSandbox.getSite().getProductionSandbox();
+            }
+            Page productionPage = pageDao.findPageByURI(productionSandbox, uri);
+
+            if (currentSandbox != null && ! currentSandbox.getSandBoxType().equals(SandBoxType.PRODUCTION)) {
+                Page sandboxPage = pageDao.findPageByURI(currentSandbox, uri);
+                if (sandboxPage != null) {
+                    if (sandboxPage.getDeletedFlag()) {
+                        return null;
+                    } else {
+                        return sandboxPage;
+                    }
+                }
+
+            }
+            return productionPage;
+        } else {
+            return null;
+        }
     }
 
 }

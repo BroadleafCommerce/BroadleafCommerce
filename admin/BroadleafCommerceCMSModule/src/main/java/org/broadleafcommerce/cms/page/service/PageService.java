@@ -148,4 +148,10 @@ public interface PageService {
      */
     public List<PageTemplate> retrieveAllPageTemplates(String localeName);
 
+
+    /**
+     * Retrieve the page if one is available for the passed in uri.
+     */
+    public Page findPageByURI(SandBox currentSandbox, String uri);
+
 }

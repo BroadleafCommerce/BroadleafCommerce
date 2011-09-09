@@ -8,6 +8,7 @@ public class SandBoxInfo implements Serializable {
 	
 	protected String sandBox;
 	protected boolean commitImmediately = true;
+    protected Long siteId;
 	
 	public String getSandBox() {
 		return sandBox;
@@ -24,5 +25,13 @@ public class SandBoxInfo implements Serializable {
 	public void setCommitImmediately(boolean commitImmediately) {
 		this.commitImmediately = commitImmediately;
 	}
+
+    public Long getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
+    }
 	
 }

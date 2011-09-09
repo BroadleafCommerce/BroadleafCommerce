@@ -15,25 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.ConfigurationItem;
 import org.broadleafcommerce.presentation.ValidationConfiguration;
@@ -41,6 +25,10 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -97,6 +85,8 @@ public class AdminUserImpl implements AdminUser {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
+
+
     
     @Transient
     protected String unencodedPassword;
@@ -104,6 +94,11 @@ public class AdminUserImpl implements AdminUser {
     public String getUnencodedPassword() {
         return unencodedPassword;
     }
+
+    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
+    protected SandBox currentSandBox;
+
 
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
@@ -155,6 +150,14 @@ public class AdminUserImpl implements AdminUser {
 
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
+    }
+
+    public SandBox getCurrentSandbox() {
+        return currentSandBox;
+    }
+
+    public void setCurrentSandbox(SandBox currentSandBox) {
+        this.currentSandBox = currentSandBox;
     }
 
 }

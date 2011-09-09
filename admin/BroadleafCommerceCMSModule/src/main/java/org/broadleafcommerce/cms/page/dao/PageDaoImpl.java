@@ -28,6 +28,9 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.*;
 
 /**
@@ -157,6 +160,30 @@ public class PageDaoImpl implements PageDao {
         Query query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE");
         query.setParameter("localeName", localeName);
         return query.getResultList();
+    }
+
+    @Override
+    public Page findPageByURI(SandBox sandBox, String uri) {
+        String[] pathElements = uri.split("//");
+        String pageName = pathElements[pathElements.length - 1];
+
+        Query query = null;
+
+        if (sandBox == null) {
+            query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
+            query.setParameter("uri", uri);
+        } else {
+            query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_SANDBOX");
+            query.setParameter("sandbox", sandBox);
+            query.setParameter("uri", uri);
+        }
+
+        List<Page> results = query.getResultList();
+        if (results != null && results.size() > 0) {
+            return results.get(0);
+        } else {
+            return null;
+        }
     }
 
 }

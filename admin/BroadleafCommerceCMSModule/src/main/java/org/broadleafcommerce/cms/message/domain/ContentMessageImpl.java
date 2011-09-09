@@ -42,10 +42,13 @@ public class ContentMessageImpl implements ContentMessage {
     protected String description;
 
     @Column(name = "KEY_EDITABLE_FLAG")
-    protected Character keyEditableFlag;
+    protected Boolean keyEditableFlag;
 
     @Column(name = "DELETED_FLAG")
-    protected Character deleted;
+    protected Boolean deletedFlag;
+
+    @Column(name = "ARCHIVED_FLAG")
+    protected Boolean archivedFlag;
 
     @OneToMany(mappedBy = "contentMessage", targetEntity = ContentMessageValueImpl.class, cascade = {CascadeType.ALL})
     @MapKey(name = "languageCode")
@@ -64,23 +67,33 @@ public class ContentMessageImpl implements ContentMessage {
     }
 
     @Override
-    public Character getKeyEditableFlag() {
+    public Boolean getKeyEditableFlag() {
         return keyEditableFlag;
     }
 
     @Override
-    public void setKeyEditableFlag(Character keyEditableFlag) {
+    public void setKeyEditableFlag(Boolean keyEditableFlag) {
         this.keyEditableFlag = keyEditableFlag;
     }
 
     @Override
-    public Character getDeleted() {
-        return deleted;
+    public Boolean getDeletedFlag() {
+        return deletedFlag;
     }
 
     @Override
-    public void setDeleted(Character deleted) {
-        this.deleted = deleted;
+    public void setDeletedFlag(Boolean deleted) {
+        this.deletedFlag = deleted;
+    }
+
+    @Override
+    public Boolean getArchivedFlag() {
+        return archivedFlag;
+    }
+
+    @Override
+    public void setArchivedFlag(Boolean archivedFlag) {
+        this.archivedFlag = archivedFlag;
     }
 
     @Override

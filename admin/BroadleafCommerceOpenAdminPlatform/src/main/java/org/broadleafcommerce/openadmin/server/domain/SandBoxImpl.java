@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -9,7 +10,6 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -42,6 +42,11 @@ public class SandBoxImpl implements SandBox {
   //  @BatchSize(size = 50)
     @Transient
     protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
+
+
+    @Column(name = "SANDBOX_TYPE")
+    @AdminPresentation(friendlyName="SandBox Type", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxType")
+    protected String sandboxType;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getId()
@@ -91,6 +96,19 @@ public class SandBoxImpl implements SandBox {
 		this.sandBoxItems = sandBoxItems;
 	}
 
+
+    @Override
+    public SandBoxType getSandBoxType() {
+        return SandBoxType.getInstance(sandboxType);
+    }
+
+    @Override
+    public void setSandBoxType(final SandBoxType sandboxType) {
+    	if (sandboxType != null) {
+    		this.sandboxType = sandboxType.getType();
+    	}
+    }
+
 	public Long getAuthor() {
 		return author;
 	}
@@ -98,16 +116,6 @@ public class SandBoxImpl implements SandBox {
 	public void setAuthor(Long author) {
 		this.author = author;
 	}
-
-    @Override
-    public Set<AdminRole> getAllowedRoles() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void setAllowedRoles(Set<AdminRole> allowedRoles) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     public Site getSite() {
