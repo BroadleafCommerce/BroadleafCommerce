@@ -154,4 +154,12 @@ public @interface AdminPresentation {
      * @return the required override enumeration
      */
     RequiredOverride requiredOverride() default RequiredOverride.IGNORED;
+
+    /**
+     * Specify if this field should be excluded from inclusion in the
+     * admin presentation layer
+     *
+     * @return whether or not the field should be excluded
+     */
+    boolean excluded() default false;
 }

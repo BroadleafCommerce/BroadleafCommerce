@@ -49,7 +49,7 @@ public class EffectsManager {
         return operations.toArray(new Operation[]{});
     }
 
-	public BufferedImage renderEffect(String effectName, double factor, UnmarshalledParameter[] parameters, BufferedImage src) throws Exception {
+	public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src) throws Exception {
 		/*
 		 * retrieve the injected filter, instantiate the filter instance using reflection and execute the operation
 		 */

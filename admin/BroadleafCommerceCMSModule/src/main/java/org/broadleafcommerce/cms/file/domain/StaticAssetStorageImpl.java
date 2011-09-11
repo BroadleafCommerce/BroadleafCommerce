@@ -22,7 +22,7 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Column(name = "STATIC_ASSET_STORAGE_ID")
     protected Long id;
 
-    @Column(name ="FULL_URL")
+    @Column(name ="FULL_URL", unique = true)
     protected String fullUrl;
 
     @Column (name = "FILE_DATA")

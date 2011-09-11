@@ -7,6 +7,7 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.web.bind.ServletRequestParameterPropertyValues;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,7 +32,6 @@ public class UploadController extends SimpleFormController {
     protected Long maximumFileSizeInBytes = 5L * 1000L * 1000L; // 5mb max by default
 
     @Override
-
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, String> model = new HashMap<String, String>();
         String callbackName = null;
@@ -64,7 +64,7 @@ public class UploadController extends SimpleFormController {
                 if (propertyValue.getValue() instanceof MultipartFile) {
                     MultipartFile file = (MultipartFile) propertyValue.getValue();
                     if (file.getSize() > maximumFileSizeInBytes) {
-                        throw new Exception("Uploaded file is larger than the currently configured limit of: " +maximumFileSizeInBytes+ " bytes. Cannot process the uploaded file entitled: " + file.getOriginalFilename() + ".");
+                        throw new MaxUploadSizeExceededException(maximumFileSizeInBytes);
                     }
                     Map<String, MultipartFile> fileMap = UploadedFile.getUpload();
                     fileMap.put(propertyValue.getName(), (MultipartFile) propertyValue.getValue());
@@ -90,6 +90,13 @@ public class UploadController extends SimpleFormController {
 
             model.put("callbackName", callbackName);
             model.put("result", buildJSON(result));
+
+            return new ModelAndView("uploadCompletedView", model);
+        } catch (MaxUploadSizeExceededException e) {
+            if (callbackName != null) {
+                model.put("callbackName", callbackName);
+                model.put("error", buildErrorJSON(e.getMessage()));
+            }
 
             return new ModelAndView("uploadCompletedView", model);
         } catch (Exception e) {

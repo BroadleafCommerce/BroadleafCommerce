@@ -19,6 +19,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDataSourceFactory;
@@ -88,6 +90,21 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 				}
 			}
         });
+        getDisplay().getListLeafDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+			public void onSelectionChanged(SelectionEvent event) {
+				if (event.getState()) {
+                    String type = event.getSelectedRecord().getAttributeAsStringArray("_type")[0];
+                    if (EntityImplementations.IMAGESTATICASSETIMPL.equals(type)) {
+                        String key = getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getPrimaryKeyValue(event.getSelectedRecord());
+                        getDisplay().getPreviewImg().setAppImgDir("../cms.preview.service/staticAsset/");
+                        getDisplay().getPreviewImg().setSrc(key + ".artifact?filterType=RESIZE&RESIZE-width-amount=60&RESIZE-height-amount=60&RESIZE-high-quality=true&RESIZE-maintain-aspect-ratio=true&RESIZE-reduce-only=true");
+                        getDisplay().getPreviewContainer().setVisible(true);
+                    } else {
+                        getDisplay().getPreviewContainer().setVisible(false);
+                    }
+				}
+			}
+		});
 	}
 
     public void setup() {

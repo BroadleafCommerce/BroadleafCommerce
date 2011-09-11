@@ -6,13 +6,10 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                         http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-2.5.xsd
                         http://www.springframework.org/schema/aop      http://www.springframework.org/schema/aop/spring-aop.xsd">
-    
+
     <aop:config/>
     
-    <bean id="multipartResolver" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadMultipartResolver">
-        <!-- one of the properties available; the maximum file size in bytes -->
-        <property name="maxUploadSize" value="100000"/>
-    </bean>
+    <bean id="multipartResolver" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadMultipartResolver"/>
 
     <bean id="uploadController" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadController">
         <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
@@ -46,5 +43,7 @@
             <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/>
         </property>
     </bean>
+
+
 	
 </beans>

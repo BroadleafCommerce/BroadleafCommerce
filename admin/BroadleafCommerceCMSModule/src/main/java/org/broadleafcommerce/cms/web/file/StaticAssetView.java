@@ -5,7 +5,9 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStreamWriter;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -20,21 +22,37 @@ public class StaticAssetView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<html><head><script type=\"text/javascript\">");
-        sb.append("window.top.");
-        sb.append(model.get("callbackName"));
-        sb.append("(eval('(");
-        if (model.get("error") != null) {
-            sb.append(model.get("error"));
-        } else {
-            sb.append(model.get("result"));
+        BufferedInputStream bis = null;
+        try {
+            String cacheFilePath = (String) model.get("cacheFilePath");
+            String mimeType = (String) model.get("mimeType");
+            response.setContentType(mimeType);
+			response.setHeader("Cache-Control","no-cache");
+	        response.setHeader("Pragma","no-cache");
+	        response.setDateHeader ("Expires", 0);
+			bis = new BufferedInputStream(new FileInputStream(cacheFilePath));
+            OutputStream os = response.getOutputStream();
+            boolean eof = false;
+            while (!eof) {
+                int temp = bis.read();
+                if (temp < 0) {
+                    eof = true;
+                } else {
+                    os.write(temp);
+                }
+            }
+            os.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+            throw e;
+		} finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (Throwable e) {
+                    //do nothing
+                }
+            }
         }
-        sb.append(")'));");
-        sb.append("</script></head><body>Upload Completed</body></html>");
-
-        OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
-        writer.write(sb.toString());
-        writer.flush();
     }
 }

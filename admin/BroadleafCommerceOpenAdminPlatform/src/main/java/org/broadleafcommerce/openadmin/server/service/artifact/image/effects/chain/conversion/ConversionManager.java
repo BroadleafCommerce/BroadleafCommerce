@@ -20,7 +20,7 @@ public class ConversionManager {
         converters.put(ParameterTypeEnum.RECTANGLE.toString(), new RectangleParameterConverter());
     }
 
-	public Parameter convertParameter(String value, String type, double factor, boolean applyFactor) throws ConverterNotFoundException, ConversionException {
+	public Parameter convertParameter(String value, String type, Double factor, boolean applyFactor) throws ConverterNotFoundException, ConversionException {
 		ParameterConverter converter = converters.get(type);
 		if (converter == null) throw new ConverterNotFoundException("Could not find a parameter converter with the type name: " + type);
 		return converter.convert(value, factor, applyFactor);

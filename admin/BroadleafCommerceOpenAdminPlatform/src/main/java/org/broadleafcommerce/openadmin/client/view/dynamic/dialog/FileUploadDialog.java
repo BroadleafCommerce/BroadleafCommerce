@@ -64,6 +64,8 @@ public class FileUploadDialog extends Window {
 	private DynamicForm dynamicForm;
 	private NewItemCreatedEventHandler handler;
     private Element synthesizedFrame;
+    private IButton saveButton;
+    private IButton cancelButton;
 
 	public FileUploadDialog() {
 		this.setIsModal(true);
@@ -88,14 +90,14 @@ public class FileUploadDialog extends Window {
         stack.addMember(dynamicForm);
         addItem(stack);
 
-        final IButton cancelButton = new IButton("Cancel");
+        cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	hide();
             }
         });
 
-        final IButton saveButton = new IButton("Upload");
+        saveButton = new IButton("Upload");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {  
             	if (dynamicForm.validate()) {
@@ -218,6 +220,8 @@ public class FileUploadDialog extends Window {
         dynamicForm.editNewRecord(initialValues);
         centerInPage();
 		show();
+        saveButton.enable();
+        cancelButton.enable();
 	}
 	
 	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {

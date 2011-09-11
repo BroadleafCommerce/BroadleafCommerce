@@ -10,7 +10,10 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -63,41 +66,49 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
 
     @Override
     public InputStream convert(InputStream artifactStream, Operation[] operations, String mimeType) throws Exception {
-        Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(artifactStream));
-        ImageReader reader = iter.next();
-        String formatName = reader.getFormatName();
+        if (operations != null && operations.length > 0) {
+            Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(artifactStream));
+            ImageReader reader = iter.next();
+            String formatName = reader.getFormatName();
+            ((ByteArrayInputStream) artifactStream).reset();
+            BufferedImage image = ImageIO.read(ImageIO.createImageInputStream(artifactStream));
 
-        BufferedImage image = ImageIO.read(ImageIO.createImageInputStream(artifactStream));
+            //before
+            if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
+                image = stripAlpha(image);
+            }
 
-        //before
-        if (formatName.equals("jpeg") || formatName.equals("jpg")) {
-            image = stripAlpha(image);
+            for (Operation operation : operations){
+                image = effectsManager.renderEffect(operation.getName(), operation.getFactor(), operation.getParameters(), image);
+            }
+
+            //and after - some applications have a problem reading jpeg images with an alpha channel associated
+            if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
+                image = stripAlpha(image);
+            }
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(byteArrayOutputStream);
+            Iterator<ImageWriter> writerIter = ImageIO.getImageWritersByFormatName(formatName);
+            ImageWriter writer = (ImageWriter) writerIter.next();
+            ImageWriteParam iwp = writer.getDefaultWriteParam();
+
+            if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
+                iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                iwp.setCompressionQuality(compressionQuality);
+            }
+            
+            MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bos);
+            writer.setOutput(output);
+
+            IIOImage iomage = new IIOImage(image, null,null);
+            writer.write(null, iomage, iwp);
+            bos.flush();
+
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        } else {
+            return artifactStream;
         }
-
-        for (Operation operation : operations){
-            image = effectsManager.renderEffect(operation.getName(), operation.getFactor(), operation.getParameters(), image);
-        }
-
-        //and after - some applications have a problem reading jpeg images with an alpha channel associated
-        if (formatName.equals("jpeg") || formatName.equals("jpg")) {
-            image = stripAlpha(image);
-        }
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        BufferedOutputStream bos = new BufferedOutputStream(byteArrayOutputStream);
-        Iterator<ImageWriter> writerIter = ImageIO.getImageWritersByFormatName(formatName);
-        ImageWriter writer = (ImageWriter) writerIter.next();
-        ImageWriteParam iwp = writer.getDefaultWriteParam();
-        iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        iwp.setCompressionQuality(compressionQuality);
-        MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bos);
-        writer.setOutput(output);
-
-        IIOImage iomage = new IIOImage(image, null,null);
-        writer.write(null, iomage, iwp);
-        bos.flush();
-
-        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 
     protected BufferedImage stripAlpha(BufferedImage image){

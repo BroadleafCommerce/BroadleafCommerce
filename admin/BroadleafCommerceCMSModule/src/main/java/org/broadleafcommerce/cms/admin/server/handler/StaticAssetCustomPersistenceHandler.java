@@ -1,6 +1,9 @@
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import org.broadleafcommerce.cms.file.domain.*;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
@@ -26,6 +29,11 @@ import java.util.Map;
  * Created by jfischer
  */
 public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    public StaticAssetCustomPersistenceHandler() {
+        MimeUtil.registerMimeDetector(ExtensionMimeDetector.class.getName());
+        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
+    }
 
     @Resource(name="blStaticAssetService")
 	protected StaticAssetService staticAssetService;
@@ -69,11 +77,17 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
 			adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-
             adminInstance.setFileSize(upload.getSize());
-            Collection mimeTypes = MimeUtil.getMimeTypes(upload.getInputStream());
+            Collection mimeTypes = MimeUtil.getMimeTypes(upload.getOriginalFilename());
             if (!mimeTypes.isEmpty()) {
-                adminInstance.setMimeType((String) mimeTypes.iterator().next());
+                MimeType mimeType = (MimeType) mimeTypes.iterator().next();
+                adminInstance.setMimeType(mimeType.toString());
+            } else {
+                mimeTypes = MimeUtil.getMimeTypes(upload.getInputStream());
+                if (!mimeTypes.isEmpty()) {
+                    MimeType mimeType = (MimeType) mimeTypes.iterator().next();
+                    adminInstance.setMimeType(mimeType.toString());
+                }
             }
             adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), null);
 

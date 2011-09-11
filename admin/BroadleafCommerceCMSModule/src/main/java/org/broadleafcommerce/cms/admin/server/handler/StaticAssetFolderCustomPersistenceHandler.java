@@ -1,7 +1,7 @@
 package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
-import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -44,7 +44,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
             String[] keys = mergedProperties.keySet().toArray(new String[]{});
 			for (String key : keys) {
                 FieldMetadata temp = mergedProperties.get(key);
-                if (temp.getInheritedFromType().equals(StaticAssetImpl.class.getName())) {
+                if (!temp.getInheritedFromType().equals(StaticAssetFolderImpl.class.getName())) {
                     mergedProperties.remove(key);
                 }
             }

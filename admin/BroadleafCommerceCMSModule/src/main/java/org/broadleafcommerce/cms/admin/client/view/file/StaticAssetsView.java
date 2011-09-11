@@ -1,14 +1,20 @@
 package org.broadleafcommerce.cms.admin.client.view.file;
 
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.ImageStyle;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.*;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
 /**
  * Created by jfischer
@@ -18,7 +24,8 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
     protected DynamicEntityTreeView treeDisplay;
     protected DynamicFormView treeDynamicFormDisplay;
     protected SubItemView listDisplay;
-    //protected DynamicFormView listDynamicFormDisplay;
+    protected Img previewImg;
+    protected Canvas previewContainer;
 
     public StaticAssetsView() {
 		setHeight100();
@@ -46,16 +53,28 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		listGridLayout.setHeight100();
 		listGridLayout.setWidth("60%");
 
-        listDisplay = new SubItemView(BLCMain.getMessageManager().getString("pagesTitle"), false, true);
-
-		//listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), additionalDataSources[0]);
-        //listDisplay.setHeight("60%");
-        //listDisplay.setShowResizeBar(true);
+        listDisplay = new SubItemView(BLCMain.getMessageManager().getString("pagesTitle"), false, true, true);
         listDisplay.getToolbar().getMember(6).destroy();
-        //listDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), additionalDataSources[0]);
-        //listDynamicFormDisplay.setHeight("40%");
+        HLayout previewSection = new HLayout();
+        Canvas spacer = new Canvas();
+        spacer.setWidth(20);
+        spacer.setHeight(60);
+        previewSection.addMember(spacer);
+        previewContainer = new Canvas();
+        previewContainer.setWidth(60);
+        previewContainer.setHeight(60);
+        previewContainer.setBorder("1px solid black");
+        previewSection.addMember(previewContainer);
+        previewImg = new Img();
+        previewImg.setImageType(ImageStyle.CENTER);
+        //myImage.setAppImgDir("pieces/48/");
+        //myImage.setLeft(120);
+        //myImage.setTop(20);
+        previewContainer.addChild(previewImg);
+        previewContainer.setVisible(false);
+        ((FormOnlyView) listDisplay.getFormOnlyDisplay()).addMember(previewSection);
+
         listGridLayout.addMember(listDisplay);
-        //listGridLayout.addMember(listDynamicFormDisplay);
 
         addMember(treeGridLayout);
         addMember(listGridLayout);
@@ -76,17 +95,18 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 	}
 
     @Override
+    public Img getPreviewImg() {
+        return previewImg;
+    }
+
+    @Override
+    public Canvas getPreviewContainer() {
+        return previewContainer;
+    }
+
+    @Override
     public SubItemDisplay getListLeafDisplay() {
 		return listDisplay;
 	}
 
-    /*@Override
-    public DynamicEntityListDisplay getListLeafDisplay() {
-		return listDisplay;
-	}
-
-    @Override
-    public DynamicFormDisplay getDynamicFormLeafDisplay() {
-		return listDynamicFormDisplay;
-	}*/
 }

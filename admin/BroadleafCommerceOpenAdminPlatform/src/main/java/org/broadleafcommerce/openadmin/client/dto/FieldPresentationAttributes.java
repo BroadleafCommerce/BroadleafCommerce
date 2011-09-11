@@ -46,6 +46,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private Boolean readOnly;
 	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>();
     private Boolean requiredOverride;
+    private Boolean excluded;
 	
 	public String getName() {
 		return name;
@@ -174,5 +175,13 @@ public class FieldPresentationAttributes implements Serializable {
 
     public void setGroupCollapsed(Boolean groupCollapsed) {
         this.groupCollapsed = groupCollapsed;
+    }
+
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(Boolean excluded) {
+        this.excluded = excluded;
     }
 }

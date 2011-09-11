@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/aop      http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:component-scan base-package="org.broadleafcommerce.cms"/>
+
+    <aop:config/>
+
+    <bean id="staticAssetView" class="org.broadleafcommerce.cms.web.file.StaticAssetView"/>
+
+    <bean id="blImageViewController" class="org.broadleafcommerce.cms.web.file.StaticAssetViewController"/>
+
+    <bean id="uploadUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="1"/>
+        <property name="alwaysUseFullPath" value="true"></property>
+        <property name="mappings">
+            <map>
+                <entry key="/**/cms.upload.service" value-ref="uploadController"/>
+                <entry key="/**/*.artifact" value-ref="blImageViewController"/>
+            </map>
+        </property>
+    </bean>
+	
+</beans>

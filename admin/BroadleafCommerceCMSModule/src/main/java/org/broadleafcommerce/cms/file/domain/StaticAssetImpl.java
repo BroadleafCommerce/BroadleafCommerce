@@ -45,7 +45,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @Embedded
     protected Auditable auditable = new Auditable();
     
-    @Column(name ="FULL_URL")
+    @Column(name ="FULL_URL", unique = true)
     @AdminPresentation(friendlyName="Full URL", order=2, group = "Asset Details", readOnly = true)
     protected String fullUrl;
 

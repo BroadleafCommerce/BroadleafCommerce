@@ -1,5 +1,7 @@
 package org.broadleafcommerce.cms.admin.client.view.file;
 
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Img;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 
@@ -9,7 +11,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 public interface StaticAssetsDisplay extends DynamicEditDisplay {
 
     public SubItemDisplay getListLeafDisplay();
-
-    //public DynamicFormDisplay getDynamicFormLeafDisplay();
+    public Img getPreviewImg();
+    public Canvas getPreviewContainer();
 
 }

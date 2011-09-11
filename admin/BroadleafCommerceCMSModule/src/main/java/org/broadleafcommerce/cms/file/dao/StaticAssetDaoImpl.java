@@ -51,7 +51,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAssetFolder readStaticAssetById(Long id) {
-        return (StaticAssetFolder) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.file.domain.StaticAssetFolder"), id);
+        return (StaticAssetFolder) em.find(entityConfiguration.lookupEntityClass(StaticAssetFolder.class.getName()), id);
     }
 
     @Override

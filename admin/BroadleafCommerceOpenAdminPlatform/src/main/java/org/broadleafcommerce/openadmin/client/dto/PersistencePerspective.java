@@ -98,19 +98,57 @@ public class PersistencePerspective implements Serializable {
 		this.populateToOneFields = populateToOneFields;
 	}
 
+    /**
+     * Retrieve the list of fields to exclude from the admin presentation.
+     * Implementations should use the excluded property of the AdminPresentation
+     * annotation, or use an AdminPresentationOverride if re-enabling a
+     * Broadleaf field is desired. If multiple datasources point to the same
+     * entity, but different exclusion behavior is required, a custom persistence
+     * handler may be employed with different inspect method implementations to
+     * account for the variations.
+     *
+     * @return list of fields to exclude from the admin
+     */
+    @Deprecated
 	public String[] getExcludeFields() {
 		return excludeFields;
 	}
 
+    /**
+     * Set the list of fields to exclude from the admin presentation.
+     * Implementations should use the excluded property of the AdminPresentation
+     * annotation, or use an AdminPresentationOverride if re-enabling a
+     * Broadleaf field is desired. If multiple datasources point to the same
+     * entity, but different exclusion behavior is required, a custom persistence
+     * handler may be employed with different inspect method implementations to
+     * account for the variations.
+     *
+     * @param excludeManyToOneFields
+     */
+    @Deprecated
 	public void setExcludeFields(String[] excludeManyToOneFields) {
 		this.excludeFields = excludeManyToOneFields;
 		Arrays.sort(this.excludeFields);
 	}
 
+    /**
+     * Get the list of fields to include in the admin presentation.
+     * Implementations should use excludeFields instead.
+     *
+     * @return list of fields to include in the admin
+     */
+    @Deprecated
 	public String[] getIncludeFields() {
 		return includeFields;
 	}
 
+    /**
+     * Set the list of fields to include in the admin presentation.
+     * Implementations should use excludeFields instead.
+     *
+     * @param includeManyToOneFields
+     */
+    @Deprecated
 	public void setIncludeFields(String[] includeManyToOneFields) {
 		this.includeFields = includeManyToOneFields;
 		Arrays.sort(this.includeFields);

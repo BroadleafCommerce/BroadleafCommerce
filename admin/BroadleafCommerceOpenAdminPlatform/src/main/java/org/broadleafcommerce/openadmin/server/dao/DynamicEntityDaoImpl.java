@@ -202,6 +202,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setColumnWidth(annot.columnWidth());
 				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
 				attr.setReadOnly(annot.readOnly());
+                attr.setExcluded(annot.excluded());
                 attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
 				if (annot.validationConfigurations().length != 0) {
 					ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -459,6 +460,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setColumnWidth(annot.columnWidth());
 				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
 				attr.setReadOnly(annot.readOnly());
+                attr.setExcluded(annot.excluded());
                 attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
 				if (annot.validationConfigurations().length != 0) {
 					ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -666,9 +668,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					presentationAttributes.containsKey(propertyName)
 					//(type.isEntityType() && !isLazy)
 			) {
-				Boolean includeField = testFieldInclusion(includeFields, excludeFields, prefix, propertyName);
+                FieldPresentationAttributes presentationAttribute = presentationAttributes.get(propertyName);
+				Boolean includeField = testFieldInclusion(includeFields, excludeFields, prefix, propertyName, presentationAttribute);
 
-				FieldPresentationAttributes presentationAttribute = presentationAttributes.get(propertyName);
 				SupportedFieldType explicitType = null;
 				if (presentationAttribute != null) {
 					explicitType = presentationAttribute.getExplicitFieldType();
@@ -784,9 +786,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		//return type not supported - just skip this property
 	}
 
-	protected Boolean testFieldInclusion(String[] includeFields, String[] excludeFields, String prefix, String propertyName) {
+	protected Boolean testFieldInclusion(String[] includeFields, String[] excludeFields, String prefix, String propertyName, FieldPresentationAttributes presentationAttribute) {
 		//Test if this property is on the excluded or included list
-		Boolean includeField = checkPropertyForInclusion(includeFields, excludeFields, prefix + propertyName);
+		Boolean includeField = checkPropertyForInclusion(includeFields, excludeFields, prefix + propertyName, presentationAttribute);
 		if (includeField) {
 			//check to make sure we're not locked into an infinite recursion
 			if (!StringUtils.isEmpty(prefix) && prefix.contains(propertyName)) {
@@ -918,7 +920,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		fields.putAll(convertedFields);
 	}
 
-	public Boolean checkPropertyForInclusion(String[] includeFields, String[] excludeFields, String propertyName) {
+	public Boolean checkPropertyForInclusion(String[] includeFields, String[] excludeFields, String propertyName, FieldPresentationAttributes presentationAttribute) {
+        if (presentationAttribute != null && presentationAttribute.getExcluded()) {
+            return false;
+        }
 		if (!ArrayUtils.isEmpty(includeFields)) {
 			Boolean includeManyToOneField = Arrays.binarySearch(includeFields, propertyName) >= 0;
 			/*

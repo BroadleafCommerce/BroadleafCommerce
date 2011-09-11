@@ -31,7 +31,7 @@ public class AuditableListener {
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = entity.getClass().getDeclaredField("auditable");
+            Field field = getSingleField(entity.getClass(), "auditable");
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
             	Object auditable = field.get(entity);
@@ -50,7 +50,7 @@ public class AuditableListener {
     @PreUpdate
     public void setAuditUpdatedBy(Object entity) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = entity.getClass().getDeclaredField("auditable");
+            Field field = getSingleField(entity.getClass(), "auditable");
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
             	Object auditable = field.get(entity);
@@ -85,4 +85,16 @@ public class AuditableListener {
     	field.set(entity, 0L);
     }
 
+    private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException nsf) {
+            // Try superclass
+            if (clazz.getSuperclass() != null) {
+                return getSingleField(clazz.getSuperclass(), fieldName);
+            }
+
+            return null;
+        }
+    }
 }
