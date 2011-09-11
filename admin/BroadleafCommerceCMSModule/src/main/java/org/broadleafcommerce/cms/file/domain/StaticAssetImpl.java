@@ -17,6 +17,8 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -35,10 +37,14 @@ import java.util.Map;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(value = { AuditableListener.class })
 @Table(name = "BLC_STATIC_ASSET")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsset {
 
+    @Embedded
+    protected Auditable auditable = new Auditable();
+    
     @Column(name ="FULL_URL")
     @AdminPresentation(friendlyName="Full URL", order=2, group = "Asset Details", readOnly = true)
     protected String fullUrl;
@@ -46,6 +52,10 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @Column(name = "FILE_SIZE")
     @AdminPresentation(friendlyName="File Size (Bytes)", order=3, group = "Asset Details", readOnly = true)
     protected Long fileSize;
+
+    @Column(name = "MIME_TYPE")
+    @AdminPresentation(friendlyName="Mime Type", order=4, group = "Asset Details", readOnly = true)
+    protected String mimeType;
 
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
     @JoinColumn(name = "PARENT_FOLDER_ID")
@@ -131,6 +141,22 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         this.sandbox = sandbox;
     }
 
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
+
     @Override
     public StaticAsset cloneEntity() {
         StaticAssetImpl asset = new StaticAssetImpl();
@@ -141,6 +167,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         asset.deletedFlag = deletedFlag;
         asset.fullUrl = fullUrl;
         asset.fileSize = fileSize;
+        asset.mimeType = mimeType;
         asset.sandbox = sandbox;
         asset.originalAssetId = originalAssetId;
 

@@ -25,7 +25,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
  */
 public class AppServices {
 
-    public static final UploadServiceAsync UPLOAD = GWT.create(UploadService.class);
+    public static final UploadProgressServiceAsync UPLOAD = GWT.create(UploadProgressService.class);
     public static final AdminSecurityServiceAsync SECURITY = GWT.create(AdminSecurityService.class);
     public static final DynamicEntityServiceAsync DYNAMIC_ENTITY = GWT.create(DynamicEntityService.class);
     static {

@@ -97,7 +97,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
                 leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
-				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "fullUrl", "fileSize"}, new Boolean[]{true, false, false});
+				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{true, false, false, false});
             }
         }));
 	}

@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
-import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.springframework.security.access.annotation.Secured;
 
 /**
@@ -25,7 +24,7 @@ import org.springframework.security.access.annotation.Secured;
  * @author jfischer
  *
  */
-public interface UploadService extends RemoteService {
+public interface UploadProgressService extends RemoteService {
 
     @Secured("PERMISSION_DEFAULT")
 	public Double getPercentUploadComplete(String callbackName) throws ServiceException, ApplicationSecurityException;
