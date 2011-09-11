@@ -87,7 +87,7 @@ public class GaussianBlur extends BaseFilter {
 
     @Override
     public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.GAUSSIANBLUR.toString();
+        String key = FilterTypeEnum.GAUSSIANBLUR.toString().toLowerCase();
         if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
             Operation operation = new Operation();
             operation.setName(key);

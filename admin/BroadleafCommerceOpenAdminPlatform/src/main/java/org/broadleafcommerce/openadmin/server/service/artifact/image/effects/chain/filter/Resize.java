@@ -38,7 +38,7 @@ public class Resize extends BaseFilter {
 
     @Override
     public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.RESIZE.toString();
+        String key = FilterTypeEnum.RESIZE.toString().toLowerCase();
         if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
             Operation operation = new Operation();
             operation.setName(key);

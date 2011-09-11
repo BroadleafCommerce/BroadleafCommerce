@@ -29,7 +29,7 @@ public class Rotate extends BaseFilter {
 
     @Override
     public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.ROTATE.toString();
+        String key = FilterTypeEnum.ROTATE.toString().toLowerCase();
         if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
             Operation operation = new Operation();
             operation.setName(key);

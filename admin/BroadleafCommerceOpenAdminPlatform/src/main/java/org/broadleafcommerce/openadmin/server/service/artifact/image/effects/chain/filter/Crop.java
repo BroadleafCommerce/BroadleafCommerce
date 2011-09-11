@@ -31,7 +31,7 @@ public class Crop extends BaseFilter {
 
     @Override
     public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.CROP.toString();
+        String key = FilterTypeEnum.CROP.toString().toLowerCase();
         if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
             Operation operation = new Operation();
             operation.setName(key);

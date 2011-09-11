@@ -97,7 +97,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                     if (EntityImplementations.IMAGESTATICASSETIMPL.equals(type)) {
                         String key = getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getPrimaryKeyValue(event.getSelectedRecord());
                         getDisplay().getPreviewImg().setAppImgDir("../cms.preview.service/staticAsset/");
-                        getDisplay().getPreviewImg().setSrc(key + ".artifact?filterType=RESIZE&RESIZE-width-amount=60&RESIZE-height-amount=60&RESIZE-high-quality=true&RESIZE-maintain-aspect-ratio=true&RESIZE-reduce-only=true");
+                        getDisplay().getPreviewImg().setSrc(key + ".artifact?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
                         getDisplay().getPreviewContainer().setVisible(true);
                     } else {
                         getDisplay().getPreviewContainer().setVisible(false);

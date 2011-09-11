@@ -32,7 +32,7 @@ public class AlterRGB extends BaseFilter {
 
     @Override
     public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.ALTERRGB.toString();
+        String key = FilterTypeEnum.ALTERRGB.toString().toLowerCase();
         if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
             Operation operation = new Operation();
             operation.setName(key);

@@ -51,7 +51,7 @@ public class AutoLevelsRGB extends BaseFilter {
     
     @Override
     public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.AUTOLEVELSRGB.toString();
+        String key = FilterTypeEnum.AUTOLEVELSRGB.toString().toLowerCase();
         if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
             Operation operation = new Operation();
             operation.setName(key);
