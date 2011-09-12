@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.page.domain;
 import org.broadleafcommerce.cms.field.domain.FieldDataImpl;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.OrderBy;
@@ -46,12 +47,14 @@ public class PageTemplateImpl implements PageTemplate {
     protected Long id;
 
     @Column (name = "TEMPLATE_NAME")
+    @AdminPresentation(friendlyName = "Template Name", hidden = true, readOnly = true)
     protected String templateName;
 
     @Column (name = "TEMPLATE_DESCRIPTION")
     protected String templateDescription;
 
     @Column (name = "TEMPLATE_PATH")
+    @AdminPresentation(friendlyName = "Template Path", hidden = true,readOnly = true)
     protected String templatePath;
 
     @ManyToOne(targetEntity = LocaleImpl.class)

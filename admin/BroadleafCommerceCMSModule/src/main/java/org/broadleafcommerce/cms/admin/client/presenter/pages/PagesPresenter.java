@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.types.Overflow;
@@ -159,6 +160,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 if (event.isLeftButtonDown()) { 
                     DSRequest requestProperties = new DSRequest();
                     requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+
+                    GWT.log((String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath"));
                     
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
@@ -287,6 +290,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                             @Override
                             public void execute(FormItem formItem) {
                                 if (currentPageRecord != null) {
+                                    destroyTemplateForm();
                                     loadTemplateForm(currentPageRecord);
                                 }
                             }

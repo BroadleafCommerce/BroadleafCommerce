@@ -47,7 +47,9 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
             persistencePerspective.setPopulateToOneFields(true);
             persistencePerspective.setExcludeFields(new String[]{
                 "site",
-                "pageTemplate",
+                "pageTemplate.id",
+                "pageTemplate.templateDescription",
+                "pageTemplate.locale",
                 "sandbox",
                 "auditable"
             });
