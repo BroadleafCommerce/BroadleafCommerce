@@ -252,7 +252,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-            if (handler.canHandleAdd(persistencePackage)) {
+            if (handler.canHandleUpdate(persistencePackage)) {
                 Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
                 return response;
             }

@@ -160,15 +160,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     DSRequest requestProperties = new DSRequest();
                     requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
                     
-                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
-                    DynamicForm form = legacyForm.getForm();
-                    for (FormItem formItem : form.getFields()) {
-                    	if (formItem instanceof RichTextCanvasItem) {
-                    		form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
-                    	}
-                    	
-                    }
-                    
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -178,7 +169,12 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 								}
 							} catch (Exception e) {
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
-                                DynamicForm form = legacyForm.getForm();
+                                final DynamicForm form = legacyForm.getForm();
+                                for (FormItem formItem : form.getFields()) {
+                                    if (formItem instanceof RichTextCanvasItem) {
+                                        form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
+                                    }
+                                }
                                 PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
                                 Record selectedRecord = form.getValuesAsRecord();
                                 dataSource.setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});

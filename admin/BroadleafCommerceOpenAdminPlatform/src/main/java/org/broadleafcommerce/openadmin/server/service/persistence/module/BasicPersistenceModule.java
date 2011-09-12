@@ -89,7 +89,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			Class<?> returnType = field.getType();
 			String value = property.getValue();
 			if (mergedProperties.get(property.getName()) != null) {
-				if (value != null && mergedProperties.get(property.getName()).getMutable() && !mergedProperties.get(property.getName()).getPresentationAttributes().getReadOnly()) {
+                Boolean mutable = mergedProperties.get(property.getName()).getMutable();
+                Boolean readOnly = mergedProperties.get(property.getName()).getPresentationAttributes().getReadOnly();
+				if (value != null && (mutable==null || mutable) && (readOnly==null || !readOnly)) {
 					switch(mergedProperties.get(property.getName()).getFieldType()) {
 					case BOOLEAN :
 						if (Character.class.isAssignableFrom(returnType)) {

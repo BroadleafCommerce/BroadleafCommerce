@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    public StaticAssetCustomPersistenceHandler() {
+    static {
         MimeUtil.registerMimeDetector(ExtensionMimeDetector.class.getName());
         MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
     }
