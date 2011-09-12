@@ -27,14 +27,14 @@ public class EffectsManager {
 	protected Map<String, OperationBuilder> filters = new HashMap<String, OperationBuilder>();
 
     public EffectsManager() {
-        filters.put(FilterTypeEnum.ALTERHSB.toString(), new AlterHSB());
-        filters.put(FilterTypeEnum.ALTERRGB.toString(), new AlterRGB());
-        filters.put(FilterTypeEnum.AUTOLEVELSRGB.toString(), new AutoLevelsRGB());
-        filters.put(FilterTypeEnum.CROP.toString(), new Crop());
-        filters.put(FilterTypeEnum.GAUSSIANBLUR.toString(), new GaussianBlur());
-        filters.put(FilterTypeEnum.RESIZE.toString(), new Resize());
-        filters.put(FilterTypeEnum.ROTATE.toString(), new Rotate());
-        filters.put(FilterTypeEnum.UNSHARPMASK.toString(), new UnsharpMask());
+        filters.put(FilterTypeEnum.ALTERHSB.toString().toLowerCase(), new AlterHSB());
+        filters.put(FilterTypeEnum.ALTERRGB.toString().toLowerCase(), new AlterRGB());
+        filters.put(FilterTypeEnum.AUTOLEVELSRGB.toString().toLowerCase(), new AutoLevelsRGB());
+        filters.put(FilterTypeEnum.CROP.toString().toLowerCase(), new Crop());
+        filters.put(FilterTypeEnum.GAUSSIANBLUR.toString().toLowerCase(), new GaussianBlur());
+        filters.put(FilterTypeEnum.RESIZE.toString().toLowerCase(), new Resize());
+        filters.put(FilterTypeEnum.ROTATE.toString().toLowerCase(), new Rotate());
+        filters.put(FilterTypeEnum.UNSHARPMASK.toString().toLowerCase(), new UnsharpMask());
     }
 
     public Operation[] buildOperations(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
