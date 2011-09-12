@@ -313,89 +313,88 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				} catch (Exception e1) {
 					isFieldAccessible = false;
 				}
-				if (isFieldAccessible) {
-					Property propertyItem = new Property();
-					propertyItem.setName(originalProperty);
-					if (props.contains(propertyItem)) {
-						continue;
-					}
-			    	props.add(propertyItem);
-			    	String strVal;
-			    	String displayVal = null;
-			    	if (value == null) {
-			    		strVal = null;
-			    	} else {
-			    		if (metadata.getCollection()) {
-			    			propertyItem.getMetadata().setFieldType(metadata.getFieldType());
-			    			strVal = null;
-			    		} else if (Date.class.isAssignableFrom(value.getClass())) {
-			        		strVal = dateFormat.format((Date) value);
-			        	} else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-			        		strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
-			        	} else if (Calendar.class.isAssignableFrom(value.getClass())) {
-			        		strVal = dateFormat.format(((Calendar) value).getTime());
-			        	} else if (Double.class.isAssignableFrom(value.getClass())) {
-			        		strVal = decimalFormat.format((Double) value);
-			        	} else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-			        		strVal = decimalFormat.format(((BigDecimal) value).doubleValue());
-			        	//} else if (entity.getClass().equals(value.getClass()) && idProperty != null){
-			        		//strVal = fieldManager.getFieldValue(value, idProperty).toString();
-			        	} else if (metadata.getForeignKeyClass() != null) {
-			        		strVal = fieldManager.getFieldValue(value, metadata.getForeignKeyProperty()).toString();
-			        		//see if there's a name property and use it for the display value
-			        		Object temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
-			        		if (temp != null) {
-			        			displayVal = temp.toString();
-			        		}
-			        	} else {
-			        		strVal = value.toString();
-			        	}
-			    	}
-			    	propertyItem.setValue(strVal);
-			    	propertyItem.setDisplayValue(displayVal);
-				} else {
-					//try a direct property acquisition via reflection
-					try {
-						Method method;
-						try {
-							//try a 'get' prefixed mutator first
-							String temp = new String(originalProperty);
-							temp = "get" + originalProperty.substring(0, 1).toUpperCase() + originalProperty.substring(1, originalProperty.length());
-							method = entity.getClass().getMethod(temp, new Class[]{});
-						} catch (NoSuchMethodException e) {
-							method = entity.getClass().getMethod(originalProperty, new Class[]{});
-						}
-						value = method.invoke(entity, new Object[]{});
-						Property propertyItem = new Property();
-						propertyItem.setName(originalProperty);
-						if (props.contains(propertyItem)) {
-							continue;
-						}
-						props.add(propertyItem);
-						String strVal;
-						if (value == null) {
-							strVal = null;
-						} else {
-							if (Date.class.isAssignableFrom(value.getClass())) {
-								strVal = dateFormat.format((Date) value);
-							} else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-								strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
-							} else if (Calendar.class.isAssignableFrom(value.getClass())) {
-								strVal = dateFormat.format(((Calendar) value).getTime());
-							} else if (Double.class.isAssignableFrom(value.getClass())) {
-								strVal = decimalFormat.format((Double) value);
-							} else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-								strVal = decimalFormat.format(((BigDecimal) value).doubleValue());
-							} else {
-								strVal = value.toString();
-							}
-						}
-						propertyItem.setValue(strVal);
-					} catch (NoSuchMethodException e) {
-						LOG.debug("Unable to find a specified property in the entity: " + originalProperty);
-						//do nothing - this property is simply not in the bean
-					}
-				}
+                String strVal;
+                checkField: {
+                    if (isFieldAccessible) {
+                        Property propertyItem = new Property();
+                        propertyItem.setName(originalProperty);
+                        if (props.contains(propertyItem)) {
+                            continue;
+                        }
+                        props.add(propertyItem);
+                        String displayVal = null;
+                        if (value != null) {
+                            if (metadata.getCollection()) {
+                                propertyItem.getMetadata().setFieldType(metadata.getFieldType());
+                                strVal = null;
+                            } else if (Date.class.isAssignableFrom(value.getClass())) {
+                                strVal = dateFormat.format((Date) value);
+                            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
+                                strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
+                            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
+                                strVal = dateFormat.format(((Calendar) value).getTime());
+                            } else if (Double.class.isAssignableFrom(value.getClass())) {
+                                strVal = decimalFormat.format((Double) value);
+                            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
+                                strVal = decimalFormat.format(((BigDecimal) value).doubleValue());
+                            //} else if (entity.getClass().equals(value.getClass()) && idProperty != null){
+                                //strVal = fieldManager.getFieldValue(value, idProperty).toString();
+                            } else if (metadata.getForeignKeyClass() != null) {
+                                strVal = fieldManager.getFieldValue(value, metadata.getForeignKeyProperty()).toString();
+                                //see if there's a name property and use it for the display value
+                                Object temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
+                                if (temp != null) {
+                                    displayVal = temp.toString();
+                                }
+                            } else {
+                                strVal = value.toString();
+                            }
+                            propertyItem.setValue(strVal);
+                            propertyItem.setDisplayValue(displayVal);
+                            break checkField;
+                        }
+                    }
+                    //try a direct property acquisition via reflection
+                    try {
+                        Method method;
+                        try {
+                            //try a 'get' prefixed mutator first
+                            String temp = new String(originalProperty);
+                            temp = "get" + originalProperty.substring(0, 1).toUpperCase() + originalProperty.substring(1, originalProperty.length());
+                            method = entity.getClass().getMethod(temp, new Class[]{});
+                        } catch (NoSuchMethodException e) {
+                            method = entity.getClass().getMethod(originalProperty, new Class[]{});
+                        }
+                        value = method.invoke(entity, new Object[]{});
+                        Property propertyItem = new Property();
+                        propertyItem.setName(originalProperty);
+                        if (props.contains(propertyItem)) {
+                            continue;
+                        }
+                        props.add(propertyItem);
+                        if (value == null) {
+                            strVal = null;
+                        } else {
+                            if (Date.class.isAssignableFrom(value.getClass())) {
+                                strVal = dateFormat.format((Date) value);
+                            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
+                                strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
+                            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
+                                strVal = dateFormat.format(((Calendar) value).getTime());
+                            } else if (Double.class.isAssignableFrom(value.getClass())) {
+                                strVal = decimalFormat.format((Double) value);
+                            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
+                                strVal = decimalFormat.format(((BigDecimal) value).doubleValue());
+                            } else {
+                                strVal = value.toString();
+                            }
+                        }
+                        propertyItem.setValue(strVal);
+                    } catch (NoSuchMethodException e) {
+                        LOG.debug("Unable to find a specified property in the entity: " + originalProperty);
+                        //do nothing - this property is simply not in the bean
+                    }
+                }
 			}
 		}
 	}
