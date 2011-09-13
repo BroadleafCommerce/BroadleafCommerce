@@ -10,6 +10,7 @@
 		<tiles:insertAttribute name="headContentAdditional" ignore="true"/>
 	</head>
 	<body>
+		<tags:sandboxRibbon jqueryUIDatepicker="${pageContext.request.contextPath}/js/ui.datepicker.js"/>
 		<div class="container">
 			<tiles:insertAttribute name="navigation" />
 			<tiles:insertAttribute name="mainContent" />

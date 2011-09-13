@@ -2095,12 +2095,12 @@ INSERT INTO BLC_LOCALE (LOCALE_ID, LOCALE_CODE, LOCALE_NAME, FRIENDLY_NAME) VALU
 INSERT INTO BLC_LOCALE (LOCALE_ID, LOCALE_CODE, LOCALE_NAME, FRIENDLY_NAME) VALUES (2, 'en_CA', 'en_CA', 'Canadian English');
 INSERT INTO BLC_LOCALE (LOCALE_ID, LOCALE_CODE, LOCALE_NAME, FRIENDLY_NAME) VALUES (3, 'es', 'es', 'Spanish');
 
-INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (1, 1, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/WEB-INF/jsp/templates/basic.jsp') ;
-INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (2, 1, 'Blank Template', 'Use this template to completely control the page contents.', '/WEB-INF/jsp/templates/blank.jsp') ;
-INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (3, 2, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/WEB-INF/jsp/templates/basic.jsp') ;
-INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (4, 2, 'Blank Template', 'Use this template to completely control the page contents.', '/WEB-INF/jsp/templates/blank.jsp') ;
-INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (5, 3, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/WEB-INF/jsp/templates/basic.jsp') ;
-INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (6, 3, 'Blank Template', 'Use this template to completely control the page contents.', '/WEB-INF/jsp/templates/blank.jsp') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (1, 1, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/basic') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (2, 1, 'Blank Template', 'Use this template to completely control the page contents.', '/blank') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (3, 2, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/basic') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (4, 2, 'Blank Template', 'Use this template to completely control the page contents.', '/blank') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (5, 3, 'Basic Template', 'This template provides a basic layout with header and footer surrounding the content.', '/basic') ;
+INSERT INTO BLC_PAGE_TEMPLATE (PAGE_TEMPLATE_ID, LOCALE_ID, TEMPLATE_NAME, TEMPLATE_DESCRIPTION, TEMPLATE_PATH) VALUES (6, 3, 'Blank Template', 'Use this template to completely control the page contents.', '/blank') ;
 
 -- About Us Page
 INSERT INTO BLC_PAGE_FOLDER (ID, NAME, PARENT_FOLDER_ID, DELETED_FLAG, IS_FOLDER_FLAG) VALUES (1, 'about_us', null, false ,false);

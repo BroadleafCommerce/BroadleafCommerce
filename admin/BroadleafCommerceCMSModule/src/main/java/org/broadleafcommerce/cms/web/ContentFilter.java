@@ -15,6 +15,22 @@
  */
 package org.broadleafcommerce.cms.web;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
@@ -28,16 +44,6 @@ import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.annotation.Resource;
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * @author bpolster
  *
@@ -47,14 +53,24 @@ public class ContentFilter extends OncePerRequestFilter {
 
     private static final Log logger = LogFactory.getLog(ContentFilter.class);
     private static final SimpleDateFormat CONTENT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmm");
+    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
+    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_HOURS_FORMATTER = new SimpleDateFormat("h");
+    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_MINUTES_FORMATTER = new SimpleDateFormat("mm");
+	private static final SimpleDateFormat CONTENT_DATE_PARSE_FORMAT = new SimpleDateFormat("MM/dd/yyyyhmm");
+	   
 
     public static String SANDBOX_ID_PARAM = "blSandboxId";
     public static String SANDBOX_DATE_TIME_PARAM = "blSandboxDateTime";
+    public static String SANDBOX_DATE_TIME_RIBBON_OVERRIDE_PARAM = "blSandboxDateTimeRibbonOverride";
+    public static final String SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM = "blSandboxDisplayDateTimeDate";
+    public static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
+    public static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
+    public static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
 
     public static String SESSION_SANDBOX_VAR = "BLC_SANDBOX_ID";
     public static String SESSION_SANDBOX_TIME_VAR = "BLC_SANDBOX_TIME";
 
-    public static String BLC_PAGE_FIELDS = "BLC_PAGE_FIELDS";
+    private static final String BLC_PAGE = "BLC_PAGE";
 
     @Resource(name="blSandBoxService")
     private SandBoxService sandBoxService;
@@ -62,7 +78,7 @@ public class ContentFilter extends OncePerRequestFilter {
     @Resource(name="blPageService")
     private PageService pageService;
 
-    private String blcPageTemplateDirectory ="/WEB-INF/templates/";
+    private String blcPageTemplateDirectory ="/WEB-INF/jsp/templates";
 
 
 	/** (non-Javadoc)
@@ -83,11 +99,13 @@ public class ContentFilter extends OncePerRequestFilter {
 	}
 
     private boolean checkForContentManagedPage(SandBox currentSandbox, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        Page p = pageService.findPageByURI(currentSandbox, request.getRequestURI());
+        String uriWithoutContextPath = request.getRequestURI().substring(request.getContextPath().length());
+    	Page p = pageService.findPageByURI(currentSandbox, uriWithoutContextPath);
         if (p != null) {
-            logger.debug("Forwarding to page: " + p.getPageTemplate().getTemplatePath());
-            request.setAttribute(BLC_PAGE_FIELDS, p.getPageFields());
-            RequestDispatcher rd = request.getRequestDispatcher(p.getPageTemplate().getTemplatePath());
+        	String templateJSPPath = blcPageTemplateDirectory + p.getPageTemplate().getTemplatePath() + ".jsp";
+            logger.debug("Forwarding to page: " + templateJSPPath);
+            request.setAttribute(BLC_PAGE, p);
+            RequestDispatcher rd = request.getRequestDispatcher(templateJSPPath);
             rd.forward(request, response);
             return true;
         }
@@ -113,6 +131,14 @@ public class ContentFilter extends OncePerRequestFilter {
         }
 
         logger.debug("Serving request using sandbox: " + currentSandbox);
+        
+        Date currentSystemDateTime = SystemTime.asDate(true);
+        Calendar sandboxDateTimeCalendar = Calendar.getInstance();
+        sandboxDateTimeCalendar.setTime(currentSystemDateTime); 
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM,  CONTENT_DATE_DISPLAY_FORMATTER.format(currentSystemDateTime));
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, CONTENT_DATE_DISPLAY_HOURS_FORMATTER.format(currentSystemDateTime));
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, CONTENT_DATE_DISPLAY_MINUTES_FORMATTER.format(currentSystemDateTime));
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM, sandboxDateTimeCalendar.get(Calendar.AM_PM));
         return currentSandbox;
     }
 
@@ -146,13 +172,14 @@ public class ContentFilter extends OncePerRequestFilter {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_PARAM);
         Date overrideTime = null;
 
-        if (sandboxDateTimeParam != null) {
-            try {
-              overrideTime = CONTENT_DATE_FORMATTER.parse(sandboxDateTimeParam);
-
-            } catch (ParseException e) {
-                logger.debug(e);
-            }
+        try {
+        	if (request.getParameter(SANDBOX_DATE_TIME_RIBBON_OVERRIDE_PARAM) != null) {
+        		overrideTime = readDateFromRequest(request);
+        	} else if (sandboxDateTimeParam != null) {
+	            overrideTime = CONTENT_DATE_FORMATTER.parse(sandboxDateTimeParam);
+        	}
+        } catch (ParseException e) {
+        	logger.debug(e);
         }
 
         if (overrideTime == null) {
@@ -165,6 +192,7 @@ public class ContentFilter extends OncePerRequestFilter {
             session.setAttribute(SESSION_SANDBOX_TIME_VAR, overrideTime);
         }
 
+  
         if (overrideTime != null) {
             FixedTimeSource ft = new FixedTimeSource(overrideTime.getTime());
             SystemTime.setLocalTimeSource(ft);
@@ -175,6 +203,23 @@ public class ContentFilter extends OncePerRequestFilter {
 
     }
 
+    private Date readDateFromRequest(HttpServletRequest request) throws ParseException {
+    	String date = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM);
+    	String minutes = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM);
+    	String hours = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM);
+    	String ampm = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM);
+    	
+    	if (StringUtils.isEmpty(minutes)) {
+    		minutes = Integer.toString(SystemTime.asCalendar().get(Calendar.MINUTE));
+    	}
+    	
+    	if (StringUtils.isEmpty(hours)) {
+    		hours = Integer.toString(SystemTime.asCalendar().get(Calendar.HOUR_OF_DAY));
+    	}
+    	
+		Date parsedDate = CONTENT_DATE_PARSE_FORMAT.parse(date + hours + minutes + ampm);
+		return parsedDate;
+    }
 
     private Site determineSite(ServletRequest request) {
         /* TODO:  Multi-tennant:  Need to add code that determines the site to support

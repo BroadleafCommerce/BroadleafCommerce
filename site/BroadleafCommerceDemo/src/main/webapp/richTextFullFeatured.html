@@ -3,6 +3,8 @@
    <head> 
 		<script type="text/javascript" src="/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/tiny_mce.js"></script>
 		<script type="text/javascript">
+		var templatePath = "/broadleafdemo/preview" + window.parent.getTemplatePath();
+		
 		tinyMCE.init({
 		        // General options
 		        mode : "textareas",
@@ -20,7 +22,7 @@
 		        theme_advanced_toolbar_align : "left",
 		        theme_advanced_statusbar_location : "bottom",
 		        theme_advanced_resizing : true,
-		        plugin_preview_pageurl : "/broadleafdemo/cms/mainTemplate.htm",
+		        plugin_preview_pageurl : templatePath,
 		        plugin_preview_height : 700,
 		        plugin_preview_width : 1000,
 		        setup : function(ed) {

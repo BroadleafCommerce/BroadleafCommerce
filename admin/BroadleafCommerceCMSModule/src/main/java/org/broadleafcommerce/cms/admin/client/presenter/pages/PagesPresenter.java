@@ -15,23 +15,17 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -52,8 +46,27 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  * 
@@ -161,8 +174,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     DSRequest requestProperties = new DSRequest();
                     requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
 
-                    GWT.log((String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath"));
-                    
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -245,6 +256,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
             }
         });
+        
+        exposeNativeGetTemplatePath();
 	}
 
     public void reloadAllChildRecordsForId(String id) {
@@ -304,5 +317,20 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	public PagesDisplay getDisplay() {
 		return (PagesDisplay) display;
 	}
+	
+	public String getTemplatePath() {
+		String pageTemplatePath = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath");
+        GWT.log(pageTemplatePath);
+		return pageTemplatePath;
+	}
+	
+	private native void exposeNativeGetTemplatePath() /*-{
+		var currentPagesPresenter = this;
+		console.log("exposing getTemplatePath()");
+		$wnd.getTemplatePath = function() {
+			console.log("getTemplatePath() called");
+			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter::getTemplatePath()();
+		}
+	}-*/;
 	
 }
