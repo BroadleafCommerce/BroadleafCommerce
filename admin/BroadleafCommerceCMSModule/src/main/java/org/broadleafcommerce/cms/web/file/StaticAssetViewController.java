@@ -19,13 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jfischer
  */
-@Controller("blImageViewController")
+@Controller("blStaticAssetViewController")
 public class StaticAssetViewController {
 
     private static final Log LOG = LogFactory.getLog(StaticAssetViewController.class);
@@ -42,7 +41,64 @@ public class StaticAssetViewController {
     @Resource(name="blArtifactService")
     protected ArtifactService artifactService;
 
-    @RequestMapping(value = "/cms.preview.service/staticAsset/{staticAssetId}.artifact", method = {RequestMethod.GET})
+    private List<CleanupOperation> operations = new ArrayList<CleanupOperation>();
+
+    protected Thread cleanupThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                List<CleanupOperation> myList = new ArrayList<CleanupOperation>();
+                synchronized (operations) {
+                    myList.addAll(operations);
+                    operations.clear();
+                }
+                for (final CleanupOperation operation : myList) {
+                    File parentDir = operation.parentDir;
+                    if (parentDir.exists()) {
+                        File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File file, String s) {
+                                if (s.startsWith(operation.assetName + "---")) {
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+                        if (obsoleteFiles != null) {
+                            for (File file : obsoleteFiles) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Deleting obsolete asset cache file: " + file.getAbsolutePath());
+                                }
+                                try {
+                                    file.delete();
+                                } catch (Throwable e) {
+                                    //do nothing
+                                }
+                            }
+                        }
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Throwable e) {
+                        //do nothing
+                    }
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(10000);
+            } catch (Throwable e) {
+                //do nothing
+            }
+        }
+    }, "CMSStaticAssetCleanupThread");
+
+    public StaticAssetViewController() {
+        cleanupThread.start();
+    }
+
+    @RequestMapping(value = "/{staticAssetId}.*", method = {RequestMethod.GET})
     public ModelAndView viewItem(@PathVariable Long staticAssetId, HttpServletRequest request) {
         try {
             StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetById(staticAssetId);
@@ -51,37 +107,42 @@ public class StaticAssetViewController {
             if (!cacheFile.exists()) {
                 clearObsoleteCacheFiles(staticAsset, cacheFile);
                 StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByFullURL(staticAsset.getFullUrl());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                InputStream is = null;
-                try {
-                    is = storage.getFileData().getBinaryStream();
-                    boolean eof = false;
-                    while (!eof) {
-                        int temp = is.read();
-                        if (temp < 0) {
-                            eof = true;
-                        } else {
-                            baos.write(temp);
+                if (!request.getParameterMap().isEmpty()) {
+                    //there are filter operations to perform on the asset
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    InputStream is = null;
+                    try {
+                        is = storage.getFileData().getBinaryStream();
+                        boolean eof = false;
+                        while (!eof) {
+                            int temp = is.read();
+                            if (temp < 0) {
+                                eof = true;
+                            } else {
+                                baos.write(temp);
+                            }
+                        }
+                        baos.flush();
+                    } finally {
+                        if (is != null) {
+                            try{
+                                is.close();
+                            } catch (Throwable e) {}
                         }
                     }
-                    baos.flush();
-                } finally {
-                    if (is != null) {
-                        try{
-                            is.close();
-                        } catch (Throwable e) {}
-                    }
+                    InputStream original = new ByteArrayInputStream(baos.toByteArray());
+                    Operation[] operations = artifactService.buildOperations(request.getParameterMap(), original, staticAsset.getMimeType());
+                    InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
+                    createCacheFile(converted, cacheFile);
+                } else {
+                    createCacheFile(storage.getFileData().getBinaryStream(), cacheFile);
                 }
-                InputStream original = new ByteArrayInputStream(baos.toByteArray());
-                Operation[] operations = artifactService.buildOperations(request.getParameterMap(), original, staticAsset.getMimeType());
-                InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
-                createCacheFile(converted, cacheFile);
             }
             Map<String, String> model = new HashMap<String, String>();
             model.put("cacheFilePath", cacheFile.getAbsolutePath());
             model.put("mimeType", staticAsset.getMimeType());
 
-            return new ModelAndView("staticAssetView", model);
+            return new ModelAndView("blStaticAssetView", model);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -91,23 +152,11 @@ public class StaticAssetViewController {
     protected void clearObsoleteCacheFiles(final StaticAsset staticAsset, final File cacheFile) {
         File parentDir = cacheFile.getParentFile();
         if (parentDir.exists()) {
-            File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File file, String s) {
-                    if (s.startsWith(staticAsset.getName() + "---")) {
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            if (obsoleteFiles != null) {
-                for (File file : obsoleteFiles) {
-                    try {
-                        file.delete();
-                    } catch (Throwable e) {
-                        //do nothing
-                    }
-                }
+            CleanupOperation operation = new CleanupOperation();
+            operation.setAssetName(staticAsset.getName());
+            operation.setParentDir(parentDir);
+            synchronized (operations) {
+                operations.add(operation);
             }
         }
     }
@@ -161,5 +210,27 @@ public class StaticAssetViewController {
 
     public void setCacheDirectory(String cacheDirectory) {
         this.cacheDirectory = cacheDirectory;
+    }
+
+    public class CleanupOperation {
+
+        private String assetName;
+        private File parentDir;
+
+        public String getAssetName() {
+            return assetName;
+        }
+
+        public void setAssetName(String assetName) {
+            this.assetName = assetName;
+        }
+
+        public File getParentDir() {
+            return parentDir;
+        }
+
+        public void setParentDir(File parentDir) {
+            this.parentDir = parentDir;
+        }
     }
 }

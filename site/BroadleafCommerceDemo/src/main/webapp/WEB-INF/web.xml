@@ -121,7 +121,7 @@
 
     <servlet-mapping>
 		<servlet-name>admin</servlet-name>
-		<url-pattern>*.artifact</url-pattern>
+		<url-pattern>/cms/staticasset/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>

@@ -11,17 +11,17 @@
 
     <aop:config/>
 
-    <bean id="staticAssetView" class="org.broadleafcommerce.cms.web.file.StaticAssetView"/>
+    <bean id="blStaticAssetView" class="org.broadleafcommerce.cms.web.file.StaticAssetView"/>
 
-    <bean id="blImageViewController" class="org.broadleafcommerce.cms.web.file.StaticAssetViewController"/>
+    <bean id="blStaticAssetViewController" class="org.broadleafcommerce.cms.web.file.StaticAssetViewController"/>
 
-    <bean id="uploadUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <bean id="blUploadUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="order" value="1"/>
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
             <map>
-                <entry key="/**/cms.upload.service" value-ref="uploadController"/>
-                <entry key="/**/*.artifact" value-ref="blImageViewController"/>
+                <entry key="/**/cms.upload.service" value-ref="blUploadController"/>
+                <entry key="/cms/staticasset/**" value-ref="blStaticAssetViewController"/>
             </map>
         </property>
     </bean>

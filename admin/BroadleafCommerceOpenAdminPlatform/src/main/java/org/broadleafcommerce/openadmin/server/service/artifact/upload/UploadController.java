@@ -66,6 +66,9 @@ public class UploadController extends SimpleFormController {
                     if (file.getSize() > maximumFileSizeInBytes) {
                         throw new MaxUploadSizeExceededException(maximumFileSizeInBytes);
                     }
+                    if (file.getOriginalFilename() == null || file.getOriginalFilename().indexOf(".") < 0) {
+                        throw new FileExtensionUnavailableException("Unable to determine file extension for uploaded file. The filename for the uploaded file is: " + file.getOriginalFilename());
+                    }
                     Map<String, MultipartFile> fileMap = UploadedFile.getUpload();
                     fileMap.put(propertyValue.getName(), (MultipartFile) propertyValue.getValue());
                     UploadedFile.setUpload(fileMap);
@@ -91,14 +94,21 @@ public class UploadController extends SimpleFormController {
             model.put("callbackName", callbackName);
             model.put("result", buildJSON(result));
 
-            return new ModelAndView("uploadCompletedView", model);
+            return new ModelAndView("blUploadCompletedView", model);
         } catch (MaxUploadSizeExceededException e) {
             if (callbackName != null) {
                 model.put("callbackName", callbackName);
                 model.put("error", buildErrorJSON(e.getMessage()));
             }
 
-            return new ModelAndView("uploadCompletedView", model);
+            return new ModelAndView("blUploadCompletedView", model);
+        } catch (FileExtensionUnavailableException e) {
+            if (callbackName != null) {
+                model.put("callbackName", callbackName);
+                model.put("error", buildErrorJSON(e.getMessage()));
+            }
+
+            return new ModelAndView("blUploadCompletedView", model);
         } catch (Exception e) {
             e.printStackTrace();
             if (callbackName != null) {
@@ -106,7 +116,7 @@ public class UploadController extends SimpleFormController {
                 model.put("error", buildErrorJSON(e.getMessage()));
             }
 
-            return new ModelAndView("uploadCompletedView", model);
+            return new ModelAndView("blUploadCompletedView", model);
         }
     }
 

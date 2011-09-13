@@ -57,6 +57,10 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @AdminPresentation(friendlyName="Mime Type", order=4, group = "Asset Details", readOnly = true)
     protected String mimeType;
 
+    @Column(name = "FILE_EXTENSION")
+    @AdminPresentation(friendlyName="File Extension", order=5, group = "Asset Details", readOnly = true)
+    protected String fileExtension;
+
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
     @JoinColumn(name = "PARENT_FOLDER_ID")
     protected StaticAssetFolder parentFolder;
@@ -157,6 +161,14 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         this.auditable = auditable;
     }
 
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
+    }
+
     @Override
     public StaticAsset cloneEntity() {
         StaticAssetImpl asset = new StaticAssetImpl();
@@ -170,6 +182,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         asset.mimeType = mimeType;
         asset.sandbox = sandbox;
         asset.originalAssetId = originalAssetId;
+        this.fileExtension = fileExtension;
 
         for (StaticAssetDescription oldAssetDescription : contentMessageValues.values()) {
             StaticAssetDescription newAssetDescription = oldAssetDescription.cloneEntity();

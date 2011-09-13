@@ -89,6 +89,9 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                     adminInstance.setMimeType(mimeType.toString());
                 }
             }
+            String extension = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1, upload.getOriginalFilename().length()).toLowerCase();
+            adminInstance.setFileExtension(extension);
+
             adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), null);
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);

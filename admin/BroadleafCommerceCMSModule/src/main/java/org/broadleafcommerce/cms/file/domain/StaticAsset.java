@@ -43,4 +43,9 @@ public interface StaticAsset extends StaticAssetFolder {
     public Auditable getAuditable();
 
     public void setAuditable(Auditable auditable);
+
+    public String getFileExtension();
+
+    public void setFileExtension(String fileExtension);
+
 }
