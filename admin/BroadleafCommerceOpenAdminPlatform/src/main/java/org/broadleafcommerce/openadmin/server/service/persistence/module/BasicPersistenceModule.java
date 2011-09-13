@@ -91,111 +91,113 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			if (mergedProperties.get(property.getName()) != null) {
                 Boolean mutable = mergedProperties.get(property.getName()).getMutable();
                 Boolean readOnly = mergedProperties.get(property.getName()).getPresentationAttributes().getReadOnly();
-				if (value != null && (mutable==null || mutable) && (readOnly==null || !readOnly)) {
-					switch(mergedProperties.get(property.getName()).getFieldType()) {
-					case BOOLEAN :
-						if (Character.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value)?'Y':'N');
-						} else {
-							fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value));
-						}
-						break;
-					case DATE :
-						fieldManager.setFieldValue(instance, property.getName(), dateFormat.parse(value));
-						break;
-					case DECIMAL :
-						if (BigDecimal.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
-						} else {
-							fieldManager.setFieldValue(instance, property.getName(), new Double(value));
-						}
-						break;
-					case MONEY :
-						if (BigDecimal.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
-						} else if (Double.class.isAssignableFrom(returnType)){
-							fieldManager.setFieldValue(instance, property.getName(), new Double(value));
-						} else {
-							fieldManager.setFieldValue(instance, property.getName(), new Money(new Double(value)));
-						}
-						break;
-					case INTEGER :
-						if (int.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), Integer.valueOf(value));
-						} else if (byte.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), Byte.valueOf(value));
-						} else if (short.class.isAssignableFrom(returnType) || Short.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), Short.valueOf(value));
-						} else if (long.class.isAssignableFrom(returnType) || Long.class.isAssignableFrom(returnType)) {
-							fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
-						}
-						break;
-					default :
-						fieldManager.setFieldValue(instance, property.getName(), value);
-						break;
-					case EMAIL :
-						fieldManager.setFieldValue(instance, property.getName(), value);
-						break;
-					case FOREIGN_KEY :{
-						Serializable foreignInstance;
-						if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
-						} else {
-							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
-						}
-						
-						if (Collection.class.isAssignableFrom(returnType)) {
-							@SuppressWarnings("rawtypes")
-							Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
-							if (!collection.contains(foreignInstance)){
-								collection.add(foreignInstance);
-							}
-						} else if (Map.class.isAssignableFrom(returnType)) {
-							throw new RuntimeException("Map structures are not supported for foreign key fields.");
-						} else {
-							fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
-						}
-						break;
-					}
-					case ADDITIONAL_FOREIGN_KEY :{
-						Serializable foreignInstance;
-						if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
-						} else {
-							foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
-						}
-						
-						if (Collection.class.isAssignableFrom(returnType)) {
-							@SuppressWarnings("rawtypes")
-							Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
-							if (!collection.contains(foreignInstance)){
-								collection.add(foreignInstance);
-							}
-						} else if (Map.class.isAssignableFrom(returnType)) {
-							throw new RuntimeException("Map structures are not supported for foreign key fields.");
-						} else {
-							fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
-						}
-						break;
-					}
-					case ID :
-						if (setId) {
-							switch(mergedProperties.get(property.getName()).getSecondaryType()) {
-							case INTEGER:
-								fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
-								break;
-							case STRING:
-								fieldManager.setFieldValue(instance, property.getName(), value);
-								break;
-							}
-						}
-						break;
-					}
-				} else {
-					if (fieldManager.getFieldValue(instance, property.getName()) != null && (!mergedProperties.get(property.getName()).getFieldType().equals(SupportedFieldType.ID) || setId)) {
-						fieldManager.setFieldValue(instance, property.getName(), null);
-					}
-				}
+                if ((mutable==null || mutable) && (readOnly==null || !readOnly)) {
+                    if (value != null) {
+                        switch(mergedProperties.get(property.getName()).getFieldType()) {
+                        case BOOLEAN :
+                            if (Character.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value)?'Y':'N');
+                            } else {
+                                fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value));
+                            }
+                            break;
+                        case DATE :
+                            fieldManager.setFieldValue(instance, property.getName(), dateFormat.parse(value));
+                            break;
+                        case DECIMAL :
+                            if (BigDecimal.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
+                            } else {
+                                fieldManager.setFieldValue(instance, property.getName(), new Double(value));
+                            }
+                            break;
+                        case MONEY :
+                            if (BigDecimal.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
+                            } else if (Double.class.isAssignableFrom(returnType)){
+                                fieldManager.setFieldValue(instance, property.getName(), new Double(value));
+                            } else {
+                                fieldManager.setFieldValue(instance, property.getName(), new Money(new Double(value)));
+                            }
+                            break;
+                        case INTEGER :
+                            if (int.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), Integer.valueOf(value));
+                            } else if (byte.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), Byte.valueOf(value));
+                            } else if (short.class.isAssignableFrom(returnType) || Short.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), Short.valueOf(value));
+                            } else if (long.class.isAssignableFrom(returnType) || Long.class.isAssignableFrom(returnType)) {
+                                fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
+                            }
+                            break;
+                        default :
+                            fieldManager.setFieldValue(instance, property.getName(), value);
+                            break;
+                        case EMAIL :
+                            fieldManager.setFieldValue(instance, property.getName(), value);
+                            break;
+                        case FOREIGN_KEY :{
+                            Serializable foreignInstance;
+                            if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
+                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                            } else {
+                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                            }
+
+                            if (Collection.class.isAssignableFrom(returnType)) {
+                                @SuppressWarnings("rawtypes")
+                                Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                                if (!collection.contains(foreignInstance)){
+                                    collection.add(foreignInstance);
+                                }
+                            } else if (Map.class.isAssignableFrom(returnType)) {
+                                throw new RuntimeException("Map structures are not supported for foreign key fields.");
+                            } else {
+                                fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
+                            }
+                            break;
+                        }
+                        case ADDITIONAL_FOREIGN_KEY :{
+                            Serializable foreignInstance;
+                            if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
+                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                            } else {
+                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                            }
+
+                            if (Collection.class.isAssignableFrom(returnType)) {
+                                @SuppressWarnings("rawtypes")
+                                Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                                if (!collection.contains(foreignInstance)){
+                                    collection.add(foreignInstance);
+                                }
+                            } else if (Map.class.isAssignableFrom(returnType)) {
+                                throw new RuntimeException("Map structures are not supported for foreign key fields.");
+                            } else {
+                                fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
+                            }
+                            break;
+                        }
+                        case ID :
+                            if (setId) {
+                                switch(mergedProperties.get(property.getName()).getSecondaryType()) {
+                                case INTEGER:
+                                    fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
+                                    break;
+                                case STRING:
+                                    fieldManager.setFieldValue(instance, property.getName(), value);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    } else {
+                        if (fieldManager.getFieldValue(instance, property.getName()) != null && (!mergedProperties.get(property.getName()).getFieldType().equals(SupportedFieldType.ID) || setId)) {
+                            fieldManager.setFieldValue(instance, property.getName(), null);
+                        }
+                    }
+                }
 			}
 		}
 		fieldManager.persistMiddleEntities();
