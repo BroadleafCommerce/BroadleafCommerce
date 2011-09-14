@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.ArtifactItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,15 +94,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         getDisplay().getListLeafDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
-                    String type = event.getSelectedRecord().getAttributeAsStringArray("_type")[0];
-                    if (EntityImplementations.IMAGESTATICASSETIMPL.equals(type)) {
-                        getDisplay().getListLeafDisplay().getPreviewContainer().setVisible(true);
-                        String key = getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getPrimaryKeyValue(event.getSelectedRecord());
-                        String extension = event.getSelectedRecord().getAttribute("fileExtension");
-                        getDisplay().getListLeafDisplay().getPreviewContainer().setImage("cms/staticasset/" + key + "." + extension + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
-                    } else {
-                        getDisplay().getListLeafDisplay().getPreviewContainer().setVisible(false);
-                    }
+                    ArtifactItem artifactItem = (ArtifactItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+                    artifactItem.setPreviewSrc(event.getSelectedRecord().getAttributeAsString("pictureLarge"));
 				}
 			}
 		});
@@ -114,7 +108,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
                 leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
-				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{true, false, false, false});
+                //((ListGridDataSource) dataSource).
+				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
             }
         }));
 	}

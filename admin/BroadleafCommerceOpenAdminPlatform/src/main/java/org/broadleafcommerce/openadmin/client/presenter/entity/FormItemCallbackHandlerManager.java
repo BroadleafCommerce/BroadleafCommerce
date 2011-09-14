@@ -84,11 +84,11 @@ public class FormItemCallbackHandlerManager {
 		});
 	}
 	
-	public void addSearchFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
+	public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
 		callbacks.put(fieldName, formItemCallback);
 	}
 	
-	public FormItemCallback getSearchFormItemCallback(String fieldName) {
+	public FormItemCallback getFormItemCallback(String fieldName) {
 		return callbacks.get(fieldName);
 	}
 	

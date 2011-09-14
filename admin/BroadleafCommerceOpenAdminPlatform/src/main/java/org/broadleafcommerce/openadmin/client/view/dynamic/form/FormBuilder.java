@@ -59,9 +59,9 @@ public class FormBuilder {
         	if (field.getAttribute("securityLevel") != null && field.getAttribute("uniqueID") != null && !SecurityManager.getInstance().isUserAuthorizedToEditField(field.getAttribute("uniqueID"))){
         		canEdit = false;
         	}
-        	
+        	String name = field.getName();
         	String fieldType = field.getAttribute("fieldType");
-        	if (fieldType != null && !field.getHidden()) {
+        	if (fieldType != null && !field.getHidden() && !field.getAttributeAsBoolean("formHidden")) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
                 if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {
@@ -435,6 +435,9 @@ public class FormBuilder {
             break;
         case HIDDEN:
             formItem = new HiddenItem();
+            break;
+        case ARTIFACT:
+            formItem = new ArtifactItem();
             break;
 		default:
 			if (!largeEntry) {

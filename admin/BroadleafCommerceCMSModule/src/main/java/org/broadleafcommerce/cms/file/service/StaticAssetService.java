@@ -35,10 +35,9 @@ public interface StaticAssetService {
      * @param sandbox - the sandbox to find pages (null indicates pages that are in production for
      *                  sites that are single tennant.
      * @param parentFolder if null then root folder for the site.
-     * @param localeName - the locale to include (null is typical for non-internationalized sites)
      * @return
      */
-    public List<StaticAssetFolder> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder, String localeName);
+    public List<StaticAssetFolder> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder);
 
 
     /**

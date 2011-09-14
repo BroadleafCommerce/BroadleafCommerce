@@ -660,6 +660,10 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
+                Boolean formHidden = property.getMetadata().getPresentationAttributes().getFormHidden();
+                if (formHidden == null) {
+                    formHidden = false;
+                }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
                 Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
@@ -778,7 +782,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setRequired(required);
 					//field.setValidOperators(getBasicTextOperators());
 					break;
-                case IMAGE:
+                case ARTIFACT:
                     field = new DataSourceImageField(propertyName, friendlyName);
                     field.setCanEdit(mutable);
 					field.setRequired(required);
@@ -812,6 +816,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setAttribute("uniqueID", uniqueID);
 					field.setAttribute("securityLevel", securityLevel);
 				}
+                field.setAttribute("formHidden", formHidden);
 				if (group != null) {
 					field.setAttribute("formGroup", group);
 				}

@@ -38,7 +38,7 @@ public class SearchFormItem extends StaticTextItem {
         addIconClickHandler(new IconClickHandler() {  
             public void onIconClick(IconClickEvent event) {  
             	final String formItemName = event.getItem().getName();
-            	((FormItemCallback) ((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getSearchFormItemCallback(formItemName)).execute(event.getItem());
+            	((FormItemCallback) ((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName)).execute(event.getItem());
             }  
         });
 	}

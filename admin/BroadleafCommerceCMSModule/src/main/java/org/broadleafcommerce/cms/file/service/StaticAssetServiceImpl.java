@@ -45,13 +45,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     @Override
-    public List<StaticAssetFolder> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder, String localeName) {
+    public List<StaticAssetFolder> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder) {
         SandBox productionSandbox = null;
         SandBox userSandbox = sandbox;
-
-        if (localeName == null) {
-            localeName = "default";
-        }
 
         if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
             productionSandbox = sandbox.getSite().getProductionSandbox();
@@ -60,7 +56,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             }
         }
 
-        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildren(parentFolder, localeName, userSandbox, productionSandbox);
+        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildren(parentFolder, userSandbox, productionSandbox);
         return staticAssetFolders;
     }
 

@@ -55,7 +55,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     }
 
     @Override
-    public List<StaticAssetFolder> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, String localeName, SandBox userSandBox, SandBox productionSandBox) {
+    public List<StaticAssetFolder> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox) {
         String queryPrefix = "BC_READ_";
         if (parentFolder == null) {
                 queryPrefix = "BC_READ_NULL_";
@@ -66,7 +66,6 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         }
         query.setParameter("userSandbox", userSandBox == null ? DUMMY_SANDBOX : userSandBox);
         query.setParameter("productionSandbox", productionSandBox == null ? DUMMY_SANDBOX : productionSandBox);
-        query.setParameter("localeName", localeName);
 
         List<StaticAsset> childAssets = query.getResultList();
         filterStaticAssetsForSandbox(userSandBox, productionSandBox, childAssets);

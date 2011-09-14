@@ -17,7 +17,6 @@ package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
-import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public interface StaticAssetDao {
 
     public StaticAssetFolder readStaticAssetById(Long id);
 
-    public List<StaticAssetFolder> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, String localeName, SandBox userSandbox, SandBox productionSandBox);
+    public List<StaticAssetFolder> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandbox, SandBox productionSandBox);
 
     public StaticAsset updateStaticAsset(StaticAsset asset);
 
