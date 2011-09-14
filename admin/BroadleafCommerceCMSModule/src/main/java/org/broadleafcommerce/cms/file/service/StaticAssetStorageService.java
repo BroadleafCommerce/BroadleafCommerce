@@ -18,7 +18,7 @@ public interface StaticAssetStorageService {
 
     StaticAssetStorage create();
 
-    StaticAssetStorage readStaticAssetStorageByFullURL(String url);
+    StaticAssetStorage readStaticAssetStorageByStaticAssetId(Long id);
 
     StaticAssetStorage save(StaticAssetStorage assetStorage);
 

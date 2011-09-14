@@ -15,19 +15,19 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.grid.ListGridField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 
@@ -122,12 +122,12 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		j++;
         	}
         }
-        getAssociatedGrid().setFields(gridFields);
+        ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos = 0;
         	for (String fieldName : fieldNames) {
-        		int originalPos = getAssociatedGrid().getFieldNum(fieldName);
-        		getAssociatedGrid().reorderField(originalPos, pos);
+        		int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
+        		((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
         		pos++;
         	}
         }

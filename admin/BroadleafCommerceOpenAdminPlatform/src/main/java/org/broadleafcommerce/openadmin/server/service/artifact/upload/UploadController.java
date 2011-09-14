@@ -83,12 +83,11 @@ public class UploadController extends SimpleFormController {
             entity.setProperties(propertyList.toArray(new Property[]{}));
 
             Entity result = null;
-            try {
-                if (operation.equals("add")) {
-                    result = dynamicEntityRemoteService.add(persistencePackage);
-                }
-            } finally {
-                UploadedFile.remove();
+
+            if (operation.equals("add")) {
+                result = dynamicEntityRemoteService.add(persistencePackage);
+            } else if (operation.equals("update")) {
+                result = dynamicEntityRemoteService.update(persistencePackage);
             }
 
             model.put("callbackName", callbackName);
@@ -117,6 +116,8 @@ public class UploadController extends SimpleFormController {
             }
 
             return new ModelAndView("blUploadCompletedView", model);
+        } finally {
+            UploadedFile.remove();
         }
     }
 

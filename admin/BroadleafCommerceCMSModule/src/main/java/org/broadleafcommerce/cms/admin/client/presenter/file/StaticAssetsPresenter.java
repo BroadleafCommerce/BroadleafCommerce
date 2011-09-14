@@ -19,6 +19,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -112,6 +114,28 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
                 //((ListGridDataSource) dataSource).
 				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
+                ((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
+                        @Override
+                        public void execute(FormItem formItem) {
+                            getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.STATICASSETIMPL);
+                            Map<String, Object> initialValues = new HashMap<String, Object>();
+                            initialValues.put("operation", "update");
+                            initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
+                            initialValues.put("ceilingEntityFullyQualifiedClassname", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname());
+                            initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
+                            FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
+                                public void onNewItemCreated(NewItemCreatedEvent event) {
+                                    String pictureLarge = event.getRecord().getAttribute("pictureLarge");
+                                    String picture = event.getRecord().getAttribute("picture");
+                                    ArtifactItem artifactItem = (ArtifactItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+                                    artifactItem.setPreviewSrc(pictureLarge);
+                                    getDisplay().getListLeafDisplay().getGrid().getSelectedRecord().setAttribute("picture", picture);
+                                    getDisplay().getListLeafDisplay().getGrid().refreshCell(getDisplay().getListLeafDisplay().getGrid().getRecordIndex(getDisplay().getListLeafDisplay().getGrid().getSelectedRecord()), 0);
+                                }
+                            }, null, new String[]{"file", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder"}, null);
+                        }
+                    }
+                );
             }
         }));
 	}

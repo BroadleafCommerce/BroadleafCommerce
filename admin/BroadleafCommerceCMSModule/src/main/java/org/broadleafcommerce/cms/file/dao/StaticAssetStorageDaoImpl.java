@@ -49,9 +49,9 @@ public class StaticAssetStorageDaoImpl implements StaticAssetStorageDao {
     }
 
     @Override
-    public StaticAssetStorage readStaticAssetStorageByFullURL(String url) {
-        Query query = em.createNamedQuery("BC_READ_STATIC_ASSET_STORAGE_BY_URL");
-        query.setParameter("url", url);
+    public StaticAssetStorage readStaticAssetStorageByStaticAssetId(Long id) {
+        Query query = em.createNamedQuery("BC_READ_STATIC_ASSET_STORAGE_BY_STATIC_ASSET_ID");
+        query.setParameter("id", id);
 
         return (StaticAssetStorage) query.getSingleResult();
     }

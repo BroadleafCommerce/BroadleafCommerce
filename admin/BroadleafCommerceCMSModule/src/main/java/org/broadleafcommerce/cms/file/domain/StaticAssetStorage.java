@@ -23,4 +23,8 @@ public interface StaticAssetStorage {
 
     void setFileData(Blob fileData);
 
+    public Long getStaticAssetId();
+
+    public void setStaticAssetId(Long staticAssetId);
+
 }

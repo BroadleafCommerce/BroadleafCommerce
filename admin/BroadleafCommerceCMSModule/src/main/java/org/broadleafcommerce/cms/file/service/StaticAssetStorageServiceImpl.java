@@ -48,8 +48,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     @Override
-    public StaticAssetStorage readStaticAssetStorageByFullURL(String url) {
-        return staticAssetStorageDao.readStaticAssetStorageByFullURL(url);
+    public StaticAssetStorage readStaticAssetStorageByStaticAssetId(Long id) {
+        return staticAssetStorageDao.readStaticAssetStorageByStaticAssetId(id);
     }
 
     @Override

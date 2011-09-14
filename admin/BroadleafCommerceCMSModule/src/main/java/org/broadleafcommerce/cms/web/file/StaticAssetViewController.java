@@ -106,7 +106,7 @@ public class StaticAssetViewController {
             File cacheFile = new File(cacheDirectory!=null?new File(cacheDirectory):DEFAULTCACHEDIRECTORY, cacheName);
             if (!cacheFile.exists()) {
                 clearObsoleteCacheFiles(staticAsset, cacheFile);
-                StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByFullURL(staticAsset.getFullUrl());
+                StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByStaticAssetId(staticAsset.getId());
                 if (!request.getParameterMap().isEmpty()) {
                     //there are filter operations to perform on the asset
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();

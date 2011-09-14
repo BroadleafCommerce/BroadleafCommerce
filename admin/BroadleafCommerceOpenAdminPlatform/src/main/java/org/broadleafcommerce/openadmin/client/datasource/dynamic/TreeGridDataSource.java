@@ -16,6 +16,7 @@
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -135,11 +136,11 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         		j++;
         	}
         }
-        getAssociatedGrid().setFields(gridFields);
+        ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos = 0;
         	for (String fieldName : fieldNames) {
-        		getAssociatedGrid().reorderField(getAssociatedGrid().getFieldNum(fieldName), pos);
+        		((ListGrid) getAssociatedGrid()).reorderField(((ListGrid) getAssociatedGrid()).getFieldNum(fieldName), pos);
         		pos++;
         	}
         }
@@ -149,7 +150,7 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 	@Override
 	public void resetPermanentFieldVisibility(String... fieldNames) {
 		super.resetPermanentFieldVisibility(fieldNames);
-		getAssociatedGrid().refreshFields();
+		((ListGrid) getAssociatedGrid()).refreshFields();
 	}
 
 	public String getRootId() {

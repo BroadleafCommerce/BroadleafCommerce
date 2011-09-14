@@ -6,6 +6,7 @@ import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+import org.apache.commons.lang.SerializationUtils;
 import org.broadleafcommerce.cms.file.domain.*;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
@@ -68,6 +69,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     }
 
     @Override
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+        return canHandleAdd(persistencePackage) || canHandleInspect(persistencePackage);
+    }
+
+    @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         if (!persistencePackage.getEntity().isMultiPartAvailableOnThread()) {
             throw new ServiceException("Could not detect an uploaded file.");
@@ -111,6 +117,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
             StaticAssetStorage storage = staticAssetStorageService.create();
             storage.setFullUrl(adminInstance.getFullUrl());
+            storage.setStaticAssetId(adminInstance.getId());
             Blob uploadBlob = staticAssetStorageService.createBlob(upload);
             storage.setFileData(uploadBlob);
             storage = staticAssetStorageService.save(storage);
@@ -119,6 +126,84 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 		} catch (Exception e) {
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
+    }
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        if (canHandleAdd(persistencePackage)) {
+            if (!persistencePackage.getEntity().isMultiPartAvailableOnThread()) {
+                throw new ServiceException("Could not detect an uploaded file.");
+            }
+            MultipartFile upload = UploadedFile.getUpload().get("file");
+            Entity entity  = persistencePackage.getEntity();
+            try {
+                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+
+			    Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
+                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			    Long primaryKey = (Long) helper.getPrimaryKey(entity, adminProperties);
+			    StaticAsset adminInstance = (StaticAsset) staticAssetService.findStaticAssetById(primaryKey);
+
+                //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
+                adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
+			    adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+                adminInstance.setFileSize(upload.getSize());
+                Collection mimeTypes = MimeUtil.getMimeTypes(upload.getOriginalFilename());
+                if (!mimeTypes.isEmpty()) {
+                    MimeType mimeType = (MimeType) mimeTypes.iterator().next();
+                    adminInstance.setMimeType(mimeType.toString());
+                } else {
+                    mimeTypes = MimeUtil.getMimeTypes(upload.getInputStream());
+                    if (!mimeTypes.isEmpty()) {
+                        MimeType mimeType = (MimeType) mimeTypes.iterator().next();
+                        adminInstance.setMimeType(mimeType.toString());
+                    }
+                }
+                String extension = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1, upload.getOriginalFilename().length()).toLowerCase();
+                adminInstance.setFileExtension(extension);
+
+                adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
+
+                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+                StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByStaticAssetId(adminInstance.getId());
+                if (storage != null) {
+                    staticAssetStorageService.delete(storage);
+                }
+
+                storage = staticAssetStorageService.create();
+                storage.setFullUrl(adminInstance.getFullUrl());
+                storage.setStaticAssetId(adminInstance.getId());
+                Blob uploadBlob = staticAssetStorageService.createBlob(upload);
+                storage.setFileData(uploadBlob);
+                storage = staticAssetStorageService.save(storage);
+
+                return addImageRecords(adminEntity);
+            } catch (Exception e) {
+                throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+            }
+        } else {
+            Entity entity = persistencePackage.getEntity();
+            try {
+                PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+                Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
+                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+                Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+                StaticAsset adminInstance = (StaticAsset) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+                //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
+                adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
+                adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+                adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
+
+                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+                return addImageRecords(adminEntity);
+            } catch (Exception e) {
+                throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+            }
+        }
     }
 
     protected Entity addImageRecords(Entity entity) {

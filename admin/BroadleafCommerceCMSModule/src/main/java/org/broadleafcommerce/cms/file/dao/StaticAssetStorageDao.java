@@ -18,7 +18,7 @@ public interface StaticAssetStorageDao {
 
     StaticAssetStorage readStaticAssetStorageById(Long id);
 
-    StaticAssetStorage readStaticAssetStorageByFullURL(String url);
+    public StaticAssetStorage readStaticAssetStorageByStaticAssetId(Long id);
 
     StaticAssetStorage save(StaticAssetStorage assetStorage);
 

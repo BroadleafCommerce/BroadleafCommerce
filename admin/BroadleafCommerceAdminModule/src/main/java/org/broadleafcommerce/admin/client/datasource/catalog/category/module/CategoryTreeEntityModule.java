@@ -15,8 +15,11 @@
  */
 package org.broadleafcommerce.admin.client.datasource.catalog.category.module;
 
-import java.util.Map;
-
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.*;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
@@ -28,14 +31,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import java.util.Map;
 
 /**
  * 
@@ -91,7 +87,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 						String myId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(myRecord));
 						if (startingId.equals(myId) && !dataSource.getPrimaryKeyValue(record).equals(myId)) {
 							updateRecord(result, (TreeNode) myRecord, false);
-							((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid().refreshRow(count);
+							((ListGrid) ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid()).refreshRow(count);
 						}
 						count++;
 					}

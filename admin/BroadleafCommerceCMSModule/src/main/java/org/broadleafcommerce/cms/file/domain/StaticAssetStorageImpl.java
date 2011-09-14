@@ -22,7 +22,10 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Column(name = "STATIC_ASSET_STORAGE_ID")
     protected Long id;
 
-    @Column(name ="FULL_URL", unique = true)
+    @Column(name ="STATIC_ASSET_ID", nullable = false)
+    protected Long staticAssetId;
+
+    @Column(name ="FULL_URL")
     protected String fullUrl;
 
     @Column (name = "FILE_DATA")
@@ -57,5 +60,15 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Override
     public void setFileData(Blob fileData) {
         this.fileData = fileData;
+    }
+
+    @Override
+    public Long getStaticAssetId() {
+        return staticAssetId;
+    }
+
+    @Override
+    public void setStaticAssetId(Long staticAssetId) {
+        this.staticAssetId = staticAssetId;
     }
 }

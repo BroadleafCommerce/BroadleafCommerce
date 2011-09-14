@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.admin.client.datasource.catalog.category;
 
+import com.smartgwt.client.widgets.grid.ListGrid;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
@@ -93,7 +94,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 	@Override
 	protected void executeAdd(final String requestId, final DSRequest request, final DSResponse response) {
 		BLCMain.NON_MODAL_PROGRESS.startProgress();
-		setLinkedValue(getPrimaryKeyValue(getAssociatedGrid().getSelectedRecord()));
+		setLinkedValue(getPrimaryKeyValue(((ListGrid) getAssociatedGrid()).getSelectedRecord()));
 		JavaScriptObject data = request.getData();
         final TreeNode newRecord = new TreeNode(data);
         persistencePerspective.getOperationTypes().setAddType(OperationType.ENTITY);
