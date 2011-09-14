@@ -35,6 +35,7 @@
 	<target name="gwt-debug-jrebel">
 		<delete dir="target/broadleafdemo/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
+            <arg value="-o"/>
 			<arg value="-Pgwt"/>
             <arg value="gwt:debug"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}"/>

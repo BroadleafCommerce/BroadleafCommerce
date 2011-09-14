@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.Hilite;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;

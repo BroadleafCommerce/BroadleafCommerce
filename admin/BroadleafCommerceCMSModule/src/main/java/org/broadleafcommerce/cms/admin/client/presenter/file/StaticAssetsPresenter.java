@@ -86,6 +86,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                             Criteria myCriteria = new Criteria();
 				            myCriteria.addCriteria("name", event.getRecord().getAttribute("name"));
 				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria);
+                            getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").resetPermanentFieldVisibilityBasedOnType(new String[]{EntityImplementations.STATICASSETIMPL});
+					        getDisplay().getListLeafDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), true, false, false);
                         }
                     }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder"}, null);
 				}
@@ -95,7 +97,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
                     ArtifactItem artifactItem = (ArtifactItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
-                    artifactItem.setPreviewSrc(event.getSelectedRecord().getAttributeAsString("pictureLarge"));
+                    artifactItem.setPreviewSrc(getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
 				}
 			}
 		});

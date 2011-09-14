@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ImageStyle;
 import com.smartgwt.client.widgets.IButton;
@@ -35,6 +36,9 @@ public class ArtifactItem extends CanvasItem {
         previewImg = new Img();
         previewImg.setImageType(ImageStyle.CENTER);
         previewImg.setVisible(true);
+        previewImg.setShowDisabled(false);
+        previewImg.setSrc(GWT.getModuleBaseURL()+"admin/images/blank.gif");
+        previewImg.setShowDown(false);
         previewContainer.addChild(previewImg);
         IButton imageUpdateButton = new IButton("Update Artifact");
         final FormItem formItem = this;
@@ -51,7 +55,7 @@ public class ArtifactItem extends CanvasItem {
     }
 
     public void setPreviewSrc(String value) {
-        previewImg.setSrc("../" + value);
+        previewImg.setSrc(value);
     }
 
 }

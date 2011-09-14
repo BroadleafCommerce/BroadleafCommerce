@@ -122,16 +122,27 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     }
 
     protected Entity addImageRecords(Entity entity) {
-        Property key = entity.findProperty("id");
-        Property extension = entity.findProperty("fileExtension");
-        Property property = new Property();
-        property.setName("picture");
-        property.setValue("cms/staticasset/" + key.getValue() + "." + extension.getValue() + "?filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
-        entity.addProperty(property);
-        Property property2 = new Property();
-        property2.setName("pictureLarge");
-        property2.setValue("cms/staticasset/" + key.getValue() + "." + extension.getValue() + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
-        entity.addProperty(property2);
+        if (entity.getType()[0].equals(ImageStaticAssetImpl.class.getName())) {
+            Property key = entity.findProperty("id");
+            Property extension = entity.findProperty("fileExtension");
+            Property property = new Property();
+            property.setName("picture");
+            property.setValue("cms/staticasset/" + key.getValue() + "." + extension.getValue() + "?filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            entity.addProperty(property);
+            Property property2 = new Property();
+            property2.setName("pictureLarge");
+            property2.setValue("../cms/staticasset/" + key.getValue() + "." + extension.getValue() + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            entity.addProperty(property2);
+        } else {
+            Property property = new Property();
+            property.setName("picture");
+            property.setValue("[ISOMORPHIC]/../admin/images/Mimetype-binary-icon-16.png");
+            entity.addProperty(property);
+            Property property2 = new Property();
+            property2.setName("pictureLarge");
+            property2.setValue("[ISOMORPHIC]/../admin/images/Mimetype-binary-icon-64.png");
+            entity.addProperty(property2);
+        }
 
         return entity;
     }
@@ -227,12 +238,13 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconAttributes.setFriendlyName(" ");
         iconAttributes.setGroup("Asset Details");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        iconAttributes.setProminent(false);
+        iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
         iconAttributes.setReadOnly(false);
         iconAttributes.setHidden(false);
         iconAttributes.setFormHidden(true);
         iconAttributes.setColumnWidth("25");
+        iconAttributes.setOrder(0);
         iconAttributes.setRequiredOverride(true);
 
         mergedProperties.put("picture", iconMetadata);
