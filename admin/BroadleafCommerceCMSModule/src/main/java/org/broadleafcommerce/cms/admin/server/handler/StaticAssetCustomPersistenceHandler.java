@@ -56,12 +56,12 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(StaticAsset.class.getName());
+        return persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0 && persistencePackage.getCustomCriteria()[0].equals("assetListUi");
     }
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(StaticAssetImpl.class.getName());
+        return canHandleInspect(persistencePackage);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return canHandleAdd(persistencePackage) || canHandleInspect(persistencePackage);
+        return canHandleInspect(persistencePackage);
     }
 
     @Override
@@ -408,6 +408,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         mergedProperties.put("ceilingEntityFullyQualifiedClassname", createHiddenField("ceilingEntityFullyQualifiedClassname"));
         mergedProperties.put("parentFolder", createHiddenField("parentFolder"));
         mergedProperties.put("idHolder", createHiddenField("idHolder"));
+        mergedProperties.put("customCriteria", createHiddenField("customCriteria"));
 
         foreignKeyReadyMergedProperties = (HashMap<String, FieldMetadata>) SerializationUtils.clone(mergedProperties);
         foreignKeyReadyMergedProperties.put("parentFolder", originalProps.get("parentFolder"));

@@ -15,5 +15,5 @@ public class EntityImplementations {
     public static final String STATICASSETFOLDERIMPL = "org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl";
     public static final String STATICASSETIMPL = "org.broadleafcommerce.cms.file.domain.StaticAssetImpl";
     public static final String IMAGESTATICASSETIMPL = "org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl";
-
+    public static final String STATICASSETDESCRIPTIONIMPL = "org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl";
 }

@@ -15,8 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
-import java.util.Map;
-
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.events.*;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -25,18 +30,8 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.events.DataArrivedEvent;
-import com.smartgwt.client.widgets.grid.events.DataArrivedHandler;
-import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
-import com.smartgwt.client.widgets.grid.events.EditCompleteHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -48,7 +43,7 @@ public class MapStructurePresenter implements SubPresentable {
 	protected GridStructureDisplay display;
 	protected MapStructureEntityEditDialog entityEditDialog;
 	protected String entityEditDialogTitle;
-	protected Map<String, Object> initialValues;
+	protected Map<String, Object> initialValues = new HashMap<String, Object>();
 	protected String[] gridFields;
 	
 	protected Record associatedRecord;
@@ -59,7 +54,13 @@ public class MapStructurePresenter implements SubPresentable {
 		this.display = display;
 		this.entityEditDialog = entityEditDialog;
 		this.entityEditDialogTitle = entityEditDialogTitle;
-		this.initialValues = initialValues;
+        if (initialValues != null) {
+		    this.initialValues = initialValues;
+        }
+	}
+
+    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
+		this(display, entityEditDialog, entityEditDialogTitle, null);
 	}
 	
 	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {

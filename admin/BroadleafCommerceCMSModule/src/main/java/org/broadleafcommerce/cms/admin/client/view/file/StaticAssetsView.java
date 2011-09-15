@@ -12,6 +12,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * Created by jfischer
@@ -21,6 +24,7 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
     protected DynamicEntityTreeView treeDisplay;
     protected DynamicFormView treeDynamicFormDisplay;
     protected SubItemView listDisplay;
+    protected GridStructureView assetDescriptionDisplay;
 
     public StaticAssetsView() {
 		setHeight100();
@@ -49,8 +53,10 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		listGridLayout.setWidth("60%");
 
         listDisplay = new SubItemView(BLCMain.getMessageManager().getString("staticAssetsTitle"), false, true, true);
-        //listDisplay.getToolbar().getMember(6).destroy();
         listGridLayout.addMember(listDisplay);
+
+        assetDescriptionDisplay = new GridStructureView(BLCMain.getMessageManager().getString("assetDescriptionTitle"), false, true);
+        ((FormOnlyView) listDisplay.getFormOnlyDisplay()).addMember(assetDescriptionDisplay);
 
         addMember(treeGridLayout);
         addMember(listGridLayout);
@@ -75,4 +81,8 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		return listDisplay;
 	}
 
+    @Override
+    public GridStructureDisplay getAssetDescriptionDisplay() {
+        return assetDescriptionDisplay;
+    }
 }

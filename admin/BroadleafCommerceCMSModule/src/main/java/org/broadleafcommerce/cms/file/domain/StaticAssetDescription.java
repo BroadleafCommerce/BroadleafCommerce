@@ -1,7 +1,5 @@
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.cms.page.domain.Locale;
-
 import java.io.Serializable;
 
 /**
@@ -21,18 +19,6 @@ public interface StaticAssetDescription extends Serializable {
 
     public void setLongDescription(String longDescription);
 
-    public StaticAsset getStaticAsset();
-
-    public void setStaticAsset(StaticAsset staticAsset);
-
     public StaticAssetDescription cloneEntity();
-
-    public String getFieldKey();
-
-    public void setFieldKey(String fieldKey);
-
-    public Locale getLocale();
-
-    public void setLocale(Locale locale);
 
 }

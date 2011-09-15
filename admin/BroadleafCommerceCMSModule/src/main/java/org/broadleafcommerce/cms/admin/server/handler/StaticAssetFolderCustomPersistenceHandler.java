@@ -30,7 +30,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(StaticAssetFolder.class.getName());
+        return persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0 && persistencePackage.getCustomCriteria()[0].equals("assetFolderUi");
     }
 
     @Override

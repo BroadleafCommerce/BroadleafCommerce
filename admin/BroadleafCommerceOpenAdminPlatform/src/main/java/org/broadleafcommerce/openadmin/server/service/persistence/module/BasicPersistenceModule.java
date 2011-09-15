@@ -21,6 +21,7 @@ import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
@@ -139,10 +140,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             break;
                         case FOREIGN_KEY :{
                             Serializable foreignInstance;
-                            if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                            if (StringUtils.isEmpty(value)) {
+                                foreignInstance = null;
                             } else {
-                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                                if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
+                                    foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                                } else {
+                                    foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                                }
                             }
 
                             if (Collection.class.isAssignableFrom(returnType)) {
@@ -160,10 +165,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                         case ADDITIONAL_FOREIGN_KEY :{
                             Serializable foreignInstance;
-                            if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                            if (StringUtils.isEmpty(value)) {
+                                foreignInstance = null;
                             } else {
-                                foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                                if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
+                                    foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+                                } else {
+                                    foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+                                }
                             }
 
                             if (Collection.class.isAssignableFrom(returnType)) {
@@ -550,8 +559,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 							ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
 						}
 					} else if (cto.get(propertyName).getFilterValues()[0] == null || cto.get(propertyName).getFilterValues()[0].equals("null")){
-						AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-						ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+						ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
 					} else {
 						AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
 						ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
@@ -575,8 +583,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 							ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
 						}
 					} else if (cto.get(propertyName).getFilterValues()[0] == null || cto.get(propertyName).getFilterValues()[0].equals("null")){
-						AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-						ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
+						ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
 					} else {
 						AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
 						ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());

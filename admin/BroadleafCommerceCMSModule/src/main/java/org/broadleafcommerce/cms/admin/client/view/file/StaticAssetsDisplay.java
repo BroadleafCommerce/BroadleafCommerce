@@ -2,6 +2,7 @@ package org.broadleafcommerce.cms.admin.client.view.file;
 
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
 /**
  * Created by jfischer
@@ -9,5 +10,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 public interface StaticAssetsDisplay extends DynamicEditDisplay {
 
     public SubItemDisplay getListLeafDisplay();
+
+    public GridStructureDisplay getAssetDescriptionDisplay();
 
 }

@@ -99,9 +99,20 @@ public class FormBuilder {
         
         groupFields(form, sections, sectionNames, sectionCollapsed);
 	}
+
+    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, DataSource optionDataSource, String displayField, String valueField, Boolean showId) {
+        buildMapForm(dataSource, form, mapStructure, null, optionDataSource, displayField, valueField, showId);
+    }
+
+    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
+        buildMapForm(dataSource, form, mapStructure, mapKeys, null, null, null, showId);
+    }
 	
-	public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
-		form.setDataSource(dataSource);
+	private static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, DataSource optionDataSource, String displayField, String valueField, Boolean showId) {
+		if (mapKeys == null && optionDataSource == null) {
+            throw new RuntimeException("Must provide either map keys or and option datasource to control the values for the key field.");
+        }
+        form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
         Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
@@ -125,10 +136,17 @@ public class FormBuilder {
 	        	FormItem displayFormItem = null;
 	        	String fieldName = field.getName();
 	        	if (mapStructure != null && mapStructure.getKeyPropertyName().equals(fieldName)) {
-	        		formItem = new SelectItem();
-	        		((SelectItem) formItem).setValueMap(mapKeys);
-	        		((SelectItem) formItem).setMultiple(false);
-	        		((SelectItem) formItem).setDefaultToFirstOption(true);
+	        		formItem = new ComboBoxItem();
+                    if (mapKeys != null) {
+	        		    ((ComboBoxItem) formItem).setValueMap(mapKeys);
+                    } else {
+                        ((ComboBoxItem) formItem).setOptionDataSource(optionDataSource);
+                        ((ComboBoxItem) formItem).setDisplayField(displayField);
+                        ((ComboBoxItem) formItem).setValueField(valueField);
+                        //((ComboBoxItem) formItem).fetchData();
+                    }
+	        		//((ComboBoxItem) formItem).setMultiple(false);
+	        		((ComboBoxItem) formItem).setDefaultToFirstOption(true);
 	        		setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        	} else {
 	        		if (!fieldType.equals(SupportedFieldType.ID.toString()) || (fieldType.equals(SupportedFieldType.ID.toString()) && showId)) {

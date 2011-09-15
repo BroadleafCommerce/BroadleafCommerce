@@ -20,8 +20,7 @@ import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ColumnTreeDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaTreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -34,7 +33,7 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 public class StaticAssetsFolderTreeDataSourceFactory implements DataSourceFactory {
 
 	public static final String parentFolderForeignKey = "parentFolder";
-	public static TreeGridDataSource dataSource = null;
+	public static CustomCriteriaTreeGridDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
@@ -49,8 +48,9 @@ public class StaticAssetsFolderTreeDataSourceFactory implements DataSourceFactor
                 "site",
                 "sandbox"
             });
-			dataSource = new TreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null);
-			dataSource.buildFields(null, false, cb);
+			dataSource = new CustomCriteriaTreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null, true, true, true, true, true);
+			dataSource.setCustomCriteria(new String[]{"assetFolderUi"});
+            dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {
 				cb.onSuccess(dataSource);

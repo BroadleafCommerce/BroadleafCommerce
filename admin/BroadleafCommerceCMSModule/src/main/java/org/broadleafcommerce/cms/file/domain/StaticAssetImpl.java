@@ -172,10 +172,10 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         asset.originalAssetId = originalAssetId;
         this.fileExtension = fileExtension;
 
-        for (StaticAssetDescription oldAssetDescription : contentMessageValues.values()) {
+        for (String key : contentMessageValues.keySet()) {
+            StaticAssetDescription oldAssetDescription = contentMessageValues.get(key);
             StaticAssetDescription newAssetDescription = oldAssetDescription.cloneEntity();
-            newAssetDescription.setStaticAsset(asset);
-            asset.getContentMessageValues().put(newAssetDescription.getFieldKey(), newAssetDescription);
+            asset.getContentMessageValues().put(key, newAssetDescription);
         }
 
         return asset;

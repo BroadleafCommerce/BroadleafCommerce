@@ -287,7 +287,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             }
             if (removeItems.size() > 0) {
                 for (String removeKey : removeItems) {
-                    pageFieldMap.remove(removeKey);
+                    PageField pageField = pageFieldMap.remove(removeKey);
+                    pageField.setPage(null);
                 }
             }
             pageService.updatePage(page, null);

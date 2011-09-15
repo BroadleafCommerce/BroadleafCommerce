@@ -105,7 +105,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
             	entity.setType(type);
             }
         }
-		service.update(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				ListGridRecord myRecord = (ListGridRecord) updateRecord(result, (Record) temp, false);
@@ -166,7 +166,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
             	entity.setType(type);
             }
         }
-        service.remove(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {

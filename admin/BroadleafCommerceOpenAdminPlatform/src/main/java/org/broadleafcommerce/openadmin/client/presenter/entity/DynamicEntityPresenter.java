@@ -64,9 +64,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	
 	protected Boolean disabled = false;
 
-    private String newItemTitle = "Create new item";
-    private Criteria fetchAfterAddCriteria = new Criteria();
-    private String[] gridFields;
+    protected String newItemTitle = "Create new item";
+    protected Criteria fetchAfterAddCriteria = new Criteria();
+    protected String[] gridFields;
 	
 	public void setStartState() {
 		if (!disabled) {

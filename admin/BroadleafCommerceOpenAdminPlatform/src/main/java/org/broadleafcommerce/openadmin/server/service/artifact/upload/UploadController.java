@@ -48,11 +48,14 @@ public class UploadController extends SimpleFormController {
             String sandbox = (String) mpvs.getPropertyValue("sandbox").getValue();
             callbackName = (String) mpvs.getPropertyValue("callbackName").getValue();
             String operation = (String) mpvs.getPropertyValue("operation").getValue();
+            String customCriteria = (String) mpvs.getPropertyValue("customCriteria").getValue();
             mpvs.removePropertyValue("ceilingEntityFullyQualifiedClassname");
             mpvs.removePropertyValue("sandbox");
             mpvs.removePropertyValue("callbackName");
             mpvs.removePropertyValue("operation");
+            mpvs.removePropertyValue("customCriteria");
             persistencePackage.setCeilingEntityFullyQualifiedClassname(ceilingEntity);
+            persistencePackage.setCustomCriteria(new String[]{customCriteria});
             SandBoxInfo sandBoxInfo = new SandBoxInfo();
             sandBoxInfo.setSandBox(sandbox);
             persistencePackage.setSandBoxInfo(sandBoxInfo);

@@ -23,20 +23,26 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetDescriptionMapDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ArtifactItem;
 
 import java.util.HashMap;
@@ -49,9 +55,11 @@ import java.util.Map;
  */
 public class StaticAssetsPresenter extends DynamicEntityPresenter implements Instantiable {
 
+    protected MapStructureEntityEditDialog staticAssetDescriptionEntityAdd = null;
     public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();
     protected HandlerRegistration leafAddClickHandlerRegistration;
     protected SubPresentable leafAssetPresenter;
+    protected SubPresentable staticAssetDescriptionPresenter;
 
     @Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -72,15 +80,32 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 	}
 
     @Override
+    protected void addClicked() {
+		Map<String, Object> initialValues = new HashMap<String, Object>();
+		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+		initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
+        BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+			public void onNewItemCreated(NewItemCreatedEvent event) {
+                if (fetchAfterAddCriteria != null) {
+				    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
+                    resetForm();
+                }
+			}
+		}, "90%", null, null);
+	}
+
+    @Override
 	public void bind() {
 		super.bind();
         leafAssetPresenter.bind();
+        staticAssetDescriptionPresenter.bind();
         leafAddClickHandlerRegistration = getDisplay().getListLeafDisplay().getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
                     getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.STATICASSETIMPL);
 					Map<String, Object> initialValues = new HashMap<String, Object>();
                     initialValues.put("operation", "add");
+                    initialValues.put("customCriteria", "assetListUi");
                     initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
                     initialValues.put("ceilingEntityFullyQualifiedClassname", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname());
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
@@ -91,7 +116,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria);
                             resetForm();
                         }
-                    }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder"}, null);
+                    }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);
 				}
 			}
         });
@@ -100,6 +125,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 				if (event.getState()) {
                     ArtifactItem artifactItem = (ArtifactItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
                     artifactItem.setPreviewSrc(getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
+                    staticAssetDescriptionPresenter.enable();
+                    staticAssetDescriptionPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), null);
 				}
 			}
 		});
@@ -118,6 +145,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
     public void resetForm() {
         getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").resetPermanentFieldVisibilityBasedOnType(new String[]{EntityImplementations.STATICASSETIMPL});
 		getDisplay().getListLeafDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), true, false, false);
+        staticAssetDescriptionPresenter.disable();
     }
 
     public void setup() {
@@ -127,7 +155,6 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
                 leafAssetPresenter = new LeafAssetPresenter(getDisplay().getListLeafDisplay(), true, true, false);
-                //((ListGridDataSource) dataSource).
 				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
                 ((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
                         @Override
@@ -137,6 +164,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                             getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").resetVisibilityOnly();
                             initialValues.put("idHolder", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getPrimaryKeyValue(getDisplay().getListLeafDisplay().getGrid().getSelectedRecord()));
                             initialValues.put("operation", "update");
+                            initialValues.put("customCriteria", "assetListUi");
                             initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
                             initialValues.put("ceilingEntityFullyQualifiedClassname", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname());
                             initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
@@ -152,12 +180,26 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                                         }
                                     });
                                 }
-                            }, null, new String[]{"file", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder", "idHolder"}, null);
+                            }, null, new String[]{"file", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder", "idHolder", "customCriteria"}, null);
                         }
                     }
                 );
             }
         }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS2", new LocaleListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetDescriptionMapDS", new StaticAssetDescriptionMapDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				staticAssetDescriptionPresenter = new MapStructurePresenter(getDisplay().getAssetDescriptionDisplay(), getStaticAssetDescriptionEntityView(), BLCMain.getMessageManager().getString("newAssetDescriptionTitle"));
+				staticAssetDescriptionPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "description", "longDescription"}, new Boolean[]{true, true, true});
+			}
+		}));
+	}
+
+    protected MapStructureEntityEditDialog getStaticAssetDescriptionEntityView() {
+		 if (staticAssetDescriptionEntityAdd == null) {
+			 staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS2"), "friendlyName", "localeName");
+		 }
+		 return staticAssetDescriptionEntityAdd;
 	}
 
 	@Override
