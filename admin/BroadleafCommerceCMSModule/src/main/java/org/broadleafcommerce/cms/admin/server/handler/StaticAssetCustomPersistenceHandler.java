@@ -37,7 +37,8 @@ import java.util.Map;
  */
 public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static Map<String, FieldMetadata> mergedProperties;
+    private static HashMap<String, FieldMetadata> mergedProperties;
+    private static HashMap<String, FieldMetadata> foreignKeyReadyMergedProperties;
 
     static {
         MimeUtil.registerMimeDetector(ExtensionMimeDetector.class.getName());
@@ -69,6 +70,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     }
 
     @Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+        return canHandleInspect(persistencePackage);
+    }
+
+    @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return canHandleAdd(persistencePackage) || canHandleInspect(persistencePackage);
     }
@@ -93,8 +99,8 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 adminInstance = new StaticAssetImpl();
             }
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
-			adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            Map<String, FieldMetadata> entityProperties = getForeignKeyReadyMergedProperties();
+			adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
             adminInstance.setFileSize(upload.getSize());
             Collection mimeTypes = MimeUtil.getMimeTypes(upload.getOriginalFilename());
@@ -113,10 +119,9 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
             adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), null);
 
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
             StaticAssetStorage storage = staticAssetStorageService.create();
-            storage.setFullUrl(adminInstance.getFullUrl());
             storage.setStaticAssetId(adminInstance.getId());
             Blob uploadBlob = staticAssetStorageService.createBlob(upload);
             storage.setFileData(uploadBlob);
@@ -126,6 +131,22 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 		} catch (Exception e) {
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
+    }
+
+    @Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
+            Map<String, FieldMetadata> adminProperties = getForeignKeyReadyMergedProperties();
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            StaticAsset adminInstance = (StaticAsset) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+
+            staticAssetService.deleteStaticAsset(adminInstance, null);
+        } catch (Exception e) {
+            throw new ServiceException("Unable to delete entity for " + entity.getType()[0], e);
+        }
     }
 
     @Override
@@ -140,13 +161,13 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
 			    Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
-                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
-			    Long primaryKey = (Long) helper.getPrimaryKey(entity, adminProperties);
+                Map<String, FieldMetadata> entityProperties = getForeignKeyReadyMergedProperties();
+			    Long primaryKey = Long.valueOf(entity.findProperty("idHolder").getValue());
 			    StaticAsset adminInstance = (StaticAsset) staticAssetService.findStaticAssetById(primaryKey);
 
                 //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
                 adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
-			    adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+			    adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
                 adminInstance.setFileSize(upload.getSize());
                 Collection mimeTypes = MimeUtil.getMimeTypes(upload.getOriginalFilename());
@@ -165,7 +186,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
                 adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
 
-                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+                Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
                 StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByStaticAssetId(adminInstance.getId());
                 if (storage != null) {
@@ -173,7 +194,6 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 }
 
                 storage = staticAssetStorageService.create();
-                storage.setFullUrl(adminInstance.getFullUrl());
                 storage.setStaticAssetId(adminInstance.getId());
                 Blob uploadBlob = staticAssetStorageService.createBlob(upload);
                 storage.setFileData(uploadBlob);
@@ -181,23 +201,23 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
                 return addImageRecords(adminEntity);
             } catch (Exception e) {
-                throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+                throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
             }
         } else {
             Entity entity = persistencePackage.getEntity();
             try {
                 PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
                 Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
-                Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
-                Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+                Map<String, FieldMetadata> entityProperties = getForeignKeyReadyMergedProperties();
+                Object primaryKey = helper.getPrimaryKey(entity, entityProperties);
                 StaticAsset adminInstance = (StaticAsset) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
                 //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
                 adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
-                adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+                adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
                 adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
 
-                Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+                Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
                 return addImageRecords(adminEntity);
             } catch (Exception e) {
@@ -250,11 +270,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             filter terms in the UI and have those filters impact the results. This will also enable data paging.
              */
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StaticAsset.class.getName(), getMergedProperties());
+            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StaticAsset.class.getName(), getForeignKeyReadyMergedProperties());
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StaticAsset.class.getName());
 			List<Serializable> records = dynamicEntityDao.query(queryCriteria, StaticAsset.class);
 
-            Entity[] pageEntities = helper.getRecords(getMergedProperties(), records);
+            Entity[] pageEntities = helper.getRecords(getForeignKeyReadyMergedProperties(), records);
 
             for (Entity entity : pageEntities) {
                 entity = addImageRecords(entity);
@@ -264,18 +284,42 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
             return response;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
+
+    /*protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, ForeignKey foreignField, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
+		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			ceilingEntityFullyQualifiedClass.getName(),
+			entities,
+			foreignField,
+			new String[]{},
+			additionalForeignKeys,
+			MergedPropertyType.PRIMARY,
+			populateManyToOneFields,
+			includeManyToOneFields,
+			excludeManyToOneFields,
+			null,
+			""
+		);
+
+		return mergedProperties;
+	}*/
 
     protected synchronized Map<String, FieldMetadata> getMergedProperties() {
         return mergedProperties;
     }
 
+    protected synchronized Map<String, FieldMetadata> getForeignKeyReadyMergedProperties() {
+        return foreignKeyReadyMergedProperties;
+    }
+
     protected synchronized void createMergedProperties(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
-        mergedProperties = dynamicEntityDao.getMergedProperties(
+        HashMap<String, FieldMetadata> originalProps = (HashMap<String, FieldMetadata>) dynamicEntityDao.getMergedProperties(
             StaticAssetFolder.class.getName(),
             entityClasses,
             (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
@@ -289,6 +333,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             ""
         );
 
+        mergedProperties = (HashMap<String, FieldMetadata>) SerializationUtils.clone(originalProps);
         FieldMetadata fieldMetadata = new FieldMetadata();
         fieldMetadata.setFieldType(SupportedFieldType.UPLOAD);
         fieldMetadata.setMutable(true);
@@ -362,6 +407,10 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         mergedProperties.put("sandbox", createHiddenField("sandbox"));
         mergedProperties.put("ceilingEntityFullyQualifiedClassname", createHiddenField("ceilingEntityFullyQualifiedClassname"));
         mergedProperties.put("parentFolder", createHiddenField("parentFolder"));
+        mergedProperties.put("idHolder", createHiddenField("idHolder"));
+
+        foreignKeyReadyMergedProperties = (HashMap<String, FieldMetadata>) SerializationUtils.clone(mergedProperties);
+        foreignKeyReadyMergedProperties.put("parentFolder", originalProps.get("parentFolder"));
 	}
 
     @Override

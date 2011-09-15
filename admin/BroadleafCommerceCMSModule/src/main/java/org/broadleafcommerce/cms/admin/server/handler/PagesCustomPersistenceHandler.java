@@ -127,6 +127,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        //TODO how are page folder updates handled?
         Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -144,7 +145,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 			return adminEntity;
 		} catch (Exception e) {
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
     }
 
@@ -160,7 +161,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
             pageService.deletePage(adminInstance, null);
 		} catch (Exception e) {
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
     }
 }

@@ -20,12 +20,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
+import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,13 +38,16 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Resource(name="blStaticAssetDao")
     protected StaticAssetDao staticAssetDao;
 
+    @Resource(name="blStaticAssetStorageService")
+    protected StaticAssetStorageService staticAssetStorageService;
+
     @Override
     public StaticAssetFolder findStaticAssetById(Long id) {
         return staticAssetDao.readStaticAssetById(id);
     }
 
     @Override
-    public List<StaticAssetFolder> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder) {
+    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder) {
         SandBox productionSandbox = null;
         SandBox userSandbox = sandbox;
 
@@ -56,28 +58,30 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             }
         }
 
-        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildren(parentFolder, userSandbox, productionSandbox);
+        List<StaticAsset> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildren(parentFolder, userSandbox, productionSandbox);
+        return staticAssetFolders;
+    }
+
+    @Override
+    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(SandBox sandbox, StaticAssetFolder parentFolder) {
+        SandBox productionSandbox = null;
+        SandBox userSandbox = sandbox;
+
+        if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
+            productionSandbox = sandbox.getSite().getProductionSandbox();
+            if (userSandbox.getId().equals(productionSandbox.getId())) {
+                userSandbox = null;
+            }
+        }
+
+        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildFolders(parentFolder, userSandbox, productionSandbox);
         return staticAssetFolders;
     }
 
     @Override
     public StaticAsset addStaticAsset(StaticAsset staticAsset, StaticAssetFolder parentFolder, SandBox destinationSandbox) {
         staticAsset.setSandbox(destinationSandbox);
-
-        List<String> parentFolders = new ArrayList<String>();
-        while (parentFolder != null) {
-            parentFolders.add(parentFolder.getName());
-            parentFolder = parentFolder.getParentFolder();
-        }
-        Collections.reverse(parentFolders);
-        StringBuffer sb = new StringBuffer();
-        sb.append("/");
-        for (String folderName : parentFolders) {
-            sb.append(folderName);
-            sb.append("/");
-        }
-        sb.append(staticAsset.getName());
-        staticAsset.setFullUrl(sb.toString());
+        staticAsset.setParentFolder(parentFolder);
 
         return staticAssetDao.updateStaticAsset(staticAsset);
     }
@@ -100,6 +104,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
             if (staticAsset.getDeletedFlag() == true) {
                 staticAssetDao.delete(staticAsset);
+                StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByStaticAssetId(staticAsset.getId());
+                if (storage != null) {
+                    staticAssetStorageService.delete(storage);
+                }
             }
             return null;
         } else {

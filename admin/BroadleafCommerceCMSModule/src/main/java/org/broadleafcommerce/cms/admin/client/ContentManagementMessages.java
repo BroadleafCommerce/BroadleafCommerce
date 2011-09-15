@@ -52,5 +52,6 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String newItemTitle();
 
     public String staticAssetsTitle();
+    public String staticAssetFoldersTitle();
 
 }

@@ -25,9 +25,6 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Column(name ="STATIC_ASSET_ID", nullable = false)
     protected Long staticAssetId;
 
-    @Column(name ="FULL_URL")
-    protected String fullUrl;
-
     @Column (name = "FILE_DATA")
     @Lob
     protected Blob fileData;
@@ -40,16 +37,6 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public String getFullUrl() {
-        return fullUrl;
-    }
-
-    @Override
-    public void setFullUrl(String fullUrl) {
-        this.fullUrl = fullUrl;
     }
 
     @Override

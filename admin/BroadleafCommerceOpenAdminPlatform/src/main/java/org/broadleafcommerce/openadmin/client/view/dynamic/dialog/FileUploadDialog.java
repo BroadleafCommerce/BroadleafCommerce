@@ -71,24 +71,21 @@ public class FileUploadDialog extends Window {
 		this.setIsModal(true);
 		this.setShowModalMask(true);
 		this.setShowMinimizeButton(false);
-		this.setWidth(600);
-		this.setAutoHeight();
-		this.setHeight(320);
+		this.setAutoSize(true);
 		this.setCanDragResize(true);
 		this.setOverflow(Overflow.HIDDEN);
 		
 		VStack stack = new VStack();
-		stack.setWidth100();
-		stack.setLayoutRightMargin(20);
-
+        stack.setWidth(630);
+        stack.setHeight(300);
 		dynamicForm = new DynamicForm();
         dynamicForm.setEncoding(Encoding.MULTIPART);
         dynamicForm.setTarget("hidden_frame");
         dynamicForm.setAction("cms.upload.service");
 		dynamicForm.setNumCols(4);
         dynamicForm.setPadding(10);
+        dynamicForm.setHeight100();
         stack.addMember(dynamicForm);
-        addItem(stack);
 
         cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
@@ -161,16 +158,18 @@ public class FileUploadDialog extends Window {
         });
         
         VLayout vLayout = new VLayout();
-        vLayout.setHeight100();
         vLayout.setAlign(VerticalAlignment.BOTTOM);
-        HLayout hLayout = new HLayout(10); 
+        HLayout hLayout = new HLayout(10);
         hLayout.setAlign(Alignment.CENTER);  
         hLayout.addMember(saveButton);  
         hLayout.addMember(cancelButton);
-        hLayout.setLayoutTopMargin(40);
-        hLayout.setLayoutBottomMargin(40);
+        hLayout.setLayoutTopMargin(20);
+        hLayout.setLayoutBottomMargin(20);
         vLayout.addMember(hLayout);
-        addItem(vLayout);
+        stack.addMember(vLayout);
+
+        addItem(stack);
+        
         createFrame();
 	}
 

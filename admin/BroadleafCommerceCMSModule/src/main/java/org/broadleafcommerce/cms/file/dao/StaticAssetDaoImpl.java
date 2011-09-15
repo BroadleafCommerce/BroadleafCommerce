@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,7 +56,22 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     }
 
     @Override
-    public List<StaticAssetFolder> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox) {
+    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox) {
+        String queryPrefix = "BC_READ_";
+        if (parentFolder == null) {
+                queryPrefix = "BC_READ_NULL_";
+        }
+        Query query2 = em.createNamedQuery(queryPrefix + "STATIC_ASSET_FOLDER_CHILD_FOLDERS");
+        if (parentFolder != null) {
+            query2.setParameter("parentFolder", parentFolder);
+        }
+        List<StaticAssetFolder> childFolders = query2.getResultList();
+
+        return childFolders;
+    }
+
+    @Override
+    public List<StaticAsset> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox) {
         String queryPrefix = "BC_READ_";
         if (parentFolder == null) {
                 queryPrefix = "BC_READ_NULL_";
@@ -70,14 +86,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         List<StaticAsset> childAssets = query.getResultList();
         filterStaticAssetsForSandbox(userSandBox, productionSandBox, childAssets);
 
-        Query query2 = em.createNamedQuery(queryPrefix + "STATIC_ASSET_FOLDER_CHILD_FOLDERS");
-        if (parentFolder != null) {
-            query2.setParameter("parentFolder", parentFolder);
-        }
-        List<StaticAssetFolder> childFolders = query2.getResultList();
-        childFolders.addAll(childAssets);
-
-        return childFolders;
+        return childAssets;
     }
 
     private void filterStaticAssetsForSandbox(SandBox userSandBox, SandBox productionSandBox, List<StaticAsset> assetList) {
@@ -106,6 +115,22 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAsset updateStaticAsset(StaticAsset asset) {
+        StaticAssetFolder parentFolder = asset.getParentFolder();
+        List<String> parentFolders = new ArrayList<String>();
+        while (parentFolder != null) {
+            parentFolders.add(parentFolder.getName());
+            parentFolder = parentFolder.getParentFolder();
+        }
+        Collections.reverse(parentFolders);
+        StringBuffer sb = new StringBuffer();
+        sb.append("/");
+        for (String folderName : parentFolders) {
+            sb.append(folderName);
+            sb.append("/");
+        }
+        sb.append(asset.getName());
+        asset.setFullUrl(sb.toString());
+
         return em.merge(asset);
     }
 

@@ -37,8 +37,9 @@ public interface StaticAssetService {
      * @param parentFolder if null then root folder for the site.
      * @return
      */
-    public List<StaticAssetFolder> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder);
+    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder);
 
+    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(SandBox sandbox, StaticAssetFolder parentFolder);
 
     /**
      * This method is intended to be called from within the CMS

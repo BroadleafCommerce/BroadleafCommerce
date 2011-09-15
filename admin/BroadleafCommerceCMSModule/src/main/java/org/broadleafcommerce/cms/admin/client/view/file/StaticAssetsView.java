@@ -34,7 +34,7 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		treeGridLayout.setWidth("40%");
 		treeGridLayout.setShowResizeBar(true);
 
-		treeDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource, true);
+		treeDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("staticAssetFoldersTitle"), entityDataSource, true);
         treeDisplay.setHeight("80%");
         treeDisplay.setShowResizeBar(true);
         treeDisplay.getToolBar().getMember(6).destroy();
@@ -48,8 +48,8 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		listGridLayout.setHeight100();
 		listGridLayout.setWidth("60%");
 
-        listDisplay = new SubItemView(BLCMain.getMessageManager().getString("pagesTitle"), false, true, true);
-        listDisplay.getToolbar().getMember(6).destroy();
+        listDisplay = new SubItemView(BLCMain.getMessageManager().getString("staticAssetsTitle"), false, true, true);
+        //listDisplay.getToolbar().getMember(6).destroy();
         listGridLayout.addMember(listDisplay);
 
         addMember(treeGridLayout);

@@ -15,10 +15,6 @@ public interface StaticAssetStorage {
 
     void setId(Long id);
 
-    String getFullUrl();
-
-    void setFullUrl(String fullUrl);
-
     Blob getFileData();
 
     void setFileData(Blob fileData);

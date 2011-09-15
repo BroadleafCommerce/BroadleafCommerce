@@ -28,7 +28,7 @@ public interface StaticAssetDao {
 
     public StaticAssetFolder readStaticAssetById(Long id);
 
-    public List<StaticAssetFolder> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandbox, SandBox productionSandBox);
+    public List<StaticAsset> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandbox, SandBox productionSandBox);
 
     public StaticAsset updateStaticAsset(StaticAsset asset);
 
@@ -39,5 +39,7 @@ public interface StaticAssetDao {
     public StaticAsset addStaticAsset(StaticAsset clonedAsset);
 
     public StaticAssetFolder addStaticAssetFolder(StaticAssetFolder staticAssetFolder);
+
+    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox);
 
 }

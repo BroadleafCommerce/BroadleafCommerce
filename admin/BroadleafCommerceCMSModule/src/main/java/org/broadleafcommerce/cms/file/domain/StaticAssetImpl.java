@@ -61,10 +61,6 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @AdminPresentation(friendlyName="File Extension", order=5, group = "Asset Details", readOnly = true)
     protected String fileExtension;
 
-    @ManyToOne(targetEntity = StaticAssetFolderImpl.class)
-    @JoinColumn(name = "PARENT_FOLDER_ID")
-    protected StaticAssetFolder parentFolder;
-
     @ManyToMany(targetEntity = StaticAssetDescriptionImpl.class, cascade = CascadeType.ALL)
     @JoinTable(name = "BLC_ASSET_DESC_MAP", inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID", referencedColumnName = "STATIC_ASSET_DESC_ID"))
     @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
@@ -103,14 +99,6 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
 
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
-    }
-
-    public StaticAssetFolder getParentFolder() {
-        return parentFolder;
-    }
-
-    public void setParentFolder(StaticAssetFolder parentFolder) {
-        this.parentFolder = parentFolder;
     }
 
     public Map<String, StaticAssetDescription> getContentMessageValues() {

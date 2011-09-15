@@ -162,6 +162,9 @@ public class StaticAssetViewController {
     }
 
     protected void createCacheFile(InputStream is, File cacheFile) throws SQLException, IOException {
+        if (!cacheFile.getParentFile().exists()) {
+            cacheFile.getParentFile().mkdirs();
+        }
         BufferedOutputStream bos = null;
         try {
             bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
