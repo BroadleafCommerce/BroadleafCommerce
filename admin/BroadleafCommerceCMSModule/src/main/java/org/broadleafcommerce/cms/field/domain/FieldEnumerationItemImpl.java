@@ -17,9 +17,9 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FieldEnumerationId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FieldEnumerationId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldEnumerationImpl", allocationSize = 10)
-    @Column(name = "FIELD_ENUMERATION_ID")
+    @GeneratedValue(generator = "FieldEnumerationItemId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "FieldEnumerationItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldEnumerationItemImpl", allocationSize = 10)
+    @Column(name = "FIELD_ENUM_ITEM_ID")
     protected Long id;
 
     @Column (name = "NAME")
