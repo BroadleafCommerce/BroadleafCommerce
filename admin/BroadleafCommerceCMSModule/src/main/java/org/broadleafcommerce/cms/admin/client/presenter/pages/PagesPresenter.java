@@ -40,13 +40,14 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -80,6 +81,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
+	protected AssetSearchDialog assetSearchView;
 
 	@Override
 	protected void removeClicked() {
@@ -258,6 +260,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         });
         
         exposeNativeGetTemplatePath();
+        exposeNativeDisplayAssetSearchDialog();
 	}
 
     public void reloadAllChildRecordsForId(String id) {
@@ -278,6 +281,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
+
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
@@ -319,17 +323,23 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 	
 	public String getTemplatePath() {
-		String pageTemplatePath = (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath");
-        GWT.log(pageTemplatePath);
-		return pageTemplatePath;
+		return (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath");
+	}
+	
+	public void displayAssetSearchDialog(JavaScriptObject editor) {
 	}
 	
 	private native void exposeNativeGetTemplatePath() /*-{
 		var currentPagesPresenter = this;
-		console.log("exposing getTemplatePath()");
 		$wnd.getTemplatePath = function() {
-			console.log("getTemplatePath() called");
 			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter::getTemplatePath()();
+		}
+	}-*/;
+	
+	private native void exposeNativeDisplayAssetSearchDialog() /*-{
+		var currentPagesPresenter = this;
+		$wnd.displayAssetSearchDialog = function(editor) {
+			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter::displayAssetSearchDialog(Lcom/google/gwt/core/client/JavaScriptObject;)(editor);
 		}
 	}-*/;
 	
