@@ -17,9 +17,6 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldData;
 import org.broadleafcommerce.cms.field.domain.FieldDataImpl;
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -94,6 +91,20 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     @Override
     public void setFieldDataList(List<FieldData> fieldDataList) {
         this.fieldDataList = fieldDataList;
+    }
+
+    @Override
+    public StructuredContentField cloneEntity() {
+        StructuredContentFieldImpl newContentField = new StructuredContentFieldImpl();
+        newContentField.fieldKey = fieldKey;
+        newContentField.structuredContent = structuredContent;
+
+        for (FieldData oldFieldData: fieldDataList) {
+            FieldData newFieldData = oldFieldData.cloneEntity();
+            newContentField.fieldDataList.add(newFieldData);
+        }
+        return newContentField;
+
     }
 }
 

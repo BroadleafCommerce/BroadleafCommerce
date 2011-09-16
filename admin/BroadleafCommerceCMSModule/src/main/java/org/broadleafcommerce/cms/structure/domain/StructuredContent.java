@@ -15,10 +15,9 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.openadmin.server.domain.Site;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,17 +32,13 @@ public interface StructuredContent {
 
     public void setContentName(String contentName);
 
-    public String getDescription();
-
-    public void setDescription(String description);
-
     public String getLanguageCode();
 
     public void setLanguageCode(String languageCode);
 
-    public Site getSite();
+    public SandBox getSandbox();
 
-    public void setSite(Site site);
+    public void setSandbox(SandBox sandbox);
 
     public StructuredContentType getStructuredContentType();
 
@@ -53,13 +48,13 @@ public interface StructuredContent {
 
     public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields);
 
-    public List<ContentDisplayRule> getContentDisplayRules();
-
-    public void setContentDisplayRules(List<ContentDisplayRule> contentDisplayRules);
-
     public Boolean getDeletedFlag();
 
     public void setDeletedFlag(Boolean deletedFlag);
+
+    public Boolean getArchivedFlag();
+
+    public void setArchivedFlag(Boolean archivedFlag);
 
     public Boolean getOnlineFlag();
 
@@ -72,4 +67,18 @@ public interface StructuredContent {
     public Date getActiveEndDate();
 
     public void setActiveEndDate(Date activeEndDate);
+
+    public Integer getPriority();
+
+    public void setPriority(Integer priority);
+
+    public String getDisplayRule(String displayRule);
+
+    public void setDisplayRule(String displayRule);
+
+    public Long getOriginalItemId();
+
+    public void setOriginalItemId(Long originalItemId);
+
+    public StructuredContent cloneEntity();
 }

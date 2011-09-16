@@ -47,8 +47,6 @@ public class PageDaoImpl implements PageDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     @Override
     public PageFolder readPageById(Long id) {
         return (PageFolder) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.PageFolder"), id);

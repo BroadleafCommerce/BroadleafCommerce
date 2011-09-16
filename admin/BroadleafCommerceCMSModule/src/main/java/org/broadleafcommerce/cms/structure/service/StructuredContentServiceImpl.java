@@ -1,0 +1,302 @@
+/*
+ * Copyright 2008-20011 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.broadleafcommerce.cms.structure.service;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by bpolster.
+ */
+@Service("blStructuredContentService")
+public class StructuredContentServiceImpl implements StructuredContentService {
+    private static final Log LOG = LogFactory.getLog(StructuredContentServiceImpl.class);
+
+    @Resource(name="blStructuredContentDao")
+    protected StructuredContentDao structuredContentDao;
+
+
+    /**
+     * Returns the StructuredContent item associated with the passed in id.
+     *
+     * @param contentId - The id of the content item.
+     * @return The associated structured content item.
+     */
+    @Override
+    public StructuredContent findStructuredContentById(Long contentId) {
+        return structuredContentDao.findStructuredContentById(contentId);
+    }
+
+    /**
+     * Returns the list of structured content types.
+     */
+    @Override
+    public List<StructuredContentType> retrieveAllStructuredContentTypes() {
+        return structuredContentDao.retrieveAllStructuredContentTypes();
+    }
+
+    /**
+     * Returns the fields associated with the passed in contentId.
+     * This is preferred over the direct access from the ContentItem so that the
+     * two items can be cached distinctly
+     *
+     * @param contentId - The id of the content.
+     * @return Map of fields for this content id
+     */
+    @Override
+    public Map<String, StructuredContentField> findFieldsByContentId(Long contentId) {
+        StructuredContent sc = findStructuredContentById(contentId);
+        return structuredContentDao.readFieldsForStructuredContentItem(sc);
+    }
+
+    /**
+     * Retuns content items for the passed in sandbox that match the passed in criteria.
+     * <p/>
+     * Merges the sandbox content with the production content.
+     *
+     * @param sandbox      - the sandbox to find structured content items (null indicates items that are in production for
+     *                     sites that are single tenant.
+     * @param parentFolder if null then root folder for the site.
+     * @param localeName   - the locale to include (null is typical for non-internationalized sites)
+     * @return
+     */
+    @Override
+    public List<StructuredContent> findContentItems(SandBox sandbox, Criteria c) {
+        c.add(Restrictions.eq("archivedFlag", false));
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            c.add(Restrictions.isNull("sandbox"));
+            return c.list();
+        } else {
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression = null;
+            if (sandbox.getSite() == null && sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                // Query is hitting the production sandbox.
+                if (! sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
+                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+                }
+            }
+
+            if (productionSandboxExpression != null) {
+                c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            } else {
+                c.add(currentSandboxExpression);
+            }
+
+            List<StructuredContent> resultList = (List<StructuredContent>) c.list();
+
+            // Iterate once to build the map
+            LinkedHashMap returnItems = new LinkedHashMap<Long,StructuredContent>();
+            for (StructuredContent content : resultList) {
+                returnItems.put(content.getId(), content);
+            }
+
+            // Iterate to remove items from the final list
+            for (StructuredContent content : resultList) {
+                if (content.getOriginalItemId() != null) {
+                    returnItems.remove(content.getOriginalItemId());
+                }
+
+                if (content.getDeletedFlag()) {
+                    returnItems.remove(content.getId());
+                }
+            }
+            return new ArrayList<StructuredContent>(returnItems.values());
+        }
+
+    }
+
+    /**
+     * Returns the count of items that match the passed in criteria.
+     *
+     * This counts the items in production + the new items in the sandbox - the
+     * existing items that have been deleted in the sandbox.
+     *
+     * @return the count of items in this sandbox that match the passed in Criteria
+     */
+    @Override
+    public int countContentItems(SandBox sandbox, Criteria c) {
+        c.add(Restrictions.eq("archivedFlag", false));
+        c.setProjection(Projections.rowCount());
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            c.add(Restrictions.isNull("sandbox"));
+            return (Integer) c.uniqueResult();
+        } else {
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression;
+            if (sandbox.getSite() == null && sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                // Query is hitting the production sandbox.
+                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
+                    return (Integer) c.uniqueResult();
+                }
+                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+            }
+
+            c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+
+            int resultCount = (Integer) c.uniqueResult();
+            int updatedCount = 0;
+            int deletedCount = 0;
+
+            // count updated items
+            c.add(Restrictions.and(Restrictions.isNotNull("originalItemId"),Restrictions.eq("sandbox", sandbox)));
+            updatedCount = (Integer) c.uniqueResult();
+
+            // count deleted items
+            c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
+            deletedCount = (Integer) c.uniqueResult();
+
+            return resultCount - updatedCount - deletedCount;
+        }
+    }
+
+    /**
+     * This method is intended to be called from within the CMS
+     * admin only.
+     * <p/>
+     * Adds the passed in contentItem to the DB.
+     * <p/>
+     * Creates a sandbox/site if one doesn't already exist.
+     */
+    @Override
+    public StructuredContent addStructuredContent(StructuredContent content, SandBox destinationSandbox) {
+        content.setSandbox(destinationSandbox);
+        return structuredContentDao.addOrUpdateContentItem(content);
+    }
+
+    /**
+     * This method is intended to be called from within the CMS
+     * admin only.
+     * <p/>
+     * Updates the structuredContent according to the following rules:
+     * <p/>
+     * 1.  If sandbox has changed from null to a value
+     * This means that the user is editing an item in production and
+     * the edit is taking place in a sandbox.
+     * <p/>
+     * Clone the item and add it to the new sandbox and set the cloned
+     * item's originalItemId to the id of the item being updated.
+     * <p/>
+     * 2.  If the sandbox has changed from one value to another
+     * This means that the user is moving the item from one sandbox
+     * to another.
+     * <p/>
+     * Update the siteId for the item to the one associated with the
+     * new sandbox
+     * <p/>
+     * 3.  If the sandbox has changed from a value to null
+     * This means that the item is moving from the sandbox to production.
+     * <p/>
+     * If the item has an originalItemId, then update that item by
+     * setting it's archived flag to true.
+     * <p/>
+     * Then, update the siteId of the item being updated to be the
+     * siteId of the original item.
+     * <p/>
+     * 4.  If the sandbox is the same then just update the item.
+     */
+    @Override
+    public StructuredContent updateStructuredContent(StructuredContent content, SandBox destSandbox) {
+        if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
+            return structuredContentDao.addOrUpdateContentItem(content);
+        } else if (checkForProductionSandbox(content.getSandbox())) {
+            // Moving from production to destSandbox
+            StructuredContent clonedContent = content.cloneEntity();
+            clonedContent.setOriginalItemId(content.getId());
+            clonedContent.setSandbox(destSandbox);
+            return structuredContentDao.addOrUpdateContentItem(clonedContent);
+        } else if (checkForProductionSandbox(destSandbox)) {
+            // Moving to production
+            StructuredContent existingContent = findStructuredContentById(content.getOriginalItemId());
+            existingContent.setArchivedFlag(true);
+            structuredContentDao.addOrUpdateContentItem(existingContent);
+
+            if (content.getDeletedFlag() == true) {
+                structuredContentDao.delete(content);
+            }
+            return null;
+        } else {
+            // moving between sandboxes
+            content.setSandbox(destSandbox);
+            return structuredContentDao.addOrUpdateContentItem(content);
+        }
+    }
+
+    // Returns true if the src and dest sandbox are the same.
+    private boolean checkForSandboxMatch(SandBox src, SandBox dest) {
+        if (src != null) {
+            if (dest != null) {
+                return src.getId().equals(dest.getId());
+            }
+        }
+        return (src == null && dest == null);
+    }
+
+    // Returns true if the dest sandbox is production.
+    private boolean checkForProductionSandbox(SandBox dest) {
+        boolean productionSandbox = false;
+
+        if (dest == null) {
+            productionSandbox = true;
+        } else {
+            if (dest.getSite() != null && dest.getSite().getProductionSandbox() != null && dest.getSite().getProductionSandbox().getId() != null) {
+                productionSandbox = dest.getSite().getProductionSandbox().getId().equals(dest.getId());
+            }
+        }
+
+        return productionSandbox;
+    }
+
+    /**
+     * If deleting and item where content.originalItemId != null
+     * then the item is deleted from the database.
+     * <p/>
+     * If the originalItemId is null, then this method marks
+     * the items as deleted within the passed in sandbox.
+     *
+     * @param page
+     * @param destinationSandbox
+     * @return
+     */
+    @Override
+    public void deleteStructuredContent(StructuredContent content, SandBox destinationSandbox) {
+        content.setDeletedFlag(true);
+        updateStructuredContent(content, destinationSandbox);
+    }
+}

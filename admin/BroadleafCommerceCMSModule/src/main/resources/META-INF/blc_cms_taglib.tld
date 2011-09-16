@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+    "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd"
+>
+<taglib>
+    <tlib-version>3.0</tlib-version>
+    <jsp-version>2.1</jsp-version>
+    <short-name>blcms</short-name>
+    <uri>/broadleaf-cms</uri>
+
+    <!-- tag>
+        <name>contentItem</name>
+        <tag-class>org.broadleafcommerce.cms.web.message.ContentItemTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Returns the internationalized message for the passed in messageKey</description>
+       	<attribute>
+			<name>messageKey</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+            <description>The key for which a value is being looked up.</description>
+		</attribute>
+        <attribute>
+			<name>languageCode</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+            <description>Allows override of the current request scoped default language code.</description>
+		</attribute>
+        <attribute>
+			<name>sandbox</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+            <description>Allows override of the current request scoped default sandbox.</description>
+		</attribute>
+    </tag -->
+
+</taglib>

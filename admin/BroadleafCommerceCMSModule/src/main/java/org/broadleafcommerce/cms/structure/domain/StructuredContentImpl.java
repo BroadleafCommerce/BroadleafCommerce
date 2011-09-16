@@ -15,8 +15,10 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.openadmin.server.domain.SiteImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -24,7 +26,6 @@ import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,22 +40,36 @@ public class StructuredContentImpl implements StructuredContent {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "STRUCTURED_CONTENT_ID")
+    @GeneratedValue(generator = "StructuredContentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "StructuredContentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentImpl", allocationSize = 10)
+    @Column(name = "ID")
     protected Long id;
 
+    @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true, requiredOverride = RequiredOverride.REQUIRED)
     @Column(name = "CONTENT_NAME")
     protected String contentName;
 
-    @Column(name = "DESCRIPTION")
-    protected String description;
-
+    @AdminPresentation(friendlyName="Language Code", order=3, group="Description", requiredOverride = RequiredOverride.REQUIRED)
     @Column(name = "LANGUAGE_CODE")
     protected String languageCode;
 
-    /*@ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")*/
-    @Transient
-    protected Site site;
+    @AdminPresentation(friendlyName="Priority", order=4, group="Description", requiredOverride = RequiredOverride.REQUIRED)
+    @Column(name = "PRIORITY")
+    protected Integer priority;
+
+
+    @AdminPresentation(friendlyName="Display Rule", order=1, group="Display Rule")
+    @Column(name = "DISPLAY_RULE")
+    protected String displayRule;
+
+    @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", hidden = true)
+    @Column(name = "ORIGINAL_ITEM_ID")
+    protected Long originalItemId;
+
+    @ManyToOne (targetEntity = SandBoxImpl.class)
+    @JoinColumn(name="SANDBOX_ID")
+    @AdminPresentation(friendlyName="Content SandBox", order=1, group="Stuctured Content", hidden = true)
+    protected SandBox sandbox;
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
@@ -66,21 +81,25 @@ public class StructuredContentImpl implements StructuredContent {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
-    @OneToMany(targetEntity = ContentDisplayRuleImpl.class)
-    @JoinTable(name = "BLC_STRUCTURED_CONTENT_RULES",joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_ID"),inverseJoinColumns = @JoinColumn(name = "CONTENT_DISPLAY_RULE_ID"))
-    protected List<ContentDisplayRule> contentDisplayRules;
-
+    @AdminPresentation(friendlyName="Deleted", order=2, group="Internal", hidden = true)
     @Column(name = "DELETED_FLAG")
     protected Boolean deletedFlag;
 
-    @Column(name = "ONLINE_FLAG")
-    protected Boolean onlineFlag;
+    @AdminPresentation(friendlyName="Archived", order=3, group="Internal", hidden = true)
+    @Column(name = "ARCHIVED_FLAG")
+    protected Boolean archivedFlag;
 
+    @AdminPresentation(friendlyName="Active Start Date", order=5, group="Description")
     @Column(name = "ACTIVE_START_DATE")
     protected Date activeStartDate;
 
+    @AdminPresentation(friendlyName="Active End Date", order=6, group="Description")
     @Column(name = "ACTIVE_END_DATE")
     protected Date activeEndDate;
+
+    @AdminPresentation(friendlyName="Online", order=7, group="Description")
+    @Column(name = "ONLINE_FLAG")
+    protected Boolean onlineFlag;
 
     @Override
     public Long getId() {
@@ -103,16 +122,6 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
     public String getLanguageCode() {
         return languageCode;
     }
@@ -123,13 +132,13 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public Site getSite() {
-        return site;
+    public SandBox getSandbox() {
+        return sandbox;
     }
 
     @Override
-    public void setSite(Site site) {
-        this.site = site;
+    public void setSandbox(SandBox sandbox) {
+        this.sandbox = sandbox;
     }
 
     @Override
@@ -145,16 +154,6 @@ public class StructuredContentImpl implements StructuredContent {
     @Override
     public Map<String, StructuredContentField> getStructuredContentFields() {
         return structuredContentFields;
-    }
-
-    @Override
-    public List<ContentDisplayRule> getContentDisplayRules() {
-        return contentDisplayRules;
-    }
-
-    @Override
-    public void setContentDisplayRules(List<ContentDisplayRule> contentDisplayRules) {
-        this.contentDisplayRules = contentDisplayRules;
     }
 
     @Override
@@ -200,5 +199,68 @@ public class StructuredContentImpl implements StructuredContent {
     @Override
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
+    }
+
+    @Override
+    public Integer getPriority() {
+        return priority;
+    }
+
+    @Override
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    @Override
+    public String getDisplayRule(String displayRule) {
+        return displayRule;
+    }
+
+    @Override
+    public void setDisplayRule(String displayRule) {
+        this.displayRule = displayRule;
+    }
+
+    @Override
+    public Long getOriginalItemId() {
+        return originalItemId;
+    }
+
+    @Override
+    public void setOriginalItemId(Long originalItemId) {
+        this.originalItemId = originalItemId;
+    }
+
+    @Override
+    public Boolean getArchivedFlag() {
+        return archivedFlag;
+    }
+
+    @Override
+    public void setArchivedFlag(Boolean archivedFlag) {
+        this.archivedFlag = archivedFlag;
+    }
+
+    @Override
+    public StructuredContent cloneEntity() {
+        StructuredContentImpl newContent = new StructuredContentImpl();
+        newContent.displayRule = displayRule;
+        newContent.activeEndDate = activeEndDate;
+        newContent.activeStartDate = activeStartDate;
+        newContent.archivedFlag = archivedFlag;
+        newContent.contentName = contentName;
+        newContent.deletedFlag = deletedFlag;
+        newContent.languageCode = languageCode;
+        newContent.onlineFlag = onlineFlag;
+        newContent.originalItemId = originalItemId;
+        newContent.priority = priority;
+        newContent.structuredContentType = structuredContentType;
+
+        Map fieldMap = newContent.getStructuredContentFields();
+        for (StructuredContentField field : structuredContentFields.values()) {
+            StructuredContentField newField = field.cloneEntity();
+            fieldMap.put(field.getFieldKey(), field);
+        }
+        return newContent;
     }
 }

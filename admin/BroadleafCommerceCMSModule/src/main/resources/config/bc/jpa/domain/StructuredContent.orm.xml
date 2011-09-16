@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+	<named-query name="BC_READ_ALL_STRUCTURED_CONTENT_TYPES" >
+		<query>SELECT structuredContentType
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContentType structuredContentType
+		</query>
+	</named-query>
+
+    	<named-query name="BC_READ_CONTENT_FIELDS_BY_CONTENT_ID" >
+		<query>SELECT scField
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContentField scField
+               LEFT JOIN FETCH scField.fieldDataList
+               WHERE scField.structuredContent = :structuredContent
+		</query>
+	</named-query>
+
+
+</entity-mappings>

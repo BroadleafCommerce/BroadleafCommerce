@@ -38,4 +38,6 @@ public interface StructuredContentField {
     public List<FieldData> getFieldDataList();
 
     public void setFieldDataList(List<FieldData> fieldDataList);
+
+    public StructuredContentField cloneEntity();
 }

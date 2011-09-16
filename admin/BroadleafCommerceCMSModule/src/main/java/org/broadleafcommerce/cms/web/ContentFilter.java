@@ -15,21 +15,6 @@
  */
 package org.broadleafcommerce.cms.web;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +29,27 @@ import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
+ * This filter sets up the current sandbox, time of day, and languageCode that
+ * should be used by content items.
+ *
+ * It checks to see if a custom content page is available for the requested URL and if so
+ * directs to that page template.
+ *
  * @author bpolster
  *
  */
@@ -59,16 +64,29 @@ public class ContentFilter extends OncePerRequestFilter {
 	private static final SimpleDateFormat CONTENT_DATE_PARSE_FORMAT = new SimpleDateFormat("MM/dd/yyyyhmm");
 	   
 
-    public static String SANDBOX_ID_PARAM = "blSandboxId";
-    public static String SANDBOX_DATE_TIME_PARAM = "blSandboxDateTime";
-    public static String SANDBOX_DATE_TIME_RIBBON_OVERRIDE_PARAM = "blSandboxDateTimeRibbonOverride";
-    public static final String SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM = "blSandboxDisplayDateTimeDate";
-    public static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
-    public static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
-    public static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
+    // Parameter/Attribute name for the current language
+    public static String LANGUAGE_CODE_VAR = "blLanguageCode";
 
-    public static String SESSION_SANDBOX_VAR = "BLC_SANDBOX_ID";
-    public static String SESSION_SANDBOX_TIME_VAR = "BLC_SANDBOX_TIME";
+    // Parameter/Attribute name for the sandbox id
+    private static String SANDBOX_ID_VAR = "blSandboxId";
+
+    // Parameter/Attribute name for the sandbox date/time
+    private static String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
+
+    // Attribute for the current sandbox
+    public static String SANDBOX_VAR = "blSandbox";
+
+    // Request variables used to store sandbox information.
+    // TODO: Refactor as properties on the sandbox.
+    private static String SANDBOX_DATE_TIME_RIBBON_OVERRIDE_PARAM = "blSandboxDateTimeRibbonOverride";
+    private static final String SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM = "blSandboxDisplayDateTimeDate";
+    private static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
+    private static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
+    private static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
+
+    // Location to forward content managed pages
+    private String blcPageTemplateDirectory ="/WEB-INF/jsp/templates";
+
 
     private static final String BLC_PAGE = "BLC_PAGE";
 
@@ -78,7 +96,7 @@ public class ContentFilter extends OncePerRequestFilter {
     @Resource(name="blPageService")
     private PageService pageService;
 
-    private String blcPageTemplateDirectory ="/WEB-INF/jsp/templates";
+
 
 
 	/** (non-Javadoc)
@@ -86,6 +104,7 @@ public class ContentFilter extends OncePerRequestFilter {
 	 */
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Site site = determineSite(request);
+        determineLanguage(request, site);
         SandBox currentSandbox = determineSandbox(request, site);
 
         try {
@@ -117,12 +136,18 @@ public class ContentFilter extends OncePerRequestFilter {
         Long sandboxId = lookupSandboxId(request);
         if (sandboxId != null) {
             currentSandbox =  sandBoxService.retrieveSandboxById(sandboxId);
+            request.setAttribute(SANDBOX_VAR, currentSandbox);
             if (currentSandbox != null && ! SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
                 // For non-production sandboxes, the system time can be modified to enable preview
                 // functionality
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Using non-production sandbox " + currentSandbox.getName() + " " + currentSandbox.getSite().getName());
+                }
                 setContentTime(request);
             } else {
-                logger.debug("Using production sandbox.");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Using production sandbox.");
+                }
             }
         }
 
@@ -143,8 +168,28 @@ public class ContentFilter extends OncePerRequestFilter {
     }
 
 
+    /**
+     * If another filter has already set the language as a request attribute, that will be honored.
+     * Otherwise, the request parameter is checked followed by the session attribute.
+     * @param request
+     * @param site
+     * @return
+     */
+    private void determineLanguage(HttpServletRequest request, Site site) {
+        String languageCode = (String) request.getAttribute(LANGUAGE_CODE_VAR);
+
+        if (languageCode == null) {
+            languageCode = request.getParameter(LANGUAGE_CODE_VAR);
+            if (languageCode != null) {
+                request.setAttribute(LANGUAGE_CODE_VAR, languageCode);
+                request.getSession(true).setAttribute(LANGUAGE_CODE_VAR, languageCode);
+            }
+        }
+    }
+
+
     private Long lookupSandboxId(HttpServletRequest request) {
-        String sandboxIdStr = request.getParameter(SANDBOX_ID_PARAM);
+        String sandboxIdStr = request.getParameter(SANDBOX_ID_VAR);
         Long sandboxId = null;
 
         if (sandboxIdStr != null) {
@@ -159,17 +204,17 @@ public class ContentFilter extends OncePerRequestFilter {
             // check the session
             HttpSession session = request.getSession(false);
             if (session != null) {
-                sandboxId = (Long) session.getAttribute(SESSION_SANDBOX_VAR);
+                sandboxId = (Long) session.getAttribute(SANDBOX_ID_VAR);
             }
         } else {
             HttpSession session = request.getSession();
-            session.setAttribute(SESSION_SANDBOX_VAR, sandboxId);
+            session.setAttribute(SANDBOX_ID_VAR, sandboxId);
         }
         return sandboxId;
     }
 
     private void setContentTime(HttpServletRequest request) {
-        String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_PARAM);
+        String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
         Date overrideTime = null;
 
         try {
@@ -185,11 +230,11 @@ public class ContentFilter extends OncePerRequestFilter {
         if (overrideTime == null) {
             HttpSession session = request.getSession(false);
             if (session != null) {
-                overrideTime = (Date) session.getAttribute(SESSION_SANDBOX_TIME_VAR);
+                overrideTime = (Date) session.getAttribute(SANDBOX_DATE_TIME_VAR);
             }
         } else {
             HttpSession session = request.getSession();
-            session.setAttribute(SESSION_SANDBOX_TIME_VAR, overrideTime);
+            session.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime);
         }
 
   
