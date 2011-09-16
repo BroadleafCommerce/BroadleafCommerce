@@ -6,8 +6,10 @@ import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,9 @@ public class StaticAssetViewController {
 
     @Resource(name="blArtifactService")
     protected ArtifactService artifactService;
+
+    @Resource(name="blSandBoxService")
+    protected SandBoxService sandBoxService;
 
     private List<CleanupOperation> operations = new ArrayList<CleanupOperation>();
 
@@ -98,10 +103,12 @@ public class StaticAssetViewController {
         cleanupThread.start();
     }
 
-    @RequestMapping(value = "/{staticAssetId}.*", method = {RequestMethod.GET})
-    public ModelAndView viewItem(@PathVariable Long staticAssetId, HttpServletRequest request) {
+    @RequestMapping(value = "/{fullUrl}.*", method = {RequestMethod.GET})
+    public ModelAndView viewItem(@PathVariable String fullUrl, HttpServletRequest request) {
         try {
-            StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetById(staticAssetId);
+            String sandBoxId = request.getParameter("sandBox");
+            SandBox sandBox = sandBoxService.retrieveSandboxById(Long.valueOf(sandBoxId));
+            StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl("/"+fullUrl, sandBox);
             String cacheName = constructCacheFileName(staticAsset, request.getParameterMap());
             File cacheFile = new File(cacheDirectory!=null?new File(cacheDirectory):DEFAULTCACHEDIRECTORY, cacheName);
             if (!cacheFile.exists()) {

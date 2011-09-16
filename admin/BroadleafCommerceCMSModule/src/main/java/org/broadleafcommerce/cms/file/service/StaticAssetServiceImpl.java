@@ -47,6 +47,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     @Override
+    public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
+        return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
+    }
+
+    @Override
     public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder) {
         SandBox productionSandbox = null;
         SandBox userSandbox = sandbox;

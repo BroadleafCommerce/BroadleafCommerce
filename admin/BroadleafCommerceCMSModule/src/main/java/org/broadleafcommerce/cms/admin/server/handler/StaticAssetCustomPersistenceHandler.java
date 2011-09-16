@@ -136,7 +136,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             storage.setFileData(uploadBlob);
             storage = staticAssetStorageService.save(storage);
 
-			return addImageRecords(adminEntity);
+			return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
 		} catch (Exception e) {
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
@@ -208,7 +208,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 storage.setFileData(uploadBlob);
                 storage = staticAssetStorageService.save(storage);
 
-                return addImageRecords(adminEntity);
+                return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
             } catch (Exception e) {
                 throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
             }
@@ -228,24 +228,24 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
                 Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
-                return addImageRecords(adminEntity);
+                return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
             } catch (Exception e) {
                 throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
             }
         }
     }
 
-    protected Entity addImageRecords(Entity entity) {
+    protected Entity addImageRecords(Entity entity, SandBoxInfo sandBoxInfo) {
         if (entity.getType()[0].equals(ImageStaticAssetImpl.class.getName())) {
-            Property key = entity.findProperty("id");
             Property extension = entity.findProperty("fileExtension");
+            Property fullUrl = entity.findProperty("fullUrl");
             Property property = new Property();
             property.setName("picture");
-            property.setValue("cms/staticasset/" + key.getValue() + "." + extension.getValue() + "?filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property.setValue("cms/staticasset" + fullUrl.getValue() + "." + extension.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
             entity.addProperty(property);
             Property property2 = new Property();
             property2.setName("pictureLarge");
-            property2.setValue("../cms/staticasset/" + key.getValue() + "." + extension.getValue() + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property2.setValue("../cms/staticasset" + fullUrl.getValue() + "." + extension.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
             entity.addProperty(property2);
         } else {
             Property property = new Property();
@@ -286,7 +286,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             Entity[] pageEntities = helper.getRecords(getForeignKeyReadyMergedProperties(), records);
 
             for (Entity entity : pageEntities) {
-                entity = addImageRecords(entity);
+                entity = addImageRecords(entity, persistencePackage.getSandBoxInfo());
             }
 
             DynamicResultSet response = new DynamicResultSet(pageEntities, pageEntities.length);

@@ -42,4 +42,6 @@ public interface StaticAssetDao {
 
     public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
 
+    public StaticAsset readStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
+
 }

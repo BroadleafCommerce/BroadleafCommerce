@@ -56,6 +56,15 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     }
 
     @Override
+    public StaticAsset readStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
+        Query query2 = em.createNamedQuery("BC_READ_STATIC_ASSET_BY_FULL_URL");
+        query2.setParameter("targetSandbox", targetSandBox);
+        query2.setParameter("fullUrl", fullUrl);
+
+        return (StaticAsset) query2.getSingleResult();
+    }
+
+    @Override
     public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder) {
         String queryPrefix = "BC_READ_";
         if (parentFolder == null) {

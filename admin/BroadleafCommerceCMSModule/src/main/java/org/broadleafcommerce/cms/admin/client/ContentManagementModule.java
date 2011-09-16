@@ -45,7 +45,7 @@ public class ContentManagementModule extends AbstractModule {
         setSection(
             BLCMain.getMessageManager().getString("pagesTitle"),
 			"pages",
-			"org.broadleafcommerce.cms.admin.client.view.pages.PagesView",
+			"org.broadleafcommerce.cms.admin.client.view.pages.StructuredContentView",
 			"pagesPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter",
 			cmsRoles,

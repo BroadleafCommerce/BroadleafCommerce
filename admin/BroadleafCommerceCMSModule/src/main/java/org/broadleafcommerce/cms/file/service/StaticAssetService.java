@@ -41,6 +41,8 @@ public interface StaticAssetService {
 
     public List<StaticAssetFolder> findStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
 
+    public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
+
     /**
      * This method is intended to be called from within the CMS
      * admin only.
