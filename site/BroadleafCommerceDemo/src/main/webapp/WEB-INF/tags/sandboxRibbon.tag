@@ -2,8 +2,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <%@ attribute rtexprvalue="true" name="jqueryUIDatepicker" description="Path to jquery ui datepicker script to be included only if in sandbox mode.  Default: script will not be included by this tag" %>
 
-
-<c:if test="${session['BLC_SANDBOX_TIME'] ne null}">
+<c:if test="${blSandbox ne null}">
 	<c:if test="${!empty jqueryUIDatepicker}">
 		<script type="text/javascript" src="${jqueryUIDatepicker}"></script>
 	</c:if>
@@ -40,19 +39,19 @@
 			<h3 style="float:left;padding-left:50px;">Sandbox Mode</h3>
 			<div style="float:right;">
 			<label>Sandbox Date:</label>
-			<input type="text" id="sandboxDate" name="sandboxDate" size="20" value="${blSandboxDisplayDateTimeDate}"/>
+			<input type="text" id="sandboxDate" name="blSandboxDisplayDateTimeDate" size="20" value="${blSandboxDisplayDateTimeDate}"/>
 			<label>Time:</label>
-			<input type="text" name="hours" size="2" value="${blSandboxDisplayDateTimeHours}"/>:
-			<input type="text" name="minutes" size="2" value="${blSandboxDisplayDateTimeMinutes}"/>
-			<select name="ampm">
+			<input type="text" name="blSandboxDisplayDateTimeHours" size="2" value="${blSandboxDisplayDateTimeHours}"/>:
+			<input type="text" name="blSandboxDisplayDateTimeMinutes" size="2" value="${blSandboxDisplayDateTimeMinutes}"/>
+			<select name="blSandboxDisplayDateTimeAMPM">
 				<c:choose>
 					<c:when test="${blSandboxDisplayDateTimeAMPM == 0}">
-						<option value="am" selected="selected">am</option>
-						<option value="pm">pm</option>
+						<option value="AM" selected="selected">am</option>
+						<option value="PM">pm</option>
 					</c:when>
 					<c:otherwise>
-						<option value="am">am</option>
-						<option value="pm" selected="selected">pm</option>
+						<option value="AM">am</option>
+						<option value="PM" selected="selected">pm</option>
 					</c:otherwise>
 				</c:choose>
 			</select>
