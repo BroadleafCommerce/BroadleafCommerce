@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -154,7 +155,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
-                leafAssetPresenter = new LeafAssetPresenter(getDisplay().getListLeafDisplay(), true, true, false);
+                leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
 				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
                 ((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
                         @Override
