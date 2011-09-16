@@ -56,7 +56,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     }
 
     @Override
-    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox) {
+    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder) {
         String queryPrefix = "BC_READ_";
         if (parentFolder == null) {
                 queryPrefix = "BC_READ_NULL_";

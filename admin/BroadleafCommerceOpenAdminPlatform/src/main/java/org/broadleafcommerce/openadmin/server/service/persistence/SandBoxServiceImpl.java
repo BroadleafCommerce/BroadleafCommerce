@@ -62,7 +62,7 @@ public class SandBoxServiceImpl implements SandBoxService {
             site = new SiteImpl();
             site.setId(sandBoxInfo.getSiteId());
         }
-        SandBox sandBox = sandBoxEntityDao.retrieveNamedSandBox(site, SandBoxType.USER, sandBoxInfo.getSandBox());
+        SandBox sandBox = sandBoxEntityDao.retrieveNamedSandBox(site, SandBoxType.USER, sandBoxInfo.getName());
         if (sandBox == null) {
             sandBox = createSandBox(persistencePackage);
         }
@@ -174,7 +174,8 @@ public class SandBoxServiceImpl implements SandBoxService {
         dtoEntity.setType(getSplitArray(persistentEntity.getType(),","));
         SandBoxInfo info = new SandBoxInfo();
         pkg.setSandBoxInfo(info);
-        info.setSandBox(sandBox.getName());
+        info.setName(sandBox.getName());
+        info.setSandBox(sandBox.getId());
         info.setCommitImmediately(false);
         PersistencePerspective dtoPersistencePerspective = new PersistencePerspective();
         pkg.setPersistencePerspective(dtoPersistencePerspective);
@@ -294,7 +295,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     protected SandBox createSandBox(PersistencePackage dtoPersistencePackage) {
         SandBoxInfo sandBoxInfo = dtoPersistencePackage.getSandBoxInfo();
         SandBox sandBox = new SandBoxImpl();
-		sandBox.setName(sandBoxInfo.getSandBox());
+		sandBox.setName(sandBoxInfo.getName());
 
         sandBox = sandBoxEntityDao.persist(sandBox);
 

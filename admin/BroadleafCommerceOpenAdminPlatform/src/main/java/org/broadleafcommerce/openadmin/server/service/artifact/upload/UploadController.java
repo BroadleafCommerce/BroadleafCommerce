@@ -57,7 +57,7 @@ public class UploadController extends SimpleFormController {
             persistencePackage.setCeilingEntityFullyQualifiedClassname(ceilingEntity);
             persistencePackage.setCustomCriteria(new String[]{customCriteria});
             SandBoxInfo sandBoxInfo = new SandBoxInfo();
-            sandBoxInfo.setSandBox(sandbox);
+            sandBoxInfo.setSandBox(Long.valueOf(sandbox));
             persistencePackage.setSandBoxInfo(sandBoxInfo);
             Entity entity = new Entity();
             persistencePackage.setEntity(entity);

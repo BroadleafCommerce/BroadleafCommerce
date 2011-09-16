@@ -39,7 +39,7 @@ public interface StaticAssetService {
      */
     public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder);
 
-    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(SandBox sandbox, StaticAssetFolder parentFolder);
+    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
 
     /**
      * This method is intended to be called from within the CMS

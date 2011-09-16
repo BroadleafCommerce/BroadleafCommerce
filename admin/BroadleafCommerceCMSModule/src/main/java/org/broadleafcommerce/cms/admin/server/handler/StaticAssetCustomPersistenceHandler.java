@@ -15,10 +15,12 @@ import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageMetadata;
 import org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadedFile;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +55,13 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
     @Resource(name="blImageArtifactProcessor")
     protected ImageArtifactProcessor imageArtifactProcessor;
+
+    @Resource(name="blSandBoxService")
+    protected SandBoxService sandBoxService;
+
+    protected SandBox getSandBox(PersistencePackage persistencePackage) {
+        return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
+    }
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -117,7 +126,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             String extension = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1, upload.getOriginalFilename().length()).toLowerCase();
             adminInstance.setFileExtension(extension);
 
-            adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), null);
+            adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), getSandBox(persistencePackage));
 
 			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
@@ -143,7 +152,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             StaticAsset adminInstance = (StaticAsset) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
-            staticAssetService.deleteStaticAsset(adminInstance, null);
+            staticAssetService.deleteStaticAsset(adminInstance, getSandBox(persistencePackage));
         } catch (Exception e) {
             throw new ServiceException("Unable to delete entity for " + entity.getType()[0], e);
         }
@@ -184,7 +193,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 String extension = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1, upload.getOriginalFilename().length()).toLowerCase();
                 adminInstance.setFileExtension(extension);
 
-                adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
+                adminInstance = staticAssetService.updateStaticAsset(adminInstance, getSandBox(persistencePackage));
 
                 Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
@@ -215,7 +224,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
                 adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
-                adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
+                adminInstance = staticAssetService.updateStaticAsset(adminInstance, getSandBox(persistencePackage));
 
                 Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 

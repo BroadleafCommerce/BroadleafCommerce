@@ -46,19 +46,19 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     protected Auditable auditable = new Auditable();
     
     @Column(name ="FULL_URL")
-    @AdminPresentation(friendlyName="Full URL", order=2, group = "Asset Details", readOnly = true)
+    @AdminPresentation(friendlyName="Full URL", order=2, group = "Details", readOnly = true)
     protected String fullUrl;
 
     @Column(name = "FILE_SIZE")
-    @AdminPresentation(friendlyName="File Size (Bytes)", order=3, group = "Asset Details", readOnly = true)
+    @AdminPresentation(friendlyName="File Size (Bytes)", order=3, group = "Details", readOnly = true)
     protected Long fileSize;
 
     @Column(name = "MIME_TYPE")
-    @AdminPresentation(friendlyName="Mime Type", order=4, group = "Asset Details", readOnly = true)
+    @AdminPresentation(friendlyName="Mime Type", order=4, group = "Details", readOnly = true)
     protected String mimeType;
 
     @Column(name = "FILE_EXTENSION")
-    @AdminPresentation(friendlyName="File Extension", order=5, group = "Asset Details", readOnly = true)
+    @AdminPresentation(friendlyName="File Extension", order=5, group = "Details", readOnly = true)
     protected String fileExtension;
 
     @ManyToMany(targetEntity = StaticAssetDescriptionImpl.class, cascade = CascadeType.ALL)

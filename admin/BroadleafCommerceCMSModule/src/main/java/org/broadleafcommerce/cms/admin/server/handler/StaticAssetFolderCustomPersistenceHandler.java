@@ -154,7 +154,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
             if (parentCategoryId != null) {
                 pageOrFolder = staticAssetService.findStaticAssetById(Long.valueOf(parentCategoryId));
             }
-            List<StaticAssetFolder> folders = staticAssetService.findStaticAssetFolderChildFolders(null, pageOrFolder);
+            List<StaticAssetFolder> folders = staticAssetService.findStaticAssetFolderChildFolders(pageOrFolder);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(folders);
 

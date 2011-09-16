@@ -63,18 +63,8 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     @Override
-    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(SandBox sandbox, StaticAssetFolder parentFolder) {
-        SandBox productionSandbox = null;
-        SandBox userSandbox = sandbox;
-
-        if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
-            productionSandbox = sandbox.getSite().getProductionSandbox();
-            if (userSandbox.getId().equals(productionSandbox.getId())) {
-                userSandbox = null;
-            }
-        }
-
-        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildFolders(parentFolder, userSandbox, productionSandbox);
+    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(StaticAssetFolder parentFolder) {
+        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildFolders(parentFolder);
         return staticAssetFolders;
     }
 

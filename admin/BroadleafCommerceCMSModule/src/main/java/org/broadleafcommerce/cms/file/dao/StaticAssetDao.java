@@ -40,6 +40,6 @@ public interface StaticAssetDao {
 
     public StaticAssetFolder addStaticAssetFolder(StaticAssetFolder staticAssetFolder);
 
-    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox);
+    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
 
 }

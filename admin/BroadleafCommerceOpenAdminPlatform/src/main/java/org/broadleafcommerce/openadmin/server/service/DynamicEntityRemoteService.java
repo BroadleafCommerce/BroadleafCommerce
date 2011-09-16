@@ -75,7 +75,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             PersistenceManager persistenceManager = null;
             try {
                 SandBoxContext context = new SandBoxContext();
-                context.setSandBoxName(persistencePackage.getSandBoxInfo().getSandBox());
+                context.setSandBoxId(persistencePackage.getSandBoxInfo().getSandBox());
                 context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
                 SandBoxContext.setSandBoxContext(context);
 
@@ -104,7 +104,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         PersistenceManager persistenceManager = null;
         try {
             SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
+            context.setSandBoxId(sandBoxInfo.getSandBox());
             context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
@@ -131,7 +131,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         PersistenceManager persistenceManager = null;
         try {
             SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
+            context.setSandBoxId(sandBoxInfo.getSandBox());
             context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
@@ -163,7 +163,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         PersistenceManager persistenceManager = null;
         try {
             SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
+            context.setSandBoxId(sandBoxInfo.getSandBox());
             context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 
@@ -195,7 +195,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         PersistenceManager persistenceManager = null;
         try {
             SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
+            context.setSandBoxId(sandBoxInfo.getSandBox());
             context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
             SandBoxContext.setSandBoxContext(context);
 

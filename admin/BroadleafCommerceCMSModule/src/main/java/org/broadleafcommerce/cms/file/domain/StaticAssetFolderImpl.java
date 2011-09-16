@@ -42,7 +42,7 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     protected Long id;
 
     @Column (name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName="Item Name", order=1, group = "Asset Details")
+    @AdminPresentation(friendlyName="Item Name", order=1, group = "Details")
     protected String name;
 
     @ManyToOne(targetEntity = StaticAssetFolderImpl.class)

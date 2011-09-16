@@ -12,7 +12,9 @@ import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
@@ -28,6 +30,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Resource(name="blPageService")
 	protected PageService pageService;
+
+    @Resource(name="blSandBoxService")
+    protected SandBoxService sandBoxService;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -57,6 +62,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return canHandleFetch(persistencePackage);
+    }
+
+    protected SandBox getSandBox(PersistencePackage persistencePackage) {
+        return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
     }
 
     @Override
@@ -291,7 +300,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     pageField.setPage(null);
                 }
             }
-            pageService.updatePage(page, null);
+            pageService.updatePage(page, getSandBox(persistencePackage));
 
             return fetchEntityBasedOnId(pageId);
         } catch (Exception e) {
