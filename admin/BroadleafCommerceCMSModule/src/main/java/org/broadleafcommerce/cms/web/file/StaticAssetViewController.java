@@ -51,50 +51,52 @@ public class StaticAssetViewController {
     protected Thread cleanupThread = new Thread(new Runnable() {
         @Override
         public void run() {
-            try {
-                List<CleanupOperation> myList = new ArrayList<CleanupOperation>();
-                synchronized (operations) {
-                    myList.addAll(operations);
-                    operations.clear();
-                }
-                for (final CleanupOperation operation : myList) {
-                    File parentDir = operation.parentDir;
-                    if (parentDir.exists()) {
-                        File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
-                            @Override
-                            public boolean accept(File file, String s) {
-                                if (s.startsWith(operation.assetName + "---")) {
-                                    return true;
+            while (true) {
+                try {
+                    List<CleanupOperation> myList = new ArrayList<CleanupOperation>();
+                    synchronized (operations) {
+                        myList.addAll(operations);
+                        operations.clear();
+                    }
+                    for (final CleanupOperation operation : myList) {
+                        File parentDir = operation.parentDir;
+                        if (parentDir.exists()) {
+                            File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
+                                @Override
+                                public boolean accept(File file, String s) {
+                                    if (s.startsWith(operation.assetName + "---")) {
+                                        return true;
+                                    }
+                                    return false;
                                 }
-                                return false;
-                            }
-                        });
-                        if (obsoleteFiles != null) {
-                            for (File file : obsoleteFiles) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Deleting obsolete asset cache file: " + file.getAbsolutePath());
-                                }
-                                try {
-                                    file.delete();
-                                } catch (Throwable e) {
-                                    //do nothing
+                            });
+                            if (obsoleteFiles != null) {
+                                for (File file : obsoleteFiles) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Deleting obsolete asset cache file: " + file.getAbsolutePath());
+                                    }
+                                    try {
+                                        file.delete();
+                                    } catch (Throwable e) {
+                                        //do nothing
+                                    }
                                 }
                             }
                         }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Throwable e) {
+                            //do nothing
+                        }
                     }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Throwable e) {
-                        //do nothing
-                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            try {
-                Thread.sleep(10000);
-            } catch (Throwable e) {
-                //do nothing
+                try {
+                    Thread.sleep(10000);
+                } catch (Throwable e) {
+                    //do nothing
+                }
             }
         }
     }, "CMSStaticAssetCleanupThread");
