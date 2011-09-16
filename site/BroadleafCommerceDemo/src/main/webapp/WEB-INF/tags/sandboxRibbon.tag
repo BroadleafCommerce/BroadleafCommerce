@@ -8,7 +8,7 @@
 	</c:if>
 	<style type="text/css"> 
 		#sandboxRibbon {
-			padding:10px;
+			padding:0 10px 5px;
 			background-color:#FFCC33; 
 			text-align:center; 
 			color:#000000;
@@ -25,6 +25,13 @@
 		#sandboxRibbon h3 {
 			margin:4px 0 0 0;
 		}
+		
+		#returnToProduction {
+			background-color:transparent; 
+			text-decoration:underline; 
+			border:none; 
+			cursor:pointer;
+		}
 	</style>
 	<div id="sandboxRibbon">
 		<script type="text/javascript">
@@ -36,8 +43,12 @@
 		</script>
 
 		<form id="sandboxPicker" method="post">
-			<h3 style="float:left;padding-left:50px;">Sandbox Mode</h3>
-			<div style="float:right;">
+			<h3 style="float:left;padding-left:50px;">
+				Sandbox Mode<br/>
+				<input id="returnToProduction" type="submit" value="Return to Production" name="blSandboxDateTimeRibbonProduction" style=""/>
+			</h3>
+			
+			<div style="float:right;margin-top:5px;">
 			<label>Sandbox Date:</label>
 			<input type="text" id="sandboxDate" name="blSandboxDisplayDateTimeDate" size="20" value="${blSandboxDisplayDateTimeDate}"/>
 			<label>Time:</label>

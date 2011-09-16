@@ -133,7 +133,13 @@ public class ContentFilter extends OncePerRequestFilter {
 
     private SandBox determineSandbox(HttpServletRequest request, Site site) {
         SandBox currentSandbox = null;
-        Long sandboxId = lookupSandboxId(request);
+        Long sandboxId = null;
+        if (request.getParameter("blSandboxDateTimeRibbonProduction") == null) {
+        	sandboxId = lookupSandboxId(request);
+        } else {
+        	request.getSession().removeAttribute(SANDBOX_DATE_TIME_VAR);
+        	request.getSession().removeAttribute(SANDBOX_ID_VAR);
+        }
         if (sandboxId != null) {
             currentSandbox =  sandBoxService.retrieveSandboxById(sandboxId);
             request.setAttribute(SANDBOX_VAR, currentSandbox);
