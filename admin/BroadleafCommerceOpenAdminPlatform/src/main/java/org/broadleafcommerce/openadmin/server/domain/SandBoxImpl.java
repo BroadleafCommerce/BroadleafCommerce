@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SNDBX")
+@Table(name="BLC_SANDBOX")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class SandBoxImpl implements SandBox {
 

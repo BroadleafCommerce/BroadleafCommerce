@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.EntitySandBoxItem;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -261,7 +261,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         /*PersistencePackage savedPackage = null;
         if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
             try {
-                savedPackage = sandBoxService.saveSandBox(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
+                savedPackage = sandBoxService.saveEntitySandBoxItems(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
             } catch (SandBoxException e) {
                 throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
             }
@@ -284,7 +284,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
                 id = Long.valueOf(id.toString());
             }
-            SandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
+            EntitySandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
             if (item != null) {
                 mergedEntity.setDirty(true);
                 for (org.broadleafcommerce.openadmin.server.domain.Property persistentProperty : item.getEntity().getProperties()) {

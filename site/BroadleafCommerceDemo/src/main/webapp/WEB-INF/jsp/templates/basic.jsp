@@ -28,7 +28,7 @@
 	<div class="mainContentAreaFull" style="padding:8px;">
 	<div id="cmsContent">
 		<c:if test="${BLC_PAGE ne null}">
-			${BLC_PAGE.pageFields.content.fieldDataList[0].value}
+			${BLC_PAGE.pageFields.content.value}
 		</c:if>
 	</div>
 	</div>

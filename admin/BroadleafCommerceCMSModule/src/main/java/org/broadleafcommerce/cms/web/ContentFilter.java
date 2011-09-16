@@ -151,8 +151,8 @@ public class ContentFilter extends OncePerRequestFilter {
             }
         }
 
-        if (currentSandbox == null) {
-            currentSandbox = sandBoxService.retrieveProductionSandBox(site);
+        if (currentSandbox == null && site != null) {
+            currentSandbox = site.getProductionSandbox();
         }
 
         logger.debug("Serving request using sandbox: " + currentSandbox);

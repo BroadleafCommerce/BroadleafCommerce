@@ -29,4 +29,6 @@ public interface PageField extends Serializable {
     public void setFieldDataList(List<FieldData> fieldDataList);
 
     public PageField cloneEntity();
+
+    public String getValue();
 }

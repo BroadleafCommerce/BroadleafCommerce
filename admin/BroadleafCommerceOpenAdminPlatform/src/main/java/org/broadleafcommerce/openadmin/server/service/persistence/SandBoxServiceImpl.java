@@ -13,6 +13,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -23,6 +24,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
@@ -32,24 +34,27 @@ import java.util.Map;
 public class SandBoxServiceImpl implements SandBoxService {
 
 	//@Resource(name="blSandBoxEntityDao")
-	protected SandBoxEntityDao sandBoxDao;
+	protected SandBoxEntityDao sandBoxEntityDao;
+
+    @Resource
+    protected SandBoxDao sandBoxDao;
 
     //@Resource(name="blSandBoxIdGenerationService")
     protected SandBoxIdGenerationService sandBoxIdGenerationService;
 
-    //@Override
-    public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
-        return sandBoxDao.retrieveSandBoxItemByTemporaryId(temporaryId);
+    @Override
+    public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
+        return sandBoxEntityDao.retrieveSandBoxItemByTemporaryId(temporaryId);
     }
 
     //@Resource(name="blSessionFactory")
     protected SessionFactory sessionFactory;
 
 	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#saveSandBox(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo)
+	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#saveEntitySandBoxItems(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo)
 	 */
 	@Override
-	public PersistencePackage saveSandBox(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException {
+	public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException {
         // TODO:  Determine best way to get "site" passed to this point.
         SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
         Site site = null;
@@ -57,16 +62,16 @@ public class SandBoxServiceImpl implements SandBoxService {
             site = new SiteImpl();
             site.setId(sandBoxInfo.getSiteId());
         }
-        SandBox sandBox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, sandBoxInfo.getSandBox());
+        SandBox sandBox = sandBoxEntityDao.retrieveNamedSandBox(site, SandBoxType.USER, sandBoxInfo.getSandBox());
         if (sandBox == null) {
             sandBox = createSandBox(persistencePackage);
         }
-        SandBoxItem item;
+        EntitySandBoxItem item;
         switch (changeType) {
             default: {
                 item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, null);
                 sandBox.getSandBoxItems().add(item);
-                sandBoxDao.persist(sandBox);
+                sandBoxEntityDao.persist(sandBox);
                 break;
             }
             case UPDATE: {
@@ -77,7 +82,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 } catch (Exception e) {
                     throw new SandBoxException(e);
                 }
-                item = sandBoxDao.retrieveSandBoxItemByTemporaryId(primaryKey);
+                item = sandBoxEntityDao.retrieveSandBoxItemByTemporaryId(primaryKey);
                 if (item == null) {
                     item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, primaryKey);
                     sandBox.getSandBoxItems().add(item);
@@ -99,7 +104,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                         }
                     }
                 }
-                sandBoxDao.merge(sandBox);
+                sandBoxEntityDao.merge(sandBox);
                 break;
             }
             case DELETE: {
@@ -110,14 +115,14 @@ public class SandBoxServiceImpl implements SandBoxService {
                 } catch (Exception e) {
                     throw new SandBoxException(e);
                 }
-                item = sandBoxDao.retrieveSandBoxItemByTemporaryId(primaryKey);
+                item = sandBoxEntityDao.retrieveSandBoxItemByTemporaryId(primaryKey);
                 if (item != null) {
                     sandBox.getSandBoxItems().remove(item);
-                    sandBoxDao.deleteItem(item);
+                    sandBoxEntityDao.deleteEntitySandBoxItem(item);
                 }
                 item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, primaryKey);
                 sandBox.getSandBoxItems().add(item);
-                sandBoxDao.merge(sandBox);
+                sandBoxEntityDao.merge(sandBox);
                 break;
             }
         }
@@ -159,7 +164,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         return response;
     }
 
-    protected PersistencePackage createPersistencePackage(SandBox sandBox, SandBoxItem sandBoxItem, PersistenceManager persistenceManager) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    protected PersistencePackage createPersistencePackage(SandBox sandBox, EntitySandBoxItem sandBoxItem, PersistenceManager persistenceManager) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         PersistencePackage pkg = new PersistencePackage();
         pkg.setCeilingEntityFullyQualifiedClassname(sandBoxItem.getCeilingEntityFullyQualifiedClassname());
         pkg.setCustomCriteria(getSplitArray(sandBoxItem.getCustomCriteria(),","));
@@ -291,16 +296,16 @@ public class SandBoxServiceImpl implements SandBoxService {
         SandBox sandBox = new SandBoxImpl();
 		sandBox.setName(sandBoxInfo.getSandBox());
 
-        sandBox = sandBoxDao.persist(sandBox);
+        sandBox = sandBoxEntityDao.persist(sandBox);
 
         return sandBox;
     }
 	
-	protected SandBoxItem createSandBoxItemFromDto(SandBox sandBox, PersistencePackage persistencePackage, ChangeType changeType, Object primaryKey) {
+	protected EntitySandBoxItem createSandBoxItemFromDto(SandBox sandBox, PersistencePackage persistencePackage, ChangeType changeType, Object primaryKey) {
 		SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
 		Entity dtoEntity = persistencePackage.getEntity();
 		PersistencePerspective dtoPersistencePerspective = persistencePackage.getPersistencePerspective();
-		SandBoxItem sandBoxItem = new SandBoxItemImpl();
+		EntitySandBoxItem sandBoxItem = new EntitySandBoxItemImpl();
 		sandBox.getSandBoxItems().add(sandBoxItem);
 		sandBoxItem.setSandBox(sandBox);
         sandBoxItem.setCeilingEntityFullyQualifiedClassname(persistencePackage.getCeilingEntityFullyQualifiedClassname());
@@ -412,21 +417,6 @@ public class SandBoxServiceImpl implements SandBoxService {
 		return sandBoxItem;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#getSandBoxDao()
-	 */
-	@Override
-	public SandBoxEntityDao getSandBoxDao() {
-		return sandBoxDao;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#setSandBoxDao(org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao)
-	 */
-	@Override
-	public void setSandBoxDao(SandBoxEntityDao sandBoxDao) {
-		this.sandBoxDao = sandBoxDao;
-	}
 
     public SandBoxIdGenerationService getSandBoxIdGenerationService() {
         return sandBoxIdGenerationService;
@@ -442,21 +432,12 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public SandBox retrieveProductionSandBox(Site site) {
-        if (site == null) {
-            return null;
-        } else {
-            return site.getProductionSandbox();
-        }
-    }
-
-    @Override
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {
         SandBox userSandbox = null;
         if (adminUser.getCurrentSandbox() != null) {
             userSandbox = adminUser.getCurrentSandbox();
         } else {
-            userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
+            userSandbox = sandBoxEntityDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
 
             if (userSandbox == null) {
                 SandBoxImpl sandBox = new SandBoxImpl();
@@ -464,7 +445,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 sandBox.setName(adminUser.getLogin());
                 sandBox.setSandBoxType(SandBoxType.USER);
                 sandBox.setAuthor(adminUser.getId());
-                sandBoxDao.persist(sandBox);
+                sandBoxEntityDao.persist(sandBox);
             }
         }
 
@@ -472,19 +453,33 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
 
-    public SandBox retrieveApprovalSandBox(Site site) {
-        return sandBoxDao.retrieveSandBoxByType(site, SandBoxType.APPROVAL);
+    @Override
+    public void promoteAllSandBoxItems(AdminUser user, SandBox sandBox) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void promoteSandBox(SandBox sandBox) {
-        // TODO: This method should check to see if the list of items
-        // can be promoted and determine the promote destination.
-        // The logic can vary by sandBoxItem type.
+    @Override
+    public void promoteSelectedItems(AdminUser user, List<SandBoxItem> sandBoxItems) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void promoteSelectedSandBoxItems(List<SandBoxItem> sandBoxItems) {
-        // TODO: This method should check to see if the list of items
-        // can be promoted and determine the promote destination.
-        // The logic can vary by sandBoxItem type.
+    @Override
+    public void revertAllSandBoxItems(AdminUser user, SandBox sandBox) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void revertSelectedSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void rejectSelectedSandboxItems(List<SandBoxItem> sandBoxItems) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

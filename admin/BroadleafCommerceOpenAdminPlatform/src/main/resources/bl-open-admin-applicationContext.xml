@@ -107,7 +107,7 @@
 	</aop:config>
 	
 	<!--<aop:config>
-		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService.saveSandBox(..))"/>
+		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* saveEntitySandBoxItemsandBoxItems(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
 	</aop:config>-->
 	

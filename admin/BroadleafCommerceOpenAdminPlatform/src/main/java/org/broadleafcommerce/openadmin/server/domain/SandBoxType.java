@@ -15,8 +15,7 @@ public class SandBoxType implements Serializable {
        private static final Map<String, SandBoxType> TYPES = new HashMap<String, SandBoxType>();
 
        public static final SandBoxType USER  = new SandBoxType("USER", "User");
-       public static final SandBoxType APPROVAL  = new SandBoxType("Approval", "Approval");
-       public static final SandBoxType PRODUCTION  = new SandBoxType("Production", "Production");
+       public static final SandBoxType PRODUCTION  = new SandBoxType("PRODUCTION", "Production");
 
 
        public static SandBoxType getInstance(final String type) {

@@ -17,7 +17,6 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldData;
 import org.broadleafcommerce.cms.field.domain.FieldDataImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -118,5 +117,12 @@ public class PageFieldImpl implements PageField {
         return newPageField;
     }
 
+    @Override
+    public String getValue() {
+        if (fieldDataList != null && fieldDataList.size() >= 1) {
+            return fieldDataList.get(0).getValue();
+        }
+        return null;
+    }
 }
 

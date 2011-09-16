@@ -22,6 +22,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -103,8 +104,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             if (sandbox.getSite() == null && sandbox.getSite().getProductionSandbox() == null) {
                 productionSandboxExpression = Restrictions.isNull("sandbox");
             } else {
-                // Query is hitting the production sandbox.
-                if (! sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
+                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
                     productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
                 }
             }

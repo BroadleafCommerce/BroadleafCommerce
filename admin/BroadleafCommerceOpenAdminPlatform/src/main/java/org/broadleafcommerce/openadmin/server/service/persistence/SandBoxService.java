@@ -1,7 +1,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
+import org.broadleafcommerce.openadmin.server.domain.EntitySandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.Site;
@@ -16,8 +16,6 @@ public interface SandBoxService {
 
     public SandBox retrieveSandboxById(Long id);
 
-    public SandBox retrieveProductionSandBox(Site site);
-
     /**
      * Returns the sandbox currently associated with the passed in userId.
      * If one is not associated, it uses (or creates) a default user sandbox with the
@@ -28,32 +26,23 @@ public interface SandBoxService {
      */
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser);
 
-    public SandBox retrieveApprovalSandBox(Site site);
+    public void promoteAllSandBoxItems(AdminUser user, SandBox sandBox);
 
-    public void promoteSandBox(SandBox sandBox);
+    public void promoteSelectedItems(AdminUser user, List<SandBoxItem> sandBoxItems);
 
-    public void promoteSelectedSandBoxItems(List<SandBoxItem> sandBoxItems);
+    public void revertAllSandBoxItems(AdminUser user, SandBox sandBox);
 
+    public void revertSelectedSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems);
 
-    // TODO: Refactor this so that it isn't "saveSandbox".    This method is specific
-    // to entity sandbox items.
-    public PersistencePackage saveSandBox(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;
+    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox);
 
+    public void rejectSelectedSandboxItems(List<SandBoxItem> sandBoxItems);
 
-    // TODO: Remove from interface?
-    public abstract SandBoxEntityDao getSandBoxDao();
+    // Entity sandbox item code
+    public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;
 
-    // TODO: Remove from interface?
-	public abstract void setSandBoxDao(SandBoxEntityDao sandBoxDao);
-
-
-    // TODO: Remove from interface?
-    public SandBoxIdGenerationService getSandBoxIdGenerationService();
-
-    // TODO: Remove from interface?
-    public void setSandBoxIdGenerationService(SandBoxIdGenerationService sandBoxIdGenerationService);
-
-    public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
+    // Entity sandbox item code
+    public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 
 
 
