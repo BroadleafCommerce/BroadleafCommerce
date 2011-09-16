@@ -242,7 +242,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getAdvancedButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (((ToolStripButton) event.getSource()).getSelected()) {
-					getPresenterSequenceSetupManager().getDataSource("offerDS").resetPermanentFieldVisibilityBasedOnType(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttributeAsStringArray("_type"));
+					getPresenterSequenceSetupManager().getDataSource("offerDS").resetPermanentFieldVisibilityBasedOnType(lastSelectedRecord.getAttributeAsStringArray("_type"));
 					getPresenterSequenceSetupManager().getDataSource("offerDS").permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "uses", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
 					getDisplay().getAdvancedItemCriteria().setVisible(true);
 					getDisplay().getAdvancedItemCriteriaTarget().setVisible(true);
@@ -262,9 +262,9 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 					}
 				}
 				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("offerDS"), true, true, false);
-				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(getDisplay().getListDisplay().getGrid().getSelectedRecord());
+				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(lastSelectedRecord);
 				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValues(values);
-				rebindFormItems(display.getListDisplay().getGrid().getSelectedRecord());
+				rebindFormItems(lastSelectedRecord);
 			}
 		});
 		selectionChangedHandlerRegistration.removeHandler();
@@ -293,7 +293,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					extractor.applyData(getDisplay().getListDisplay().getGrid().getSelectedRecord());
+					extractor.applyData(lastSelectedRecord);
 				}
 			}
         });
@@ -320,19 +320,19 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getDeliveryTypeRadio().addChangedHandler(new ChangedHandler() {
 			public void onChanged(ChangedEvent event) {
 				String deliveryType = event.getValue().toString();
-				initializer.initDeliveryType(deliveryType, getDisplay().getListDisplay().getGrid().getSelectedRecord());
+				initializer.initDeliveryType(deliveryType, lastSelectedRecord);
 			}
 		});
 		getDisplay().getCustomerRuleRadio().addChangedHandler(new ChangedHandler() {
 			public void onChanged(ChangedEvent event) {
 				String customerRule = event.getValue().toString();
-				initializer.initCustomerRule(customerRule, getDisplay().getListDisplay().getGrid().getSelectedRecord());
+				initializer.initCustomerRule(customerRule, lastSelectedRecord);
 			}
 		});
 		getDisplay().getFgRuleRadio().addChangedHandler(new ChangedHandler() {
 			public void onChanged(ChangedEvent event) {
 				String fgRule = event.getValue().toString();
-				initializer.initFGRule(fgRule, getDisplay().getListDisplay().getGrid().getSelectedRecord());
+				initializer.initFGRule(fgRule, lastSelectedRecord);
 			}
 		});
 		getDisplay().getItemRuleRadio().addChangedHandler(new ChangedHandler() {
@@ -344,7 +344,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getOrderRuleRadio().addChangedHandler(new ChangedHandler() {
 			public void onChanged(ChangedEvent event) {
 				String orderRule = event.getValue().toString();
-				initializer.initOrderRule(orderRule, getDisplay().getListDisplay().getGrid().getSelectedRecord());
+				initializer.initOrderRule(orderRule, lastSelectedRecord);
 			}
 		});
 		getDisplay().getHelpButtonBogo().addMouseMoveHandler(new MouseMoveHandler() {
@@ -425,7 +425,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					initializeDisplay(getDisplay().getListDisplay().getGrid().getSelectedRecord());
+					initializeDisplay(lastSelectedRecord);
 				}
 			}
         });

@@ -186,7 +186,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 );
             }
         }));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS2", new LocaleListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetDescriptionMapDS", new StaticAssetDescriptionMapDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				staticAssetDescriptionPresenter = new MapStructurePresenter(getDisplay().getAssetDescriptionDisplay(), getStaticAssetDescriptionEntityView(), BLCMain.getMessageManager().getString("newAssetDescriptionTitle"));
@@ -197,7 +197,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 
     protected MapStructureEntityEditDialog getStaticAssetDescriptionEntityView() {
 		 if (staticAssetDescriptionEntityAdd == null) {
-			 staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS2"), "friendlyName", "localeName");
+			 staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeName");
 		 }
 		 return staticAssetDescriptionEntityAdd;
 	}
