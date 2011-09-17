@@ -16,7 +16,7 @@
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
-                <!--Add any custom persistence modules here -->
+                <!--Add any additional persistence modules here -->
                 <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>

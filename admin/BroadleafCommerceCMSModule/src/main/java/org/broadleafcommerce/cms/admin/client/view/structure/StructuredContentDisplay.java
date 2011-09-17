@@ -1,10 +1,6 @@
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,20 +11,5 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDispl
  */
 public interface StructuredContentDisplay extends DynamicEditDisplay {
 
-    public DynamicEntityListDisplay getListDisplay();
-
-    public DynamicFormDisplay getDynamicFormDisplay();
-
-    public ToolStripButton getAddPageButton();
-
-    public void setAddPageButton(ToolStripButton addPageButton);
-
-    public ToolStripButton getAddPageFolderButton();
-
-    public void setAddPageFolderButton(ToolStripButton addPageFolderButton);
-
-    public ComboBoxItem getCurrentLocale();
-
-    public void setCurrentLocale(ComboBoxItem currentLocale);
 
 }

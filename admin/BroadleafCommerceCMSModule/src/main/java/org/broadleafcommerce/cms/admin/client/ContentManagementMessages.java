@@ -56,4 +56,5 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String assetDescriptionTitle();
     public String newAssetDescriptionTitle();
 
+    public String structuredContentTitle();
 }

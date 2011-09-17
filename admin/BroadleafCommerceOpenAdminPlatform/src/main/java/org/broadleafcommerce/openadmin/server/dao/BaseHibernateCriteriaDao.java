@@ -37,7 +37,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 	
 	private static final Log LOG = LogFactory.getLog(BaseHibernateCriteriaDao.class);
 	
-	protected Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
+	public Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
 		/*
 		 * TODO this method should return a proxied Criteria instance that will return a mixed list
 		 */

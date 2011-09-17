@@ -19,9 +19,15 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jfischer
@@ -59,12 +65,12 @@ public class StaticAssetViewController {
                         operations.clear();
                     }
                     for (final CleanupOperation operation : myList) {
-                        File parentDir = operation.parentDir;
+                        File parentDir = operation.cacheFile.getParentFile();
                         if (parentDir.exists()) {
                             File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
                                 @Override
                                 public boolean accept(File file, String s) {
-                                    if (s.startsWith(operation.assetName + "---")) {
+                                    if (s.startsWith(operation.assetName + "---") && !operation.getCacheFile().getName().equals(s)) {
                                         return true;
                                     }
                                     return false;
@@ -163,7 +169,7 @@ public class StaticAssetViewController {
         if (parentDir.exists()) {
             CleanupOperation operation = new CleanupOperation();
             operation.setAssetName(staticAsset.getName());
-            operation.setParentDir(parentDir);
+            operation.setCacheFile(cacheFile);
             synchronized (operations) {
                 operations.add(operation);
             }
@@ -200,20 +206,43 @@ public class StaticAssetViewController {
     }
 
     protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String[]> parameterMap) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         StringBuffer sb = new StringBuffer();
         sb.append(staticAsset.getFullUrl());
         sb.append("---");
-        sb.append(format.format(staticAsset.getAuditable().getDateUpdated()==null?staticAsset.getAuditable().getDateCreated():staticAsset.getAuditable().getDateUpdated()));
+
+        StringBuffer sb2 = new StringBuffer();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        sb2.append(format.format(staticAsset.getAuditable().getDateUpdated()==null?staticAsset.getAuditable().getDateCreated():staticAsset.getAuditable().getDateUpdated()));
         for (String key : parameterMap.keySet()) {
-            sb.append("-");
-            sb.append(key);
-            sb.append("-");
-            sb.append(parameterMap.get(key)[0]);
+            sb2.append("-");
+            sb2.append(key);
+            sb2.append("-");
+            sb2.append(parameterMap.get(key)[0]);
         }
-        sb.append(".tmp");
+
+        String digest;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(sb2.toString().getBytes());
+            BigInteger number = new BigInteger(1,messageDigest);
+            digest = number.toString(16);
+        } catch(NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        sb.append(pad(digest, 32, '0'));
+        sb.append(".");
+        sb.append(staticAsset.getFileExtension());
 
         return sb.toString();
+    }
+
+    protected String pad(String s, int length, char pad) {
+        StringBuffer buffer = new StringBuffer(s);
+        while (buffer.length() < length) {
+            buffer.insert(0, pad);
+        }
+        return buffer.toString();
     }
 
     public String getCacheDirectory() {
@@ -227,7 +256,7 @@ public class StaticAssetViewController {
     public class CleanupOperation {
 
         private String assetName;
-        private File parentDir;
+        private File cacheFile;
 
         public String getAssetName() {
             return assetName;
@@ -237,12 +266,12 @@ public class StaticAssetViewController {
             this.assetName = assetName;
         }
 
-        public File getParentDir() {
-            return parentDir;
+        public File getCacheFile() {
+            return cacheFile;
         }
 
-        public void setParentDir(File parentDir) {
-            this.parentDir = parentDir;
+        public void setCacheFile(File cacheFile) {
+            this.cacheFile = cacheFile;
         }
     }
 }

@@ -62,7 +62,7 @@
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
-                <!--Add any custom persistence modules here -->
+                <!--Add any additional persistence modules here -->
                 <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
@@ -70,7 +70,7 @@
 		</constructor-arg>
         <property name="customPersistenceHandlers">
 			<list>
-                <!--Add any custom persistence modules here -->
+                <!--Add any custom persistence handlers here -->
                 <bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
@@ -79,6 +79,7 @@
 				<bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="targetEntityManagers">

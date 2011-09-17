@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -222,7 +221,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 	
 	public Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
-		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, persistenceManager.getDynamicEntityDao(), entityClasses);
+		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, entityClasses);
 		Entity entity = getRecord(mergedProperties, record, null, null);
 		
 		return entity;
@@ -230,14 +229,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 	
 	public Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<Serializable> records) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
-		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, persistenceManager.getDynamicEntityDao(), entityClasses);
+		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, entityClasses);
 		Entity[] entities = getRecords(mergedProperties, records, null, null);
 		
 		return entities;
 	}
 	
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, entityClasses);
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		return persistenceManager.getDynamicEntityDao().getSimpleMergedProperties(entityName, persistencePerspective, entityClasses);
 	}
 
     public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<Serializable> records) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {

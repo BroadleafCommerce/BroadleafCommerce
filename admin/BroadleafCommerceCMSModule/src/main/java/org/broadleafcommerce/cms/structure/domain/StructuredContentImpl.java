@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.cms.page.domain.Locale;
+import org.broadleafcommerce.cms.page.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -45,18 +47,18 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "ID")
     protected Long id;
 
-    @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true, requiredOverride = RequiredOverride.REQUIRED)
-    @Column(name = "CONTENT_NAME")
+    @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true)
+    @Column(name = "CONTENT_NAME", nullable = false)
     protected String contentName;
 
-    @AdminPresentation(friendlyName="Language Code", order=3, group="Description", requiredOverride = RequiredOverride.REQUIRED)
-    @Column(name = "LANGUAGE_CODE")
-    protected String languageCode;
+    @AdminPresentation(friendlyName="Locale", order=3, group="Description", hidden = true, prominent = true)
+    @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
+    @JoinColumn(name = "LOCALE_ID")
+    protected Locale locale;
 
-    @AdminPresentation(friendlyName="Priority", order=4, group="Description", requiredOverride = RequiredOverride.REQUIRED)
-    @Column(name = "PRIORITY")
+    @AdminPresentation(friendlyName="Priority", order=4, group="Description")
+    @Column(name = "PRIORITY", nullable = false)
     protected Integer priority;
-
 
     @AdminPresentation(friendlyName="Display Rule", order=1, group="Display Rule")
     @Column(name = "DISPLAY_RULE")
@@ -89,15 +91,15 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "ARCHIVED_FLAG")
     protected Boolean archivedFlag;
 
-    @AdminPresentation(friendlyName="Active Start Date", order=5, group="Description")
+    @AdminPresentation(friendlyName="Active Start Date", order=6, group="Description", prominent = true)
     @Column(name = "ACTIVE_START_DATE")
     protected Date activeStartDate;
 
-    @AdminPresentation(friendlyName="Active End Date", order=6, group="Description")
+    @AdminPresentation(friendlyName="Active End Date", order=7, group="Description", prominent = true)
     @Column(name = "ACTIVE_END_DATE")
     protected Date activeEndDate;
 
-    @AdminPresentation(friendlyName="Online", order=7, group="Description")
+    @AdminPresentation(friendlyName="Online", order=5, group="Description")
     @Column(name = "ONLINE_FLAG")
     protected Boolean onlineFlag;
 
@@ -122,13 +124,13 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public String getLanguageCode() {
-        return languageCode;
+    public Locale getLocale() {
+        return locale;
     }
 
     @Override
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     @Override
@@ -250,7 +252,7 @@ public class StructuredContentImpl implements StructuredContent {
         newContent.archivedFlag = archivedFlag;
         newContent.contentName = contentName;
         newContent.deletedFlag = deletedFlag;
-        newContent.languageCode = languageCode;
+        newContent.locale = locale;
         newContent.onlineFlag = onlineFlag;
         newContent.originalItemId = originalItemId;
         newContent.priority = priority;

@@ -1,17 +1,13 @@
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
@@ -24,11 +20,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
  */
 public class StructuredContentView extends HLayout implements Instantiable, StructuredContentDisplay {
 
-    protected DynamicEntityTreeView listDisplay;
+    protected DynamicEntityListView listDisplay;
     protected DynamicFormView dynamicFormDisplay;
-    protected ComboBoxItem currentLocale = new ComboBoxItem();
-    protected ToolStripButton addPageFolderButton;
-    protected ToolStripButton addPageButton;
 
     public StructuredContentView() {
 		setHeight100();
@@ -37,35 +30,12 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
-		leftVerticalLayout.setID("pagesLeftVerticalLayout");
+		leftVerticalLayout.setID("structureLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
-
-		listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource, true);
-        Canvas[] members = listDisplay.getToolBar().getMembers();
-
-        currentLocale.setShowTitle(false);
-        currentLocale.setWidth(120);
-        currentLocale.setOptionDataSource(additionalDataSources[0]);
-        currentLocale.setDisplayField("friendlyName");
-        currentLocale.setValueField("localeName");
-        currentLocale.setDefaultToFirstOption(true);
-        listDisplay.getToolBar().addFormItem(currentLocale, 6);
-        listDisplay.getToolBar().getMember(7).destroy();
-        listDisplay.getToolBar().getMember(1).destroy();
-        addPageFolderButton = new ToolStripButton();
-        addPageFolderButton.setDisabled(true);
-        addPageFolderButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/folder_open.png");
-        listDisplay.getToolBar().addButton(addPageFolderButton, 1);
-        addPageButton = new ToolStripButton();
-        addPageButton.setDisabled(true);
-        addPageButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/file.png");
-        listDisplay.getToolBar().addButton(addPageButton, 2);
-        listDisplay.getToolBar().addMember(new ToolStripSeparator(), 3);
-
+		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
-
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
 
         addMember(leftVerticalLayout);
@@ -84,27 +54,4 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		return dynamicFormDisplay;
 	}
 
-    public ToolStripButton getAddPageButton() {
-        return addPageButton;
-    }
-
-    public void setAddPageButton(ToolStripButton addPageButton) {
-        this.addPageButton = addPageButton;
-    }
-
-    public ToolStripButton getAddPageFolderButton() {
-        return addPageFolderButton;
-    }
-
-    public void setAddPageFolderButton(ToolStripButton addPageFolderButton) {
-        this.addPageFolderButton = addPageFolderButton;
-    }
-
-    public ComboBoxItem getCurrentLocale() {
-        return currentLocale;
-    }
-
-    public void setCurrentLocale(ComboBoxItem currentLocale) {
-        this.currentLocale = currentLocale;
-    }
 }

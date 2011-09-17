@@ -72,7 +72,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			PageFolder adminInstance = (PageFolder) Class.forName(entity.getType()[0]).newInstance();
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(PageFolder.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective, entityClasses);
 			adminInstance = (PageFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             if (PageFolderImpl.class.getName().equals(entity.getType()[0])) {
@@ -141,7 +141,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
@@ -164,7 +164,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 

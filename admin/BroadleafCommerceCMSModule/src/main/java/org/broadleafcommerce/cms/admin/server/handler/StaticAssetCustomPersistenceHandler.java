@@ -130,13 +130,21 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
 			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
-            StaticAssetStorage storage = staticAssetStorageService.create();
-            storage.setStaticAssetId(adminInstance.getId());
-            Blob uploadBlob = staticAssetStorageService.createBlob(upload);
-            storage.setFileData(uploadBlob);
-            storage = staticAssetStorageService.save(storage);
+            try {
+                StaticAssetStorage storage = staticAssetStorageService.create();
+                storage.setStaticAssetId(adminInstance.getId());
+                Blob uploadBlob = staticAssetStorageService.createBlob(upload);
+                storage.setFileData(uploadBlob);
+                storage = staticAssetStorageService.save(storage);
+            } catch (Exception e) {
+                /*
+                the blob storage is a long-lived transaction - using a compensating transaction to cover failure
+                 */
+                staticAssetService.deleteStaticAsset(adminInstance, getSandBox(persistencePackage));
+                throw e;
+            }
 
-			return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
+            return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
 		} catch (Exception e) {
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
@@ -176,6 +184,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
                 //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
                 adminInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
+                StaticAsset originalInstance = (StaticAsset) SerializationUtils.clone(adminInstance);
 			    adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
 
                 adminInstance.setFileSize(upload.getSize());
@@ -202,11 +211,19 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                     staticAssetStorageService.delete(storage);
                 }
 
-                storage = staticAssetStorageService.create();
-                storage.setStaticAssetId(adminInstance.getId());
-                Blob uploadBlob = staticAssetStorageService.createBlob(upload);
-                storage.setFileData(uploadBlob);
-                storage = staticAssetStorageService.save(storage);
+                try {
+                    storage = staticAssetStorageService.create();
+                    storage.setStaticAssetId(adminInstance.getId());
+                    Blob uploadBlob = staticAssetStorageService.createBlob(upload);
+                    storage.setFileData(uploadBlob);
+                    storage = staticAssetStorageService.save(storage);
+                } catch (Exception e) {
+                    /*
+                    the blob storage is a long-lived transaction - using a compensating transaction to cover failure
+                     */
+                    adminInstance = staticAssetService.updateStaticAsset(originalInstance, getSandBox(persistencePackage));
+                    throw e;
+                }
 
                 return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
             } catch (Exception e) {

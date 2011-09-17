@@ -45,7 +45,7 @@ public class ContentManagementModule extends AbstractModule {
         setSection(
             BLCMain.getMessageManager().getString("pagesTitle"),
 			"pages",
-			"org.broadleafcommerce.cms.admin.client.view.pages.StructuredContentView",
+			"org.broadleafcommerce.cms.admin.client.view.pages.PagesView",
 			"pagesPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter",
 			cmsRoles,
@@ -58,6 +58,16 @@ public class ContentManagementModule extends AbstractModule {
 			"org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsView",
 			"staticAssetsPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.file.StaticAssetsPresenter",
+			cmsRoles,
+			null
+		);
+
+        setSection(
+            BLCMain.getMessageManager().getString("structuredContentTitle"),
+			"structuredContent",
+			"org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentView",
+			"structuredContentPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenter",
 			cmsRoles,
 			null
 		);

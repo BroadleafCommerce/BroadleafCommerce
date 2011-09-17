@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.cms.page.domain.Locale;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.Date;
@@ -32,9 +33,9 @@ public interface StructuredContent {
 
     public void setContentName(String contentName);
 
-    public String getLanguageCode();
+    public Locale getLocale();
 
-    public void setLanguageCode(String languageCode);
+    public void setLocale(Locale locale);
 
     public SandBox getSandbox();
 

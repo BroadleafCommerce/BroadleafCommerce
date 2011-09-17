@@ -62,6 +62,7 @@ public class StaticAssetStorageDaoImpl implements StaticAssetStorageDao {
             return em.merge(assetStorage);
         }
         em.persist(assetStorage);
+        em.flush();
         return assetStorage;
     }
 

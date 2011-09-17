@@ -15,10 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.remote;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -31,6 +27,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 
@@ -99,9 +98,16 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 						throw new ServiceException("Security Check Failed: AdminSecurityServiceRemote");
 					}
 					
-					break;
+					return;
 				}
-			}	
+			}
+            /*
+            Make the security check somewhat restrictive. If a securityConfigs has been assigned, but the config
+            for this ceilingEntityFullyQualifiedName is not there, throw an exception and make the security config
+            be explicitly declared.
+             */
+            //throw new ServiceException("Security Check Failed: AdminSecurityServiceRemote. No security configuration found for: " + ceilingEntityFullyQualifiedName);
+            //TODO re-enable this additional security check
 		}
 	}
 
