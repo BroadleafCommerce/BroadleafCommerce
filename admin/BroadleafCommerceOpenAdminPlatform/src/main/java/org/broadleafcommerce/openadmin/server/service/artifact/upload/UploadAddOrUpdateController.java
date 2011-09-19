@@ -23,13 +23,13 @@ import java.util.Map;
 /**
  * Created by jfischer
  */
-public class UploadController extends SimpleFormController {
+public class UploadAddOrUpdateController extends SimpleFormController {
 
-    private static final Log LOG = LogFactory.getLog(UploadController.class);
+    private static final Log LOG = LogFactory.getLog(UploadAddOrUpdateController.class);
 
     protected DynamicEntityService dynamicEntityRemoteService;
 
-    protected Long maximumFileSizeInBytes = 5L * 1000L * 1000L; // 5mb max by default
+    protected Long maximumFileSizeInBytes = 20L * 1000L * 1000L; // 20mb max by default
 
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {

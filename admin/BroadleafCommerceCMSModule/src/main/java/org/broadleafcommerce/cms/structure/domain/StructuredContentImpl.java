@@ -75,6 +75,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
+    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED)
     protected StructuredContentType structuredContentType;
 
     @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldImpl.class, cascade = {CascadeType.ALL})

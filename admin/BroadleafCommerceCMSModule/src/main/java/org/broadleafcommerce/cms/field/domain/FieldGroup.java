@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -41,11 +39,4 @@ public interface FieldGroup extends Serializable {
 
     public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions);
 
-    public PageTemplate getPageTemplate();
-
-    public void setPageTemplate(PageTemplate pageTemplate);
-
-    public int getGroupOrder();
-
-    public void setGroupOrder(int groupOrder);
 }

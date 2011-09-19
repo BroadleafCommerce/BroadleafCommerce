@@ -1,6 +1,8 @@
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.broadleafcommerce.cms.page.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
@@ -8,15 +10,22 @@ import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.Criteria;
 
 import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +36,8 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class StructuredContentCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    private static Map<String, FieldMetadata> mergedProperties;
 
     @Resource(name="blStructuredContentService")
 	protected StructuredContentService structuredContentService;
@@ -64,6 +75,55 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
     }
 
+    protected synchronized Map<String, FieldMetadata> getModifiedProperties() {
+        return mergedProperties;
+    }
+
+    protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective, Class<?>[] entityClasses) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException {
+        mergedProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
+
+        FieldMetadata fieldMetadata = new FieldMetadata();
+        fieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
+        fieldMetadata.setMutable(true);
+        fieldMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
+        fieldMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
+        fieldMetadata.setCollection(false);
+        fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+
+        PersistencePackage fetchPackage = new PersistencePackage();
+        fetchPackage.setCeilingEntityFullyQualifiedClassname(Locale.class.getName());
+        PersistencePerspective fetchPerspective = new PersistencePerspective();
+        fetchPackage.setPersistencePerspective(fetchPerspective);
+        fetchPerspective.setAdditionalForeignKeys(new ForeignKey[]{});
+        fetchPerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        fetchPerspective.setAdditionalNonPersistentProperties(new String[]{});
+        DynamicResultSet resultSet = ((PersistenceManager) helper).fetch(fetchPackage, new CriteriaTransferObject());
+
+        String[][] enums = new String[resultSet.getRecords().length][2];
+        int j=0;
+        for (Entity entity : resultSet.getRecords()) {
+            enums[j][0] = entity.findProperty("id").getValue();
+            enums[j][1] = entity.findProperty("friendlyName").getValue();
+            j++;
+        }
+
+        fieldMetadata.setEnumerationValues(enums);
+        FieldPresentationAttributes attributes = new FieldPresentationAttributes();
+        fieldMetadata.setPresentationAttributes(attributes);
+        attributes.setName("locale");
+        attributes.setFriendlyName("Locale");
+        attributes.setGroup("Description");
+        attributes.setOrder(3);
+        attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        attributes.setProminent(true);
+        attributes.setBroadleafEnumeration("");
+        attributes.setReadOnly(false);
+        attributes.setHidden(false);
+        attributes.setRequiredOverride(true);
+
+        mergedProperties.put("locale", fieldMetadata);
+    }
+
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -71,48 +131,9 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
-            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
 
-            FieldMetadata fieldMetadata = new FieldMetadata();
-            fieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
-            fieldMetadata.setMutable(true);
-            fieldMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
-            fieldMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
-            fieldMetadata.setCollection(false);
-            fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-
-            PersistencePackage fetchPackage = new PersistencePackage();
-            fetchPackage.setCeilingEntityFullyQualifiedClassname(Locale.class.getName());
-            PersistencePerspective fetchPerspective = new PersistencePerspective();
-            fetchPackage.setPersistencePerspective(fetchPerspective);
-            fetchPerspective.setAdditionalForeignKeys(new ForeignKey[]{});
-            fetchPerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
-            fetchPerspective.setAdditionalNonPersistentProperties(new String[]{});
-            DynamicResultSet resultSet = ((PersistenceManager) helper).fetch(fetchPackage, new CriteriaTransferObject());
-
-            String[][] enums = new String[resultSet.getRecords().length][2];
-            int j=0;
-            for (Entity entity : resultSet.getRecords()) {
-                enums[j][0] = entity.findProperty("id").getValue();
-                enums[j][1] = entity.findProperty("friendlyName").getValue();
-                j++;
-            }
-
-            fieldMetadata.setEnumerationValues(enums);
-            FieldPresentationAttributes attributes = new FieldPresentationAttributes();
-            fieldMetadata.setPresentationAttributes(attributes);
-            attributes.setName("locale.id");
-            attributes.setFriendlyName("Locale");
-            attributes.setGroup("Description");
-            attributes.setOrder(3);
-            attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-            attributes.setProminent(true);
-            attributes.setBroadleafEnumeration("");
-            attributes.setReadOnly(false);
-            attributes.setHidden(false);
-            attributes.setRequiredOverride(true);
-
-            originalProps.put("locale", fieldMetadata);
+            createModifiedProperties(dynamicEntityDao, helper, persistencePerspective, entityClasses);
+            Map<String, FieldMetadata> originalProps = getModifiedProperties();
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
@@ -124,40 +145,31 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 		}
     }
 
-    /*@Override
+    @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entities);
-            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StaticAsset.class.getName(), originalProps);
+            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StructuredContent.class.getName(), originalProps);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StructuredContent.class.getName());
+            PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), StructuredContent.class.getName());
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StructuredContent.class);
+            Criteria count = dynamicEntityDao.getCriteria(countCriteria, StructuredContent.class);
 
-            structuredContentService.findContentItems(getSandBox(persistencePackage), criteria);
-
-
-
-
-            String parentCategoryId = cto.get(PagesTreeDataSourceFactory.parentFolderForeignKey).getFilterValues()[0];
-            PageFolder pageOrFolder = null;
-            if (parentCategoryId != null) {
-                pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
-            }
-            String localeName = cto.get("pageTemplate.locale.localeName").getFilterValues()[0];
-            List<PageFolder> folders = pageService.findPageFolderChildren(getSandBox(persistencePackage), pageOrFolder, localeName);
+            List<StructuredContent> contents = structuredContentService.findContentItems(getSandBox(persistencePackage), criteria);
+            Long totalRecords = structuredContentService.countContentItems(getSandBox(persistencePackage), count);
             List<Serializable> convertedList = new ArrayList<Serializable>();
-            convertedList.addAll(folders);
+            convertedList.addAll(contents);
 
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> pageProperties = getMergedProperties(PageFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getAdditionalForeignKeys());
-            Entity[] pageEntities = helper.getRecords(pageProperties, convertedList);
+            Entity[] pageEntities = helper.getRecords(originalProps, convertedList);
 
-            DynamicResultSet response = new DynamicResultSet(pageEntities, pageEntities.length);
+            DynamicResultSet response = new DynamicResultSet(pageEntities, totalRecords.intValue());
 
             return response;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -167,16 +179,12 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         Entity entity  = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			PageFolder adminInstance = (PageFolder) Class.forName(entity.getType()[0]).newInstance();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(PageFolder.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
-			adminInstance = (PageFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+			StructuredContent adminInstance = (StructuredContent) Class.forName(entity.getType()[0]).newInstance();
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
+			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            if (PageFolderImpl.class.getName().equals(entity.getType()[0])) {
-                pageService.addPageFolder(adminInstance, adminInstance.getParentFolder());
-            } else {
-                pageService.addPage((Page) adminInstance, adminInstance.getParentFolder(), getSandBox(persistencePackage));
-            }
+            adminInstance = structuredContentService.addStructuredContent(adminInstance, getSandBox(persistencePackage));
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -186,7 +194,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 		}
     }
 
-    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    /*protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
 			ceilingEntityFullyQualifiedClass.getName(),

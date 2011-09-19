@@ -55,13 +55,6 @@ public class FieldGroupImpl implements FieldGroup {
     @BatchSize(size = 20)
     protected List<FieldDefinition> fieldDefinitions;
 
-    @ManyToOne(targetEntity = PageTemplateImpl.class)
-    @JoinColumn(name = "PAGE_TEMPLATE_ID")
-	protected PageTemplate pageTemplate;
-
-    @Column(name="GROUP_ORDER")
-    protected int groupOrder;
-
     @Override
     public Long getId() {
         return id;
@@ -102,24 +95,5 @@ public class FieldGroupImpl implements FieldGroup {
         this.fieldDefinitions = fieldDefinitions;
     }
 
-    @Override
-    public PageTemplate getPageTemplate() {
-        return pageTemplate;
-    }
-
-    @Override
-    public void setPageTemplate(PageTemplate pageTemplate) {
-        this.pageTemplate = pageTemplate;
-    }
-
-    @Override
-    public int getGroupOrder() {
-        return groupOrder;
-    }
-
-    @Override
-    public void setGroupOrder(int groupOrder) {
-        this.groupOrder = groupOrder;
-    }
 }
 

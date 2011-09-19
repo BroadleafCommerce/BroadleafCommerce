@@ -15,10 +15,13 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by bpolster.
  */
-public interface ContentDisplayRule {
+public interface ContentDisplayRule extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);

@@ -11,7 +11,7 @@
     
     <bean id="multipartResolver" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadMultipartResolver"/>
 
-    <bean id="blUploadController" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadController">
+    <bean id="blUploadController" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadAddOrUpdateController">
         <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
     </bean>
 

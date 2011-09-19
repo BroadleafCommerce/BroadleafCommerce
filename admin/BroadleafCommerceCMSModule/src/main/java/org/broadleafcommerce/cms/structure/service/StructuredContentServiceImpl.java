@@ -86,8 +86,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      *
      * @param sandbox      - the sandbox to find structured content items (null indicates items that are in production for
      *                     sites that are single tenant.
-     * @param parentFolder if null then root folder for the site.
-     * @param localeName   - the locale to include (null is typical for non-internationalized sites)
      * @return
      */
     @Override
@@ -147,14 +145,14 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * @return the count of items in this sandbox that match the passed in Criteria
      */
     @Override
-    public int countContentItems(SandBox sandbox, Criteria c) {
+    public Long countContentItems(SandBox sandbox, Criteria c) {
         c.add(Restrictions.eq("archivedFlag", false));
         c.setProjection(Projections.rowCount());
 
         if (sandbox == null) {
             // Query is hitting the production sandbox.
             c.add(Restrictions.isNull("sandbox"));
-            return (Integer) c.uniqueResult();
+            return (Long) c.uniqueResult();
         } else {
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
@@ -163,24 +161,24 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             } else {
                 // Query is hitting the production sandbox.
                 if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
-                    return (Integer) c.uniqueResult();
+                    return (Long) c.uniqueResult();
                 }
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
             c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
 
-            int resultCount = (Integer) c.uniqueResult();
-            int updatedCount = 0;
-            int deletedCount = 0;
+            Long resultCount = (Long) c.list().get(0);
+            Long updatedCount = 0L;
+            Long deletedCount = 0L;
 
             // count updated items
             c.add(Restrictions.and(Restrictions.isNotNull("originalItemId"),Restrictions.eq("sandbox", sandbox)));
-            updatedCount = (Integer) c.uniqueResult();
+            updatedCount = (Long) c.list().get(0);
 
             // count deleted items
             c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
-            deletedCount = (Integer) c.uniqueResult();
+            deletedCount = (Long) c.list().get(0);
 
             return resultCount - updatedCount - deletedCount;
         }
@@ -197,6 +195,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public StructuredContent addStructuredContent(StructuredContent content, SandBox destinationSandbox) {
         content.setSandbox(destinationSandbox);
+        content.setArchivedFlag(false);
+        content.setDeletedFlag(false);
         return structuredContentDao.addOrUpdateContentItem(content);
     }
 
@@ -290,7 +290,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * If the originalItemId is null, then this method marks
      * the items as deleted within the passed in sandbox.
      *
-     * @param page
+     * @param content
      * @param destinationSandbox
      * @return
      */

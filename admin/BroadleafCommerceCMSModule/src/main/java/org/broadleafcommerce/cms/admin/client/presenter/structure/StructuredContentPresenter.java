@@ -28,13 +28,18 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
@@ -119,7 +124,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
-                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
                     if (legacyForm != null) {
                         legacyForm.getForm().reset();
                     }
@@ -142,7 +147,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
 									//do nothing
 								}
 							} catch (Exception e) {
-                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
                                     if (formItem instanceof RichTextCanvasItem) {
@@ -180,6 +185,31 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                 ((ListGridDataSource) dataSource).setupGridFields(new String[]{"contentName", "locale", "activeStartDate", "activeEndDate", "onlineFlag"}, new Boolean[]{false, false, false, false, false});
             }
         }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
+				structuredContentTypeDataSource.resetPermanentFieldVisibility(
+					"name"
+				);
+				EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource);
+				getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
+				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                        "structuredContentType",
+                        structuredContentTypeSearchView,
+                        "Structured Content Type Search",
+                        getDisplay().getDynamicFormDisplay(),
+                        new FormItemCallback() {
+                            @Override
+                            public void execute(FormItem formItem) {
+                                if (currentStructuredContentRecord != null) {
+                                    destroyContentTypeForm();
+                                    loadContentTypeForm(currentStructuredContentRecord);
+                                }
+                            }
+                        }
+                );
+			}
+		}));
 	}
 
 	@Override

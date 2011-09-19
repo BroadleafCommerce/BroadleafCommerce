@@ -17,12 +17,14 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface StructuredContentType {
+public interface StructuredContentType extends Serializable {
+
     Long getId();
 
     void setId(Long id);

@@ -21,6 +21,7 @@ import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.List;
@@ -48,10 +49,11 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     @Column (name = "DESCRIPTION")
     protected String description;
 
-    @OneToMany(targetEntity = FieldGroupImpl.class)
-    @JoinTable(name = "BLC_STRUCTURED_CONTENT_GROUPS", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
-    @OrderColumn(name = "group_order")
+    @OneToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_STRCTRDCNTNT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_TYPE_ID", referencedColumnName = "STRUCTURED_CONTENT_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @OrderColumn(name = "GROUP_ORDER")
     @BatchSize(size = 20)
     protected List<FieldGroup> fieldGroups;
 

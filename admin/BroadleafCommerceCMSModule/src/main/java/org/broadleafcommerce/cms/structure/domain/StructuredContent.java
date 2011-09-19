@@ -18,13 +18,15 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.cms.page.domain.Locale;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
 /**
  * Created by bpolster.
  */
-public interface StructuredContent {
+public interface StructuredContent extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);

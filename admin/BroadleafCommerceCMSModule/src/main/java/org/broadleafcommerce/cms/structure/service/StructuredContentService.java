@@ -68,7 +68,7 @@ public interface StructuredContentService {
     /**
      * @return the count of items in this sandbox that match the passed in Criteria
      */
-    public int countContentItems(SandBox sandBox, Criteria c);
+    public Long countContentItems(SandBox sandBox, Criteria c);
 
     /**
      * This method is intended to be called from within the CMS

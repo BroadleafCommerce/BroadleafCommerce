@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2008-2009 the original author or authors.
  *
@@ -19,12 +18,14 @@ package org.broadleafcommerce.cms.admin.client.datasource.structure;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 /**
@@ -32,19 +33,18 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class StructuredContentListDataSourceFactory implements DataSourceFactory {
-
-    public static final String structuredContentTypeForeignKey = "structuredContentType";
-    public static final String localeForeignKey = "locale";
+public class StructuredContentTypeSearchListDataSourceFactory implements DataSourceFactory {
+	
 	public static ListGridDataSource dataSource = null;
-
+	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(structuredContentTypeForeignKey, EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
-            DataSourceModule[] modules = new DataSourceModule[]{
-                new BasicClientEntityModule(CeilingEntities.STRUCTUREDCONTENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+			DataSourceModule[] modules = new DataSourceModule[]{
+				new BasicClientEntityModule(CeilingEntities.STRUCTUREDCONTENTTYPE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
+            persistencePerspective.setPopulateToOneFields(true);
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
