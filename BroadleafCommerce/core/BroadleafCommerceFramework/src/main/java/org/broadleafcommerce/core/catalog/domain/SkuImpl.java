@@ -337,6 +337,7 @@ public class SkuImpl implements Sku {
     /*
      * This is to facilitate serialization to non-Java clients
      */
+    @JsonIgnore
     public Boolean getTaxable() {
         return isTaxable();
     }
@@ -367,6 +368,7 @@ public class SkuImpl implements Sku {
     /*
      * This is to facilitate serialization to non-Java clients
      */
+    @JsonIgnore
     public Boolean getDiscountable() {
         return isDiscountable();
     }
