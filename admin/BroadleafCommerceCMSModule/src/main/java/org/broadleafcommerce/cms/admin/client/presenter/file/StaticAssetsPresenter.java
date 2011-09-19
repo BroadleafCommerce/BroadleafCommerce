@@ -17,6 +17,7 @@ package org.broadleafcommerce.cms.admin.client.presenter.file;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -66,11 +67,9 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 	protected void changeSelection(final Record selectedRecord) {
 		leafAssetPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				try {
-					if (response.getErrors().size() > 0) {
-						leafAssetPresenter.disable();
-					}
-				} catch (Exception e) {
+                if (response.getStatus()== RPCResponse.STATUS_FAILURE) {
+				    leafAssetPresenter.disable();
+				} else {
 					leafAssetPresenter.enable();
                     leafAssetPresenter.setStartState();
                     display.getListDisplay().getAddButton().enable();

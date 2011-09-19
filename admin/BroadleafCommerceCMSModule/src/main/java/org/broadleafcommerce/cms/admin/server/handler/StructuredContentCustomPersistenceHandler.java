@@ -3,6 +3,9 @@ package org.broadleafcommerce.cms.admin.server.handler;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.page.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
@@ -36,6 +39,8 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class StructuredContentCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    private Log LOG = LogFactory.getLog(StructuredContentCustomPersistenceHandler.class);
 
     private static Map<String, FieldMetadata> mergedProperties;
 
@@ -141,6 +146,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			return results;
 		} catch (Exception e) {
+            LOG.error(e);
 			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
     }
@@ -169,7 +175,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -190,49 +196,32 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			return adminEntity;
 		} catch (Exception e) {
+            LOG.error(e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
     }
 
-    /*protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
-		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
-			ceilingEntityFullyQualifiedClass.getName(),
-			entities,
-			null,
-			new String[]{},
-			additionalForeignKeys,
-			MergedPropertyType.PRIMARY,
-			populateManyToOneFields,
-			includeManyToOneFields,
-			excludeManyToOneFields,
-			null,
-			""
-		);
-
-		return mergedProperties;
-	}
-
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        //TODO how are page folder updates handled?
         Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            adminInstance.getStructuredContentFields().size();
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            adminInstance = (Page) SerializationUtils.clone(adminInstance);
-			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = (StructuredContent) SerializationUtils.clone(adminInstance);
+			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            adminInstance = pageService.updatePage(adminInstance, getSandBox(persistencePackage));
+            adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox(persistencePackage));
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
 			return adminEntity;
 		} catch (Exception e) {
+            LOG.error(e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
     }
@@ -242,14 +231,15 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 		Entity entity = persistencePackage.getEntity();
         try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
-            pageService.deletePage(adminInstance, getSandBox(persistencePackage));
+            structuredContentService.deleteStructuredContent(adminInstance, getSandBox(persistencePackage));
 		} catch (Exception e) {
+            LOG.error(e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
-    }*/
+    }
 }

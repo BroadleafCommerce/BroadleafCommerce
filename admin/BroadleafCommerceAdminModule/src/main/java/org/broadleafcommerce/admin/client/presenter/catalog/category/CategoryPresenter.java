@@ -16,6 +16,7 @@
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
 import com.smartgwt.client.data.*;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -105,11 +106,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}
 		allChildCategoriesPresenter.load(selectedRecord, dataSource, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				try {
-					if (response.getErrors().size() > 0) {
-						getDisplay().getInsertOrphanButton().disable();
-					}
-				} catch (Exception e) {
+                if (response.getStatus()== RPCResponse.STATUS_FAILURE) {
+					getDisplay().getInsertOrphanButton().disable();
+                } else {
 					if (getDisplay().getOrphanedCategoryGrid().getSelectedRecord() != null) {
 						getDisplay().getInsertOrphanButton().enable();
 					}

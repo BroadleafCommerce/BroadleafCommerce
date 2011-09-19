@@ -46,13 +46,6 @@ public class FieldDataImpl implements FieldData {
     @Lob
     protected String lobValue;
 
-    @ManyToOne(targetEntity = PageFieldImpl.class)
-    @JoinColumn(name = "PAGE_FIELD_ID")
-	protected PageField pageField;
-
-    @Column(name="FIELD_ORDER")
-    protected int fieldOrder;
-
     @Override
     public Long getId() {
         return id;
@@ -89,30 +82,11 @@ public class FieldDataImpl implements FieldData {
     }
 
     @Override
-    public PageField getPageField() {
-        return pageField;
-    }
-
-    @Override
-    public void setPageField(PageField pageField) {
-        this.pageField = pageField;
-    }
-
-    @Override
     public FieldData cloneEntity() {
         FieldDataImpl newFieldData = new FieldDataImpl();
         newFieldData.setValue(this.getValue());
         return newFieldData;
     }
 
-    @Override
-    public int getFieldOrder() {
-        return fieldOrder;
-    }
-
-    @Override
-    public void setFieldOrder(int fieldOrder) {
-        this.fieldOrder = fieldOrder;
-    }
 }
 

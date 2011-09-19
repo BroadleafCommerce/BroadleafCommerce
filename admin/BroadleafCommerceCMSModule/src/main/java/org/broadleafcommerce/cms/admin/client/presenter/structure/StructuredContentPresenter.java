@@ -15,8 +15,10 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -25,9 +27,9 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -84,7 +86,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
     protected void loadContentTypeForm(final Record selectedRecord) {
         //load the page template form
         BLCMain.NON_MODAL_PROGRESS.startProgress();
-        PageTemplateFormListDataSourceFactory.createDataSource("contentTypeFormDS", new String[]{"constructForm", selectedRecord.getAttribute("structuredContentType")}, new AsyncCallbackAdapter() {
+        StructuredContentTypeFormListDataSourceFactory.createDataSource("contentTypeFormDS", new String[]{"constructForm", selectedRecord.getAttribute("structuredContentType")}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(final DataSource dataSource) {
                 destroyContentTypeForm();
@@ -97,17 +99,17 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                 formOnlyView.setID("contentTypeForm");
                 formOnlyView.setOverflow(Overflow.VISIBLE);
                 ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).addMember(formOnlyView);
-                ((PageTemplateFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
+                ((StructuredContentTypeFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
                 BLCMain.NON_MODAL_PROGRESS.startProgress();
                 formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
                     @Override
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         formOnlyView.getForm().enable();
                         for (FormItem formItem : formOnlyView.getForm().getFields()) {
-                        	if (formItem instanceof RichTextCanvasItem) {
-                        		formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
-                        	}
-                        	
+                            if (formItem instanceof RichTextCanvasItem) {
+                                formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
+                            }
+
                         }
                     }
                 });
@@ -142,29 +144,23 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            try {
-								if (!response.getErrors().isEmpty()) {
-									//do nothing
-								}
-							} catch (Exception e) {
+                            if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
                                     if (formItem instanceof RichTextCanvasItem) {
+                                        GWT.log(formItem.getFieldName());
+                                        GWT.log(((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
                                         form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
                                     }
                                 }
-                                PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
+                                StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
                                 Record selectedRecord = form.getValuesAsRecord();
                                 dataSource.setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
                                 form.saveData(new DSCallback() {
                                     @Override
                                     public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                        try {
-                                            if (!response.getErrors().isEmpty()) {
-                                                //do nothing
-                                            }
-                                        } catch (Exception e) {
+                                        if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                         }
                                     }

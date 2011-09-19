@@ -50,7 +50,8 @@ public class PageFieldImpl implements PageField {
     @JoinColumn(name="PAGE_ID")
     protected Page page;
 
-    @OneToMany(mappedBy = "pageField", targetEntity = FieldDataImpl.class, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = FieldDataImpl.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "BLC_PGFLD_FLD_XREF", joinColumns = @JoinColumn(name = "PAGE_FIELD_ID", referencedColumnName = "PAGE_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DATA_ID", referencedColumnName = "FIELD_DATA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "FIELD_ORDER")

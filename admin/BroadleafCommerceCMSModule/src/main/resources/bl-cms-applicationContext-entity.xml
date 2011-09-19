@@ -18,5 +18,8 @@
 	<bean id="org.broadleafcommerce.cms.page.domain.PageTemplate" class="org.broadleafcommerce.cms.page.domain.PageTemplateImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.file.domain.StaticAssetStorage" class="org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.file.domain.StaticAssetFolder" class="org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContent" class="org.broadleafcommerce.cms.structure.domain.StructuredContentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentType" class="org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.cms.field.domain.FieldData" class="org.broadleafcommerce.cms.field.domain.FieldDataImpl"/>
 
 </beans>

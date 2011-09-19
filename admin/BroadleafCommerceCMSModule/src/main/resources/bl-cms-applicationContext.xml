@@ -80,6 +80,7 @@
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="targetEntityManagers">

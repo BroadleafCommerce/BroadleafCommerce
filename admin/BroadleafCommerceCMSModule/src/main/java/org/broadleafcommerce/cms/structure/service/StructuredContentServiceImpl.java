@@ -57,6 +57,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return structuredContentDao.findStructuredContentById(contentId);
     }
 
+    @Override
+    public StructuredContentType findStructuredContentTypeById(Long id) {
+        return structuredContentDao.findStructuredContentTypeById(id);
+    }
+
     /**
      * Returns the list of structured content types.
      */

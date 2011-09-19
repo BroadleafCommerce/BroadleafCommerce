@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.admin.client.presenter.pages;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -165,11 +166,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            try {
-								if (!response.getErrors().isEmpty()) {
-									//do nothing
-								}
-							} catch (Exception e) {
+                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
@@ -183,11 +180,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                                 form.saveData(new DSCallback() {
                                     @Override
                                     public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                        try {
-                                            if (!response.getErrors().isEmpty()) {
-                                                //do nothing
-                                            }
-                                        } catch (Exception e) {
+                                        if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                         }
                                     }

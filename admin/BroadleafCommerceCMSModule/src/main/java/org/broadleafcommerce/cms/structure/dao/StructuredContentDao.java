@@ -29,6 +29,8 @@ public interface StructuredContentDao {
 
     public StructuredContent findStructuredContentById(Long contentId);
 
+    public StructuredContentType findStructuredContentTypeById(Long contentTypeId);
+
     public List<StructuredContentType> retrieveAllStructuredContentTypes();
 
     public Map<String,StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc);

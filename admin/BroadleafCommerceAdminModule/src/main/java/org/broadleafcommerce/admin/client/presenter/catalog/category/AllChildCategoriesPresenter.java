@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
+import com.smartgwt.client.rpc.RPCResponse;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -125,11 +126,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 						public void onSearchItemSelected(SearchItemSelectedEvent event) {
 							display.getGrid().addData(event.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
-									try {
-										if (!response.getErrors().isEmpty()) {
-											//do nothing
-										}
-									} catch (Exception e) {
+									if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
 										categoryPresenter.reloadParentTreeNodeRecords(true);
 									}
 								}
@@ -174,11 +171,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							try {
-								if (!response.getErrors().isEmpty()) {
-									//do nothing
-								}
-							} catch (Exception e) {
+							if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
 								categoryPresenter.reloadParentTreeNodeRecords(true);
 								((CategoryDisplay) categoryPresenter.getDisplay()).getRemoveOrphanedButton().disable();
 								((CategoryDisplay) categoryPresenter.getDisplay()).getInsertOrphanButton().disable();

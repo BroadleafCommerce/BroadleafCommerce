@@ -38,6 +38,8 @@ public interface StructuredContentService {
      */
     public StructuredContent findStructuredContentById(Long contentId);
 
+    public StructuredContentType findStructuredContentTypeById(Long id);
+
     /**
      * Returns the list of structured content types.
      */

@@ -54,7 +54,11 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     @Override
     public StructuredContent findStructuredContentById(Long contentId) {
         return (StructuredContent) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.structure.domain.StructuredContent"), contentId);
+    }
 
+    @Override
+    public StructuredContentType findStructuredContentTypeById(Long contentTypeId) {
+        return (StructuredContentType) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.structure.domain.StructuredContentType"), contentTypeId);
     }
 
     @Override

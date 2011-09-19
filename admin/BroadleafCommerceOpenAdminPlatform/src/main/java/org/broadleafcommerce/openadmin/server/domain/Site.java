@@ -1,9 +1,12 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by bpolster.
  */
-public interface Site {
+public interface Site extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);

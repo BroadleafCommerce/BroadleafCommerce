@@ -6,8 +6,9 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.*;
-import org.broadleafcommerce.cms.page.domain.*;
-import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.cms.field.service.FileService;
+import org.broadleafcommerce.cms.structure.domain.*;
+import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -24,21 +25,24 @@ import java.util.*;
 /**
  * Created by jfischer
  */
-public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private Log LOG = LogFactory.getLog(PageTemplateCustomPersistenceHandler.class);
+    private Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
 
-    @Resource(name="blPageService")
-	protected PageService pageService;
+    @Resource(name="blStructuredContentService")
+	protected StructuredContentService structuredContentService;
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
+
+    @Resource(name="blFileService")
+    protected FileService fileService;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         return
-            PageTemplate.class.getName().equals(ceilingEntityFullyQualifiedClassname) &&
+            StructuredContentType.class.getName().equals(ceilingEntityFullyQualifiedClassname) &&
             persistencePackage.getCustomCriteria() != null &&
             persistencePackage.getCustomCriteria().length > 0 &&
             persistencePackage.getCustomCriteria()[0].equals("constructForm");
@@ -72,19 +76,19 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String pageTemplateId = persistencePackage.getCustomCriteria()[1];
-            PageTemplate template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
+            String structuredContentTypeId = persistencePackage.getCustomCriteria()[1];
+            StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeById(Long.valueOf(structuredContentTypeId));
             ClassMetadata metadata = new ClassMetadata();
-            metadata.setCeilingType(PageTemplate.class.getName());
+            metadata.setCeilingType(StructuredContentType.class.getName());
             PolymorphicEntity entity = new PolymorphicEntity();
-            entity.setName("PageTemplateImpl");
-            entity.setType(PageTemplateImpl.class.getName());
+            entity.setName("StructuredContentTypeImpl");
+            entity.setType(StructuredContentTypeImpl.class.getName());
             PolymorphicEntity[] entities = new PolymorphicEntity[]{entity};
             metadata.setPolymorphicEntities(entities);
             int groupCount = 1;
             int fieldCount = 0;
             List<Property> propertiesList = new ArrayList<Property>();
-            List<FieldGroup> groups = template.getFieldGroups();
+            List<FieldGroup> groups = structuredContentType.getFieldGroups();
             for (FieldGroup group : groups) {
                 List<FieldDefinition> definitions = group.getFieldDefinitions();
                 for (FieldDefinition definition : definitions) {
@@ -94,8 +98,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     property.setMetadata(fieldMetadata);
                     fieldMetadata.setFieldType(definition.getFieldType());
                     fieldMetadata.setMutable(true);
-                    fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
-                    fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
+                    fieldMetadata.setInheritedFromType(StructuredContentTypeImpl.class.getName());
+                    fieldMetadata.setAvailableToTypes(new String[] {StructuredContentTypeImpl.class.getName()});
                     fieldMetadata.setCollection(false);
                     fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                     fieldMetadata.setLength(definition.getMaxLength());
@@ -143,8 +147,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             fieldMetadata.setFieldType(SupportedFieldType.ID);
             fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
             fieldMetadata.setMutable(true);
-            fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
-            fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
+            fieldMetadata.setInheritedFromType(StructuredContentTypeImpl.class.getName());
+            fieldMetadata.setAvailableToTypes(new String[] {StructuredContentTypeImpl.class.getName()});
             fieldMetadata.setCollection(false);
             fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
             FieldPresentationAttributes attributes = new FieldPresentationAttributes();
@@ -201,8 +205,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String pageId = persistencePackage.getCustomCriteria()[1];
-            Entity entity = fetchEntityBasedOnId(pageId);
+            String structuredContentId = persistencePackage.getCustomCriteria()[1];
+            Entity entity = fetchEntityBasedOnId(structuredContentId);
             DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
             return results;
@@ -212,18 +216,18 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         }
     }
 
-    protected Entity fetchEntityBasedOnId(String pageId) throws Exception {
-        Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
-        Map<String, PageField> pageFieldMap = page.getPageFields();
+    protected Entity fetchEntityBasedOnId(String structuredContentId) throws Exception {
+        StructuredContent structuredContent = (StructuredContent) structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+        Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
         Entity entity = new Entity();
-        entity.setType(new String[]{PageTemplateImpl.class.getName()});
+        entity.setType(new String[]{StructuredContentType.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
-        for (String key : pageFieldMap.keySet()) {
+        for (String key : structuredContentFieldMap.keySet()) {
             Property property = new Property();
             propertiesList.add(property);
             property.setName(key);
-            PageField pageField = pageFieldMap.get(key);
-            List<FieldData> fieldDataList = pageField.getFieldDataList();
+            StructuredContentField structuredContentField = structuredContentFieldMap.get(key);
+            List<FieldData> fieldDataList = structuredContentField.getFieldDataList();
             String value;
             if (!CollectionUtils.isEmpty(fieldDataList)) {
                 //TODO add support for multiple values
@@ -236,7 +240,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         Property property = new Property();
         propertiesList.add(property);
         property.setName("id");
-        property.setValue(pageId);
+        property.setValue(structuredContentId);
 
         entity.setProperties(propertiesList.toArray(new Property[]{}));
 
@@ -247,60 +251,62 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String pageId = persistencePackage.getCustomCriteria()[1];
-            Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
+            String structuredContentId = persistencePackage.getCustomCriteria()[1];
+            StructuredContent structuredContent = (StructuredContent) structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
             //build up some fields before we detach page from the session
             List<String> templateFieldNames = new ArrayList<String>();
-            for (FieldGroup group : page.getPageTemplate().getFieldGroups()) {
+            for (FieldGroup group : structuredContent.getStructuredContentType().getFieldGroups()) {
                 for (FieldDefinition definition: group.getFieldDefinitions()) {
                     templateFieldNames.add(definition.getName());
                 }
             }
-            for (String key : page.getPageFields().keySet()) {
-                PageField pageField = page.getPageFields().get(key);
-                pageField.getFieldDataList().size();
+            for (String key : structuredContent.getStructuredContentFields().keySet()) {
+                StructuredContentField structuredContentField = structuredContent.getStructuredContentFields().get(key);
+                structuredContentField.getFieldDataList().size();
             }
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            page = (Page) SerializationUtils.clone(page);
-            Map<String, PageField> pageFieldMap = page.getPageFields();
+            structuredContent = (StructuredContent) SerializationUtils.clone(structuredContent);
+            Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 if (templateFieldNames.contains(property.getName())) {
-                    PageField pageField = pageFieldMap.get(property.getName());
-                    if (pageField != null) {
-                        if (!CollectionUtils.isEmpty(pageField.getFieldDataList())) {
-                            FieldData fieldData = pageField.getFieldDataList().get(0);
+                    StructuredContentField structuredContentField = structuredContentFieldMap.get(property.getName());
+                    if (structuredContentField != null) {
+                        if (!CollectionUtils.isEmpty(structuredContentField.getFieldDataList())) {
+                            FieldData fieldData = structuredContentField.getFieldDataList().get(0);
                             fieldData.setValue(property.getValue());
                         } else {
                             FieldData fieldData = new FieldDataImpl();
-                            pageField.getFieldDataList().add(fieldData);
                             fieldData.setValue(property.getValue());
+                            fileService.addFieldData(fieldData);
+                            structuredContentField.getFieldDataList().add(fieldData);
                         }
                     } else {
-                        pageField = new PageFieldImpl();
-                        pageFieldMap.put(property.getName(), pageField);
-                        pageField.setFieldKey(property.getName());
-                        pageField.setPage(page);
+                        structuredContentField = new StructuredContentFieldImpl();
+                        structuredContentFieldMap.put(property.getName(), structuredContentField);
+                        structuredContentField.setFieldKey(property.getName());
+                        structuredContentField.setStructuredContent(structuredContent);
                         FieldData fieldData = new FieldDataImpl();
-                        pageField.getFieldDataList().add(fieldData);
                         fieldData.setValue(property.getValue());
+                        fileService.addFieldData(fieldData);
+                        structuredContentField.getFieldDataList().add(fieldData);
                     }
                 }
             }
             List<String> removeItems = new ArrayList<String>();
-            for (String key : pageFieldMap.keySet()) {
+            for (String key : structuredContentFieldMap.keySet()) {
                 if (persistencePackage.getEntity().findProperty(key)==null) {
                     removeItems.add(key);
                 }
             }
             if (removeItems.size() > 0) {
                 for (String removeKey : removeItems) {
-                    PageField pageField = pageFieldMap.remove(removeKey);
-                    pageField.setPage(null);
+                    StructuredContentField structuredContentField = structuredContentFieldMap.remove(removeKey);
+                    structuredContentField.setStructuredContent(null);
                 }
             }
-            pageService.updatePage(page, getSandBox(persistencePackage));
+            structuredContentService.updateStructuredContent(structuredContent, getSandBox(persistencePackage));
 
-            return fetchEntityBasedOnId(pageId);
+            return fetchEntityBasedOnId(structuredContentId);
         } catch (Exception e) {
             LOG.error(e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);

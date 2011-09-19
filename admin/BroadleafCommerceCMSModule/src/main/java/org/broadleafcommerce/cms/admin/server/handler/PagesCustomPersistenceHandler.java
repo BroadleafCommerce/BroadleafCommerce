@@ -144,6 +144,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            adminInstance.getPageFields().size();
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
             adminInstance = (Page) SerializationUtils.clone(adminInstance);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
