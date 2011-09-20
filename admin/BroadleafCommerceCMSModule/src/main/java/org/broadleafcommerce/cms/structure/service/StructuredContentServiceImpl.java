@@ -104,7 +104,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         } else {
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression = null;
-            if (sandbox.getSite() == null && sandbox.getSite().getProductionSandbox() == null) {
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
                 productionSandboxExpression = Restrictions.isNull("sandbox");
             } else {
                 if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
@@ -161,7 +161,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         } else {
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
-            if (sandbox.getSite() == null && sandbox.getSite().getProductionSandbox() == null) {
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
                 productionSandboxExpression = Restrictions.isNull("sandbox");
             } else {
                 // Query is hitting the production sandbox.

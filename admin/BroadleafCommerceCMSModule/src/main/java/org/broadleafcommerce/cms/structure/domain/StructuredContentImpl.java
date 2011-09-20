@@ -17,10 +17,12 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.page.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.LocaleImpl;
+import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.RequiredOverride;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -60,7 +62,7 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "PRIORITY", nullable = false)
     protected Integer priority;
 
-    @AdminPresentation(friendlyName="Display Rule", order=1, group="Display Rule")
+    @AdminPresentation(friendlyName="Display Rule", order=1, group="Display Rule", largeEntry = true)
     @Column(name = "DISPLAY_RULE")
     protected String displayRule;
 
@@ -78,10 +80,12 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED)
     protected StructuredContentType structuredContentType;
 
-    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldImpl.class, cascade = {CascadeType.ALL})
-    @MapKey(name = "fieldKey")
+    @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "BLC_STRCTR_CNTNT_FLD_MAP", inverseJoinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_FIELD_ID", referencedColumnName = "STRUCTURED_CONTENT_FIELD_ID"))
+    @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    @BatchSize(size = 20)
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
     @AdminPresentation(friendlyName="Deleted", order=2, group="Internal", hidden = true)

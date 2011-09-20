@@ -1,11 +1,11 @@
-package org.broadleafcommerce.cms.field.domain;
+package org.broadleafcommerce.cms.page.domain;
 
 import java.io.Serializable;
 
 /**
  * Created by bpolster.
  */
-public interface FieldData extends Serializable {
+public interface PageFieldData extends Serializable {
     
     public Long getId();
 
@@ -15,6 +15,6 @@ public interface FieldData extends Serializable {
 
     public void setValue(String value);
 
-    public FieldData cloneEntity();
+    public PageFieldData cloneEntity();
 
 }

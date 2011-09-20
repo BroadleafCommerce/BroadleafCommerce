@@ -15,10 +15,12 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldData;
-import org.broadleafcommerce.cms.field.domain.FieldDataImpl;
+import org.broadleafcommerce.cms.page.domain.PageFieldData;
+import org.broadleafcommerce.cms.page.domain.PageFieldDataImpl;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,10 +50,13 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     @JoinColumn(name="STRUCTURED_CONTENT_ID")
     protected StructuredContent structuredContent;
 
-    @OneToMany(targetEntity = FieldDataImpl.class)
-    @JoinTable(name = "BLC_STRUCT_CONTENT_FIELD_DATA", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DATA_ID"))
+    @OneToMany(targetEntity = StructuredContentFieldDataImpl.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "BLC_STRUCT_CNTNT_FLD_XREF", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_FIELD_ID", referencedColumnName = "STRUCTURED_CONTENT_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "STRCTRD_CNTNT_FLD_DATA_ID", referencedColumnName = "STRCTRD_CNTNT_FLD_DATA_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "FIELD_ORDER")
-    private List<FieldData> fieldDataList = new ArrayList<FieldData>();
+    @BatchSize(size = 20)
+    private List<StructuredContentFieldData> fieldDataList = new ArrayList<StructuredContentFieldData>();
 
     @Override
     public Long getId() {
@@ -84,12 +89,12 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     }
 
     @Override
-    public List<FieldData> getFieldDataList() {
+    public List<StructuredContentFieldData> getFieldDataList() {
         return fieldDataList;
     }
 
     @Override
-    public void setFieldDataList(List<FieldData> fieldDataList) {
+    public void setFieldDataList(List<StructuredContentFieldData> fieldDataList) {
         this.fieldDataList = fieldDataList;
     }
 
@@ -99,8 +104,8 @@ public class StructuredContentFieldImpl implements StructuredContentField {
         newContentField.fieldKey = fieldKey;
         newContentField.structuredContent = structuredContent;
 
-        for (FieldData oldFieldData: fieldDataList) {
-            FieldData newFieldData = oldFieldData.cloneEntity();
+        for (StructuredContentFieldData oldFieldData: fieldDataList) {
+            StructuredContentFieldData newFieldData = oldFieldData.cloneEntity();
             newContentField.fieldDataList.add(newFieldData);
         }
         return newContentField;

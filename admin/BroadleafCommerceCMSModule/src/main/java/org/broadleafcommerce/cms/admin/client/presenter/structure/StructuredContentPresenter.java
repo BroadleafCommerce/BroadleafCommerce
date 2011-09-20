@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.rpc.RPCResponse;
@@ -145,18 +144,17 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
+                                final Record newRecord = response.getData()[0];
+                                final String newId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(newRecord);
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
                                     if (formItem instanceof RichTextCanvasItem) {
-                                        GWT.log(formItem.getFieldName());
-                                        GWT.log(((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
                                         form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
                                     }
                                 }
                                 StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
-                                Record selectedRecord = form.getValuesAsRecord();
-                                dataSource.setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
+                                dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                                 form.saveData(new DSCallback() {
                                     @Override
                                     public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -165,6 +163,10 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                                         }
                                     }
                                 });
+                                if (!getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord).equals(newId)) {
+                                    //display.getListDisplay().getGrid().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(newId));
+                                    currentStructuredContentRecord.setAttribute(getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyFieldName(), newId);
+                                }
 							}
                         }
                     }, requestProperties);

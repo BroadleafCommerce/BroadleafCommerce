@@ -9,7 +9,7 @@
         <mapping-file>config/bc/jpa/domain/StaticAsset.orm.xml</mapping-file>
         <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldGroupImpl</class>
-        <class>org.broadleafcommerce.cms.field.domain.FieldDataImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageFieldDataImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageFolderImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
@@ -23,6 +23,7 @@
         <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
 

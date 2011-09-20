@@ -15,11 +15,6 @@
  */
 package org.broadleafcommerce.cms.structure.dao;
 
-import org.broadleafcommerce.cms.page.dao.PageDao;
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageFolder;
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
@@ -32,7 +27,9 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -82,6 +79,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public StructuredContent addOrUpdateContentItem(StructuredContent content) {
+        em.clear();
         return em.merge(content);
     }
 

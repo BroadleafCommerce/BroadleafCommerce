@@ -228,7 +228,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 checkValue: {
                     if (!MapUtils.isEmpty(pageFieldMap)) {
                         PageField pageField = pageFieldMap.get(definition.getName());
-                        List<FieldData> fieldDataList = pageField.getFieldDataList();
+                        List<PageFieldData> fieldDataList = pageField.getFieldDataList();
                         if (!CollectionUtils.isEmpty(fieldDataList)) {
                             //TODO add support for multiple values
                             value = fieldDataList.get(0).getValue();
@@ -275,10 +275,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     PageField pageField = pageFieldMap.get(property.getName());
                     if (pageField != null) {
                         if (!CollectionUtils.isEmpty(pageField.getFieldDataList())) {
-                            FieldData fieldData = pageField.getFieldDataList().get(0);
+                            PageFieldData fieldData = pageField.getFieldDataList().get(0);
                             fieldData.setValue(property.getValue());
                         } else {
-                            FieldData fieldData = new FieldDataImpl();
+                            PageFieldData fieldData = new PageFieldDataImpl();
                             pageField.getFieldDataList().add(fieldData);
                             fieldData.setValue(property.getValue());
                         }
@@ -287,7 +287,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                         pageFieldMap.put(property.getName(), pageField);
                         pageField.setFieldKey(property.getName());
                         pageField.setPage(page);
-                        FieldData fieldData = new FieldDataImpl();
+                        PageFieldData fieldData = new PageFieldDataImpl();
                         pageField.getFieldDataList().add(fieldData);
                         fieldData.setValue(property.getValue());
                     }

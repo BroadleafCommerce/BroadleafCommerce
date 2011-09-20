@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldData;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -37,9 +35,9 @@ public interface StructuredContentField extends Serializable {
 
     public void setStructuredContent(StructuredContent structuredContent);
 
-    public List<FieldData> getFieldDataList();
+    public List<StructuredContentFieldData> getFieldDataList();
 
-    public void setFieldDataList(List<FieldData> fieldDataList);
+    public void setFieldDataList(List<StructuredContentFieldData> fieldDataList);
 
     public StructuredContentField cloneEntity();
 }

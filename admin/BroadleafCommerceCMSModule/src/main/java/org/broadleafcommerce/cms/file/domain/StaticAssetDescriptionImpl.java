@@ -15,11 +15,6 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldData;
-import org.broadleafcommerce.cms.page.domain.Locale;
-import org.broadleafcommerce.cms.page.domain.LocaleImpl;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;

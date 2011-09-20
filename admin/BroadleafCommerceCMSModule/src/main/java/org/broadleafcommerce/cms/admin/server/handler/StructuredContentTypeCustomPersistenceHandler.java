@@ -2,11 +2,13 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.field.domain.*;
-import org.broadleafcommerce.cms.field.service.FileService;
+import org.broadleafcommerce.cms.field.domain.FieldDefinition;
+import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.*;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.openadmin.client.dto.*;
@@ -34,9 +36,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
-
-    @Resource(name="blFileService")
-    protected FileService fileService;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -196,7 +195,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return results;
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform inspect for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -211,7 +210,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return results;
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -222,20 +221,26 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         Entity entity = new Entity();
         entity.setType(new String[]{StructuredContentType.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
-        for (String key : structuredContentFieldMap.keySet()) {
-            Property property = new Property();
-            propertiesList.add(property);
-            property.setName(key);
-            StructuredContentField structuredContentField = structuredContentFieldMap.get(key);
-            List<FieldData> fieldDataList = structuredContentField.getFieldDataList();
-            String value;
-            if (!CollectionUtils.isEmpty(fieldDataList)) {
-                //TODO add support for multiple values
-                value = fieldDataList.get(0).getValue();
-            } else {
-                value = null;
+        for (FieldGroup fieldGroup : structuredContent.getStructuredContentType().getFieldGroups()) {
+            for (FieldDefinition definition : fieldGroup.getFieldDefinitions()) {
+                Property property = new Property();
+                propertiesList.add(property);
+                property.setName(definition.getName());
+                String value;
+                checkValue: {
+                    if (!MapUtils.isEmpty(structuredContentFieldMap)) {
+                        StructuredContentField structuredContentField = structuredContentFieldMap.get(definition.getName());
+                        List<StructuredContentFieldData> fieldDataList = structuredContentField.getFieldDataList();
+                        if (!CollectionUtils.isEmpty(fieldDataList)) {
+                            //TODO add support for multiple values
+                            value = fieldDataList.get(0).getValue();
+                            break checkValue;
+                        }
+                    }
+                    value = null;
+                }
+                property.setValue(value);
             }
-            property.setValue(value);
         }
         Property property = new Property();
         propertiesList.add(property);
@@ -272,12 +277,12 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     StructuredContentField structuredContentField = structuredContentFieldMap.get(property.getName());
                     if (structuredContentField != null) {
                         if (!CollectionUtils.isEmpty(structuredContentField.getFieldDataList())) {
-                            FieldData fieldData = structuredContentField.getFieldDataList().get(0);
+                            StructuredContentFieldData fieldData = structuredContentField.getFieldDataList().get(0);
                             fieldData.setValue(property.getValue());
                         } else {
-                            FieldData fieldData = new FieldDataImpl();
+                            StructuredContentFieldData fieldData = new StructuredContentFieldDataImpl();
                             fieldData.setValue(property.getValue());
-                            fileService.addFieldData(fieldData);
+                            //fileService.addFieldData(fieldData);
                             structuredContentField.getFieldDataList().add(fieldData);
                         }
                     } else {
@@ -285,9 +290,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                         structuredContentFieldMap.put(property.getName(), structuredContentField);
                         structuredContentField.setFieldKey(property.getName());
                         structuredContentField.setStructuredContent(structuredContent);
-                        FieldData fieldData = new FieldDataImpl();
+                        StructuredContentFieldData fieldData = new StructuredContentFieldDataImpl();
                         fieldData.setValue(property.getValue());
-                        fileService.addFieldData(fieldData);
+                        //fileService.addFieldData(fieldData);
                         structuredContentField.getFieldDataList().add(fieldData);
                     }
                 }
@@ -308,7 +313,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return fetchEntityBasedOnId(structuredContentId);
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }

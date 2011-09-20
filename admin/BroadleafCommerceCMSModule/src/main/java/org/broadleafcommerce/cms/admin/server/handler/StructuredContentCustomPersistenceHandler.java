@@ -146,7 +146,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			return results;
 		} catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
 			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
     }
@@ -175,7 +175,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             return response;
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -196,7 +196,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			return adminEntity;
 		} catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
     }
@@ -221,7 +221,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			return adminEntity;
 		} catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
     }
@@ -238,7 +238,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             structuredContentService.deleteStructuredContent(adminInstance, getSandBox(persistencePackage));
 		} catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Unable to execute persistence activity", e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
     }

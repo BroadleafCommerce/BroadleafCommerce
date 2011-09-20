@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldData;
-import org.broadleafcommerce.cms.field.domain.FieldDataImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,13 +48,13 @@ public class PageFieldImpl implements PageField {
     @JoinColumn(name="PAGE_ID")
     protected Page page;
 
-    @OneToMany(targetEntity = FieldDataImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_PGFLD_FLD_XREF", joinColumns = @JoinColumn(name = "PAGE_FIELD_ID", referencedColumnName = "PAGE_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_DATA_ID", referencedColumnName = "FIELD_DATA_ID"))
+    @OneToMany(targetEntity = PageFieldDataImpl.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "BLC_PGFLD_FLD_XREF", joinColumns = @JoinColumn(name = "PAGE_FIELD_ID", referencedColumnName = "PAGE_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_FIELD_DATA_ID", referencedColumnName = "PAGE_FIELD_DATA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "FIELD_ORDER")
     @BatchSize(size = 20)
-    private List<FieldData> fieldDataList = new ArrayList<FieldData>();
+    private List<PageFieldData> fieldDataList = new ArrayList<PageFieldData>();
 
     @Override
     public Long getId() {
@@ -89,19 +87,19 @@ public class PageFieldImpl implements PageField {
     }
 
     @Override
-    public List<FieldData> getFieldDataList() {
+    public List<PageFieldData> getFieldDataList() {
         return fieldDataList;
     }
 
     @Override
-    public void addFieldData(FieldData fieldData) {
+    public void addFieldData(PageFieldData fieldData) {
         if (! fieldDataList.contains(fieldData)) {
               fieldDataList.add(fieldData);
         }
     }
 
     @Override
-    public void setFieldDataList(List<FieldData> fieldDataList) {
+    public void setFieldDataList(List<PageFieldData> fieldDataList) {
         this.fieldDataList = fieldDataList;
     }
 
@@ -111,8 +109,8 @@ public class PageFieldImpl implements PageField {
         newPageField.fieldKey = fieldKey;
         newPageField.page = page;
 
-        for (FieldData oldPageData: fieldDataList) {
-            FieldData newFieldData = oldPageData.cloneEntity();
+        for (PageFieldData oldPageData: fieldDataList) {
+            PageFieldData newFieldData = oldPageData.cloneEntity();
             newPageField.fieldDataList.add(newFieldData);
         }
         return newPageField;

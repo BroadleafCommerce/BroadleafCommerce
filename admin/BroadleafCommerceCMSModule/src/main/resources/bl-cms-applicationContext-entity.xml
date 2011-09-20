@@ -20,6 +20,7 @@
     <bean id="org.broadleafcommerce.cms.file.domain.StaticAssetFolder" class="org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContent" class="org.broadleafcommerce.cms.structure.domain.StructuredContentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentType" class="org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.cms.field.domain.FieldData" class="org.broadleafcommerce.cms.field.domain.FieldDataImpl"/>
+    <bean id="org.broadleafcommerce.cms.field.domain.PageFieldData" class="org.broadleafcommerce.cms.page.domain.PageFieldDataImpl"/>
+    <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldData" class="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl"/>
 
 </beans>

@@ -1,7 +1,5 @@
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldData;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,11 +20,11 @@ public interface PageField extends Serializable {
 
     public void setPage(Page page);
 
-    public List<FieldData> getFieldDataList();
+    public List<PageFieldData> getFieldDataList();
 
-    public void addFieldData(FieldData fieldData);
+    public void addFieldData(PageFieldData fieldData);
 
-    public void setFieldDataList(List<FieldData> fieldDataList);
+    public void setFieldDataList(List<PageFieldData> fieldDataList);
 
     public PageField cloneEntity();
 

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.field.domain;
+package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -27,16 +25,16 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD_DATA")
+@Table(name = "BLC_PAGE_FIELD_DATA")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class FieldDataImpl implements FieldData {
+public class PageFieldDataImpl implements PageFieldData {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FieldDataId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FieldDataId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldDataImpl", allocationSize = 10)
-    @Column(name = "FIELD_DATA_ID")
+    @GeneratedValue(generator = "PageFieldDataId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "PageFieldDataId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageFieldDataImpl", allocationSize = 10)
+    @Column(name = "PAGE_FIELD_DATA_ID")
     protected Long id;
 
     @Column (name = "VALUE")
@@ -82,8 +80,8 @@ public class FieldDataImpl implements FieldData {
     }
 
     @Override
-    public FieldData cloneEntity() {
-        FieldDataImpl newFieldData = new FieldDataImpl();
+    public PageFieldData cloneEntity() {
+        PageFieldDataImpl newFieldData = new PageFieldDataImpl();
         newFieldData.setValue(this.getValue());
         return newFieldData;
     }
