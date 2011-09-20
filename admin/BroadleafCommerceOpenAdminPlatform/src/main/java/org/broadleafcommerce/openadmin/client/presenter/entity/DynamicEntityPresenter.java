@@ -123,7 +123,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 		selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				ListGridRecord selectedRecord = event.getSelectedRecord();
-				if (event.getState()) {
+				if (event.getState() && selectedRecord != null) {
 					if (!selectedRecord.equals(lastSelectedRecord)) {
 						lastSelectedRecord = selectedRecord;
 						if (selectedRecord.getAttributeAsStringArray("_type") == null){

@@ -13,12 +13,13 @@ public class RichTextHTMLPane extends HTMLPane {
 	
     public void setValue(String value) {
     	Node node = findIFrame();
-    	setRichTextValue(node, value);
+    	setRichTextValue(node, value==null?"":value);
     }
 
     public String getValue()  {
     	Node node = findIFrame();
-    	return findRichTextValue(node);
+    	String response = findRichTextValue(node);
+        return response;
     }
     
     public Node findIFrame() {

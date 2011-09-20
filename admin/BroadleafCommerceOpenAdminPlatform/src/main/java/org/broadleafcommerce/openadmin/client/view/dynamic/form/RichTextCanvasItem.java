@@ -3,6 +3,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 
 public class RichTextCanvasItem extends CanvasItem {
+    
 	@Override
 	public Object getValue() {
 		return ((RichTextHTMLPane) getCanvas()).getValue();

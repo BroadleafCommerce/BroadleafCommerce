@@ -131,7 +131,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                         	if (formItem instanceof RichTextCanvasItem) {
                         		formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
                         	}
-                        	
                         }
                     }
                 });
@@ -167,6 +166,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+                                final Record newRecord = response.getData()[0];
+                                final String newId = getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(newRecord);
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
@@ -175,8 +176,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                                     }
                                 }
                                 PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
-                                Record selectedRecord = form.getValuesAsRecord();
-                                dataSource.setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
+                                dataSource.setCustomCriteria(new String[]{"constructForm", newId});
                                 form.saveData(new DSCallback() {
                                     @Override
                                     public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -185,6 +185,10 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                                         }
                                     }
                                 });
+                                if (!getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord).equals(newId)) {
+                                    ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(newId));
+                                    currentPageRecord.setAttribute(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyFieldName(), newId);
+                                }
 							}
                         }
                     }, requestProperties);
