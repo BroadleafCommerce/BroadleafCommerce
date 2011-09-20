@@ -136,14 +136,17 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        //TODO how are page folder updates handled?
         Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {
+                throw new ServiceException("Unable to update PageFolder instances.");
+            }
+			Page adminInstance = (Page) persistenceObject;
             adminInstance.getPageFields().size();
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
             adminInstance = (Page) SerializationUtils.clone(adminInstance);
@@ -167,7 +170,11 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {
+                throw new ServiceException("Unable to remove PageFolder instances.");
+            }
+			Page adminInstance = (Page) persistenceObject;
 
             pageService.deletePage(adminInstance, getSandBox(persistencePackage));
 		} catch (Exception e) {

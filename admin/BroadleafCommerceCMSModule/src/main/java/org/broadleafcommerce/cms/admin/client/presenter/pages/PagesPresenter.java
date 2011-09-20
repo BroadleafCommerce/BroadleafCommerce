@@ -95,12 +95,16 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         if (pageType!=null && pageType.equals("org.broadleafcommerce.cms.page.domain.PageImpl")) {
             getDisplay().getAddPageButton().disable();
             getDisplay().getAddPageFolderButton().disable();
+            getDisplay().getListDisplay().getRemoveButton().enable();
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
             currentPageRecord = selectedRecord;
             loadTemplateForm(selectedRecord);
         } else {
             getDisplay().getAddPageButton().enable();
             getDisplay().getAddPageFolderButton().enable();
+            getDisplay().getListDisplay().getRemoveButton().disable();
             destroyTemplateForm();
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
             currentPageRecord = null;
         }
 	}
