@@ -15,9 +15,54 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
+import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
@@ -31,30 +76,6 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
-import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -68,7 +89,8 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
-	//protected AssetSearchDialog assetSearchView;
+	protected AssetSearchDialog assetSearchDialogView;
+	protected EntitySearchDialog pageTemplateDialogView;
 
 	@Override
 	protected void removeClicked() {
@@ -268,7 +290,16 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
-
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetFolderTreeDS", new StaticAssetsFolderTreeDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+            @Override
+            public void onSetupSuccess(DataSource dataSource) {
+            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
+            	PresentationLayerAssociatedDataSource staticAssetFolderTreeDS = (PresentationLayerAssociatedDataSource) getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS");
+             	assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS, staticAssetFolderTreeDS);
+            	
+            }
+        }));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
@@ -284,6 +315,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 					"templatePath"
 				);
 				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource);
+				pageTemplateDialogView = pageTemplateSearchView;
 				getPresenterSequenceSetupManager().getDataSource("pageTreeDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "pageTemplate",
@@ -314,6 +346,14 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 	
 	public void displayAssetSearchDialog(JavaScriptObject editor) {
+		assetSearchDialogView.search("Asset Search", new SearchItemSelectedEventHandler() {
+	
+			@Override
+			public void onSearchItemSelected(SearchItemSelectedEvent event) {
+				GWT.log("search item selected");
+				
+			}
+		});
 	}
 	
 	private native void exposeNativeGetTemplatePath() /*-{
