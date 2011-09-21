@@ -15,17 +15,10 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -35,7 +28,8 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * 
@@ -54,7 +48,7 @@ public class AdminUserCustomPersistenceHandler implements CustomPersistenceHandl
 	}
 
 	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
+		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
 	}
 
 	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
@@ -62,7 +56,7 @@ public class AdminUserCustomPersistenceHandler implements CustomPersistenceHandl
 	}
 
 	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
+		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
 	}
 
 	public Boolean canHandleInspect(PersistencePackage persistencePackage) {
