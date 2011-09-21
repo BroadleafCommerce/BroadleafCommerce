@@ -40,7 +40,11 @@ public class ContentManagementModule extends AbstractModule {
 		
 		List<String> cmsRoles = new ArrayList<String>();
 		cmsRoles.add("ROLE_ADMIN");
-		cmsRoles.add("ROLE_CONTENT_MANAGER");
+		cmsRoles.add("ROLE_CONTENT_EDITOR");
+
+        List<String> approverRoles = new ArrayList<String>();
+		approverRoles.add("ROLE_ADMIN");
+		approverRoles.add("ROLE_CONTENT_APPROVER");
 
         setSection(
             BLCMain.getMessageManager().getString("pagesTitle"),
@@ -71,6 +75,30 @@ public class ContentManagementModule extends AbstractModule {
 			cmsRoles,
 			null
 		);
+
+   /*     setSection(
+            BLCMain.getMessageManager().getString("userSandboxTitle"),
+			"userSandBox",
+			"org.broadleafcommerce.cms.admin.client.view.sandbox.UserSandBoxView",
+			"userSandBoxPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.UserSandBoxPresenter",
+			cmsRoles,
+			null
+		);
+
+
+
+        setSection(
+            BLCMain.getMessageManager().getString("approvalSandboxTitle"),
+			"approvalSandBox",
+			"org.broadleafcommerce.cms.admin.client.view.sandbox.ApprovalSandBoxView",
+			"userSandBoxPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.ApprovalSandBoxPresenter",
+			approverRoles,
+			null
+		);
+
+		*/
 
         setHtmlEditorIFramePath("/broadleafdemo/richTextFullFeatured.html");
         setBasicHtmlEditorIFramePath("/broadleafdemo/richTextBasic.html");

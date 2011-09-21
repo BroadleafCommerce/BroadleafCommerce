@@ -39,4 +39,6 @@ public interface StaticAssetFolder extends Serializable {
 
     public void setFolderFlag(Boolean folderFlag);
 
+    public String getFullUrl();
+
 }

@@ -36,4 +36,6 @@ public interface PageFolder extends Serializable {
     public void setName(String name);
 
     public Boolean isFolder();
+
+    public String getFullUrl();
 }

@@ -18,13 +18,14 @@ package org.broadleafcommerce.cms.file.service;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface StaticAssetService {
+public interface StaticAssetService extends SandBoxItemListener {
 
 
     public StaticAssetFolder findStaticAssetById(Long id);

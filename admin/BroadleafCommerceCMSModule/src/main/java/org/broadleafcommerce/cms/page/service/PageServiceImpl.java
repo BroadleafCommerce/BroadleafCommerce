@@ -22,8 +22,8 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,11 +34,14 @@ import java.util.Map;
  * Created by bpolster.
  */
 @Service("blPageService")
-public class PageServiceImpl implements PageService {
+public class PageServiceImpl implements PageService, SandBoxItemListener {
     private static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
 
     @Resource(name="blPageDao")
     protected PageDao pageDao;
+
+    @Resource(name="blSandBoxItemDao")
+    protected SandBoxItemDao sandBoxItemDao;
 
     /**
      * Returns the page with the passed in id.
@@ -107,7 +110,14 @@ public class PageServiceImpl implements PageService {
     @Override
     public Page addPage(Page page, PageFolder parentFolder, SandBox destinationSandbox) {
         page.setSandbox(destinationSandbox);
-        return pageDao.updatePage(page);
+        page.setParentFolder(parentFolder);
+        String parentUrl = (parentFolder == null ? "" : parentFolder.getFullUrl());
+        page.setFullUrl(parentUrl + "/" + page.getName());
+        Page newPage = pageDao.addPage(page);
+        if (! isProductionSandBox(destinationSandbox)) {
+            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
+        }
+        return newPage;
     }
 
     /**
@@ -143,27 +153,24 @@ public class PageServiceImpl implements PageService {
      */
     @Override
     public Page updatePage(Page page, SandBox destSandbox) {
+        String parentUrl = (page.getParentFolder() == null ? "" : page.getParentFolder().getFullUrl());
+
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
+            page.setFullUrl(parentUrl + "/" + page.getName());
             return pageDao.updatePage(page);
-        } else if (checkForProductionSandbox(page.getSandbox())) {
-            // Moving from production to destSandbox
+        } else if (isProductionSandBox(page.getSandbox())) {
+            // Move from production to destSandbox
             Page clonedPage = page.cloneEntity();
             clonedPage.setOriginalPageId(page.getId());
             clonedPage.setSandbox(destSandbox);
-            return pageDao.addPage(clonedPage);
-        } else if (checkForProductionSandbox(destSandbox)) {
-            // Moving to production
-            Page existingPage = (Page) findPageById(page.getOriginalPageId());
-            existingPage.setArchivedFlag(true);
-            pageDao.updatePage(existingPage);
+            clonedPage.setFullUrl(parentUrl + "/" + page.getName());
+            Page returnPage = pageDao.addPage(clonedPage);
 
-            if (page.getDeletedFlag() == true) {
-                pageDao.delete(page);
-            }
-            return null;
+            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
+            return returnPage;
         } else {
-            page.setSandbox(destSandbox);
-            return pageDao.updatePage(page);
+            // This should happen via a promote, revert, or reject in the sandbox service
+            throw new IllegalArgumentException("Update called when promote or reject was expected.");
         }
     }
 
@@ -178,18 +185,12 @@ public class PageServiceImpl implements PageService {
     }
 
     // Returns true if the dest sandbox is production.
-    private boolean checkForProductionSandbox(SandBox dest) {
-        boolean productionSandbox = false;
-
+    private boolean isProductionSandBox(SandBox dest) {
         if (dest == null) {
-            productionSandbox = true;
+            return true;
         } else {
-            if (dest.getSite() != null && dest.getSite().getProductionSandbox() != null && dest.getSite().getProductionSandbox().getId() != null) {
-                productionSandbox = dest.getSite().getProductionSandbox().getId().equals(dest.getId());
-            }
+            return SandBoxType.PRODUCTION.equals(dest.getSandBoxType());
         }
-
-        return productionSandbox;
     }
 
 
@@ -275,4 +276,59 @@ public class PageServiceImpl implements PageService {
         }
     }
 
+    @Override
+    public void itemPromoted(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
+        if (! SandBoxItemType.PAGE.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+
+        Page page = (Page) pageDao.readPageById(sandBoxItem.getTemporaryItemId());
+        if (page == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Page not found " + sandBoxItem.getTemporaryItemId());
+            }
+        } else {
+            if (isProductionSandBox(destinationSandBox) && page.getOriginalPageId() != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Page promoted to production.  " + page.getId() + ".  Archiving original page " + page.getOriginalPageId());
+                }
+                Page originalPage = (Page) pageDao.readPageById(page.getOriginalPageId());
+                originalPage.setArchivedFlag(Boolean.TRUE);
+                pageDao.updatePage(originalPage);
+
+               // We are archiving the old page and making this the new "production page", so
+               // null out the original page id before saving.
+               page.setOriginalPageId(null);
+            }
+
+        }
+        page.setSandbox(destinationSandBox);
+        pageDao.updatePage(page);
+    }
+
+    @Override
+    public void itemRejected(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
+        if (! SandBoxItemType.PAGE.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+
+        Page page = (Page) pageDao.readPageById(sandBoxItem.getTemporaryItemId());
+        if (page != null) {
+            page.setSandbox(destinationSandBox);
+            pageDao.updatePage(page);
+        }
+    }
+
+    @Override
+    public void itemReverted(SandBoxItem sandBoxItem) {
+        if (! SandBoxItemType.PAGE.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+        Page page = (Page) pageDao.readPageById(sandBoxItem.getTemporaryItemId());
+
+        if (page != null) {
+            page.setArchivedFlag(Boolean.TRUE);
+            pageDao.updatePage(page);
+        }
+    }
 }

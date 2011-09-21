@@ -10,6 +10,7 @@ import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 
+import java.util.Calendar;
 import java.util.List;
 
 public interface SandBoxService {
@@ -26,17 +27,21 @@ public interface SandBoxService {
      */
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser);
 
-    public void promoteAllSandBoxItems(AdminUser user, SandBox sandBox);
+    public void promoteAllSandBoxItems(AdminUser user, SandBox sandBox, String comment);
 
-    public void promoteSelectedItems(AdminUser user, List<SandBoxItem> sandBoxItems);
+    public void promoteSelectedItems(AdminUser user, SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
+
+    public void schedulePromotionForSandBox(AdminUser user, SandBox sandBox, Calendar calendar);
+
+    public void schedulePromotionForSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems, Calendar calendar);
 
     public void revertAllSandBoxItems(AdminUser user, SandBox sandBox);
 
-    public void revertSelectedSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems);
+    public void revertSelectedSandBoxItems(AdminUser user, SandBox sandBox, List<SandBoxItem> sandBoxItems);
 
-    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox);
+    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox, String comment);
 
-    public void rejectSelectedSandboxItems(List<SandBoxItem> sandBoxItems);
+    public void rejectSelectedSandBoxItems(AdminUser user, SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
 
     // Entity sandbox item code
     public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;

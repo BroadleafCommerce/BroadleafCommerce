@@ -26,26 +26,28 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
 
-	//@Resource(name="blSandBoxEntityDao")
-	protected SandBoxEntityDao sandBoxEntityDao;
+    protected List<SandBoxItemListener> sandboxItemListeners = new ArrayList<SandBoxItemListener>();
 
     @Resource
     protected SandBoxDao sandBoxDao;
-
-    //@Resource(name="blSandBoxIdGenerationService")
-    protected SandBoxIdGenerationService sandBoxIdGenerationService;
 
     @Override
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
         return sandBoxEntityDao.retrieveSandBoxItemByTemporaryId(temporaryId);
     }
+
+    //@Resource(name="blSandBoxEntityDao")
+	protected SandBoxEntityDao sandBoxEntityDao;
+
+    //@Resource(name="blSandBoxIdGenerationService")
+    protected SandBoxIdGenerationService sandBoxIdGenerationService;
+
+
 
     //@Resource(name="blSessionFactory")
     protected SessionFactory sessionFactory;
@@ -455,32 +457,126 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 
     @Override
-    public void promoteAllSandBoxItems(AdminUser user, SandBox sandBox) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void promoteAllSandBoxItems(AdminUser user, SandBox fromSandBox, String comment) {
+        promoteSelectedItems(user, fromSandBox, comment, fromSandBox.getSandBoxItems());
     }
 
+
     @Override
-    public void promoteSelectedItems(AdminUser user, List<SandBoxItem> sandBoxItems) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void promoteSelectedItems(AdminUser user, SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
+        SandBox destinationSandBox = determineNextSandBox(fromSandBox);
+        SandBoxAction action = createSandBoxAction(user, SandBoxActionType.PROMOTE, comment);
+
+        for(SandBoxItem sandBoxItem : sandBoxItems) {
+            action.addSandBoxItem(sandBoxItem);
+            for (SandBoxItemListener listener : sandboxItemListeners) {
+                listener.itemPromoted(sandBoxItem, destinationSandBox);
+            }
+
+            if (destinationSandBox == null || SandBoxType.PRODUCTION.equals(destinationSandBox)) {
+                sandBoxItem.setArchivedFlag(true);
+            }
+            sandBoxItem.addSandBoxAction(action);
+        }
     }
 
     @Override
     public void revertAllSandBoxItems(AdminUser user, SandBox sandBox) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        revertSelectedSandBoxItems(user, sandBox,  sandBox.getSandBoxItems());
     }
 
     @Override
-    public void revertSelectedSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void revertSelectedSandBoxItems(AdminUser user, SandBox fromSandBox, List<SandBoxItem> sandBoxItems) {
+        SandBoxAction action = createSandBoxAction(user, SandBoxActionType.REVERT, null);
+
+        for(SandBoxItem sandBoxItem : sandBoxItems) {
+            action.addSandBoxItem(sandBoxItem);
+            for (SandBoxItemListener listener : sandboxItemListeners) {
+                listener.itemReverted(sandBoxItem);
+            }
+
+            // We're done with this sandBoxItem
+            sandBoxItem.setArchivedFlag(true);
+            sandBoxItem.addSandBoxAction(action);
+        }
     }
 
     @Override
-    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox, String comment) {
+         rejectSelectedSandBoxItems(user, sandBox, comment, sandBox.getSandBoxItems());
     }
 
     @Override
-    public void rejectSelectedSandboxItems(List<SandBoxItem> sandBoxItems) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void rejectSelectedSandBoxItems(AdminUser user, SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
+        SandBox destinationSandBox = determineNextSandBox(fromSandBox);
+        SandBoxAction action = createSandBoxAction(user, SandBoxActionType.REJECT, comment);
+
+        for(SandBoxItem sandBoxItem : sandBoxItems) {
+            action.addSandBoxItem(sandBoxItem);
+            for (SandBoxItemListener listener : sandboxItemListeners) {
+                listener.itemRejected(sandBoxItem, destinationSandBox);
+            }
+
+            sandBoxItem.addSandBoxAction(action);
+        }
+    }
+
+
+    @Override
+    public void schedulePromotionForSandBox(AdminUser user, SandBox sandBox, Calendar calendar) {
+
+    }
+
+    @Override
+    public void schedulePromotionForSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems, Calendar calendar) {
+
+    }
+
+
+    public List<SandBoxItemListener> getSandboxItemListeners() {
+        return sandboxItemListeners;
+    }
+
+    public void setSandboxItemListeners(List<SandBoxItemListener> sandboxItemListeners) {
+        this.sandboxItemListeners = sandboxItemListeners;
+    }
+
+    protected SandBoxAction createSandBoxAction(AdminUser user, SandBoxActionType type, String comment) {
+        SandBoxAction action = new SandBoxActionImpl();
+        action.setActionType(type);
+        action.setActionDate(Calendar.getInstance().getTime());
+        action.setComment(comment);
+        action.setUser(user);
+        return action;
+    }
+
+    protected SandBox determineNextSandBox(SandBox sandBox) {
+        if (SandBoxType.USER.equals(sandBox.getSandBoxType())) {
+            return retrieveApprovalSandBox(sandBox);
+        } else if (SandBoxType.APPROVAL.equals(sandBox.getSandBoxType())) {
+            if (sandBox.getSite() != null) {
+                return sandBox.getSite().getProductionSandbox();
+            } else {
+                // null is the production sandbox for a single tenant application
+                return null;
+            }
+        }
+        throw new IllegalArgumentException("Unable to determine next sandbox for " + sandBox);
+    }
+
+
+    protected SandBox retrieveApprovalSandBox(SandBox sandBox) {
+        final String APPROVAL_SANDBOX_NAME = "Approval";
+        SandBox approvalSandbox = sandBoxEntityDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
+
+        // If the approval sandbox doesn't exist, create it.
+        if (approvalSandbox == null) {
+            approvalSandbox = new SandBoxImpl();
+            sandBox.setSite(sandBox.getSite());
+            sandBox.setName(APPROVAL_SANDBOX_NAME);
+            sandBox.setSandBoxType(SandBoxType.APPROVAL);
+            sandBoxEntityDao.persist(sandBox);
+        }
+        return approvalSandbox;
     }
 }

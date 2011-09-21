@@ -2,12 +2,13 @@ package org.broadleafcommerce.openadmin.server.domain;
 
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
+import javax.persistence.CascadeType;
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +37,11 @@ public class SandBoxImpl implements SandBox {
     @JoinTable(name = "BLC_SITE_SANDBOX", joinColumns = @JoinColumn(name = "SANDBOX_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
     protected Site site;
     
-  //  @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
-  // @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-  //  @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
-  //  @BatchSize(size = 50)
+    @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Where(clause = "ARCHIVED_FLAG = 0")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
+    @BatchSize(size = 50)
     @Transient
     protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
 

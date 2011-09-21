@@ -9,29 +9,28 @@ import java.util.Map;
 /**
  * Created by bpolster.
  */
-public class SandBoxType implements Serializable {
+public class SandBoxOperationType implements Serializable {
     private static final long serialVersionUID = 1L;
 
-       private static final Map<String, SandBoxType> TYPES = new HashMap<String, SandBoxType>();
+    private static final Map<String, SandBoxOperationType> TYPES = new HashMap<String, SandBoxOperationType>();
 
-       public static final SandBoxType USER  = new SandBoxType("USER", "User");
-       public static final SandBoxType APPROVAL = new SandBoxType("APPROVAL", "Approval");
-       public static final SandBoxType PRODUCTION  = new SandBoxType("PRODUCTION", "Production");
+    public static final SandBoxOperationType ADD     = new SandBoxOperationType("ADD", "Add");
+    public static final SandBoxOperationType UPDATE  = new SandBoxOperationType("UPDATE", "Update");
+    public static final SandBoxOperationType DELETE  = new SandBoxOperationType("DELETE", "Delete");
 
+    public static SandBoxOperationType getInstance(final String type) {
+        return TYPES.get(type);
+    }
 
-       public static SandBoxType getInstance(final String type) {
-           return TYPES.get(type);
-       }
+    private String type;
+    private String friendlyType;
 
-       private String type;
-       private String friendlyType;
-
-       public SandBoxType() {
+    public SandBoxOperationType() {
         //do nothing
     }
 
-    public SandBoxType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+    public SandBoxOperationType(final String type, final String friendlyType) {
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -40,15 +39,15 @@ public class SandBoxType implements Serializable {
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-        	throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
         }
     }
 
@@ -68,7 +67,7 @@ public class SandBoxType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SandBoxType other = (SandBoxType) obj;
+        SandBoxOperationType other = (SandBoxOperationType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

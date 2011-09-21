@@ -1,9 +1,14 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -23,18 +28,46 @@ public class SandBoxItemImpl implements SandBoxItem {
     @JoinColumn(name = "SANDBOX_ID")
 	protected SandBox sandBox;
 
-    
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#getId()
-	 */
+    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+	protected SandBox originalSandBox;
+
+    @Column(name = "SANDBOX_ITEM_TYPE")
+    protected String sandBoxItemType;
+
+    @Column(name = "SANDBOX_OPERATION_TYPE")
+    protected String sandboxOperationType;
+
+    @Column(name = "DESCRIPTION")
+    protected String description;
+
+    @Column(name = "LAST_UPDATE_DATE")
+    protected Date lastUpdateDate;
+
+    @ManyToOne(targetEntity = AdminUserImpl.class)
+    @JoinColumn(name = "CREATED_BY_USER_ID")
+    protected AdminUser createdBy;
+
+    @Column(name = "TEMPORARY_ITEM_ID")
+    protected Long temporaryItemId;
+
+    @Column(name = "ORIGINAL_ITEM_ID")
+    protected Long originalItemId;
+
+    @Column(name = "ARCHIVED_FLAG")
+    protected Boolean archivedFlag = Boolean.FALSE;
+
+    @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)
+    @JoinTable(name = "SANDBOX_ITEM_ACTION",
+               joinColumns = {@JoinColumn(name ="SANDBOX_ITEM_ID", referencedColumnName = "SANDBOX_ITEM_ID")},
+               inverseJoinColumns = {@JoinColumn(name = "SANDBOX_ACTION_ID", referencedColumnName = "SANDBOX_ACTION_ID")})
+    protected List<SandBoxAction> sandBoxActions;
+
 	@Override
 	public Long getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBoxItem#setId(java.lang.Long)
-	 */
 	@Override
 	public void setId(Long id) {
 		this.id = id;
@@ -49,6 +82,115 @@ public class SandBoxItemImpl implements SandBoxItem {
 	public void setSandBox(SandBox sandBox) {
 		this.sandBox = sandBox;
 	}
+
+    @Override
+	public SandBox getOriginalSandBox() {
+		return originalSandBox;
+	}
+
+    @Override
+	public void setOriginalSandBox(SandBox originalSandBox) {
+		this.originalSandBox = originalSandBox;
+	}
+
+    @Override
+    public SandBoxItemType getSandBoxItemType() {
+        return SandBoxItemType.getInstance(sandBoxItemType);
+    }
+
+   @Override
+    public void setSandBoxItemType(SandBoxItemType sandBoxItemType) {
+        this.sandBoxItemType = sandBoxItemType.getType();
+    }
+
+    @Override
+    public SandBoxOperationType getSandBoxOperationType() {
+        return SandBoxOperationType.getInstance(sandboxOperationType);
+    }
+
+
+    @Override
+    public void setSandBoxOperationType(SandBoxOperationType sandboxOperationType) {
+        this.sandboxOperationType = sandboxOperationType.getType();
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    @Override
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    @Override
+    public AdminUser getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(AdminUser createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public Long getOriginalItemId() {
+        return originalItemId;
+    }
+
+    @Override
+    public void setOriginalItemId(Long itemIdentifer) {
+        this.originalItemId = itemIdentifer;
+    }
+
+    @Override
+    public Long getTemporaryItemId() {
+        return temporaryItemId;
+    }
+
+    @Override
+    public void setTemporaryItemId(Long temporaryItemId) {
+        this.temporaryItemId = temporaryItemId;
+    }
+
+    @Override
+    public List<SandBoxAction> getSandBoxActions() {
+        return sandBoxActions;
+    }
+
+    @Override
+    public void setSandBoxActions(List<SandBoxAction> actionList) {
+        this.sandBoxActions = actionList;
+    }
+
+    @Override
+    public Boolean getArchivedFlag() {
+        return archivedFlag;
+    }
+
+    @Override
+    public void setArchivedFlag(Boolean archivedFlag) {
+        this.archivedFlag = archivedFlag;
+    }
+
+    @Override
+    public void addSandBoxAction(SandBoxAction action) {
+        if (sandBoxActions == null) {
+            sandBoxActions = new ArrayList<SandBoxAction>();
+        }
+        sandBoxActions.add(action);
+    }
 
     @Override
 	public int hashCode() {
@@ -74,5 +216,5 @@ public class SandBoxItemImpl implements SandBoxItem {
 			return false;
 		return true;
 	}
-    
+
 }

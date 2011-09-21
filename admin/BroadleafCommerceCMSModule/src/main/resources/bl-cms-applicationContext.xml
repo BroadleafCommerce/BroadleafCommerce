@@ -102,4 +102,14 @@
 		</property>
 	</bean>
 
+    <bean id="blSandBoxService" class="org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl">
+		<property name="sandboxItemListeners">
+			<list>
+				<ref bean="blPageService"/>
+                <ref bean="blStructuredContentService"/>
+                <ref bean="blStaticAssetService"/>
+			</list>
+		</property>
+	</bean>
+
 </beans>

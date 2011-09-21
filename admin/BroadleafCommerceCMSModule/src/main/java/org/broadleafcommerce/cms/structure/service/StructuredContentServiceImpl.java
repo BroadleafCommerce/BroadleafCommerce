@@ -21,8 +21,8 @@ import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -44,6 +44,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name="blStructuredContentDao")
     protected StructuredContentDao structuredContentDao;
+
+    @Resource(name="blSandBoxItemDao")
+    protected SandBoxItemDao sandBoxItemDao;
 
 
     /**
@@ -202,7 +205,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         content.setSandbox(destinationSandbox);
         content.setArchivedFlag(false);
         content.setDeletedFlag(false);
-        return structuredContentDao.addOrUpdateContentItem(content);
+        StructuredContent sc = structuredContentDao.addOrUpdateContentItem(content);
+        if (! isProductionSandBox(destinationSandbox)) {
+            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STRUCTURED_CONTENT, sc.getContentName(), sc.getId(), null);
+        }
+        return sc;
     }
 
     /**
@@ -241,25 +248,16 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
             return structuredContentDao.addOrUpdateContentItem(content);
         } else if (checkForProductionSandbox(content.getSandbox())) {
-            // Moving from production to destSandbox
+            // Move from production to destSandbox
             StructuredContent clonedContent = content.cloneEntity();
             clonedContent.setOriginalItemId(content.getId());
             clonedContent.setSandbox(destSandbox);
-            return structuredContentDao.addOrUpdateContentItem(clonedContent);
-        } else if (checkForProductionSandbox(destSandbox)) {
-            // Moving to production
-            StructuredContent existingContent = findStructuredContentById(content.getOriginalItemId());
-            existingContent.setArchivedFlag(true);
-            structuredContentDao.addOrUpdateContentItem(existingContent);
-
-            if (content.getDeletedFlag() == true) {
-                structuredContentDao.delete(content);
-            }
-            return null;
+            StructuredContent returnContent = structuredContentDao.addOrUpdateContentItem(clonedContent);
+            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
+            return returnContent;
         } else {
-            // moving between sandboxes
-            content.setSandbox(destSandbox);
-            return structuredContentDao.addOrUpdateContentItem(content);
+            // This should happen via a promote, revert, or reject in the sandbox service
+            throw new IllegalArgumentException("Update called when promote or reject was expected.");
         }
     }
 
@@ -303,5 +301,70 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public void deleteStructuredContent(StructuredContent content, SandBox destinationSandbox) {
         content.setDeletedFlag(true);
         updateStructuredContent(content, destinationSandbox);
+    }
+
+    private boolean isProductionSandBox(SandBox dest) {
+        if (dest == null) {
+            return true;
+        } else {
+            return SandBoxType.PRODUCTION.equals(dest.getSandBoxType());
+        }
+    }
+
+    @Override
+    public void itemPromoted(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
+        if (! SandBoxItemType.STRUCTURED_CONTENT.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+
+        StructuredContent sc = structuredContentDao.findStructuredContentById(sandBoxItem.getTemporaryItemId());
+
+        if (sc == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Structured Content Item not found " + sandBoxItem.getTemporaryItemId());
+            }
+        } else {
+            if (isProductionSandBox(destinationSandBox) && sc.getOriginalItemId() != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Structured content promoted to production.  " + sc.getId() + ".  Archiving original item " + sc.getOriginalItemId());
+                }
+                StructuredContent originalSC = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
+                originalSC.setArchivedFlag(Boolean.TRUE);
+                structuredContentDao.addOrUpdateContentItem(originalSC);
+
+               // We are archiving the old item and making this the new "production item", so
+               // null out the original item id before saving.
+                sc.setOriginalItemId(null);
+            }
+
+        }
+        sc.setSandbox(destinationSandBox);
+        structuredContentDao.addOrUpdateContentItem(sc);
+    }
+
+    @Override
+    public void itemRejected(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
+        if (! SandBoxItemType.STRUCTURED_CONTENT.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+        StructuredContent sc = structuredContentDao.findStructuredContentById(sandBoxItem.getTemporaryItemId());
+
+        if (sc != null) {
+            sc.setSandbox(destinationSandBox);
+            structuredContentDao.addOrUpdateContentItem(sc);
+        }
+    }
+
+    @Override
+    public void itemReverted(SandBoxItem sandBoxItem) {
+        if (! SandBoxItemType.STRUCTURED_CONTENT.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+        StructuredContent sc = structuredContentDao.findStructuredContentById(sandBoxItem.getTemporaryItemId());
+
+        if (sc != null) {
+            sc.setArchivedFlag(Boolean.TRUE);
+            structuredContentDao.addOrUpdateContentItem(sc);
+        }
     }
 }

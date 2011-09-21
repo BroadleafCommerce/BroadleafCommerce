@@ -20,8 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
-import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,6 +37,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Resource(name="blStaticAssetDao")
     protected StaticAssetDao staticAssetDao;
+
+    @Resource(name="blSandBoxItemDao")
+    protected SandBoxItemDao sandBoxItemDao;
 
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
@@ -77,37 +80,35 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     public StaticAsset addStaticAsset(StaticAsset staticAsset, StaticAssetFolder parentFolder, SandBox destinationSandbox) {
         staticAsset.setSandbox(destinationSandbox);
         staticAsset.setParentFolder(parentFolder);
-
-        return staticAssetDao.updateStaticAsset(staticAsset);
+        String parentUrl = (parentFolder == null ? "" : parentFolder.getFullUrl());
+        staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName());
+        StaticAsset newAsset =  staticAssetDao.updateStaticAsset(staticAsset);
+        if (! isProductionSandBox(destinationSandbox)) {
+            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
+        }
+        return newAsset;
     }
 
     @Override
     public StaticAsset updateStaticAsset(StaticAsset staticAsset, SandBox destSandbox) {
+        String parentUrl = (staticAsset.getParentFolder() == null ? "" : staticAsset.getParentFolder().getFullUrl());
+
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {
+            staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName());
             return staticAssetDao.updateStaticAsset(staticAsset);
         } else if (checkForProductionSandbox(staticAsset.getSandbox())) {
             // Moving from production to destSandbox
             StaticAsset clonedAsset = staticAsset.cloneEntity();
             clonedAsset.setOriginalAssetId(staticAsset.getId());
             clonedAsset.setSandbox(destSandbox);
-            return staticAssetDao.addStaticAsset(clonedAsset);
-        } else if (checkForProductionSandbox(destSandbox)) {
-            // Moving to production
-            StaticAsset existingAsset = (StaticAsset) findStaticAssetById(staticAsset.getOriginalAssetId());
-            existingAsset.setArchivedFlag(true);
-            staticAssetDao.updateStaticAsset(existingAsset);
+            clonedAsset.setFullUrl(parentUrl + "/" + clonedAsset.getName());
+            StaticAsset returnAsset =  staticAssetDao.addStaticAsset(clonedAsset);
 
-            if (staticAsset.getDeletedFlag() == true) {
-                staticAssetDao.delete(staticAsset);
-                StaticAssetStorage storage = staticAssetStorageService.readStaticAssetStorageByStaticAssetId(staticAsset.getId());
-                if (storage != null) {
-                    staticAssetStorageService.delete(storage);
-                }
-            }
-            return null;
+            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
+            return returnAsset;
         } else {
-            staticAsset.setSandbox(destSandbox);
-            return staticAssetDao.updateStaticAsset(staticAsset);
+            // This should happen via a promote, revert, or reject in the sandbox service
+            throw new IllegalArgumentException("Update called when promote or reject was expected.");
         }
     }
 
@@ -159,4 +160,65 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetDao.addStaticAssetFolder(staticAssetFolder);
     }
 
+    // Returns true if the dest sandbox is production.
+    private boolean isProductionSandBox(SandBox dest) {
+        if (dest == null) {
+            return true;
+        } else {
+            return SandBoxType.PRODUCTION.equals(dest.getSandBoxType());
+        }
+    }
+
+    @Override
+    public void itemPromoted(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
+        if (! SandBoxItemType.STATIC_ASSET.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+        StaticAsset asset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+
+        if (asset == null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Asset not found " + sandBoxItem.getTemporaryItemId());
+            }
+        } else {
+            if (isProductionSandBox(destinationSandBox) && asset.getOriginalAssetId() != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Asset promoted to production.  " + asset.getId() + ".  Archiving original asset " + asset.getOriginalAssetId());
+                }
+                StaticAsset originalAsset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+                originalAsset.setArchivedFlag(Boolean.TRUE);
+                staticAssetDao.updateStaticAsset(originalAsset);
+                asset.setOriginalAssetId(null);
+            }
+        }
+        asset.setSandbox(destinationSandBox);
+        staticAssetDao.updateStaticAsset(asset);
+    }
+
+    @Override
+    public void itemRejected(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
+        if (! SandBoxItemType.STATIC_ASSET.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+        StaticAsset asset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+
+
+        if (asset != null) {
+            asset.setSandbox(destinationSandBox);
+            staticAssetDao.updateStaticAsset(asset);
+        }
+    }
+
+    @Override
+    public void itemReverted(SandBoxItem sandBoxItem) {
+        if (! SandBoxItemType.STATIC_ASSET.equals(sandBoxItem.getSandBoxItemType())) {
+            return;
+        }
+        StaticAsset asset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+
+        if (asset != null) {
+            asset.setArchivedFlag(Boolean.TRUE);
+            staticAssetDao.updateStaticAsset(asset);
+        }
+    }
 }

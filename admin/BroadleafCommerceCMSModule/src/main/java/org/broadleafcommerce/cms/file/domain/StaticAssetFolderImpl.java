@@ -16,7 +16,6 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.openadmin.server.domain.SiteImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -133,6 +132,16 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @Override
     public void setFolderFlag(Boolean folderFlag) {
         this.folderFlag = folderFlag;
+    }
+
+    @Override
+    public String getFullUrl() {
+        String fullUrl = "";
+        if (parentFolder != null) {
+              fullUrl = parentFolder.getFullUrl();
+        }
+        fullUrl = fullUrl + "/" + getName();
+        return fullUrl;
     }
 }
 

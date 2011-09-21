@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
@@ -129,6 +128,15 @@ public class PageFolderImpl implements PageFolder {
     @Override
     public Boolean isFolder() {
         return folderFlag;
+    }
+
+    public String getFullUrl() {
+        String fullUrl = "";
+        if (parentFolder != null) {
+              fullUrl = parentFolder.getFullUrl();
+        }
+        fullUrl = fullUrl + "/" + getName();
+        return fullUrl;
     }
 
 }
