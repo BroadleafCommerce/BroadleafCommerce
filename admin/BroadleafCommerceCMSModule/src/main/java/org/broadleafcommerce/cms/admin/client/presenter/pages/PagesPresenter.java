@@ -15,19 +15,27 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.*;
+import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -53,29 +61,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -297,7 +284,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
             	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
             	PresentationLayerAssociatedDataSource staticAssetFolderTreeDS = (PresentationLayerAssociatedDataSource) getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS");
              	assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS, staticAssetFolderTreeDS);
-            	
             }
         }));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new NullAsyncCallbackAdapter()));

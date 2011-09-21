@@ -51,8 +51,8 @@ public class StaticAssetsTileGridDataSourceFactory implements DataSourceFactory 
 			};
             persistencePerspective.setPopulateToOneFields(true);
 			dataSource = new CustomCriteriaTileGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, true, true, true, true);
+            dataSource.setCustomCriteria(new String[]{"assetListUi"});
 			dataSource.buildFields(null, false, cb);
-			dataSource.setCustomCriteria(new String[]{"assetListUi"});
 		} else {
 			if (cb != null) {
 				cb.onSuccess(dataSource);

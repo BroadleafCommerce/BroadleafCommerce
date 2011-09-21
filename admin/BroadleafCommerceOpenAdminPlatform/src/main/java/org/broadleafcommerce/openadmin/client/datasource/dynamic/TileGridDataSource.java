@@ -15,15 +15,17 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.Arrays;
-
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.types.FieldType;
+import com.smartgwt.client.widgets.tile.TileGrid;
+import com.smartgwt.client.widgets.viewer.DetailViewerField;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.tile.TileGrid;
-import com.smartgwt.client.widgets.viewer.DetailViewerField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -41,29 +43,45 @@ public class TileGridDataSource extends PresentationLayerAssociatedDataSource {
 	public TileGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
 		super(name, persistencePerspective, service, modules);
 	}
-	
-	public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
-		if (fieldNames.length > 0) {
+
+    public void setupGridFields(final String[] fieldNames) {
+        if (fieldNames.length > 0) {
 			resetProminenceOnly(fieldNames);
 		}
-		
+
 		String[] sortedFieldNames = new String[fieldNames.length];
 		for (int j=0;j<fieldNames.length;j++) {
 			sortedFieldNames[j] = fieldNames[j];
 		}
 		Arrays.sort(sortedFieldNames);
-		
-		DataSourceField[] fields = getFields();
-		DetailViewerField[] gridFields = new DetailViewerField[fields.length];
-		
-        int j = 0;
-        for (DataSourceField field : fields) {
-    		gridFields[j] = new DetailViewerField(field.getName(), field.getTitle());
-    		j++;
-        }
 
+		DataSourceField[] fields = getFields();
+        int j = 0;
+        List<DataSourceField> prominentFields = new ArrayList<DataSourceField>();
+        for (DataSourceField field : fields) {
+        	if (field.getAttributeAsBoolean("prominent")) {
+        		prominentFields.add(field);
+        	}
+        }
+        int availableSlots = fieldNames.length==0?4:fieldNames.length;
+        DetailViewerField[] gridFields = new DetailViewerField[availableSlots];
+        for (DataSourceField field : prominentFields) {
+        	gridFields[j] = new DetailViewerField(field.getName(), field.getTitle());
+            if (field.getType().equals(FieldType.IMAGE)) {
+                gridFields[j].setImageURLPrefix("");
+            }
+        	j++;
+        	availableSlots--;
+        }
+        for (DataSourceField field : fields) {
+        	if (!prominentFields.contains(field) && availableSlots > 0) {
+                gridFields[j] = new DetailViewerField(field.getName(), field.getTitle());
+                if (field.getType().equals(FieldType.IMAGE)) {
+                    gridFields[j].setImageURLPrefix("");
+                }
+                availableSlots--;
+        	}
+        }
         ((TileGrid) getAssociatedGrid()).setFields(gridFields);
-        getAssociatedGrid().setHilites(hilites);
-	}
-	
+    }
 }

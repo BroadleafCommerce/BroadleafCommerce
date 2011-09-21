@@ -15,12 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
-import org.broadleafcommerce.openadmin.client.setup.AppController;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -39,7 +33,11 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.tile.TileGrid;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.viewer.DetailViewerField;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
+import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.setup.AppController;
 
 /**
  * 
@@ -54,7 +52,6 @@ public class AssetSearchDialog extends Window {
 	protected SearchItemSelectedEventHandler handler;
 	
 	public AssetSearchDialog(final TileGridDataSource staticAssetDataSource, final PresentationLayerAssociatedDataSource staticAssetFolderDataSource) {
-		super();
 		this.setIsModal(true);
 		this.setShowModalMask(true);
 		this.setShowMinimizeButton(false);
@@ -91,13 +88,16 @@ public class AssetSearchDialog extends Window {
 		
         
 		tileGrid = new TileGrid();
+        tileGrid.setTileWidth(80);
+        tileGrid.setTileHeight(120);
         tileGrid.setAutoFetchData(false);
         tileGrid.setSelectionType(SelectionStyle.SINGLE);
         tileGrid.setShowAllRecords(false);
         tileGrid.setHeight(230);
         tileGrid.setWidth("70%");
-        tileGrid.setDataSource(staticAssetDataSource);
         staticAssetDataSource.setAssociatedGrid(tileGrid);
+        staticAssetDataSource.setupGridFields(new String[]{"pictureLarge", "name"});
+        tileGrid.setDataSource(staticAssetDataSource);
         tileGrid.addSelectionChangedHandler(new com.smartgwt.client.widgets.tile.events.SelectionChangedHandler() {
         	@Override
         	public void onSelectionChanged(SelectionChangedEvent event) {
