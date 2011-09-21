@@ -15,8 +15,11 @@
  */
 package org.broadleafcommerce.admin.client.datasource.catalog.category.module;
 
-import java.util.Map;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.*;
+import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
@@ -28,14 +31,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import java.util.Map;
 
 /**
  * 
@@ -74,7 +70,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		service.update(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				/*
@@ -82,26 +78,33 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 				 * through the currently loaded records to see if there are any other instances of our
 				 * entity and update them as well.
 				 */
-				String startingId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(record));
+				String realStartingId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(record));
+                String embellishedStartingId = dataSource.getPrimaryKeyValue(record);
 				RecordList resultSet = ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid().getRecordList();
 				if (resultSet != null) {
 					Record[] myRecords = resultSet.toArray();
 					int count = 1;
 					for (Record myRecord : myRecords) {
-						String myId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(myRecord));
-						if (startingId.equals(myId) && !dataSource.getPrimaryKeyValue(record).equals(myId)) {
+						String realMyId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(myRecord));
+                        String embellishedMyId = dataSource.getPrimaryKeyValue(myRecord);
+						if (realStartingId.equals(realMyId) && !embellishedStartingId.equals(embellishedMyId)) {
 							updateRecord(result, (TreeNode) myRecord, false);
 							((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid().refreshRow(count);
 						}
 						count++;
 					}
 				}
-				TreeNode myRecord = (TreeNode) updateRecord(result, (Record) record, false);
-				TreeNode[] recordList = new TreeNode[]{myRecord};
+				TreeNode[] recordList = new TreeNode[]{record};
 				response.setData(recordList);
+
 				dataSource.processResponse(requestId, response);
 			}
 		});
 	}
 
+    protected void logAttributes(Record record) {
+        for (String attr : record.getAttributes()) {
+            GWT.log(attr + ", " + record.getAttribute(attr));
+        }
+    }
 }
