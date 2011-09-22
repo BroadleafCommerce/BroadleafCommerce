@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -9,29 +10,30 @@ import java.util.Map;
 /**
  * Created by bpolster.
  */
-public class SandBoxType implements Serializable {
+public class SandBoxType implements Serializable, BroadleafEnumerationType {
+
     private static final long serialVersionUID = 1L;
 
-       private static final Map<String, SandBoxType> TYPES = new HashMap<String, SandBoxType>();
+    private static final Map<String, SandBoxType> TYPES = new HashMap<String, SandBoxType>();
 
-       public static final SandBoxType USER  = new SandBoxType("USER", "User");
-       public static final SandBoxType APPROVAL = new SandBoxType("APPROVAL", "Approval");
-       public static final SandBoxType PRODUCTION  = new SandBoxType("PRODUCTION", "Production");
+    public static final SandBoxType USER = new SandBoxType("USER", "User");
+    public static final SandBoxType APPROVAL = new SandBoxType("APPROVAL", "Approval");
+    public static final SandBoxType PRODUCTION = new SandBoxType("PRODUCTION", "Production");
 
 
-       public static SandBoxType getInstance(final String type) {
-           return TYPES.get(type);
-       }
+    public static SandBoxType getInstance(final String type) {
+        return TYPES.get(type);
+    }
 
-       private String type;
-       private String friendlyType;
+    private String type;
+    private String friendlyType;
 
-       public SandBoxType() {
+    public SandBoxType() {
         //do nothing
     }
 
     public SandBoxType(final String type, final String friendlyType) {
-    	this.friendlyType = friendlyType;
+        this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -40,15 +42,15 @@ public class SandBoxType implements Serializable {
     }
 
     public String getFriendlyType() {
-		return friendlyType;
-	}
+        return friendlyType;
+    }
 
-	private void setType(final String type) {
+    private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-        	throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
         }
     }
 

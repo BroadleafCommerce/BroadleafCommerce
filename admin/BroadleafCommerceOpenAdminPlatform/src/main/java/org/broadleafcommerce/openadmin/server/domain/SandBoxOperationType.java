@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -9,7 +10,8 @@ import java.util.Map;
 /**
  * Created by bpolster.
  */
-public class SandBoxOperationType implements Serializable {
+public class SandBoxOperationType implements Serializable, BroadleafEnumerationType {
+
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, SandBoxOperationType> TYPES = new HashMap<String, SandBoxOperationType>();

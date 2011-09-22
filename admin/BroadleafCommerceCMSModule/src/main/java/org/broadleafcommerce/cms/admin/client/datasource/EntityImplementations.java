@@ -18,4 +18,5 @@ public class EntityImplementations {
     public static final String STATICASSETDESCRIPTIONIMPL = "org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl";
     public static final String STRUCTUREDCONTENTTYPEIMPL = "org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl";
     public static final String LOCALEIMPL = "org.broadleafcommerce.cms.page.domain.LocaleImpl";
+    public static final String SANDBOXIMPL = "org.broadleafcommerce.openadmin.server.domain.SandBoxImpl";
 }

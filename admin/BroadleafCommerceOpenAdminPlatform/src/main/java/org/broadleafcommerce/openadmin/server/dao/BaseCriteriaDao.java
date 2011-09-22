@@ -16,7 +16,6 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import org.hibernate.Criteria;
 
 import javax.persistence.EntityManager;
 import java.io.Serializable;
@@ -41,7 +40,5 @@ public interface BaseCriteriaDao<T extends Serializable> {
 	public abstract List<T> query(PersistentEntityCriteria entityCriteria);
 	
 	public abstract Class<? extends Serializable> getEntityClass();
-
-    public abstract Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass);
 
 }

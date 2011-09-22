@@ -644,7 +644,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				String foreignKeyClass = property.getMetadata().getForeignKeyClass();
 				String foreignKeyProperty = property.getMetadata().getForeignKeyProperty();
 				String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
-				if (friendlyName == null) {
+				if (friendlyName == null || friendlyName.equals("")) {
 					friendlyName = property.getName();
 				} else {
 					//check if the friendly name is an i18N key

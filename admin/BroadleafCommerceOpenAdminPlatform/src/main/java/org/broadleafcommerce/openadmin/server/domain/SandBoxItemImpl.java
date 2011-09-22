@@ -1,7 +1,12 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -14,6 +19,13 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SANDBOX_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
+@AdminPresentationOverrides(
+        {@AdminPresentationOverride(name="createdBy.login", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="createdBy.password", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="createdBy.email", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="createdBy.currentSandBox", value=@AdminPresentation(excluded = true))}
+)
+@AdminPresentationClass(populateToOneFields = true)
 public class SandBoxItemImpl implements SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
@@ -26,22 +38,28 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "SANDBOX_ID")
+    @AdminPresentation(excluded = true)
 	protected SandBox sandBox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @AdminPresentation(excluded = true)
 	protected SandBox originalSandBox;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
+    @AdminPresentation(friendlyName="Item Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
+    @AdminPresentation(friendlyName="Operation Type", order=3, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
     protected String sandboxOperationType;
 
     @Column(name = "DESCRIPTION")
+    @AdminPresentation(friendlyName="Description", order=1, group="Details")
     protected String description;
 
     @Column(name = "LAST_UPDATE_DATE")
+    @AdminPresentation(friendlyName="Last Updated", order=4, group="Details")
     protected Date lastUpdateDate;
 
     @ManyToOne(targetEntity = AdminUserImpl.class)
@@ -49,18 +67,23 @@ public class SandBoxItemImpl implements SandBoxItem {
     protected AdminUser createdBy;
 
     @Column(name = "TEMPORARY_ITEM_ID")
+    @AdminPresentation(excluded = true)
     protected Long temporaryItemId;
 
     @Column(name = "ORIGINAL_ITEM_ID")
+    @AdminPresentation(excluded = true)
     protected Long originalItemId;
 
     @Column(name = "ARCHIVED_FLAG")
+    @AdminPresentation(excluded = true)
     protected Boolean archivedFlag = Boolean.FALSE;
 
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "SANDBOX_ITEM_ACTION",
-               joinColumns = {@JoinColumn(name ="SANDBOX_ITEM_ID", referencedColumnName = "SANDBOX_ITEM_ID")},
-               inverseJoinColumns = {@JoinColumn(name = "SANDBOX_ACTION_ID", referencedColumnName = "SANDBOX_ACTION_ID")})
+    @JoinTable(
+        name = "SANDBOX_ITEM_ACTION",
+        joinColumns = {@JoinColumn(name ="SANDBOX_ITEM_ID", referencedColumnName = "SANDBOX_ITEM_ID")},
+        inverseJoinColumns = {@JoinColumn(name = "SANDBOX_ACTION_ID", referencedColumnName = "SANDBOX_ACTION_ID")}
+    )
     protected List<SandBoxAction> sandBoxActions;
 
 	@Override

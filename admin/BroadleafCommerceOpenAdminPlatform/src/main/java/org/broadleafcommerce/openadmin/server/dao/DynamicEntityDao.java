@@ -15,12 +15,14 @@
  */
 package org.broadleafcommerce.openadmin.server.dao;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.Criteria;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
@@ -78,5 +80,9 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
     public List<Type> getPropertyTypes(Class<?> entityClass);
 
     public List<String> getPropertyNames(Class<?> entityClass);
+
+    public abstract Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass);
+
+    public Criteria createCriteria(Class<?> entityClass);
 
 }

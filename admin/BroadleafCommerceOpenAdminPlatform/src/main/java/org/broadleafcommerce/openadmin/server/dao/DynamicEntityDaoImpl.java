@@ -167,7 +167,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String prefix
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Map<String, FieldMetadata> mergedProperties = new HashMap<String, FieldMetadata>();
-		buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, metadataOverrides, mergedProperties, prefix);
+        Boolean classAnnotatedPopulateManyToOneFields = null;
 
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
 		//go in reverse order since I want the lowest subclass override
@@ -178,17 +178,35 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     presentationOverrides.put(myOverride.name(), myOverride);
                 }
             }
+            AdminPresentationClass adminPresentationClass = entities[i].getAnnotation(AdminPresentationClass.class);
+            if (adminPresentationClass != null) {
+                classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields();
+            }
 		}
+        if (classAnnotatedPopulateManyToOneFields != null) {
+            populateManyToOneFields = classAnnotatedPopulateManyToOneFields;
+        }
 
+		buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, metadataOverrides, mergedProperties, prefix);
+
+        List<String> removeItems = new ArrayList<String>();
         for (String propertyName : presentationOverrides.keySet()) {
             if (mergedProperties.containsKey(propertyName)) {
+                AdminPresentation annot = presentationOverrides.get(propertyName).value();
                 FieldMetadata metadata = mergedProperties.get(propertyName);
                 FieldPresentationAttributes attr = metadata.getPresentationAttributes();
                 if (attr == null) {
+                    if (annot.excluded()) {
+                        continue;
+                    }
                     attr = new FieldPresentationAttributes();
                     metadata.setPresentationAttributes(attr);
+                } else {
+                    if (annot.excluded()) {
+                        removeItems.add(propertyName);
+                        continue;
+                    }
                 }
-                AdminPresentation annot = presentationOverrides.get(propertyName).value();
 				attr.setFriendlyName(annot.friendlyName());
 				attr.setSecurityLevel(annot.securityLevel());
 				attr.setHidden(annot.hidden());
@@ -216,6 +234,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					}
 				}
             }
+        }
+
+        for (String removeKey : removeItems) {
+            mergedProperties.remove(removeKey);
         }
 
 		return mergedProperties;

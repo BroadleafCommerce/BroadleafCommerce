@@ -97,6 +97,7 @@ public class AdminUserImpl implements AdminUser {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
+    @AdminPresentation(excluded = true)
     protected SandBox currentSandBox;
 
 

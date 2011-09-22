@@ -42,7 +42,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 		 * TODO this method should return a proxied Criteria instance that will return a mixed list
 		 */
 		//Criteria criteria = ((DualEntityManager) getStandardEntityManager()).getStandardManager().getSession().createCriteria(entityClass);
-        Criteria criteria = ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
+        Criteria criteria = createCriteria(entityClass);
         entityCriteria.apply(criteria);
         
         return criteria;
@@ -80,6 +80,10 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
         }
         
         return rowCount;
+    }
+
+    public Criteria createCriteria(Class<?> entityClass) {
+        return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
     }
     
 	public abstract EntityManager getStandardEntityManager();

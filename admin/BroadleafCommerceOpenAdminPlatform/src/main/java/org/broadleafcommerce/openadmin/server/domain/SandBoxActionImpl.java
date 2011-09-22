@@ -1,7 +1,9 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -38,9 +40,11 @@ public class SandBoxActionImpl implements SandBoxAction {
     protected String comment;
 
     @ManyToMany(targetEntity = SandBoxItemImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "SANDBOX_ITEM_ACTION",
-               joinColumns = {@JoinColumn(name = "SANDBOX_ACTION_ID", referencedColumnName = "SANDBOX_ACTION_ID")},
-               inverseJoinColumns = {@JoinColumn(name ="SANDBOX_ITEM_ID", referencedColumnName = "SANDBOX_ITEM_ID")})
+    @JoinTable(
+        name = "SANDBOX_ITEM_ACTION",
+        joinColumns = {@JoinColumn(name = "SANDBOX_ACTION_ID", referencedColumnName = "SANDBOX_ACTION_ID")},
+        inverseJoinColumns = {@JoinColumn(name ="SANDBOX_ITEM_ID", referencedColumnName = "SANDBOX_ITEM_ID")}
+    )
     protected List<SandBoxItem> sandBoxItems;
 
     @Override
@@ -72,8 +76,6 @@ public class SandBoxActionImpl implements SandBoxAction {
     public void setActionDate(Date date) {
         this.actionDate = date;
     }
-
-
 
     @Override
     public AdminUser getUser() {

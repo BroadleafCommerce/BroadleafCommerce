@@ -57,4 +57,6 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String newAssetDescriptionTitle();
 
     public String structuredContentTitle();
+
+    public String userSandBoxTitle();
 }

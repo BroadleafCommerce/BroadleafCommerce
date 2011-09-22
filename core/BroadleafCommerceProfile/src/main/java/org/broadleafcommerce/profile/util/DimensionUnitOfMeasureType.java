@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.profile.util;
 
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

@@ -42,7 +42,7 @@ public @interface AdminPresentation {
 	 * @see AdminMessages
 	 * @return the friendly name
 	 */
-	String friendlyName();
+	String friendlyName() default "";
 	
 	/**
 	 * If a security level is specified, it is registered with org.broadleafcommerce.openadmin.client.security.SecurityManager

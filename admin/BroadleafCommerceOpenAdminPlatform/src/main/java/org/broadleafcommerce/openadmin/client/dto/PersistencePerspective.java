@@ -90,10 +90,28 @@ public class PersistencePerspective implements Serializable {
 		this.persistencePerspectiveItems = persistencePerspectiveItems;
 	}
 
+    /**
+     * Retrieves whether or not ManyToOne and OneToOne field boundaries
+     * will be traversed when retrieving and populating entity fields.
+     * Implementation should use the @AdminPresentationClass annotation
+     * instead.
+     *
+     * @return Whether or not ManyToOne and OneToOne field boundaries will be crossed.
+     */
+    @Deprecated
 	public Boolean getPopulateToOneFields() {
 		return populateToOneFields;
 	}
 
+    /**
+     * Sets whether or not ManyToOne and OneToOne field boundaries
+     * will be traversed when retrieving and populating entity fields.
+     * Implementation should use the @AdminPresentationClass annotation
+     * instead.
+     *
+     * @return Whether or not ManyToOne and OneToOne field boundaries will be crossed.
+     */
+    @Deprecated
 	public void setPopulateToOneFields(Boolean populateToOneFields) {
 		this.populateToOneFields = populateToOneFields;
 	}
@@ -101,7 +119,7 @@ public class PersistencePerspective implements Serializable {
     /**
      * Retrieve the list of fields to exclude from the admin presentation.
      * Implementations should use the excluded property of the AdminPresentation
-     * annotation, or use an AdminPresentationOverride if re-enabling a
+     * annotation instead, or use an AdminPresentationOverride if re-enabling a
      * Broadleaf field is desired. If multiple datasources point to the same
      * entity, but different exclusion behavior is required, a custom persistence
      * handler may be employed with different inspect method implementations to
@@ -117,7 +135,7 @@ public class PersistencePerspective implements Serializable {
     /**
      * Set the list of fields to exclude from the admin presentation.
      * Implementations should use the excluded property of the AdminPresentation
-     * annotation, or use an AdminPresentationOverride if re-enabling a
+     * annotation instead, or use an AdminPresentationOverride if re-enabling a
      * Broadleaf field is desired. If multiple datasources point to the same
      * entity, but different exclusion behavior is required, a custom persistence
      * handler may be employed with different inspect method implementations to

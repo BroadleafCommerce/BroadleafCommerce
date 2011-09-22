@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.profile.util.BroadleafEnumerationType;
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 import org.broadleafcommerce.profile.util.StringUtil;
 
 /**

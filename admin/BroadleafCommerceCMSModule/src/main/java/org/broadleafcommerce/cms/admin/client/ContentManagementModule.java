@@ -76,19 +76,19 @@ public class ContentManagementModule extends AbstractModule {
 			null
 		);
 
-   /*     setSection(
-            BLCMain.getMessageManager().getString("userSandboxTitle"),
+        setSection(
+            BLCMain.getMessageManager().getString("userSandBoxTitle"),
 			"userSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.UserSandBoxView",
+			"org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
 			"userSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.UserSandBoxPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
 			cmsRoles,
 			null
 		);
 
 
 
-        setSection(
+        /*setSection(
             BLCMain.getMessageManager().getString("approvalSandboxTitle"),
 			"approvalSandBox",
 			"org.broadleafcommerce.cms.admin.client.view.sandbox.ApprovalSandBoxView",

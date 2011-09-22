@@ -48,7 +48,7 @@ public class BLCMain implements EntryPoint {
 	
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
 	//TODO set the version as part of the build
-	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "1.5.0-M2-SNAPSHOT");
+	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
 	public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
 	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
 	public static MasterView MASTERVIEW;
