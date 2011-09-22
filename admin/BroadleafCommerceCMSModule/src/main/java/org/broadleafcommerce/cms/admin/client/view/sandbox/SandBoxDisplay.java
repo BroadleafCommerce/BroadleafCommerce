@@ -24,6 +24,8 @@ public interface SandBoxDisplay extends Display {
 
 	public ListGrid getGrid();
 
+    public ToolStripButton getRefreshButton();
+
 	public ToolStrip getToolBar();
 
 }

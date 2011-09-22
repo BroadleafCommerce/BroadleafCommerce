@@ -56,6 +56,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         display.getPromoteSelectionButton().disable();
         display.getRevertAllButton().disable();
         display.getRevertSelectionButton().disable();
+        display.getRefreshButton().enable();
 	}
 
 	public void enable() {
@@ -86,6 +87,15 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
 	public void bind() {
+        revertAllClickHandlerRegistration = display.getRefreshButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"fetch", "", ""});
+                    setStartState();
+                    display.getGrid().invalidateCache();
+                }
+            }
+        });
 		revertAllClickHandlerRegistration = display.getRevertAllButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
