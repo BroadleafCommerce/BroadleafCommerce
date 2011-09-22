@@ -89,7 +89,6 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         grid.setShowFilterEditor(false);
         grid.setCanGroupBy(false);
         grid.setDataPageSize(10);
-        //grid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
         grid.setAlternateBodyStyleName("editRowDisabled");
         insideLayout.addMember(grid);
 

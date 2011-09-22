@@ -89,7 +89,7 @@ public class CommentDialog extends Window {
         addItem(hLayout);
 	}
 	
-	public void search(String title, CommentCallback callback) {
+	public void launch(String title, CommentCallback callback) {
 		this.setTitle(title);
 		this.callback = callback;
 		centerInPage();

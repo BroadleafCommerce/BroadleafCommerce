@@ -128,7 +128,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 		promoteAllClickHandlerRegistration = display.getPromoteAllButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    COMMENT_DIALOG.search("Enter a promotion comment", new CommentCallback() {
+                    COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
                         @Override
                         public void comment(String comment) {
                             ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"promoteAll", "", comment});
@@ -142,7 +142,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 		promoteSelectionClickHandlerRegistration = display.getPromoteSelectionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    COMMENT_DIALOG.search("Enter a promotion comment", new CommentCallback() {
+                    COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
                         @Override
                         public void comment(String comment) {
                             ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"promoteSelected", getSelectedRecords(), comment});
