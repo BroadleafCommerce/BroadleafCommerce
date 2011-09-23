@@ -37,7 +37,7 @@ public interface StructuredContentDao {
 
     public Map<String,StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc);
 
-    public StructuredContent addOrUpdateContentItem(StructuredContent content);
+    public StructuredContent addOrUpdateContentItem(StructuredContent content, boolean clearLevel1Cache);
 
     public void delete(StructuredContent content);
 
