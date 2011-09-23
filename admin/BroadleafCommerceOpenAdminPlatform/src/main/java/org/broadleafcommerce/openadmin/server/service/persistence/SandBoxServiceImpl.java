@@ -573,10 +573,10 @@ public class SandBoxServiceImpl implements SandBoxService {
         // If the approval sandbox doesn't exist, create it.
         if (approvalSandbox == null) {
             approvalSandbox = new SandBoxImpl();
-            sandBox.setSite(sandBox.getSite());
-            sandBox.setName(APPROVAL_SANDBOX_NAME);
-            sandBox.setSandBoxType(SandBoxType.APPROVAL);
-            sandBoxDao.persist(sandBox);
+            approvalSandbox.setSite(sandBox.getSite());
+            approvalSandbox.setName(APPROVAL_SANDBOX_NAME);
+            approvalSandbox.setSandBoxType(SandBoxType.APPROVAL);
+            approvalSandbox = sandBoxDao.persist(approvalSandbox);
         }
         return approvalSandbox;
     }
