@@ -66,7 +66,8 @@ public class CommentDialog extends Window {
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	if (callback != null) {
-                    callback.comment(formItem.getValueAsString());
+                    String val = formItem.getValueAsString();
+                    callback.comment(val==null?"":val);
                 }
             	hide();
             }
