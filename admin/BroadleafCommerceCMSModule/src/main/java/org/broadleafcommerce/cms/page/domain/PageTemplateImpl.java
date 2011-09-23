@@ -17,14 +17,15 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.List;
 
 /**

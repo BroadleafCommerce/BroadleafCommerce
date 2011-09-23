@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.time;
 
+import org.broadleafcommerce.common.TimeDTO;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -84,6 +86,38 @@ public class SystemTime {
 
     public static Calendar asCalendar() {
         return asCalendar(true);
+    }
+
+    public static TimeDTO asTimeDTO() {
+        final Calendar cal = asCalendar(true);
+        TimeDTO timeDTO = new TimeDTO() {
+
+            @Override
+            public int getHour() {
+                return cal.get(Calendar.HOUR_OF_DAY);
+            }
+
+            @Override
+            public int getDayOfWeek() {
+                return cal.get(Calendar.DAY_OF_WEEK);
+            }
+
+            @Override
+            public int getDayOfMonth() {
+                return cal.get(Calendar.DAY_OF_MONTH);
+            }
+
+            @Override
+            public int getMonth() {
+                return cal.get(Calendar.MONTH);
+            }
+
+            @Override
+            public double getTimeAsDecimal() {
+                return cal.get(Calendar.HOUR_OF_DAY) + (cal.get(Calendar.MINUTE) / 60.0);
+            }
+        };
+        return timeDTO;
     }
 
     public static Calendar asCalendar(boolean includeTime) {

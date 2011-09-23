@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
@@ -40,6 +41,8 @@ public interface StructuredContentService extends SandBoxItemListener {
     public StructuredContent findStructuredContentById(Long contentId);
 
     public StructuredContentType findStructuredContentTypeById(Long id);
+
+    public StructuredContentType findStructuredContentTypeByName(String name);
 
     /**
      * Returns the list of structured content types.
@@ -129,4 +132,23 @@ public interface StructuredContentService extends SandBoxItemListener {
      * @return
      */
     public void deleteStructuredContent(StructuredContent content, SandBox destinationSandbox);
+
+    public List<StructuredContent> lookupStructuredContentItemsByType(SandBox sandBox, StructuredContentType contentType, Locale locale, Integer count, Map<String,Object> ruleDTOs);
+
+    public List<StructuredContent> lookupStructuredContentItemsByName(SandBox sandBox, StructuredContentType contentType, String contentName, Locale locale, Integer count, Map<String,Object> ruleDTOs);
+
+
+    /**
+     * Returns a list of DTO objects that the rule builder should support for content targeting.
+     *
+     * The RuleDTO objects drive the behavior of the admin API but have a loose binding to the
+     * actual objects used in the MVEL processing.    The actual objects must have the same
+     * properties but are not strictly required to extend these DTOs.
+     *
+     * The Map key is the object reference that should be used in the MVEL processing.
+     *
+     */
+    public Map<String, Object> getStructuredContentRuleDTOs();
+
+    public void setStructuredContentRuleDTOs(Map<String, Object> contentRuleDTOMap);
 }

@@ -196,5 +196,4 @@
         </property>
         <property name="cleaner" ref="blHibernateCleaner"/>
     </bean>-->
-	
 </beans>

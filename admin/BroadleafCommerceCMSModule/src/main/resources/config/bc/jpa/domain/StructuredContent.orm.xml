@@ -9,7 +9,14 @@
 		</query>
 	</named-query>
 
-    	<named-query name="BC_READ_CONTENT_FIELDS_BY_CONTENT_ID" >
+    <named-query name="BC_READ_STRUCTURED_CONTENT_TYPE_BY_NAME" >
+		<query>SELECT structuredContentType
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContentType structuredContentType
+               WHERE structuredContentType.name = :name
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_CONTENT_FIELDS_BY_CONTENT_ID" >
 		<query>SELECT scField
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContentField scField
                LEFT JOIN FETCH scField.fieldDataList
@@ -17,5 +24,57 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_SANDBOX" >
+		<query>SELECT structuredContent
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+               WHERE structuredContent.sandbox = :sandbox AND
+                     structuredContent.structuredContentType = :contentType AND
+                     structuredContent.locale = :locale AND
+                     structuredContent.contentName = :contentName AND
+                     structuredContent.activeStartDate &gt;= :activeStartDate AND
+                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.archivedFlag = false
+               ORDER BY priority
+		</query>
+	</named-query>
 
+    <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME" >
+		<query>SELECT structuredContent
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+               WHERE structuredContent.sandbox is null AND
+                     structuredContent.structuredContentType = :contentType AND
+                     structuredContent.locale = :locale AND
+                     structuredContent.contentName = :contentName AND
+                     structuredContent.activeStartDate &gt;= :activeStartDate AND
+                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.archivedFlag = false
+               ORDER BY priority
+		</query>
+	</named-query>
+
+    <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_SANDBOX" >
+		<query>SELECT structuredContent
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+               WHERE structuredContent.sandbox = :sandbox AND
+                     structuredContent.structuredContentType = :contentType AND
+                     structuredContent.locale = :locale AND
+                     structuredContent.activeStartDate &gt;= :activeStartDate AND
+                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.archivedFlag = false
+               ORDER BY priority
+		</query>
+	</named-query>
+
+    <named-query name="BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE" >
+		<query>SELECT structuredContent
+               FROM org.broadleafcommerce.cms.structure.domain.StructuredContent structuredContent
+               WHERE structuredContent.sandbox is null AND
+                     structuredContent.structuredContentType = :contentType AND
+                     structuredContent.locale = :locale AND
+                     structuredContent.activeStartDate &gt;= :activeStartDate AND
+                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.archivedFlag = false
+               ORDER BY priority
+		</query>
+	</named-query>
 </entity-mappings>

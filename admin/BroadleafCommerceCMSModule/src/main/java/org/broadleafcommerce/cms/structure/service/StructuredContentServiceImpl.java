@@ -15,8 +15,10 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
@@ -27,13 +29,13 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.mvel2.MVEL;
+import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Created by bpolster.
@@ -47,6 +49,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
+
+    private Map<String, Object> structuredContentRuleDTOMap;
+
+    private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
 
 
     /**
@@ -63,6 +69,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public StructuredContentType findStructuredContentTypeById(Long id) {
         return structuredContentDao.findStructuredContentTypeById(id);
+    }
+
+    @Override
+    public StructuredContentType findStructuredContentTypeByName(String name) {
+        return structuredContentDao.findStructuredContentTypeByName(name);
     }
 
     /**
@@ -303,6 +314,132 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         updateStructuredContent(content, destinationSandbox);
     }
 
+
+    private List<StructuredContent> mergeContent(List<StructuredContent> productionList, List<StructuredContent> sandboxList) {
+        if (sandboxList == null || sandboxList.size() == 0) {
+            return productionList;
+        }
+
+        Map<Long,StructuredContent> scMap = new LinkedHashMap<Long,StructuredContent>();
+        for(StructuredContent sc : productionList) {
+            scMap.put(sc.getId(), sc);
+        }
+
+        for(StructuredContent sc : sandboxList) {
+            if (sc.getOriginalItemId() != null) {
+                scMap.remove(sc.getOriginalItemId());
+            }
+            if (! sc.getDeletedFlag()) {
+                scMap.put(sc.getId(), sc);
+            }
+        }
+        return new ArrayList<StructuredContent>(scMap.values());
+    }
+
+
+    protected Boolean executeExpression(String expression, Map<String, Object> vars) {
+        Serializable exp = (Serializable) EXPRESSION_CACHE.get(expression);
+        if (exp == null) {
+            ParserContext context = new ParserContext();
+            exp = MVEL.compileExpression(expression.toString(), context);
+        }
+        EXPRESSION_CACHE.put(expression, exp);
+
+        return (Boolean) MVEL.executeExpression(exp, vars);
+
+    }
+
+    /**
+     * This method loops through the content and orders by priority.   If multiple items have the same priority,
+     * it will randomize the order of those results.   IF the item has a display rule, the code will evaluate
+     * the rule before and ensure a match before returning.
+     *
+     * @return
+     */
+    private List<StructuredContent> evaluateAndPriortizeContent(List<StructuredContent> structuredContentList, int count, Map<String, Object> ruleDTOs) {
+
+        Iterator<StructuredContent> structuredContentIterator = structuredContentList.iterator();
+        List<StructuredContent> returnList = new ArrayList<StructuredContent>();
+        List<StructuredContent> tmpList = new ArrayList<StructuredContent>();
+        Integer lastPriority = Integer.MIN_VALUE;
+        while (structuredContentIterator.hasNext()) {
+            StructuredContent sc = structuredContentIterator.next();
+            if (! lastPriority.equals(sc.getPriority())) {
+                // If we've moved to another priority, then shuffle all of the items
+                // with the previous priority and add them to the return list.
+                if (tmpList.size() > 1) {
+                    Collections.shuffle(tmpList);
+                }
+                returnList.addAll(tmpList);
+
+                tmpList.clear();
+
+                // If we've added enough items to satisfy the count, then return the
+                // list.
+                if (returnList.size() == count) {
+                    return returnList;
+                } else if (returnList.size() > count) {
+                    return returnList.subList(0, count);
+                }
+            } else {
+                if (sc.getDisplayRule() != null && "".equals(sc.getDisplayRule())) {
+                    if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
+                        tmpList.add(sc);
+                    }
+                } else {
+                    tmpList.add(sc);
+                }
+            }
+            lastPriority = sc.getPriority();
+        }
+
+        if (tmpList.size() > 1) {
+            Collections.shuffle(tmpList);
+        }
+
+        returnList.addAll(tmpList);
+
+
+        if (returnList.size() > count) {
+            return returnList.subList(0, count);
+        }
+        return returnList;
+    }
+
+    @Override
+    public List<StructuredContent> lookupStructuredContentItemsByType(SandBox sandBox, StructuredContentType contentType, Locale locale, Integer count, Map<String, Object> ruleDTOs) {
+        List<StructuredContent> productionContentList = null;
+        List<StructuredContent> sandBoxContentList = null;
+        productionContentList = structuredContentDao.findActiveStructuredContentByType(getProductionSandBox(sandBox), contentType, locale);
+        if (! isProductionSandBox(sandBox)) {
+            sandBoxContentList = structuredContentDao.findActiveStructuredContentByType(sandBox, contentType, locale);
+        }
+
+        List<StructuredContent> contentList = mergeContent(productionContentList, sandBoxContentList);
+        return evaluateAndPriortizeContent(contentList, count, ruleDTOs);
+    }
+
+    @Override
+    public List<StructuredContent> lookupStructuredContentItemsByName(SandBox sandBox, StructuredContentType contentType, String contentName, org.broadleafcommerce.cms.locale.domain.Locale locale, Integer count, Map<String, Object> ruleDTOs) {
+        List<StructuredContent> productionContentList = null;
+        List<StructuredContent> sandBoxContentList = null;
+        productionContentList = structuredContentDao.findActiveStructuredContentByNameAndType(getProductionSandBox(sandBox), contentType, contentName, locale);
+        if (! isProductionSandBox(sandBox)) {
+            sandBoxContentList = structuredContentDao.findActiveStructuredContentByNameAndType(sandBox, contentType, contentName, locale);
+        }
+
+        List<StructuredContent> contentList = mergeContent(productionContentList, sandBoxContentList);
+        return evaluateAndPriortizeContent(contentList, count, ruleDTOs);
+    }
+
+    private SandBox getProductionSandBox(SandBox currentSandBox) {
+        if (currentSandBox == null || currentSandBox.getSite() == null || SandBoxType.PRODUCTION.equals(currentSandBox.getSandBoxType())) {
+            return currentSandBox;
+        } else {
+            return currentSandBox.getSite().getProductionSandbox();
+        }
+    }
+
     private boolean isProductionSandBox(SandBox dest) {
         if (dest == null) {
             return true;
@@ -366,5 +503,25 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             sc.setArchivedFlag(Boolean.TRUE);
             structuredContentDao.addOrUpdateContentItem(sc);
         }
+    }
+
+
+    /**
+     * Returns a list of DTO objects that the rule builder should support for content targeting.
+     * <p/>
+     * The RuleDTO objects drive the behavior of the admin API but have a loose binding to the
+     * actual objects used in the MVEL processing.    The actual objects must have the same
+     * properties but are not strictly required to extend these DTOs.
+     * <p/>
+     * The Map key is the object reference that should be used in the MVEL processing.
+     */
+    @Override
+    public Map<String, Object> getStructuredContentRuleDTOs() {
+        return structuredContentRuleDTOMap;
+    }
+
+    @Override
+    public void setStructuredContentRuleDTOs(Map<String, Object> contentRuleDTOMap) {
+        structuredContentRuleDTOMap = contentRuleDTOMap;
     }
 }

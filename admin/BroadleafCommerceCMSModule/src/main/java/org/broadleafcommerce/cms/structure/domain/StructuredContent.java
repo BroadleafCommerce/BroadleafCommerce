@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.page.domain.Locale;
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.io.Serializable;
@@ -75,7 +75,7 @@ public interface StructuredContent extends Serializable {
 
     public void setPriority(Integer priority);
 
-    public String getDisplayRule(String displayRule);
+    public String getDisplayRule();
 
     public void setDisplayRule(String displayRule);
 

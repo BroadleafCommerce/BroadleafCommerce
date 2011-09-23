@@ -6,7 +6,7 @@ import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.page.domain.Locale;
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;

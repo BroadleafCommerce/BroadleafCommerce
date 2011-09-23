@@ -8,29 +8,64 @@
     <short-name>blcms</short-name>
     <uri>/broadleaf-cms</uri>
 
-    <!-- tag>
-        <name>contentItem</name>
-        <tag-class>org.broadleafcommerce.cms.web.message.ContentItemTag</tag-class>
+
+    <!--
+        private String contentType;
+    private String contentName;
+    private Integer rowCount;
+    private String contentListVar = "contentList";
+    private String contentItemVar = "content";
+    private String numResultsVar = "numResults";
+    private Locale locale;
+    -->
+
+    <tag>
+        <name>content</name>
+        <tag-class>org.broadleafcommerce.cms.web.structure.DisplayContentTag</tag-class>
         <body-content>empty</body-content>
         <description>Returns the internationalized message for the passed in messageKey</description>
        	<attribute>
-			<name>messageKey</name>
+			<name>contentType</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-            <description>The key for which a value is being looked up.</description>
+            <description>The type of content to look up.</description>
 		</attribute>
         <attribute>
-			<name>languageCode</name>
+			<name>contentName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-            <description>Allows override of the current request scoped default language code.</description>
+            <description>The name of a specific content item within the content type.</description>
 		</attribute>
         <attribute>
-			<name>sandbox</name>
+			<name>count</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-            <description>Allows override of the current request scoped default sandbox.</description>
+            <description>The number of items to return.</description>
 		</attribute>
-    </tag -->
+        <attribute>
+			<name>locale</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Overrides the request scoped locale</description>
+		</attribute>
+        <attribute>
+			<name>contentListVar</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of the page scoped variable that the result is set to.  Defaults to contentList.</description>
+		</attribute>
+       	<attribute>
+			<name>contentItemVar</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of the page scoped variable that the first result is set to.  Defaults to contentItem.</description>
+		</attribute>
+        <attribute>
+			<name>numResultsVar</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of the page scoped variable that stores the number of results.  Defaults to numResults.</description>
+		</attribute>
+    </tag>
 
 </taglib>

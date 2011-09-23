@@ -15,9 +15,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.page.domain.Locale;
-import org.broadleafcommerce.cms.page.domain.LocaleImpl;
-import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
+import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -219,7 +218,7 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public String getDisplayRule(String displayRule) {
+    public String getDisplayRule() {
         return displayRule;
     }
 

@@ -14,7 +14,5 @@ public interface SandBoxEntityDao {
 
     public void deleteEntitySandBoxItem(EntitySandBoxItem sandBoxItem);
 
-    public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType);
-
     public SandBox retrieveNamedSandBox(Site site, SandBoxType sandboxType, String sandboxName);
 }

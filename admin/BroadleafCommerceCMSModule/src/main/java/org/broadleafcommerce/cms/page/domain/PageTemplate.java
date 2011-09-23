@@ -1,6 +1,7 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.cms.locale.domain.Locale;
 
 import java.io.Serializable;
 import java.util.List;

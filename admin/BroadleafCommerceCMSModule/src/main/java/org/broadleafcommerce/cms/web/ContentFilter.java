@@ -18,6 +18,8 @@ package org.broadleafcommerce.cms.web;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.cms.locale.service.LocaleService;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
@@ -65,7 +67,10 @@ public class ContentFilter extends OncePerRequestFilter {
 	   
 
     // Parameter/Attribute name for the current language
-    public static String LANGUAGE_CODE_VAR = "blLanguageCode";
+    public static String LOCALE_VAR = "blLocale";
+
+    // Parameter/Attribute name for the current language
+    public static String LOCALE_CODE_PARAM = "blLocaleCode";
 
     // Parameter/Attribute name for the sandbox id
     private static String SANDBOX_ID_VAR = "blSandboxId";
@@ -96,6 +101,9 @@ public class ContentFilter extends OncePerRequestFilter {
     @Resource(name="blPageService")
     private PageService pageService;
 
+    @Resource(name="blLocaleService")
+    private LocaleService localeService;
+
 
 
 
@@ -104,7 +112,7 @@ public class ContentFilter extends OncePerRequestFilter {
 	 */
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Site site = determineSite(request);
-        determineLanguage(request, site);
+        determineLocale(request, site);
         SandBox currentSandbox = determineSandbox(request, site);
 
         try {
@@ -181,16 +189,35 @@ public class ContentFilter extends OncePerRequestFilter {
      * @param site
      * @return
      */
-    private void determineLanguage(HttpServletRequest request, Site site) {
-        String languageCode = (String) request.getAttribute(LANGUAGE_CODE_VAR);
+    private Locale determineLocale(HttpServletRequest request, Site site) {
 
-        if (languageCode == null) {
-            languageCode = request.getParameter(LANGUAGE_CODE_VAR);
-            if (languageCode != null) {
-                request.setAttribute(LANGUAGE_CODE_VAR, languageCode);
-                request.getSession(true).setAttribute(LANGUAGE_CODE_VAR, languageCode);
+        Locale locale = null;
+
+        // First check for request attribute
+        locale = (Locale) request.getAttribute(LOCALE_VAR);
+
+        // Second, check for a request parameter
+        if (locale == null && request.getParameter(LOCALE_CODE_PARAM) != null) {
+            String localeCode = request.getParameter(LOCALE_CODE_PARAM);
+            locale = localeService.findLocaleByCode(localeCode);
+        }
+
+        // Third, check the session
+        if (locale == null) {
+            HttpSession session = request.getSession(true);
+            if (session != null) {
+                locale = (Locale) session.getAttribute(LOCALE_VAR);
             }
         }
+
+        // Finally, use the default
+        if (locale == null) {
+            locale = localeService.findDefaultLocale();
+        }
+
+        request.setAttribute(LOCALE_VAR, locale);
+        request.getSession().setAttribute(LOCALE_VAR, locale);
+        return locale;
     }
 
 

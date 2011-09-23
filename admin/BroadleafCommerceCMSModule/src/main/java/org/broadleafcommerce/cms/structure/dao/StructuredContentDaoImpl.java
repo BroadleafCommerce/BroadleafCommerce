@@ -15,11 +15,13 @@
  */
 package org.broadleafcommerce.cms.structure.dao;
 
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -89,5 +91,53 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
             content = findStructuredContentById(content.getId());
         }
         em.remove(content);
+    }
+
+    @Override
+    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale locale) {
+        String queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE";
+        if (sandBox != null) {
+            queryName =  "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_SANDBOX";
+        }
+
+        Query query = em.createNamedQuery(queryName);
+        query.setParameter("contentType", type);
+        query.setParameter("currentDate", SystemTime.asDate());
+        query.setParameter("locale", locale);
+        if (sandBox != null) {
+            query.setParameter("sandbox", sandBox);
+        }
+        return query.getResultList();
+    }
+
+    @Override
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale) {
+        String queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME";
+        if (sandBox != null) {
+            queryName =  "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_SANDBOX";
+        }
+
+        Query query = em.createNamedQuery(queryName);
+        query.setParameter("contentType", type);
+        query.setParameter("contentName", name);
+        query.setParameter("currentDate", SystemTime.asDate());
+        query.setParameter("locale", locale);
+        if (sandBox != null) {
+            query.setParameter("sandbox", sandBox);
+        }
+        return query.getResultList();
+    }
+
+    @Override
+    public StructuredContentType findStructuredContentTypeByName(String name) {
+        Query query = em.createNamedQuery("BC_READ_STRUCTURED_CONTENT_TYPE_BY_NAME");
+        query.setParameter("name",name);
+        List<StructuredContentType> results = query.getResultList();
+        if (results.size() > 0) {
+            return results.get(0);
+        } else {
+            return null;
+        }
+
     }
 }

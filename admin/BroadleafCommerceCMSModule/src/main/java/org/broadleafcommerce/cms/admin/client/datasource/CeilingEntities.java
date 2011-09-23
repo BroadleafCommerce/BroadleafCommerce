@@ -11,7 +11,7 @@ public class CeilingEntities {
 
     public static final String PAGES = "org.broadleafcommerce.cms.page.domain.PageFolder";
     public static final String PAGETEMPLATE = "org.broadleafcommerce.cms.page.domain.PageTemplate";
-    public static final String LOCALE = "org.broadleafcommerce.cms.page.domain.Locale";
+    public static final String LOCALE = "org.broadleafcommerce.cms.locale.domain.Locale";
     public static final String STATICFOLDERASSETS = "org.broadleafcommerce.cms.file.domain.StaticAssetFolder";
     public static final String STATICASSETS = "org.broadleafcommerce.cms.file.domain.StaticAsset";
     public static final String STRUCTUREDCONTENT = "org.broadleafcommerce.cms.structure.domain.StructuredContent";

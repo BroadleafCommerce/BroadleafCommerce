@@ -15,9 +15,11 @@
  */
 package org.broadleafcommerce.cms.structure.dao;
 
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.List;
 import java.util.Map;
@@ -38,4 +40,10 @@ public interface StructuredContentDao {
     public StructuredContent addOrUpdateContentItem(StructuredContent content);
 
     public void delete(StructuredContent content);
+
+    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale locale);
+
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale);
+
+    public StructuredContentType findStructuredContentTypeByName(String name);
 }

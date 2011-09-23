@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.page.domain;
+package org.broadleafcommerce.cms.locale.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -30,6 +30,9 @@ public class LocaleImpl implements Locale {
 
     @Column (name = "FRIENDLY_NAME")
     protected String friendlyName;
+
+     @Column (name = "DEFAULT_FLAG")
+    protected Boolean defaultFlag;
 
     @Override
     public Long getId() {
@@ -69,6 +72,16 @@ public class LocaleImpl implements Locale {
     @Override
     public void setFriendlyName(String friendlyName) {
         this.friendlyName = friendlyName;
+    }
+
+    @Override
+    public void setDefaultFlag(Boolean defaultFlag) {
+        this.defaultFlag = defaultFlag;
+    }
+
+    @Override
+    public Boolean getDefaultFlag() {
+        return defaultFlag;
     }
 
     @Override

@@ -64,9 +64,10 @@ public class SandBoxServiceImpl implements SandBoxService {
             site = new SiteImpl();
             site.setId(sandBoxInfo.getSiteId());
         }
+        // TODO:  Need to closely check sandbox / entity sandbox dao code.
         SandBox sandBox = sandBoxEntityDao.retrieveNamedSandBox(site, SandBoxType.USER, sandBoxInfo.getName());
         if (sandBox == null) {
-            sandBox = createSandBox(persistencePackage);
+            sandBox = createEntitySandBox(persistencePackage);
         }
         EntitySandBoxItem item;
         switch (changeType) {
@@ -294,7 +295,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         return property;
     }
 
-    protected SandBox createSandBox(PersistencePackage dtoPersistencePackage) {
+    protected SandBox createEntitySandBox(PersistencePackage dtoPersistencePackage) {
         SandBoxInfo sandBoxInfo = dtoPersistencePackage.getSandBoxInfo();
         SandBox sandBox = new SandBoxImpl();
 		sandBox.setName(sandBoxInfo.getName());
@@ -440,7 +441,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         if (adminUser.getCurrentSandbox() != null) {
             userSandbox = adminUser.getCurrentSandbox();
         } else {
-            userSandbox = sandBoxEntityDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
+            userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
 
             if (userSandbox == null) {
                 SandBoxImpl sandBox = new SandBoxImpl();
@@ -448,7 +449,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 sandBox.setName(adminUser.getLogin());
                 sandBox.setSandBoxType(SandBoxType.USER);
                 sandBox.setAuthor(adminUser.getId());
-                sandBoxEntityDao.persist(sandBox);
+                sandBoxDao.persist(sandBox);
             }
         }
 
@@ -567,7 +568,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     protected SandBox retrieveApprovalSandBox(SandBox sandBox) {
         final String APPROVAL_SANDBOX_NAME = "Approval";
-        SandBox approvalSandbox = sandBoxEntityDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
+        SandBox approvalSandbox = sandBoxDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
 
         // If the approval sandbox doesn't exist, create it.
         if (approvalSandbox == null) {
@@ -575,7 +576,7 @@ public class SandBoxServiceImpl implements SandBoxService {
             sandBox.setSite(sandBox.getSite());
             sandBox.setName(APPROVAL_SANDBOX_NAME);
             sandBox.setSandBoxType(SandBoxType.APPROVAL);
-            sandBoxEntityDao.persist(sandBox);
+            sandBoxDao.persist(sandBox);
         }
         return approvalSandbox;
     }

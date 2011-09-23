@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.page.domain;
+package org.broadleafcommerce.cms.locale.domain;
 
 import java.io.Serializable;
 
@@ -22,5 +22,9 @@ public interface Locale extends Serializable {
     public String getFriendlyName();
 
     public void setFriendlyName(String friendlyName);
+
+    public void setDefaultFlag(Boolean defaultFlag);
+
+    public Boolean getDefaultFlag();
 
 }
