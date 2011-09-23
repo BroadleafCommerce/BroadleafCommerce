@@ -15,27 +15,19 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
-import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -46,8 +38,8 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEvent;
+import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -61,8 +53,28 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  * 
@@ -331,13 +343,15 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 		return (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath");
 	}
 	
-	public void displayAssetSearchDialog(JavaScriptObject editor) {
-		assetSearchDialogView.search("Asset Search", new SearchItemSelectedEventHandler() {
-	
+	public void displayAssetSearchDialog(final JavaScriptObject editor) {
+		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedEventHandler() {
 			@Override
-			public void onSearchItemSelected(SearchItemSelectedEvent event) {
-				GWT.log("search item selected");
-				
+			public void onSearchItemSelected(TileGridItemSelectedEvent event) {
+				String staticAssetFullUrl = "/broadleafdemo/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+				String title = event.getRecord().getAttribute("name");
+				String alt = event.getRecord().getAttribute("name");
+				String imgTag = "<img title='" + title + "' src='" + staticAssetFullUrl + "' alt='" + alt + "'/>";
+				insertRichTextContent(editor, imgTag);
 			}
 		});
 	}
@@ -356,4 +370,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 		}
 	}-*/;
 	
+	private native void insertRichTextContent(JavaScriptObject tinyMCEEditor, String content) /*-{
+		tinyMCEEditor.selection.setContent(content); 
+	}-*/;
 }

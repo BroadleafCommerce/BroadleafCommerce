@@ -15,6 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEvent;
+import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.setup.AppController;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -27,17 +33,11 @@ import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.tile.TileGrid;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
-import org.broadleafcommerce.openadmin.client.setup.AppController;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class AssetSearchDialog extends Window {
 	protected TileGrid tileGrid;
 	protected TreeGrid treeGrid;
 	protected IButton saveButton;
-	protected SearchItemSelectedEventHandler handler;
+	protected TileGridItemSelectedEventHandler handler;
 	
 	public AssetSearchDialog(final TileGridDataSource staticAssetDataSource, final PresentationLayerAssociatedDataSource staticAssetFolderDataSource) {
 		this.setIsModal(true);
@@ -105,6 +105,7 @@ public class AssetSearchDialog extends Window {
         	}
         });
         
+
         
 		HLayout dialogHLayout = new HLayout();
 		dialogHLayout.addMember(treeGrid);
@@ -115,10 +116,11 @@ public class AssetSearchDialog extends Window {
         saveButton = new IButton("Ok");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	Record selectedRecord = tileGrid.getSelectedRecord();
-            	AppController.getInstance().getEventBus().addHandler(SearchItemSelectedEvent.TYPE, AssetSearchDialog.this.handler);
-            	AppController.getInstance().getEventBus().fireEvent(new SearchItemSelectedEvent((ListGridRecord) selectedRecord, tileGrid.getDataSource()));
-            	AppController.getInstance().getEventBus().removeHandler(SearchItemSelectedEvent.TYPE, AssetSearchDialog.this.handler);
+            	//getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
+            	Record selectedRecord = tileGrid.getSelection()[0];
+            	AppController.getInstance().getEventBus().addHandler(TileGridItemSelectedEvent.TYPE, handler);
+            	AppController.getInstance().getEventBus().fireEvent(new TileGridItemSelectedEvent(selectedRecord, tileGrid.getDataSource()));
+            	AppController.getInstance().getEventBus().removeHandler(TileGridItemSelectedEvent.TYPE, handler);
             	hide();
             }
         });
@@ -140,7 +142,7 @@ public class AssetSearchDialog extends Window {
         addItem(hLayout);
 	}
 	
-	public void search(String title, SearchItemSelectedEventHandler handler) {
+	public void search(String title, TileGridItemSelectedEventHandler handler) {
 		this.setTitle(title);
 		this.handler = handler;
 		centerInPage();
@@ -149,11 +151,11 @@ public class AssetSearchDialog extends Window {
 		show();
 	}
 
-    public SearchItemSelectedEventHandler getHandler() {
+    public TileGridItemSelectedEventHandler getHandler() {
         return handler;
     }
 
-    public void setHandler(SearchItemSelectedEventHandler handler) {
+    public void setHandler(TileGridItemSelectedEventHandler handler) {
         this.handler = handler;
     }
 
