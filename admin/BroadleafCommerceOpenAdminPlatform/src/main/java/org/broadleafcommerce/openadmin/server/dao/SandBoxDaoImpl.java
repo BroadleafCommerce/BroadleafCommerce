@@ -26,7 +26,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType) {
         Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE");
-        query.setParameter("site", site);
+        //query.setParameter("site", site);
         query.setParameter("sandboxType", sandboxType.getType());
         SandBox response = null;
         try {
@@ -40,7 +40,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     public SandBox retrieveNamedSandBox(Site site, SandBoxType sandboxType, String sandboxName) {
         Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE_AND_NAME");
-        query.setParameter("site", site);
+        //query.setParameter("site", site);
         query.setParameter("sandboxType", sandboxType.getType());
         query.setParameter("sandboxName", sandboxName);
         SandBox response = null;

@@ -49,6 +49,6 @@ public interface SandBoxService {
     // Entity sandbox item code
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 
-
+    public SandBox retrieveApprovalSandBox(SandBox sandBox);
 
 }

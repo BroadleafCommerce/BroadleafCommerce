@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
-import org.broadleafcommerce.openadmin.client.presenter.entity.PassthroughEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
@@ -74,43 +73,26 @@ public abstract class AbstractModule implements EntryPoint, Module {
         BLCMain.MESSAGE_MANAGER.addConstants(constants);
     }
 
-    public void setSection(
-            String sectionTitle,
-            String viewKey,
-            String sectionViewClass,
-            List<String> sectionRoles
-    ) {
-        setSection(sectionTitle,
-                viewKey,
-                sectionViewClass,
-                sectionViewClass + "-presenter",
-                PassthroughEntityPresenter.class.getName(),
-                sectionRoles,
-                null);
-    }
-
 	public void setSection(
 		String sectionTitle, 
 		String sectionViewKey, 
 		String sectionViewClass,
 		String sectionPresenterKey, 
 		String sectionPresenterClass,
-		List<String> sectionRoles,
 		List<String> sectionPermissions
 	) {
 		pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
 		ModuleFactory moduleFactory = ModuleFactory.getInstance();
 		moduleFactory.put(sectionViewKey, sectionViewClass);
 		moduleFactory.put(sectionPresenterKey, sectionPresenterClass);
-		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionRoles, sectionPermissions);
+		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionPermissions);
 	}
 	
 	public void setSecurity(
 		String sectionViewKey,
-		List<String> sectionRoles,
 		List<String> sectionPermissions
 	) {
-		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionRoles, sectionPermissions);
+		SecurityManager.getInstance().registerSection(this.moduleKey, sectionViewKey, sectionPermissions);
 	}
 	
 	public void removeSection(

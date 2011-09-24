@@ -12,6 +12,8 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
@@ -67,10 +69,6 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
         return canHandleFetch(persistencePackage);
     }
 
-    protected SandBox getSandBox(PersistencePackage persistencePackage) {
-        return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
-    }
-
     protected List<SandBoxItem> retrieveSandBoxItems(List<Long> ids, DynamicEntityDao dynamicEntityDao) {
         Criteria criteria = dynamicEntityDao.createCriteria(SandBoxItem.class);
         criteria.add(Restrictions.in("id", ids));
@@ -81,7 +79,7 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         String[] customCriteria = persistencePackage.getCustomCriteria();
-        if (ArrayUtils.isEmpty(customCriteria) || customCriteria.length != 3) {
+        if (ArrayUtils.isEmpty(customCriteria) || customCriteria.length != 4) {
             ServiceException e = new ServiceException("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname);
             LOG.error("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname, e);
             throw e;
@@ -93,10 +91,11 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             throw e;
         }
         try {
-            String operation = customCriteria[0];
+            String moduleKey = customCriteria[0];
+            String operation = customCriteria[1];
             List<Long> targets = new ArrayList<Long>();
-            if (!StringUtils.isEmpty(customCriteria[1])) {
-                String[] parts = customCriteria[1].split(",");
+            if (!StringUtils.isEmpty(customCriteria[2])) {
+                String[] parts = customCriteria[2].split(",");
                 for (String part : parts) {
                     try {
                         targets.add(Long.valueOf(part));
@@ -105,26 +104,65 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
                     }
                 }
             }
-            String comment = customCriteria[2];
+            String comment = customCriteria[3];
+
+            String requiredPermission;
+            if (moduleKey.equals("userSandBox")) {
+                requiredPermission = "PERMISSION_USER_SANDBOX";
+            } else {
+                requiredPermission = "PERMISSION_APPROVER_SANDBOX";
+            }
+
             User principal = (User) authentication.getPrincipal();
             AdminUser adminUser = adminSecurityService.readAdminUserByUserName(principal.getUsername());
+            boolean allowOperation = false;
+            for (AdminRole role : adminUser.getAllRoles()) {
+                for (AdminPermission permission : role.getAllPermissions()) {
+                    if (permission.getName().equals(requiredPermission)) {
+                        allowOperation = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!allowOperation) {
+                ServiceException e = new ServiceException("Current user does not have permission to perform operation");
+                LOG.error("Current user does not have permission to perform operation", e);
+                throw e;
+            }
+
+            SandBox currentSandBox;
+            if (moduleKey.equals("userSandBox")) {
+                currentSandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+            } else {
+                currentSandBox = sandBoxService.retrieveApprovalSandBox(sandBoxService.retrieveUserSandBox(null, adminUser));
+            }
+
 
             if (operation.equals("promoteAll")) {
-                sandBoxService.promoteAllSandBoxItems(adminUser, getSandBox(persistencePackage), comment);
+                sandBoxService.promoteAllSandBoxItems(adminUser, currentSandBox, comment);
             } else if (operation.equals("promoteSelected")) {
                 List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao);
-                sandBoxService.promoteSelectedItems(adminUser, getSandBox(persistencePackage), comment, items);
-            } else if (operation.equals("revertAll")) {
-                sandBoxService.revertAllSandBoxItems(adminUser, getSandBox(persistencePackage));
-            } else if (operation.equals("revertSelected")) {
+                sandBoxService.promoteSelectedItems(adminUser, currentSandBox, comment, items);
+            } else if (operation.equals("revertRejectAll")) {
+                if (moduleKey.equals("userSandBox")) {
+                    sandBoxService.revertAllSandBoxItems(adminUser, currentSandBox);
+                } else {
+                    sandBoxService.rejectAllSandBoxItems(adminUser, currentSandBox, comment);
+                }
+            } else if (operation.equals("revertRejectSelected")) {
                 List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao);
-                sandBoxService.revertSelectedSandBoxItems(adminUser, getSandBox(persistencePackage), items);
+                if (moduleKey.equals("userSandBox")) {
+                    sandBoxService.revertSelectedSandBoxItems(adminUser, currentSandBox, items);
+                } else {
+                    sandBoxService.rejectSelectedSandBoxItems(adminUser, currentSandBox, comment, items);
+                }
             }
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SandBoxItem.class);
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective, entities);
-            cto.get("sandBox").setFilterValue(persistencePackage.getSandBoxInfo().getSandBox().toString());
+            cto.get("sandBox").setFilterValue(currentSandBox.getId().toString());
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItem.class);

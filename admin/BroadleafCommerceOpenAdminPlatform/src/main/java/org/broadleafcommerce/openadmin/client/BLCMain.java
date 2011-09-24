@@ -54,6 +54,7 @@ public class BLCMain implements EntryPoint {
 	public static MasterView MASTERVIEW;
 	public static boolean ISNEW = true;
 	public static String currentModuleKey;
+    public static String currentViewKey;
 	
 	public static final boolean DEBUG = true;
 	
@@ -87,12 +88,16 @@ public class BLCMain implements EntryPoint {
                     for (Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext(); ) {
                         Module currentModule = iterator.next();
                         if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(currentModule.getModuleKey())) {
-                              modules.remove(currentModule.getModuleKey());
+                            iterator.remove();
                         }
-
                     }
 
-                    if (moduleKey == null) {
+                    if (modules.size() == 0) {
+                        SC.say("Your login does not have authorization to view any modules");
+                        return;
+                    }
+
+                    if (moduleKey == null || modules.get(moduleKey) == null) {
                         moduleKey = modules.keySet().iterator().next();
                     }
 

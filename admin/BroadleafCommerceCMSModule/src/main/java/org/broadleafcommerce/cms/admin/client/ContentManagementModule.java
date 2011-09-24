@@ -37,68 +37,70 @@ public class ContentManagementModule extends AbstractModule {
 		
 		setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
 		setModuleKey("BLCContentManagement");
-		
-		List<String> cmsRoles = new ArrayList<String>();
-		cmsRoles.add("ROLE_ADMIN");
-		cmsRoles.add("ROLE_CONTENT_EDITOR");
 
-        List<String> approverRoles = new ArrayList<String>();
-		approverRoles.add("ROLE_ADMIN");
-		approverRoles.add("ROLE_CONTENT_APPROVER");
-
+        List<String> pagePermissions = new ArrayList<String>();
+		pagePermissions.add("PERMISSION_CREATE_PAGE");
+		pagePermissions.add("PERMISSION_UPDATE_PAGE");
+        pagePermissions.add("PERMISSION_DELETE_PAGE");
+        pagePermissions.add("PERMISSION_READ_PAGE");
         setSection(
             BLCMain.getMessageManager().getString("pagesTitle"),
-			"pages",
-			"org.broadleafcommerce.cms.admin.client.view.pages.PagesView",
-			"pagesPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter",
-			cmsRoles,
-			null
-		);
+            "pages",
+            "org.broadleafcommerce.cms.admin.client.view.pages.PagesView",
+            "pagesPresenter",
+            "org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter",
+            pagePermissions
+        );
 
+        List<String> assetPermissions = new ArrayList<String>();
+		assetPermissions.add("PERMISSION_CREATE_ASSET");
+		assetPermissions.add("PERMISSION_UPDATE_ASSET");
+        assetPermissions.add("PERMISSION_DELETE_ASSET");
+        assetPermissions.add("PERMISSION_READ_ASSET");
         setSection(
             BLCMain.getMessageManager().getString("staticAssetsTitle"),
 			"staticAssets",
 			"org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsView",
 			"staticAssetsPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.file.StaticAssetsPresenter",
-			cmsRoles,
-			null
+			assetPermissions
 		);
 
+        List<String> structuredContentPermissions = new ArrayList<String>();
+		structuredContentPermissions.add("PERMISSION_CREATE_STRUCTURED_CONTENT");
+		structuredContentPermissions.add("PERMISSION_UPDATE_STRUCTURED_CONTENT");
+        structuredContentPermissions.add("PERMISSION_DELETE_STRUCTURED_CONTENT");
+        structuredContentPermissions.add("PERMISSION_READ_STRUCTURED_CONTENT");
         setSection(
             BLCMain.getMessageManager().getString("structuredContentTitle"),
 			"structuredContent",
 			"org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentView",
 			"structuredContentPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.structure.StructuredContentPresenter",
-			cmsRoles,
-			null
+			structuredContentPermissions
 		);
 
+        List<String> userSandBoxPermissions = new ArrayList<String>();
+		userSandBoxPermissions.add("PERMISSION_USER_SANDBOX");
         setSection(
             BLCMain.getMessageManager().getString("userSandBoxTitle"),
 			"userSandBox",
 			"org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
 			"userSandBoxPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
-			cmsRoles,
-			null
+			userSandBoxPermissions
 		);
 
-
-
-        /*setSection(
-            BLCMain.getMessageManager().getString("approvalSandboxTitle"),
-			"approvalSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.ApprovalSandBoxView",
-			"userSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.ApprovalSandBoxPresenter",
-			approverRoles,
-			null
+        List<String> approverSandBoxPermissions = new ArrayList<String>();
+		approverSandBoxPermissions.add("PERMISSION_APPROVER_SANDBOX");
+        setSection(
+            BLCMain.getMessageManager().getString("approverSandBoxTitle"),
+			"approverSandBox",
+			"org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
+			"approverSandBoxPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
+			approverSandBoxPermissions
 		);
-
-		*/
 
         setHtmlEditorIFramePath("/broadleafdemo/richTextFullFeatured.html");
         setBasicHtmlEditorIFramePath("/broadleafdemo/richTextBasic.html");

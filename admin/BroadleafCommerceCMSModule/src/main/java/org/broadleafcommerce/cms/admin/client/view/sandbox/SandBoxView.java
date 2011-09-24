@@ -23,8 +23,8 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 
     protected ToolStripButton promoteAllButton;
     protected ToolStripButton promoteSelectionButton;
-	protected ToolStripButton revertSelectionButton;
-    protected ToolStripButton revertAllButton;
+	protected ToolStripButton revertRejectSelectionButton;
+    protected ToolStripButton revertRejectAllButton;
     protected ToolStripButton refreshButton;
 	protected ListGrid grid;
 	protected ToolStrip toolBar;
@@ -46,12 +46,12 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
-        revertSelectionButton = new ToolStripButton();
-        revertSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_left.png");
-        toolBar.addButton(revertSelectionButton);
-        revertAllButton = new ToolStripButton();
-        revertAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_left.png");
-        toolBar.addButton(revertAllButton);
+        revertRejectSelectionButton = new ToolStripButton();
+        revertRejectSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_left.png");
+        toolBar.addButton(revertRejectSelectionButton);
+        revertRejectAllButton = new ToolStripButton();
+        revertRejectAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_left.png");
+        toolBar.addButton(revertRejectAllButton);
 
         toolBar.addSeparator();
 
@@ -109,16 +109,16 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
 	 */
-	public ToolStripButton getRevertSelectionButton() {
-		return revertSelectionButton;
+	public ToolStripButton getRevertRejectSelectionButton() {
+		return revertRejectSelectionButton;
 	}
 
     public ToolStripButton getPromoteSelectionButton() {
         return promoteSelectionButton;
     }
 
-    public ToolStripButton getRevertAllButton() {
-        return revertAllButton;
+    public ToolStripButton getRevertRejectAllButton() {
+        return revertRejectAllButton;
     }
 
     public ToolStripButton getRefreshButton() {

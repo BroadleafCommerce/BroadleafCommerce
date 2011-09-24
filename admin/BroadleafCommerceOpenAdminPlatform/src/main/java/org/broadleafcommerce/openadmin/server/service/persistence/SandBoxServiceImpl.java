@@ -567,7 +567,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
 
-    protected SandBox retrieveApprovalSandBox(SandBox sandBox) {
+    public SandBox retrieveApprovalSandBox(SandBox sandBox) {
         final String APPROVAL_SANDBOX_NAME = "Approval";
         SandBox approvalSandbox = sandBoxDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
 

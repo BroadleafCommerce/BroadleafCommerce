@@ -2,7 +2,6 @@ package org.broadleafcommerce.cms.admin.client.presenter.sandbox;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -36,17 +35,16 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 
     private static final CommentDialog COMMENT_DIALOG = new CommentDialog();
 
-    protected Record currentStructuredContentRecord;
-
 	protected SandBoxDisplay display;
 	protected ListGridRecord lastSelectedRecord = null;
 	protected Boolean loaded = false;
 
 	protected HandlerRegistration selectionChangedHandlerRegistration;
-	protected HandlerRegistration revertAllClickHandlerRegistration;
-    protected HandlerRegistration revertSelectionClickHandlerRegistration;
+	protected HandlerRegistration revertRejectAllClickHandlerRegistration;
+    protected HandlerRegistration revertRejectSelectionClickHandlerRegistration;
 	protected HandlerRegistration promoteAllClickHandlerRegistration;
     protected HandlerRegistration promoteSelectionClickHandlerRegistration;
+    protected HandlerRegistration refreshClickHandlerRegistration;
 	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 
 	protected Boolean disabled = false;
@@ -54,8 +52,8 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 	public void setStartState() {
         display.getPromoteAllButton().disable();
         display.getPromoteSelectionButton().disable();
-        display.getRevertAllButton().disable();
-        display.getRevertSelectionButton().disable();
+        display.getRevertRejectAllButton().disable();
+        display.getRevertRejectSelectionButton().disable();
         display.getRefreshButton().enable();
 	}
 
@@ -63,8 +61,8 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 		disabled = false;
 		display.getPromoteAllButton().enable();
         display.getPromoteSelectionButton().disable();
-        display.getRevertAllButton().enable();
-        display.getRevertSelectionButton().disable();
+        display.getRevertRejectAllButton().enable();
+        display.getRevertRejectSelectionButton().disable();
 	}
 
 	public void disable() {
@@ -87,30 +85,52 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
 	public void bind() {
-        revertAllClickHandlerRegistration = display.getRefreshButton().addClickHandler(new ClickHandler() {
+        refreshClickHandlerRegistration = display.getRefreshButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"fetch", "", ""});
+                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"fetch", "", ""});
                     setStartState();
                     display.getGrid().invalidateCache();
                 }
             }
         });
-		revertAllClickHandlerRegistration = display.getRevertAllButton().addClickHandler(new ClickHandler() {
+		revertRejectAllClickHandlerRegistration = display.getRevertRejectAllButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"revertAll", "", ""});
-                    setStartState();
-                    display.getGrid().invalidateCache();
+                    if (BLCMain.currentViewKey.equals("userSandBox")) {
+                        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectAll", "", ""});
+                        setStartState();
+                        display.getGrid().invalidateCache();
+                    } else {
+                        COMMENT_DIALOG.launch("Enter a rejection comment", new CommentCallback() {
+                            @Override
+                            public void comment(String comment) {
+                                ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectAll", "", comment});
+                                setStartState();
+                                display.getGrid().invalidateCache();
+                            }
+                        });
+                    }
                 }
             }
         });
-		revertSelectionClickHandlerRegistration = display.getRevertSelectionButton().addClickHandler(new ClickHandler() {
+		revertRejectSelectionClickHandlerRegistration = display.getRevertRejectSelectionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"revertSelected", getSelectedRecords(), ""});
-                    setStartState();
-                    display.getGrid().invalidateCache();
+                    if (BLCMain.currentViewKey.equals("userSandBox")) {
+                        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectSelected", getSelectedRecords(), ""});
+                        setStartState();
+                        display.getGrid().invalidateCache();
+                    } else {
+                        COMMENT_DIALOG.launch("Enter a rejection comment", new CommentCallback() {
+                            @Override
+                            public void comment(String comment) {
+                                ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectSelected", getSelectedRecords(), comment});
+                                setStartState();
+                                display.getGrid().invalidateCache();
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -119,7 +139,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 				ListGridRecord selectedRecord = event.getSelectedRecord();
 				if (event.getState() && selectedRecord != null) {
 					if (!selectedRecord.equals(lastSelectedRecord)) {
-						display.getRevertSelectionButton().enable();
+						display.getRevertRejectSelectionButton().enable();
                         display.getPromoteSelectionButton().enable();
 					}
 				}
@@ -131,7 +151,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                     COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
                         @Override
                         public void comment(String comment) {
-                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"promoteAll", "", comment});
+                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteAll", "", comment});
                             setStartState();
                             display.getGrid().invalidateCache();
                         }
@@ -145,7 +165,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                     COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
                         @Override
                         public void comment(String comment) {
-                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{"promoteSelected", getSelectedRecords(), comment});
+                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteSelected", getSelectedRecords(), comment});
                             setStartState();
                             display.getGrid().invalidateCache();
                         }
@@ -182,7 +202,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 
     @Override
     public void setup() {
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("sandBoxItemDS", new SandBoxItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("sandBoxItemDS", new SandBoxItemListDataSourceFactory(), null, new Object[]{BLCMain.currentViewKey, "fetch", "", ""}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(dataSource);
@@ -213,12 +233,12 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 		return selectionChangedHandlerRegistration;
 	}
 
-    public HandlerRegistration getRevertAllClickHandlerRegistration() {
-        return revertAllClickHandlerRegistration;
+    public HandlerRegistration getRevertRejectAllClickHandlerRegistration() {
+        return revertRejectAllClickHandlerRegistration;
     }
 
-    public HandlerRegistration getRevertSelectionClickHandlerRegistration() {
-        return revertSelectionClickHandlerRegistration;
+    public HandlerRegistration getRevertRejectSelectionClickHandlerRegistration() {
+        return revertRejectSelectionClickHandlerRegistration;
     }
 
     public HandlerRegistration getPromoteAllClickHandlerRegistration() {
@@ -227,6 +247,10 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 
     public HandlerRegistration getPromoteSelectionClickHandlerRegistration() {
         return promoteSelectionClickHandlerRegistration;
+    }
+
+    public HandlerRegistration getRefreshClickHandlerRegistration() {
+        return refreshClickHandlerRegistration;
     }
 
     public PresenterSequenceSetupManager getPresenterSequenceSetupManager() {

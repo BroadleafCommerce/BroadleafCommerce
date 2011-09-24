@@ -38,23 +38,20 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 public class SandBoxItemListDataSourceFactory implements DataSourceFactory {
 
     public static final String sandBoxForeignKey = "sandBox";
-	public static CustomCriteriaListGridDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(sandBoxForeignKey, EntityImplementations.SANDBOXIMPL)});
-            DataSourceModule[] modules = new DataSourceModule[]{
-                new BasicClientEntityModule(CeilingEntities.SANDBOXITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, true, true, true, true);
-            dataSource.setCustomCriteria(new String[]{"fetch","",""});
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
+        operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+        PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(sandBoxForeignKey, EntityImplementations.SANDBOXIMPL)});
+        DataSourceModule[] modules = new DataSourceModule[]{
+            new BasicClientEntityModule(CeilingEntities.SANDBOXITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+        };
+        CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, true, true, true, true);
+        String[] customCriteria = new String[additionalItems.length];
+        for (int j=0;j<additionalItems.length;j++) {
+            customCriteria[j] = additionalItems[j].toString();
+        }
+        dataSource.setCustomCriteria(customCriteria);
+        dataSource.buildFields(null, false, cb);
 	}
 
 }
