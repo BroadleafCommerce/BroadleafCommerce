@@ -182,27 +182,4 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
         }
     }
 
-    @Override
-    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        ServiceException e = new ServiceException("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname);
-        LOG.error("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname, e);
-        throw e;
-    }
-
-    @Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        ServiceException e = new ServiceException("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname);
-        LOG.error("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname, e);
-        throw e;
-    }
-
-    @Override
-    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        ServiceException e = new ServiceException("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname);
-        LOG.error("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname, e);
-        throw e;
-    }
 }
