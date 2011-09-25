@@ -15,28 +15,19 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -62,6 +53,11 @@ public class AdminPermissionImpl implements AdminPermission {
     @AdminPresentation(friendlyName="Name", order=1, group="Permission", prominent=true)
     protected String name;
 
+    @Column(name = "PERMISSION_TYPE", nullable=false)
+    @Index(name="ADMINPERM_TYPE_INDEX", columnNames={"PERMISSION_TYPE"})
+    @AdminPresentation(friendlyName="Permission Type", order=3, group="Permission", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.security.service.type.PermissionType")
+    protected String type;
+
     @Column(name = "DESCRIPTION", nullable=false)
     @AdminPresentation(friendlyName="Description", order=2, group="Permission", prominent=true)
     protected String description;
@@ -71,6 +67,12 @@ public class AdminPermissionImpl implements AdminPermission {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles= new HashSet<AdminRole>();
+
+    @OneToMany(mappedBy = "adminPermission", targetEntity = AdminPermissionQualifiedEntityImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<AdminPermissionQualifiedEntity> qualifiedEntities;
 
     public Long getId() {
         return id;
@@ -104,4 +106,21 @@ public class AdminPermissionImpl implements AdminPermission {
 		this.allRoles = allRoles;
 	}
 
+    public PermissionType getType() {
+        return PermissionType.getInstance(type);
+    }
+
+    public void setType(PermissionType type) {
+        if (type != null) {
+    		this.type = type.getType();
+    	}
+    }
+
+    public List<AdminPermissionQualifiedEntity> getQualifiedEntities() {
+        return qualifiedEntities;
+    }
+
+    public void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities) {
+        this.qualifiedEntities = qualifiedEntities;
+    }
 }

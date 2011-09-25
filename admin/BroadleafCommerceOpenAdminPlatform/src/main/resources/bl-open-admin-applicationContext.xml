@@ -135,6 +135,7 @@
 		</property>
 		<!--<property name="sandBoxService" ref="blSandBoxService"/>-->
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+        <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
 	</bean>
 
     <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">

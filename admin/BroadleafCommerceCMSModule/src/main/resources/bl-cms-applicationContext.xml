@@ -93,6 +93,7 @@
             </map>
 		</property>
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+        <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
 	</bean>
 
     <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">

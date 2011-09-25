@@ -23,6 +23,7 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetDescriptionMapDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
@@ -107,7 +108,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                     initialValues.put("operation", "add");
                     initialValues.put("customCriteria", "assetListUi");
                     initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
-                    initialValues.put("ceilingEntityFullyQualifiedClassname", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname());
+                    initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
                     FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
@@ -166,7 +167,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                             initialValues.put("operation", "update");
                             initialValues.put("customCriteria", "assetListUi");
                             initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
-                            initialValues.put("ceilingEntityFullyQualifiedClassname", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getDefaultNewEntityFullyQualifiedClassname());
+                            initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                             initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
                             FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                                 public void onNewItemCreated(NewItemCreatedEvent event) {

@@ -15,7 +15,10 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 
@@ -28,4 +31,11 @@ public interface AdminPermission extends Serializable {
     public void setName(String name);
     public String getDescription();
     public void setDescription(String description);
+    public PermissionType getType();
+
+    public void setType(PermissionType type);
+
+    public List<AdminPermissionQualifiedEntity> getQualifiedEntities();
+
+    public void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities);
 }

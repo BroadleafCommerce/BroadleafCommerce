@@ -45,20 +45,17 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandleFetch(persistencePackage);
     }
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandleFetch(persistencePackage);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandleFetch(persistencePackage);
     }
 
     protected SandBox getSandBox(PersistencePackage persistencePackage) {

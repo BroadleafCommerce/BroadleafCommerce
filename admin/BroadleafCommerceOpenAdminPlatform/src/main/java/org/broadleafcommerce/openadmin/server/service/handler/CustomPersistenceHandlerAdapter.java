@@ -70,4 +70,9 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         throw new ServiceException("Update not supported");
     }
+
+    @Override
+    public Boolean willHandleSecurity(PersistencePackage persistencePackage) {
+        return false;
+    }
 }

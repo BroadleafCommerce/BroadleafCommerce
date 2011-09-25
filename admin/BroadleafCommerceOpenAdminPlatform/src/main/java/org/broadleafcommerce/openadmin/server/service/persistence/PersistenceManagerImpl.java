@@ -3,10 +3,12 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.EntitySandBoxItem;
+import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -32,6 +34,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	protected Map<TargetModeType, String> targetEntityManagers = new HashMap<TargetModeType, String>();
 	protected TargetModeType targetMode;
 	private ApplicationContext applicationContext;
+    protected AdminSecurityServiceRemote adminRemoteSecurityService;
 
 	public PersistenceManagerImpl(PersistenceModule[] modules) {
 		this.modules = modules;
@@ -175,12 +178,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		// check to see if there is a custom handler registered
 		for (CustomPersistenceHandler handler : customPersistenceHandlers) {
 			if (handler.canHandleInspect(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
+                }
 				DynamicResultSet results = handler.inspect(persistencePackage, metadataOverrides, dynamicEntityDao, this);
 
 				return results;
 			}
 		}
 
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
 		Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
 		Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 		for (PersistenceModule module : modules) {
@@ -208,10 +215,14 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleFetch(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
+                }
                 DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
                 return results;
             }
         }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
 		return myModule.fetch(persistencePackage, cto);
 	}
@@ -230,10 +241,14 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleAdd(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                }
                 Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
                 return response;
             }
         }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
 		return myModule.add(persistencePackage);
 	}
@@ -253,8 +268,24 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleUpdate(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    Entity entity = persistencePackage.getEntity();
+                    for (Property p : entity.getProperties()) {
+                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
+                            break;
+                        }
+                    }
+                }
                 Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
                 return response;
+            }
+        }
+        Entity entity = persistencePackage.getEntity();
+        for (Property p : entity.getProperties()) {
+            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
+                break;
             }
         }
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
@@ -315,8 +346,24 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //check to see if there is a custom handler registered
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleRemove(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    Entity entity = persistencePackage.getEntity();
+                    for (Property p : entity.getProperties()) {
+                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
+                            break;
+                        }
+                    }
+                }
                 handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
                 return;
+            }
+        }
+        Entity entity = persistencePackage.getEntity();
+        for (Property p : entity.getProperties()) {
+            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
+                break;
             }
         }
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
@@ -466,4 +513,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
 		this.customPersistenceHandlers = customPersistenceHandlers;
 	}
+
+    public AdminSecurityServiceRemote getAdminRemoteSecurityService() {
+        return adminRemoteSecurityService;
+    }
+
+    public void setAdminRemoteSecurityService(AdminSecurityServiceRemote adminRemoteSecurityService) {
+        this.adminRemoteSecurityService = adminRemoteSecurityService;
+    }
 }

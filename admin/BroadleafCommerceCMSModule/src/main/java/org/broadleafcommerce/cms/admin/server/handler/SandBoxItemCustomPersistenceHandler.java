@@ -15,15 +15,13 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -47,6 +45,14 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
+
+    @Resource(name="blAdminSecurityRemoteService")
+    protected AdminSecurityServiceRemote adminRemoteSecurityService;
+
+    @Override
+    public Boolean willHandleSecurity(PersistencePackage persistencePackage) {
+        return true;
+    }
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -84,8 +90,8 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             LOG.error("Invalid request for entity: " + ceilingEntityFullyQualifiedClassname, e);
             throw e;
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        if (adminUser == null) {
             ServiceException e = new ServiceException("Unable to determine current user logged in status");
             LOG.error("Unable to determine current user logged in status", e);
             throw e;
@@ -113,8 +119,6 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
                 requiredPermission = "PERMISSION_APPROVER_SANDBOX";
             }
 
-            User principal = (User) authentication.getPrincipal();
-            AdminUser adminUser = adminSecurityService.readAdminUserByUserName(principal.getUsername());
             boolean allowOperation = false;
             for (AdminRole role : adminUser.getAllRoles()) {
                 for (AdminPermission permission : role.getAllPermissions()) {

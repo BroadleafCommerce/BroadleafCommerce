@@ -30,7 +30,7 @@ import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.persistence.EntityConfiguration;
@@ -38,7 +38,6 @@ import org.hibernate.tool.hbm2x.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
+public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
 	public static final String IDENTITYCRITERIA = "Offer";
 	private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);
@@ -58,27 +57,32 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 	
 	public Boolean canHandleInspect(PersistencePackage persistencePackage) {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
+        boolean canHandle = false;
+        if (customCriteria != null) {
+            for (String criteria : customCriteria) {
+                if (criteria != null && criteria.equals(IDENTITYCRITERIA)) {
+                    canHandle = true;
+                    break;
+                }
+            }
+        }
+		return canHandle;
 	}
 
 	public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
+		return canHandleInspect(persistencePackage);
 	}
 
 	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
+		return canHandleInspect(persistencePackage);
 	}
 
 	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
+		return canHandleInspect(persistencePackage);
 	}
 
 	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && Arrays.binarySearch(customCriteria, IDENTITYCRITERIA) >= 0;
+		return canHandleInspect(persistencePackage);
 	}
 
 	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
