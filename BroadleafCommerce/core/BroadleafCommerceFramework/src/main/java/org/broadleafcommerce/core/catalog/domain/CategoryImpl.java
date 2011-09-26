@@ -119,6 +119,7 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
     
     /** The long description. */
+    @Lob
     @Column(name = "LONG_DESCRIPTION")
     @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
     protected String longDescription;
