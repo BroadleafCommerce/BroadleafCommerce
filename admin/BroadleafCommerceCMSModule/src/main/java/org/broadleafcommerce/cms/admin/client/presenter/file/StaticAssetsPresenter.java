@@ -23,6 +23,8 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetDescriptionMapDataSourceFactory;
@@ -63,9 +65,11 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
     protected HandlerRegistration leafAddClickHandlerRegistration;
     protected SubPresentable leafAssetPresenter;
     protected SubPresentable staticAssetDescriptionPresenter;
+    protected TreeNode currentSelectedRecord;
 
     @Override
 	protected void changeSelection(final Record selectedRecord) {
+        currentSelectedRecord = (TreeNode) selectedRecord;
 		leafAssetPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
                 if (response.getStatus()== RPCResponse.STATUS_FAILURE) {
@@ -87,10 +91,10 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 		initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
-                if (fetchAfterAddCriteria != null) {
-				    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
-                    resetForm();
+                if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentSelectedRecord)) {
+                   ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentSelectedRecord);
                 }
+                resetForm();
 			}
 		}, "90%", null, null);
 	}
@@ -113,8 +117,13 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                     FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
                             Criteria myCriteria = new Criteria();
-				            myCriteria.addCriteria("name", event.getRecord().getAttribute("name"));
-				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria);
+				            myCriteria.addCriteria("fullUrl", event.getRecord().getAttribute("fullUrl"));
+				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria, new DSCallback() {
+                                @Override
+                                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                    getDisplay().getListLeafDisplay().getGrid().selectRecord(0);
+                                }
+                            });
                             resetForm();
                         }
                     }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);

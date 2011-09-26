@@ -32,9 +32,12 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredCon
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -45,6 +48,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -75,6 +81,24 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             legacyForm.destroy();
         }
     }
+
+    @Override
+    protected void addClicked() {
+		Map<String, Object> initialValues = new HashMap<String, Object>();
+		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+			public void onNewItemCreated(NewItemCreatedEvent event) {
+                Criteria myCriteria = new Criteria();
+				myCriteria.addCriteria("contentName", event.getRecord().getAttribute("contentName"));
+                display.getListDisplay().getGrid().fetchData(myCriteria, new DSCallback() {
+                    @Override
+                    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                         getDisplay().getListDisplay().getGrid().selectRecord(0);
+                    }
+                });
+			}
+		}, "90%", null, null);
+	}
 
     @Override
 	protected void changeSelection(final Record selectedRecord) {
