@@ -123,8 +123,10 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Page updatePage(Page page) {
-        em.clear();
+    public Page updatePage(Page page, boolean clearLevel1Cache) {
+        if (clearLevel1Cache) {
+            em.clear();
+        }
         return em.merge(page);
     }
 

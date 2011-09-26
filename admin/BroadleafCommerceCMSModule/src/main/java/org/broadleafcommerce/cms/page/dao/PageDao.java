@@ -37,7 +37,7 @@ public interface PageDao {
 
     public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String localeName, SandBox userSandbox, SandBox productionSandBox);
 
-    public Page updatePage(Page page);
+    public Page updatePage(Page page, boolean clearLevel1Cache);
 
     public void delete(Page page);
 

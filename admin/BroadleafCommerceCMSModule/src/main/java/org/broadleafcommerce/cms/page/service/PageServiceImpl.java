@@ -157,7 +157,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
             page.setFullUrl(parentUrl + "/" + page.getName());
-            return pageDao.updatePage(page);
+            return pageDao.updatePage(page, true);
         } else if (isProductionSandBox(page.getSandbox())) {
             // Move from production to destSandbox
             Page clonedPage = page.cloneEntity();
@@ -294,7 +294,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                 }
                 Page originalPage = (Page) pageDao.readPageById(page.getOriginalPageId());
                 originalPage.setArchivedFlag(Boolean.TRUE);
-                pageDao.updatePage(originalPage);
+                pageDao.updatePage(originalPage, false);
 
                // We are archiving the old page and making this the new "production page", so
                // null out the original page id before saving.
@@ -303,7 +303,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
         }
         page.setSandbox(destinationSandBox);
-        pageDao.updatePage(page);
+        pageDao.updatePage(page, false);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         Page page = (Page) pageDao.readPageById(sandBoxItem.getTemporaryItemId());
         if (page != null) {
             page.setSandbox(destinationSandBox);
-            pageDao.updatePage(page);
+            pageDao.updatePage(page, false);
         }
     }
 
@@ -328,7 +328,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
         if (page != null) {
             page.setArchivedFlag(Boolean.TRUE);
-            pageDao.updatePage(page);
+            pageDao.updatePage(page, false);
         }
     }
 }
