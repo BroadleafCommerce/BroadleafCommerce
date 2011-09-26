@@ -170,7 +170,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         asset.mimeType = mimeType;
         asset.sandbox = sandbox;
         asset.originalAssetId = originalAssetId;
-        this.fileExtension = fileExtension;
+        asset.fileExtension = fileExtension;
 
         for (String key : contentMessageValues.keySet()) {
             StaticAssetDescription oldAssetDescription = contentMessageValues.get(key);

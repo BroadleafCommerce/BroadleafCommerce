@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.config;
+package org.broadleafcommerce.config;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.core.io.Resource;
+import org.springframework.util.PropertyPlaceholderHelper;
+import org.springframework.util.StringValueResolver;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.core.io.Resource;
 
 /**
  * A property resource configurer that chooses the property file at runtime
@@ -69,6 +73,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     protected RuntimeEnvironmentKeyResolver keyResolver;
     protected Set<String> environments = Collections.emptySet();
     protected Set<Resource> propertyLocations;
+    protected StringValueResolver stringValueResolver;
 
     public RuntimeEnvironmentPropertiesConfigurer() {
         // EMPTY
@@ -181,6 +186,12 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         return props;
     }
 
+    @Override
+	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+        super.processProperties(beanFactoryToProcess, props);
+		stringValueResolver = new PlaceholderResolvingStringValueResolver(props);
+	}
+
     /**
      * Sets the default environment name, used when the runtime environment
      * cannot be determined.
@@ -206,5 +217,39 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
      */
     public void setPropertyLocations(Set<Resource> propertyLocations) {
         this.propertyLocations = propertyLocations;
+    }
+
+    private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
+
+		private final PropertyPlaceholderHelper helper;
+
+		private final PropertyPlaceholderHelper.PlaceholderResolver resolver;
+
+		public PlaceholderResolvingStringValueResolver(Properties props) {
+			this.helper = new PropertyPlaceholderHelper("${", "}", ":", true);
+			this.resolver = new PropertyPlaceholderConfigurerResolver(props);
+		}
+
+		public String resolveStringValue(String strVal) throws BeansException {
+			String value = this.helper.replacePlaceholders(strVal, this.resolver);
+			return (value.equals("") ? null : value);
+		}
+	}
+
+	private class PropertyPlaceholderConfigurerResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
+
+		private final Properties props;
+
+		private PropertyPlaceholderConfigurerResolver(Properties props) {
+			this.props = props;
+		}
+
+		public String resolvePlaceholder(String placeholderName) {
+			return RuntimeEnvironmentPropertiesConfigurer.this.resolvePlaceholder(placeholderName, props, 1);
+		}
+	}
+
+    public StringValueResolver getStringValueResolver() {
+        return stringValueResolver;
     }
 }

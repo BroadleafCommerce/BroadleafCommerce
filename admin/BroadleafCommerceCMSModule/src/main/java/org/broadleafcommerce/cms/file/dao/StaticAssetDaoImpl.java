@@ -138,6 +138,8 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             sb.append("/");
         }
         sb.append(asset.getName());
+        sb.append(".");
+        sb.append(asset.getFileExtension());
         asset.setFullUrl(sb.toString());
 
         return em.merge(asset);

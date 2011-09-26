@@ -81,7 +81,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         staticAsset.setSandbox(destinationSandbox);
         staticAsset.setParentFolder(parentFolder);
         String parentUrl = (parentFolder == null ? "" : parentFolder.getFullUrl());
-        staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName());
+        staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName() + "." + staticAsset.getFileExtension());
         StaticAsset newAsset =  staticAssetDao.updateStaticAsset(staticAsset);
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
@@ -94,14 +94,14 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         String parentUrl = (staticAsset.getParentFolder() == null ? "" : staticAsset.getParentFolder().getFullUrl());
 
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {
-            staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName());
+            staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName() + "." + staticAsset.getFileExtension());
             return staticAssetDao.updateStaticAsset(staticAsset);
         } else if (checkForProductionSandbox(staticAsset.getSandbox())) {
             // Moving from production to destSandbox
             StaticAsset clonedAsset = staticAsset.cloneEntity();
             clonedAsset.setOriginalAssetId(staticAsset.getId());
             clonedAsset.setSandbox(destSandbox);
-            clonedAsset.setFullUrl(parentUrl + "/" + clonedAsset.getName());
+            clonedAsset.setFullUrl(parentUrl + "/" + clonedAsset.getName() + "." + clonedAsset.getFileExtension());
             StaticAsset returnAsset =  staticAssetDao.addStaticAsset(clonedAsset);
 
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());

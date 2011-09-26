@@ -111,12 +111,13 @@ public class StaticAssetViewController {
         cleanupThread.start();
     }
 
-    @RequestMapping(value = "/{fullUrl}.*", method = {RequestMethod.GET})
-    public ModelAndView viewItem(@PathVariable String fullUrl, HttpServletRequest request) {
+    @RequestMapping(value = "/**/{fileName}", method = {RequestMethod.GET})
+    public ModelAndView viewItem(@PathVariable String fileName, HttpServletRequest request) {
         try {
+            String fullUrl = request.getPathInfo();
             String sandBoxId = request.getParameter("sandBox");
             SandBox sandBox = sandBoxService.retrieveSandboxById(Long.valueOf(sandBoxId));
-            StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl("/"+fullUrl, sandBox);
+            StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
             String cacheName = constructCacheFileName(staticAsset, request.getParameterMap());
             File cacheFile = new File(cacheDirectory!=null?new File(cacheDirectory):DEFAULTCACHEDIRECTORY, cacheName);
             if (!cacheFile.exists()) {

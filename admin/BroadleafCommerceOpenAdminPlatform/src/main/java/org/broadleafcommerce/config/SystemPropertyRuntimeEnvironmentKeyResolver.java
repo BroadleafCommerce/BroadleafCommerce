@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.config;
+package org.broadleafcommerce.config;
 
 /**
  * Determines the current runtime environment by reading a system property

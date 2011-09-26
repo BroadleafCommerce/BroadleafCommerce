@@ -59,6 +59,8 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
 
+    protected String assetServerUrlPrefix = "fester";
+
     protected SandBox getSandBox(PersistencePackage persistencePackage) {
         return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
     }
@@ -254,15 +256,14 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
     protected Entity addImageRecords(Entity entity, SandBoxInfo sandBoxInfo) {
         if (entity.getType()[0].equals(ImageStaticAssetImpl.class.getName())) {
-            Property extension = entity.findProperty("fileExtension");
             Property fullUrl = entity.findProperty("fullUrl");
             Property property = new Property();
             property.setName("picture");
-            property.setValue("cms/staticasset" + fullUrl.getValue() + "." + extension.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property.setValue("../" + assetServerUrlPrefix + fullUrl.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
             entity.addProperty(property);
             Property property2 = new Property();
             property2.setName("pictureLarge");
-            property2.setValue("../cms/staticasset" + fullUrl.getValue() + "." + extension.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property2.setValue("../" + assetServerUrlPrefix + fullUrl.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
             entity.addProperty(property2);
         } else {
             Property property = new Property();
@@ -477,5 +478,13 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         attributes.setReadOnly(false);
         attributes.setHidden(true);
         return fieldMetadata;
+    }
+
+    public String getAssetServerUrlPrefix() {
+        return assetServerUrlPrefix;
+    }
+
+    public void setAssetServerUrlPrefix(String assetServerUrlPrefix) {
+        this.assetServerUrlPrefix = assetServerUrlPrefix;
     }
 }

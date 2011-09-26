@@ -60,7 +60,7 @@
 		</property>
 	</bean>
 
-	<bean id="blConfiguration" class="org.broadleafcommerce.profile.config.RuntimeEnvironmentPropertiesConfigurer">
+	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">
 			<set>
 				<value>classpath:config/bc/</value>

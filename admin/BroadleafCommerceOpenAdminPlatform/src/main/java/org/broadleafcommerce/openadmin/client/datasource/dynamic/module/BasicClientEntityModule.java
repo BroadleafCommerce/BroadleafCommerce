@@ -786,7 +786,6 @@ public class BasicClientEntityModule implements DataSourceModule {
                     field = new DataSourceImageField(propertyName, friendlyName);
                     field.setCanEdit(mutable);
 					field.setRequired(required);
-                    ((DataSourceImageField) field).setImageURLPrefix("../");
                     break;
 				default:
 					field = new DataSourceTextField(propertyName, friendlyName);
