@@ -349,10 +349,16 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 			@Override
 			public void onSearchItemSelected(TileGridItemSelectedEvent event) {
 				String staticAssetFullUrl = "/broadleafdemo/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
-				String title = event.getRecord().getAttribute("name");
-				String alt = event.getRecord().getAttribute("name");
-				String imgTag = "<img title='" + title + "' src='" + staticAssetFullUrl + "' alt='" + alt + "'/>";
-				insertRichTextContent(editor, imgTag);
+				String name = event.getRecord().getAttribute("name");
+				String fileExtension = event.getRecord().getAttribute("fileExtension");
+				String richContent;
+				
+				if (fileExtension.equals("gif") || fileExtension.equals("jpg") || fileExtension.equals("png")) {
+					richContent =  "<img title='" + name + "' src='" + staticAssetFullUrl + "' alt='" + name + "'/>";
+				} else {
+					richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
+				}
+				insertRichTextContent(editor, richContent);
 			}
 		});
 	}
