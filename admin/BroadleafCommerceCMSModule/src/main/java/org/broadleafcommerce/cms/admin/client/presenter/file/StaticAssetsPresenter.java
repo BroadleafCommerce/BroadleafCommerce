@@ -37,7 +37,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenterWithoutForm;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
@@ -58,7 +58,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class StaticAssetsPresenter extends DynamicEntityPresenter implements Instantiable {
+public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm implements Instantiable {
 
     protected MapStructureEntityEditDialog staticAssetDescriptionEntityAdd = null;
     public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();

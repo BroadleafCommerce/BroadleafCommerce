@@ -10,8 +10,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisp
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
@@ -22,7 +20,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureVie
 public class StaticAssetsView extends HLayout implements Instantiable, StaticAssetsDisplay {
 
     protected DynamicEntityTreeView treeDisplay;
-    protected DynamicFormView treeDynamicFormDisplay;
     protected SubItemView listDisplay;
     protected GridStructureView assetDescriptionDisplay;
 
@@ -40,12 +37,8 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 
 		treeDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("staticAssetFoldersTitle"), entityDataSource, true);
         treeDisplay.setHeight("80%");
-        treeDisplay.setShowResizeBar(true);
         treeDisplay.getToolBar().getMember(6).destroy();
-        treeDynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
-        treeDynamicFormDisplay.setHeight("20%");
         treeGridLayout.addMember(treeDisplay);
-        treeGridLayout.addMember(treeDynamicFormDisplay);
 
         VLayout listGridLayout = new VLayout();
 		listGridLayout.setID("staticAssetsGridLayout");
@@ -66,14 +59,8 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		return this;
 	}
 
-	@Override
     public DynamicEntityListDisplay getListDisplay() {
 		return treeDisplay;
-	}
-
-    @Override
-    public DynamicFormDisplay getDynamicFormDisplay() {
-		return treeDynamicFormDisplay;
 	}
 
     @Override

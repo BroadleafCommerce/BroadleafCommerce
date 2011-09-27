@@ -49,6 +49,11 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
     }
 
     @Override
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+        return canHandleInspect(persistencePackage);
+    }
+
+    @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
@@ -84,30 +89,6 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
     }
-
-    //TODO how are static asset folder updates handled?
-    /*@Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        Entity entity = persistencePackage.getEntity();
-		try {
-			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
-			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-			StaticAssetFolder adminInstance = (StaticAssetFolder) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            adminInstance = (StaticAssetFolder) SerializationUtils.clone(adminInstance);
-			adminInstance = (StaticAssetFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-
-            adminInstance = staticAssetService.updateStaticAsset(adminInstance, null);
-
-			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
-
-			return adminEntity;
-		} catch (Exception e) {
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
-		}
-    }*/
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {

@@ -15,19 +15,28 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.*;
+import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.tree.TreeGrid;
+import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -53,28 +62,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -88,19 +77,26 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
+    protected TreeNode currentFolderRecord;
 	protected AssetSearchDialog assetSearchDialogView;
 	protected EntitySearchDialog pageTemplateDialogView;
 
 	@Override
 	protected void removeClicked() {
-		display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
-            @Override
-            public void execute(DSResponse response, Object rawData, DSRequest request) {
-                destroyTemplateForm();
-                formPresenter.disable();
-		        display.getListDisplay().getRemoveButton().disable();
+        SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
+            public void execute(Boolean value) {
+                if (value) {
+                    display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            destroyTemplateForm();
+                            formPresenter.disable();
+                            display.getListDisplay().getRemoveButton().disable();
+                        }
+                    }, null);
+                }
             }
-        }, null);
+        });
 	}
 
     protected void destroyTemplateForm() {
@@ -123,11 +119,12 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
         } else {
             getDisplay().getAddPageButton().enable();
             getDisplay().getAddPageFolderButton().enable();
-            getDisplay().getListDisplay().getRemoveButton().disable();
+            getDisplay().getListDisplay().getRemoveButton().enable();
             destroyTemplateForm();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
             currentPageRecord = null;
         }
+        currentFolderRecord = (TreeNode) selectedRecord;
 	}
 
     protected void loadTemplateForm(final Record selectedRecord) {
@@ -231,8 +228,10 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     initialValues.put("_type", new String[]{EntityImplementations.PAGEIMPL});
                     BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
-                            TreeNode parentRecord = (TreeNode) display.getListDisplay().getGrid().getSelectedRecord();
-		                    reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(parentRecord));
+                            if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentFolderRecord)) {
+                               ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentFolderRecord);
+                            }
+		                    reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentFolderRecord));
                         }
                     }, "90%", null, null);
                 }
@@ -249,8 +248,10 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                     initialValues.put("_type", new String[]{EntityImplementations.PAGEFOLDERIMPL});
                     BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
                         public void onNewItemCreated(NewItemCreatedEvent event) {
-                            TreeNode parentRecord = (TreeNode) display.getListDisplay().getGrid().getSelectedRecord();
-		                    reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(parentRecord));
+                            if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentFolderRecord)) {
+                               ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentFolderRecord);
+                            }
+		                    reloadAllChildRecordsForId(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentFolderRecord));
                         }
                     }, "90%", null, null);
                 }

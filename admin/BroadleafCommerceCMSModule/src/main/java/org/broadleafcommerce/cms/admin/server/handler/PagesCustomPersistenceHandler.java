@@ -169,11 +169,12 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {
-                throw new ServiceException("Unable to remove PageFolder instances.");
+                PageFolder adminInstance = (PageFolder) persistenceObject;
+                pageService.deletePageFolder(adminInstance);
+            } else {
+			    Page adminInstance = (Page) persistenceObject;
+                pageService.deletePage(adminInstance, getSandBox(persistencePackage));
             }
-			Page adminInstance = (Page) persistenceObject;
-
-            pageService.deletePage(adminInstance, getSandBox(persistencePackage));
 		} catch (Exception e) {
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
