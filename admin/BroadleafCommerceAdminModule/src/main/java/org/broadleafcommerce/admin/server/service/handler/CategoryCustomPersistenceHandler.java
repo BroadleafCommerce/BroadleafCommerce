@@ -140,7 +140,6 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 			populateManyToOneFields,
 			includeManyToOneFields, 
 			excludeManyToOneFields,
-			null,
 			""
 		);
 		

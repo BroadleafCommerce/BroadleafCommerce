@@ -74,7 +74,7 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 		return canHandleFetch(persistencePackage);
 	}
 
-	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+	public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -90,7 +90,6 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
@@ -146,7 +145,6 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 				persistencePerspective.getPopulateToOneFields(),
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
 			BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Product.class.getName(), productProperties);
@@ -271,7 +269,6 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 			populateManyToOneFields,
 			includeManyToOneFields, 
 			excludeManyToOneFields,
-			null,
 			""
 		);
 		

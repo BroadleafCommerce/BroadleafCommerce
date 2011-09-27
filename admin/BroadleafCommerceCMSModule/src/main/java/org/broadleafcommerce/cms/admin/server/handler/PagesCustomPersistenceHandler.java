@@ -124,7 +124,6 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			populateManyToOneFields,
 			includeManyToOneFields,
 			excludeManyToOneFields,
-			null,
 			""
 		);
 

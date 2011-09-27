@@ -20,7 +20,7 @@ public interface PersistenceManager {
 
 	public abstract ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException;
 
-	public abstract DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides) throws ServiceException, ClassNotFoundException;
+	public abstract DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException;
 
 	public abstract DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
 

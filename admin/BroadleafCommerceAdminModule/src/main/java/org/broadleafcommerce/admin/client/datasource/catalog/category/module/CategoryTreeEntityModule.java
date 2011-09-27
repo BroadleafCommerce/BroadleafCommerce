@@ -26,12 +26,9 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicCli
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
-import java.util.Map;
 
 /**
  * 
@@ -39,16 +36,6 @@ import java.util.Map;
  *
  */
 public class CategoryTreeEntityModule extends BasicClientEntityModule {
-
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param service
-	 * @param metadataOverrides
-	 */
-	public CategoryTreeEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, metadataOverrides);
-	}
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname

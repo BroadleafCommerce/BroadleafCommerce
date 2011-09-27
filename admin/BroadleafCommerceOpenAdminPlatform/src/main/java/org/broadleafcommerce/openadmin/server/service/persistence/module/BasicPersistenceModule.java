@@ -431,7 +431,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
 			if (primaryKey == null) {
@@ -630,7 +629,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		}
 	}
 	
-	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException {
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try{
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -645,7 +644,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				metadataOverrides,
 				""
 			);
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
@@ -674,7 +672,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
 			
@@ -730,7 +727,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
 			Object primaryKey = getPrimaryKey(entity, mergedProperties);
@@ -782,7 +778,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
 			

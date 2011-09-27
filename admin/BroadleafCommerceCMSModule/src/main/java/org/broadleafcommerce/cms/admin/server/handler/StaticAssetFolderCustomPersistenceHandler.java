@@ -54,7 +54,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -70,7 +70,6 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 				persistencePerspective.getPopulateToOneFields(),
 				persistencePerspective.getIncludeFields(),
 				persistencePerspective.getExcludeFields(),
-				null,
 				""
 			);
             String[] keys = mergedProperties.keySet().toArray(new String[]{});
@@ -164,7 +163,6 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 			populateManyToOneFields,
 			includeManyToOneFields,
 			excludeManyToOneFields,
-			null,
 			""
 		);
 

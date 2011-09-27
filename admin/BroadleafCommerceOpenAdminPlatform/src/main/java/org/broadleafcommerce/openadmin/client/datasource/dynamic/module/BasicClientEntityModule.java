@@ -63,17 +63,11 @@ public class BasicClientEntityModule implements DataSourceModule {
 	protected final String ceilingEntityFullyQualifiedClassname;
 	protected PersistencePerspective persistencePerspective;
 	protected Long loadLevelCount = 0L;
-	protected Map<String, FieldMetadata> metadataOverrides;
 	
 	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		this(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, null);
-	}
-	
-	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
 		this.service = service;
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;
-		this.metadataOverrides = metadataOverrides;
 	}
 	
 	/**
@@ -504,18 +498,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 	}
     
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-    	String[] overrideKeys = null;
-    	FieldMetadata[] overrideValues = null;
-    	if (metadataOverrides != null) {
-    		overrideKeys = new String[metadataOverrides.size()];
-    		overrideValues = new FieldMetadata[metadataOverrides.size()];
-    		int j = 0;
-    		for (String key : metadataOverrides.keySet()){
-    			overrideKeys[j] = key;
-    			overrideValues[j] = metadataOverrides.get(key);
-    		}
-    	}
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new AbstractCallback<DynamicResultSet>() {
 			
 			@Override
 			protected void onOtherException(Throwable exception) {

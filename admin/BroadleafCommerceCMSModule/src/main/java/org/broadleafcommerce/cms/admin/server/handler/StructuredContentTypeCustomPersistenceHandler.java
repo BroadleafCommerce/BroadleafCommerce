@@ -72,7 +72,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentTypeId = persistencePackage.getCustomCriteria()[1];

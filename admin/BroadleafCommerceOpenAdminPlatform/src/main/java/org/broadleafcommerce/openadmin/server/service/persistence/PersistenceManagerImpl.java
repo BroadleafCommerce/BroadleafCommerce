@@ -174,14 +174,14 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 * java.lang.String[], java.util.Map)
 	 */
 	@Override
-	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides) throws ServiceException, ClassNotFoundException {
+	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
 		// check to see if there is a custom handler registered
 		for (CustomPersistenceHandler handler : customPersistenceHandlers) {
 			if (handler.canHandleInspect(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
                 }
-				DynamicResultSet results = handler.inspect(persistencePackage, metadataOverrides, dynamicEntityDao, this);
+				DynamicResultSet results = handler.inspect(persistencePackage, dynamicEntityDao, this);
 
 				return results;
 			}
@@ -191,7 +191,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
 		Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 		for (PersistenceModule module : modules) {
-			module.updateMergedProperties(persistencePackage, allMergedProperties, metadataOverrides);
+			module.updateMergedProperties(persistencePackage, allMergedProperties);
 		}
 		ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
 
