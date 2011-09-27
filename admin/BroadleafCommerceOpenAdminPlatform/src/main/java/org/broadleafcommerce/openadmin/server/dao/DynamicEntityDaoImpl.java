@@ -210,6 +210,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setFriendlyName(annot.friendlyName());
 				attr.setSecurityLevel(annot.securityLevel());
 				attr.setHidden(annot.hidden());
+                attr.setFormHidden(annot.formHidden());
 				attr.setOrder(annot.order());
 				attr.setExplicitFieldType(annot.fieldType());
 				attr.setGroup(annot.group());
@@ -472,6 +473,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setFriendlyName(annot.friendlyName());
 				attr.setSecurityLevel(annot.securityLevel());
 				attr.setHidden(annot.hidden());
+                attr.setFormHidden(annot.formHidden());
 				attr.setOrder(annot.order());
 				attr.setExplicitFieldType(annot.fieldType());
 				attr.setGroup(annot.group());

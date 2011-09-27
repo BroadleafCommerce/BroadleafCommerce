@@ -369,7 +369,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconAttributes.setBroadleafEnumeration("");
         iconAttributes.setReadOnly(false);
         iconAttributes.setHidden(false);
-        iconAttributes.setFormHidden(true);
+        iconAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
         iconAttributes.setColumnWidth("25");
         iconAttributes.setOrder(0);
         iconAttributes.setRequiredOverride(true);

@@ -35,7 +35,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private String securityLevel;
 	private Integer order;
 	private Boolean hidden;
-    private Boolean formHidden;
+    private FormHiddenEnum formHidden;
 	private String group;
 	private Integer groupOrder;
     private Boolean groupCollapsed;
@@ -186,11 +186,11 @@ public class FieldPresentationAttributes implements Serializable {
         this.excluded = excluded;
     }
 
-    public Boolean getFormHidden() {
+    public FormHiddenEnum getFormHidden() {
         return formHidden;
     }
 
-    public void setFormHidden(Boolean formHidden) {
+    public void setFormHidden(FormHiddenEnum formHidden) {
         this.formHidden = formHidden;
     }
 }

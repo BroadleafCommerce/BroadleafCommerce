@@ -28,6 +28,7 @@ import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -61,7 +62,8 @@ public class FormBuilder {
         	}
         	String name = field.getName();
         	String fieldType = field.getAttribute("fieldType");
-        	if (fieldType != null && !field.getHidden() && !field.getAttributeAsBoolean("formHidden")) {
+            FormHiddenEnum enumVal = (FormHiddenEnum) field.getAttributeAsObject("formHidden");
+        	if (fieldType != null && (!field.getHidden() || enumVal == FormHiddenEnum.VISIBLE) && enumVal != FormHiddenEnum.HIDDEN) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
                 if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {

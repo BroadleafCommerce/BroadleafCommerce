@@ -17,6 +17,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -76,7 +77,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
-    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)

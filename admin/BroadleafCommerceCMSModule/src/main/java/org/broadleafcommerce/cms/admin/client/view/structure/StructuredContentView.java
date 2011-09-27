@@ -1,9 +1,13 @@
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
@@ -22,6 +26,8 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
     protected DynamicEntityListView listDisplay;
     protected DynamicFormView dynamicFormDisplay;
+    protected ComboBoxItem currentContentType = new ComboBoxItem();
+    protected ToolStripButton clearButton;
 
     public StructuredContentView() {
 		setHeight100();
@@ -35,6 +41,21 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource);
+        Label label = new Label();
+        label.setContents(BLCMain.getMessageManager().getString("contentTypeFilterTitle"));
+        label.setWrap(false);
+        listDisplay.getToolBar().addMember(label);
+        clearButton = new ToolStripButton();  
+        clearButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/close.png");
+        listDisplay.getToolBar().addButton(clearButton);
+        currentContentType.setShowTitle(false);
+        currentContentType.setWidth(120);
+        currentContentType.setOptionDataSource(additionalDataSources[0]);
+        currentContentType.setDisplayField("name");
+        currentContentType.setValueField("id");
+        currentContentType.setDefaultToFirstOption(false);
+        listDisplay.getToolBar().addFormItem(currentContentType);
+
         leftVerticalLayout.addMember(listDisplay);
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
 
@@ -54,4 +75,11 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		return dynamicFormDisplay;
 	}
 
+    public ComboBoxItem getCurrentContentType() {
+        return currentContentType;
+    }
+
+    public ToolStripButton getClearButton() {
+        return clearButton;
+    }
 }

@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.lang.ObjectUtils;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 
@@ -66,6 +67,14 @@ public @interface AdminPresentation {
 	 * @return whether or not to hide
 	 */
 	boolean hidden() default false;
+
+    /**
+     * Whether or not the field is hidden in the form. This value overrides
+     * the hidden property for forms.
+     *
+     * @return whether or not to hide the form field.
+     */
+    FormHiddenEnum formHidden() default FormHiddenEnum.NOT_SPECIFIED;
 	
 	/**
 	 * Explicity specify the type the GUI should consider this field

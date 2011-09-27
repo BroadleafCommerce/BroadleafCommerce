@@ -660,9 +660,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
-                Boolean formHidden = property.getMetadata().getPresentationAttributes().getFormHidden();
+                FormHiddenEnum formHidden = property.getMetadata().getPresentationAttributes().getFormHidden();
                 if (formHidden == null) {
-                    formHidden = false;
+                    formHidden = FormHiddenEnum.NOT_SPECIFIED;
                 }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();

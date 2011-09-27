@@ -21,7 +21,6 @@ import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.*;
@@ -36,16 +35,16 @@ public class StructuredContentListDataSourceFactory implements DataSourceFactory
 
     public static final String structuredContentTypeForeignKey = "structuredContentType";
     public static final String localeForeignKey = "locale";
-	public static ListGridDataSource dataSource = null;
+	public static StructuredContentListDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(structuredContentTypeForeignKey, EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
             DataSourceModule[] modules = new DataSourceModule[]{
-                new BasicClientEntityModule(CeilingEntities.STRUCTUREDCONTENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+                new StructuredContentListClientEntityModule(CeilingEntities.STRUCTUREDCONTENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+			dataSource = new StructuredContentListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

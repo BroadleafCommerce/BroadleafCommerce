@@ -45,8 +45,12 @@ public class EntitySearchDialog extends Window {
 	protected ListGrid searchGrid;
 	protected IButton saveButton;
 	protected SearchItemSelectedEventHandler handler;
+
+    public EntitySearchDialog(ListGridDataSource dataSource) {
+        this(dataSource, false);
+    }
 	
-	public EntitySearchDialog(ListGridDataSource dataSource) {
+	public EntitySearchDialog(ListGridDataSource dataSource, boolean autoFetch) {
 		super();
 		this.setIsModal(true);
 		this.setShowModalMask(true);
@@ -58,7 +62,7 @@ public class EntitySearchDialog extends Window {
 		this.setVisible(false);
         
 		searchGrid = new ListGrid();
-        searchGrid.setAutoFetchData(false);
+        searchGrid.setAutoFetchData(autoFetch);
         searchGrid.setAlternateRecordStyles(true);
         searchGrid.setSelectionType(SelectionStyle.SINGLE);
         searchGrid.setShowAllColumns(false);

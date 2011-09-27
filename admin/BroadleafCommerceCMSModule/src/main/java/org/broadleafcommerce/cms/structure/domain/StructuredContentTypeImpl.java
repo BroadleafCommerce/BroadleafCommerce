@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,9 +45,11 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected Long id;
 
     @Column (name = "NAME")
+    @AdminPresentation(friendlyName="Name", order=1, group="Details", prominent=true)
     protected String name;
 
     @Column (name = "DESCRIPTION")
+    @AdminPresentation(friendlyName="Description", order=2, group="Details", prominent=true)
     protected String description;
 
     @OneToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})

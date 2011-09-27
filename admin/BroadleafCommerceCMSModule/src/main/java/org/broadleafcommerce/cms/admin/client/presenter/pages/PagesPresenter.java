@@ -313,7 +313,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 					"templateName",
 					"templatePath"
 				);
-				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource);
+				EntitySearchDialog pageTemplateSearchView = new EntitySearchDialog(pageTemplateDataSource, true);
 				pageTemplateDialogView = pageTemplateSearchView;
 				getPresenterSequenceSetupManager().getDataSource("pageTreeDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
