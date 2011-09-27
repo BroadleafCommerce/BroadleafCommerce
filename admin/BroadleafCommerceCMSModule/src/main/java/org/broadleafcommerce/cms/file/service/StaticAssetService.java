@@ -19,6 +19,7 @@ import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
+import org.hibernate.Criteria;
 
 import java.util.List;
 
@@ -30,15 +31,9 @@ public interface StaticAssetService extends SandBoxItemListener {
 
     public StaticAssetFolder findStaticAssetById(Long id);
 
-    /**
-     * Merges sandbox and site production content
-     *
-     * @param sandbox - the sandbox to find pages (null indicates pages that are in production for
-     *                  sites that are single tennant.
-     * @param parentFolder if null then root folder for the site.
-     * @return
-     */
-    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder);
+    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, Criteria c);
+
+    public Long countStaticAssetFolderChildren(SandBox sandbox, Criteria c);
 
     public List<StaticAssetFolder> findStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
 

@@ -20,11 +20,18 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -54,20 +61,102 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
     }
 
+    /**
+     * Retuns content items for the passed in sandbox that match the passed in criteria.
+     * <p/>
+     * Merges the sandbox content with the production content.
+     *
+     * @param sandbox      - the sandbox to find structured content items (null indicates items that are in production for
+     *                     sites that are single tenant.
+     * @return
+     */
     @Override
-    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, StaticAssetFolder parentFolder) {
-        SandBox productionSandbox = null;
-        SandBox userSandbox = sandbox;
+    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, Criteria c) {
+        c.add(Restrictions.eq("archivedFlag", false));
+        c.add(Restrictions.eq("folderFlag", false));
 
-        if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
-            productionSandbox = sandbox.getSite().getProductionSandbox();
-            if (userSandbox.getId().equals(productionSandbox.getId())) {
-                userSandbox = null;
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            c.add(Restrictions.isNull("sandbox"));
+            return c.list();
+        } else {
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression = null;
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
+                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+                }
             }
+
+            if (productionSandboxExpression != null) {
+                c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            } else {
+                c.add(currentSandboxExpression);
+            }
+
+            List<StaticAsset> resultList = (List<StaticAsset>) c.list();
+
+            // Iterate once to build the map
+            LinkedHashMap returnItems = new LinkedHashMap<Long,StructuredContent>();
+            for (StaticAsset asset : resultList) {
+                returnItems.put(asset.getId(), asset);
+            }
+
+            // Iterate to remove items from the final list
+            for (StaticAsset asset : resultList) {
+                if (asset.getDeletedFlag()) {
+                    returnItems.remove(asset.getId());
+                }
+            }
+            return new ArrayList<StaticAsset>(returnItems.values());
         }
 
-        List<StaticAsset> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildren(parentFolder, userSandbox, productionSandbox);
-        return staticAssetFolders;
+    }
+
+    /**
+     * Returns the count of items that match the passed in criteria.
+     *
+     * This counts the items in production + the new items in the sandbox - the
+     * existing items that have been deleted in the sandbox.
+     *
+     * @return the count of items in this sandbox that match the passed in Criteria
+     */
+    @Override
+    public Long countStaticAssetFolderChildren(SandBox sandbox, Criteria c) {
+        c.add(Restrictions.eq("archivedFlag", false));
+        c.add(Restrictions.eq("folderFlag", false));
+        c.setProjection(Projections.rowCount());
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            c.add(Restrictions.isNull("sandbox"));
+            return (Long) c.uniqueResult();
+        } else {
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression;
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                // Query is hitting the production sandbox.
+                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
+                    return (Long) c.uniqueResult();
+                }
+                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+            }
+
+            c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+
+            Long resultCount = (Long) c.list().get(0);
+            Long deletedCount = 0L;
+
+            // count deleted items
+            c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
+            deletedCount = (Long) c.list().get(0);
+
+            return resultCount - deletedCount;
+        }
     }
 
     @Override

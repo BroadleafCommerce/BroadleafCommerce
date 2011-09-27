@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 public class ArtifactItem extends CanvasItem {
 
     private Img previewImg;
+    protected IButton imageUpdateButton;
 
     public ArtifactItem() {
         VStack allStack = new VStack();
@@ -40,18 +41,28 @@ public class ArtifactItem extends CanvasItem {
         previewImg.setSrc(GWT.getModuleBaseURL()+"admin/images/blank.gif");
         previewImg.setShowDown(false);
         previewContainer.addChild(previewImg);
-        IButton imageUpdateButton = new IButton("Update Artifact");
+        imageUpdateButton = new IButton("Update Artifact");
         final FormItem formItem = this;
         imageUpdateButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final String formItemName = formItem.getName();
-            	((FormItemCallback) ((DynamicEntityDataSource) formItem.getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName)).execute(formItem);
+                ((FormItemCallback) ((DynamicEntityDataSource) formItem.getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName)).execute(formItem);
             }
         });
         allStack.addMember(imageUpdateButton);
 
         setCanvas(allStack);
+    }
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        super.setDisabled(disabled);
+        if (disabled) {
+            imageUpdateButton.setVisible(false);
+        } else {
+            imageUpdateButton.setVisible(true);
+        }
     }
 
     public void setPreviewSrc(String value) {

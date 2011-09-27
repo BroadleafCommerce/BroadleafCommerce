@@ -20,7 +20,6 @@ import com.smartgwt.client.data.*;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
@@ -38,7 +37,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenterWithoutForm;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
@@ -133,8 +131,10 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
         getDisplay().getListLeafDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
+                    getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().disable();
                     ArtifactItem artifactItem = (ArtifactItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
                     artifactItem.setPreviewSrc(getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
+                    artifactItem.setDisabled(true);
                     staticAssetDescriptionPresenter.enable();
                     staticAssetDescriptionPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), null);
 				}
@@ -166,7 +166,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
                 leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
 				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
-                ((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
+                /*((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
                         @Override
                         public void execute(FormItem formItem) {
                             getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.STATICASSETIMPL);
@@ -193,7 +193,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                             }, null, new String[]{"file", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder", "idHolder", "customCriteria"}, null);
                         }
                     }
-                );
+                );*/
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));

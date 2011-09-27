@@ -46,6 +46,7 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 		listGridLayout.setWidth("60%");
 
         listDisplay = new SubItemView(BLCMain.getMessageManager().getString("staticAssetsTitle"), false, true, true);
+        listDisplay.getSaveButton().setVisible(false);
         listGridLayout.addMember(listDisplay);
 
         assetDescriptionDisplay = new GridStructureView(BLCMain.getMessageManager().getString("assetDescriptionTitle"), false, true);

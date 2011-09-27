@@ -23,16 +23,14 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.Criteria;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Blob;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jfischer
@@ -59,7 +57,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
 
-    protected String assetServerUrlPrefix = "fester";
+    protected String assetServerUrlPrefix;
 
     protected SandBox getSandBox(PersistencePackage persistencePackage) {
         return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
@@ -168,7 +166,8 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         }
     }
 
-    @Override
+    //do not support update at this time
+    /*@Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         if (canHandleAdd(persistencePackage)) {
             if (!persistencePackage.getEntity().isMultiPartAvailableOnThread()) {
@@ -220,9 +219,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                     storage.setFileData(uploadBlob);
                     storage = staticAssetStorageService.save(storage);
                 } catch (Exception e) {
-                    /*
-                    the blob storage is a long-lived transaction - using a compensating transaction to cover failure
-                     */
+                    //the blob storage is a long-lived transaction - using a compensating transaction to cover failure
                     adminInstance = staticAssetService.updateStaticAsset(originalInstance, getSandBox(persistencePackage));
                     throw e;
                 }
@@ -252,7 +249,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
             }
         }
-    }
+    }*/
 
     protected Entity addImageRecords(Entity entity, SandBoxInfo sandBoxInfo) {
         if (entity.getType()[0].equals(ImageStaticAssetImpl.class.getName())) {
@@ -283,31 +280,23 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            /*String parentCategoryId = cto.get(StaticAssetsTreeDataSourceFactory.parentFolderForeignKey).getFilterValues().length==0?null:cto.get(StaticAssetsTreeDataSourceFactory.parentFolderForeignKey).getFilterValues()[0];
-            StaticAssetFolder pageOrFolder = null;
-            if (parentCategoryId != null) {
-                pageOrFolder = staticAssetService.findStaticAssetById(Long.valueOf(parentCategoryId));
-            }
-            List<StaticAssetFolder> folders = staticAssetService.findStaticAssetFolderChildren(null, pageOrFolder);
-            List<Serializable> convertedList = new ArrayList<Serializable>();
-            convertedList.addAll(folders);*/
-            /*
-            TODO once the staticAssetService is code stabilized, convert it to use criteria created below and
-            add any additional parameters it needs rather than use named queries. This will allow users to enter
-            filter terms in the UI and have those filters impact the results. This will also enable data paging.
-             */
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StaticAsset.class.getName(), getForeignKeyReadyMergedProperties());
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StaticAsset.class.getName());
-			List<Serializable> records = dynamicEntityDao.query(queryCriteria, StaticAsset.class);
+            Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StaticAsset.class);
+            List<StaticAsset> items = staticAssetService.findStaticAssetFolderChildren(getSandBox(persistencePackage), criteria);
+            List<Serializable> convertedList = new ArrayList<Serializable>();
+            convertedList.addAll(items);
 
-            Entity[] pageEntities = helper.getRecords(getForeignKeyReadyMergedProperties(), records);
+            Entity[] pageEntities = helper.getRecords(getForeignKeyReadyMergedProperties(), convertedList);
 
             for (Entity entity : pageEntities) {
                 entity = addImageRecords(entity, persistencePackage.getSandBoxInfo());
             }
 
-            DynamicResultSet response = new DynamicResultSet(pageEntities, pageEntities.length);
+            Long count = staticAssetService.countStaticAssetFolderChildren(getSandBox(persistencePackage), criteria);
+
+            DynamicResultSet response = new DynamicResultSet(pageEntities, count.intValue());
 
             return response;
         } catch (Exception e) {
@@ -315,25 +304,6 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
-
-    /*protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, ForeignKey foreignField, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
-		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
-			ceilingEntityFullyQualifiedClass.getName(),
-			entities,
-			foreignField,
-			new String[]{},
-			additionalForeignKeys,
-			MergedPropertyType.PRIMARY,
-			populateManyToOneFields,
-			includeManyToOneFields,
-			excludeManyToOneFields,
-			null,
-			""
-		);
-
-		return mergedProperties;
-	}*/
 
     protected synchronized Map<String, FieldMetadata> getMergedProperties() {
         return mergedProperties;
@@ -421,7 +391,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconLargeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconLargeAttributes.setProminent(false);
         iconLargeAttributes.setBroadleafEnumeration("");
-        iconLargeAttributes.setReadOnly(false);
+        iconLargeAttributes.setReadOnly(true);
         iconLargeAttributes.setHidden(false);
         iconLargeAttributes.setRequiredOverride(true);
         iconLargeAttributes.setOrder(0);
