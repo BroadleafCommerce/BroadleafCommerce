@@ -22,6 +22,8 @@ import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
@@ -64,6 +66,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
     protected Record currentStructuredContentRecord;
     protected HandlerRegistration clearContentFilterButtonHandlerRegistration;
     protected HandlerRegistration contentTypeFilterChangeHandlerRegistration;
+    protected boolean isFetched = false;
 
 	@Override
 	protected void removeClicked() {
@@ -204,7 +207,16 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     getDisplay().getCurrentContentType().clearValue();
+                    ((StructuredContentListDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setPermanentCriteria(null);
+                    getDisplay().getListDisplay().getGrid().clearCriteria();
+                    getDisplay().getListDisplay().getGrid().invalidateCache();
                 }
+            }
+        });
+        getDisplay().getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                isFetched = true;
             }
         });
         contentTypeFilterChangeHandlerRegistration = getDisplay().getCurrentContentType().addChangedHandler(new ChangedHandler() {
@@ -212,7 +224,11 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
             public void onChanged(ChangedEvent event) {
                 String newContentTypeId = (String) event.getValue();
                 ((StructuredContentListDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setPermanentCriteria(new Criteria("structuredContentType", newContentTypeId));
-                getDisplay().getListDisplay().getGrid().invalidateCache();
+                if (isFetched) {
+                    getDisplay().getListDisplay().getGrid().invalidateCache();
+                } else {
+                    getDisplay().getListDisplay().getGrid().fetchData();
+                }
             }
         });
 	}

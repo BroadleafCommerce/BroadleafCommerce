@@ -8,7 +8,6 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSource;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
@@ -42,7 +41,9 @@ public class StructuredContentListClientEntityModule extends BasicClientEntityMo
     public void executeFetch(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
         BLCMain.NON_MODAL_PROGRESS.startProgress();
         Criteria criteria = request.getCriteria();
-        criteria.addCriteria(((StructuredContentListDataSource) dataSource).permanentCriteria);
+        if (((StructuredContentListDataSource) dataSource).permanentCriteria != null) {
+            criteria.addCriteria(((StructuredContentListDataSource) dataSource).permanentCriteria);
+        }
 		CriteriaTransferObject cto = getCto(request);
 		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
 			public void onSuccess(DynamicResultSet result) {
