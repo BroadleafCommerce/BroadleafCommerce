@@ -89,15 +89,18 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             BufferedOutputStream bos = new BufferedOutputStream(byteArrayOutputStream);
+            if (formatName.toLowerCase().equals("gif")) {
+                formatName = "png";
+            }
             Iterator<ImageWriter> writerIter = ImageIO.getImageWritersByFormatName(formatName);
-            ImageWriter writer = (ImageWriter) writerIter.next();
+            ImageWriter writer = writerIter.next();
             ImageWriteParam iwp = writer.getDefaultWriteParam();
 
             if (formatName.toLowerCase().equals("jpeg") || formatName.toLowerCase().equals("jpg")) {
                 iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 iwp.setCompressionQuality(compressionQuality);
             }
-            
+
             MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bos);
             writer.setOutput(output);
 

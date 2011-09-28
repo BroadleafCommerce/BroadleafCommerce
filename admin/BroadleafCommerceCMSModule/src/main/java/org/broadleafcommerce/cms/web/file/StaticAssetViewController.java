@@ -118,6 +118,7 @@ public class StaticAssetViewController {
             String sandBoxId = request.getParameter("sandBox");
             SandBox sandBox = sandBoxService.retrieveSandboxById(Long.valueOf(sandBoxId));
             StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
+            String mimeType = staticAsset.getMimeType();
             String cacheName = constructCacheFileName(staticAsset, request.getParameterMap());
             File cacheFile = new File(cacheDirectory!=null?new File(cacheDirectory):DEFAULTCACHEDIRECTORY, cacheName);
             if (!cacheFile.exists()) {
@@ -150,13 +151,16 @@ public class StaticAssetViewController {
                     Operation[] operations = artifactService.buildOperations(request.getParameterMap(), original, staticAsset.getMimeType());
                     InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
                     createCacheFile(converted, cacheFile);
+                    if (mimeType.equals("image/gif")) {
+                        mimeType = "image/png";
+                    }
                 } else {
                     createCacheFile(storage.getFileData().getBinaryStream(), cacheFile);
                 }
             }
             Map<String, String> model = new HashMap<String, String>();
             model.put("cacheFilePath", cacheFile.getAbsolutePath());
-            model.put("mimeType", staticAsset.getMimeType());
+            model.put("mimeType", mimeType);
 
             return new ModelAndView("blStaticAssetView", model);
         } catch (Exception e) {
@@ -208,7 +212,7 @@ public class StaticAssetViewController {
 
     protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String[]> parameterMap) {
         StringBuffer sb = new StringBuffer();
-        sb.append(staticAsset.getFullUrl());
+        sb.append(staticAsset.getFullUrl().substring(0, staticAsset.getFullUrl().lastIndexOf(".")));
         sb.append("---");
 
         StringBuffer sb2 = new StringBuffer();

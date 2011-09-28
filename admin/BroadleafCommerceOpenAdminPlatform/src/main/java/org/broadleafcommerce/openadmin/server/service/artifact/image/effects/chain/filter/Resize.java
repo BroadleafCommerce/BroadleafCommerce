@@ -171,8 +171,14 @@ public class Resize extends BaseFilter {
 					h = destH;
 				}
 			}
+            int type;
+            if (img.getType()!=BufferedImage.TYPE_INT_ARGB && img.getType()!=BufferedImage.TYPE_INT_RGB) {
+                type = BufferedImage.TYPE_INT_ARGB;
+            } else {
+                type = img.getType();
+            }
 
-			BufferedImage tmp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+			BufferedImage tmp = new BufferedImage(w, h, type);
 			Graphics2D g2 = tmp.createGraphics();
 			g2.drawImage(ret.getScaledInstance(w, h, Image.SCALE_SMOOTH), 0, 0, w, h, null);
 			g2.dispose();
