@@ -1,6 +1,8 @@
 package org.broadleafcommerce.cms.admin.server.handler;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl;
@@ -24,6 +26,8 @@ import java.util.Map;
  * Created by jfischer
  */
 public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    private static final Log LOG = LogFactory.getLog(StaticAssetFolderCustomPersistenceHandler.class);
 
     @Resource(name="blStaticAssetService")
 	protected StaticAssetService staticAssetService;
@@ -85,7 +89,9 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 
 			return results;
 		} catch (Exception e) {
-			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
+			ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
+            throw ex;
 		}
     }
 

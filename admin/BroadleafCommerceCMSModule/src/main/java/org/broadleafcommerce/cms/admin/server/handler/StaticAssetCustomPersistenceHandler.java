@@ -7,6 +7,8 @@ import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.domain.*;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
@@ -37,6 +39,7 @@ import java.util.*;
  */
 public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
+    private static final Log LOG = LogFactory.getLog(StaticAssetCustomPersistenceHandler.class);
     private static HashMap<String, FieldMetadata> mergedProperties;
     private static HashMap<String, FieldMetadata> foreignKeyReadyMergedProperties;
 
@@ -424,7 +427,9 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
 			return results;
 		} catch (Exception e) {
-			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
+            ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
+            throw ex;
 		}
     }
 

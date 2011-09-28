@@ -60,7 +60,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected EntityManager standardEntityManager;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
     protected EntityConfiguration entityConfiguration;
-    protected Map<String, FieldMetadata> metadataOverrides;
+    protected Map<String, Map<String, FieldMetadata>> metadataOverrides;
 
 	@Override
 	public Class<? extends Serializable> getEntityClass() {
@@ -189,24 +189,17 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		buildPropertiesFromPolymorphicEntities(entities, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, mergedProperties, prefix);
 
         List<String> removeItems = new ArrayList<String>();
+
         for (String propertyName : presentationOverrides.keySet()) {
             AdminPresentation annot = presentationOverrides.get(propertyName).value();
             for (String key : mergedProperties.keySet()) {
-                if ((key.startsWith(propertyName) && annot.excluded()) || key.equals(propertyName)) {
+                if (key.startsWith(propertyName) && annot.excluded()) {
+                    removeItems.add(key);
+                    continue;
+                }
+                if (key.equals(propertyName)) {
                     FieldMetadata metadata = mergedProperties.get(key);
                     FieldPresentationAttributes attr = metadata.getPresentationAttributes();
-                    if (attr == null) {
-                        if (annot.excluded()) {
-                            continue;
-                        }
-                        attr = new FieldPresentationAttributes();
-                        metadata.setPresentationAttributes(attr);
-                    } else {
-                        if (annot.excluded()) {
-                            removeItems.add(key);
-                            continue;
-                        }
-                    }
                     attr.setFriendlyName(annot.friendlyName());
                     attr.setSecurityLevel(annot.securityLevel());
                     attr.setHidden(annot.hidden());
@@ -232,6 +225,83 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 itemMap.put(item.itemName(), item.itemValue());
                             }
                             attr.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (metadataOverrides != null) {
+            Map<String, FieldMetadata> configuredOverrides = metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
+            if (configuredOverrides != null) {
+                for (String propertyName : configuredOverrides.keySet()) {
+                    FieldMetadata localMetadata = configuredOverrides.get(propertyName);
+                    for (String key : mergedProperties.keySet()) {
+                        Boolean excluded = localMetadata.getPresentationAttributes().getExcluded();
+                        if (excluded == null) {
+                            excluded = false;
+                        }
+                        if (key.startsWith(propertyName) && excluded) {
+                            removeItems.add(key);
+                            continue;
+                        }
+                        if (key.equals(propertyName)) {
+                            if (removeItems.contains(key)) {
+                                //metadataOverrides wins - if scheduled for deletion - unschedule it
+                                removeItems.remove(key);
+                            }
+                            FieldMetadata serverMetadata = mergedProperties.get(key);
+                            if (localMetadata.getPresentationAttributes().getFriendlyName() != null) {
+                                serverMetadata.getPresentationAttributes().setFriendlyName(localMetadata.getPresentationAttributes().getFriendlyName());
+                            }
+                            if (localMetadata.getPresentationAttributes().getSecurityLevel() != null) {
+                                serverMetadata.getPresentationAttributes().setSecurityLevel(localMetadata.getPresentationAttributes().getSecurityLevel());
+                            }
+                            if (localMetadata.getPresentationAttributes().isHidden() != null) {
+                                serverMetadata.getPresentationAttributes().setHidden(localMetadata.getPresentationAttributes().isHidden());
+                            }
+                            if (localMetadata.getPresentationAttributes().getFormHidden() != null) {
+                                serverMetadata.getPresentationAttributes().setFormHidden(localMetadata.getPresentationAttributes().getFormHidden());
+                            }
+                            if (localMetadata.getPresentationAttributes().getOrder() != null) {
+                                serverMetadata.getPresentationAttributes().setOrder(localMetadata.getPresentationAttributes().getOrder());
+                            }
+                            if (localMetadata.getPresentationAttributes().getExplicitFieldType() != null) {
+                                serverMetadata.getPresentationAttributes().setExplicitFieldType(localMetadata.getPresentationAttributes().getExplicitFieldType());
+                            }
+                            if (localMetadata.getPresentationAttributes().getGroup() != null) {
+                                serverMetadata.getPresentationAttributes().setGroup(localMetadata.getPresentationAttributes().getGroup());
+                            }
+                            if (localMetadata.getPresentationAttributes().getGroupCollapsed() != null) {
+                                serverMetadata.getPresentationAttributes().setGroupCollapsed(localMetadata.getPresentationAttributes().getGroupCollapsed());
+                            }
+                            if (localMetadata.getPresentationAttributes().getGroupOrder() != null) {
+                                serverMetadata.getPresentationAttributes().setGroupOrder(localMetadata.getPresentationAttributes().getGroupOrder());
+                            }
+                            if (localMetadata.getPresentationAttributes().isLargeEntry() != null) {
+                                serverMetadata.getPresentationAttributes().setLargeEntry(localMetadata.getPresentationAttributes().isLargeEntry());
+                            }
+                            if (localMetadata.getPresentationAttributes().isProminent() != null) {
+                                serverMetadata.getPresentationAttributes().setProminent(localMetadata.getPresentationAttributes().isProminent());
+                            }
+                            if (localMetadata.getPresentationAttributes().getColumnWidth() != null) {
+                                serverMetadata.getPresentationAttributes().setColumnWidth(localMetadata.getPresentationAttributes().getColumnWidth());
+                            }
+                            if (localMetadata.getPresentationAttributes().getBroadleafEnumeration() != null) {
+                                serverMetadata.getPresentationAttributes().setBroadleafEnumeration(localMetadata.getPresentationAttributes().getBroadleafEnumeration());
+                            }
+                            if (localMetadata.getPresentationAttributes().getReadOnly() != null) {
+                                serverMetadata.getPresentationAttributes().setReadOnly(localMetadata.getPresentationAttributes().getReadOnly());
+                            }
+                            if (localMetadata.getPresentationAttributes().getExcluded() != null) {
+                                serverMetadata.getPresentationAttributes().setExcluded(localMetadata.getPresentationAttributes().getExcluded());
+                            }
+                            if (localMetadata.getPresentationAttributes().getRequiredOverride() != null) {
+                                serverMetadata.getPresentationAttributes().setRequiredOverride(localMetadata.getPresentationAttributes().getRequiredOverride());
+                            }
+                            if (localMetadata.getPresentationAttributes().getValidationConfigurations() != null) {
+                                serverMetadata.getPresentationAttributes().setValidationConfigurations(localMetadata.getPresentationAttributes().getValidationConfigurations());
+                            }
                         }
                     }
                 }
@@ -287,94 +357,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		return getFieldMetadata(prefix, propertyName, componentProperties, type, null, entityType, targetClass, presentationAttribute, mergedPropertyType);
 	}
-	
-	protected void overrideMetadata(FieldMetadata serverMetadata, String propertyName) {
-    	if (metadataOverrides != null && metadataOverrides.containsKey(propertyName)) {
-    		FieldMetadata localMetadata = metadataOverrides.get(propertyName);
-    		if (localMetadata.getCollection() != null) {
-    			serverMetadata.setCollection(localMetadata.getCollection());
-    		}
-    		if (localMetadata.getMutable() != null) {
-    			serverMetadata.setMutable(localMetadata.getMutable());
-    		}
-    		if (localMetadata.getRequired() != null) {
-    			serverMetadata.setRequired(localMetadata.getRequired());
-    		}
-    		if (localMetadata.getUnique() != null) {
-    			serverMetadata.setUnique(localMetadata.getUnique());
-    		}
-    		if (localMetadata.getAvailableToTypes() != null) {
-    			serverMetadata.setAvailableToTypes(localMetadata.getAvailableToTypes());
-    		}
-    		if (localMetadata.getEnumerationValues() != null) {
-    			serverMetadata.setEnumerationValues(localMetadata.getEnumerationValues());
-    		}
-    		if (localMetadata.getEnumerationClass() != null) {
-    			serverMetadata.setEnumerationClass(localMetadata.getEnumerationClass());
-    		}
-    		if (localMetadata.getFieldType() != null) {
-    			serverMetadata.setFieldType(localMetadata.getFieldType());
-    		}
-    		if (localMetadata.getForeignKeyClass() != null) {
-    			serverMetadata.setForeignKeyClass(localMetadata.getForeignKeyClass());
-    		}
-    		if (localMetadata.getForeignKeyProperty() != null) {
-    			serverMetadata.setForeignKeyProperty(localMetadata.getForeignKeyProperty());
-    		}
-    		if (localMetadata.getInheritedFromType() != null) {
-    			serverMetadata.setInheritedFromType(localMetadata.getInheritedFromType());
-    		}
-    		if (localMetadata.getLength() != null) {
-    			serverMetadata.setLength(localMetadata.getLength());
-    		}
-    		if (localMetadata.getMergedPropertyType() != null) {
-    			serverMetadata.setMergedPropertyType(localMetadata.getMergedPropertyType());
-    		}
-    		if (localMetadata.getPrecision() != null) {
-    			serverMetadata.setPrecision(localMetadata.getPrecision());
-    		}
-    		if (localMetadata.getScale() != null) {
-    			serverMetadata.setScale(localMetadata.getScale());
-    		}
-    		if (localMetadata.getPresentationAttributes().isHidden() != null) {
-    			serverMetadata.getPresentationAttributes().setHidden(localMetadata.getPresentationAttributes().isHidden());
-    		}
-    		if (localMetadata.getPresentationAttributes().isLargeEntry() != null) {
-    			serverMetadata.getPresentationAttributes().setLargeEntry(localMetadata.getPresentationAttributes().isLargeEntry());
-    		}
-    		if (localMetadata.getPresentationAttributes().isProminent() != null) {
-    			serverMetadata.getPresentationAttributes().setProminent(localMetadata.getPresentationAttributes().isProminent());
-    		}
-    		if (localMetadata.getPresentationAttributes().getBroadleafEnumeration() != null) {
-    			serverMetadata.getPresentationAttributes().setBroadleafEnumeration(localMetadata.getPresentationAttributes().getBroadleafEnumeration());
-    		}
-    		if (localMetadata.getPresentationAttributes().getColumnWidth() != null) {
-    			serverMetadata.getPresentationAttributes().setColumnWidth(localMetadata.getPresentationAttributes().getColumnWidth());
-    		}
-    		if (localMetadata.getPresentationAttributes().getExplicitFieldType() != null) {
-    			serverMetadata.getPresentationAttributes().setExplicitFieldType(localMetadata.getPresentationAttributes().getExplicitFieldType());
-    		}
-    		if (localMetadata.getPresentationAttributes().getFriendlyName() != null) {
-    			serverMetadata.getPresentationAttributes().setFriendlyName(localMetadata.getPresentationAttributes().getFriendlyName());
-    		}
-    		if (localMetadata.getPresentationAttributes().getGroup() != null) {
-    			serverMetadata.getPresentationAttributes().setGroup(localMetadata.getPresentationAttributes().getGroup());
-    		}
-    		if (localMetadata.getPresentationAttributes().getName() != null) {
-    			serverMetadata.getPresentationAttributes().setName(localMetadata.getPresentationAttributes().getName());
-    		}
-    		if (localMetadata.getPresentationAttributes().getOrder() != null) {
-    			serverMetadata.getPresentationAttributes().setOrder(localMetadata.getPresentationAttributes().getOrder());
-    		}
-    		if (localMetadata.getPresentationAttributes().getGroupOrder() != null) {
-    			serverMetadata.getPresentationAttributes().setGroupOrder(localMetadata.getPresentationAttributes().getGroupOrder());
-    		}
-            if (localMetadata.getPresentationAttributes().getGroupCollapsed() != null) {
-    			serverMetadata.getPresentationAttributes().setGroupCollapsed(localMetadata.getPresentationAttributes().getGroupCollapsed());
-    		}
-    	}
-    }
-	
+
 	protected FieldMetadata getFieldMetadata(
 		String prefix, 
 		String propertyName, 
@@ -438,8 +421,6 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fieldMetadata.setEnumerationValues(enumerationValues);
 			fieldMetadata.setEnumerationClass(presentationAttribute.getBroadleafEnumeration());
 		}
-		
-		overrideMetadata(fieldMetadata, prefix + propertyName);
 		
 		return fieldMetadata;
 	}
@@ -997,11 +978,11 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         this.entityConfiguration = entityConfiguration;
     }
 
-    public Map<String, FieldMetadata> getMetadataOverrides() {
+    public Map<String, Map<String, FieldMetadata>> getMetadataOverrides() {
         return metadataOverrides;
     }
 
-    public void setMetadataOverrides(Map<String, FieldMetadata> metadataOverrides) {
+    public void setMetadataOverrides(Map<String, Map<String, FieldMetadata>> metadataOverrides) {
         this.metadataOverrides = metadataOverrides;
     }
 }

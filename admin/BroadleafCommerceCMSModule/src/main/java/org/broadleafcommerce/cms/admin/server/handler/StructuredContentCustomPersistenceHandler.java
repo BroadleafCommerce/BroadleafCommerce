@@ -146,8 +146,9 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			return results;
 		} catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
-			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
+            ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
+            throw ex;
 		}
     }
 

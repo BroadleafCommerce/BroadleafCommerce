@@ -126,7 +126,9 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 			
 			return results;
 		} catch (Exception e) {
-			throw new ServiceException("Unable to retrieve inspection results for " + ceilingEntityFullyQualifiedClassname, e);
+            ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
+            throw ex;
 		}
 	}
 

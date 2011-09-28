@@ -112,7 +112,9 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			
 			return results;
 		} catch (Exception e) {
-			throw new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+			ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
+            throw ex;
 		}
 	}
 

@@ -157,8 +157,7 @@ public class FieldPresentationAttributes implements Serializable {
 		return validationConfigurations;
 	}
 
-	public void setValidationConfigurations(
-			Map<String, Map<String, String>> validationConfigurations) {
+	public void setValidationConfigurations(Map<String, Map<String, String>> validationConfigurations) {
 		this.validationConfigurations = validationConfigurations;
 	}
 
