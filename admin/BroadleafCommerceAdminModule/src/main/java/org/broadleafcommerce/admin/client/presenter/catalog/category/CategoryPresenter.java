@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.BooleanCallback;
@@ -41,6 +43,7 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
+import org.broadleafcommerce.openadmin.client.reflection.AsyncClient;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
@@ -57,7 +60,7 @@ import java.util.Map;
  *
  */
 public class CategoryPresenter extends DynamicEntityPresenter implements Instantiable {
-	
+
 	protected MapStructureEntityEditDialog mapEntityAdd = null;
 	protected String rootId = "1";
 	protected String rootName = "Store";

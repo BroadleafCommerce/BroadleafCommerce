@@ -24,6 +24,7 @@ import java.io.Serializable;
  */
 public interface Factory extends Serializable {
 
-	Object newInstance(String className);
+	public void createAsync(String className, AsyncClient entityPresenterClient);
 
+    public Object newInstance(String className);
 }

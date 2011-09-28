@@ -49,7 +49,7 @@ import java.util.Map;
  *
  */
 public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
-	
+
 	protected MapStructureEntityEditDialog mapEntityAdd = null;
 	protected EntitySearchDialog productSearchView;
 	protected SubPresentable crossSalePresenter;

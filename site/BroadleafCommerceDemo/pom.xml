@@ -25,6 +25,9 @@
                 <artifactId>gwt-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <configuration>
+                          <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+                        </configuration>
                         <goals>
                             <goal>compile</goal>
                             <goal>test</goal>
@@ -114,11 +117,13 @@
                                 <configuration>
                                     <resources>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/java</directory>
+                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/java
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java</directory>
+                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
@@ -126,15 +131,18 @@
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/resources</directory>
+                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/resources
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources</directory>
+                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources</directory>
+                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                     </resources>

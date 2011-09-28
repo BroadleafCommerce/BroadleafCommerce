@@ -58,7 +58,7 @@ public class PasswordMatchValidationFactory implements ValidationFactory {
 			valid.setErrorMessage(configurationItems.get("errorMessage"));
 		}
 		valid.setOtherField(fieldName + "Repeat_blc");
-		
+
 		return valid;
 	}
 
