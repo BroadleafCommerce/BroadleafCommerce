@@ -16,7 +16,7 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -30,6 +30,10 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATIC_ASSET_FOLDER")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationOverrides(
+        {@AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))}
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StaticAssetFolderImpl implements StaticAssetFolder {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +55,7 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     /*@ManyToOne(targetEntity = SiteImpl.class)
     @JoinColumn(name="SITE_ID")*/
     @Transient
+    @AdminPresentation(excluded = true)
     protected Site site;
 
     @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = StaticAssetFolderImpl.class)

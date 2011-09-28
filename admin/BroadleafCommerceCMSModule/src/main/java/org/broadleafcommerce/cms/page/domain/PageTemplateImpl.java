@@ -20,6 +20,8 @@ import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,6 +37,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_TEMPLATE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class PageTemplateImpl implements PageTemplate {
 
     private static final long serialVersionUID = 1L;

@@ -41,7 +41,6 @@ public class PageTemplateFormListDataSourceFactory {
         DataSourceModule[] modules = new DataSourceModule[]{
             new BasicClientEntityModule(CeilingEntities.PAGETEMPLATE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
         };
-        persistencePerspective.setPopulateToOneFields(true);
         PageTemplateFormListDataSource dataSource = new PageTemplateFormListDataSource(name + count++, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(customCriteria, false, cb);
 

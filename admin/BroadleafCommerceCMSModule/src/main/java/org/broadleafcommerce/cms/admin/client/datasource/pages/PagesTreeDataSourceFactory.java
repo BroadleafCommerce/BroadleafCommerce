@@ -42,9 +42,9 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{new ForeignKey(pageTemplateForeignKey, EntityImplementations.PAGETEMPLATE, null, ForeignKeyRestrictionType.ID_EQ, "templateName")});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(parentFolderForeignKey, EntityImplementations.PAGEFOLDERIMPL, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-				new PagesClientEntityModule(CeilingEntities.PAGES, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new PagesClientEntityModule(CeilingEntities.PAGEFOLDER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-            persistencePerspective.setPopulateToOneFields(true);
+            /*persistencePerspective.setPopulateToOneFields(true);
             persistencePerspective.setExcludeFields(new String[]{
                 "site",
                 "pageTemplate.id",
@@ -52,7 +52,7 @@ public class PagesTreeDataSourceFactory implements DataSourceFactory {
                 "pageTemplate.locale",
                 "sandbox",
                 "auditable"
-            });
+            });*/
 			dataSource = new PagesTreeDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null);
 			dataSource.buildFields(null, false, cb);
 		} else {

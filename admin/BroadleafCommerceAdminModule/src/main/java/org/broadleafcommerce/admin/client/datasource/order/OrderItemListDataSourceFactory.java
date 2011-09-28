@@ -46,26 +46,6 @@ public class OrderItemListDataSourceFactory implements DataSourceFactory {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ORDER, null));
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(
-				new String[]{
-					"giftWrapOrderItem", 
-					"bundleOrderItem", 
-					"category", 
-					"product.defaultCategory",
-					"product.name",
-					"product.description",
-					"product.longDescription",
-					"product.activeStartDate",
-					"product.activeEndDate",
-                    "product.sku",
-					"sku.name",
-					"sku.salePrice",
-					"sku.retailPrice",
-					"product.sku",
-                    "order"
-				}
-			);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new OrderItemEntityModule(CeilingEntities.ORDER_ITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

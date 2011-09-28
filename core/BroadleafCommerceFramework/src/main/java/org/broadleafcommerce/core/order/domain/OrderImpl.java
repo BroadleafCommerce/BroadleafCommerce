@@ -23,7 +23,7 @@ import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.Cache;
@@ -42,6 +42,17 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="customer.auditable", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="customer.challengeQuestion", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="customer.challengeAnswer", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="customer.passwordChangeRequired", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="customer.receiveEmail", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="customer.registered", value=@AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class OrderImpl implements Order {
 
     private static final long serialVersionUID = 1L;

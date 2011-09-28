@@ -43,12 +43,7 @@ public class StaticAssetsFolderTreeDataSourceFactory implements DataSourceFactor
             DataSourceModule[] modules = new DataSourceModule[]{
 				new StaticAssetsFolderClientEntityModule(CeilingEntities.STATICFOLDERASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-            persistencePerspective.setPopulateToOneFields(true);
-            persistencePerspective.setExcludeFields(new String[]{
-                "site",
-                "sandbox"
-            });
-			dataSource = new CustomCriteriaTreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null, true, true, true, true, true);
+            dataSource = new CustomCriteriaTreeGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, null, null, true, true, true, true, true);
 			dataSource.setCustomCriteria(new String[]{"assetFolderUi"});
             dataSource.buildFields(null, false, cb);
 		} else {

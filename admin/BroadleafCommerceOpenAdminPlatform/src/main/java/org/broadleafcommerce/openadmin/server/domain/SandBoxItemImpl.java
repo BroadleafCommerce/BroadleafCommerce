@@ -3,10 +3,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.AdminPresentationClass;
-import org.broadleafcommerce.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -25,7 +22,7 @@ import java.util.List;
         @AdminPresentationOverride(name="createdBy.email", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="createdBy.currentSandBox", value=@AdminPresentation(excluded = true))}
 )
-@AdminPresentationClass(populateToOneFields = true)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class SandBoxItemImpl implements SandBoxItem {
 
 	private static final long serialVersionUID = 1L;

@@ -22,6 +22,8 @@ import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -40,9 +42,11 @@ import java.util.Map;
 @EntityListeners(value = { AuditableListener.class })
 @Table(name = "BLC_STATIC_ASSET")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsset {
 
     @Embedded
+    @AdminPresentation(excluded = true)
     protected Auditable auditable = new Auditable();
     
     @Column(name ="FULL_URL")
@@ -71,6 +75,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "SANDBOX_ID")
+    @AdminPresentation(excluded = true)
     protected SandBox sandbox;
 
     @Column (name = "ARCHIVED_FLAG")

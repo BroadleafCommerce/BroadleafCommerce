@@ -42,7 +42,6 @@ public class PageTemplateSearchListDataSourceFactory implements DataSourceFactor
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new PageTemplateSearchClientEntityModule(CeilingEntities.PAGETEMPLATE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-            persistencePerspective.setPopulateToOneFields(true);
 			dataSource = new PageTemplateSearchListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {

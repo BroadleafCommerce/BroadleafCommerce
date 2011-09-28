@@ -29,6 +29,7 @@
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.admin.server.service.handler.OfferEntityInspectCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="targetEntityManagers">

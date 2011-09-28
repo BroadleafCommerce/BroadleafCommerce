@@ -16,7 +16,7 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -31,6 +31,16 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FOLDER")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="auditable", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="site", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="pageTemplate.id", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="pageTemplate.templateDescription", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="pageTemplate.locale", value=@AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class PageFolderImpl implements PageFolder {
 
     private static final long serialVersionUID = 1L;

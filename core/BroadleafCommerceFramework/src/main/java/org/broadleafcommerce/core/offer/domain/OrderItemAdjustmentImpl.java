@@ -32,13 +32,40 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_ADJUSTMENT")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="offer.id", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.description", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.discountType", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.value", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.priority", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.startDate", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.endDate", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.stackable", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.targetSystem", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.applyToSalePrice", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.appliesToOrderRules", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.appliesToCustomerRules", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.applyDiscountToMarkedItems", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.combinableWithOtherOffers", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.deliveryType", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.maxUses", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.uses", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.offerItemQualifierRuleType", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.offerItemTargetRuleType", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.totalitarianOffer", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     public static final long serialVersionUID = 1L;
@@ -63,6 +90,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
     @Index(name="OIADJUST_ITEM_INDEX", columnNames={"ORDER_ITEM_ID"})
+    @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)

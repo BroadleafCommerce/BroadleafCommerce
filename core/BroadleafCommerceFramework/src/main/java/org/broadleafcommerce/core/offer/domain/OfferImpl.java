@@ -45,13 +45,17 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationOverrides(
+        {@AdminPresentationOverride(name="targetItemCriteria.offer", value=@AdminPresentation(excluded = true))}
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class OfferImpl implements Offer {
 
     public static final long serialVersionUID = 1L;
@@ -130,7 +134,7 @@ public class OfferImpl implements Offer {
     protected String appliesToCustomerRules;
 
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
-    @AdminPresentation(friendlyName="Apply To Marked Items", group="Application", groupOrder=4, hidden=true)
+    @AdminPresentation(excluded = true)
     @Deprecated
     protected boolean applyDiscountToMarkedItems;
     

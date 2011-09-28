@@ -178,8 +178,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 }
             }
             AdminPresentationClass adminPresentationClass = entities[i].getAnnotation(AdminPresentationClass.class);
-            if (adminPresentationClass != null) {
-                classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields();
+            if (adminPresentationClass != null && classAnnotatedPopulateManyToOneFields == null && adminPresentationClass.populateToOneFields() != PopulateToOneFieldsEnum.NOT_SPECIFIED) {
+                classAnnotatedPopulateManyToOneFields = adminPresentationClass.populateToOneFields()==PopulateToOneFieldsEnum.TRUE;
             }
 		}
         if (classAnnotatedPopulateManyToOneFields != null) {
@@ -190,49 +190,51 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
         List<String> removeItems = new ArrayList<String>();
         for (String propertyName : presentationOverrides.keySet()) {
-            if (mergedProperties.containsKey(propertyName)) {
-                AdminPresentation annot = presentationOverrides.get(propertyName).value();
-                FieldMetadata metadata = mergedProperties.get(propertyName);
-                FieldPresentationAttributes attr = metadata.getPresentationAttributes();
-                if (attr == null) {
-                    if (annot.excluded()) {
-                        continue;
+            AdminPresentation annot = presentationOverrides.get(propertyName).value();
+            for (String key : mergedProperties.keySet()) {
+                if ((key.startsWith(propertyName) && annot.excluded()) || key.equals(propertyName)) {
+                    FieldMetadata metadata = mergedProperties.get(key);
+                    FieldPresentationAttributes attr = metadata.getPresentationAttributes();
+                    if (attr == null) {
+                        if (annot.excluded()) {
+                            continue;
+                        }
+                        attr = new FieldPresentationAttributes();
+                        metadata.setPresentationAttributes(attr);
+                    } else {
+                        if (annot.excluded()) {
+                            removeItems.add(key);
+                            continue;
+                        }
                     }
-                    attr = new FieldPresentationAttributes();
-                    metadata.setPresentationAttributes(attr);
-                } else {
-                    if (annot.excluded()) {
-                        removeItems.add(propertyName);
-                        continue;
+                    attr.setFriendlyName(annot.friendlyName());
+                    attr.setSecurityLevel(annot.securityLevel());
+                    attr.setHidden(annot.hidden());
+                    attr.setFormHidden(annot.formHidden());
+                    attr.setOrder(annot.order());
+                    attr.setExplicitFieldType(annot.fieldType());
+                    attr.setGroup(annot.group());
+                    attr.setGroupCollapsed(annot.groupCollapsed());
+                    attr.setGroupOrder(annot.groupOrder());
+                    attr.setLargeEntry(annot.largeEntry());
+                    attr.setProminent(annot.prominent());
+                    attr.setColumnWidth(annot.columnWidth());
+                    attr.setBroadleafEnumeration(annot.broadleafEnumeration());
+                    attr.setReadOnly(annot.readOnly());
+                    attr.setExcluded(annot.excluded());
+                    attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
+                    if (annot.validationConfigurations().length != 0) {
+                        ValidationConfiguration[] configurations = annot.validationConfigurations();
+                        for (ValidationConfiguration configuration : configurations) {
+                            ConfigurationItem[] items = configuration.configurationItems();
+                            Map<String, String> itemMap = new HashMap<String, String>();
+                            for (ConfigurationItem item : items) {
+                                itemMap.put(item.itemName(), item.itemValue());
+                            }
+                            attr.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+                        }
                     }
                 }
-				attr.setFriendlyName(annot.friendlyName());
-				attr.setSecurityLevel(annot.securityLevel());
-				attr.setHidden(annot.hidden());
-                attr.setFormHidden(annot.formHidden());
-				attr.setOrder(annot.order());
-				attr.setExplicitFieldType(annot.fieldType());
-				attr.setGroup(annot.group());
-                attr.setGroupCollapsed(annot.groupCollapsed());
-				attr.setGroupOrder(annot.groupOrder());
-				attr.setLargeEntry(annot.largeEntry());
-				attr.setProminent(annot.prominent());
-				attr.setColumnWidth(annot.columnWidth());
-				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
-				attr.setReadOnly(annot.readOnly());
-                attr.setExcluded(annot.excluded());
-                attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
-				if (annot.validationConfigurations().length != 0) {
-					ValidationConfiguration[] configurations = annot.validationConfigurations();
-					for (ValidationConfiguration configuration : configurations) {
-						ConfigurationItem[] items = configuration.configurationItems();
-						Map<String, String> itemMap = new HashMap<String, String>();
-						for (ConfigurationItem item : items) {
-							itemMap.put(item.itemName(), item.itemValue());
-						}
-						attr.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
-					}
-				}
             }
         }
 

@@ -420,7 +420,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, getMergedProperties());
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
-			DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
+			DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
 			return results;
 		} catch (Exception e) {

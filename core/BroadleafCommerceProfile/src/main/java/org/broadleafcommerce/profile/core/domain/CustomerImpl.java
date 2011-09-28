@@ -19,6 +19,8 @@ import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.profile.core.service.type.LocaleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -32,6 +34,7 @@ import java.util.Locale;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerImpl implements Customer {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +53,7 @@ public class CustomerImpl implements Customer {
     protected String username;
 
     @Column(name = "PASSWORD")
-    @AdminPresentation(friendlyName="Password", group="Customer", hidden=true)
+    @AdminPresentation(excluded = true)
     protected String password;
 
     @Column(name = "FIRST_NAME")
@@ -69,15 +72,15 @@ public class CustomerImpl implements Customer {
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    @AdminPresentation(friendlyName="Challenge Question", group="Customer")
+    @AdminPresentation(friendlyName="Challenge Question", group="Customer", excluded = true)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
-    @AdminPresentation(friendlyName="Challenge Answer", group="Customer", hidden=true)
+    @AdminPresentation(excluded = true)
     protected String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
-    @AdminPresentation(friendlyName="Password Change Required", group="Customer")
+    @AdminPresentation(excluded = true)
     protected boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")

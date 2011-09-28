@@ -41,7 +41,6 @@ public class DiscreteOrderItemFeePriceDataSourceFactory implements DataSourceFac
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.DISCRETEORDERITEMFEEPRICE, null));
-			persistencePerspective.setPopulateToOneFields(false);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.DISCRETE_ORDER_ITEM_FEE_PRICE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

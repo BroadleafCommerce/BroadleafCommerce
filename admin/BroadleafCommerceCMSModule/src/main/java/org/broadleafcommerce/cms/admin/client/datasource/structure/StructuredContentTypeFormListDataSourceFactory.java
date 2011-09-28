@@ -41,7 +41,6 @@ public class StructuredContentTypeFormListDataSourceFactory {
         DataSourceModule[] modules = new DataSourceModule[]{
             new BasicClientEntityModule(CeilingEntities.STRUCTUREDCONTENTTYPE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
         };
-        persistencePerspective.setPopulateToOneFields(true);
         StructuredContentTypeFormListDataSource dataSource = new StructuredContentTypeFormListDataSource(name + count++, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
         dataSource.buildFields(customCriteria, false, cb);
 

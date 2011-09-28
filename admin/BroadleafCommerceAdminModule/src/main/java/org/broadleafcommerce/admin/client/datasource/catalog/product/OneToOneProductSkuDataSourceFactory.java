@@ -42,13 +42,10 @@ public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{ParentCategoryListDataSourceFactory.defaultCategoryForeignKey});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new ProductSkuBasicEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-            //dataSource.setCommitImmediately(false);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

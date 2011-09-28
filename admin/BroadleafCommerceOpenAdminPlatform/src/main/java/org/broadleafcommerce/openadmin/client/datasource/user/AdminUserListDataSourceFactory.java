@@ -42,7 +42,6 @@ public class AdminUserListDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.setPopulateToOneFields(false);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.ADMIN_USER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

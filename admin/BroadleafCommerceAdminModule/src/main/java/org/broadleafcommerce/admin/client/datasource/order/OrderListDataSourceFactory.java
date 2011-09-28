@@ -42,8 +42,6 @@ public class OrderListDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"customer.auditable", "customer.challengeQuestion", "customer.challengeAnswer", "customer.passwordChangeRequired", "customer.receiveEmail", "customer.registered"});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.ORDER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

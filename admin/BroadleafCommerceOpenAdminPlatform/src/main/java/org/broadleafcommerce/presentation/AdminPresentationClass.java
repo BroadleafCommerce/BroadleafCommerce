@@ -37,6 +37,6 @@ public @interface AdminPresentationClass {
 	 *
 	 * @return whether or not to populate ManyToOne or OneToOne fields
 	 */
-	boolean populateToOneFields() default false;
+	PopulateToOneFieldsEnum populateToOneFields() default PopulateToOneFieldsEnum.NOT_SPECIFIED;
 
 }

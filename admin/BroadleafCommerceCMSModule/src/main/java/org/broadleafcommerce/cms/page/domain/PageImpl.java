@@ -17,8 +17,7 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.RequiredOverride;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -66,7 +65,7 @@ public class PageImpl extends PageFolderImpl implements Page {
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
     @JoinColumn(name="SANDBOX_ID")
-    @AdminPresentation(friendlyName="Page SandBox", order=3, group="Page", hidden = true)
+    @AdminPresentation(excluded = true)
     protected SandBox sandbox;
 
     @Column (name = "ARCHIVED_FLAG")

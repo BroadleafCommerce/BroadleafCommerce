@@ -113,18 +113,15 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility(
-						"question"
-					);
-					final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result);
-					
-					getPresenterSequenceSetupManager().getDataSource("customerDS").
-					getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-						"challengeQuestion", 
-						challengeQuestionSearchView, 
-						BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
-						display.getDynamicFormDisplay()
-					);
+				((ListGridDataSource) result).resetPermanentFieldVisibility("question");
+                final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                getPresenterSequenceSetupManager().getDataSource("customerDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "challengeQuestion",
+                    challengeQuestionSearchView,
+                    BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
+                    display.getDynamicFormDisplay()
+                );
 			}
 		}));
 	}

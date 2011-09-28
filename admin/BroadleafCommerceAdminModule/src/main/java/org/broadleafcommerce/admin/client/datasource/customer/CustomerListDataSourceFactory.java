@@ -44,8 +44,6 @@ public class CustomerListDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey("challengeQuestion", EntityImplementations.CHALLENGE_QUESTION, null, ForeignKeyRestrictionType.ID_EQ, "question")});
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"password", "challengeAnswer", "passwordChangeRequired"});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.CUSTOMER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

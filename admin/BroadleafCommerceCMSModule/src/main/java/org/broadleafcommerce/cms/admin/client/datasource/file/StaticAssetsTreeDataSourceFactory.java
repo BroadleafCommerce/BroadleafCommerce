@@ -44,12 +44,6 @@ public class StaticAssetsTreeDataSourceFactory implements DataSourceFactory {
             DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.STATICASSETS, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-            persistencePerspective.setPopulateToOneFields(true);
-            persistencePerspective.setExcludeFields(new String[]{
-                "site",
-                "sandbox",
-                "auditable"
-            });
 			dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, true, true, true, true);
             dataSource.setCustomCriteria(new String[]{"assetListUi"});
 			dataSource.buildFields(null, false, cb);
