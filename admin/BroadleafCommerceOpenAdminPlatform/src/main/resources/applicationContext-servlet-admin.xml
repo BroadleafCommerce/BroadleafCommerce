@@ -43,7 +43,5 @@
             <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/>
         </property>
     </bean>
-
-    <bean id="blAdminSandBoxRequestBean" class="org.broadleafcommerce.openadmin.security.AdminSandBoxFilter" init-method="init" scope="request"/>
 	
 </beans>
