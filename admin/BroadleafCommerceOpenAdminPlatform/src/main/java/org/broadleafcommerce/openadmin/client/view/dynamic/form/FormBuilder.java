@@ -199,15 +199,24 @@ public class FormBuilder {
         	});
         	for (String group : groups) {
         		SectionItem section = new SectionItem();  
-                section.setDefaultValue(group);  
-                section.setSectionExpanded(sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group));
+                section.setDefaultValue(group);
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
+                Boolean containsRichTextItem = null;
                 for (FormItem formItem : formItems) {
                 	ids[x] = formItem.getName();
                 	x++;
+                    if (containsRichTextItem == null && formItem instanceof RichTextCanvasItem) {
+                        containsRichTextItem = true;
+                    }
                 }
+                if (containsRichTextItem == null) {
+                    containsRichTextItem = false;
+                }
+                boolean shouldExpand = sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group);
+                section.setSectionExpanded(containsRichTextItem || shouldExpand);
+                section.setCanCollapse(!containsRichTextItem);
                 section.setItemIds(ids);
                 allItems.add(section);
                 allItems.addAll(formItems);
