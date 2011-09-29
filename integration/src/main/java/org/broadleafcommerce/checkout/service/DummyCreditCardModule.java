@@ -58,13 +58,14 @@ public class DummyCreditCardModule extends AbstractModule {
 	}
 
 	private PaymentResponseItem createResponse(PaymentContext paymentContext) {
+        paymentContext.getPaymentInfo().setReferenceNumber("abc123");
     	PaymentResponseItem responseItem = new PaymentResponseItemImpl();
 		responseItem.setTransactionTimestamp(SystemTime.asDate());
 		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
 		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
 		responseItem.setTransactionSuccess(true);
 		responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
-        
+
         return responseItem;
     }
 

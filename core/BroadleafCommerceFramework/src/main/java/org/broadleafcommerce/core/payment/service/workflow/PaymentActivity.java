@@ -15,9 +15,6 @@
  */
 package org.broadleafcommerce.core.payment.service.workflow;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.Referenced;
@@ -27,6 +24,10 @@ import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.money.Money;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PaymentActivity extends BaseActivity {
 
@@ -41,38 +42,83 @@ public class PaymentActivity extends BaseActivity {
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
         Money orderTotal = seed.getOrderTotal();
         Money remainingTotal = seed.getOrderTotal();
-        Iterator<PaymentInfo> itr = infos.keySet().iterator();
-        while(itr.hasNext()) {
-            PaymentInfo info = itr.next();
-            if (paymentService.isValidCandidate(info.getType())) {
-                PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, infos.get(info), userName);
-                PaymentResponseItem paymentResponseItem;
-                if (seed.getActionType().equals(PaymentActionType.AUTHORIZE)) {
-                    paymentResponseItem = paymentService.authorize(paymentContext);
-                } else if (seed.getActionType().equals(PaymentActionType.AUTHORIZEANDDEBIT)) {
-                    paymentResponseItem = paymentService.authorizeAndDebit(paymentContext);
-                } else if (seed.getActionType().equals(PaymentActionType.BALANCE)) {
-                    paymentResponseItem = paymentService.balance(paymentContext);
-                } else if (seed.getActionType().equals(PaymentActionType.CREDIT)) {
-                    paymentResponseItem = paymentService.credit(paymentContext);
-                } else if (seed.getActionType().equals(PaymentActionType.DEBIT)) {
-                    paymentResponseItem = paymentService.debit(paymentContext);
-                } else if (seed.getActionType().equals(PaymentActionType.VOID)) {
-                    paymentResponseItem = paymentService.voidPayment(paymentContext);
-                } else if (seed.getActionType().equals(PaymentActionType.REVERSEAUTHORIZE)) {
-                    paymentResponseItem = paymentService.reverseAuthorize(paymentContext);
-                } else {
-                    throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
-                }
-                if (paymentResponseItem != null) {
-                    //validate payment response item
-                    if (paymentResponseItem.getAmountPaid() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
-                        throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: amountPaid, transactionTimestamp or transactionSuccess");
+        Map<PaymentInfo, Referenced> replaceItems = new HashMap<PaymentInfo, Referenced>();
+        try {
+            Iterator<PaymentInfo> itr = infos.keySet().iterator();
+            while(itr.hasNext()) {
+                PaymentInfo info = itr.next();
+                if (paymentService.isValidCandidate(info.getType())) {
+                    Referenced referenced = infos.get(info);
+                    itr.remove();
+                    infos.remove(info);
+                    PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, referenced, userName);
+                    PaymentResponseItem paymentResponseItem;
+                    if (seed.getActionType().equals(PaymentActionType.AUTHORIZE)) {
+                        try {
+                            paymentResponseItem = paymentService.authorize(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else if (seed.getActionType().equals(PaymentActionType.AUTHORIZEANDDEBIT)) {
+                        try {
+                            paymentResponseItem = paymentService.authorizeAndDebit(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else if (seed.getActionType().equals(PaymentActionType.BALANCE)) {
+                        try {
+                            paymentResponseItem = paymentService.balance(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else if (seed.getActionType().equals(PaymentActionType.CREDIT)) {
+                        try {
+                            paymentResponseItem = paymentService.credit(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else if (seed.getActionType().equals(PaymentActionType.DEBIT)) {
+                        try {
+                            paymentResponseItem = paymentService.debit(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else if (seed.getActionType().equals(PaymentActionType.VOID)) {
+                        try {
+                            paymentResponseItem = paymentService.voidPayment(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else if (seed.getActionType().equals(PaymentActionType.REVERSEAUTHORIZE)) {
+                        try {
+                            paymentResponseItem = paymentService.reverseAuthorize(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
+                    } else {
+                        referenced.setReferenceNumber(info.getReferenceNumber());
+                        replaceItems.put(info, referenced);
+                        throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                     }
-                    seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
-                    remainingTotal = remainingTotal.subtract(paymentResponseItem.getAmountPaid());
+                    if (paymentResponseItem != null) {
+                        //validate payment response item
+                        if (paymentResponseItem.getAmountPaid() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
+                            throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: amountPaid, transactionTimestamp or transactionSuccess");
+                        }
+                        seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
+                        remainingTotal = remainingTotal.subtract(paymentResponseItem.getAmountPaid());
+                    }
                 }
             }
+        } finally {
+            infos.putAll(replaceItems);
         }
 
         return context;
