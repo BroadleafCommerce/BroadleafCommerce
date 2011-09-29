@@ -45,11 +45,11 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 	protected AdminSecurityService adminSecurityService;
 
 	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
+		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
 	}
 
 	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
+		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
 	}
 
 	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
