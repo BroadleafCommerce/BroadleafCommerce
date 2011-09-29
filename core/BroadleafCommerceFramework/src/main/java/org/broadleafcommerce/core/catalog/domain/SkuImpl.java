@@ -26,6 +26,7 @@ import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.util.DateUtil;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -336,6 +337,7 @@ public class SkuImpl implements Sku {
     /*
      * This is to facilitate serialization to non-Java clients
      */
+    @JsonIgnore
     public Boolean getTaxable() {
         return isTaxable();
     }
@@ -366,6 +368,7 @@ public class SkuImpl implements Sku {
     /*
      * This is to facilitate serialization to non-Java clients
      */
+    @JsonIgnore
     public Boolean getDiscountable() {
         return isDiscountable();
     }
@@ -392,7 +395,8 @@ public class SkuImpl implements Sku {
             return null;
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
-    
+
+    @JsonIgnore
     public Boolean getAvailable() {
     	return isAvailable();
     }

@@ -990,6 +990,12 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>1.4.3</version>
+                <scope>compile</scope>
+            </dependency>
             <dependency>
 				<groupId>eu.medsea.mimeutil</groupId>
 				<artifactId>mime-util</artifactId>
