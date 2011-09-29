@@ -90,7 +90,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		entity.setProperties(new Property[]{prop});
 			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
 			            		
-			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage(null, entity, tempPerspective, getPresenterSequenceSetupManager().getDataSource("customerDS").createSandBoxInfo(), new String[]{"passwordUpdate"}), new AbstractCallback<Entity>() {
+			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage(null, entity, tempPerspective, new String[]{"passwordUpdate"}), new AbstractCallback<Entity>() {
 									public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
 										SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));

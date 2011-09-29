@@ -34,10 +34,6 @@ public interface Module {
 	
 	public void postDraw();
 
-	public Long getCurrentSandBox();
-
-	public void setCurrentSandBox(Long currentSandBox);
-
 	public String getHtmlEditorIFramePath();
 
 	public void setHtmlEditorIFramePath(String htmlEditorIFramePath);

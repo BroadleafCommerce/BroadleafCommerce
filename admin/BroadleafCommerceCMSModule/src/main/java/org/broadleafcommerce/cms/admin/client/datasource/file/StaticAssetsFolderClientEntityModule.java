@@ -35,7 +35,7 @@ public class StaticAssetsFolderClientEntityModule extends BasicClientEntityModul
         BLCMain.NON_MODAL_PROGRESS.startProgress();
         Criteria criteria = request.getCriteria();
 		CriteriaTransferObject cto = getCto(request);
-		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 TreeNode[] recordList = buildRecords(result, null);

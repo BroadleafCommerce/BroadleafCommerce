@@ -8,15 +8,13 @@ public class PersistencePackage implements Serializable {
 	
 	protected String ceilingEntityFullyQualifiedClassname;
 	protected PersistencePerspective persistencePerspective;
-	protected SandBoxInfo sandBoxInfo;
 	protected String[] customCriteria;
 	protected Entity entity;
 	
-	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, SandBoxInfo sandBoxInfo, String[] customCriteria) {
+	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) {
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;
 		this.entity = entity;
-		this.sandBoxInfo = sandBoxInfo;
 		this.customCriteria = customCriteria;
 	}
 	
@@ -40,14 +38,6 @@ public class PersistencePackage implements Serializable {
 	public void setPersistencePerspective(
 			PersistencePerspective persistencePerspective) {
 		this.persistencePerspective = persistencePerspective;
-	}
-	
-	public SandBoxInfo getSandBoxInfo() {
-		return sandBoxInfo;
-	}
-	
-	public void setSandBoxInfo(SandBoxInfo sandBoxInfo) {
-		this.sandBoxInfo = sandBoxInfo;
 	}
 	
 	public String[] getCustomCriteria() {

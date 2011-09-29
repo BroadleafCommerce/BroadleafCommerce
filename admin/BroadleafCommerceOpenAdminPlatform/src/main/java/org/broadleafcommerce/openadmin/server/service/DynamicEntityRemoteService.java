@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -54,11 +53,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         try {
             PersistenceManager persistenceManager = null;
             try {
-                SandBoxContext context = new SandBoxContext();
-                context.setSandBoxId(persistencePackage.getSandBoxInfo().getSandBox());
-                context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
-                SandBoxContext.setSandBoxContext(context);
-
                 persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
                 persistenceManager.setTargetMode(TargetModeType.SANDBOX);
                 return persistenceManager.inspect(persistencePackage);
@@ -66,7 +60,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
                 if (persistenceManager != null) {
                     persistenceManager.close();
                 }
-                SandBoxContext.setSandBoxContext(null);
             }
         } catch (ServiceException e) {
             throw e;
@@ -77,15 +70,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxId(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.fetch(persistencePackage, cto);
@@ -97,20 +83,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxId(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.add(persistencePackage);
@@ -122,20 +100,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxId(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.update(persistencePackage);
@@ -147,20 +117,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxId(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             persistenceManager.remove(persistencePackage);
@@ -172,7 +134,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 

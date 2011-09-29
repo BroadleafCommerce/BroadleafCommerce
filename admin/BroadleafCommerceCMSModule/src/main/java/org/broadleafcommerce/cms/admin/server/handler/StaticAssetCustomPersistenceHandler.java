@@ -18,6 +18,7 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageMetadata;
 import org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadedFile;
@@ -62,8 +63,8 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 
     protected String assetServerUrlPrefix;
 
-    protected SandBox getSandBox(PersistencePackage persistencePackage) {
-        return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
+    protected SandBox getSandBox() {
+        return sandBoxService.retrieveSandboxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
 
     @Override
@@ -129,7 +130,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             String extension = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1, upload.getOriginalFilename().length()).toLowerCase();
             adminInstance.setFileExtension(extension);
 
-            adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), getSandBox(persistencePackage));
+            adminInstance = staticAssetService.addStaticAsset(adminInstance, adminInstance.getParentFolder(), getSandBox());
 
 			Entity adminEntity = helper.getRecord(entityProperties, adminInstance, null, null);
 
@@ -143,11 +144,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
                 /*
                 the blob storage is a long-lived transaction - using a compensating transaction to cover failure
                  */
-                staticAssetService.deleteStaticAsset(adminInstance, getSandBox(persistencePackage));
+                staticAssetService.deleteStaticAsset(adminInstance, getSandBox());
                 throw e;
             }
 
-            return addImageRecords(adminEntity, persistencePackage.getSandBoxInfo());
+            return addImageRecords(adminEntity);
 		} catch (Exception e) {
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
@@ -163,7 +164,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             StaticAsset adminInstance = (StaticAsset) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
-            staticAssetService.deleteStaticAsset(adminInstance, getSandBox(persistencePackage));
+            staticAssetService.deleteStaticAsset(adminInstance, getSandBox());
         } catch (Exception e) {
             throw new ServiceException("Unable to delete entity for " + entity.getType()[0], e);
         }
@@ -254,16 +255,16 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         }
     }*/
 
-    protected Entity addImageRecords(Entity entity, SandBoxInfo sandBoxInfo) {
+    protected Entity addImageRecords(Entity entity) {
         if (entity.getType()[0].equals(ImageStaticAssetImpl.class.getName())) {
             Property fullUrl = entity.findProperty("fullUrl");
             Property property = new Property();
             property.setName("picture");
-            property.setValue("../" + assetServerUrlPrefix + fullUrl.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property.setValue("../" + assetServerUrlPrefix + fullUrl.getValue() + "?filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
             entity.addProperty(property);
             Property property2 = new Property();
             property2.setName("pictureLarge");
-            property2.setValue("../" + assetServerUrlPrefix + fullUrl.getValue() + "?sandBox=" + sandBoxInfo.getSandBox() + "&filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property2.setValue("../" + assetServerUrlPrefix + fullUrl.getValue() + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
             entity.addProperty(property2);
         } else {
             Property property = new Property();
@@ -287,17 +288,17 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StaticAsset.class.getName(), getForeignKeyReadyMergedProperties());
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StaticAsset.class.getName());
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StaticAsset.class);
-            List<StaticAsset> items = staticAssetService.findStaticAssetFolderChildren(getSandBox(persistencePackage), criteria);
+            List<StaticAsset> items = staticAssetService.findStaticAssetFolderChildren(getSandBox(), criteria);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(items);
 
             Entity[] pageEntities = helper.getRecords(getForeignKeyReadyMergedProperties(), convertedList);
 
             for (Entity entity : pageEntities) {
-                entity = addImageRecords(entity, persistencePackage.getSandBoxInfo());
+                entity = addImageRecords(entity);
             }
 
-            Long count = staticAssetService.countStaticAssetFolderChildren(getSandBox(persistencePackage), criteria);
+            Long count = staticAssetService.countStaticAssetFolderChildren(getSandBox(), criteria);
 
             DynamicResultSet response = new DynamicResultSet(pageEntities, count.intValue());
 

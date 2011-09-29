@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -61,7 +62,12 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         query2.setParameter("targetSandbox", targetSandBox);
         query2.setParameter("fullUrl", fullUrl);
 
-        return (StaticAsset) query2.getSingleResult();
+        List<StaticAsset> results = query2.getResultList();
+        if (CollectionUtils.isEmpty(results)) {
+            return null;
+        } else {
+            return results.iterator().next();
+        }
     }
 
     @Override

@@ -36,7 +36,7 @@ public class PageTemplateSearchClientEntityModule extends BasicClientEntityModul
         Criteria criteria = request.getCriteria();
         criteria.addCriteria(((PageTemplateSearchListDataSource) dataSource).permanentCriteria);
 		CriteriaTransferObject cto = getCto(request);
-		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 TreeNode[] recordList = buildRecords(result, null);

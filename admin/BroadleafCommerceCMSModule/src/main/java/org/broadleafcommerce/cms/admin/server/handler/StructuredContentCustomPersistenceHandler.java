@@ -16,6 +16,7 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
@@ -76,8 +77,8 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         return canHandleInspect(persistencePackage);
     }
 
-    protected SandBox getSandBox(PersistencePackage persistencePackage) {
-        return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
+    protected SandBox getSandBox() {
+        return sandBoxService.retrieveSandboxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
 
     protected synchronized Map<String, FieldMetadata> getModifiedProperties() {
@@ -165,8 +166,8 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StructuredContent.class);
             Criteria count = dynamicEntityDao.getCriteria(countCriteria, StructuredContent.class);
 
-            List<StructuredContent> contents = structuredContentService.findContentItems(getSandBox(persistencePackage), criteria);
-            Long totalRecords = structuredContentService.countContentItems(getSandBox(persistencePackage), count);
+            List<StructuredContent> contents = structuredContentService.findContentItems(getSandBox(), criteria);
+            Long totalRecords = structuredContentService.countContentItems(getSandBox(), count);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(contents);
 
@@ -191,7 +192,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
 			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            adminInstance = structuredContentService.addStructuredContent(adminInstance, getSandBox(persistencePackage));
+            adminInstance = structuredContentService.addStructuredContent(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -216,7 +217,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             adminInstance = (StructuredContent) SerializationUtils.clone(adminInstance);
 			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox(persistencePackage));
+            adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -237,7 +238,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
-            structuredContentService.deleteStructuredContent(adminInstance, getSandBox(persistencePackage));
+            structuredContentService.deleteStructuredContent(adminInstance, getSandBox());
 		} catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);

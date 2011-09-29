@@ -110,7 +110,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
         newProps = newPropList.toArray(newProps);
         entity.setProperties(newProps);
         
-        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) buildRecord(result, false);
@@ -126,7 +126,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
 
 	@Override
 	public void buildFields(String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), new AbstractCallback<DynamicResultSet>() {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				ClassMetadata metadata = result.getClassMetaData();

@@ -33,7 +33,6 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	protected LinkedHashMap<String, String[]> pages = new LinkedHashMap<String, String[]>();
 	protected String moduleTitle;
 	protected String moduleKey;
-	protected Long currentSandBox = 2L;
 	
 	protected String htmlEditorIFramePath;
 	protected String basicHtmlEditorIFramePath;
@@ -59,14 +58,6 @@ public abstract class AbstractModule implements EntryPoint, Module {
 
 	public void setModuleKey(String moduleKey) {
 		this.moduleKey = moduleKey;
-	}
-
-	public Long getCurrentSandBox() {
-		return currentSandBox;
-	}
-
-	public void setCurrentSandBox(Long currentSandBox) {
-		this.currentSandBox = currentSandBox;
 	}
 
     public void addConstants(ConstantsWithLookup constants) {

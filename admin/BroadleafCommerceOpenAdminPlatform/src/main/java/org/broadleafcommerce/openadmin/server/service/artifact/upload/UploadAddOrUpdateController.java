@@ -45,7 +45,6 @@ public class UploadAddOrUpdateController extends SimpleFormController {
             PersistencePackage persistencePackage = new PersistencePackage();
             persistencePackage.setPersistencePerspective(new PersistencePerspective());
             String ceilingEntity = (String) mpvs.getPropertyValue("ceilingEntityFullyQualifiedClassname").getValue();
-            String sandbox = (String) mpvs.getPropertyValue("sandbox").getValue();
             callbackName = (String) mpvs.getPropertyValue("callbackName").getValue();
             String operation = (String) mpvs.getPropertyValue("operation").getValue();
             String customCriteria = (String) mpvs.getPropertyValue("customCriteria").getValue();
@@ -56,9 +55,6 @@ public class UploadAddOrUpdateController extends SimpleFormController {
             mpvs.removePropertyValue("customCriteria");
             persistencePackage.setCeilingEntityFullyQualifiedClassname(ceilingEntity);
             persistencePackage.setCustomCriteria(new String[]{customCriteria});
-            SandBoxInfo sandBoxInfo = new SandBoxInfo();
-            sandBoxInfo.setSandBox(Long.valueOf(sandbox));
-            persistencePackage.setSandBoxInfo(sandBoxInfo);
             Entity entity = new Entity();
             persistencePackage.setEntity(entity);
             entity.setType(new String[]{ceilingEntity});

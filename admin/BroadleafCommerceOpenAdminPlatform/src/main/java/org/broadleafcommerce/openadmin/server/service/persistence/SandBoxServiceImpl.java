@@ -36,25 +36,20 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Resource
     protected SandBoxDao sandBoxDao;
 
-    @Override
+    /*@Override
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
         return sandBoxEntityDao.retrieveSandBoxItemByTemporaryId(temporaryId);
     }
 
-    //@Resource(name="blSandBoxEntityDao")
+    @Resource(name="blSandBoxEntityDao")
 	protected SandBoxEntityDao sandBoxEntityDao;
 
-    //@Resource(name="blSandBoxIdGenerationService")
+    @Resource(name="blSandBoxIdGenerationService")
     protected SandBoxIdGenerationService sandBoxIdGenerationService;
 
-
-
-    //@Resource(name="blSessionFactory")
+    @Resource(name="blSessionFactory")
     protected SessionFactory sessionFactory;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.service.remote.SandBoxService#saveEntitySandBoxItems(org.broadleafcommerce.openadmin.client.dto.Entity, org.broadleafcommerce.openadmin.client.dto.PersistencePerspective, org.broadleafcommerce.openadmin.client.dto.SandBoxInfo)
-	 */
 	@Override
 	public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException {
         // TODO:  Determine best way to get "site" passed to this point.
@@ -134,9 +129,9 @@ public class SandBoxServiceImpl implements SandBoxService {
         } catch (Exception e) {
             throw new SandBoxException(e);
         }
-    }
+    }*/
 
-    protected Map<String, Class<?>> getIdMetadata(Class<?> entityClass) {
+    /*protected Map<String, Class<?>> getIdMetadata(Class<?> entityClass) {
         Map response = new HashMap();
         org.hibernate.metadata.ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
         String idProperty = metadata.getIdentifierPropertyName();
@@ -419,16 +414,16 @@ public class SandBoxServiceImpl implements SandBoxService {
 		}
 		
 		return sandBoxItem;
-	}
+	}*/
 	
 
-    public SandBoxIdGenerationService getSandBoxIdGenerationService() {
+    /*public SandBoxIdGenerationService getSandBoxIdGenerationService() {
         return sandBoxIdGenerationService;
     }
 
     public void setSandBoxIdGenerationService(SandBoxIdGenerationService sandBoxIdGenerationService) {
         this.sandBoxIdGenerationService = sandBoxIdGenerationService;
-    }
+    }*/
 
     @Override
     public SandBox retrieveSandboxById(Long sandboxId) {

@@ -35,6 +35,9 @@ import java.util.Map;
 @Controller("blStaticAssetViewController")
 public class StaticAssetViewController {
 
+    private static final String SANDBOX_ADMIN_ID_VAR = "blAdminCurrentSandboxId";
+    private static String SANDBOX_ID_VAR = "blSandboxId";
+
     private static final Log LOG = LogFactory.getLog(StaticAssetViewController.class);
     private static final File DEFAULTCACHEDIRECTORY = new File(System.getProperty("java.io.tmpdir"));
 
@@ -115,9 +118,23 @@ public class StaticAssetViewController {
     public ModelAndView viewItem(@PathVariable String fileName, HttpServletRequest request) {
         try {
             String fullUrl = request.getPathInfo();
-            String sandBoxId = request.getParameter("sandBox");
-            SandBox sandBox = sandBoxService.retrieveSandboxById(Long.valueOf(sandBoxId));
+            String sandBoxId = (String) request.getSession().getAttribute(SANDBOX_ID_VAR);
+            if (sandBoxId == null) {
+                sandBoxId = (String) request.getSession().getAttribute(SANDBOX_ADMIN_ID_VAR);
+            }
+            SandBox sandBox;
+            if (sandBoxId != null) {
+                sandBox = sandBoxService.retrieveSandboxById(Long.valueOf(sandBoxId));
+            } else {
+                sandBox = null;
+            }
             StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
+            if (staticAsset == null && sandBox != null) {
+                staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
+            }
+            if (staticAsset == null) {
+                throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBoxId + "), or the production sandBox.");
+            }
             String mimeType = staticAsset.getMimeType();
             String cacheName = constructCacheFileName(staticAsset, request.getParameterMap());
             File cacheFile = new File(cacheDirectory!=null?new File(cacheDirectory):DEFAULTCACHEDIRECTORY, cacheName);

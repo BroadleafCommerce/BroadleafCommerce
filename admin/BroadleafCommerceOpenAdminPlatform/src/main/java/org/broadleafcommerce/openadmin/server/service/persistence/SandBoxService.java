@@ -1,14 +1,9 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.server.domain.EntitySandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 
 import java.util.Calendar;
 import java.util.List;
@@ -43,11 +38,9 @@ public interface SandBoxService {
 
     public void rejectSelectedSandBoxItems(AdminUser user, SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
 
-    // Entity sandbox item code
-    public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;
+    //public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;
 
-    // Entity sandbox item code
-    public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
+    //public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 
     public SandBox retrieveApprovalSandBox(SandBox sandBox);
 

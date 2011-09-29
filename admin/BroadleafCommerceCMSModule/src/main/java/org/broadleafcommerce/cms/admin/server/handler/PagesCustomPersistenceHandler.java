@@ -11,6 +11,7 @@ import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -58,8 +59,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         return canHandleFetch(persistencePackage);
     }
 
-    protected SandBox getSandBox(PersistencePackage persistencePackage) {
-        return sandBoxService.retrieveSandboxById(persistencePackage.getSandBoxInfo().getSandBox());
+    protected SandBox getSandBox() {
+        return sandBoxService.retrieveSandboxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
 
     @Override
@@ -75,7 +76,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             if (PageFolderImpl.class.getName().equals(entity.getType()[0])) {
                 pageService.addPageFolder(adminInstance, adminInstance.getParentFolder());
             } else {
-                pageService.addPage((Page) adminInstance, adminInstance.getParentFolder(), getSandBox(persistencePackage));
+                pageService.addPage((Page) adminInstance, adminInstance.getParentFolder(), getSandBox());
             }
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
@@ -96,7 +97,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
             }
             String localeName = cto.get("pageTemplate.locale.localeName").getFilterValues()[0];
-            List<PageFolder> folders = pageService.findPageFolderChildren(getSandBox(persistencePackage), pageOrFolder, localeName);
+            List<PageFolder> folders = pageService.findPageFolderChildren(getSandBox(), pageOrFolder, localeName);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(folders);
 
@@ -148,7 +149,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             adminInstance = (Page) SerializationUtils.clone(adminInstance);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            adminInstance = pageService.updatePage(adminInstance, getSandBox(persistencePackage));
+            adminInstance = pageService.updatePage(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -172,7 +173,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 pageService.deletePageFolder(adminInstance);
             } else {
 			    Page adminInstance = (Page) persistenceObject;
-                pageService.deletePage(adminInstance, getSandBox(persistencePackage));
+                pageService.deletePage(adminInstance, getSandBox());
             }
 		} catch (Exception e) {
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);

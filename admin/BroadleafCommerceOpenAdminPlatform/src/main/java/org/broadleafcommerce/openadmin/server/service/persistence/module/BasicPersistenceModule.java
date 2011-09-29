@@ -29,6 +29,8 @@ import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
+import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -437,7 +439,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				primaryKey = getPrimaryKey(entity, mergedProperties);
 			}
 			Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
+            SandBoxContext context = SandBoxContext.getSandBoxContext();
+            if (context != null && context.getSandBoxMode() != SandBoxMode.IMMEDIATE_COMMIT) {
                 //clone the instance to disconnect it from its session
                 instance = (Serializable) SerializationUtils.clone(instance);
             }

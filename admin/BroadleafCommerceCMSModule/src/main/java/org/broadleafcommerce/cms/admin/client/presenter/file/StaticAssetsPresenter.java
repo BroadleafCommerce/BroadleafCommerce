@@ -109,7 +109,6 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 					Map<String, Object> initialValues = new HashMap<String, Object>();
                     initialValues.put("operation", "add");
                     initialValues.put("customCriteria", "assetListUi");
-                    initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
                     initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
                     FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
@@ -124,7 +123,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                             });
                             resetForm();
                         }
-                    }, null, new String[]{"file", "name", "callbackName", "operation", "sandbox", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);
+                    }, null, new String[]{"file", "name", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);
 				}
 			}
         });
@@ -148,8 +147,10 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 				}
             }
         });
-        FILE_UPLOAD.draw();
-        FILE_UPLOAD.hide();
+        if (!FILE_UPLOAD.isDrawn()) {
+            FILE_UPLOAD.draw();
+            FILE_UPLOAD.hide();
+        }
 	}
 
     public void resetForm() {

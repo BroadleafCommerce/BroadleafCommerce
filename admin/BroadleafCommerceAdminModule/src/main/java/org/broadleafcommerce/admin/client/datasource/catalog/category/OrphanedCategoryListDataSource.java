@@ -53,7 +53,7 @@ public class OrphanedCategoryListDataSource extends ListGridDataSource {
 	@Override
 	protected void executeFetch(final String requestId, DSRequest request, final DSResponse response) {
 		final DataSourceModule fetchModule = getCompatibleModule(persistencePerspective.getOperationTypes().getFetchType());
-		service.fetch(new PersistencePackage(fetchModule.getCeilingEntityFullyQualifiedClassname(), null, persistencePerspective, createSandBoxInfo(), null), fetchModule.getCto(request), new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, this) {
+		service.fetch(new PersistencePackage(fetchModule.getCeilingEntityFullyQualifiedClassname(), null, persistencePerspective, null), fetchModule.getCto(request), new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, this) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = fetchModule.buildRecords(result, new String[]{root});

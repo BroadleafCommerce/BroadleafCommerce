@@ -306,7 +306,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return mergedEntity;
     }
 
-    @Override
+    /*@Override
     public Entity updateDirtyState(Entity mergedEntity) throws ServiceException {
         try {
             Map idMetadata = dynamicEntityDao.getIdMetadata(Class.forName(mergedEntity.getType()[0]));
@@ -330,7 +330,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         return mergedEntity;
-    }
+    }*/
 
 	/*
 	 * (non-Javadoc)
