@@ -27,6 +27,7 @@ import com.smartgwt.client.widgets.form.FormItemValueFormatter;
 import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
@@ -437,7 +438,10 @@ public class FormBuilder {
         case HTML:
         	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
         	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane();
-        	richTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getUrlPrefix() + BLCMain.getModule(BLCMain.currentModuleKey).getHtmlEditorIFramePath());
+            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
+                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
+            }
+        	richTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath());
         	richTextHTMLPane.setContentsType(ContentsType.PAGE);
         	richTextHTMLPane.setWidth(700);
         	richTextHTMLPane.setHeight(450);
@@ -450,7 +454,10 @@ public class FormBuilder {
         case HTML_BASIC:
         	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
         	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane();
-        	basicRichTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getUrlPrefix() + BLCMain.getModule(BLCMain.currentModuleKey).getBasicHtmlEditorIFramePath());
+            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
+                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
+            }
+        	basicRichTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath());
         	basicRichTextHTMLPane.setContentsType(ContentsType.PAGE); 
         	basicRichTextHTMLPane.setWidth(300);
         	basicRichTextHTMLPane.setHeight(175);

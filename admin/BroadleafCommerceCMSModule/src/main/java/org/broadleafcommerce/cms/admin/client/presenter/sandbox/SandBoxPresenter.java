@@ -16,6 +16,7 @@ import org.broadleafcommerce.cms.admin.client.view.sandbox.CommentCallback;
 import org.broadleafcommerce.cms.admin.client.view.sandbox.CommentDialog;
 import org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractEntityPresenter;
@@ -95,7 +96,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ListGridRecord[] records = display.getGrid().getSelection();
-                    String prefix = BLCMain.getModule(BLCMain.currentModuleKey).getUrlPrefix();
+                    String prefix = ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getUrlPrefix();
                     UrlBuilder urlBuilder = new UrlBuilder();
                     if (prefix.startsWith("/")) {
                         urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
@@ -104,9 +105,8 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                     }
                     urlBuilder.setPath(prefix);
                     urlBuilder.setParameter("blSandboxId", SecurityManager.USER.getCurrentSandBoxId());
-                    String generalUrl = urlBuilder.buildString();
                     if (records == null || (records != null && records.length > 1)) {
-                        com.google.gwt.user.client.Window.open(generalUrl, "cmsPreview", null);
+                        com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
                     } else {
                         String specificSandboxId = records[0].getAttribute("sandBox.id");
                         String type = records[0].getAttribute("sandBoxItemType");

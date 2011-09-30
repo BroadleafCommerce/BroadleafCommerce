@@ -19,8 +19,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
-import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.AbstractHtmlEditingModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
  * @author jfischer
  *
  */
-public class ContentManagementModule extends AbstractModule {
+public class ContentManagementModule extends AbstractHtmlEditingModule {
 
 	public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(ContentManagementMessages.class));

@@ -34,15 +34,4 @@ public interface Module {
 	
 	public void postDraw();
 
-	public String getHtmlEditorIFramePath();
-
-	public void setHtmlEditorIFramePath(String htmlEditorIFramePath);
-
-	public String getBasicHtmlEditorIFramePath();
-
-	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath);
-
-    public String getUrlPrefix();
-
-    public void setUrlPrefix(String urlPrefix);
 }
