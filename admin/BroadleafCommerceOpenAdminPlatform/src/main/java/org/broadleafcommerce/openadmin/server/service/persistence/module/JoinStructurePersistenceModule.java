@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -118,14 +119,14 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		try {
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
 			Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				ceilingEntityFullyQualifiedClassname, 
-				entities, 
-				null, 
-				persistencePerspective.getAdditionalNonPersistentProperties(), 
+				ceilingEntityFullyQualifiedClassname,
+				entities,
+				null,
+				persistencePerspective.getAdditionalNonPersistentProperties(),
 				persistencePerspective.getAdditionalForeignKeys(),
 				MergedPropertyType.PRIMARY,
-				persistencePerspective.getPopulateToOneFields(), 
-				persistencePerspective.getIncludeFields(), 
+				persistencePerspective.getPopulateToOneFields(),
+				persistencePerspective.getIncludeFields(),
 				persistencePerspective.getExcludeFields(),
 				""
 			);
@@ -250,9 +251,27 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 					index++;
 				}
 			} else {
+                String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+                Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+                Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
+                    ceilingEntityFullyQualifiedClassname,
+                    entities,
+                    null,
+                    persistencePerspective.getAdditionalNonPersistentProperties(),
+                    persistencePerspective.getAdditionalForeignKeys(),
+                    MergedPropertyType.PRIMARY,
+                    persistencePerspective.getPopulateToOneFields(),
+                    persistencePerspective.getIncludeFields(),
+                    persistencePerspective.getExcludeFields(),
+                    ""
+                );
 				Serializable myRecord = records.get(index);
 				myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
-				persistenceManager.getDynamicEntityDao().merge(myRecord);
+				myRecord = persistenceManager.getDynamicEntityDao().merge(myRecord);
+                List<Serializable> myList = new ArrayList<Serializable>();
+                myList.add(myRecord);
+                Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, joinStructure.getTargetObjectPath());
+                entity = payload[0];
 			}
 			
 			return entity;
