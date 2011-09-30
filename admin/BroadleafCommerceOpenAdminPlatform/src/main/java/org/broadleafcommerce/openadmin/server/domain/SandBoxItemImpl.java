@@ -17,10 +17,16 @@ import java.util.List;
 @Table(name="BLC_SANDBOX_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @AdminPresentationOverrides(
-        {@AdminPresentationOverride(name="createdBy.login", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="createdBy.password", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="createdBy.email", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="createdBy.currentSandBox", value=@AdminPresentation(excluded = true))}
+        {
+            @AdminPresentationOverride(name="createdBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="createdBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="createdBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="sandBox.author", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="sandBox.site", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="sandBox.sandboxType", value=@AdminPresentation(excluded = true))
+        }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class SandBoxItemImpl implements SandBoxItem {
@@ -35,7 +41,6 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "SANDBOX_ID")
-    @AdminPresentation(excluded = true)
 	protected SandBox sandBox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)

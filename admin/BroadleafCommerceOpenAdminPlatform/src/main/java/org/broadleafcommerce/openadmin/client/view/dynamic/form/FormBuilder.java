@@ -437,7 +437,7 @@ public class FormBuilder {
         case HTML:
         	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
         	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane();
-        	richTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getHtmlEditorIFramePath());
+        	richTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getUrlPrefix() + BLCMain.getModule(BLCMain.currentModuleKey).getHtmlEditorIFramePath());
         	richTextHTMLPane.setContentsType(ContentsType.PAGE);
         	richTextHTMLPane.setWidth(700);
         	richTextHTMLPane.setHeight(450);
@@ -450,7 +450,7 @@ public class FormBuilder {
         case HTML_BASIC:
         	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
         	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane();
-        	basicRichTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getBasicHtmlEditorIFramePath());
+        	basicRichTextHTMLPane.setContentsURL(BLCMain.getModule(BLCMain.currentModuleKey).getUrlPrefix() + BLCMain.getModule(BLCMain.currentModuleKey).getBasicHtmlEditorIFramePath());
         	basicRichTextHTMLPane.setContentsType(ContentsType.PAGE); 
         	basicRichTextHTMLPane.setWidth(300);
         	basicRichTextHTMLPane.setHeight(175);

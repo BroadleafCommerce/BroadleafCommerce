@@ -1,6 +1,7 @@
 package org.broadleafcommerce.cms.admin.client.presenter.sandbox;
 
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.UrlBuilder;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -19,6 +20,7 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaL
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
@@ -45,6 +47,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 	protected HandlerRegistration promoteAllClickHandlerRegistration;
     protected HandlerRegistration promoteSelectionClickHandlerRegistration;
     protected HandlerRegistration refreshClickHandlerRegistration;
+    protected HandlerRegistration previewClickHandlerRegistration;
 	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 
 	protected Boolean disabled = false;
@@ -55,6 +58,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         display.getRevertRejectAllButton().disable();
         display.getRevertRejectSelectionButton().disable();
         display.getRefreshButton().enable();
+        display.getPreviewButton().disable();
 	}
 
 	public void enable() {
@@ -63,6 +67,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         display.getPromoteSelectionButton().disable();
         display.getRevertRejectAllButton().enable();
         display.getRevertRejectSelectionButton().disable();
+        display.getPreviewButton().disable();
 	}
 
 	public void disable() {
@@ -85,6 +90,36 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
 	public void bind() {
+        previewClickHandlerRegistration = display.getPreviewButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    ListGridRecord[] records = display.getGrid().getSelection();
+                    String prefix = BLCMain.getModule(BLCMain.currentModuleKey).getUrlPrefix();
+                    UrlBuilder urlBuilder = new UrlBuilder();
+                    if (prefix.startsWith("/")) {
+                        urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
+                        urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
+                        urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
+                    }
+                    urlBuilder.setPath(prefix);
+                    urlBuilder.setParameter("blSandboxId", SecurityManager.USER.getCurrentSandBoxId());
+                    String generalUrl = urlBuilder.buildString();
+                    if (records == null || (records != null && records.length > 1)) {
+                        com.google.gwt.user.client.Window.open(generalUrl, "cmsPreview", null);
+                    } else {
+                        String specificSandboxId = records[0].getAttribute("sandBox.id");
+                        String type = records[0].getAttribute("sandBoxItemType");
+                        urlBuilder.setParameter("blSandboxId", specificSandboxId);
+                        if (type.equals("PAGE")) {
+                            String newPath = prefix + records[0].getAttribute("description");
+                            urlBuilder.setPath(newPath);
+                        }
+                        com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
+                    }
+                }
+            }
+        });
         refreshClickHandlerRegistration = display.getRefreshButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
@@ -141,6 +176,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 					if (!selectedRecord.equals(lastSelectedRecord)) {
 						display.getRevertRejectSelectionButton().enable();
                         display.getPromoteSelectionButton().enable();
+                        display.getPreviewButton().enable();
 					}
 				}
 			}

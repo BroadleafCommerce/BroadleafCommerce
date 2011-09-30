@@ -36,6 +36,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	
 	protected String htmlEditorIFramePath;
 	protected String basicHtmlEditorIFramePath;
+    protected String urlPrefix;
 	
 	public void registerModule() {
 		BLCMain.addModule(this);
@@ -123,4 +124,11 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		this.basicHtmlEditorIFramePath = basicHtmlEditorIFramePath;
 	}
 
+    public String getUrlPrefix() {
+        return urlPrefix;
+    }
+
+    public void setUrlPrefix(String urlPrefix) {
+        this.urlPrefix = urlPrefix;
+    }
 }

@@ -56,6 +56,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
                 }
             }
             response.setUserName(persistentAdminUser.getLogin());
+            response.setCurrentSandBoxId(String.valueOf(persistentAdminUser.getCurrentSandbox().getId()));
             return response;
         }
 

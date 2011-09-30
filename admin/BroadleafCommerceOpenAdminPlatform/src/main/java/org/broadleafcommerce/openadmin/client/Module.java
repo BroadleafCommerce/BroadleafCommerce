@@ -41,5 +41,8 @@ public interface Module {
 	public String getBasicHtmlEditorIFramePath();
 
 	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath);
-	
+
+    public String getUrlPrefix();
+
+    public void setUrlPrefix(String urlPrefix);
 }

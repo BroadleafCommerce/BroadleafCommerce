@@ -26,6 +26,7 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 	protected ToolStripButton revertRejectSelectionButton;
     protected ToolStripButton revertRejectAllButton;
     protected ToolStripButton refreshButton;
+    protected ToolStripButton previewButton;
 	protected ListGrid grid;
 	protected ToolStrip toolBar;
 
@@ -72,6 +73,9 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         refreshButton = new ToolStripButton();
         refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
         toolBar.addButton(refreshButton);
+        previewButton = new ToolStripButton();
+        previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        toolBar.addButton(previewButton);
         toolBar.addSpacer(6);
 
         insideLayout.addMember(toolBar);
@@ -135,4 +139,8 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 	public ToolStrip getToolBar() {
 		return toolBar;
 	}
+
+    public ToolStripButton getPreviewButton() {
+        return previewButton;
+    }
 }

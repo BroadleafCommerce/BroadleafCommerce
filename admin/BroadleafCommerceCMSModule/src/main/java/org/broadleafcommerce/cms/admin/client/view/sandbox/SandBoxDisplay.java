@@ -28,4 +28,6 @@ public interface SandBoxDisplay extends Display {
 
 	public ToolStrip getToolBar();
 
+    public ToolStripButton getPreviewButton();
+
 }

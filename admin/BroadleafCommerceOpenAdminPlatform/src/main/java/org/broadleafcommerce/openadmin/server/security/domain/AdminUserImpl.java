@@ -86,8 +86,6 @@ public class AdminUserImpl implements AdminUser {
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
-
-    
     @Transient
     protected String unencodedPassword;
     
@@ -95,11 +93,10 @@ public class AdminUserImpl implements AdminUser {
         return unencodedPassword;
     }
 
-    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
     @AdminPresentation(excluded = true)
     protected SandBox currentSandBox;
-
 
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;

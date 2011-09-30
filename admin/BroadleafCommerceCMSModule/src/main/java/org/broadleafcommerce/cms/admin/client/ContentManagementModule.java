@@ -102,8 +102,9 @@ public class ContentManagementModule extends AbstractModule {
 			approverSandBoxPermissions
 		);
 
-        setHtmlEditorIFramePath("/broadleafdemo/richTextFullFeatured.html");
-        setBasicHtmlEditorIFramePath("/broadleafdemo/richTextBasic.html");
+        setUrlPrefix("/broadleafdemo");
+        setHtmlEditorIFramePath("/richTextFullFeatured.html");
+        setBasicHtmlEditorIFramePath("/richTextBasic.html");
         registerModule();
     }
 

@@ -1,32 +1,15 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItem;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
-import org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.service.exception.SandBoxException;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
-import org.hibernate.SessionFactory;
-import org.hibernate.type.Type;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
@@ -35,6 +18,9 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Resource
     protected SandBoxDao sandBoxDao;
+
+    @Resource(name="blAdminSecurityService")
+    protected AdminSecurityService adminSecurityService;
 
     /*@Override
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
@@ -439,12 +425,15 @@ public class SandBoxServiceImpl implements SandBoxService {
             userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
 
             if (userSandbox == null) {
-                SandBoxImpl sandBox = new SandBoxImpl();
+                SandBox sandBox = new SandBoxImpl();
                 sandBox.setSite(site);
                 sandBox.setName(adminUser.getLogin());
                 sandBox.setSandBoxType(SandBoxType.USER);
                 sandBox.setAuthor(adminUser.getId());
-                sandBoxDao.persist(sandBox);
+                sandBox = sandBoxDao.persist(sandBox);
+
+                adminUser.setCurrentSandbox(sandBox);
+                adminSecurityService.saveAdminUser(adminUser);
             }
         }
 
