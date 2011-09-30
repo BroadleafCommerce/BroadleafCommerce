@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -27,6 +29,7 @@ import javax.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATIC_ASSET_DESCRIPTION")
+@EntityListeners(value = { AuditableListener.class })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class StaticAssetDescriptionImpl implements StaticAssetDescription {
 
@@ -37,6 +40,10 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @TableGenerator(name = "StaticAssetDescriptionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetDescriptionId", allocationSize = 10)
     @Column(name = "STATIC_ASSET_DESC_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column (name = "DESCRIPTION")
     @AdminPresentation(friendlyName="Description")
@@ -83,6 +90,14 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
         newAssetDescription.longDescription = longDescription;
 
         return newAssetDescription;
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 }
 

@@ -1,6 +1,5 @@
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.util.Map;
@@ -39,10 +38,6 @@ public interface StaticAsset extends StaticAssetFolder {
     public String getMimeType();
 
     public void setMimeType(String mimeType);
-
-    public Auditable getAuditable();
-
-    public void setAuditable(Auditable auditable);
 
     public String getFileExtension();
 

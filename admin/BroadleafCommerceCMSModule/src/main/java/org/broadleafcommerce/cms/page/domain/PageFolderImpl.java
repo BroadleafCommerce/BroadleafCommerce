@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
@@ -31,6 +33,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FOLDER")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@EntityListeners(value = { AuditableListener.class })
 @AdminPresentationOverrides(
     {
         @AdminPresentationOverride(name="auditable", value=@AdminPresentation(excluded = true)),
@@ -50,6 +53,10 @@ public class PageFolderImpl implements PageFolder {
     @TableGenerator(name = "PageFolderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageFolderImpl", allocationSize = 10)
     @Column(name = "ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column(name = "NAME", nullable=false)
     @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true)
@@ -149,5 +156,12 @@ public class PageFolderImpl implements PageFolder {
         return fullUrl;
     }
 
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
 }
 

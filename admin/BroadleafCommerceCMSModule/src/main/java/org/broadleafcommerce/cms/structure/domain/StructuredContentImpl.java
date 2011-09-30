@@ -17,6 +17,8 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
@@ -39,6 +41,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STRUCTURED_CONTENT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@EntityListeners(value = { AuditableListener.class })
 public class StructuredContentImpl implements StructuredContent {
 
     private static final long serialVersionUID = 1L;
@@ -48,6 +51,10 @@ public class StructuredContentImpl implements StructuredContent {
     @TableGenerator(name = "StructuredContentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentImpl", allocationSize = 10)
     @Column(name = "ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
@@ -246,6 +253,14 @@ public class StructuredContentImpl implements StructuredContent {
     @Override
     public void setArchivedFlag(Boolean archivedFlag) {
         this.archivedFlag = archivedFlag;
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 
     @Override

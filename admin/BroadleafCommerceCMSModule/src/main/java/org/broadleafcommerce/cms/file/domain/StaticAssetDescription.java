@@ -1,5 +1,7 @@
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+
 import java.io.Serializable;
 
 /**
@@ -21,4 +23,7 @@ public interface StaticAssetDescription extends Serializable {
 
     public StaticAssetDescription cloneEntity();
 
+    public Auditable getAuditable();
+
+    public void setAuditable(Auditable auditable);
 }

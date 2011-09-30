@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -27,6 +30,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STRCTRD_CNTNT_FLD_DATA")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@EntityListeners(value = { AuditableListener.class })
 public class StructuredContentFieldDataImpl implements StructuredContentFieldData {
 
     private static final long serialVersionUID = 1L;
@@ -36,6 +40,10 @@ public class StructuredContentFieldDataImpl implements StructuredContentFieldDat
     @TableGenerator(name = "StructuredContentFieldDataId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentFieldDataImpl", allocationSize = 10)
     @Column(name = "STRCTRD_CNTNT_FLD_DATA_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column (name = "VALUE")
     protected String stringValue;
@@ -77,6 +85,14 @@ public class StructuredContentFieldDataImpl implements StructuredContentFieldDat
             lobValue = null;
             stringValue = null;
         }
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 
     @Override

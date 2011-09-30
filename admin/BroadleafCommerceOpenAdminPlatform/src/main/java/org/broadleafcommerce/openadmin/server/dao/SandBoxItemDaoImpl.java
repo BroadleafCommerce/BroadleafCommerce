@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -47,17 +48,17 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
     }
 
     @Override
-    public SandBoxItem addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
+    public SandBoxItem addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId, AdminUser adminUser) {
         SandBoxItemImpl sandBoxItem = new SandBoxItemImpl();
         sandBoxItem.setSandBoxOperationType(operationType);
         sandBoxItem.setSandBox(sandBox);
         sandBoxItem.setArchivedFlag(false);
         sandBoxItem.setLastUpdateDate(Calendar.getInstance().getTime());
-        //sandBoxItem.setCreatedBy();
         sandBoxItem.setDescription(description);
         sandBoxItem.setOriginalItemId(originalId);
         sandBoxItem.setTemporaryItemId(temporaryId);
         sandBoxItem.setSandBoxItemType(itemType);
+        sandBoxItem.setCreatedBy(adminUser);
 
         SandBoxAction action = new SandBoxActionImpl();
         action.setActionDate(sandBoxItem.getLastUpdateDate());

@@ -1,5 +1,8 @@
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -12,6 +15,7 @@ import java.sql.Blob;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ASSET_STORAGE")
+@EntityListeners(value = { AuditableListener.class })
 public class StaticAssetStorageImpl implements StaticAssetStorage {
 
     private static final long serialVersionUID = 1L;
@@ -21,6 +25,10 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @TableGenerator(name = "StaticAssetStorageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetStorageImpl", allocationSize = 10)
     @Column(name = "STATIC_ASSET_STORAGE_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column(name ="STATIC_ASSET_ID", nullable = false)
     protected Long staticAssetId;
@@ -57,5 +65,13 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Override
     public void setStaticAssetId(Long staticAssetId) {
         this.staticAssetId = staticAssetId;
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 }

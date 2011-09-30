@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -27,6 +30,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CONTENT_DISPLAY_RULE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@EntityListeners(value = { AuditableListener.class })
 public class ContentDisplayRuleImpl implements ContentDisplayRule {
 
     private static final long serialVersionUID = 1L;
@@ -36,6 +40,10 @@ public class ContentDisplayRuleImpl implements ContentDisplayRule {
     @TableGenerator(name = "ContentDisplayRuleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ContentDisplayRuleImpl", allocationSize = 10)
     @Column(name = "CONTENT_DISPLAY_RULE_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column (name = "PRIORITY")
     protected Integer priority;
@@ -85,6 +93,14 @@ public class ContentDisplayRuleImpl implements ContentDisplayRule {
     @Override
     public void setMvelRule(String mvelRule) {
         this.mvelRule = mvelRule;
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 }
 

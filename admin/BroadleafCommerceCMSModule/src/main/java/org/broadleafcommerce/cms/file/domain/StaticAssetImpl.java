@@ -45,10 +45,6 @@ import java.util.Map;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsset {
 
-    @Embedded
-    @AdminPresentation(excluded = true)
-    protected Auditable auditable = new Auditable();
-    
     @Column(name ="FULL_URL")
     @AdminPresentation(friendlyName="Full URL", order=2, group = "Details", readOnly = true)
     protected String fullUrl;
@@ -144,14 +140,6 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-    }
-
-    public Auditable getAuditable() {
-        return auditable;
-    }
-
-    public void setAuditable(Auditable auditable) {
-        this.auditable = auditable;
     }
 
     public String getFileExtension() {

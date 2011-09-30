@@ -17,6 +17,9 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.page.domain.PageFieldData;
 import org.broadleafcommerce.cms.page.domain.PageFieldDataImpl;
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -33,6 +36,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STRUCTURED_CONTENT_FIELD")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@EntityListeners(value = { AuditableListener.class })
 public class StructuredContentFieldImpl implements StructuredContentField {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +46,10 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     @TableGenerator(name = "StructuredContentFieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentFieldImpl", allocationSize = 10)
     @Column(name = "STRUCTURED_CONTENT_FIELD_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column (name = "FIELD_KEY")
     protected String fieldKey;
@@ -110,6 +118,14 @@ public class StructuredContentFieldImpl implements StructuredContentField {
         }
         return newContentField;
 
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 }
 

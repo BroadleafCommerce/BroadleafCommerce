@@ -1,6 +1,7 @@
 package org.broadleafcommerce.cms.file.domain;
 
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 
 import java.io.Serializable;
@@ -40,5 +41,9 @@ public interface StaticAssetFolder extends Serializable {
     public void setFolderFlag(Boolean folderFlag);
 
     public String getFullUrl();
+
+    public Auditable getAuditable();
+
+    public void setAuditable(Auditable auditable);
 
 }

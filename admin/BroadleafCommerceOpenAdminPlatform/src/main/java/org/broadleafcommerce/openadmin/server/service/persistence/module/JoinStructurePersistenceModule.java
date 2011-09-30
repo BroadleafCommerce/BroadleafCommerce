@@ -22,6 +22,7 @@ import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 
@@ -85,6 +86,16 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getExcludeFields(),
 					""
 				);
+                String idProp = null;
+                for (String key : joinMergedProperties.keySet()) {
+                    if (joinMergedProperties.get(key).getFieldType()== SupportedFieldType.ID) {
+                        idProp = key;
+                        break;
+                    }
+                }
+                if (idProp != null) {
+                    joinMergedProperties.remove(idProp);
+                }
 				allMergedProperties.put(MergedPropertyType.JOINSTRUCTURE, joinMergedProperties);
 			}
 		} catch (Exception e) {

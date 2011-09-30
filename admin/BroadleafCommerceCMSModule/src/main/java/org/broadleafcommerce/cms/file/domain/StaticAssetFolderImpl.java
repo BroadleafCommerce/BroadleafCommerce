@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
@@ -28,6 +30,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(value = { AuditableListener.class })
 @Table(name = "BLC_STATIC_ASSET_FOLDER")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationOverrides(
@@ -43,6 +46,10 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     @TableGenerator(name = "StaticAssetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetFolderImpl", allocationSize = 10)
     @Column(name = "STATIC_ASSET_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected Auditable auditable = new Auditable();
 
     @Column (name = "NAME", nullable = false)
     @AdminPresentation(friendlyName="Item Name", order=1, group = "Details")
@@ -147,6 +154,14 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
         }
         fullUrl = fullUrl + "/" + getName();
         return fullUrl;
+    }
+
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 }
 

@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.openadmin.audit.Auditable;
+
 import java.io.Serializable;
 
 /**
@@ -37,4 +39,8 @@ public interface ContentDisplayRule extends Serializable {
     public String getMvelRule();
 
     public void setMvelRule(String mvelRule);
+
+    public Auditable getAuditable();
+
+    public void setAuditable(Auditable auditable);
 }

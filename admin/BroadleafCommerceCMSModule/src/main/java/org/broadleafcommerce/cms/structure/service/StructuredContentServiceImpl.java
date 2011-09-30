@@ -25,6 +25,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -49,6 +50,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
+
+    @Resource(name="blAdminSecurityRemoteService")
+    protected AdminSecurityServiceRemote adminRemoteSecurityService;
 
     private Map<String, Object> structuredContentRuleDTOMap;
 
@@ -218,7 +222,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         content.setDeletedFlag(false);
         StructuredContent sc = structuredContentDao.addOrUpdateContentItem(content, true);
         if (! isProductionSandBox(destinationSandbox)) {
-            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STRUCTURED_CONTENT, sc.getContentName(), sc.getId(), null);
+            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STRUCTURED_CONTENT, sc.getContentName(), sc.getId(), null, adminRemoteSecurityService.getPersistentAdminUser());
         }
         return sc;
     }
@@ -264,7 +268,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             clonedContent.setOriginalItemId(content.getId());
             clonedContent.setSandbox(destSandbox);
             StructuredContent returnContent = structuredContentDao.addOrUpdateContentItem(clonedContent, true);
-            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
+            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId(), adminRemoteSecurityService.getPersistentAdminUser());
             return returnContent;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service
