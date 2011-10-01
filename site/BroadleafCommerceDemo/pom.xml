@@ -86,7 +86,7 @@
                 <configuration>
                     <packaging>war</packaging>
                     <relativePath>../../</relativePath>
-                    <rootPath>$${rebel.root}</rootPath>
+                    <rootPath>${basedir}/../..</rootPath>
                 </configuration>
                 <executions>
                     <execution>
