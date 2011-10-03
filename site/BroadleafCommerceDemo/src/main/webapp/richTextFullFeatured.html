@@ -11,24 +11,44 @@
                 if (script.readyState == "loaded" ||
                         script.readyState == "complete") {
                     script.onreadystatechange = null;
-                    createTinyMCE();
+                    var options = getOptions();
+                    tinyMCE.init(options);
                 }
             };
         } else {  //Others
             script.onload = function() {
-                createTinyMCE();
+                var options = getOptions();
+                tinyMCE.init(options);
             };
         }
 
         script.src = window.parent.getAdminContext() + "admin/tinymce/tiny_mce.js";
         document.getElementsByTagName("head")[0].appendChild(script);
 
-        function createTinyMCE() {
-            /**
-             This file is an example of the full featured rich text editor.  A BLC Admin Implementation should
-             provide a version of this file with any customizations, and specify the path to that file in the onModuleLoad method
-             **/
+        function setupEditor(ed) {
+            ed.onInit.add(function(ed, evt) {
+                var dom = ed.dom;
+                var doc = ed.getDoc();
 
+                tinymce.dom.Event.add(doc, 'keypress', function(e) {
+                    window.parent.enableSaveButton();
+                });
+                    ed.setContent(document.content);
+            });
+            ed.addButton('assetSearch', {
+                title : 'Asset Search',
+                image : window.parent.getAdminContext()+'admin/images/button/assetDialog.png',
+                onclick: function() {
+                    window.parent.displayAssetSearchDialog(ed);
+                }
+            });
+        }
+
+        /*
+        Change the values in getOptions() to affect visual changes in the TinyMCE control used for HTML
+        editing.
+         */
+        function getOptions() {
             var options = {
                 // General options
                 mode : "textareas",
@@ -46,28 +66,7 @@
                 theme_advanced_toolbar_align : "left",
                 theme_advanced_statusbar_location : "bottom",
                 theme_advanced_resizing : true,
-
-
-                setup : function(ed) {
-                    ed.onInit.add(function(ed, evt) {
-                        var dom = ed.dom;
-                        var doc = ed.getDoc();
-
-                        tinymce.dom.Event.add(doc, 'keypress', function(e) {
-                            window.parent.enableSaveButton();
-                        });
-				        	ed.setContent(document.content);
-                    });
-                    ed.addButton('assetSearch', {
-                        title : 'Asset Search',
-                        image : window.parent.getAdminContext()+'admin/images/button/assetDialog.png',
-                        onclick: function() {
-                            window.parent.displayAssetSearchDialog(ed);
-                        }
-                    });
-
-
-                }
+                setup : setupEditor
             }
 
             var templatePath = null;
@@ -82,7 +81,7 @@
                 options.theme_advanced_buttons2 = options.theme_advanced_buttons2 + "|,preview";
             }
 
-            tinyMCE.init(options);
+            return options;
         }
     </script>
 </head>
