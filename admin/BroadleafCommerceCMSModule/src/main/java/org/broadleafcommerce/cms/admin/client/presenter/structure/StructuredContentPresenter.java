@@ -31,6 +31,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.*;
+import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -39,7 +40,6 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -59,7 +59,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class StructuredContentPresenter extends DynamicEntityPresenter implements Instantiable {
+public class StructuredContentPresenter extends HtmlEditingPresenter implements Instantiable {
 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
@@ -193,8 +193,8 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                                     }
                                 });
                                 if (!getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord).equals(newId)) {
-                                    //display.getListDisplay().getGrid().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(newId));
-                                    currentStructuredContentRecord.setAttribute(getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyFieldName(), newId);
+                                    display.getListDisplay().getGrid().getRecordList().remove(currentStructuredContentRecord);
+                                    currentStructuredContentRecord = newRecord;
                                 }
 							}
                         }
@@ -234,6 +234,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
 	}
 
 	public void setup() {
+        super.setup();
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
@@ -242,6 +243,7 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
 					"name","description"
 				);
 				EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
+                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), result);
 				getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "structuredContentType",
@@ -258,7 +260,6 @@ public class StructuredContentPresenter extends DynamicEntityPresenter implement
                             }
                         }
                 );
-                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), result);
                 ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"contentName", "locale", "activeStartDate", "activeEndDate", "onlineFlag"}, new Boolean[]{false, false, false, false, false});
 			}
 		}));

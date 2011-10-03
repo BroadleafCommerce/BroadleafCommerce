@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.rpc.RPCResponse;
@@ -34,28 +33,21 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
+import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEventHandler;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
@@ -70,7 +62,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class PagesPresenter extends DynamicEntityPresenter implements Instantiable {
+public class PagesPresenter extends HtmlEditingPresenter implements Instantiable {
 
 	protected String rootId = null;
 	protected String rootName = "Root";
@@ -78,7 +70,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
     protected TreeNode currentFolderRecord;
-	protected AssetSearchDialog assetSearchDialogView;
 	protected EntitySearchDialog pageTemplateDialogView;
 
 	@Override
@@ -267,9 +258,6 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
                 ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
             }
         });
-        
-        exposeNativeGetTemplatePath();
-        exposeNativeDisplayAssetSearchDialog();
 	}
 
     public void reloadAllChildRecordsForId(String id) {
@@ -290,15 +278,7 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetFolderTreeDS", new StaticAssetsFolderTreeDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-            @Override
-            public void onSetupSuccess(DataSource dataSource) {
-            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	PresentationLayerAssociatedDataSource staticAssetFolderTreeDS = (PresentationLayerAssociatedDataSource) getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS");
-             	assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS, staticAssetFolderTreeDS);
-            }
-        }));
+        super.setup();
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
@@ -335,49 +315,14 @@ public class PagesPresenter extends DynamicEntityPresenter implements Instantiab
 		}));
 	}
 
+    @Override
+    public String getTemplatePath() {
+		return (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath");
+	}
+
 	@Override
 	public PagesDisplay getDisplay() {
 		return (PagesDisplay) display;
 	}
-	
-	public String getTemplatePath() {
-		return (String) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getValue("pageTemplate.templatePath");
-	}
-	
-	public void displayAssetSearchDialog(final JavaScriptObject editor) {
-		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedEventHandler() {
-			@Override
-			public void onSearchItemSelected(TileGridItemSelectedEvent event) {
-				String staticAssetFullUrl = "/broadleafdemo/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
-				String name = event.getRecord().getAttribute("name");
-				String fileExtension = event.getRecord().getAttribute("fileExtension");
-				String richContent;
-				
-				if (fileExtension.equals("gif") || fileExtension.equals("jpg") || fileExtension.equals("png")) {
-					richContent =  "<img title='" + name + "' src='" + staticAssetFullUrl + "' alt='" + name + "'/>";
-				} else {
-					richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
-				}
-				insertRichTextContent(editor, richContent);
-			}
-		});
-	}
-	
-	private native void exposeNativeGetTemplatePath() /*-{
-		var currentPagesPresenter = this;
-		$wnd.getTemplatePath = function() {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter::getTemplatePath()();
-		}
-	}-*/;
-	
-	private native void exposeNativeDisplayAssetSearchDialog() /*-{
-		var currentPagesPresenter = this;
-		$wnd.displayAssetSearchDialog = function(editor) {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.pages.PagesPresenter::displayAssetSearchDialog(Lcom/google/gwt/core/client/JavaScriptObject;)(editor);
-		}
-	}-*/;
-	
-	private native void insertRichTextContent(JavaScriptObject tinyMCEEditor, String content) /*-{
-		tinyMCEEditor.selection.setContent(content); 
-	}-*/;
+
 }

@@ -6,6 +6,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @Column(name = "TEMPORARY_ITEM_ID")
     @AdminPresentation(excluded = true)
+    @Index(name="TEMP_ITEM_INDEX", columnNames={"TEMPORARY_ITEM_ID"})
     protected Long temporaryItemId;
 
     @Column(name = "ORIGINAL_ITEM_ID")

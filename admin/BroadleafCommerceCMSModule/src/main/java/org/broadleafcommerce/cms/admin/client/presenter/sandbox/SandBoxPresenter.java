@@ -96,7 +96,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ListGridRecord[] records = display.getGrid().getSelection();
-                    String prefix = ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getUrlPrefix();
+                    String prefix = ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix();
                     UrlBuilder urlBuilder = new UrlBuilder();
                     if (prefix.startsWith("/")) {
                         urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());

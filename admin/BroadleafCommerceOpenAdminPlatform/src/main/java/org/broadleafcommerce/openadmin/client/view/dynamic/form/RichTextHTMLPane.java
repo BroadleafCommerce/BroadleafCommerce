@@ -51,7 +51,7 @@ public class RichTextHTMLPane extends HTMLPane {
 		var currentIFrameNode = iframeNode;
 		var currentValue = value;
 		iframeNode.onload = function() {
-			currentIFrameNode.contentWindow.tinyMCE.get('richTextContent').setContent(currentValue);
+			currentIFrameNode.contentWindow.document.content = currentValue;
 		}
 	}-*/;
 }

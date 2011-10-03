@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
@@ -169,7 +170,11 @@ public class FormBuilder {
 	}
 
 	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, final Map<String, Integer> sectionNames, Map<String, Boolean> sectionCollapsed) {
-		if (sections.size() > 0) {
+		if (sections.isEmpty()) {
+            GWT.log("There were no fields available to show in the form. Rendering a blank DynamicForm.");
+            return;
+        }
+        if (sections.size() > 0) {
         	int j=0;
         	List<FormItem> allItems = new ArrayList<FormItem>();
         	String[] groups = new String[sectionNames.size()];
@@ -441,7 +446,7 @@ public class FormBuilder {
             if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
                 throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
             }
-        	richTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath());
+        	richTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath());
         	richTextHTMLPane.setContentsType(ContentsType.PAGE);
         	richTextHTMLPane.setWidth(700);
         	richTextHTMLPane.setHeight(450);
@@ -457,7 +462,7 @@ public class FormBuilder {
             if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
                 throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
             }
-        	basicRichTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath());
+        	basicRichTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath());
         	basicRichTextHTMLPane.setContentsType(ContentsType.PAGE); 
         	basicRichTextHTMLPane.setWidth(300);
         	basicRichTextHTMLPane.setHeight(175);

@@ -102,7 +102,6 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 			approverSandBoxPermissions
 		);
 
-        setUrlPrefix("/broadleafdemo");
         setHtmlEditorIFramePath("/richTextFullFeatured.html");
         setBasicHtmlEditorIFramePath("/richTextBasic.html");
         registerModule();
@@ -110,6 +109,8 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 
     @Override
 	public void postDraw() {
+        setPreviewUrlPrefix(BLCMain.webAppContext);
+        
 		ImgButton sgwtHomeButton = new ImgButton();
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
         sgwtHomeButton.setWidth(98);
@@ -126,5 +127,4 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
         });
         BLCMain.MASTERVIEW.getTopBar().addMember(sgwtHomeButton, 1);
 	}
-
 }

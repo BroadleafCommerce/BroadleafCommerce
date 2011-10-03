@@ -45,7 +45,9 @@ public class BLCMain implements EntryPoint {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>();
-	
+
+    public static String webAppContext;
+    public static String adminContext;
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
 	//TODO set the version as part of the build
 	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
@@ -124,6 +126,13 @@ public class BLCMain implements EntryPoint {
 		        }
 		    });
 		}
+        AppServices.UTILITY.getWebAppContext(new AbstractCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                webAppContext = result;
+            }
+        });
+        adminContext = GWT.getModuleBaseURL();
 	}
 
     public static MessageManager getMessageManager() {
@@ -145,4 +154,5 @@ public class BLCMain implements EntryPoint {
     public static native boolean isLogDebugEnabled(String category) /*-{
 		return $wnd.isc.Log.logIsDebugEnabled(category)
 	}-*/;
+
 }

@@ -36,7 +36,8 @@
             <map>
                 <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService" />
                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService" />
-                <entry key="/**/cms.upload.progress.service" value-ref="blUploadRemoteService" />
+                <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService" />
+                <entry key="/**/utility.service" value-ref="blUtilityRemoteService" />
             </map>
         </property>
         <property name="serviceExporterFactory">

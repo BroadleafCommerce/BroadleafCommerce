@@ -109,6 +109,16 @@ public class AssetSearchDialog extends Window {
         		saveButton.enable();
         	}
         });
+        tileGrid.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    if (tileGrid.anySelected()) {
+                        saveButton.enable();
+                    }
+                }
+            }
+        });
         
 
         

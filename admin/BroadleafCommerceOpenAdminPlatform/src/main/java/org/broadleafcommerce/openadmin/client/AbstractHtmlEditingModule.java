@@ -21,10 +21,10 @@ package org.broadleafcommerce.openadmin.client;
  *
  */
 public abstract class AbstractHtmlEditingModule extends AbstractModule implements HtmlEditingModule {
-	
+
+    protected String previewUrlPrefix;
 	protected String htmlEditorIFramePath;
 	protected String basicHtmlEditorIFramePath;
-    protected String urlPrefix;
 	
 	public String getHtmlEditorIFramePath() {
 		return htmlEditorIFramePath;
@@ -40,13 +40,13 @@ public abstract class AbstractHtmlEditingModule extends AbstractModule implement
 
 	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath) {
 		this.basicHtmlEditorIFramePath = basicHtmlEditorIFramePath;
-	}
-
-    public String getUrlPrefix() {
-        return urlPrefix;
     }
 
-    public void setUrlPrefix(String urlPrefix) {
-        this.urlPrefix = urlPrefix;
+    public String getPreviewUrlPrefix() {
+        return previewUrlPrefix;
+    }
+
+    public void setPreviewUrlPrefix(String previewUrlPrefix) {
+        this.previewUrlPrefix = previewUrlPrefix;
     }
 }
