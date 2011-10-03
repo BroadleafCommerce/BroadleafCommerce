@@ -55,7 +55,7 @@
                     });
                     ed.addButton('assetSearch', {
                         title : 'Asset Search',
-                        image : '/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/images/button/assetDialog.png',
+                        image : window.parent.getAdminContext()+'admin/images/button/assetDialog.png',
                         onclick: function() {
                             window.parent.displayAssetSearchDialog(ed);
                         }
