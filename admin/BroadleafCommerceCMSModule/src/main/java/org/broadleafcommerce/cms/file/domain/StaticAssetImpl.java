@@ -15,16 +15,12 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.openadmin.audit.Auditable;
-import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -39,7 +35,7 @@ import java.util.Map;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AdminAuditableListener.class })
 @Table(name = "BLC_STATIC_ASSET")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)

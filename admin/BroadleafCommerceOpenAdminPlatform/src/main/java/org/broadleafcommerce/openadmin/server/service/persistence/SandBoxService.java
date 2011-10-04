@@ -22,21 +22,21 @@ public interface SandBoxService {
      */
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser);
 
-    public void promoteAllSandBoxItems(AdminUser user, SandBox sandBox, String comment);
+    public void promoteAllSandBoxItems(SandBox sandBox, String comment);
 
-    public void promoteSelectedItems(AdminUser user, SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
+    public void promoteSelectedItems(SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
 
-    public void schedulePromotionForSandBox(AdminUser user, SandBox sandBox, Calendar calendar);
+    public void schedulePromotionForSandBox(SandBox sandBox, Calendar calendar);
 
-    public void schedulePromotionForSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems, Calendar calendar);
+    public void schedulePromotionForSandBoxItems(List<SandBoxItem> sandBoxItems, Calendar calendar);
 
-    public void revertAllSandBoxItems(AdminUser user, SandBox sandBox);
+    public void revertAllSandBoxItems(SandBox sandBox);
 
-    public void revertSelectedSandBoxItems(AdminUser user, SandBox sandBox, List<SandBoxItem> sandBoxItems);
+    public void revertSelectedSandBoxItems(SandBox sandBox, List<SandBoxItem> sandBoxItems);
 
-    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox, String comment);
+    public void rejectAllSandBoxItems(SandBox sandBox, String comment);
 
-    public void rejectSelectedSandBoxItems(AdminUser user, SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
+    public void rejectSelectedSandBoxItems(SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
 
     //public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;
 

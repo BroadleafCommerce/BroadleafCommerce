@@ -1,6 +1,6 @@
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 
@@ -19,7 +19,7 @@ public interface StructuredContentFieldData extends Serializable {
 
     public StructuredContentFieldData cloneEntity();
 
-    public Auditable getAuditable();
+    public AdminAuditable getAuditable();
 
-    public void setAuditable(Auditable auditable);
+    public void setAuditable(AdminAuditable auditable);
 }

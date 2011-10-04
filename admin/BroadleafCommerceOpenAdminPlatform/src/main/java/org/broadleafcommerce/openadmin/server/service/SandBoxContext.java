@@ -1,7 +1,7 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 
-
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
 public class SandBoxContext {
 	
@@ -15,26 +15,20 @@ public class SandBoxContext {
 		SANDBOXCONTEXT.set(sandBoxContext);
 	}
 	
-	protected String userName;
+	protected AdminUser adminUser;
 	protected Long sandBoxId;
 	protected SandBoxMode sandBoxMode;
     protected String sandBoxName;
-	
-	/**
-	 * @return the userName
-	 */
-	public String getUserName() {
-		return userName;
-	}
-	
-	/**
-	 * @param userName the userName to set
-	 */
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-	
-	/**
+
+    public AdminUser getAdminUser() {
+        return adminUser;
+    }
+
+    public void setAdminUser(AdminUser adminUser) {
+        this.adminUser = adminUser;
+    }
+
+    /**
 	 * @return the sandBoxName
 	 */
 	public Long getSandBoxId() {

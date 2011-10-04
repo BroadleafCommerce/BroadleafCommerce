@@ -23,7 +23,6 @@ import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
-import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -51,9 +50,6 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
-
-    @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
 
     @Override
     public StaticAssetFolder findStaticAssetById(Long id) {
@@ -177,7 +173,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName() + "." + staticAsset.getFileExtension());
         StaticAsset newAsset =  staticAssetDao.updateStaticAsset(staticAsset);
         if (! isProductionSandBox(destinationSandbox)) {
-            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null, adminRemoteSecurityService.getPersistentAdminUser());
+            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
         }
         return newAsset;
     }
@@ -197,7 +193,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             clonedAsset.setFullUrl(parentUrl + "/" + clonedAsset.getName() + "." + clonedAsset.getFileExtension());
             StaticAsset returnAsset =  staticAssetDao.addStaticAsset(clonedAsset);
 
-            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId(), adminRemoteSecurityService.getPersistentAdminUser());
+            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
             return returnAsset;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service

@@ -15,8 +15,9 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.audit.Auditable;
-import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -30,7 +31,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FIELD_DATA")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AdminAuditableListener.class })
 public class PageFieldDataImpl implements PageFieldData {
 
     private static final long serialVersionUID = 1L;
@@ -43,7 +44,7 @@ public class PageFieldDataImpl implements PageFieldData {
 
     @Embedded
     @AdminPresentation(excluded = true)
-    protected Auditable auditable = new Auditable();
+    protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "VALUE")
     protected String stringValue;
@@ -94,11 +95,11 @@ public class PageFieldDataImpl implements PageFieldData {
         return newFieldData;
     }
 
-    public Auditable getAuditable() {
+    public AdminAuditable getAuditable() {
         return auditable;
     }
 
-    public void setAuditable(Auditable auditable) {
+    public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
 }

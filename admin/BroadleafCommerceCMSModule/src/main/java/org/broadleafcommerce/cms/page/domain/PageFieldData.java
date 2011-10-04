@@ -1,6 +1,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
 
@@ -19,7 +19,7 @@ public interface PageFieldData extends Serializable {
 
     public PageFieldData cloneEntity();
 
-    public Auditable getAuditable();
+    public AdminAuditable getAuditable();
 
-    public void setAuditable(Auditable auditable);
+    public void setAuditable(AdminAuditable auditable);
 }

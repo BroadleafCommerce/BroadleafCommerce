@@ -16,7 +16,7 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.io.Serializable;
@@ -86,7 +86,11 @@ public interface StructuredContent extends Serializable {
 
     public StructuredContent cloneEntity();
 
-    public Auditable getAuditable();
+    public AdminAuditable getAuditable();
 
-    public void setAuditable(Auditable auditable);
+    public void setAuditable(AdminAuditable auditable);
+
+    public Boolean getLockedFlag();
+
+    public void setLockedFlag(Boolean lockedFlag);
 }

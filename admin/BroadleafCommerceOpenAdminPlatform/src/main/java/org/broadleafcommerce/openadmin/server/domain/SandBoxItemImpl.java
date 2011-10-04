@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
@@ -29,6 +31,7 @@ import java.util.List;
             @AdminPresentationOverride(name="sandBox.sandboxType", value=@AdminPresentation(excluded = true))
         }
 )
+@EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class SandBoxItemImpl implements SandBoxItem {
 
@@ -39,6 +42,10 @@ public class SandBoxItemImpl implements SandBoxItem {
     @TableGenerator(name = "SandBoxItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxItemImpl", allocationSize = 50)
     @Column(name = "SANDBOX_ITEM_ID")
     protected Long id;
+
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected AdminAuditable auditable = new AdminAuditable();
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "SANDBOX_ID")
@@ -60,14 +67,6 @@ public class SandBoxItemImpl implements SandBoxItem {
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName="Description", order=1, group="Details")
     protected String description;
-
-    @Column(name = "LAST_UPDATE_DATE")
-    @AdminPresentation(friendlyName="Last Updated", order=4, group="Details")
-    protected Date lastUpdateDate;
-
-    @ManyToOne(targetEntity = AdminUserImpl.class)
-    @JoinColumn(name = "CREATED_BY_USER_ID")
-    protected AdminUser createdBy;
 
     @Column(name = "TEMPORARY_ITEM_ID")
     @AdminPresentation(excluded = true)
@@ -152,26 +151,6 @@ public class SandBoxItemImpl implements SandBoxItem {
     }
 
     @Override
-    public Date getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    @Override
-    public void setLastUpdateDate(Date lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-    }
-
-    @Override
-    public AdminUser getCreatedBy() {
-        return createdBy;
-    }
-
-    @Override
-    public void setCreatedBy(AdminUser createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    @Override
     public Long getOriginalItemId() {
         return originalItemId;
     }
@@ -217,6 +196,16 @@ public class SandBoxItemImpl implements SandBoxItem {
             sandBoxActions = new ArrayList<SandBoxAction>();
         }
         sandBoxActions.add(action);
+    }
+
+    @Override
+    public AdminAuditable getAuditable() {
+        return auditable;
+    }
+
+    @Override
+    public void setAuditable(AdminAuditable auditable) {
+        this.auditable = auditable;
     }
 
     @Override

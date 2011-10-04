@@ -144,22 +144,22 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
 
 
             if (operation.equals("promoteAll")) {
-                sandBoxService.promoteAllSandBoxItems(adminUser, currentSandBox, comment);
+                sandBoxService.promoteAllSandBoxItems(currentSandBox, comment);
             } else if (operation.equals("promoteSelected")) {
                 List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao);
-                sandBoxService.promoteSelectedItems(adminUser, currentSandBox, comment, items);
+                sandBoxService.promoteSelectedItems(currentSandBox, comment, items);
             } else if (operation.equals("revertRejectAll")) {
                 if (moduleKey.equals("userSandBox")) {
-                    sandBoxService.revertAllSandBoxItems(adminUser, currentSandBox);
+                    sandBoxService.revertAllSandBoxItems(currentSandBox);
                 } else {
-                    sandBoxService.rejectAllSandBoxItems(adminUser, currentSandBox, comment);
+                    sandBoxService.rejectAllSandBoxItems(currentSandBox, comment);
                 }
             } else if (operation.equals("revertRejectSelected")) {
                 List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao);
                 if (moduleKey.equals("userSandBox")) {
-                    sandBoxService.revertSelectedSandBoxItems(adminUser, currentSandBox, items);
+                    sandBoxService.revertSelectedSandBoxItems(currentSandBox, items);
                 } else {
-                    sandBoxService.rejectSelectedSandBoxItems(adminUser, currentSandBox, comment, items);
+                    sandBoxService.rejectSelectedSandBoxItems(currentSandBox, comment, items);
                 }
             }
 

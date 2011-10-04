@@ -1,7 +1,7 @@
 package org.broadleafcommerce.cms.page.domain;
 
 
-import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 
 import java.io.Serializable;
@@ -40,7 +40,11 @@ public interface PageFolder extends Serializable {
 
     public String getFullUrl();
 
-    public Auditable getAuditable();
+    public AdminAuditable getAuditable();
 
-    public void setAuditable(Auditable auditable);
+    public void setAuditable(AdminAuditable auditable);
+
+    public Boolean getLockedFlag();
+
+    public void setLockedFlag(Boolean lockedFlag);
 }

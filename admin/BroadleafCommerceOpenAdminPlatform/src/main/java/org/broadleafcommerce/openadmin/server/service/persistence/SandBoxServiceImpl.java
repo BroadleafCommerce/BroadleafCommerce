@@ -442,15 +442,15 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 
     @Override
-    public void promoteAllSandBoxItems(AdminUser user, SandBox fromSandBox, String comment) {
-        promoteSelectedItems(user, fromSandBox, comment, fromSandBox.getSandBoxItems());
+    public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
+        promoteSelectedItems(fromSandBox, comment, fromSandBox.getSandBoxItems());
     }
 
 
     @Override
-    public void promoteSelectedItems(AdminUser user, SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
+    public void promoteSelectedItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         SandBox destinationSandBox = determineNextSandBox(fromSandBox);
-        SandBoxAction action = createSandBoxAction(user, SandBoxActionType.PROMOTE, comment);
+        SandBoxAction action = createSandBoxAction(SandBoxActionType.PROMOTE, comment);
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
             action.addSandBoxItem(sandBoxItem);
@@ -467,13 +467,13 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public void revertAllSandBoxItems(AdminUser user, SandBox sandBox) {
-        revertSelectedSandBoxItems(user, sandBox,  sandBox.getSandBoxItems());
+    public void revertAllSandBoxItems(SandBox sandBox) {
+        revertSelectedSandBoxItems(sandBox,  sandBox.getSandBoxItems());
     }
 
     @Override
-    public void revertSelectedSandBoxItems(AdminUser user, SandBox fromSandBox, List<SandBoxItem> sandBoxItems) {
-        SandBoxAction action = createSandBoxAction(user, SandBoxActionType.REVERT, null);
+    public void revertSelectedSandBoxItems(SandBox fromSandBox, List<SandBoxItem> sandBoxItems) {
+        SandBoxAction action = createSandBoxAction(SandBoxActionType.REVERT, null);
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
             action.addSandBoxItem(sandBoxItem);
@@ -488,14 +488,14 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public void rejectAllSandBoxItems(AdminUser user, SandBox sandBox, String comment) {
-         rejectSelectedSandBoxItems(user, sandBox, comment, sandBox.getSandBoxItems());
+    public void rejectAllSandBoxItems(SandBox sandBox, String comment) {
+         rejectSelectedSandBoxItems(sandBox, comment, sandBox.getSandBoxItems());
     }
 
     @Override
-    public void rejectSelectedSandBoxItems(AdminUser user, SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
+    public void rejectSelectedSandBoxItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         SandBox destinationSandBox = determineNextSandBox(fromSandBox);
-        SandBoxAction action = createSandBoxAction(user, SandBoxActionType.REJECT, comment);
+        SandBoxAction action = createSandBoxAction(SandBoxActionType.REJECT, comment);
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
             action.addSandBoxItem(sandBoxItem);
@@ -509,12 +509,12 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 
     @Override
-    public void schedulePromotionForSandBox(AdminUser user, SandBox sandBox, Calendar calendar) {
+    public void schedulePromotionForSandBox(SandBox sandBox, Calendar calendar) {
 
     }
 
     @Override
-    public void schedulePromotionForSandBoxItems(AdminUser user, List<SandBoxItem> sandBoxItems, Calendar calendar) {
+    public void schedulePromotionForSandBoxItems(List<SandBoxItem> sandBoxItems, Calendar calendar) {
 
     }
 
@@ -527,12 +527,12 @@ public class SandBoxServiceImpl implements SandBoxService {
         this.sandboxItemListeners = sandboxItemListeners;
     }
 
-    protected SandBoxAction createSandBoxAction(AdminUser user, SandBoxActionType type, String comment) {
+    protected SandBoxAction createSandBoxAction(SandBoxActionType type, String comment) {
         SandBoxAction action = new SandBoxActionImpl();
         action.setActionType(type);
-        action.setActionDate(Calendar.getInstance().getTime());
+        //action.setActionDate(Calendar.getInstance().getTime());
         action.setComment(comment);
-        action.setUser(user);
+        //action.setUser(user);
         return action;
     }
 

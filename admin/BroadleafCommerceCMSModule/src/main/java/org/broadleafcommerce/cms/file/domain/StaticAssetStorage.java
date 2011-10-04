@@ -1,7 +1,5 @@
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.openadmin.audit.Auditable;
-
 import java.sql.Blob;
 
 /**
@@ -25,7 +23,4 @@ public interface StaticAssetStorage {
 
     public void setStaticAssetId(Long staticAssetId);
 
-    public Auditable getAuditable();
-
-    public void setAuditable(Auditable auditable);
 }

@@ -24,7 +24,6 @@ import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
-import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -43,9 +42,6 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
-
-    @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
 
     /**
      * Returns the page with the passed in id.
@@ -119,7 +115,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         page.setFullUrl(parentUrl + "/" + page.getName());
         Page newPage = pageDao.addPage(page);
         if (! isProductionSandBox(destinationSandbox)) {
-            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null, adminRemoteSecurityService.getPersistentAdminUser());
+            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
         }
         return newPage;
     }
@@ -157,12 +153,19 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
      */
     @Override
     public Page updatePage(Page page, SandBox destSandbox) {
+        if (page.getLockedFlag()) {
+            throw new IllegalArgumentException("Unable to update a locked record");
+        }
+
         String parentUrl = (page.getParentFolder() == null ? "" : page.getParentFolder().getFullUrl());
 
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
             page.setFullUrl(parentUrl + "/" + page.getName());
             return pageDao.updatePage(page, true);
         } else if (isProductionSandBox(page.getSandbox())) {
+            page.setLockedFlag(true);
+            page = pageDao.updatePage(page, false);
+
             // Move from production to destSandbox
             Page clonedPage = page.cloneEntity();
             clonedPage.setOriginalPageId(page.getId());
@@ -170,7 +173,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             clonedPage.setFullUrl(parentUrl + "/" + page.getName());
             Page returnPage = pageDao.addPage(clonedPage);
 
-            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId(), adminRemoteSecurityService.getPersistentAdminUser());
+            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
             return returnPage;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service

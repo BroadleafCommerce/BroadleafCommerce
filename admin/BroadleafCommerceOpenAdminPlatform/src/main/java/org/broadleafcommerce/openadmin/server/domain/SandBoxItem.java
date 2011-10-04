@@ -1,9 +1,8 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public interface SandBoxItem extends Serializable {
@@ -32,14 +31,6 @@ public interface SandBoxItem extends Serializable {
 
     public void setDescription(String description);
 
-    public Date getLastUpdateDate();
-
-    public void setLastUpdateDate(Date updateDate);
-
-    public AdminUser getCreatedBy();
-
-    public void setCreatedBy(AdminUser user);
-
     public Long getTemporaryItemId();
 
     public void setTemporaryItemId(Long id);
@@ -57,4 +48,8 @@ public interface SandBoxItem extends Serializable {
     public void setArchivedFlag(Boolean archivedFlag);
 
     public void addSandBoxAction(SandBoxAction action);
+
+    public AdminAuditable getAuditable();
+
+    public void setAuditable(AdminAuditable auditable);
 }

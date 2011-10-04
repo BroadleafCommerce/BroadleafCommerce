@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
@@ -16,6 +18,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SANDBOX_ACTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
+@EntityListeners(value = { AdminAuditableListener.class })
 public class SandBoxActionImpl implements SandBoxAction {
 
 	private static final long serialVersionUID = 1L;
@@ -26,15 +29,12 @@ public class SandBoxActionImpl implements SandBoxAction {
     @Column(name = "SANDBOX_ACTION_ID")
     protected Long id;
 
+    @Embedded
+    @AdminPresentation(excluded = true)
+    protected AdminAuditable auditable = new AdminAuditable();
+
     @Column(name = "ACTION_TYPE")
     protected String sandBoxActionType;
-
-    @Column(name = "ACTION_DATE")
-    protected Date actionDate;
-
-    @ManyToOne(targetEntity = AdminUserImpl.class)
-    @JoinColumn(name = "USER_ID")
-    protected AdminUser user;
 
     @Column(name = "COMMENT")
     protected String comment;
@@ -68,26 +68,6 @@ public class SandBoxActionImpl implements SandBoxAction {
     }
 
     @Override
-    public Date getActionDate() {
-        return actionDate;
-    }
-
-    @Override
-    public void setActionDate(Date date) {
-        this.actionDate = date;
-    }
-
-    @Override
-    public AdminUser getUser() {
-        return user;
-    }
-
-    @Override
-    public void setUser(AdminUser user) {
-        this.user = user;
-    }
-
-    @Override
     public String getComment() {
         return comment;
     }
@@ -113,5 +93,15 @@ public class SandBoxActionImpl implements SandBoxAction {
             sandBoxItems = new ArrayList<SandBoxItem>();
         }
         sandBoxItems.add(item);
+    }
+
+    @Override
+    public AdminAuditable getAuditable() {
+        return auditable;
+    }
+
+    @Override
+    public void setAuditable(AdminAuditable auditable) {
+        this.auditable = auditable;
     }
 }

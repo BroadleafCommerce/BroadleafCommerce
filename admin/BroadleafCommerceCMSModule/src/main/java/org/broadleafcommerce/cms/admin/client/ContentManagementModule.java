@@ -85,7 +85,7 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
         setSection(
             BLCMain.getMessageManager().getString("userSandBoxTitle"),
 			"userSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
+			"org.broadleafcommerce.cms.admin.client.view.sandbox.MySandBoxView",
 			"userSandBoxPresenter",
 			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
 			userSandBoxPermissions

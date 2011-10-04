@@ -19,7 +19,7 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
  * Time: 3:48 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay {
+public class MySandBoxView extends VLayout implements Instantiable, SandBoxDisplay {
 
     protected ToolStripButton promoteAllButton;
     protected ToolStripButton promoteSelectionButton;
@@ -30,7 +30,8 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 	protected ListGrid grid;
 	protected ToolStrip toolBar;
 
-    public SandBoxView() {
+    public MySandBoxView() {
+        super(20);
         setWidth100();
         setHeight100();
         setLayoutMargin(20);
@@ -41,6 +42,7 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 		setWidth100();
 
         VLayout insideLayout = new VLayout();
+        insideLayout.setHeight("50%");
 
 		toolBar = new ToolStrip();
 		toolBar.setHeight(20);
@@ -97,6 +99,34 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         insideLayout.addMember(grid);
 
         addMember(insideLayout);
+
+        VLayout insideLayout2 = new VLayout();
+        insideLayout2.setHeight("50%");
+
+		ToolStrip toolBar = new ToolStrip();
+		toolBar.setHeight(20);
+		toolBar.setWidth100();
+		toolBar.addSpacer(6);
+
+        insideLayout2.addMember(toolBar);
+
+        ListGrid grid = new ListGrid();
+        grid.setCanReorderRecords(true);
+        grid.setAlternateRecordStyles(true);
+        grid.setSelectionType(SelectionStyle.MULTIPLE);
+        grid.setCanEdit(false);
+        grid.setDataSource(entityDataSource);
+        grid.setAutoFetchData(true);
+        grid.setDrawAllMaxCells(10);
+        grid.setCanSort(true);
+        grid.setCanResizeFields(true);
+        grid.setShowFilterEditor(false);
+        grid.setCanGroupBy(false);
+        grid.setDataPageSize(10);
+        grid.setAlternateBodyStyleName("editRowDisabled");
+        insideLayout2.addMember(grid);
+
+        addMember(insideLayout2);
 	}
 
     public Canvas asCanvas() {

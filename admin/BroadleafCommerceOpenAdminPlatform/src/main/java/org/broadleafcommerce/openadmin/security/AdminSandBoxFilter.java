@@ -51,6 +51,7 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
             SandBoxContext context = new SandBoxContext();
             context.setSandBoxId(sandBox.getId());
             context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
+            context.setAdminUser(adminUser);
             SandBoxContext.setSandBoxContext(context);
         }
         try {

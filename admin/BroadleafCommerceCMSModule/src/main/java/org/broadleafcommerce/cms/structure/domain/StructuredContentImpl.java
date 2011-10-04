@@ -17,8 +17,9 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.audit.Auditable;
-import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
@@ -41,7 +42,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STRUCTURED_CONTENT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AdminAuditableListener.class })
 public class StructuredContentImpl implements StructuredContent {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +55,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @Embedded
     @AdminPresentation(excluded = true)
-    protected Auditable auditable = new Auditable();
+    protected AdminAuditable auditable = new AdminAuditable();
 
     @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
@@ -114,6 +115,10 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(friendlyName="Online", order=5, group="Description")
     @Column(name = "ONLINE_FLAG")
     protected Boolean onlineFlag;
+
+    @Column (name = "LOCKED_FLAG")
+    @AdminPresentation(friendlyName="Is Locked", hidden = true)
+    protected Boolean lockedFlag = false;
 
     @Override
     public Long getId() {
@@ -255,12 +260,20 @@ public class StructuredContentImpl implements StructuredContent {
         this.archivedFlag = archivedFlag;
     }
 
-    public Auditable getAuditable() {
+    public AdminAuditable getAuditable() {
         return auditable;
     }
 
-    public void setAuditable(Auditable auditable) {
+    public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
+    }
+
+    public Boolean getLockedFlag() {
+        return lockedFlag;
+    }
+
+    public void setLockedFlag(Boolean lockedFlag) {
+        this.lockedFlag = lockedFlag;
     }
 
     @Override

@@ -15,8 +15,9 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.audit.Auditable;
-import org.broadleafcommerce.openadmin.audit.AuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
@@ -33,7 +34,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FOLDER")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
     {
         @AdminPresentationOverride(name="auditable", value=@AdminPresentation(excluded = true)),
@@ -56,7 +57,7 @@ public class PageFolderImpl implements PageFolder {
 
     @Embedded
     @AdminPresentation(excluded = true)
-    protected Auditable auditable = new Auditable();
+    protected AdminAuditable auditable = new AdminAuditable();
 
     @Column(name = "NAME", nullable=false)
     @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true)
@@ -81,6 +82,10 @@ public class PageFolderImpl implements PageFolder {
     @Column (name = "IS_FOLDER_FLAG")
     @AdminPresentation(friendlyName="Is Folder", order=3, group="Folder Flag", hidden = true)
     protected Boolean folderFlag = true;
+
+    @Column (name = "LOCKED_FLAG")
+    @AdminPresentation(friendlyName="Is Locked", hidden = true)
+    protected Boolean lockedFlag = false;
 
     @Override
     public Long getId() {
@@ -156,12 +161,20 @@ public class PageFolderImpl implements PageFolder {
         return fullUrl;
     }
 
-    public Auditable getAuditable() {
+    public AdminAuditable getAuditable() {
         return auditable;
     }
 
-    public void setAuditable(Auditable auditable) {
+    public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
+    }
+
+    public Boolean getLockedFlag() {
+        return lockedFlag;
+    }
+
+    public void setLockedFlag(Boolean lockedFlag) {
+        this.lockedFlag = lockedFlag;
     }
 }
 

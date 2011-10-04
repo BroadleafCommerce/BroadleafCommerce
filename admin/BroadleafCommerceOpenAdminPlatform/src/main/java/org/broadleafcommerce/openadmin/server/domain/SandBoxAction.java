@@ -1,8 +1,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,14 +16,6 @@ public interface SandBoxAction {
 
     public void setActionType(SandBoxActionType type);
 
-    public Date getActionDate();
-
-    public void setActionDate(Date date);
-
-    public AdminUser getUser();
-
-    public void setUser(AdminUser user);
-
     public String getComment();
 
     public void setComment(String comment);
@@ -35,4 +26,7 @@ public interface SandBoxAction {
 
     public void addSandBoxItem(SandBoxItem item);
 
+    public AdminAuditable getAuditable();
+
+    public void setAuditable(AdminAuditable auditable);
 }

@@ -15,10 +15,11 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.presentation.*;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,7 +36,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AdminAuditableListener.class })
 public class PageImpl extends PageFolderImpl implements Page {
 
     private static final long serialVersionUID = 1L;
