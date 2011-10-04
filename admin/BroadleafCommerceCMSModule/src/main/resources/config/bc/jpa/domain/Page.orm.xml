@@ -63,6 +63,14 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE" >
+		<query>SELECT pageTemplate
+               FROM org.broadleafcommerce.cms.page.domain.PageTemplate pageTemplate
+               WHERE
+                  pageTemplate.locale.defaultFlag = true
+		</query>
+	</named-query>
+
     <named-query name="BC_READ_PAGE_BY_URI" >
 		<query>SELECT page
                FROM org.broadleafcommerce.cms.page.domain.PageImpl page

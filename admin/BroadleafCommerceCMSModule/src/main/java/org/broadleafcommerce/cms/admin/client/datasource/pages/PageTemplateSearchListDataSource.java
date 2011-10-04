@@ -15,7 +15,7 @@ public class PageTemplateSearchListDataSource extends ListGridDataSource {
         super(name, persistencePerspective, service, modules);
     }
 
-    protected Criteria permanentCriteria = new Criteria("locale.localeName", "default");
+    protected Criteria permanentCriteria = new Criteria("locale.defaultFlag", "true");
 
     public Criteria getPermanentCriteria() {
         return permanentCriteria;

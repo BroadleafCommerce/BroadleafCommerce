@@ -247,9 +247,6 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
     @Override
     public List<PageTemplate> retrieveAllPageTemplates(String localeName) {
-        if (localeName == null) {
-            localeName = "default";
-        }
         return pageDao.retrieveAllPageTemplates(localeName);
     }
 

@@ -155,8 +155,13 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public List<PageTemplate> retrieveAllPageTemplates(String localeName) {
-        Query query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE");
-        query.setParameter("localeName", localeName);
+        Query query;
+        if (localeName != null) {
+            query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE");
+            query.setParameter("localeName", localeName);
+        } else {
+            query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE");
+        }
         return query.getResultList();
     }
 

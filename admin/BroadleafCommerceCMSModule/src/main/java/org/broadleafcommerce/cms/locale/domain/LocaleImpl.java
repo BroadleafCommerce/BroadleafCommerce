@@ -31,7 +31,7 @@ public class LocaleImpl implements Locale {
     @Column (name = "FRIENDLY_NAME")
     protected String friendlyName;
 
-     @Column (name = "DEFAULT_FLAG")
+    @Column (name = "DEFAULT_FLAG")
     protected Boolean defaultFlag;
 
     @Override
