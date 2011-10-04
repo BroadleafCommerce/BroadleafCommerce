@@ -434,6 +434,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
                 adminUser.setCurrentSandbox(sandBox);
                 adminSecurityService.saveAdminUser(adminUser);
+                userSandbox = sandBox;
             }
         }
 

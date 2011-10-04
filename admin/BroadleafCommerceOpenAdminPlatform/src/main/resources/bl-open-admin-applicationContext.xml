@@ -105,6 +105,11 @@
 		<aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.remove(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceRemoveOperation"/>
 	</aop:config>
+
+    <aop:config>
+		<aop:pointcut id="blSandBoxServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl.retrieveUserSandBox(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceOperation"/>
+	</aop:config>
 	
 	<!--<aop:config>
 		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* saveEntitySandBoxItemsandBoxItems(..))"/>

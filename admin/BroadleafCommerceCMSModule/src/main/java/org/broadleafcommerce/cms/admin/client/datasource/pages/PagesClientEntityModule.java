@@ -1,6 +1,7 @@
 package org.broadleafcommerce.cms.admin.client.datasource.pages;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.Criteria;
@@ -45,6 +46,9 @@ public class PagesClientEntityModule extends BasicClientEntityModule {
                 for (TreeNode node : recordList) {
                     if ("org.broadleafcommerce.cms.page.domain.PageImpl".equals(node.getAttribute("_type"))) {
                         node.setIsFolder(false);
+                        if (node.getAttributeAsBoolean("lockedFlag")) {
+                            node.setIcon(GWT.getModuleBaseURL()+"admin/images/lock_page.png");
+                        }
                     }
                 }
 

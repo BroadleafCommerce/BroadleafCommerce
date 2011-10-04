@@ -103,8 +103,13 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         if (pageType!=null && pageType.equals("org.broadleafcommerce.cms.page.domain.PageImpl")) {
             getDisplay().getAddPageButton().disable();
             getDisplay().getAddPageFolderButton().disable();
-            getDisplay().getListDisplay().getRemoveButton().enable();
-            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
+            if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+                getDisplay().getListDisplay().getRemoveButton().enable();
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
+            } else {
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+                getDisplay().getListDisplay().getRemoveButton().disable();
+            }
             currentPageRecord = selectedRecord;
             loadTemplateForm(selectedRecord);
         } else {
@@ -139,7 +144,9 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
                     @Override
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
-                        formOnlyView.getForm().enable();
+                        if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+                            formOnlyView.getForm().enable();
+                        }
                         for (FormItem formItem : formOnlyView.getForm().getFields()) {
                         	if (formItem instanceof RichTextCanvasItem) {
                         		formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
@@ -196,12 +203,12 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                         if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                         }
+                                        if (!getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord).equals(newId)) {
+                                            ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(newId));
+                                            currentPageRecord.setAttribute(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyFieldName(), newId);
+                                        }
                                     }
                                 });
-                                if (!getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord).equals(newId)) {
-                                    ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(newId));
-                                    currentPageRecord.setAttribute(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyFieldName(), newId);
-                                }
 							}
                         }
                     }, requestProperties);
