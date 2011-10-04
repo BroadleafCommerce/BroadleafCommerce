@@ -6,7 +6,7 @@
     <tlib-version>3.0</tlib-version>
     <jsp-version>2.1</jsp-version>
     <short-name>blcms</short-name>
-    <uri>/broadleaf-cms</uri>
+    <uri>http://www.broadleafcommerce.org/tags/cms</uri>
 
 
     <!--
@@ -22,7 +22,7 @@
     <tag>
         <name>content</name>
         <tag-class>org.broadleafcommerce.cms.web.structure.DisplayContentTag</tag-class>
-        <body-content>empty</body-content>
+        <body-content>JSP</body-content>
         <description>Returns the internationalized message for the passed in messageKey</description>
        	<attribute>
 			<name>contentType</name>

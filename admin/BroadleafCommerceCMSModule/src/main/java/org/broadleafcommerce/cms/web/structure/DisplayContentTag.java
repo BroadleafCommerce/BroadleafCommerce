@@ -86,14 +86,13 @@ public class DisplayContentTag extends BodyTagSupport {
     }
 
 
-	@Override
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         Map<String, Object> mvelParameters = buildMvelParameters(request);
         SandBox currentSandbox = (SandBox) request.getAttribute(ContentFilter.SANDBOX_VAR);
 
         List<StructuredContent> contentItems;
-        StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
+        StructuredContentType structuredContentType = getStructuredContentService(pageContext).findStructuredContentTypeByName(contentType);
 
         if (locale == null) {
             locale = (Locale) request.getAttribute(ContentFilter.LOCALE_VAR);

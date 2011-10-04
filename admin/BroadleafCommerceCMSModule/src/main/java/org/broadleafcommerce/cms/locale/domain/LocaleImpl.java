@@ -55,16 +55,6 @@ public class LocaleImpl implements Locale {
     }
 
     @Override
-    public String getLocaleName() {
-        return localeName;
-    }
-
-    @Override
-    public void setLocaleName(String localeName) {
-        this.localeName = localeName;
-    }
-
-    @Override
     public String getFriendlyName() {
         return friendlyName;
     }

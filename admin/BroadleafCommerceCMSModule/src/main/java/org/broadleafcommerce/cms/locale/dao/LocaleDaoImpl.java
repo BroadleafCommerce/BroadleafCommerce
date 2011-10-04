@@ -61,7 +61,7 @@ public class LocaleDaoImpl implements LocaleDao {
     public Locale findDefaultLocale() {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_LOCALE");
         List<Locale> localeList = (List<Locale>) query.getResultList();
-        if (localeList.size() > 1) {
+        if (localeList.size() >= 1) {
             return localeList.get(0);
         }
         return null;

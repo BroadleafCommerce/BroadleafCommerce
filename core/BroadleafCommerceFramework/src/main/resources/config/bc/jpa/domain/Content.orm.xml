@@ -8,7 +8,7 @@
 		<query>SELECT content FROM org.broadleafcommerce.core.content.domain.Content content
 				WHERE content.sandbox = :sandbox
 				  AND content.contentType = :contentType
-				  AND content.activeStartDate &lt; :displayDate
+				  AND content.activeStartDate &lt; :contentDate
 				  AND content.activeEndDate &gt; :displayDate
 				  AND content.online = TRUE
 		     ORDER BY priority

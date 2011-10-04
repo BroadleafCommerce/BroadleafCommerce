@@ -17,7 +17,6 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -117,6 +116,14 @@ public class StructuredContentFieldImpl implements StructuredContentField {
         }
         return newContentField;
 
+    }
+
+    @Override
+    public String getValue() {
+        if (fieldDataList != null && fieldDataList.size() >= 1) {
+            return fieldDataList.get(0).getValue();
+        }
+        return null;
     }
 
     public AdminAuditable getAuditable() {

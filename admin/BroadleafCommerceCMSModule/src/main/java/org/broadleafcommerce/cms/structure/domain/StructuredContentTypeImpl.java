@@ -17,7 +17,6 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
@@ -55,7 +54,7 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     @AdminPresentation(friendlyName="Description", order=2, group="Details", prominent=true)
     protected String description;
 
-    @OneToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
+    @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_STRCTRDCNTNT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_TYPE_ID", referencedColumnName = "STRUCTURED_CONTENT_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")

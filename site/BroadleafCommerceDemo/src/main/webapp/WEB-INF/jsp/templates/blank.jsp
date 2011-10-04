@@ -32,8 +32,7 @@
 	<body>
 		<div id="cmsContent">
 		<c:if test="${BLC_PAGE ne null}">
-			<!-- TODO: this should be content -->
-			${BLC_PAGE.pageFields.field_3.fieldDataList[0].value}
+			${BLC_PAGE.pageFields.body.value}
 		</c:if>
 	</div>
 	</body>

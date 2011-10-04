@@ -63,7 +63,7 @@ public class PageTemplateImpl implements PageTemplate {
     @JoinColumn(name = "LOCALE_ID")
     protected Locale locale;
 
-    @OneToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
+    @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_PGTMPLT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "PAGE_TEMPLATE_ID", referencedColumnName = "PAGE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")

@@ -31,8 +31,8 @@
                      structuredContent.structuredContentType = :contentType AND
                      structuredContent.locale = :locale AND
                      structuredContent.contentName = :contentName AND
-                     structuredContent.activeStartDate &gt;= :activeStartDate AND
-                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.activeStartDate &lt;= :currentDate AND
+                     (structuredContent.activeEndDate &gt;= :currentDate OR structuredContent.activeEndDate is null) AND
                      structuredContent.archivedFlag = false
                ORDER BY priority
 		</query>
@@ -45,8 +45,8 @@
                      structuredContent.structuredContentType = :contentType AND
                      structuredContent.locale = :locale AND
                      structuredContent.contentName = :contentName AND
-                     structuredContent.activeStartDate &gt;= :activeStartDate AND
-                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.activeStartDate &lt;= :currentDate AND
+                     (structuredContent.activeEndDate &gt;= :currentDate OR structuredContent.activeEndDate is null) AND
                      structuredContent.archivedFlag = false
                ORDER BY priority
 		</query>
@@ -58,8 +58,8 @@
                WHERE structuredContent.sandbox = :sandbox AND
                      structuredContent.structuredContentType = :contentType AND
                      structuredContent.locale = :locale AND
-                     structuredContent.activeStartDate &gt;= :activeStartDate AND
-                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.activeStartDate &lt;= :currentDate AND
+                     (structuredContent.activeEndDate &gt;= :currentDate OR structuredContent.activeEndDate is null) AND
                      structuredContent.archivedFlag = false
                ORDER BY priority
 		</query>
@@ -71,8 +71,8 @@
                WHERE structuredContent.sandbox is null AND
                      structuredContent.structuredContentType = :contentType AND
                      structuredContent.locale = :locale AND
-                     structuredContent.activeStartDate &gt;= :activeStartDate AND
-                     (structuredContent.activeEndDate &lt;= :activeEndDate OR structuredContent.activeEndDate is null) AND
+                     structuredContent.activeStartDate &lt;= :currentDate AND
+                     (structuredContent.activeEndDate &gt;= :currentDate OR structuredContent.activeEndDate is null) AND
                      structuredContent.archivedFlag = false
                ORDER BY priority
 		</query>

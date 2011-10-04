@@ -15,10 +15,6 @@ public interface Locale extends Serializable {
 
     void setLocaleCode(String localeCode);
 
-    String getLocaleName();
-
-    void setLocaleName(String localeName);
-
     public String getFriendlyName();
 
     public void setFriendlyName(String friendlyName);

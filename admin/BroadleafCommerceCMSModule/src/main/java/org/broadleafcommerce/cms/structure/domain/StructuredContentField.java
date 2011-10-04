@@ -42,6 +42,8 @@ public interface StructuredContentField extends Serializable {
     public void setFieldDataList(List<StructuredContentFieldData> fieldDataList);
 
     public StructuredContentField cloneEntity();
+    
+    public String getValue();
 
     public AdminAuditable getAuditable();
 

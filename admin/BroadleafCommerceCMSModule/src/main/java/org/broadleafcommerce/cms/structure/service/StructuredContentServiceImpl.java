@@ -387,6 +387,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                     return returnList;
                 } else if (returnList.size() > count) {
                     return returnList.subList(0, count);
+                } else {
+                    tmpList.add(sc);
                 }
             } else {
                 if (sc.getDisplayRule() != null && "".equals(sc.getDisplayRule())) {
