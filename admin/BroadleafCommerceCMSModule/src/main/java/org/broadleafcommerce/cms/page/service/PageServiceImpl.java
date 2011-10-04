@@ -17,6 +17,7 @@ package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.locale.service.LocaleService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
@@ -42,6 +43,9 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
+
+    @Resource(name="blLocaleService")
+    protected LocaleService localeService;
 
     /**
      * Returns the page with the passed in id.
@@ -81,12 +85,12 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
      * @return
      */
     @Override
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, String localeName) {
+    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, String localeCode) {
         SandBox productionSandbox = null;
         SandBox userSandbox = sandbox;
 
-        if (localeName == null) {
-            localeName = "default";
+        if (localeCode == null) {
+            localeCode = localeService.findDefaultLocale().getLocaleCode();
         }
 
         if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
@@ -96,7 +100,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             }
         }
 
-        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder, localeName, userSandbox, productionSandbox);
+        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder, localeCode, userSandbox, productionSandbox);
         return pageFolders;
     }
 
@@ -246,8 +250,8 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
     }
 
     @Override
-    public List<PageTemplate> retrieveAllPageTemplates(String localeName) {
-        return pageDao.retrieveAllPageTemplates(localeName);
+    public List<PageTemplate> retrieveAllPageTemplates(String localeCode) {
+        return pageDao.retrieveAllPageTemplates(localeCode);
     }
 
     /**

@@ -49,7 +49,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         currentLocale.setWidth(120);
         currentLocale.setOptionDataSource(additionalDataSources[0]);
         currentLocale.setDisplayField("friendlyName");
-        currentLocale.setValueField("localeName");
+        currentLocale.setValueField("localeCode");
         currentLocale.setDefaultToFirstOption(true);
         listDisplay.getToolBar().addFormItem(currentLocale, 6);
         listDisplay.getToolBar().getMember(7).destroy();

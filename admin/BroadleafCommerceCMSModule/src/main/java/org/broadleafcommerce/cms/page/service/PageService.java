@@ -62,10 +62,10 @@ public interface PageService {
      * @param sandbox - the sandbox to find pages (null indicates pages that are in production for
      *                  sites that are single tennant.
      * @param parentFolder if null then root folder for the site.
-     * @param localeName - the locale to include (null is typical for non-internationalized sites)
+     * @param localeCode - the locale to include (null is typical for non-internationalized sites)
      * @return
      */
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox, PageFolder parentFolder, String localeName);
+    public List<PageFolder> findPageFolderChildren(SandBox sandbox, PageFolder parentFolder, String localeCode);
 
 
     /**
@@ -146,7 +146,7 @@ public interface PageService {
     /**
      * Returns the list of pageTemplates available for the passed in language.
      */
-    public List<PageTemplate> retrieveAllPageTemplates(String localeName);
+    public List<PageTemplate> retrieveAllPageTemplates(String localeCode);
 
 
     /**

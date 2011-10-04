@@ -35,7 +35,7 @@ public interface PageDao {
 
     public Map<String, PageField> readPageFieldsByPage(Page page);
 
-    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String localeName, SandBox userSandbox, SandBox productionSandBox);
+    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String localeCode, SandBox userSandbox, SandBox productionSandBox);
 
     public Page updatePage(Page page, boolean clearLevel1Cache);
 
@@ -47,7 +47,7 @@ public interface PageDao {
 
     public PageFolder addPageFolder(PageFolder pageFolder);
 
-    public List<PageTemplate> retrieveAllPageTemplates(String localeName);
+    public List<PageTemplate> retrieveAllPageTemplates(String localeCode);
 
     public Page findPageByURI(SandBox productionSandbox, String uri);
 }

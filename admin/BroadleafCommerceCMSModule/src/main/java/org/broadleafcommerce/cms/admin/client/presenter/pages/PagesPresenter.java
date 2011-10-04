@@ -258,10 +258,10 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         getDisplay().getCurrentLocale().addChangedHandler(new ChangedHandler() {
             @Override
             public void onChanged(ChangedEvent event) {
-                String newLocaleName = (String) event.getValue();
-                ((PagesTreeDataSource) getPresenterSequenceSetupManager().getDataSource("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeName", newLocaleName));
+                String newLocaleCode = (String) event.getValue();
+                ((PagesTreeDataSource) getPresenterSequenceSetupManager().getDataSource("pageTreeDS")).setPermanentCriteria(new Criteria("pageTemplate.locale.localeCode", newLocaleCode));
                 getDisplay().getListDisplay().getGrid().invalidateCache();
-                ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeName", newLocaleName));
+                ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeCode", newLocaleCode));
                 ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
             }
         });

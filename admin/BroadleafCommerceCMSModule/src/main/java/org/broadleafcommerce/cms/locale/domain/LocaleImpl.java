@@ -25,9 +25,6 @@ public class LocaleImpl implements Locale {
     @Column (name = "LOCALE_CODE")
     protected String localeCode;
 
-    @Column (name = "LOCALE_NAME")
-    protected String localeName;
-
     @Column (name = "FRIENDLY_NAME")
     protected String friendlyName;
 
@@ -86,7 +83,6 @@ public class LocaleImpl implements Locale {
         }
 
         if (localeCode != null ? !localeCode.equals(locale.localeCode) : locale.localeCode != null) return false;
-        if (localeName != null ? !localeName.equals(locale.localeName) : locale.localeName != null) return false;
         if (friendlyName != null ? !friendlyName.equals(locale.friendlyName) : locale.friendlyName != null) return false;
 
         return true;
@@ -96,7 +92,6 @@ public class LocaleImpl implements Locale {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (localeCode != null ? localeCode.hashCode() : 0);
-        result = 31 * result + (localeName != null ? localeName.hashCode() : 0);
         result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
         return result;
     }

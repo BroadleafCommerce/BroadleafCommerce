@@ -1,7 +1,10 @@
 package org.broadleafcommerce.cms.admin.server.handler;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
@@ -31,6 +34,8 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+
+    private static final Log LOG = LogFactory.getLog(PagesCustomPersistenceHandler.class);
 
     @Resource(name="blPageService")
 	protected PageService pageService;
@@ -83,6 +88,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 			return adminEntity;
 		} catch (Exception e) {
+            LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
     }
@@ -96,8 +102,14 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             if (parentCategoryId != null) {
                 pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
             }
-            String localeName = cto.get("pageTemplate.locale.localeName").getFilterValues()[0];
-            List<PageFolder> folders = pageService.findPageFolderChildren(getSandBox(), pageOrFolder, localeName);
+            String[] filterValues = cto.get("pageTemplate.locale.defaultFlag").getFilterValues();
+            String localeCode;
+            if (!ArrayUtils.isEmpty(filterValues)) {
+                localeCode = null;
+            } else {
+                localeCode = cto.get("pageTemplate.locale.localeCode").getFilterValues()[0];
+            }
+            List<PageFolder> folders = pageService.findPageFolderChildren(getSandBox(), pageOrFolder, localeCode);
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(folders);
 
@@ -109,6 +121,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
             return response;
         } catch (Exception e) {
+            LOG.error("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -155,6 +168,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 			return adminEntity;
 		} catch (Exception e) {
+            LOG.error("Unable to update entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
     }
@@ -176,6 +190,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 pageService.deletePage(adminInstance, getSandBox());
             }
 		} catch (Exception e) {
+            LOG.error("Unable to remove entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
     }

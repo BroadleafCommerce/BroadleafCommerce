@@ -15,7 +15,7 @@ public class PagesTreeDataSource extends TreeGridDataSource {
         super(name, persistencePerspective, service, modules, rootId, rootName);
     }
 
-    protected Criteria permanentCriteria = new Criteria("pageTemplate.locale.localeName", "default");
+    protected Criteria permanentCriteria = new Criteria("pageTemplate.locale.defaultFlag", "true");
 
     public Criteria getPermanentCriteria() {
         return permanentCriteria;

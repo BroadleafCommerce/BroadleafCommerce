@@ -35,7 +35,7 @@
                LEFT JOIN page.pageTemplate pageTemplate
                WHERE
                   page.parentFolder = :parentFolder AND
-                  (pageTemplate.locale.localeName = :localeName OR pageTemplate.locale.localeName is null) AND
+                  (pageTemplate.locale.localeCode = :localeCode OR pageTemplate.locale.localeCode is null) AND
                   (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null) AND
                   page.archivedFlag = false AND
                   page.deletedFlag = false
@@ -48,7 +48,7 @@
                LEFT JOIN page.pageTemplate pageTemplate
                WHERE
                   page.parentFolder is null AND
-                  (pageTemplate.locale.localeName = :localeName OR pageTemplate.locale.localeName is null) AND
+                  (pageTemplate.locale.localeCode = :localeCode OR pageTemplate.locale.localeCode is null) AND
                   (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null) AND
                   page.archivedFlag = false AND
                   page.deletedFlag = false
@@ -59,7 +59,7 @@
 		<query>SELECT pageTemplate
                FROM org.broadleafcommerce.cms.page.domain.PageTemplate pageTemplate
                WHERE
-                  pageTemplate.locale.localeName = :localeName
+                  pageTemplate.locale.localeCode = :localeCode
 		</query>
 	</named-query>
 

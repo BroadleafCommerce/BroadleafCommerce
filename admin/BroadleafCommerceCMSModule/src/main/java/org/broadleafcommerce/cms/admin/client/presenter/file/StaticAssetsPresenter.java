@@ -208,7 +208,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 
     protected MapStructureEntityEditDialog getStaticAssetDescriptionEntityView() {
 		 if (staticAssetDescriptionEntityAdd == null) {
-			 staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeName");
+			 staticAssetDescriptionEntityAdd = new MapStructureEntityEditDialog(StaticAssetDescriptionMapDataSourceFactory.MAPSTRUCTURE, getPresenterSequenceSetupManager().getDataSource("localeDS"), "friendlyName", "localeCode");
 		 }
 		 return staticAssetDescriptionEntityAdd;
 	}

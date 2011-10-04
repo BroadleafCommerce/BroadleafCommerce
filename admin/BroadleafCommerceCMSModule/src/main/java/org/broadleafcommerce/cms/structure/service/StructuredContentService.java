@@ -65,8 +65,6 @@ public interface StructuredContentService extends SandBoxItemListener {
      * Merges the sandbox content with the production content.
      * @param sandbox - the sandbox to find structured content items (null indicates items that are in production for
      *                  sites that are single tenant.
-     * @param parentFolder if null then root folder for the site.
-     * @param localeName - the locale to include (null is typical for non-internationalized sites)
      * @return
      */
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria c);
