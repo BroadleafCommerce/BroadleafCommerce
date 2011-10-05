@@ -167,6 +167,7 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SandBoxItem.class);
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective, entities);
             cto.get("sandBox").setFilterValue(currentSandBox.getId().toString());
+            cto.get("archivedFlag").setFilterValue(Boolean.FALSE.toString());
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItem.class);

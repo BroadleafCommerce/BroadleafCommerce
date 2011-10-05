@@ -33,11 +33,10 @@
                 tinymce.dom.Event.add(doc, 'keypress', function(e) {
                     window.parent.enableSaveButton();
                 });
-                    ed.setContent(document.content);
             });
             ed.addButton('assetSearch', {
                 title : 'Asset Search',
-                image : window.parent.getAdminContext()+'admin/images/button/assetDialog.png',
+                image : window.parent.getAdminContext() + 'admin/images/button/assetDialog.png',
                 onclick: function() {
                     window.parent.displayAssetSearchDialog(ed);
                 }
@@ -45,8 +44,8 @@
         }
 
         /*
-        Change the values in getOptions() to affect visual changes in the TinyMCE control used for HTML
-        editing.
+         Change the values in getOptions() to affect visual changes in the TinyMCE control used for HTML
+         editing.
          */
         function getOptions() {
             var options = {
@@ -55,7 +54,7 @@
                 theme : "advanced",
                 height: 400,
                 width: 650,
-                content_css: window.parent.getPreviewUrlPrefix()+"/css/master.css,"+window.parent.getPreviewUrlPrefix()+"/css/blueprint/screen.css",
+                content_css: window.parent.getPreviewUrlPrefix() + "/css/master.css," + window.parent.getPreviewUrlPrefix() + "/css/blueprint/screen.css",
                 plugins : "autolink,lists,spellchecker,pagebreak,style,table,advhr,advimage,advlink,iespell,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras",
                 // Theme options
                 theme_advanced_buttons1 : "newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
@@ -66,12 +65,13 @@
                 theme_advanced_toolbar_align : "left",
                 theme_advanced_statusbar_location : "bottom",
                 theme_advanced_resizing : true,
+                readonly : window.parent.getHTMLDisabled(gup("id")),
                 setup : setupEditor
             }
 
             var templatePath = null;
             if (window.parent.getTemplatePath != null) {
-                var templatePath = window.parent.getPreviewUrlPrefix()+"/preview" + window.parent.getTemplatePath();
+                var templatePath = window.parent.getPreviewUrlPrefix() + "/preview" + window.parent.getTemplatePath();
             }
 
             if (templatePath != null) {
@@ -83,11 +83,26 @@
 
             return options;
         }
+
+        function gup(name) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(window.location.href);
+            if (results == null)
+                return "";
+            else
+                return results[1];
+        }
     </script>
 </head>
 <body>
 <form method="post" action="somepage">
-    <textarea id="richTextContent" name="content"></textarea>
+    <script type="text/javascript">
+        document.writeln('<textarea id="richTextContent" name="content">');
+        document.write(window.parent.getHTMLValue(gup("id")));
+        document.writeln('</textarea>');
+    </script>
 </form>
 </body>
 </html>

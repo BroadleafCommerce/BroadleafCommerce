@@ -278,6 +278,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 originalAsset.setArchivedFlag(Boolean.TRUE);
                 staticAssetDao.updateStaticAsset(originalAsset);
                 asset.setOriginalAssetId(null);
+                asset.setLockedFlag(false);
+            } else {
+                asset.setLockedFlag(true);
             }
         }
         asset.setSandbox(destinationSandBox);
@@ -308,6 +311,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (asset != null) {
             asset.setArchivedFlag(Boolean.TRUE);
             staticAssetDao.updateStaticAsset(asset);
+
+            StaticAsset originalAsset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getOriginalItemId());
+            originalAsset.setLockedFlag(false);
+            staticAssetDao.updateStaticAsset(originalAsset);
         }
     }
 }

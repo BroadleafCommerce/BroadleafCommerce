@@ -35,11 +35,10 @@
                 tinymce.dom.Event.add(doc, 'click', function(e) {
                     window.parent.enableSaveButton();
                 });
-                ed.setContent(document.content);
             });
             ed.addButton('assetSearch', {
                 title : 'Asset Search',
-                image : window.parent.getAdminContext()+'admin/images/button/assetDialog.png',
+                image : window.parent.getAdminContext() + 'admin/images/button/assetDialog.png',
                 onclick: function() {
                     window.parent.displayAssetSearchDialog(ed);
                 }
@@ -47,8 +46,8 @@
         }
 
         /*
-        Change the values in getOptions() to affect visual changes in the TinyMCE control used for HTML
-        editing.
+         Change the values in getOptions() to affect visual changes in the TinyMCE control used for HTML
+         editing.
          */
         function getOptions() {
             var options = {
@@ -63,16 +62,32 @@
                 height: 100,
                 width: 250,
                 forced_root_block: false,
+                readonly : window.parent.getHTMLDisabled(gup("id")),
                 setup : setupEditor
             }
 
             return options;
         }
+
+        function gup(name) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(window.location.href);
+            if (results == null)
+                return "";
+            else
+                return results[1];
+        }
     </script>
 </head>
 <body>
 <form method="post" action="somepage">
-    <textarea id="richTextContent" name="content"></textarea>
+    <script type="text/javascript">
+        document.writeln('<textarea id="richTextContent" name="content">');
+        document.write(window.parent.getHTMLValue(gup("id")));
+        document.writeln('</textarea>');
+    </script>
 </form>
 </body>
 </html>

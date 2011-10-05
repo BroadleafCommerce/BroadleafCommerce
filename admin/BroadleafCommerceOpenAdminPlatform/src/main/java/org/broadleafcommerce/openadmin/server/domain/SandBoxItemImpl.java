@@ -78,7 +78,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     protected Long originalItemId;
 
     @Column(name = "ARCHIVED_FLAG")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(hidden=true)
     protected Boolean archivedFlag = Boolean.FALSE;
 
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)

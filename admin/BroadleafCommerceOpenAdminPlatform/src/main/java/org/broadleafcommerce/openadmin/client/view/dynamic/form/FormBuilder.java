@@ -87,7 +87,7 @@ public class FormBuilder {
 		        	if (largeEntry == null) {
 		        		largeEntry = false;
 		        	}
-		        	final FormItem formItem = buildField(dataSource, field, fieldType, largeEntry);
+		        	final FormItem formItem = buildField(dataSource, field, fieldType, largeEntry, form);
 		        	final FormItem displayFormItem = buildDisplayField(field, fieldType);
 		        	if (fieldType.equals(SupportedFieldType.ID.toString())) {
 		        		canEdit = false;
@@ -158,7 +158,7 @@ public class FormBuilder {
 			        	if (largeEntry == null) {
 			        		largeEntry = false;
 			        	}
-			        	formItem = buildField(dataSource, field, fieldType, largeEntry);
+			        	formItem = buildField(dataSource, field, fieldType, largeEntry, form);
 			        	displayFormItem = buildDisplayField(field, fieldType);
 			        	setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        		}
@@ -342,7 +342,7 @@ public class FormBuilder {
 		return displayFormItem;
 	}
 
-	protected static FormItem buildField(final DataSource dataSource, final DataSourceField field, String fieldType, Boolean largeEntry) {
+	protected static FormItem buildField(final DataSource dataSource, final DataSourceField field, String fieldType, Boolean largeEntry, DynamicForm form) {
 		final FormItem formItem;
 		switch(SupportedFieldType.valueOf(fieldType)){
 		case BOOLEAN:
@@ -442,14 +442,14 @@ public class FormBuilder {
 			break;
         case HTML:
         	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
-        	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane();
+        	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath(), form);
             if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
                 throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
             }
-        	richTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath());
-        	richTextHTMLPane.setContentsType(ContentsType.PAGE);
         	richTextHTMLPane.setWidth(700);
         	richTextHTMLPane.setHeight(450);
+            richTextHTMLPane.setContentsType(ContentsType.PAGE);
+            //richTextHTMLPane.init();
         	richTextCanvasItem.setCanvas(richTextHTMLPane);
             richTextCanvasItem.setShowTitle(true);
             richTextCanvasItem.setColSpan(3);
@@ -458,14 +458,14 @@ public class FormBuilder {
             break;
         case HTML_BASIC:
         	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
-        	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane();
+        	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath(), form);
             if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
                 throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
             }
-        	basicRichTextHTMLPane.setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix() + ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath());
-        	basicRichTextHTMLPane.setContentsType(ContentsType.PAGE); 
         	basicRichTextHTMLPane.setWidth(300);
         	basicRichTextHTMLPane.setHeight(175);
+            basicRichTextHTMLPane.setContentsType(ContentsType.PAGE);
+            //basicRichTextHTMLPane.init();
         	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
             basicRichTextCanvasItem.setShowTitle(true);
         	

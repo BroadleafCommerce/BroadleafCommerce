@@ -13,5 +13,9 @@ public class RichTextCanvasItem extends CanvasItem {
 	public void setValue(String value) {
 		((RichTextHTMLPane) getCanvas()).setValue(value);
 	}
-	
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        ((RichTextHTMLPane) getCanvas()).setDisabled(disabled);
+    }
 }

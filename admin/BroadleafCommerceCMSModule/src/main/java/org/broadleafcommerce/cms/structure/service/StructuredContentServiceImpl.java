@@ -481,6 +481,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                // We are archiving the old item and making this the new "production item", so
                // null out the original item id before saving.
                 sc.setOriginalItemId(null);
+                sc.setLockedFlag(false);
+            } else {
+                sc.setLockedFlag(true);
             }
 
         }
@@ -511,6 +514,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (sc != null) {
             sc.setArchivedFlag(Boolean.TRUE);
             structuredContentDao.addOrUpdateContentItem(sc, false);
+
+            StructuredContent originalSc = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
+            originalSc.setLockedFlag(false);
+            structuredContentDao.addOrUpdateContentItem(originalSc, false);
         }
     }
 

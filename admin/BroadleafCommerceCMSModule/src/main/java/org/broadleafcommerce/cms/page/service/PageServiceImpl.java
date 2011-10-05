@@ -307,8 +307,10 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                // We are archiving the old page and making this the new "production page", so
                // null out the original page id before saving.
                page.setOriginalPageId(null);
+               page.setLockedFlag(false);
+            } else {
+               page.setLockedFlag(true);
             }
-
         }
         page.setSandbox(destinationSandBox);
         pageDao.updatePage(page, false);
@@ -337,6 +339,10 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         if (page != null) {
             page.setArchivedFlag(Boolean.TRUE);
             pageDao.updatePage(page, false);
+
+            Page originalPage = (Page) pageDao.readPageById(page.getOriginalPageId());
+            originalPage.setLockedFlag(false);
+            pageDao.updatePage(originalPage, false);
         }
     }
 }
