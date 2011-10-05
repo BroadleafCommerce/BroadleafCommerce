@@ -220,9 +220,12 @@ public class FormBuilder {
                 if (containsRichTextItem == null) {
                     containsRichTextItem = false;
                 }
-                boolean shouldExpand = sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group);
-                section.setSectionExpanded(containsRichTextItem || shouldExpand);
-                section.setCanCollapse(!containsRichTextItem);
+                //Disallow collapsing of sections
+                //boolean shouldExpand = sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group);
+                //section.setSectionExpanded(containsRichTextItem || shouldExpand);
+                //section.setCanCollapse(!containsRichTextItem);
+                section.setSectionExpanded(true);
+                section.setCanCollapse(false);
                 section.setItemIds(ids);
                 allItems.add(section);
                 allItems.addAll(formItems);
@@ -242,6 +245,7 @@ public class FormBuilder {
 	protected static void setupField(Boolean showDisabledState, Boolean canEdit, Map<String, List<FormItem>> sections, Map<String, Integer> sectionNames, DataSourceField field, String group, Integer groupOrder, final FormItem formItem, final FormItem displayFormItem) {
 		formItem.setName(field.getName());
 		formItem.setTitle(field.getTitle());
+        formItem.setWrapTitle(false);
 		formItem.setRequired(field.getRequired());
 		if (!sections.containsKey(group)) {
 			List<FormItem> temp = new ArrayList<FormItem>();
@@ -337,7 +341,7 @@ public class FormBuilder {
             ((CanvasItem) displayFormItem).setCanvas(new UploadStatusProgress(100, 20));
             displayFormItem.setName("__display_"+field.getName());
             displayFormItem.setShowTitle(false);
-            displayFormItem.setColSpan(2);
+            displayFormItem.setColSpan(1);
 		}
 		return displayFormItem;
 	}
@@ -347,6 +351,7 @@ public class FormBuilder {
 		switch(SupportedFieldType.valueOf(fieldType)){
 		case BOOLEAN:
 			formItem = new BooleanItem();
+            formItem.setColSpan(2);
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					if (value == null) {
@@ -359,19 +364,24 @@ public class FormBuilder {
 			break;
 		case DATE:
 			formItem = new DateTimeItem();
+            formItem.setColSpan(2);
 			break;
 		case DECIMAL:
 			formItem = new FloatItem();
+            formItem.setColSpan(2);
 			break;
 		case EMAIL:
 			formItem = new TextItem();
+            formItem.setColSpan(2);
 			((TextItem)formItem).setLength(field.getLength());
 			break;
 		case INTEGER:
 			formItem = new IntegerItem();
+            formItem.setColSpan(2);
 			break;
 		case MONEY:
 			formItem = new FloatItem();
+            formItem.setColSpan(2);
 			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
@@ -380,6 +390,7 @@ public class FormBuilder {
 			break;
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
+            formItem.setColSpan(2);
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -394,6 +405,7 @@ public class FormBuilder {
 			break;
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
+            formItem.setColSpan(2);
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
@@ -408,6 +420,7 @@ public class FormBuilder {
 			break;
 		case BROADLEAF_ENUMERATION:
 			formItem = new SelectItem();
+            formItem.setColSpan(2);
 			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
 			String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
 			for (int j=0; j<enumerationValues.length; j++) {
@@ -417,6 +430,7 @@ public class FormBuilder {
 			break;
         case EXPLICIT_ENUMERATION:
 			formItem = new SelectItem();
+            formItem.setColSpan(2);
 			LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
 			String[][] enumerationValues2 = (String[][]) field.getAttributeAsObject("enumerationValues");
 			for (int j=0; j<enumerationValues2.length; j++) {
@@ -426,9 +440,11 @@ public class FormBuilder {
 			break;
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
+            formItem.setColSpan(2);
 			break;
 		case ID:
 			formItem = new TextItem();
+            formItem.setColSpan(2);
 			((TextItem)formItem).setLength(field.getLength());
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
@@ -438,6 +454,7 @@ public class FormBuilder {
 			break;
 		case PASSWORD:
 			formItem = new PasswordItem();
+            formItem.setColSpan(2);
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
@@ -452,7 +469,7 @@ public class FormBuilder {
             //richTextHTMLPane.init();
         	richTextCanvasItem.setCanvas(richTextHTMLPane);
             richTextCanvasItem.setShowTitle(true);
-            richTextCanvasItem.setColSpan(3);
+            richTextCanvasItem.setColSpan(2);
         	
         	formItem = richTextCanvasItem;
             break;
@@ -468,27 +485,32 @@ public class FormBuilder {
             //basicRichTextHTMLPane.init();
         	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
             basicRichTextCanvasItem.setShowTitle(true);
+            basicRichTextCanvasItem.setColSpan(2);
         	
         	formItem = basicRichTextCanvasItem;
         	break;
         case UPLOAD:
             formItem = new UploadItem();
+            formItem.setColSpan(1);
             break;
         case HIDDEN:
             formItem = new HiddenItem();
+            formItem.setColSpan(2);
             break;
         case ARTIFACT:
             formItem = new ArtifactItem();
+            formItem.setColSpan(2);
             break;
 		default:
 			if (!largeEntry) {
 				formItem = new TextItem();
+                formItem.setColSpan(2);
 				((TextItem)formItem).setLength(field.getLength());
 			} else {
 				formItem = new TextAreaItem();
+                formItem.setColSpan(2);
 				((TextAreaItem)formItem).setLength(field.getLength());
 				formItem.setHeight(70);
-				formItem.setColSpan(3);
 				formItem.setWidth("400");
 			}
 			break;

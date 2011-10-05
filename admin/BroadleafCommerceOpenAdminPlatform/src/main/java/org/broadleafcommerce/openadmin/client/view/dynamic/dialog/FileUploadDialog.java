@@ -82,7 +82,7 @@ public class FileUploadDialog extends Window {
         dynamicForm.setEncoding(Encoding.MULTIPART);
         dynamicForm.setTarget("hidden_frame");
         dynamicForm.setAction("cms.upload.service");
-		dynamicForm.setNumCols(4);
+		dynamicForm.setNumCols(3);
         dynamicForm.setPadding(10);
         dynamicForm.setHeight100();
         stack.addMember(dynamicForm);
