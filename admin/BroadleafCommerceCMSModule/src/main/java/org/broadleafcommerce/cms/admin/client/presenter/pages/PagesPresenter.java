@@ -203,12 +203,13 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                         if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                         }
-                                        if (!getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord).equals(newId)) {
-                                            ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(newId));
-                                            currentPageRecord.setAttribute(getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyFieldName(), newId);
-                                        }
                                     }
                                 });
+                                String oldId = getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord);
+                                if (!oldId.equals(newId)) {
+                                    ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(oldId));
+                                    currentPageRecord = newRecord;
+                                }
 							}
                         }
                     }, requestProperties);
