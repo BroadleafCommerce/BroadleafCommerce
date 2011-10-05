@@ -463,6 +463,9 @@ public class SandBoxServiceImpl implements SandBoxService {
                 sandBoxItem.setArchivedFlag(true);
             }
             sandBoxItem.setSandBox(destinationSandBox);
+            if (sandBoxItem.getOriginalSandBox() == null) {
+                sandBoxItem.setOriginalSandBox(fromSandBox);
+            }
             sandBoxItem.addSandBoxAction(action);
         }
     }
