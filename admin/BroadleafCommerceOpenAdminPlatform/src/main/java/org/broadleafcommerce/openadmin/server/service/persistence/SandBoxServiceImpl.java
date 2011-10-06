@@ -441,12 +441,10 @@ public class SandBoxServiceImpl implements SandBoxService {
         return userSandbox;
     }
 
-
     @Override
     public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
         promoteSelectedItems(fromSandBox, comment, fromSandBox.getSandBoxItems());
     }
-
 
     @Override
     public void promoteSelectedItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
@@ -483,6 +481,12 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public void revertSelectedSandBoxItems(SandBox fromSandBox, List<SandBoxItem> sandBoxItems) {
+        for (SandBoxItem item : sandBoxItems) {
+            if (item.getArchivedFlag()) {
+                throw new IllegalArgumentException("Cannot revert an archived SandBoxItem");
+            }
+        }
+
         SandBoxAction action = createSandBoxAction(SandBoxActionType.REVERT, null);
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
@@ -510,6 +514,12 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public void rejectSelectedSandBoxItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
+        for (SandBoxItem item : sandBoxItems) {
+            if (item.getOriginalSandBox() == null) {
+                throw new IllegalArgumentException("Cannot reject a SandBoxItem whose originalSandBox member is null");
+            }
+        }
+
         SandBoxAction action = createSandBoxAction(SandBoxActionType.REJECT, comment);
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
@@ -534,7 +544,6 @@ public class SandBoxServiceImpl implements SandBoxService {
     public void schedulePromotionForSandBoxItems(List<SandBoxItem> sandBoxItems, Calendar calendar) {
 
     }
-
 
     public List<SandBoxItemListener> getSandboxItemListeners() {
         return sandboxItemListeners;
@@ -566,7 +575,6 @@ public class SandBoxServiceImpl implements SandBoxService {
         }
         throw new IllegalArgumentException("Unable to determine next sandbox for " + sandBox);
     }
-
 
     public SandBox retrieveApprovalSandBox(SandBox sandBox) {
         final String APPROVAL_SANDBOX_NAME = "Approval";
