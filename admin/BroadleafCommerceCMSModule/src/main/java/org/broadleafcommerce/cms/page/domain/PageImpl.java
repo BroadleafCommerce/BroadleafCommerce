@@ -71,6 +71,11 @@ public class PageImpl extends PageFolderImpl implements Page {
     @AdminPresentation(excluded = true)
     protected SandBox sandbox;
 
+    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @AdminPresentation(excluded = true)
+	protected SandBox originalSandBox;
+
     @Column (name = "ARCHIVED_FLAG")
     @AdminPresentation(friendlyName="Archived", order=5, group="Page", hidden = true)
     protected Boolean archivedFlag = false;
@@ -161,6 +166,14 @@ public class PageImpl extends PageFolderImpl implements Page {
         this.fullUrl = fullUrl;
     }
 
+    public SandBox getOriginalSandBox() {
+        return originalSandBox;
+    }
+
+    public void setOriginalSandBox(SandBox originalSandBox) {
+        this.originalSandBox = originalSandBox;
+    }
+
     @Override
     public Page cloneEntity() {
         PageImpl newPage = new PageImpl();
@@ -176,6 +189,7 @@ public class PageImpl extends PageFolderImpl implements Page {
         newPage.metaKeywords = metaKeywords;
         newPage.sandbox = sandbox;
         newPage.originalPageId = originalPageId;
+        newPage.originalSandBox = originalSandBox;
         newPage.fullUrl = fullUrl;
 
         for (PageField oldPageField: pageFields.values()) {

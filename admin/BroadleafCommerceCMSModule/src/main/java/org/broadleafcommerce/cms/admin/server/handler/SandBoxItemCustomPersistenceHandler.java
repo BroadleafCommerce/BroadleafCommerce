@@ -2,6 +2,7 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -80,6 +81,9 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
     }
 
     protected List<SandBoxItem> retrieveSandBoxItems(List<Long> ids, DynamicEntityDao dynamicEntityDao, SandBox mySandBox) {
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("The passed in ids parameter is empty");
+        }
         Criteria criteria = dynamicEntityDao.createCriteria(SandBoxItem.class);
         criteria.add(Restrictions.in("id", ids));
         criteria.add(Restrictions.or(Restrictions.eq("originalSandBox", mySandBox), Restrictions.eq("sandBox", mySandBox)));

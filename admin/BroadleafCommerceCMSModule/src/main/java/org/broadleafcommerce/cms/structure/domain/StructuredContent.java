@@ -93,4 +93,8 @@ public interface StructuredContent extends Serializable {
     public Boolean getLockedFlag();
 
     public void setLockedFlag(Boolean lockedFlag);
+
+    public SandBox getOriginalSandBox();
+
+    public void setOriginalSandBox(SandBox originalSandBox);
 }

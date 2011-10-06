@@ -47,4 +47,8 @@ public interface Page extends PageFolder {
 
     public void setFullUrl(String fullUrl);
 
+    public SandBox getOriginalSandBox();
+
+    public void setOriginalSandBox(SandBox originalSandBox);
+
 }

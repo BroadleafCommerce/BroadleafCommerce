@@ -70,6 +70,11 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @AdminPresentation(excluded = true)
     protected SandBox sandbox;
 
+    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @AdminPresentation(excluded = true)
+	protected SandBox originalSandBox;
+
     @Column (name = "ARCHIVED_FLAG")
     @AdminPresentation(friendlyName="Archived Flag", hidden = true)
     protected Boolean archivedFlag = false;
@@ -146,6 +151,14 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         this.fileExtension = fileExtension;
     }
 
+    public SandBox getOriginalSandBox() {
+        return originalSandBox;
+    }
+
+    public void setOriginalSandBox(SandBox originalSandBox) {
+        this.originalSandBox = originalSandBox;
+    }
+
     @Override
     public StaticAsset cloneEntity() {
         StaticAssetImpl asset = new StaticAssetImpl();
@@ -158,6 +171,7 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         asset.fileSize = fileSize;
         asset.mimeType = mimeType;
         asset.sandbox = sandbox;
+        asset.originalSandBox = originalSandBox;
         asset.originalAssetId = originalAssetId;
         asset.fileExtension = fileExtension;
 

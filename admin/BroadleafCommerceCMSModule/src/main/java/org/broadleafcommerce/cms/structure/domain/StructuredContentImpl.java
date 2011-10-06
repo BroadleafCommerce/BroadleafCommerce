@@ -98,6 +98,11 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(friendlyName="Content SandBox", order=1, group="Stuctured Content", excluded = true)
     protected SandBox sandbox;
 
+    @ManyToOne(targetEntity = SandBoxImpl.class)
+    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @AdminPresentation(excluded = true)
+	protected SandBox originalSandBox;
+
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
     @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, excluded = true, formHidden = FormHiddenEnum.VISIBLE)
@@ -289,6 +294,14 @@ public class StructuredContentImpl implements StructuredContent {
 
     public void setLockedFlag(Boolean lockedFlag) {
         this.lockedFlag = lockedFlag;
+    }
+
+    public SandBox getOriginalSandBox() {
+        return originalSandBox;
+    }
+
+    public void setOriginalSandBox(SandBox originalSandBox) {
+        this.originalSandBox = originalSandBox;
     }
 
     @Override

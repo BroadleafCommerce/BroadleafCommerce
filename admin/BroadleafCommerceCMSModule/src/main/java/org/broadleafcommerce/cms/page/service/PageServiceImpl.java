@@ -296,7 +296,13 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                 LOG.debug("Page not found " + sandBoxItem.getTemporaryItemId());
             }
         } else {
-            if (isProductionSandBox(destinationSandBox) && page.getOriginalPageId() != null) {
+            boolean productionSandBox = isProductionSandBox(destinationSandBox);
+            if (productionSandBox) {
+                page.setLockedFlag(false);
+            } else {
+                page.setLockedFlag(true);
+            }
+            if (productionSandBox && page.getOriginalPageId() != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Page promoted to production.  " + page.getId() + ".  Archiving original page " + page.getOriginalPageId());
                 }
@@ -307,10 +313,10 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                // We are archiving the old page and making this the new "production page", so
                // null out the original page id before saving.
                page.setOriginalPageId(null);
-               page.setLockedFlag(false);
-            } else {
-               page.setLockedFlag(true);
             }
+        }
+        if (page.getOriginalSandBox() == null) {
+            page.setOriginalSandBox(page.getSandbox());
         }
         page.setSandbox(destinationSandBox);
         pageDao.updatePage(page, false);
@@ -325,6 +331,8 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         Page page = (Page) pageDao.readPageById(sandBoxItem.getTemporaryItemId());
         if (page != null) {
             page.setSandbox(destinationSandBox);
+            page.setOriginalSandBox(null);
+            page.setLockedFlag(false);
             pageDao.updatePage(page, false);
         }
     }
@@ -338,6 +346,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
         if (page != null) {
             page.setArchivedFlag(Boolean.TRUE);
+            page.setLockedFlag(false);
             pageDao.updatePage(page, false);
 
             Page originalPage = (Page) pageDao.readPageById(page.getOriginalPageId());

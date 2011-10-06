@@ -40,7 +40,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("structureLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
+		leftVerticalLayout.setWidth("40%");
 		leftVerticalLayout.setShowResizeBar(true);
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);

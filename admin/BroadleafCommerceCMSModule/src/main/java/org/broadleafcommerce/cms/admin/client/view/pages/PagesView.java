@@ -41,7 +41,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("pagesLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
-		leftVerticalLayout.setWidth("50%");
+		leftVerticalLayout.setWidth("40%");
 		leftVerticalLayout.setShowResizeBar(true);
 
 		listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource, true);

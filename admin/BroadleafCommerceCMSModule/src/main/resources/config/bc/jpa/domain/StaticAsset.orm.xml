@@ -26,7 +26,7 @@
                FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
                WHERE
                   staticAsset.parentFolder = :parentFolder AND
-                  (staticAsset.sandbox = :userSandbox OR staticAsset.sandbox = :productionSandbox OR staticAsset.sandbox is null) AND
+                  (staticAsset.sandbox = :userSandbox OR staticAsset.sandbox = :productionSandbox OR staticAsset.sandbox is null OR staticAsset.originalSandBox = :userSandbox) AND
                   staticAsset.archivedFlag = false AND
                   staticAsset.deletedFlag = false
 		</query>
@@ -37,7 +37,7 @@
                FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
                WHERE
                   staticAsset.parentFolder is null AND
-                  (staticAsset.sandbox = :userSandbox OR staticAsset.sandbox = :productionSandbox OR staticAsset.sandbox is null) AND
+                  (staticAsset.sandbox = :userSandbox OR staticAsset.sandbox = :productionSandbox OR staticAsset.sandbox is null OR staticAsset.originalSandBox = :userSandbox) AND
                   staticAsset.archivedFlag = false AND
                   staticAsset.deletedFlag = false
 		</query>

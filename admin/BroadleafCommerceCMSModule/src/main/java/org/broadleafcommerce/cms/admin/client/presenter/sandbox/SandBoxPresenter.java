@@ -2,7 +2,7 @@ package org.broadleafcommerce.cms.admin.client.presenter.sandbox;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.UrlBuilder;
-import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.*;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -21,7 +21,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaL
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
@@ -90,42 +89,50 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         return sb.toString();
     }
 
+    protected void previewSelection(ListGridRecord[] records) {
+        String prefix = ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix();
+        UrlBuilder urlBuilder = new UrlBuilder();
+        if (prefix.startsWith("/")) {
+            urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
+            urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
+            urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
+        }
+        urlBuilder.setPath(prefix);
+        urlBuilder.setParameter("blSandboxId", org.broadleafcommerce.openadmin.client.security.SecurityManager.USER.getCurrentSandBoxId());
+        if (records == null || (records != null && records.length > 1)) {
+            com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
+        } else {
+            String specificSandboxId = records[0].getAttribute("sandBox.id");
+            String type = records[0].getAttribute("sandBoxItemType");
+            urlBuilder.setParameter("blSandboxId", specificSandboxId);
+            if (type.equals("PAGE")) {
+                String newPath = prefix + records[0].getAttribute("description");
+                urlBuilder.setPath(newPath);
+            }
+            com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
+        }
+    }
+
+    protected void invalidateMyCache() {
+        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"fetch", "", "", "standard"});
+        setStartState();
+        display.getGrid().invalidateCache();
+    }
+
 	public void bind() {
         previewClickHandlerRegistration = display.getPreviewButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     ListGridRecord[] records = display.getGrid().getSelection();
-                    String prefix = ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix();
-                    UrlBuilder urlBuilder = new UrlBuilder();
-                    if (prefix.startsWith("/")) {
-                        urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
-                        urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
-                        urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
-                    }
-                    urlBuilder.setPath(prefix);
-                    urlBuilder.setParameter("blSandboxId", SecurityManager.USER.getCurrentSandBoxId());
-                    if (records == null || (records != null && records.length > 1)) {
-                        com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
-                    } else {
-                        String specificSandboxId = records[0].getAttribute("sandBox.id");
-                        String type = records[0].getAttribute("sandBoxItemType");
-                        urlBuilder.setParameter("blSandboxId", specificSandboxId);
-                        if (type.equals("PAGE")) {
-                            String newPath = prefix + records[0].getAttribute("description");
-                            urlBuilder.setPath(newPath);
-                        }
-                        com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
-                    }
+                    previewSelection(records);
                 }
             }
         });
         refreshClickHandlerRegistration = display.getRefreshButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"fetch", "", "", "standard"});
-                    setStartState();
-                    display.getGrid().invalidateCache();
+                    invalidateMyCache();
                 }
             }
         });
@@ -296,4 +303,8 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 	public Boolean getLoaded() {
 		return loaded;
 	}
+
+    protected void invalidateOtherCache() {
+        //do nothing
+    }
 }

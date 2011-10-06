@@ -80,6 +80,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             c.add(Restrictions.isNull("sandbox"));
             return c.list();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression = null;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -91,9 +92,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             }
 
             if (productionSandboxExpression != null) {
-                c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+                c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
             } else {
-                c.add(currentSandboxExpression);
+                c.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
             }
 
             List<StaticAsset> resultList = (List<StaticAsset>) c.list();
@@ -134,6 +135,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             c.add(Restrictions.isNull("sandbox"));
             return (Long) c.uniqueResult();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -146,7 +148,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
-            c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
 
             Long resultCount = (Long) c.list().get(0);
             Long deletedCount = 0L;
@@ -270,7 +272,13 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 LOG.debug("Asset not found " + sandBoxItem.getTemporaryItemId());
             }
         } else {
-            if (isProductionSandBox(destinationSandBox) && asset.getOriginalAssetId() != null) {
+            boolean productionSandBox = isProductionSandBox(destinationSandBox);
+            if (productionSandBox) {
+                asset.setLockedFlag(false);
+            } else {
+                asset.setLockedFlag(true);
+            }
+            if (productionSandBox && asset.getOriginalAssetId() != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Asset promoted to production.  " + asset.getId() + ".  Archiving original asset " + asset.getOriginalAssetId());
                 }
@@ -278,10 +286,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 originalAsset.setArchivedFlag(Boolean.TRUE);
                 staticAssetDao.updateStaticAsset(originalAsset);
                 asset.setOriginalAssetId(null);
-                asset.setLockedFlag(false);
-            } else {
-                asset.setLockedFlag(true);
             }
+        }
+        if (asset.getOriginalSandBox() == null) {
+            asset.setOriginalSandBox(asset.getSandbox());
         }
         asset.setSandbox(destinationSandBox);
         staticAssetDao.updateStaticAsset(asset);
@@ -297,6 +305,8 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
         if (asset != null) {
             asset.setSandbox(destinationSandBox);
+            asset.setOriginalSandBox(null);
+            asset.setLockedFlag(false);
             staticAssetDao.updateStaticAsset(asset);
         }
     }
@@ -310,6 +320,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
         if (asset != null) {
             asset.setArchivedFlag(Boolean.TRUE);
+            asset.setLockedFlag(false);
             staticAssetDao.updateStaticAsset(asset);
 
             StaticAsset originalAsset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getOriginalItemId());

@@ -510,16 +510,17 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public void rejectSelectedSandBoxItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
-        SandBox destinationSandBox = determineNextSandBox(fromSandBox);
         SandBoxAction action = createSandBoxAction(SandBoxActionType.REJECT, comment);
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
             action.addSandBoxItem(sandBoxItem);
             for (SandBoxItemListener listener : sandboxItemListeners) {
-                listener.itemRejected(sandBoxItem, destinationSandBox);
+                listener.itemRejected(sandBoxItem, sandBoxItem.getOriginalSandBox());
             }
 
             sandBoxItem.addSandBoxAction(action);
+            sandBoxItem.setSandBox(sandBoxItem.getOriginalSandBox());
+            sandBoxItem.setOriginalSandBox(null);
         }
     }
 

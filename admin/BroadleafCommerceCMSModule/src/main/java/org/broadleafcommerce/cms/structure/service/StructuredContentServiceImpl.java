@@ -116,6 +116,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             c.add(Restrictions.isNull("sandbox"));
             return c.list();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression = null;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -127,9 +128,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
 
             if (productionSandboxExpression != null) {
-                c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+                c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
             } else {
-                c.add(currentSandboxExpression);
+                c.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
             }
 
             List<StructuredContent> resultList = (List<StructuredContent>) c.list();
@@ -173,6 +174,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             c.add(Restrictions.isNull("sandbox"));
             return (Long) c.uniqueResult();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -185,7 +187,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
-            c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
 
             Long resultCount = (Long) c.list().get(0);
             Long updatedCount = 0L;
@@ -470,7 +472,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 LOG.debug("Structured Content Item not found " + sandBoxItem.getTemporaryItemId());
             }
         } else {
-            if (isProductionSandBox(destinationSandBox) && sc.getOriginalItemId() != null) {
+            boolean productionSandBox = isProductionSandBox(destinationSandBox);
+            if (productionSandBox) {
+                sc.setLockedFlag(false);
+            } else {
+                sc.setLockedFlag(true);
+            }
+            if (productionSandBox && sc.getOriginalItemId() != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Structured content promoted to production.  " + sc.getId() + ".  Archiving original item " + sc.getOriginalItemId());
                 }
@@ -481,11 +489,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                // We are archiving the old item and making this the new "production item", so
                // null out the original item id before saving.
                 sc.setOriginalItemId(null);
-                sc.setLockedFlag(false);
-            } else {
-                sc.setLockedFlag(true);
             }
-
+        }
+        if (sc.getOriginalSandBox() == null) {
+            sc.setOriginalSandBox(sc.getSandbox());
         }
         sc.setSandbox(destinationSandBox);
         structuredContentDao.addOrUpdateContentItem(sc, false);
@@ -500,6 +507,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (sc != null) {
             sc.setSandbox(destinationSandBox);
+            sc.setOriginalSandBox(null);
+            sc.setLockedFlag(false);
             structuredContentDao.addOrUpdateContentItem(sc, false);
         }
     }
@@ -513,6 +522,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (sc != null) {
             sc.setArchivedFlag(Boolean.TRUE);
+            sc.setLockedFlag(false);
             structuredContentDao.addOrUpdateContentItem(sc, false);
 
             StructuredContent originalSc = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());

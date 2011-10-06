@@ -43,4 +43,7 @@ public interface StaticAsset extends StaticAssetFolder {
 
     public void setFileExtension(String fileExtension);
 
+    public SandBox getOriginalSandBox();
+
+    public void setOriginalSandBox(SandBox originalSandBox);
 }

@@ -107,6 +107,13 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
     @Override
 	protected void changeSelection(final Record selectedRecord) {
+        if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+            getDisplay().getListDisplay().getRemoveButton().enable();
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
+        } else {
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+            getDisplay().getListDisplay().getRemoveButton().disable();
+        }
         currentStructuredContentRecord = selectedRecord;
         loadContentTypeForm(selectedRecord);
 	}
@@ -132,7 +139,9 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
                     @Override
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
-                        formOnlyView.getForm().enable();
+                        if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+                            formOnlyView.getForm().enable();
+                        }
                         for (FormItem formItem : formOnlyView.getForm().getFields()) {
                             if (formItem instanceof RichTextCanvasItem) {
                                 formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));

@@ -23,13 +23,20 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
     protected ToolStripButton promoteAllButton;
     protected ToolStripButton promoteSelectionButton;
-	protected ToolStripButton revertRejectSelectionButton;
+	protected ToolStripButton revertSelectionButton;
     protected ToolStripButton revertRejectAllButton;
     protected ToolStripButton refreshButton;
     protected ToolStripButton previewButton;
 	protected ListGrid grid;
     protected ListGrid pendingGrid;
 	protected ToolStrip toolBar;
+    protected ToolStrip pendingToolBar;
+    protected ToolStripButton reclaimSelectionButton;
+    protected ToolStripButton reclaimAllButton;
+    protected ToolStripButton releaseSelectionButton;
+    protected ToolStripButton releaseAllButton;
+    protected ToolStripButton pendingRefreshButton;
+    protected ToolStripButton pendingPreviewButton;
 
     public MySandBoxView() {
         super(20);
@@ -50,20 +57,20 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
-        revertRejectSelectionButton = new ToolStripButton();
-        revertRejectSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_left.png");
-        toolBar.addButton(revertRejectSelectionButton);
+        revertSelectionButton = new ToolStripButton();
+        revertSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_down.png");
+        toolBar.addButton(revertSelectionButton);
         revertRejectAllButton = new ToolStripButton();
-        revertRejectAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_left.png");
+        revertRejectAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_down.png");
         toolBar.addButton(revertRejectAllButton);
 
         toolBar.addSeparator();
 
         promoteSelectionButton = new ToolStripButton();
-        promoteSelectionButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/arrow_right.png");
+        promoteSelectionButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/arrow_up.png");
         toolBar.addButton(promoteSelectionButton);
         promoteAllButton = new ToolStripButton();
-        promoteAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_right.png");
+        promoteAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_up.png");
         toolBar.addButton(promoteAllButton);
 
         toolBar.addSpacer(6);
@@ -104,12 +111,37 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         VLayout insideLayout2 = new VLayout();
         insideLayout2.setHeight("50%");
 
-		ToolStrip toolBar = new ToolStrip();
-		toolBar.setHeight(20);
-		toolBar.setWidth100();
-		toolBar.addSpacer(6);
+		pendingToolBar = new ToolStrip();
+		pendingToolBar.setHeight(20);
+		pendingToolBar.setWidth100();
+		pendingToolBar.addSpacer(6);
 
-        insideLayout2.addMember(toolBar);
+        reclaimSelectionButton = new ToolStripButton();
+        reclaimSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_left.png");
+        pendingToolBar.addButton(reclaimSelectionButton);
+        reclaimAllButton = new ToolStripButton();
+        reclaimAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_left.png");
+        pendingToolBar.addButton(reclaimAllButton);
+
+        pendingToolBar.addSeparator();
+
+        releaseSelectionButton = new ToolStripButton();
+        releaseSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_down.png");
+        pendingToolBar.addButton(releaseSelectionButton);
+        releaseAllButton = new ToolStripButton();
+        releaseAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_down.png");
+        pendingToolBar.addButton(releaseAllButton);
+
+        pendingToolBar.addFill();
+        pendingRefreshButton = new ToolStripButton();
+        pendingRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        pendingToolBar.addButton(pendingRefreshButton);
+        pendingPreviewButton = new ToolStripButton();
+        pendingPreviewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        pendingToolBar.addButton(pendingPreviewButton);
+        pendingToolBar.addSpacer(6);
+
+        insideLayout2.addMember(pendingToolBar);
 
         pendingGrid = new ListGrid();
         pendingGrid.setCanReorderRecords(true);
@@ -145,7 +177,7 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay#getRemoveButton()
 	 */
 	public ToolStripButton getRevertRejectSelectionButton() {
-		return revertRejectSelectionButton;
+		return this.revertSelectionButton;
 	}
 
     public ToolStripButton getPromoteSelectionButton() {
@@ -177,5 +209,69 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 
     public ListGrid getPendingGrid() {
         return pendingGrid;
+    }
+
+    public ToolStripButton getRevertSelectionButton() {
+        return revertSelectionButton;
+    }
+
+    public void setRevertSelectionButton(ToolStripButton revertSelectionButton) {
+        this.revertSelectionButton = revertSelectionButton;
+    }
+
+    public ToolStrip getPendingToolBar() {
+        return pendingToolBar;
+    }
+
+    public void setPendingToolBar(ToolStrip pendingToolBar) {
+        this.pendingToolBar = pendingToolBar;
+    }
+
+    public ToolStripButton getReclaimSelectionButton() {
+        return reclaimSelectionButton;
+    }
+
+    public void setReclaimSelectionButton(ToolStripButton reclaimSelectionButton) {
+        this.reclaimSelectionButton = reclaimSelectionButton;
+    }
+
+    public ToolStripButton getReclaimAllButton() {
+        return reclaimAllButton;
+    }
+
+    public void setReclaimAllButton(ToolStripButton reclaimAllButton) {
+        this.reclaimAllButton = reclaimAllButton;
+    }
+
+    public ToolStripButton getReleaseSelectionButton() {
+        return releaseSelectionButton;
+    }
+
+    public void setReleaseSelectionButton(ToolStripButton releaseSelectionButton) {
+        this.releaseSelectionButton = releaseSelectionButton;
+    }
+
+    public ToolStripButton getReleaseAllButton() {
+        return releaseAllButton;
+    }
+
+    public void setReleaseAllButton(ToolStripButton releaseAllButton) {
+        this.releaseAllButton = releaseAllButton;
+    }
+
+    public ToolStripButton getPendingRefreshButton() {
+        return pendingRefreshButton;
+    }
+
+    public void setPendingRefreshButton(ToolStripButton pendingRefreshButton) {
+        this.pendingRefreshButton = pendingRefreshButton;
+    }
+
+    public ToolStripButton getPendingPreviewButton() {
+        return pendingPreviewButton;
+    }
+
+    public void setPendingPreviewButton(ToolStripButton pendingPreviewButton) {
+        this.pendingPreviewButton = pendingPreviewButton;
     }
 }

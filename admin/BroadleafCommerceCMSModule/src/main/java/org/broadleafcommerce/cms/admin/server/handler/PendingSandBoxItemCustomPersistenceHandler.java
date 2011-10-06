@@ -93,14 +93,14 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
             SandBox mySandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
             SandBox approvalSandBox = sandBoxService.retrieveApprovalSandBox(mySandBox);
 
-            if (operation.equals("revertAll")) {
+            if (operation.equals("releaseAll")) {
                 sandBoxService.revertAllSandBoxItems(mySandBox, approvalSandBox);
-            } else if (operation.equals("revertSelected")) {
+            } else if (operation.equals("releaseSelected")) {
                 List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao, mySandBox);
                 sandBoxService.revertSelectedSandBoxItems(approvalSandBox, items);
-            } else if (operation.equals("rejectAll")) {
+            } else if (operation.equals("reclaimAll")) {
                 sandBoxService.rejectAllSandBoxItems(mySandBox, approvalSandBox, "reclaiming sandbox items");
-            } else if (operation.equals("rejectSelected")) {
+            } else if (operation.equals("reclaimSelected")) {
                 List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao, mySandBox);
                 sandBoxService.rejectSelectedSandBoxItems(approvalSandBox, "reclaiming sandbox item", items);
             }
