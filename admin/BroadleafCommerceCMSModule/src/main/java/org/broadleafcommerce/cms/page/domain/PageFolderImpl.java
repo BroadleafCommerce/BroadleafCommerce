@@ -37,8 +37,18 @@ import java.util.List;
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
     {
-        @AdminPresentationOverride(name="auditable", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="site", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(hidden = true)),
+        @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(hidden = true)),
+        @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(hidden = true)),
+        @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(hidden = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="pageTemplate.id", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="pageTemplate.templateDescription", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="pageTemplate.locale", value=@AdminPresentation(excluded = true))
@@ -56,7 +66,6 @@ public class PageFolderImpl implements PageFolder {
     protected Long id;
 
     @Embedded
-    @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
     @Column(name = "NAME", nullable=false)
@@ -70,6 +79,7 @@ public class PageFolderImpl implements PageFolder {
     /*@ManyToOne(targetEntity = SiteImpl.class)
     @JoinColumn(name="SITE_ID")*/
     @Transient
+    @AdminPresentation(excluded = true)
     protected Site site;
 
     @OneToMany(mappedBy="parentFolder", cascade = CascadeType.ALL, targetEntity = PageFolderImpl.class)

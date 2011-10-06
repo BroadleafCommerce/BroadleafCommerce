@@ -47,7 +47,7 @@ public class AdminUserImpl implements AdminUser {
     @GeneratedValue(generator = "AdminUserId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminUserId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminUserImpl", allocationSize = 50)
     @Column(name = "ADMIN_USER_ID")
-    @AdminPresentation(hidden=true)
+    @AdminPresentation(friendlyName="Admin User ID", group="Primary Key", hidden=true)
     private Long id;
 
     @Column(name = "NAME", nullable=false)

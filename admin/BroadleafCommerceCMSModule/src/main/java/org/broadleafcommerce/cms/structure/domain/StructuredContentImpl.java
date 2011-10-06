@@ -23,8 +23,7 @@ import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.RequiredOverride;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -43,6 +42,23 @@ import java.util.Map;
 @Table(name = "BLC_STRUCTURED_CONTENT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
+@AdminPresentationOverrides(
+        {
+            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true))
+        }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StructuredContentImpl implements StructuredContent {
 
     private static final long serialVersionUID = 1L;
@@ -54,14 +70,13 @@ public class StructuredContentImpl implements StructuredContent {
     protected Long id;
 
     @Embedded
-    @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
     @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
     protected String contentName;
 
-    @AdminPresentation(friendlyName="Locale", order=3, group="Description", hidden = true, prominent = true)
+    @AdminPresentation(excluded = true)
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_ID")
     protected Locale locale;
@@ -80,12 +95,12 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
     @JoinColumn(name="SANDBOX_ID")
-    @AdminPresentation(friendlyName="Content SandBox", order=1, group="Stuctured Content", hidden = true)
+    @AdminPresentation(friendlyName="Content SandBox", order=1, group="Stuctured Content", excluded = true)
     protected SandBox sandbox;
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
-    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, excluded = true, formHidden = FormHiddenEnum.VISIBLE)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)

@@ -5,6 +5,8 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.grid.HoverCustomizer;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -41,6 +43,20 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource);
+        listDisplay.getGrid().setHoverMoveWithMouse(true);
+        listDisplay.getGrid().setCanHover(true);
+        listDisplay.getGrid().setShowHover(true);
+        listDisplay.getGrid().setHoverOpacity(75);
+        listDisplay.getGrid().setHoverCustomizer(new HoverCustomizer() {
+            @Override
+            public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (record.getAttributeAsBoolean("lockedFlag")) {
+                    return "Last Updated By <B>" + record.getAttribute("auditable.updatedBy.name") + "</B> On <B>" + record.getAttribute("auditable.dateUpdated") + "</B>.";
+                }
+                return null;
+            }
+        });
+        
         Label label = new Label();
         label.setContents(BLCMain.getMessageManager().getString("contentTypeFilterTitle"));
         label.setWrap(false);

@@ -128,6 +128,30 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         attributes.setRequiredOverride(true);
 
         mergedProperties.put("locale", fieldMetadata);
+
+        FieldMetadata iconMetadata = new FieldMetadata();
+        iconMetadata.setFieldType(SupportedFieldType.ARTIFACT);
+        iconMetadata.setMutable(true);
+        iconMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
+        iconMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});
+        iconMetadata.setCollection(false);
+        iconMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
+        iconMetadata.setPresentationAttributes(iconAttributes);
+        iconAttributes.setName("picture");
+        iconAttributes.setFriendlyName(" ");
+        iconAttributes.setGroup("Locked Details");
+        iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        iconAttributes.setProminent(true);
+        iconAttributes.setBroadleafEnumeration("");
+        iconAttributes.setReadOnly(false);
+        iconAttributes.setHidden(false);
+        iconAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+        iconAttributes.setColumnWidth("25");
+        iconAttributes.setOrder(0);
+        iconAttributes.setRequiredOverride(true);
+
+        mergedProperties.put("locked", iconMetadata);
     }
 
     @Override
@@ -172,6 +196,15 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             convertedList.addAll(contents);
 
             Entity[] pageEntities = helper.getRecords(originalProps, convertedList);
+
+            for (Entity entity : pageEntities) {
+                if ("true".equals(entity.findProperty("lockedFlag").getValue())) {
+                    Property property = new Property();
+                    property.setName("locked");
+                    property.setValue("[ISOMORPHIC]/../admin/images/lock_page.png");
+                    entity.addProperty(property);
+                }
+            }
 
             DynamicResultSet response = new DynamicResultSet(pageEntities, totalRecords.intValue());
 

@@ -38,8 +38,6 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
 	public DynamicFormView(String title, DataSource dataSource) {
 		super();
 		
-		//setHeight100();
-        setWidth100();
         setLayoutMargin(0);
         toolbar = new ToolStrip();
         toolbar.setHeight(20);

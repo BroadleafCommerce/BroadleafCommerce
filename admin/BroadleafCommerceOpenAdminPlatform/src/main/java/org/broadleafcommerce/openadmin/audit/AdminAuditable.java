@@ -30,12 +30,11 @@ public class AdminAuditable implements Serializable {
 
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName="Date Created", group="Audit", readOnly=true)
+    @AdminPresentation(friendlyName="Date Created", group="Audit", readOnly = true)
     protected Date dateCreated;
 
     @ManyToOne(targetEntity = AdminUserImpl.class)
     @JoinColumn(name = "CREATED_BY", updatable = false)
-    @AdminPresentation(friendlyName="Created By", group="Audit", hidden=true, readOnly=true)
     protected AdminUser createdBy;
 
     @Column(name = "DATE_UPDATED")
@@ -45,7 +44,6 @@ public class AdminAuditable implements Serializable {
 
     @ManyToOne(targetEntity = AdminUserImpl.class)
     @JoinColumn(name = "UPDATED_BY")
-    @AdminPresentation(friendlyName="Updated By", group="Audit", hidden=true, readOnly = true)
     protected AdminUser updatedBy;
 
     public Date getDateCreated() {

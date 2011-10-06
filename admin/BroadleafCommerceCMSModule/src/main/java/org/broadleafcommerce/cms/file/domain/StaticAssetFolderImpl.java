@@ -35,7 +35,17 @@ import java.util.List;
 @Table(name = "BLC_STATIC_ASSET_FOLDER")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationOverrides(
-        {@AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))}
+        {
+            @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))
+        }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StaticAssetFolderImpl implements StaticAssetFolder {
@@ -49,7 +59,6 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     protected Long id;
 
     @Embedded
-    @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "NAME", nullable = false)
