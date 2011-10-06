@@ -46,8 +46,19 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 	public ListGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
 		super(name, persistencePerspective, service, modules);
 	}
+
+    public void setupGridFields(final String[] fieldNames) {
+        Boolean[] canEdit = new Boolean[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            canEdit[j] = false;
+        }
+        setupGridFields(fieldNames, canEdit);
+    }
 	
 	public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
+        if (fieldNames.length != canEdit.length) {
+            throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
+        }
 		if (fieldNames.length > 0) {
 			resetProminenceOnly(fieldNames);
 		}

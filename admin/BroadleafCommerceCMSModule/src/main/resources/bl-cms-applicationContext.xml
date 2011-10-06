@@ -85,6 +85,7 @@
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.SandBoxItemCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.PendingSandBoxItemCustomPersistenceHandler"/>
 			</list>
 		</property>
 		<property name="targetEntityManagers">

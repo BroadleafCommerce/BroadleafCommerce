@@ -260,7 +260,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                             }
                         }
                 );
-                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"contentName", "locale", "activeStartDate", "activeEndDate", "onlineFlag"}, new Boolean[]{false, false, false, false, false});
+                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"contentName", "locale", "activeStartDate", "activeEndDate", "onlineFlag"});
 			}
 		}));
 	}

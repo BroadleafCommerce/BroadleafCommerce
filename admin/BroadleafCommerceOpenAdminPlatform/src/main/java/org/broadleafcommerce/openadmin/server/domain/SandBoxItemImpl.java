@@ -21,14 +21,22 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @AdminPresentationOverrides(
         {
-            @AdminPresentationOverride(name="createdBy.login", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="createdBy.password", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="createdBy.email", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.author", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.site", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="sandBox.sandboxType", value=@AdminPresentation(excluded = true))
+            @AdminPresentationOverride(name="sandBox.sandboxType", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="originalSandBox.name", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="originalSandBox.author", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="originalSandBox.site", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="originalSandBox.sandboxType", value=@AdminPresentation(excluded = true))
         }
 )
 @EntityListeners(value = { AdminAuditableListener.class })
@@ -41,10 +49,10 @@ public class SandBoxItemImpl implements SandBoxItem {
     @GeneratedValue(generator = "SandBoxItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SandBoxItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxItemImpl", allocationSize = 50)
     @Column(name = "SANDBOX_ITEM_ID")
+    @AdminPresentation(hidden = true)
     protected Long id;
 
     @Embedded
-    @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
@@ -53,7 +61,6 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
-    @AdminPresentation(excluded = true)
 	protected SandBox originalSandBox;
 
     @Column(name = "SANDBOX_ITEM_TYPE")

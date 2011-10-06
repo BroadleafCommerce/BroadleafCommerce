@@ -783,7 +783,8 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 				if (fieldType.equals(SupportedFieldType.ID.toString())) {
 					field.setHidden(true);
-					field.setAttribute("permanentlyHidden", false);
+					field.setAttribute("permanentlyHidden", true);
+                    formHidden = FormHiddenEnum.VISIBLE;
 				} else if (hidden != null) {
 					field.setHidden(hidden);
 					field.setAttribute("permanentlyHidden", hidden);

@@ -227,7 +227,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			public void onSetupSuccess(DataSource result) {
 				((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid().setDataSource(result);
 				((ListGridDataSource) result).setAssociatedGrid(((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid());
-				((ListGridDataSource) result).setupGridFields(new String[]{"name", "urlKey"}, new Boolean[]{false, false});
+				((ListGridDataSource) result).setupGridFields(new String[]{"name", "urlKey"});
 				
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria(OrphanedCategoryListDataSourceFactory.foreignKeyName, "0");

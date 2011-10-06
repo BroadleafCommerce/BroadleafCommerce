@@ -15,15 +15,8 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
-import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,54 +29,18 @@ import java.util.Map;
  * Time: 1:56 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCustomPersistenceHandler {
 
-    private Log LOG = LogFactory.getLog(SandBoxItemCustomPersistenceHandler.class);
-
-    @Resource(name="blSandBoxService")
-    protected SandBoxService sandBoxService;
-
-    @Resource(name="blAdminSecurityService")
-    protected AdminSecurityService adminSecurityService;
-
-    @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
-
-    @Override
-    public Boolean willHandleSecurity(PersistencePackage persistencePackage) {
-        return true;
-    }
+    private Log LOG = LogFactory.getLog(PendingSandBoxItemCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         boolean isSandboxItem = SandBoxItem.class.getName().equals(ceilingEntityFullyQualifiedClassname);
         if (isSandboxItem) {
-            return persistencePackage.getCustomCriteria()[4].equals("standard");
+            return persistencePackage.getCustomCriteria()[4].equals("pending");
         }
         return false;
-    }
-
-    @Override
-    public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return canHandleFetch(persistencePackage);
-    }
-
-    @Override
-    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
-        return canHandleFetch(persistencePackage);
-    }
-
-    @Override
-    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return canHandleFetch(persistencePackage);
-    }
-
-    protected List<SandBoxItem> retrieveSandBoxItems(List<Long> ids, DynamicEntityDao dynamicEntityDao, SandBox mySandBox) {
-        Criteria criteria = dynamicEntityDao.createCriteria(SandBoxItem.class);
-        criteria.add(Restrictions.in("id", ids));
-        criteria.add(Restrictions.or(Restrictions.eq("originalSandBox", mySandBox), Restrictions.eq("sandBox", mySandBox)));
-        return criteria.list();
     }
 
     @Override
@@ -102,7 +59,6 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             throw e;
         }
         try {
-            String moduleKey = customCriteria[0];
             String operation = customCriteria[1];
             List<Long> targets = new ArrayList<Long>();
             if (!StringUtils.isEmpty(customCriteria[2])) {
@@ -115,14 +71,8 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
                     }
                 }
             }
-            String comment = customCriteria[3];
 
-            String requiredPermission;
-            if (moduleKey.equals("userSandBox")) {
-                requiredPermission = "PERMISSION_USER_SANDBOX";
-            } else {
-                requiredPermission = "PERMISSION_APPROVER_SANDBOX";
-            }
+            String requiredPermission = "PERMISSION_USER_SANDBOX";
 
             boolean allowOperation = false;
             for (AdminRole role : adminUser.getAllRoles()) {
@@ -140,41 +90,25 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
                 throw e;
             }
 
-            SandBox originalSandBox;
-            SandBox currentSandBox;
-            if (moduleKey.equals("userSandBox")) {
-                currentSandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
-                originalSandBox = currentSandBox;
-            } else {
-                originalSandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
-                currentSandBox = sandBoxService.retrieveApprovalSandBox(originalSandBox);
-            }
+            SandBox mySandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+            SandBox approvalSandBox = sandBoxService.retrieveApprovalSandBox(mySandBox);
 
-
-            if (operation.equals("promoteAll")) {
-                sandBoxService.promoteAllSandBoxItems(currentSandBox, comment);
-            } else if (operation.equals("promoteSelected")) {
-                List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao, currentSandBox);
-                sandBoxService.promoteSelectedItems(currentSandBox, comment, items);
-            } else if (operation.equals("revertRejectAll")) {
-                if (moduleKey.equals("userSandBox")) {
-                    sandBoxService.revertAllSandBoxItems(originalSandBox, currentSandBox);
-                } else {
-                    sandBoxService.rejectAllSandBoxItems(originalSandBox, currentSandBox, comment);
-                }
-            } else if (operation.equals("revertRejectSelected")) {
-                List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao, currentSandBox);
-                if (moduleKey.equals("userSandBox")) {
-                    sandBoxService.revertSelectedSandBoxItems(currentSandBox, items);
-                } else {
-                    sandBoxService.rejectSelectedSandBoxItems(currentSandBox, comment, items);
-                }
+            if (operation.equals("revertAll")) {
+                sandBoxService.revertAllSandBoxItems(mySandBox, approvalSandBox);
+            } else if (operation.equals("revertSelected")) {
+                List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao, mySandBox);
+                sandBoxService.revertSelectedSandBoxItems(approvalSandBox, items);
+            } else if (operation.equals("rejectAll")) {
+                sandBoxService.rejectAllSandBoxItems(mySandBox, approvalSandBox, "reclaiming sandbox items");
+            } else if (operation.equals("rejectSelected")) {
+                List<SandBoxItem> items = retrieveSandBoxItems(targets, dynamicEntityDao, mySandBox);
+                sandBoxService.rejectSelectedSandBoxItems(approvalSandBox, "reclaiming sandbox item", items);
             }
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SandBoxItem.class);
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective, entities);
-            cto.get("sandBox").setFilterValue(currentSandBox.getId().toString());
+            cto.get("originalSandBox").setFilterValue(mySandBox.getId().toString());
             cto.get("archivedFlag").setFilterValue(Boolean.FALSE.toString());
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());

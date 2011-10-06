@@ -48,7 +48,18 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 		this.rootName = rootName;
 	}
 
+    public void setupGridFields(final String[] fieldNames) {
+        Boolean[] canEdit = new Boolean[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            canEdit[j] = false;
+        }
+        setupGridFields(fieldNames, canEdit, "*", "*");
+    }
+
 	public void setupGridFields(String[] fieldNames, Boolean[] canEdit, String initialFieldWidth, String otherFieldWidth) {
+        if (fieldNames.length != canEdit.length) {
+            throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
+        }
 		if (fieldNames != null && fieldNames.length > 0) {
 			resetProminenceOnly(fieldNames);
 		}

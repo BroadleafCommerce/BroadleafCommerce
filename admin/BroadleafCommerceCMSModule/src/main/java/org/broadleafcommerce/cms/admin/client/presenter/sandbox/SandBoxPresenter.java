@@ -123,7 +123,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         refreshClickHandlerRegistration = display.getRefreshButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"fetch", "", ""});
+                    ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"fetch", "", "", "standard"});
                     setStartState();
                     display.getGrid().invalidateCache();
                 }
@@ -133,14 +133,14 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     if (BLCMain.currentViewKey.equals("userSandBox")) {
-                        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectAll", "", ""});
+                        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectAll", "", "", "standard"});
                         setStartState();
                         display.getGrid().invalidateCache();
                     } else {
                         COMMENT_DIALOG.launch("Enter a rejection comment", new CommentCallback() {
                             @Override
                             public void comment(String comment) {
-                                ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectAll", "", comment});
+                                ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectAll", "", comment, "standard"});
                                 setStartState();
                                 display.getGrid().invalidateCache();
                             }
@@ -153,14 +153,14 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
                     if (BLCMain.currentViewKey.equals("userSandBox")) {
-                        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectSelected", getSelectedRecords(), ""});
+                        ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectSelected", getSelectedRecords(), "", "standard"});
                         setStartState();
                         display.getGrid().invalidateCache();
                     } else {
                         COMMENT_DIALOG.launch("Enter a rejection comment", new CommentCallback() {
                             @Override
                             public void comment(String comment) {
-                                ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectSelected", getSelectedRecords(), comment});
+                                ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"revertRejectSelected", getSelectedRecords(), comment, "standard"});
                                 setStartState();
                                 display.getGrid().invalidateCache();
                             }
@@ -187,7 +187,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                     COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
                         @Override
                         public void comment(String comment) {
-                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteAll", "", comment});
+                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteAll", "", comment, "standard"});
                             setStartState();
                             display.getGrid().invalidateCache();
                         }
@@ -201,7 +201,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                     COMMENT_DIALOG.launch("Enter a promotion comment", new CommentCallback() {
                         @Override
                         public void comment(String comment) {
-                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteSelected", getSelectedRecords(), comment});
+                            ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteSelected", getSelectedRecords(), comment, "standard"});
                             setStartState();
                             display.getGrid().invalidateCache();
                         }
@@ -238,11 +238,11 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 
     @Override
     public void setup() {
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("sandBoxItemDS", new SandBoxItemListDataSourceFactory(), null, new Object[]{BLCMain.currentViewKey, "fetch", "", ""}, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("sandBoxItemDS", new SandBoxItemListDataSourceFactory(), null, new Object[]{BLCMain.currentViewKey, "fetch", "", "", "standard"}, new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(dataSource);
-                ((CustomCriteriaListGridDataSource) dataSource).setupGridFields(new String[]{"createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "lastUpdateDate"}, new Boolean[]{false, false, false, false, false});
+                ((CustomCriteriaListGridDataSource) dataSource).setupGridFields(new String[]{"auditable.createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "auditable.dateCreated", "auditable.dateUpdated"});
             }
         }));
     }

@@ -30,11 +30,11 @@ public interface SandBoxService {
 
     public void schedulePromotionForSandBoxItems(List<SandBoxItem> sandBoxItems, Calendar calendar);
 
-    public void revertAllSandBoxItems(SandBox sandBox);
+    public void revertAllSandBoxItems(SandBox originalSandBox, SandBox sandBox);
 
     public void revertSelectedSandBoxItems(SandBox sandBox, List<SandBoxItem> sandBoxItems);
 
-    public void rejectAllSandBoxItems(SandBox sandBox, String comment);
+    public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment);
 
     public void rejectSelectedSandBoxItems(SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
 

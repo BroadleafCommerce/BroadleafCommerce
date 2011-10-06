@@ -70,6 +70,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
     protected TreeNode currentFolderRecord;
+    protected String currentPageId;
 	protected EntitySearchDialog pageTemplateDialogView;
 
 	@Override
@@ -111,6 +112,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 getDisplay().getListDisplay().getRemoveButton().disable();
             }
             currentPageRecord = selectedRecord;
+            currentPageId = getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord);
             loadTemplateForm(selectedRecord);
         } else {
             getDisplay().getAddPageButton().enable();
@@ -119,6 +121,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
             destroyTemplateForm();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
             currentPageRecord = null;
+            currentPageId = null;
         }
         currentFolderRecord = (TreeNode) selectedRecord;
 	}
@@ -205,10 +208,10 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                         }
                                     }
                                 });
-                                String oldId = getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(currentPageRecord);
-                                if (!oldId.equals(newId)) {
-                                    ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(oldId));
+                                if (!currentPageId.equals(newId)) {
+                                    ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(currentPageId));
                                     currentPageRecord = newRecord;
+                                    currentPageId = newId;
                                     currentFolderRecord = (TreeNode) newRecord;
                                 }
 							}

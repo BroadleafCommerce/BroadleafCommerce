@@ -19,7 +19,7 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
  * Time: 3:48 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MySandBoxView extends VLayout implements Instantiable, SandBoxDisplay {
+public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDisplay {
 
     protected ToolStripButton promoteAllButton;
     protected ToolStripButton promoteSelectionButton;
@@ -28,6 +28,7 @@ public class MySandBoxView extends VLayout implements Instantiable, SandBoxDispl
     protected ToolStripButton refreshButton;
     protected ToolStripButton previewButton;
 	protected ListGrid grid;
+    protected ListGrid pendingGrid;
 	protected ToolStrip toolBar;
 
     public MySandBoxView() {
@@ -92,7 +93,7 @@ public class MySandBoxView extends VLayout implements Instantiable, SandBoxDispl
         grid.setDrawAllMaxCells(10);
         grid.setCanSort(true);
         grid.setCanResizeFields(true);
-        grid.setShowFilterEditor(false);
+        grid.setShowFilterEditor(true);
         grid.setCanGroupBy(false);
         grid.setDataPageSize(10);
         grid.setAlternateBodyStyleName("editRowDisabled");
@@ -110,21 +111,21 @@ public class MySandBoxView extends VLayout implements Instantiable, SandBoxDispl
 
         insideLayout2.addMember(toolBar);
 
-        ListGrid grid = new ListGrid();
-        grid.setCanReorderRecords(true);
-        grid.setAlternateRecordStyles(true);
-        grid.setSelectionType(SelectionStyle.MULTIPLE);
-        grid.setCanEdit(false);
-        grid.setDataSource(entityDataSource);
-        grid.setAutoFetchData(true);
-        grid.setDrawAllMaxCells(10);
-        grid.setCanSort(true);
-        grid.setCanResizeFields(true);
-        grid.setShowFilterEditor(false);
-        grid.setCanGroupBy(false);
-        grid.setDataPageSize(10);
-        grid.setAlternateBodyStyleName("editRowDisabled");
-        insideLayout2.addMember(grid);
+        pendingGrid = new ListGrid();
+        pendingGrid.setCanReorderRecords(true);
+        pendingGrid.setAlternateRecordStyles(true);
+        pendingGrid.setSelectionType(SelectionStyle.MULTIPLE);
+        pendingGrid.setCanEdit(false);
+        pendingGrid.setDataSource(additionalDataSources[0]);
+        pendingGrid.setAutoFetchData(true);
+        pendingGrid.setDrawAllMaxCells(10);
+        pendingGrid.setCanSort(true);
+        pendingGrid.setCanResizeFields(true);
+        pendingGrid.setShowFilterEditor(true);
+        pendingGrid.setCanGroupBy(false);
+        pendingGrid.setDataPageSize(10);
+        pendingGrid.setAlternateBodyStyleName("editRowDisabled");
+        insideLayout2.addMember(pendingGrid);
 
         addMember(insideLayout2);
 	}
@@ -172,5 +173,9 @@ public class MySandBoxView extends VLayout implements Instantiable, SandBoxDispl
 
     public ToolStripButton getPreviewButton() {
         return previewButton;
+    }
+
+    public ListGrid getPendingGrid() {
+        return pendingGrid;
     }
 }

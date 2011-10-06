@@ -47,21 +47,21 @@ public class AdminUserImpl implements AdminUser {
     @GeneratedValue(generator = "AdminUserId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminUserId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminUserImpl", allocationSize = 50)
     @Column(name = "ADMIN_USER_ID")
-    @AdminPresentation(friendlyName="Admin User ID", group="Primary Key", hidden=true)
+    @AdminPresentation(hidden=true)
     private Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="User", prominent=true)
+    @AdminPresentation(friendlyName="Admin Name", order=1, group="User", prominent=true)
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
-    @AdminPresentation(friendlyName="Login", order=2, group="User", prominent=true)
+    @AdminPresentation(friendlyName="Admin Login", order=2, group="User", prominent=true)
     protected String login;
 
     @Column(name = "PASSWORD", nullable=false)
     @AdminPresentation(
-		friendlyName="Password", 
+		friendlyName="Admin Password",
 		order=3, 
 		group="User", 
 		fieldType=SupportedFieldType.PASSWORD, 
@@ -76,7 +76,7 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName="Email Address", order=4, group="User")
+    @AdminPresentation(friendlyName="Admin Email Address", order=4, group="User")
     protected String email; 
 
     /** All roles that this user has */

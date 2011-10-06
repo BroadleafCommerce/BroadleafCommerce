@@ -87,7 +87,7 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 			"userSandBox",
 			"org.broadleafcommerce.cms.admin.client.view.sandbox.MySandBoxView",
 			"userSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.MySandBoxPresenter",
 			userSandBoxPermissions
 		);
 

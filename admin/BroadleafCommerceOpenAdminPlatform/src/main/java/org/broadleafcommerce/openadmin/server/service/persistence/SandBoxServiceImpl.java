@@ -471,8 +471,14 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public void revertAllSandBoxItems(SandBox sandBox) {
-        revertSelectedSandBoxItems(sandBox,  sandBox.getSandBoxItems());
+    public void revertAllSandBoxItems(SandBox originalSandBox, SandBox sandBox) {
+         List<SandBoxItem> items = new ArrayList<SandBoxItem>();
+         for (SandBoxItem item : sandBox.getSandBoxItems()) {
+             if (originalSandBox.equals(sandBox) || (item.getOriginalSandBox() != null && item.getOriginalSandBox().equals(originalSandBox))) {
+                 items.add(item);
+             }
+         }
+        revertSelectedSandBoxItems(sandBox, sandBox.getSandBoxItems());
     }
 
     @Override
@@ -492,8 +498,14 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public void rejectAllSandBoxItems(SandBox sandBox, String comment) {
-         rejectSelectedSandBoxItems(sandBox, comment, sandBox.getSandBoxItems());
+    public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment) {
+         List<SandBoxItem> items = new ArrayList<SandBoxItem>();
+         for (SandBoxItem item : sandBox.getSandBoxItems()) {
+             if (item.getOriginalSandBox().equals(originalSandBox)) {
+                 items.add(item);
+             }
+         }
+         rejectSelectedSandBoxItems(sandBox, comment, items);
     }
 
     @Override
