@@ -209,6 +209,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                 if (!oldId.equals(newId)) {
                                     ((TreeGrid) display.getListDisplay().getGrid()).getTree().remove(((TreeGrid) display.getListDisplay().getGrid()).getTree().findById(oldId));
                                     currentPageRecord = newRecord;
+                                    currentFolderRecord = (TreeNode) newRecord;
                                 }
 							}
                         }

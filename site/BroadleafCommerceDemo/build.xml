@@ -18,7 +18,7 @@
             <arg value="-o"/>
             <arg value="-Pgwt"/>
 			<arg value="gwt:run"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir}"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
 		</artifact:mvn>
 	</target>
 	
@@ -29,7 +29,7 @@
             <arg value="-o"/>
             <arg value="-Pgwt"/>
 			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir}"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
 		</artifact:mvn>
 	</target>
 	
@@ -40,7 +40,7 @@
             <arg value="-o"/>
 			<arg value="-Pgwt"/>
             <arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -noverify -javaagent:${jrebel.path}"/>
 		</artifact:mvn>
 	</target>
 	
@@ -51,7 +51,7 @@
             <arg value="-o"/>
             <arg value="-Pgwt"/>
 			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
+			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
 		</artifact:mvn>
 	</target>
 	
