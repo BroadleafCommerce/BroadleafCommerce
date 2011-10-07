@@ -432,6 +432,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			if (primaryKey == null) {
@@ -646,6 +647,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
@@ -665,7 +667,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(entity.getType()[0]);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				entity.getType()[0], 
+				persistencePackage.getCeilingEntityFullyQualifiedClassname(),
 				entities, 
 				(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
 				persistencePerspective.getAdditionalNonPersistentProperties(), 
@@ -674,6 +676,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			
@@ -729,6 +732,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			Object primaryKey = getPrimaryKey(entity, mergedProperties);
@@ -780,6 +784,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			

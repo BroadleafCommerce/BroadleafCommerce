@@ -143,6 +143,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 						persistencePerspective.getPopulateToOneFields(), 
 						persistencePerspective.getIncludeFields(), 
 						persistencePerspective.getExcludeFields(),
+                        persistencePerspective.getConfigurationKey(),
 						""
 					);
 				}
@@ -169,6 +170,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 						persistencePerspective.getPopulateToOneFields(), 
 						persistencePerspective.getIncludeFields(), 
 						persistencePerspective.getExcludeFields(),
+                        persistencePerspective.getConfigurationKey(),
 						""
 					);
 				}
@@ -217,6 +219,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
 					""
 				);
 			}
@@ -300,6 +303,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
 					""
 				);
 			}
@@ -373,6 +377,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
@@ -398,6 +403,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					false,
 					new String[]{},
 					new String[]{},
+                    null,
 					""
 				);
 			}

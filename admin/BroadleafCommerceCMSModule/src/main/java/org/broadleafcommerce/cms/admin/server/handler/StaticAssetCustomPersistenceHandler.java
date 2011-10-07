@@ -330,6 +330,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             persistencePerspective.getPopulateToOneFields(),
             persistencePerspective.getIncludeFields(),
             persistencePerspective.getExcludeFields(),
+            persistencePerspective.getConfigurationKey(),
             ""
         );
 

@@ -85,6 +85,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
 					""
 				);
                 String idProp = null;
@@ -128,6 +129,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(),
 				persistencePerspective.getIncludeFields(),
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -140,6 +142,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				false,
 				new String[]{},
 				new String[]{},
+                null,
 				""
 			);
 			
@@ -224,6 +227,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
@@ -263,6 +267,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                     persistencePerspective.getPopulateToOneFields(),
                     persistencePerspective.getIncludeFields(),
                     persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
                     ""
                 );
 				Serializable myRecord = records.get(index);
@@ -301,6 +306,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				false,
 				new String[]{},
 				new String[]{},
+                null,
 				""
 			);
 			CriteriaTransferObject ctoInserted = new CriteriaTransferObject();
@@ -338,6 +344,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -350,6 +357,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				false,
 				new String[]{},
 				new String[]{},
+                null,
 				""
 			);
 			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);

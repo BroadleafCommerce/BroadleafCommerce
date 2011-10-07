@@ -53,7 +53,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 		Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> categoryProperties = getMergedProperties(Category.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> categoryProperties = getMergedProperties(Category.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			Object primaryKey = helper.getPrimaryKey(entity, categoryProperties);
 			Category category = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			
@@ -128,7 +128,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 		throw new RuntimeException("custom update not supported");
 	}
 
-	protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
 			ceilingEntityFullyQualifiedClass.getName(), 
@@ -140,6 +140,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 			populateManyToOneFields,
 			includeManyToOneFields, 
 			excludeManyToOneFields,
+            configurationKey,
 			""
 		);
 		

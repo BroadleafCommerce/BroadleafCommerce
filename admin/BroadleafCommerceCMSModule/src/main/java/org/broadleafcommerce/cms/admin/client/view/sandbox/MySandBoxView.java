@@ -43,6 +43,7 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         setWidth100();
         setHeight100();
         setLayoutMargin(20);
+        setBackgroundColor("#999999");
     }
 
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
@@ -74,10 +75,10 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         toolBar.addButton(promoteAllButton);
 
         toolBar.addSpacer(6);
-        Label productLabel = new Label();
-        productLabel.setContents(BLCMain.getMessageManager().getString("userSandBoxTitle"));
-        productLabel.setWrap(false);
-        toolBar.addMember(productLabel);
+        Label mySandBoxLabel = new Label();
+        mySandBoxLabel.setContents(BLCMain.getMessageManager().getString("userSandBoxTitle"));
+        mySandBoxLabel.setWrap(false);
+        toolBar.addMember(mySandBoxLabel);
 
         toolBar.addFill();
         refreshButton = new ToolStripButton();
@@ -131,6 +132,12 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         releaseAllButton = new ToolStripButton();
         releaseAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_down.png");
         pendingToolBar.addButton(releaseAllButton);
+
+        pendingToolBar.addSpacer(6);
+        Label pendingApprovalLabel = new Label();
+        pendingApprovalLabel.setContents(BLCMain.getMessageManager().getString("pendingApprovalTitle"));
+        pendingApprovalLabel.setWrap(false);
+        pendingToolBar.addMember(pendingApprovalLabel);
 
         pendingToolBar.addFill();
         pendingRefreshButton = new ToolStripButton();

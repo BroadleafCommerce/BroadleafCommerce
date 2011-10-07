@@ -1,6 +1,7 @@
 package org.broadleafcommerce.cms.admin.client.presenter.sandbox;
 
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -123,6 +124,12 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
                     ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("pendingSandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey, "reclaimAll", "", "", "pending"});
                     setPendingStartState();
                     getMySandBoxDisplay().getPendingGrid().invalidateCache();
+                    Timer timer = new Timer() {
+                        public void run() {
+                            invalidateMyCache();
+                        }
+                    };
+                    timer.schedule(1000);
                 }
             }
         });
@@ -132,6 +139,12 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
                     ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("pendingSandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"reclaimSelected", getPendingSelectedRecords(), "", "pending"});
                     setPendingStartState();
                     getMySandBoxDisplay().getPendingGrid().invalidateCache();
+                    Timer timer = new Timer() {
+                        public void run() {
+                            invalidateMyCache();
+                        }
+                    };
+                    timer.schedule(1000);
                 }
             }
         });

@@ -46,6 +46,7 @@ public class PageTemplateImpl implements PageTemplate {
     @GeneratedValue(generator = "PageTemplateId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PageTemplateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageTemplateImpl", allocationSize = 10)
     @Column(name = "PAGE_TEMPLATE_ID")
+    @AdminPresentation(friendlyName = "Template Id", hidden = true, readOnly = true)
     protected Long id;
 
     @Column (name = "TEMPLATE_NAME")

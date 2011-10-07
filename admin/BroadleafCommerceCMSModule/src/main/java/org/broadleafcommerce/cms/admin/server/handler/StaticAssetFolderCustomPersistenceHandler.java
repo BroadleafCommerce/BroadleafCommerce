@@ -74,6 +74,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 				persistencePerspective.getPopulateToOneFields(),
 				persistencePerspective.getIncludeFields(),
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
             String[] keys = mergedProperties.keySet().toArray(new String[]{});
@@ -145,7 +146,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
             convertedList.addAll(folders);
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> pageProperties = getMergedProperties(StaticAssetFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getAdditionalForeignKeys());
+            Map<String, FieldMetadata> pageProperties = getMergedProperties(StaticAssetFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey(), persistencePerspective.getAdditionalForeignKeys());
 
             Entity[] entities = helper.getRecords(pageProperties, convertedList);
 
@@ -157,7 +158,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
         }
     }
 
-    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, ForeignKey[] additionalForeignKeys) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
 			ceilingEntityFullyQualifiedClass.getName(),
@@ -169,6 +170,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 			populateManyToOneFields,
 			includeManyToOneFields,
 			excludeManyToOneFields,
+            configurationKey,
 			""
 		);
 

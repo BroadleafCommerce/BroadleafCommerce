@@ -43,7 +43,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	
 	public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 	
-	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+	public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 	
 	public abstract Serializable persist(Serializable entity);
 	
@@ -85,8 +85,8 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public Criteria createCriteria(Class<?> entityClass);
 
-    public Map<String, Map<String, FieldMetadata>> getMetadataOverrides();
+    public Map<String, Map<String, Map<String, FieldMetadata>>> getMetadataOverrides();
 
-    public void setMetadataOverrides(Map<String, Map<String, FieldMetadata>> metadataOverrides);
+    public void setMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides);
 
 }

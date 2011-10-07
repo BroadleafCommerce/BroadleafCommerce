@@ -60,6 +60,7 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
 
     public String userSandBoxTitle();
     public String approverSandBoxTitle();
+    public String pendingApprovalTitle();
 
     public String contentTypeFilterTitle();
 }

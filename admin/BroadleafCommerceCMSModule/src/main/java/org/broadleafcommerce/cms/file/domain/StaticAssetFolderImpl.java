@@ -36,6 +36,10 @@ import java.util.List;
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationOverrides(
         {
+            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(hidden = true)),
             @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),

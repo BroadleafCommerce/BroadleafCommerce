@@ -90,11 +90,12 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
 			
-			Map<String, FieldMetadata> skuMergedProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> skuMergedProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			String[] keys = skuMergedProperties.keySet().toArray(new String[]{});
 			int order = 29;
 			for (String key : keys) {
@@ -147,13 +148,14 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 				persistencePerspective.getPopulateToOneFields(),
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Product.class.getName(), productProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Product.class.getName());
 			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Product.class);
 			Entity[] entities = helper.getRecords(productProperties, records, null, null);
-			Map<String, FieldMetadata> skuProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> skuProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			List<Serializable> skus = new ArrayList<Serializable>();
 			for (Serializable record : records) {
 				Sku sku = ((Product) record).getAllSkus().get(0);
@@ -181,7 +183,7 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Product productInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			productInstance = (Product) helper.createPopulatedInstance(productInstance, entity, productProperties, false);
 			
 			Sku skuInstance;
@@ -192,7 +194,7 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 				Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Sku.class);
 				skuInstance = (Sku) entities[0].newInstance();
 			}
-			Map<String, FieldMetadata> skuProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> skuProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			for (Property property : entity.getProperties()) {
 				if (property.getName().startsWith("allSkus.")) {
 					property.setName(property.getName().substring("allSkus.".length(), property.getName().length()));
@@ -218,7 +220,7 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 		Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			Object primaryKey = helper.getPrimaryKey(entity, productProperties);
 			Product productInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			Sku skuInstance = productInstance.getAllSkus().get(0);
@@ -233,13 +235,13 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 		Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> productProperties = getMergedProperties(Product.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			Object primaryKey = helper.getPrimaryKey(entity, productProperties);
 			Product productInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			productInstance = (Product) helper.createPopulatedInstance(productInstance, entity, productProperties, false);
 			
 			Sku skuInstance = productInstance.getAllSkus().get(0);
-			Map<String, FieldMetadata> skuProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields());
+			Map<String, FieldMetadata> skuProperties = getMergedProperties(Sku.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey());
 			for (Property property : entity.getProperties()) {
 				if (property.getName().startsWith("allSkus.")) {
 					property.setName(property.getName().substring("allSkus.".length(), property.getName().length()));
@@ -259,7 +261,7 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 		}
 	}
 	
-	protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
 		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
 			ceilingEntityFullyQualifiedClass.getName(), 
@@ -271,6 +273,7 @@ public class OneToOneProductSkuCustomPersistenceHandler extends CustomPersistenc
 			populateManyToOneFields,
 			includeManyToOneFields, 
 			excludeManyToOneFields,
+            configurationKey,
 			""
 		);
 		

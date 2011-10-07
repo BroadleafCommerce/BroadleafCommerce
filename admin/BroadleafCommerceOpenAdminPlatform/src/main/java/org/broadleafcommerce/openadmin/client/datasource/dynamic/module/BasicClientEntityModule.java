@@ -389,7 +389,9 @@ public class BasicClientEntityModule implements DataSourceModule {
                     property.getValue() != null &&
                     dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
                 ) {
-                    record.setAttribute(attributeName, formatter.parse(property.getValue()));
+                    if (property.getValue() != null && !property.getValue().equals("null")) {
+                        record.setAttribute(attributeName, formatter.parse(property.getValue()));
+                    }
                 } else if (
                     dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
                 ) {

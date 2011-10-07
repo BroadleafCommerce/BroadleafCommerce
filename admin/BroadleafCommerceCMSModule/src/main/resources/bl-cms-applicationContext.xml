@@ -75,7 +75,6 @@
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.OfferEntityInspectCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>

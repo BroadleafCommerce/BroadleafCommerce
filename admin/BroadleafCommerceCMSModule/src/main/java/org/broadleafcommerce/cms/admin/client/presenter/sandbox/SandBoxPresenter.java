@@ -2,7 +2,8 @@ package org.broadleafcommerce.cms.admin.client.presenter.sandbox;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.UrlBuilder;
-import com.smartgwt.client.data.*;
+import com.google.gwt.user.client.Timer;
+import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -197,6 +198,12 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                             ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteAll", "", comment, "standard"});
                             setStartState();
                             display.getGrid().invalidateCache();
+                            Timer timer = new Timer() {
+                                public void run() {
+                                    invalidateOtherCache();
+                                }
+                            };
+                            timer.schedule(1000);
                         }
                     });
                 }
@@ -211,6 +218,12 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
                             ((CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS")).setCustomCriteria(new String[]{BLCMain.currentViewKey,"promoteSelected", getSelectedRecords(), comment, "standard"});
                             setStartState();
                             display.getGrid().invalidateCache();
+                            Timer timer = new Timer() {
+                                public void run() {
+                                    invalidateOtherCache();
+                                }
+                            };
+                            timer.schedule(1000);
                         }
                     });
                 }

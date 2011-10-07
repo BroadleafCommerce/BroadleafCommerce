@@ -55,7 +55,11 @@ import java.util.Map;
             @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true))
+            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="locale.id", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="locale.localeCode", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="locale.friendlyName", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="locale.defaultFlag", value=@AdminPresentation(excluded = true))
         }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
@@ -76,9 +80,9 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "CONTENT_NAME", nullable = false)
     protected String contentName;
 
-    @AdminPresentation(excluded = true)
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_ID")
+    @AdminPresentation(hidden = true)
     protected Locale locale;
 
     @AdminPresentation(friendlyName="Priority", order=4, group="Description")
@@ -105,7 +109,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
-    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, excluded = true, formHidden = FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, formHidden = FormHiddenEnum.VISIBLE)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)

@@ -49,7 +49,6 @@ import java.util.List;
         @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="pageTemplate.id", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="pageTemplate.templateDescription", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="pageTemplate.locale", value=@AdminPresentation(excluded = true))
     }

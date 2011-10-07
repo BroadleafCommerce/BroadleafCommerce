@@ -38,6 +38,7 @@ public class PersistencePerspective implements Serializable {
 	protected Boolean populateToOneFields = false;
 	protected String[] excludeFields = new String[]{};
 	protected String[] includeFields = new String[]{};
+    protected String configurationKey;
 	
 	public PersistencePerspective() {
 	}
@@ -172,4 +173,11 @@ public class PersistencePerspective implements Serializable {
 		Arrays.sort(this.includeFields);
 	}
 
+    public String getConfigurationKey() {
+        return configurationKey;
+    }
+
+    public void setConfigurationKey(String configurationKey) {
+        this.configurationKey = configurationKey;
+    }
 }
