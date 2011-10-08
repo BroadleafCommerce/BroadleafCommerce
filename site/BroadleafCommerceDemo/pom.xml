@@ -45,14 +45,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exploded</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>2.1.1</version> 
                 <configuration>
                     <webappDirectory>${webappDirectory}</webappDirectory>
                 </configuration>
