@@ -118,7 +118,7 @@
 	</bean>
 
      <!-- TimeDTO used by the structured content rule builder. -->
-    <bean id="blTimeDTO" class="org.broadleafcommerce.common.DummyTimeDTO"/>
+    <bean id="blTimeDTO" class="org.broadleafcommerce.common.TimeDTO"/>
     <!-- RequestDTO used by the structured content rule builder -->
     <bean id="blRequestDTO" class="org.broadleafcommerce.common.RequestDTOImpl"/>
     <!-- RequestDTO used by the structured content rule builder -->

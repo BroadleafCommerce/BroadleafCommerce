@@ -22,6 +22,7 @@ import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -51,5 +52,14 @@ public class LocaleServiceImpl implements LocaleService {
     @Override
     public Locale findDefaultLocale() {
         return localeDao.findDefaultLocale();
+    }
+
+
+    /**
+     * Returns list of supported locales.
+     */
+    @Override
+    public List<Locale> findAllLocales() {
+        return localeDao.findAllLocales();
     }
 }

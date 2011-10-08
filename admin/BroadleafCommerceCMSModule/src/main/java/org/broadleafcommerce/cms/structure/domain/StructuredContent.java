@@ -20,7 +20,6 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -60,17 +59,9 @@ public interface StructuredContent extends Serializable {
 
     public void setArchivedFlag(Boolean archivedFlag);
 
-    public Boolean getOnlineFlag();
+    public Boolean getOfflineFlag();
 
-    public void setOnlineFlag(Boolean onlineFlag);
-
-    public Date getActiveStartDate();
-
-    public void setActiveStartDate(Date activeStartDate);
-
-    public Date getActiveEndDate();
-
-    public void setActiveEndDate(Date activeEndDate);
+    public void setOfflineFlag(Boolean offlineFlag);
 
     public Integer getPriority();
 

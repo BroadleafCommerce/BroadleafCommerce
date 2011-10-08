@@ -20,6 +20,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.cms.web.ContentFilter;
+import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.TimeDTO;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +87,21 @@ public class DisplayContentTag extends BodyTagSupport {
         return structuredContentService;
     }
 
+    // The following FieldMapWrapper allows for JSP syntax to be item.body
+    // instead of item.body.value
+    private List<Map> wrapFieldMaps(List<StructuredContent> contentItems) {
+        if (contentItems != null) {
+            List<Map> contentFieldList = new ArrayList<Map>();
+            for (StructuredContent item : contentItems) {
+                contentFieldList.add(new FieldMapWrapper(item.getStructuredContentFields()));
+            }
+            return contentFieldList;
+
+        } else {
+            return null;
+        }
+    }
+
 
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -107,11 +124,15 @@ public class DisplayContentTag extends BodyTagSupport {
         }
 
         pageContext.setAttribute(getNumResultsVar(), contentItems.size());
-        if (contentItems != null && contentItems.size() > 0) {
-            pageContext.setAttribute(numResultsVar, contentItems.size());
-            pageContext.setAttribute(contentItemVar, contentItems.get(0));
-            pageContext.setAttribute(contentListVar, contentItems);
+        if (contentItems.size() > 0) {
+            List<Map> returnFields = wrapFieldMaps(contentItems);
+            pageContext.setAttribute(contentItemVar, returnFields.get(0));
+            pageContext.setAttribute(contentListVar, returnFields);
+            pageContext.setAttribute("structuredContentList", contentItems);
         } else {
+            pageContext.setAttribute(contentItemVar, contentItems);
+            pageContext.setAttribute(contentListVar, null);
+            pageContext.setAttribute("structuredContentList", null);
             pageContext.setAttribute(numResultsVar, 0);
         }
         

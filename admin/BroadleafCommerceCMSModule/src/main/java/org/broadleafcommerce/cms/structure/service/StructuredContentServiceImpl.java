@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +30,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
@@ -116,7 +118,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             c.add(Restrictions.isNull("sandbox"));
             return c.list();
         } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression = null;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -128,9 +129,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
 
             if (productionSandboxExpression != null) {
-                c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
+                c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
             } else {
-                c.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
+                c.add(currentSandboxExpression);
             }
 
             List<StructuredContent> resultList = (List<StructuredContent>) c.list();
@@ -174,7 +175,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             c.add(Restrictions.isNull("sandbox"));
             return (Long) c.uniqueResult();
         } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -187,7 +187,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
-            c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
+            c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
 
             Long resultCount = (Long) c.list().get(0);
             Long updatedCount = 0L;
@@ -338,11 +338,19 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             if (sc.getOriginalItemId() != null) {
                 scMap.remove(sc.getOriginalItemId());
             }
-            if (! sc.getDeletedFlag()) {
+
+            if (! sc.getDeletedFlag() && ! sc.getOfflineFlag()) {
                 scMap.put(sc.getId(), sc);
             }
         }
-        return new ArrayList<StructuredContent>(scMap.values());
+
+        ArrayList<StructuredContent> returnList = new ArrayList<StructuredContent>(scMap.values());
+
+        if (returnList.size()  > 1) {
+            Collections.sort(returnList, new BeanComparator("priority"));
+        }
+
+        return returnList;
     }
 
 
@@ -350,7 +358,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         Serializable exp = (Serializable) EXPRESSION_CACHE.get(expression);
         if (exp == null) {
             ParserContext context = new ParserContext();
-            exp = MVEL.compileExpression(expression.toString(), context);
+            try {
+                exp = MVEL.compileExpression(expression, context);
+            } catch (CompileException ce) {
+                LOG.warn("Compile exception processing phrase: " + expression,ce);
+                return Boolean.FALSE;
+            }
         }
         EXPRESSION_CACHE.put(expression, exp);
 
@@ -390,10 +403,16 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 } else if (returnList.size() > count) {
                     return returnList.subList(0, count);
                 } else {
-                    tmpList.add(sc);
+                    if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
+                        if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
+                            tmpList.add(sc);
+                        }
+                    } else {
+                        tmpList.add(sc);
+                    }
                 }
             } else {
-                if (sc.getDisplayRule() != null && "".equals(sc.getDisplayRule())) {
+                if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
                     if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
                         tmpList.add(sc);
                     }
@@ -444,11 +463,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     private SandBox getProductionSandBox(SandBox currentSandBox) {
-        if (currentSandBox == null || currentSandBox.getSite() == null || SandBoxType.PRODUCTION.equals(currentSandBox.getSandBoxType())) {
-            return currentSandBox;
-        } else {
-            return currentSandBox.getSite().getProductionSandbox();
+        SandBox productionSandBox = null;
+        if (currentSandBox == null || SandBoxType.PRODUCTION.equals(currentSandBox.getSandBoxType())) {
+            productionSandBox = currentSandBox;
+        } else if (currentSandBox.getSite() != null) {
+            productionSandBox = currentSandBox.getSite().getProductionSandbox();
         }
+        return productionSandBox;
     }
 
     private boolean isProductionSandBox(SandBox dest) {
@@ -472,13 +493,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 LOG.debug("Structured Content Item not found " + sandBoxItem.getTemporaryItemId());
             }
         } else {
-            boolean productionSandBox = isProductionSandBox(destinationSandBox);
-            if (productionSandBox) {
-                sc.setLockedFlag(false);
-            } else {
-                sc.setLockedFlag(true);
-            }
-            if (productionSandBox && sc.getOriginalItemId() != null) {
+            if (isProductionSandBox(destinationSandBox) && sc.getOriginalItemId() != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Structured content promoted to production.  " + sc.getId() + ".  Archiving original item " + sc.getOriginalItemId());
                 }
@@ -489,10 +504,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                // We are archiving the old item and making this the new "production item", so
                // null out the original item id before saving.
                 sc.setOriginalItemId(null);
+                sc.setLockedFlag(false);
+            } else {
+                sc.setLockedFlag(true);
             }
-        }
-        if (sc.getOriginalSandBox() == null) {
-            sc.setOriginalSandBox(sc.getSandbox());
+
         }
         sc.setSandbox(destinationSandBox);
         structuredContentDao.addOrUpdateContentItem(sc, false);
@@ -507,8 +523,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (sc != null) {
             sc.setSandbox(destinationSandBox);
-            sc.setOriginalSandBox(null);
-            sc.setLockedFlag(false);
             structuredContentDao.addOrUpdateContentItem(sc, false);
         }
     }
@@ -522,7 +536,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (sc != null) {
             sc.setArchivedFlag(Boolean.TRUE);
-            sc.setLockedFlag(false);
             structuredContentDao.addOrUpdateContentItem(sc, false);
 
             StructuredContent originalSc = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());

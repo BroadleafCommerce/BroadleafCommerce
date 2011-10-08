@@ -21,6 +21,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -97,32 +98,42 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale locale) {
-        String queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE";
-        if (sandBox != null) {
-            queryName =  "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_SANDBOX";
+
+
+        String queryName = null;
+        if (sandBox == null) {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE";
+        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_PRODUCTION_SANDBOX";
+        } else {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_USER_SANDBOX";
         }
 
         Query query = em.createNamedQuery(queryName);
         query.setParameter("contentType", type);
-        query.setParameter("currentDate", SystemTime.asDate());
         query.setParameter("locale", locale);
-        if (sandBox != null) {
+        if (sandBox != null)  {
             query.setParameter("sandbox", sandBox);
         }
+
         return query.getResultList();
     }
 
     @Override
     public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale) {
-        String queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME";
-        if (sandBox != null) {
-            queryName =  "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_SANDBOX";
+
+        String queryName = null;
+        if (sandBox == null) {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME";
+        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_PRODUCTION_SANDBOX";
+        } else {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_USER_SANDBOX";
         }
 
         Query query = em.createNamedQuery(queryName);
         query.setParameter("contentType", type);
         query.setParameter("contentName", name);
-        query.setParameter("currentDate", SystemTime.asDate());
         query.setParameter("locale", locale);
         if (sandBox != null) {
             query.setParameter("sandbox", sandBox);

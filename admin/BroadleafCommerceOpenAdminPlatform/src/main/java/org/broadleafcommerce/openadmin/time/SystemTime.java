@@ -89,35 +89,7 @@ public class SystemTime {
     }
 
     public static TimeDTO asTimeDTO() {
-        final Calendar cal = asCalendar(true);
-        TimeDTO timeDTO = new TimeDTO() {
-
-            @Override
-            public int getHour() {
-                return cal.get(Calendar.HOUR_OF_DAY);
-            }
-
-            @Override
-            public int getDayOfWeek() {
-                return cal.get(Calendar.DAY_OF_WEEK);
-            }
-
-            @Override
-            public int getDayOfMonth() {
-                return cal.get(Calendar.DAY_OF_MONTH);
-            }
-
-            @Override
-            public int getMonth() {
-                return cal.get(Calendar.MONTH);
-            }
-
-            @Override
-            public double getTimeAsDecimal() {
-                return cal.get(Calendar.HOUR_OF_DAY) + (cal.get(Calendar.MINUTE) / 60.0);
-            }
-        };
-        return timeDTO;
+        return new TimeDTO(asCalendar(true));
     }
 
     public static Calendar asCalendar(boolean includeTime) {

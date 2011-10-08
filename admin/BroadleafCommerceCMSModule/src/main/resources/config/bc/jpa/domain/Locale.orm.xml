@@ -17,5 +17,10 @@
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_ALL_LOCALES" >
+		<query>SELECT locale
+               FROM org.broadleafcommerce.cms.locale.domain.Locale locale
+		</query>
+	</named-query>
 
 </entity-mappings>

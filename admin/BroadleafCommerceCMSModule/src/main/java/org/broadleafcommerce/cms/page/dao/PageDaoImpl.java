@@ -15,12 +15,14 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -154,19 +156,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<PageTemplate> retrieveAllPageTemplates(String localeCode) {
-        Query query;
-        if (localeCode != null) {
-            query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE");
-            query.setParameter("localeCode", localeCode);
-        } else {
-            query = em.createNamedQuery("BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE");
-        }
-        return query.getResultList();
-    }
-
-    @Override
-    public Page findPageByURI(SandBox sandBox, String uri) {
+    public Page findPageByURI(SandBox sandBox, Locale locale, String uri) {
         String[] pathElements = uri.split("//");
         String pageName = pathElements[pathElements.length - 1];
 
@@ -175,9 +165,16 @@ public class PageDaoImpl implements PageDao {
         if (sandBox == null) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
             query.setParameter("uri", uri);
-        } else {
-            query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_SANDBOX");
+            query.setParameter("locale", locale);
+        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
+            query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX");
             query.setParameter("sandbox", sandBox);
+            query.setParameter("locale", locale);
+            query.setParameter("uri", uri);
+        } else {
+            query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_USER_SANDBOX");
+            query.setParameter("sandbox", sandBox);
+            query.setParameter("locale", locale);
             query.setParameter("uri", uri);
         }
 

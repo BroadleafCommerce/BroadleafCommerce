@@ -55,14 +55,6 @@
 		</query>
 	</named-query>
 
-    <named-query name="BC_READ_PAGE_TEMPLATES_BY_LANGUAGE_CODE" >
-		<query>SELECT pageTemplate
-               FROM org.broadleafcommerce.cms.page.domain.PageTemplate pageTemplate
-               WHERE
-                  pageTemplate.locale.localeCode = :localeCode
-		</query>
-	</named-query>
-
     <named-query name="BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE" >
 		<query>SELECT pageTemplate
                FROM org.broadleafcommerce.cms.page.domain.PageTemplate pageTemplate
@@ -74,26 +66,42 @@
     <named-query name="BC_READ_PAGE_BY_URI" >
 		<query>SELECT page
                FROM org.broadleafcommerce.cms.page.domain.PageImpl page
-               LEFT JOIN page.pageTemplate pageTemplate
                WHERE
                   page.fullUrl = :uri AND
                   page.sandbox is null AND
+                  page.pageTemplate.locale = :locale AND
                   page.archivedFlag = false AND
                   page.deletedFlag = false
 		</query>
 	</named-query>
 
-    <named-query name="BC_READ_PAGE_BY_URI_AND_SANDBOX" >
+    <named-query name="BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX" >
 		<query>SELECT page
                FROM org.broadleafcommerce.cms.page.domain.PageImpl page
-               LEFT JOIN page.pageTemplate pageTemplate
                WHERE
                   page.fullUrl = :uri AND
                   page.sandbox = :sandbox AND
+                  page.pageTemplate.locale = :locale AND
                   page.archivedFlag = false AND
                   page.deletedFlag = false
 		</query>
 	</named-query>
 
+    <named-query name="BC_READ_PAGE_BY_URI_AND_USER_SANDBOX" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               WHERE
+                  page.fullUrl = :uri AND
+                  page.pageTemplate.locale = :locale AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false AND
+                  page.id in
+                    (SELECT sandboxItem.temporaryItemId
+                     FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
+                     WHERE (sandboxItem.originalSandBox = :sandbox OR sandboxItem.sandBox = :sandbox) AND
+                           sandboxItem.archivedFlag = false AND
+                           sandboxItem.temporaryItemId = page.id)
+		</query>
+	</named-query>
 
 </entity-mappings>

@@ -17,6 +17,8 @@ package org.broadleafcommerce.cms.locale.dao;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
 
+import java.util.List;
+
 /**
  * Created by bpolster.
  */
@@ -30,8 +32,14 @@ public interface LocaleDao {
     /**
      * Returns the page template with the passed in id.
      *
-     * @param id - the id of the page template
      * @return The default locale
      */
     public Locale findDefaultLocale();
+
+    /**
+     * Returns all supported BLC locales.
+     * @return
+     */
+    public List<Locale> findAllLocales();
+
 }

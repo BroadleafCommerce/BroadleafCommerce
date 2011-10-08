@@ -17,6 +17,8 @@ package org.broadleafcommerce.cms.locale.service;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
 
+import java.util.List;
+
 /**
  * Created by bpolster.
  */
@@ -31,8 +33,14 @@ public interface LocaleService {
     /**
      * Returns the page template with the passed in id.
      *
-     * @param id - the id of the page template
      * @return The default locale
      */
     public Locale findDefaultLocale();
+
+    /**
+     * Returns the page template with the passed in id.
+     *
+     * @return The default locale
+     */
+    public List<Locale> findAllLocales();
 }

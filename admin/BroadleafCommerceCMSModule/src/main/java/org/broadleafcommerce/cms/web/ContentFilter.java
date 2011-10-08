@@ -44,6 +44,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This filter sets up the current sandbox, time of day, and languageCode that
@@ -112,11 +114,11 @@ public class ContentFilter extends OncePerRequestFilter {
 	 */
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Site site = determineSite(request);
-        determineLocale(request, site);
+        Locale locale = determineLocale(request, site);
         SandBox currentSandbox = determineSandbox(request, site);
 
         try {
-            if (! checkForContentManagedPage(currentSandbox, request, response)) {
+            if (! checkForContentManagedPage(currentSandbox, locale, request, response)) {
 		        filterChain.doFilter(request, response);
             }
         } finally {
@@ -125,9 +127,9 @@ public class ContentFilter extends OncePerRequestFilter {
         }
 	}
 
-    private boolean checkForContentManagedPage(SandBox currentSandbox, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private boolean checkForContentManagedPage(SandBox currentSandbox, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String uriWithoutContextPath = request.getRequestURI().substring(request.getContextPath().length());
-    	Page p = pageService.findPageByURI(currentSandbox, uriWithoutContextPath);
+    	Page p = pageService.findPageByURI(currentSandbox, locale, uriWithoutContextPath);
         if (p != null) {
         	String templateJSPPath = blcPageTemplateDirectory + p.getPageTemplate().getTemplatePath() + ".jsp";
             logger.debug("Forwarding to page: " + templateJSPPath);
@@ -217,6 +219,13 @@ public class ContentFilter extends OncePerRequestFilter {
 
         request.setAttribute(LOCALE_VAR, locale);
         request.getSession().setAttribute(LOCALE_VAR, locale);
+
+        Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap");
+        if (ruleMap == null) {
+            ruleMap = new HashMap<String,Object>();
+            request.setAttribute("blRuleMap", ruleMap);
+        }
+        ruleMap.put("locale", locale);
         return locale;
     }
 

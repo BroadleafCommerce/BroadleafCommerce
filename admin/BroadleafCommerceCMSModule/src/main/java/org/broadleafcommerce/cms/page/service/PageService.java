@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
@@ -144,14 +145,8 @@ public interface PageService {
 
 
     /**
-     * Returns the list of pageTemplates available for the passed in language.
-     */
-    public List<PageTemplate> retrieveAllPageTemplates(String localeCode);
-
-
-    /**
      * Retrieve the page if one is available for the passed in uri.
      */
-    public Page findPageByURI(SandBox currentSandbox, String uri);
+    public Page findPageByURI(SandBox currentSandbox, Locale locale, String uri);
 
 }

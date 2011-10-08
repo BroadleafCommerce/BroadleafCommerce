@@ -17,6 +17,7 @@ package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.service.LocaleService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
@@ -249,26 +250,21 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         return pageDao.addPageFolder(pageFolder);
     }
 
-    @Override
-    public List<PageTemplate> retrieveAllPageTemplates(String localeCode) {
-        return pageDao.retrieveAllPageTemplates(localeCode);
-    }
-
     /**
      * Retrieve the page if one is available for the passed in uri.
      */
     @Override
-    public Page findPageByURI(SandBox currentSandbox, String uri) {
+    public Page findPageByURI(SandBox currentSandbox, Locale locale, String uri) {
         if (uri != null) {
             // TODO: Optimize production page lookup
             SandBox productionSandbox = null;
             if (currentSandbox != null && currentSandbox.getSite() != null) {
                 productionSandbox = currentSandbox.getSite().getProductionSandbox();
             }
-            Page productionPage = pageDao.findPageByURI(productionSandbox, uri);
+            Page productionPage = pageDao.findPageByURI(productionSandbox, locale, uri);
 
             if (currentSandbox != null && ! currentSandbox.getSandBoxType().equals(SandBoxType.PRODUCTION)) {
-                Page sandboxPage = pageDao.findPageByURI(currentSandbox, uri);
+                Page sandboxPage = pageDao.findPageByURI(currentSandbox, locale, uri);
                 if (sandboxPage != null) {
                     if (sandboxPage.getDeletedFlag()) {
                         return null;

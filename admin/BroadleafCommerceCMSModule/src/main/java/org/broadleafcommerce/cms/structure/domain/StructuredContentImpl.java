@@ -19,7 +19,6 @@ import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
@@ -30,7 +29,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +74,7 @@ public class StructuredContentImpl implements StructuredContent {
     @Embedded
     protected AdminAuditable auditable = new AdminAuditable();
 
-    @AdminPresentation(friendlyName="Content Name", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Content Name", order=1, groupOrder = 1, group="Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
     protected String contentName;
 
@@ -85,11 +83,11 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(hidden = true)
     protected Locale locale;
 
-    @AdminPresentation(friendlyName="Priority", order=4, group="Description")
+    @AdminPresentation(friendlyName="Priority", order=3, group="Description")
     @Column(name = "PRIORITY", nullable = false)
     protected Integer priority;
 
-    @AdminPresentation(friendlyName="Display Rule", order=1, group="Display Rule", largeEntry = true)
+    @AdminPresentation(friendlyName="Display Rule", order=1, groupOrder = 2, group="Display Rule", largeEntry = true)
     @Column(name = "DISPLAY_RULE")
     protected String displayRule;
 
@@ -109,7 +107,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
-    @AdminPresentation(friendlyName="Content Type", order=8, group="Description", requiredOverride = RequiredOverride.REQUIRED, formHidden = FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Content Type", order=2, group="Description", requiredOverride = RequiredOverride.REQUIRED, excluded = true, formHidden = FormHiddenEnum.VISIBLE)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
@@ -128,17 +126,9 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "ARCHIVED_FLAG")
     protected Boolean archivedFlag;
 
-    @AdminPresentation(friendlyName="Active Start Date", order=6, group="Description", prominent = true)
-    @Column(name = "ACTIVE_START_DATE")
-    protected Date activeStartDate;
-
-    @AdminPresentation(friendlyName="Active End Date", order=7, group="Description", prominent = true)
-    @Column(name = "ACTIVE_END_DATE")
-    protected Date activeEndDate;
-
-    @AdminPresentation(friendlyName="Online", order=5, group="Description")
-    @Column(name = "ONLINE_FLAG")
-    protected Boolean onlineFlag;
+    @AdminPresentation(friendlyName="Offline", order=4, group="Description")
+    @Column(name = "OFFLINE_FLAG")
+    protected Boolean offlineFlag = false;
 
     @Column (name = "LOCKED_FLAG")
     @AdminPresentation(friendlyName="Is Locked", hidden = true)
@@ -215,33 +205,13 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public Boolean getOnlineFlag() {
-        return onlineFlag;
+    public Boolean getOfflineFlag() {
+        return offlineFlag;
     }
 
     @Override
-    public void setOnlineFlag(Boolean onlineFlag) {
-        this.onlineFlag = onlineFlag;
-    }
-
-    @Override
-    public Date getActiveStartDate() {
-        return activeStartDate;
-    }
-
-    @Override
-    public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate = activeStartDate;
-    }
-
-    @Override
-    public Date getActiveEndDate() {
-        return activeEndDate;
-    }
-
-    @Override
-    public void setActiveEndDate(Date activeEndDate) {
-        this.activeEndDate = activeEndDate;
+    public void setOfflineFlag(Boolean offlineFlag) {
+        this.offlineFlag = offlineFlag;
     }
 
     @Override
@@ -312,13 +282,11 @@ public class StructuredContentImpl implements StructuredContent {
     public StructuredContent cloneEntity() {
         StructuredContentImpl newContent = new StructuredContentImpl();
         newContent.displayRule = displayRule;
-        newContent.activeEndDate = activeEndDate;
-        newContent.activeStartDate = activeStartDate;
         newContent.archivedFlag = archivedFlag;
         newContent.contentName = contentName;
         newContent.deletedFlag = deletedFlag;
         newContent.locale = locale;
-        newContent.onlineFlag = onlineFlag;
+        newContent.offlineFlag = offlineFlag;
         newContent.originalItemId = originalItemId;
         newContent.priority = priority;
         newContent.structuredContentType = structuredContentType;

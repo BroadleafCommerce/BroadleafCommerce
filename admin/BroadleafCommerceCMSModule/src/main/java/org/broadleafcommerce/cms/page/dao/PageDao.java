@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
+import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFolder;
@@ -47,7 +48,5 @@ public interface PageDao {
 
     public PageFolder addPageFolder(PageFolder pageFolder);
 
-    public List<PageTemplate> retrieveAllPageTemplates(String localeCode);
-
-    public Page findPageByURI(SandBox productionSandbox, String uri);
+    public Page findPageByURI(SandBox sandBox, Locale locale, String uri);
 }

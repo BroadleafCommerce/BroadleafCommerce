@@ -45,7 +45,7 @@ public class LocaleDaoImpl implements LocaleDao {
         Query query = em.createNamedQuery("BC_READ_LOCALE_BY_CODE");
         query.setParameter("localeCode", localeCode);
         List<Locale> localeList = (List<Locale>) query.getResultList();
-        if (localeList.size() > 1) {
+        if (localeList.size() >= 1) {
             return localeList.get(0);
         }
         return null;
@@ -54,7 +54,6 @@ public class LocaleDaoImpl implements LocaleDao {
     /**
      * Returns the page template with the passed in id.
      *
-     * @param id - the id of the page template
      * @return The default locale
      */
     @Override
@@ -65,5 +64,14 @@ public class LocaleDaoImpl implements LocaleDao {
             return localeList.get(0);
         }
         return null;
+    }
+
+    /**
+     * Returns all supported BLC locales.
+     * @return
+     */
+    public List<Locale> findAllLocales() {
+        Query query = em.createNamedQuery("BC_READ_ALL_LOCALES");
+        return (List<Locale>) query.getResultList();
     }
 }
