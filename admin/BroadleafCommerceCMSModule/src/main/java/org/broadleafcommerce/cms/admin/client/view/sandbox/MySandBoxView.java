@@ -43,7 +43,6 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         setWidth100();
         setHeight100();
         setLayoutMargin(20);
-        setBackgroundColor("#999999");
     }
 
 	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {

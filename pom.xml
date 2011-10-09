@@ -1042,6 +1042,12 @@
 				<version>2.1.3</version>
 				<type>jar</type>
 				<scope>compile</scope>
+                <exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+				        <artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

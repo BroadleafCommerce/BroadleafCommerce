@@ -11,10 +11,6 @@
 
     <aop:config/>
 
-    <bean id="blStaticAssetView" class="org.broadleafcommerce.cms.web.file.StaticAssetView"/>
-
-    <bean id="blStaticAssetViewController" class="org.broadleafcommerce.cms.web.file.StaticAssetViewController"/>
-
     <bean id="blUploadUrlMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
         <property name="order" value="1"/>
         <property name="alwaysUseFullPath" value="true"></property>
