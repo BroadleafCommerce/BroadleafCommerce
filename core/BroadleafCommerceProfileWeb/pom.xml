@@ -3,13 +3,13 @@
 	<parent>
 		<artifactId>core</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-M4</version>
+		<version>1.5.0-M5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>broadleaf-profile-web</artifactId>
 	<name>BroadleafCommerceProfileWeb</name>
-	<version>1.5.0-M4</version>
+	<version>1.5.0-M5-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
