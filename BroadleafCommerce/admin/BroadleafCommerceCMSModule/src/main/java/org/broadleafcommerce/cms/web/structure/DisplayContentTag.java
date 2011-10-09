@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.broadleafcommerce.cms.web.structure;
 
 import org.broadleafcommerce.cms.locale.domain.Locale;
