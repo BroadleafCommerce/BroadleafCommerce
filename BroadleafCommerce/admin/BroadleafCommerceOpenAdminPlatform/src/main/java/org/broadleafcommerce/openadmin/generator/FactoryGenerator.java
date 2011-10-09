@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.generator;
 
-import java.io.PrintWriter;
-
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
@@ -26,6 +24,8 @@ import com.google.gwt.core.ext.typeinfo.NotFoundException;
 import com.google.gwt.core.ext.typeinfo.TypeOracle;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
+
+import java.io.PrintWriter;
 
 /**
  * 
@@ -48,17 +48,18 @@ public class FactoryGenerator extends Generator {
 		}
 		try {
 			logger.log(TreeLogger.INFO, "Generating source for " + clazz.getQualifiedSourceName(), null);
-			JClassType[] reflectableTypes = {typeOracle.getType(INSTANTIABLE_TYPE), typeOracle.getType(VALIDATOR_TYPE)};
+			JClassType[] reflectableTypes = {typeOracle.getType(INSTANTIABLE_TYPE)};
+            JClassType[] validatorTypes = {typeOracle.getType(VALIDATOR_TYPE)};
 			SourceWriter sourceWriter = getSourceWriter(clazz, context, logger);
 			if (sourceWriter != null) {
-				sourceWriter.println("public java.lang.Object newInstance(String className) {");
-				for (JClassType reflectableType : reflectableTypes) {
+                sourceWriter.println("public java.lang.Object newInstance(String className) {");
+				for (JClassType validatorType : validatorTypes) {
 					JClassType[] types = typeOracle.getTypes();
 					int count = 0;
 					for (int i = 0; i < types.length; i++) {
 						if (types[i].isInterface() == null
 						&& !types[i].isAbstract()
-						&& types[i].isAssignableTo(reflectableType)) {
+						&& types[i].isAssignableTo(validatorType)) {
 							logger.log(TreeLogger.INFO, "Emitting instantiation code for: " + types[i].getQualifiedSourceName(), null);
 							if (count == 0) {
 								sourceWriter.println("   if(\""
@@ -79,7 +80,46 @@ public class FactoryGenerator extends Generator {
 						}
 					}
 				}
-				sourceWriter.println("return null;");
+                sourceWriter.println("return null;");
+                sourceWriter.println("}");
+				sourceWriter.println("public void createAsync(final String className, final AsyncClient asyncClient) {");
+				for (JClassType reflectableType : reflectableTypes) {
+					JClassType[] types = typeOracle.getTypes();
+					int count = 0;
+					for (int i = 0; i < types.length; i++) {
+						if (types[i].isInterface() == null
+						&& !types[i].isAbstract()
+						&& types[i].isAssignableTo(reflectableType)) {
+							logger.log(TreeLogger.INFO, "Emitting async instantiation code for: " + types[i].getQualifiedSourceName(), null);
+							if (count == 0) {
+								sourceWriter.println("   if(\""
+								+ types[i].getQualifiedSourceName()
+								+ "\".equals(className)) {"
+                                + "com.google.gwt.core.client.GWT.runAsync(new com.google.gwt.core.client.RunAsyncCallback() {"
+                                + "public void onFailure(Throwable err) {"
+                                + "asyncClient.onUnavailable();"
+                                + "}"
+                                + "public void onSuccess() {"
+                                + "asyncClient.onSuccess(new "
+								+ types[i].getQualifiedSourceName() + "());"
+								+ "}});}");
+							} else {
+								sourceWriter.println("   else if(\""
+								+ types[i].getQualifiedSourceName()
+								+ "\".equals(className)) {"
+								+ "com.google.gwt.core.client.GWT.runAsync(new com.google.gwt.core.client.RunAsyncCallback() {"
+                                + "public void onFailure(Throwable err) {"
+                                + "asyncClient.onUnavailable();"
+                                + "}"
+                                + "public void onSuccess() {"
+                                + "asyncClient.onSuccess(new "
+								+ types[i].getQualifiedSourceName() + "());"
+								+ "}});}");
+							}
+							count++;
+						}
+					}
+				}
 				sourceWriter.println("}");
 				sourceWriter.commit(logger);
 				logger.log(TreeLogger.INFO, "Done Generating source for "

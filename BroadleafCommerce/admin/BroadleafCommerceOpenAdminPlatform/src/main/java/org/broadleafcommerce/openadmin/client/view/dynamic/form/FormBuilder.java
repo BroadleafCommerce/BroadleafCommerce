@@ -15,10 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.ContentsType;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -26,10 +28,13 @@ import com.smartgwt.client.widgets.form.FormItemValueFormatter;
 import com.smartgwt.client.widgets.form.fields.*;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
 
 import java.util.*;
 
@@ -46,7 +51,9 @@ public class FormBuilder {
 	
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
 		form.setDataSource(dataSource);
+        form.setCellPadding(8);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
+        Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
 		DataSourceField[] fields = dataSource.getFields();
 		Boolean originalEdit = canEdit;
@@ -55,11 +62,15 @@ public class FormBuilder {
         	if (field.getAttribute("securityLevel") != null && field.getAttribute("uniqueID") != null && !SecurityManager.getInstance().isUserAuthorizedToEditField(field.getAttribute("uniqueID"))){
         		canEdit = false;
         	}
-        	
+        	String name = field.getName();
         	String fieldType = field.getAttribute("fieldType");
-        	if (fieldType != null && !field.getHidden()) {
+            FormHiddenEnum enumVal = (FormHiddenEnum) field.getAttributeAsObject("formHidden");
+        	if (fieldType != null && (!field.getHidden() || enumVal == FormHiddenEnum.VISIBLE) && enumVal != FormHiddenEnum.HIDDEN) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
+                if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {
+                    sectionCollapsed.put(group, field.getAttributeAsBoolean("formGroupCollapsed"));
+                }
 	    		Integer groupOrder = null;
 	    		if (temp != null) {
 	    			groupOrder = Integer.valueOf(temp);
@@ -76,7 +87,7 @@ public class FormBuilder {
 		        	if (largeEntry == null) {
 		        		largeEntry = false;
 		        	}
-		        	final FormItem formItem = buildField(dataSource, field, fieldType, largeEntry);
+		        	final FormItem formItem = buildField(dataSource, field, fieldType, largeEntry, form);
 		        	final FormItem displayFormItem = buildDisplayField(field, fieldType);
 		        	if (fieldType.equals(SupportedFieldType.ID.toString())) {
 		        		canEdit = false;
@@ -90,19 +101,34 @@ public class FormBuilder {
         	canEdit = originalEdit;
         }
         
-        groupFields(form, sections, sectionNames);
+        groupFields(form, sections, sectionNames, sectionCollapsed);
 	}
+
+    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, DataSource optionDataSource, String displayField, String valueField, Boolean showId) {
+        buildMapForm(dataSource, form, mapStructure, null, optionDataSource, displayField, valueField, showId);
+    }
+
+    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
+        buildMapForm(dataSource, form, mapStructure, mapKeys, null, null, null, showId);
+    }
 	
-	public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
-		form.setDataSource(dataSource);
+	private static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, DataSource optionDataSource, String displayField, String valueField, Boolean showId) {
+		if (mapKeys == null && optionDataSource == null) {
+            throw new RuntimeException("Must provide either map keys or and option datasource to control the values for the key field.");
+        }
+        form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
+        Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
 		DataSourceField[] fields = dataSource.getFields();
         for (DataSourceField field : fields) {
         	String fieldType = field.getAttribute("fieldType");
         	if (fieldType != null && !field.getHidden()) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
+                if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {
+                    sectionCollapsed.put(group, field.getAttributeAsBoolean("formGroupCollapsed"));
+                }
 	    		Integer groupOrder = null;
 	    		if (temp != null) {
 	    			groupOrder = Integer.valueOf(temp);
@@ -114,10 +140,17 @@ public class FormBuilder {
 	        	FormItem displayFormItem = null;
 	        	String fieldName = field.getName();
 	        	if (mapStructure != null && mapStructure.getKeyPropertyName().equals(fieldName)) {
-	        		formItem = new SelectItem();
-	        		((SelectItem) formItem).setValueMap(mapKeys);
-	        		((SelectItem) formItem).setMultiple(false);
-	        		((SelectItem) formItem).setDefaultToFirstOption(true);
+	        		formItem = new ComboBoxItem();
+                    if (mapKeys != null) {
+	        		    ((ComboBoxItem) formItem).setValueMap(mapKeys);
+                    } else {
+                        ((ComboBoxItem) formItem).setOptionDataSource(optionDataSource);
+                        ((ComboBoxItem) formItem).setDisplayField(displayField);
+                        ((ComboBoxItem) formItem).setValueField(valueField);
+                        //((ComboBoxItem) formItem).fetchData();
+                    }
+	        		//((ComboBoxItem) formItem).setMultiple(false);
+	        		((ComboBoxItem) formItem).setDefaultToFirstOption(true);
 	        		setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        	} else {
 	        		if (!fieldType.equals(SupportedFieldType.ID.toString()) || (fieldType.equals(SupportedFieldType.ID.toString()) && showId)) {
@@ -125,7 +158,7 @@ public class FormBuilder {
 			        	if (largeEntry == null) {
 			        		largeEntry = false;
 			        	}
-			        	formItem = buildField(dataSource, field, fieldType, largeEntry);
+			        	formItem = buildField(dataSource, field, fieldType, largeEntry, form);
 			        	displayFormItem = buildDisplayField(field, fieldType);
 			        	setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        		}
@@ -133,11 +166,15 @@ public class FormBuilder {
         	}
         }
         
-        groupFields(form, sections, sectionNames);
+        groupFields(form, sections, sectionNames, sectionCollapsed);
 	}
 
-	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, final Map<String, Integer> sectionNames) {
-		if (sections.size() > 1) {
+	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, final Map<String, Integer> sectionNames, Map<String, Boolean> sectionCollapsed) {
+		if (sections.isEmpty()) {
+            GWT.log("There were no fields available to show in the form. Rendering a blank DynamicForm.");
+            return;
+        }
+        if (sections.size() > 0) {
         	int j=0;
         	List<FormItem> allItems = new ArrayList<FormItem>();
         	String[] groups = new String[sectionNames.size()];
@@ -168,15 +205,27 @@ public class FormBuilder {
         	});
         	for (String group : groups) {
         		SectionItem section = new SectionItem();  
-                section.setDefaultValue(group);  
-                section.setSectionExpanded(true); 
+                section.setDefaultValue(group);
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
+                Boolean containsRichTextItem = null;
                 for (FormItem formItem : formItems) {
                 	ids[x] = formItem.getName();
                 	x++;
+                    if (containsRichTextItem == null && formItem instanceof RichTextCanvasItem) {
+                        containsRichTextItem = true;
+                    }
                 }
+                if (containsRichTextItem == null) {
+                    containsRichTextItem = false;
+                }
+                //Disallow collapsing of sections
+                //boolean shouldExpand = sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group);
+                //section.setSectionExpanded(containsRichTextItem || shouldExpand);
+                //section.setCanCollapse(!containsRichTextItem);
+                section.setSectionExpanded(true);
+                section.setCanCollapse(false);
                 section.setItemIds(ids);
                 allItems.add(section);
                 allItems.addAll(formItems);
@@ -196,6 +245,7 @@ public class FormBuilder {
 	protected static void setupField(Boolean showDisabledState, Boolean canEdit, Map<String, List<FormItem>> sections, Map<String, Integer> sectionNames, DataSourceField field, String group, Integer groupOrder, final FormItem formItem, final FormItem displayFormItem) {
 		formItem.setName(field.getName());
 		formItem.setTitle(field.getTitle());
+        formItem.setWrapTitle(false);
 		formItem.setRequired(field.getRequired());
 		if (!sections.containsKey(group)) {
 			List<FormItem> temp = new ArrayList<FormItem>();
@@ -286,15 +336,22 @@ public class FormBuilder {
 			displayFormItem = new HiddenItem();
 			displayFormItem.setName("__display_"+field.getName());
 			break;
+        case UPLOAD:
+            displayFormItem = new CanvasItem();
+            ((CanvasItem) displayFormItem).setCanvas(new UploadStatusProgress(100, 20));
+            displayFormItem.setName("__display_"+field.getName());
+            displayFormItem.setShowTitle(false);
+            displayFormItem.setColSpan(1);
 		}
 		return displayFormItem;
 	}
 
-	protected static FormItem buildField(final DataSource dataSource, final DataSourceField field, String fieldType, Boolean largeEntry) {
+	protected static FormItem buildField(final DataSource dataSource, final DataSourceField field, String fieldType, Boolean largeEntry, DynamicForm form) {
 		final FormItem formItem;
 		switch(SupportedFieldType.valueOf(fieldType)){
 		case BOOLEAN:
 			formItem = new BooleanItem();
+            formItem.setColSpan(2);
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					if (value == null) {
@@ -307,19 +364,24 @@ public class FormBuilder {
 			break;
 		case DATE:
 			formItem = new DateTimeItem();
+            formItem.setColSpan(2);
 			break;
 		case DECIMAL:
 			formItem = new FloatItem();
+            formItem.setColSpan(2);
 			break;
 		case EMAIL:
 			formItem = new TextItem();
+            formItem.setColSpan(2);
 			((TextItem)formItem).setLength(field.getLength());
 			break;
 		case INTEGER:
 			formItem = new IntegerItem();
+            formItem.setColSpan(2);
 			break;
 		case MONEY:
 			formItem = new FloatItem();
+            formItem.setColSpan(2);
 			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
@@ -328,7 +390,8 @@ public class FormBuilder {
 			break;
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
+            formItem.setColSpan(2);
+			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
@@ -342,7 +405,8 @@ public class FormBuilder {
 			break;
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
+            formItem.setColSpan(2);
+			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
 					String response;
 					if (value == null) {
@@ -356,6 +420,7 @@ public class FormBuilder {
 			break;
 		case BROADLEAF_ENUMERATION:
 			formItem = new SelectItem();
+            formItem.setColSpan(2);
 			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
 			String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
 			for (int j=0; j<enumerationValues.length; j++) {
@@ -363,11 +428,23 @@ public class FormBuilder {
 			}
 			formItem.setValueMap(valueMap);
 			break;
+        case EXPLICIT_ENUMERATION:
+			formItem = new SelectItem();
+            formItem.setColSpan(2);
+			LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
+			String[][] enumerationValues2 = (String[][]) field.getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues2.length; j++) {
+				valueMap2.put(enumerationValues2[j][0], enumerationValues2[j][1]);
+			}
+			formItem.setValueMap(valueMap2);
+			break;
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
+            formItem.setColSpan(2);
 			break;
 		case ID:
 			formItem = new TextItem();
+            formItem.setColSpan(2);
 			((TextItem)formItem).setLength(field.getLength());
 			formItem.setValueFormatter(new FormItemValueFormatter() {
 				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
@@ -377,17 +454,63 @@ public class FormBuilder {
 			break;
 		case PASSWORD:
 			formItem = new PasswordItem();
+            formItem.setColSpan(2);
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
+        case HTML:
+        	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
+        	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath(), form);
+            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
+                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
+            }
+        	richTextHTMLPane.setWidth(700);
+        	richTextHTMLPane.setHeight(450);
+            richTextHTMLPane.setContentsType(ContentsType.PAGE);
+            //richTextHTMLPane.init();
+        	richTextCanvasItem.setCanvas(richTextHTMLPane);
+            richTextCanvasItem.setShowTitle(true);
+            richTextCanvasItem.setColSpan(2);
+        	
+        	formItem = richTextCanvasItem;
+            break;
+        case HTML_BASIC:
+        	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
+        	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath(), form);
+            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
+                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
+            }
+        	basicRichTextHTMLPane.setWidth(300);
+        	basicRichTextHTMLPane.setHeight(175);
+            basicRichTextHTMLPane.setContentsType(ContentsType.PAGE);
+            //basicRichTextHTMLPane.init();
+        	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
+            basicRichTextCanvasItem.setShowTitle(true);
+            basicRichTextCanvasItem.setColSpan(2);
+        	
+        	formItem = basicRichTextCanvasItem;
+        	break;
+        case UPLOAD:
+            formItem = new UploadItem();
+            formItem.setColSpan(1);
+            break;
+        case HIDDEN:
+            formItem = new HiddenItem();
+            formItem.setColSpan(2);
+            break;
+        case ARTIFACT:
+            formItem = new ArtifactItem();
+            formItem.setColSpan(2);
+            break;
 		default:
 			if (!largeEntry) {
 				formItem = new TextItem();
+                formItem.setColSpan(2);
 				((TextItem)formItem).setLength(field.getLength());
 			} else {
 				formItem = new TextAreaItem();
+                formItem.setColSpan(2);
 				((TextAreaItem)formItem).setLength(field.getLength());
 				formItem.setHeight(70);
-				formItem.setColSpan(3);
 				formItem.setWidth("400");
 			}
 			break;

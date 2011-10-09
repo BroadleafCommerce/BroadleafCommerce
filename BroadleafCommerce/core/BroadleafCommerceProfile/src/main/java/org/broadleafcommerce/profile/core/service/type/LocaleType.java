@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.broadleafcommerce.profile.util.BroadleafEnumerationType;
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of locale types.

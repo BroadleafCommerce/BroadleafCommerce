@@ -15,25 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.ConfigurationItem;
 import org.broadleafcommerce.presentation.ValidationConfiguration;
@@ -41,6 +25,10 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -64,16 +52,16 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="User", prominent=true)
+    @AdminPresentation(friendlyName="Admin Name", order=1, group="User", prominent=true)
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
-    @AdminPresentation(friendlyName="Login", order=2, group="User", prominent=true)
+    @AdminPresentation(friendlyName="Admin Login", order=2, group="User", prominent=true)
     protected String login;
 
     @Column(name = "PASSWORD", nullable=false)
     @AdminPresentation(
-		friendlyName="Password", 
+		friendlyName="Admin Password",
 		order=3, 
 		group="User", 
 		fieldType=SupportedFieldType.PASSWORD, 
@@ -88,7 +76,7 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName="Email Address", order=4, group="User")
+    @AdminPresentation(friendlyName="Admin Email Address", order=4, group="User")
     protected String email; 
 
     /** All roles that this user has */
@@ -97,13 +85,18 @@ public class AdminUserImpl implements AdminUser {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
-    
+
     @Transient
     protected String unencodedPassword;
     
     public String getUnencodedPassword() {
         return unencodedPassword;
     }
+
+    @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
+    @AdminPresentation(excluded = true)
+    protected SandBox currentSandBox;
 
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
@@ -155,6 +148,14 @@ public class AdminUserImpl implements AdminUser {
 
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
+    }
+
+    public SandBox getCurrentSandbox() {
+        return currentSandBox;
+    }
+
+    public void setCurrentSandbox(SandBox currentSandBox) {
+        this.currentSandBox = currentSandBox;
     }
 
 }

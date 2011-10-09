@@ -33,16 +33,19 @@ public class UserManagementModule extends AbstractModule {
 		setModuleTitle(BLCMain.getMessageManager().getString("userAdminModuleTitle"));
 		setModuleKey("BLCOpenAdmin");
 		
-		List<String> userManagementRoles = new ArrayList<String>();
-		userManagementRoles.add("ROLE_ADMIN");
+		List<String> userManagementPermissions = new ArrayList<String>();
+		userManagementPermissions.add("PERMISSION_CREATE_ADMIN_USER");
+        userManagementPermissions.add("PERMISSION_UPDATE_ADMIN_USER");
+        userManagementPermissions.add("PERMISSION_DELETE_ADMIN_USER");
+        userManagementPermissions.add("PERMISSION_READ_ADMIN_USER");
+        
 		setSection(
             BLCMain.getMessageManager().getString("userManagementMainTitle"),
 			"user",
 			"org.broadleafcommerce.openadmin.client.view.user.UserManagementView",
 			"userPresenter",
 			"org.broadleafcommerce.openadmin.client.presenter.user.UserManagementPresenter",
-			userManagementRoles,
-			null
+			userManagementPermissions
 		);
 
         setSection(
@@ -51,8 +54,7 @@ public class UserManagementModule extends AbstractModule {
 			"org.broadleafcommerce.openadmin.client.view.user.RoleManagementView",
 			"rolePresenter",
 			"org.broadleafcommerce.openadmin.client.presenter.user.RoleManagementPresenter",
-			userManagementRoles,
-			null
+			userManagementPermissions
 		);
 		
         setSection(
@@ -61,8 +63,7 @@ public class UserManagementModule extends AbstractModule {
 			"org.broadleafcommerce.openadmin.client.view.user.PermissionManagementView",
 			"permissionPresenter",
 			"org.broadleafcommerce.openadmin.client.presenter.user.PermissionManagementPresenter",
-			userManagementRoles,
-			null
+			userManagementPermissions
 		);
 
 		

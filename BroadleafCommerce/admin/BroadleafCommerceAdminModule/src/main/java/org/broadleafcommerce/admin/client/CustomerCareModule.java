@@ -38,30 +38,32 @@ public class CustomerCareModule extends AbstractModule {
 		setModuleTitle(BLCMain.getMessageManager().getString("customerCareModuleTitle"));
 		setModuleKey("BLCCustomerCare");
 		
-		List<String> orderRoles = new ArrayList<String>();
-		orderRoles.add("ROLE_ADMIN");
-		orderRoles.add("ROLE_CUSTOMER_SERVICE_REP");
+		List<String> orderPermissions = new ArrayList<String>();
+		orderPermissions.add("PERMISSION_CREATE_ORDER");
+		orderPermissions.add("PERMISSION_UPDATE_ORDER");
+        orderPermissions.add("PERMISSION_DELETE_ORDER");
+        orderPermissions.add("PERMISSION_READ_ORDER");
 		setSection(
             BLCMain.getMessageManager().getString("orderMainTitle"),
 			"order",
 			"org.broadleafcommerce.admin.client.view.order.OrderView",
 			"orderPresenter",
 			"org.broadleafcommerce.admin.client.presenter.order.OrderPresenter",
-			orderRoles,
-			null
+			orderPermissions
 		);
 		
-		List<String> customerRoles = new ArrayList<String>();
-		customerRoles.add("ROLE_ADMIN");
-		customerRoles.add("ROLE_CUSTOMER_SERVICE_REP");
+		List<String> customerPermissions = new ArrayList<String>();
+		customerPermissions.add("PERMISSION_CREATE_CUSTOMER");
+		customerPermissions.add("PERMISSION_UPDATE_CUSTOMER");
+        customerPermissions.add("PERMISSION_DELETE_CUSTOMER");
+        customerPermissions.add("PERMISSION_READ_CUSTOMER");
 		setSection(
             BLCMain.getMessageManager().getString("customerMainTitle"),
 			"customer",
 			"org.broadleafcommerce.admin.client.view.customer.CustomerView",
 			"customerPresenter",
 			"org.broadleafcommerce.admin.client.presenter.customer.CustomerPresenter",
-			customerRoles,
-			null
+			customerPermissions
 		);
 		
 		registerModule();

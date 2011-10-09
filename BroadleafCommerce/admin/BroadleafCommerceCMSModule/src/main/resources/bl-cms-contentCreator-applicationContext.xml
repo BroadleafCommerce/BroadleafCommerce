@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
+		<constructor-arg>
+			<list>
+                <!--Add any additional persistence modules here -->
+                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
+				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
+			</list>
+		</constructor-arg>
+        <property name="customPersistenceHandlers">
+			<list>
+                <!--Add any custom persistence handlers here -->
+                <bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler">
+                    <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
+                </bean>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.SandBoxItemCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.PendingSandBoxItemCustomPersistenceHandler"/>
+			</list>
+		</property>
+		<property name="targetEntityManagers">
+			<map>
+                <!--configure target entity managers here-->
+                <entry key="sandbox" value="prodEntityManager"/>
+                <entry key="stage" value="prodEntityManager"/>
+                <entry key="prod" value="prodEntityManager"/>
+            </map>
+		</property>
+		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+        <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
+	</bean>
+
+</beans>

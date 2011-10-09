@@ -19,6 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.*;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
@@ -26,12 +27,9 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicCli
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
-import java.util.Map;
 
 /**
  * 
@@ -39,16 +37,6 @@ import java.util.Map;
  *
  */
 public class CategoryTreeEntityModule extends BasicClientEntityModule {
-
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param service
-	 * @param metadataOverrides
-	 */
-	public CategoryTreeEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, metadataOverrides);
-	}
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
@@ -70,7 +58,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				/*
@@ -89,7 +77,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
                         String embellishedMyId = dataSource.getPrimaryKeyValue(myRecord);
 						if (realStartingId.equals(realMyId) && !embellishedStartingId.equals(embellishedMyId)) {
 							updateRecord(result, (TreeNode) myRecord, false);
-							((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid().refreshRow(count);
+							((ListGrid) ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid()).refreshRow(count);
 						}
 						count++;
 					}

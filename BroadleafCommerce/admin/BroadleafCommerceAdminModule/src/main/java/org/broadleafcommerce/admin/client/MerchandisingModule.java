@@ -39,42 +39,45 @@ public class MerchandisingModule extends AbstractModule {
 		setModuleTitle(BLCMain.getMessageManager().getString("merchandisingModuleTitle"));
 		setModuleKey("BLCMerchandising");
 		
-		List<String> categoryRoles = new ArrayList<String>();
-		categoryRoles.add("ROLE_ADMIN");
-		categoryRoles.add("ROLE_MERCHANDISE_MANAGER");
+		List<String> categoryPermissions = new ArrayList<String>();
+		categoryPermissions.add("PERMISSION_CREATE_CATEGORY");
+		categoryPermissions.add("PERMISSION_UPDATE_CATEGORY");
+        categoryPermissions.add("PERMISSION_DELETE_CATEGORY");
+        categoryPermissions.add("PERMISSION_READ_CATEGORY");
 		setSection(
             BLCMain.getMessageManager().getString("categoryMainTitle"),
 			"category",
 			"org.broadleafcommerce.admin.client.view.catalog.category.CategoryView",
 			"categoryPresenter",
 			"org.broadleafcommerce.admin.client.presenter.catalog.category.CategoryPresenter",
-			categoryRoles,
-			null
+			categoryPermissions
 		);
-		List<String> productRoles = new ArrayList<String>();
-		productRoles.add("ROLE_ADMIN");
-		productRoles.add("ROLE_MERCHANDISE_MANAGER");
+		List<String> productPermissions = new ArrayList<String>();
+		productPermissions.add("PERMISSION_CREATE_PRODUCT");
+		productPermissions.add("PERMISSION_UPDATE_PRODUCT");
+        productPermissions.add("PERMISSION_DELETE_PRODUCT");
+        productPermissions.add("PERMISSION_READ_PRODUCT");
 		setSection(
             BLCMain.getMessageManager().getString("productMainTitle"),
 			"product",
 			"org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuView",
 			"productPresenter",
 			"org.broadleafcommerce.admin.client.presenter.catalog.product.OneToOneProductSkuPresenter",
-			productRoles,
-			null
+			productPermissions
 		);
 
-		List<String> offerRoles = new ArrayList<String>();
-		offerRoles.add("ROLE_ADMIN");
-		offerRoles.add("ROLE_PROMOTION_MANAGER");
+		List<String> offerPermissions = new ArrayList<String>();
+		offerPermissions.add("PERMISSION_CREATE_PROMOTION");
+		offerPermissions.add("PERMISSION_UPDATE_PROMOTION");
+        offerPermissions.add("PERMISSION_DELETE_PROMOTION");
+        offerPermissions.add("PERMISSION_READ_PROMOTION");
 		setSection(
             BLCMain.getMessageManager().getString("promotionMainTitle"),
 			"offer",
 			"org.broadleafcommerce.admin.client.view.promotion.OfferView",
 			"offerPresenter",
 			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
-			offerRoles,
-			null
+			offerPermissions
 		);
 
 		registerModule();

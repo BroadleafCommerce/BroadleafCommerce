@@ -29,6 +29,7 @@
             <map>
                 <entry key="jdbc/web" value-ref="webDS"/>
                 <entry key="jdbc/webSecure" value-ref="webDS"/>
+                <entry key="jdbc/cmsStorage" value-ref="webStorageDS"/>
                 <!--<entry key="jdbc/webSandbox" value-ref="webSandboxDS"/>-->
             </map>
         </property>
@@ -36,6 +37,13 @@
     </bean>
     
     <bean id="webDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>
+
+    <bean id="webStorageDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
 		<property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
 		<property name="username" value="sa" />

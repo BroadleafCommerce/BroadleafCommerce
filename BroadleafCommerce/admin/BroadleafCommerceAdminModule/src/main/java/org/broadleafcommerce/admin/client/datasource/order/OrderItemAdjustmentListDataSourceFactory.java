@@ -46,16 +46,6 @@ public class OrderItemAdjustmentListDataSourceFactory implements DataSourceFacto
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ORDER_ITEM, null));
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setIncludeFields(
-				new String[]{
-					"id",
-					"reason",
-					"value",
-					"offer.name",
-					"offer.type"
-				}	
-			);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.ORDER_ITEM_ADJUSTMENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

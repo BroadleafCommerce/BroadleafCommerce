@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.profile.common.domain.Auditable;
+import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface Order extends Serializable {

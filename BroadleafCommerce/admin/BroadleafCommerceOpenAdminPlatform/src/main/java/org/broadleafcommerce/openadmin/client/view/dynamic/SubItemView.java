@@ -44,7 +44,11 @@ public class SubItemView extends VLayout implements SubItemDisplay {
 	protected ListGrid grid;
 	protected FormOnlyView formOnlyView;
 
-	public SubItemView(String title, Boolean canReorder, Boolean canEdit) {
+    public SubItemView(String title, Boolean canReorder, Boolean canEdit) {
+        this(title, canReorder, canEdit, false);
+    }
+
+	public SubItemView(String title, Boolean canReorder, Boolean canEdit, Boolean showFilterEditor) {
         setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
@@ -108,6 +112,7 @@ public class SubItemView extends VLayout implements SubItemDisplay {
         grid.setAutoSaveEdits(true);
         grid.setSaveByCell(true);
         grid.setAlternateRecordStyles(true);
+        grid.setShowFilterEditor(showFilterEditor);
         grid.setCanGroupBy(false);
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");

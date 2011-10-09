@@ -15,16 +15,17 @@
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import java.util.List;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /**
  * 
@@ -62,5 +63,26 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_PERMISSIONS");
         List<AdminPermission> permissions = query.getResultList();
         return permissions;
+    }
+
+    public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+        Query query = em.createNamedQuery("BC_COUNT_PERMISSIONS_FOR_USER_BY_TYPE_AND_CEILING_ENTITY");
+        query.setParameter("adminUser", adminUser);
+        query.setParameter("type", permissionType.getType());
+        query.setParameter("ceilingEntity", ceilingEntityFullyQualifiedName);
+        query.setHint(queryCacheableKey, true);
+
+        Long count = (Long) query.getSingleResult();
+        return count > 0;
+    }
+
+    public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+        Query query = em.createNamedQuery("BC_COUNT_PERMISSIONS_BY_TYPE_AND_CEILING_ENTITY");
+        query.setParameter("type", permissionType.getType());
+        query.setParameter("ceilingEntity", ceilingEntityFullyQualifiedName);
+        query.setHint(queryCacheableKey, true);
+
+        Long count = (Long) query.getSingleResult();
+        return count > 0;
     }
 }

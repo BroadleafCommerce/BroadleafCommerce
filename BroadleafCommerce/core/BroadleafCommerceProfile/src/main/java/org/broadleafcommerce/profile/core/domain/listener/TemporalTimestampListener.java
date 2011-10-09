@@ -15,20 +15,13 @@
  */
 package org.broadleafcommerce.profile.core.domain.listener;
 
+import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.profile.core.domain.annotation.AutoPopulate;
+
+import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.broadleafcommerce.profile.core.domain.annotation.AutoPopulate;
-import org.broadleafcommerce.profile.time.SystemTime;
 
 public class TemporalTimestampListener {
 

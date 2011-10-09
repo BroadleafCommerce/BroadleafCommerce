@@ -227,7 +227,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue();
 		if (token != null) {
-			topTabSet.selectTab(token);
+			topTabSet.selectTab(token.replace(' ', '_'));
 		}
 	}
 

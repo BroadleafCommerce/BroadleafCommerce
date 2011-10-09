@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+    
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+	    <property name="converters">
+	        <list>
+	            <bean class="org.broadleafcommerce.openadmin.server.util.TargetModeTypeConverter" />
+	        </list>
+	    </property>
+	</bean>
+	
+    <context:component-scan base-package="org.broadleafcommerce.persistence"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
+    
+    <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
+    
+    <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
+		<property name="entityContexts">
+			<list>
+				<value>classpath:bl-open-admin-applicationContext-entity.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:/META-INF/persistence-admin.xml</value>
+			</list>
+		</property>
+	</bean>
+
+    <bean id="blArtifactService" class="org.broadleafcommerce.openadmin.server.service.artifact.ArtifactServiceImpl">
+        <property name="artifactProcessors">
+            <list>
+                <bean class="org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor"/>
+                <!--
+                    possibly other artifact processors could be included here
+                -->
+            </list>
+        </property>
+    </bean>
+	
+	<!--<bean id="blSandBoxEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
+		<property name="persistenceUnitName" value="blSandboxPU"/>
+	</bean>
+	
+	<bean id="blTransactionManagerSandBox" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="blSandBoxEntityManagerFactory" />
+	</bean>
+
+	<tx:advice id="blTxAdviceSandBox" transaction-manager="blTransactionManagerSandBox">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>-->
+
+</beans>

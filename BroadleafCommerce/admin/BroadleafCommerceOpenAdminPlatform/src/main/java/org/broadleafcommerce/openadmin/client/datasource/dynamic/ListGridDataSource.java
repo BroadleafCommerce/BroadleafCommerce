@@ -17,8 +17,8 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.Hilite;
 import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
@@ -46,8 +46,19 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 	public ListGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
 		super(name, persistencePerspective, service, modules);
 	}
+
+    public void setupGridFields(final String[] fieldNames) {
+        Boolean[] canEdit = new Boolean[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            canEdit[j] = false;
+        }
+        setupGridFields(fieldNames, canEdit);
+    }
 	
 	public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
+        if (fieldNames.length != canEdit.length) {
+            throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
+        }
 		if (fieldNames.length > 0) {
 			resetProminenceOnly(fieldNames);
 		}
@@ -136,18 +147,18 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         		j++;
         	}
         }
-        getAssociatedGrid().setFields(gridFields);
+        ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos;
-        	if (getAssociatedGrid().getCanExpandRecords() != null && getAssociatedGrid().getCanExpandRecords()) {
+        	if (((ListGrid) getAssociatedGrid()).getCanExpandRecords() != null && ((ListGrid) getAssociatedGrid()).getCanExpandRecords()) {
         		pos = 1;
         	} else {
         		pos = 0;
         	}
         	for (String fieldName : fieldNames) {
-        		int originalPos = getAssociatedGrid().getFieldNum(fieldName);
+        		int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
         		if (pos != originalPos) {
-        			getAssociatedGrid().reorderField(originalPos, pos);
+        			((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
         		}
         		pos++;
         	}

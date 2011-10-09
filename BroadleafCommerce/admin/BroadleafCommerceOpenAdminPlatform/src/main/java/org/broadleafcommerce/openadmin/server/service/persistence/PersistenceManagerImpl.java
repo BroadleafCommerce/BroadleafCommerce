@@ -3,14 +3,17 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.EntitySandBoxItem;
+import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -31,6 +34,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	protected Map<TargetModeType, String> targetEntityManagers = new HashMap<TargetModeType, String>();
 	protected TargetModeType targetMode;
 	private ApplicationContext applicationContext;
+    protected AdminSecurityServiceRemote adminRemoteSecurityService;
 
 	public PersistenceManagerImpl(PersistenceModule[] modules) {
 		this.modules = modules;
@@ -87,8 +91,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 * java.lang.Class)
 	 */
 	@Override
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, dynamicEntityDao, entityClasses);
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, entityClasses);
 	}
 
 	/*
@@ -170,24 +174,28 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 * java.lang.String[], java.util.Map)
 	 */
 	@Override
-	public DynamicResultSet inspect(PersistencePackage persistencePackage, Map<String, FieldMetadata> metadataOverrides) throws ServiceException, ClassNotFoundException {
+	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
 		// check to see if there is a custom handler registered
 		for (CustomPersistenceHandler handler : customPersistenceHandlers) {
 			if (handler.canHandleInspect(persistencePackage)) {
-				DynamicResultSet results = handler.inspect(persistencePackage, metadataOverrides, dynamicEntityDao, this);
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
+                }
+				DynamicResultSet results = handler.inspect(persistencePackage, dynamicEntityDao, this);
 
 				return results;
 			}
 		}
 
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
 		Class<?>[] entities = getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
 		Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 		for (PersistenceModule module : modules) {
-			module.updateMergedProperties(persistencePackage, allMergedProperties, metadataOverrides);
+			module.updateMergedProperties(persistencePackage, allMergedProperties);
 		}
 		ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
 
-		DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
+		DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
 		return results;
 	}
@@ -204,6 +212,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleFetch(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
+                }
+                DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return results;
+            }
+        }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
 		return myModule.fetch(persistencePackage, cto);
 	}
@@ -219,6 +238,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleAdd(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                }
+                Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return response;
+            }
+        }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
 		return myModule.add(persistencePackage);
 	}
@@ -235,11 +265,34 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleUpdate(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    Entity entity = persistencePackage.getEntity();
+                    for (Property p : entity.getProperties()) {
+                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
+                            break;
+                        }
+                    }
+                }
+                Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return response;
+            }
+        }
+        Entity entity = persistencePackage.getEntity();
+        for (Property p : entity.getProperties()) {
+            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
+                break;
+            }
+        }
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
         /*PersistencePackage savedPackage = null;
         if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
             try {
-                savedPackage = sandBoxService.saveSandBox(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
+                savedPackage = sandBoxService.saveEntitySandBoxItems(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
             } catch (SandBoxException e) {
                 throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
             }
@@ -253,7 +306,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return mergedEntity;
     }
 
-    @Override
+    /*@Override
     public Entity updateDirtyState(Entity mergedEntity) throws ServiceException {
         try {
             Map idMetadata = dynamicEntityDao.getIdMetadata(Class.forName(mergedEntity.getType()[0]));
@@ -262,7 +315,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
                 id = Long.valueOf(id.toString());
             }
-            SandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
+            EntitySandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
             if (item != null) {
                 mergedEntity.setDirty(true);
                 for (org.broadleafcommerce.openadmin.server.domain.Property persistentProperty : item.getEntity().getProperties()) {
@@ -277,7 +330,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         return mergedEntity;
-    }
+    }*/
 
 	/*
 	 * (non-Javadoc)
@@ -290,6 +343,29 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
+        //check to see if there is a custom handler registered
+        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+            if (handler.canHandleRemove(persistencePackage)) {
+                if (!handler.willHandleSecurity(persistencePackage)) {
+                    Entity entity = persistencePackage.getEntity();
+                    for (Property p : entity.getProperties()) {
+                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
+                            break;
+                        }
+                    }
+                }
+                handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
+                return;
+            }
+        }
+        Entity entity = persistencePackage.getEntity();
+        for (Property p : entity.getProperties()) {
+            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
+                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
+                break;
+            }
+        }
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
 		myModule.remove(persistencePackage);
 	}
@@ -437,4 +513,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
 		this.customPersistenceHandlers = customPersistenceHandlers;
 	}
+
+    public AdminSecurityServiceRemote getAdminRemoteSecurityService() {
+        return adminRemoteSecurityService;
+    }
+
+    public void setAdminRemoteSecurityService(AdminSecurityServiceRemote adminRemoteSecurityService) {
+        this.adminRemoteSecurityService = adminRemoteSecurityService;
+    }
 }

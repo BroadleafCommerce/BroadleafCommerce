@@ -15,19 +15,21 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
-import com.smartgwt.client.widgets.grid.ListGridField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 
@@ -37,6 +39,9 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 public class ComplexValueMapStructureDataSource extends ListGridDataSource {
 	
 	protected LinkedHashMap<String, String> keyMap;
+    protected DataSource optionDataSource;
+    protected String displayField;
+    protected String valueField;
 
 	/**
 	 * @param name
@@ -47,6 +52,13 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
 	public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, LinkedHashMap<String, String> keyMap) {
 		super(name, persistencePerspective, service, modules);
 		this.keyMap = keyMap;
+	}
+
+    public ComplexValueMapStructureDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules, DataSource optionDataSource, String displayField, String valueField) {
+		super(name, persistencePerspective, service, modules);
+		this.optionDataSource = optionDataSource;
+        this.displayField = displayField;
+        this.valueField = valueField;
 	}
 	
 	@Override
@@ -67,9 +79,18 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         for (DataSourceField field : prominentFields) {
         	gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
         	if (MergedPropertyType.MAPSTRUCTUREKEY.toString().equals(field.getAttribute("mergedPropertyType"))) {
-        		SelectItem selectItem = new SelectItem();
-        		selectItem.setMultiple(false);
-        		selectItem.setValueMap(keyMap);
+        		ComboBoxItem selectItem = new ComboBoxItem();
+        		//selectItem.setMultiple(false);
+                if (keyMap == null && optionDataSource == null) {
+                    throw new RuntimeException("Must supply either a key map or option data source to support the key values for this map structure.");
+                }
+                if (keyMap != null) {
+        		    selectItem.setValueMap(keyMap);
+                } else {
+                    selectItem.setOptionDataSource(optionDataSource);
+                    selectItem.setDisplayField(displayField);
+                    selectItem.setValueField(valueField);
+                }
         		selectItem.setDefaultToFirstOption(true);
         		selectItem.setAutoFetchData(false);
         		gridFields[j].setEditorType(selectItem);
@@ -122,12 +143,12 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		j++;
         	}
         }
-        getAssociatedGrid().setFields(gridFields);
+        ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos = 0;
         	for (String fieldName : fieldNames) {
-        		int originalPos = getAssociatedGrid().getFieldNum(fieldName);
-        		getAssociatedGrid().reorderField(originalPos, pos);
+        		int originalPos = ((ListGrid) getAssociatedGrid()).getFieldNum(fieldName);
+        		((ListGrid) getAssociatedGrid()).reorderField(originalPos, pos);
         		pos++;
         	}
         }

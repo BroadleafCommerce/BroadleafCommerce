@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -37,4 +39,21 @@ public interface AdminUser extends Serializable {
     public void setAllRoles(Set<AdminRole> allRoles);
     public String getUnencodedPassword();
     public void setUnencodedPassword(String unencodedPassword);
+
+    /**
+     * The current sandbox associated with this user.
+     * This is primarily intended to be used by the BLC-CMS workflow
+     * processes.
+     *
+     * @return
+     */
+    public SandBox getCurrentSandbox();
+
+    /**
+     * Sets the user's current sandbox.    This is typically called by the
+     * BLC-CMS engine in order to switch the default workspace for the user.
+     *
+     * @param sandbox
+     */
+    public void setCurrentSandbox(SandBox sandbox);
 }

@@ -1,31 +1,20 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SNDBX")
+@Table(name="BLC_SANDBOX")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class SandBoxImpl implements SandBox {
 
@@ -35,6 +24,7 @@ public class SandBoxImpl implements SandBox {
     @GeneratedValue(generator = "SandBoxId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SandBoxId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxImpl", allocationSize = 50)
     @Column(name = "SANDBOX_ID")
+    @AdminPresentation(hidden = true)
     protected Long id;
     
     @Column(name = "SANDBOX_NAME")
@@ -43,12 +33,23 @@ public class SandBoxImpl implements SandBox {
     
     @Column(name="AUTHOR")
     protected Long author;
+
+    @ManyToOne(targetEntity = SiteImpl.class)
+    @JoinTable(name = "BLC_SITE_SANDBOX", joinColumns = @JoinColumn(name = "SANDBOX_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
+    protected Site site;
     
     @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Where(clause = "ARCHIVED_FLAG = 0")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     @BatchSize(size = 50)
+    @Transient
     protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
+
+
+    @Column(name = "SANDBOX_TYPE")
+    @AdminPresentation(friendlyName="SandBox Type", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxType")
+    protected String sandboxType;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getId()
@@ -98,6 +99,19 @@ public class SandBoxImpl implements SandBox {
 		this.sandBoxItems = sandBoxItems;
 	}
 
+
+    @Override
+    public SandBoxType getSandBoxType() {
+        return SandBoxType.getInstance(sandboxType);
+    }
+
+    @Override
+    public void setSandBoxType(final SandBoxType sandboxType) {
+    	if (sandboxType != null) {
+    		this.sandboxType = sandboxType.getType();
+    	}
+    }
+
 	public Long getAuthor() {
 		return author;
 	}
@@ -107,13 +121,13 @@ public class SandBoxImpl implements SandBox {
 	}
 
     @Override
-    public Set<AdminRole> getAllowedRoles() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public Site getSite() {
+        return site;
     }
 
     @Override
-    public void setAllowedRoles(Set<AdminRole> allowedRoles) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setSite(Site site) {
+        this.site = site;
     }
 
     @Override

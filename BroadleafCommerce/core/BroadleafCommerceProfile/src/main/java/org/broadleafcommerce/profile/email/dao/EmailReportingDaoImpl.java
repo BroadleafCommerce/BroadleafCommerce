@@ -19,13 +19,13 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.email.domain.EmailTarget;
 import org.broadleafcommerce.profile.email.domain.EmailTracking;
 import org.broadleafcommerce.profile.email.domain.EmailTrackingClicks;
 import org.broadleafcommerce.profile.email.domain.EmailTrackingOpens;
-import org.broadleafcommerce.profile.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 /**

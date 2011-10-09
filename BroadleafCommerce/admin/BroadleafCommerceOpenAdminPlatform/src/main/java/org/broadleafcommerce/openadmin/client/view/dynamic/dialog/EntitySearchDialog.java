@@ -42,11 +42,15 @@ import com.smartgwt.client.widgets.layout.HLayout;
  */
 public class EntitySearchDialog extends Window {
 		
-	private ListGrid searchGrid;
-	private IButton saveButton;
-	private SearchItemSelectedEventHandler handler;
+	protected ListGrid searchGrid;
+	protected IButton saveButton;
+	protected SearchItemSelectedEventHandler handler;
+
+    public EntitySearchDialog(ListGridDataSource dataSource) {
+        this(dataSource, false);
+    }
 	
-	public EntitySearchDialog(ListGridDataSource dataSource) {
+	public EntitySearchDialog(ListGridDataSource dataSource, boolean autoFetch) {
 		super();
 		this.setIsModal(true);
 		this.setShowModalMask(true);
@@ -58,7 +62,7 @@ public class EntitySearchDialog extends Window {
 		this.setVisible(false);
         
 		searchGrid = new ListGrid();
-        searchGrid.setAutoFetchData(false);
+        searchGrid.setAutoFetchData(autoFetch);
         searchGrid.setAlternateRecordStyles(true);
         searchGrid.setSelectionType(SelectionStyle.SINGLE);
         searchGrid.setShowAllColumns(false);
@@ -118,4 +122,27 @@ public class EntitySearchDialog extends Window {
 		show();
 	}
 
+    public SearchItemSelectedEventHandler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(SearchItemSelectedEventHandler handler) {
+        this.handler = handler;
+    }
+
+    public IButton getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(IButton saveButton) {
+        this.saveButton = saveButton;
+    }
+
+    public ListGrid getSearchGrid() {
+        return searchGrid;
+    }
+
+    public void setSearchGrid(ListGrid searchGrid) {
+        this.searchGrid = searchGrid;
+    }
 }

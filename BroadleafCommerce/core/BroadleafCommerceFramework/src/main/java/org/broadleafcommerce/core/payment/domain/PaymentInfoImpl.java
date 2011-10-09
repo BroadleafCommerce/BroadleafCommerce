@@ -41,6 +41,8 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
@@ -52,6 +54,7 @@ import org.hibernate.annotations.MapKey;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class PaymentInfoImpl implements PaymentInfo {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +68,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
+    @AdminPresentation(excluded = true, hidden = true)
     protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })

@@ -15,14 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.setup.AppController;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -40,6 +32,13 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
+import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.setup.AppController;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
+
+import java.util.Map;
 
 /**
  * 
@@ -67,7 +66,7 @@ public class EntityEditDialog extends Window {
 		stack.setLayoutRightMargin(20);
         
 		dynamicForm = new DynamicForm(); 
-		dynamicForm.setNumCols(4);
+		dynamicForm.setNumCols(3);
         dynamicForm.setPadding(10);
         stack.addMember(dynamicForm);
         addItem(stack);

@@ -33,6 +33,7 @@ public class DynamicFormPresenter {
 	protected DynamicFormDisplay display;
 	protected HandlerRegistration saveButtonHandlerRegistration;
 	protected HandlerRegistration refreshButtonHandlerRegistration;
+    protected HandlerRegistration itemChangedHandlerRegistration;
 	
 	public DynamicFormPresenter(DynamicFormDisplay display) {
 		this.display = display;
@@ -77,12 +78,25 @@ public class DynamicFormPresenter {
 				}
 			}
         });
-		display.getFormOnlyDisplay().getForm().addItemChangedHandler(new ItemChangedHandler() {
+		itemChangedHandlerRegistration=display.getFormOnlyDisplay().getForm().addItemChangedHandler(new ItemChangedHandler() {
 			public void onItemChanged(ItemChangedEvent event) {
 				display.getSaveButton().enable();
 			}
 		});
+		
+		exposeNativeEnableSaveButton();
 	}
+	
+	public void enableSaveButton() {
+		display.getSaveButton().enable();
+	}
+
+	private native void exposeNativeEnableSaveButton() /*-{
+		var currentDynamicFormPresenter = this;
+		$wnd.enableSaveButton = function() {
+			currentDynamicFormPresenter.@org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter::enableSaveButton()();
+		}
+	}-*/;
 
 	public HandlerRegistration getSaveButtonHandlerRegistration() {
 		return saveButtonHandlerRegistration;
@@ -91,5 +105,8 @@ public class DynamicFormPresenter {
 	public HandlerRegistration getRefreshButtonHandlerRegistration() {
 		return refreshButtonHandlerRegistration;
 	}
-	
+
+    public HandlerRegistration getItemChangedHandlerRegistration() {
+        return itemChangedHandlerRegistration;
+    }
 }

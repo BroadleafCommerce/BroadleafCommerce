@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.admin.client.datasource.catalog.category;
 
+import com.smartgwt.client.widgets.grid.ListGrid;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
@@ -93,14 +94,14 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 	@Override
 	protected void executeAdd(final String requestId, final DSRequest request, final DSResponse response) {
 		BLCMain.NON_MODAL_PROGRESS.startProgress();
-		setLinkedValue(getPrimaryKeyValue(getAssociatedGrid().getSelectedRecord()));
+		setLinkedValue(getPrimaryKeyValue(((ListGrid) getAssociatedGrid()).getSelectedRecord()));
 		JavaScriptObject data = request.getData();
         final TreeNode newRecord = new TreeNode(data);
         persistencePerspective.getOperationTypes().setAddType(OperationType.ENTITY);
         final DataSourceModule entityModule = getCompatibleModule(OperationType.ENTITY);
     	Entity entity = entityModule.buildEntity(newRecord, request);
     	//Add the new category entity
-		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
+		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) entityModule.buildRecord(result, true);
@@ -111,7 +112,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 				DataSourceModule joinModule = getCompatibleModule(OperationType.JOINSTRUCTURE);
 				Entity entity = joinModule.buildEntity(record, request);
 				//Add the join table entry for the new category as well
-	        	service.add(new PersistencePackage(joinModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, createSandBoxInfo(), null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, "temp" + requestId, request, response, CategoryTreeDataSource.this) {
+	        	service.add(new PersistencePackage(joinModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, "temp" + requestId, request, response, CategoryTreeDataSource.this) {
 					public void onSuccess(Entity result) {
 						super.onSuccess(result);
 						processResponse(requestId, response);

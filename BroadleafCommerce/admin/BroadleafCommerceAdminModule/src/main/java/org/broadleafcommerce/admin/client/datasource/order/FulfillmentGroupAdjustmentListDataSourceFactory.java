@@ -46,16 +46,6 @@ public class FulfillmentGroupAdjustmentListDataSourceFactory implements DataSour
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.FULFILLMENT_GROUP, null));
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setIncludeFields(
-				new String[]{
-					"id",
-					"reason",
-					"value",
-					"offer.name",
-					"offer.type"
-				}	
-			);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.FULFILLMENT_GROUP_ADJUSTMENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

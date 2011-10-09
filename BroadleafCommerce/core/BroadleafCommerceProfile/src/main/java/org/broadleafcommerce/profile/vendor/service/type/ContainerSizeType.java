@@ -15,11 +15,11 @@
  */
 package org.broadleafcommerce.profile.vendor.service.type;
 
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.profile.util.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of container size types.

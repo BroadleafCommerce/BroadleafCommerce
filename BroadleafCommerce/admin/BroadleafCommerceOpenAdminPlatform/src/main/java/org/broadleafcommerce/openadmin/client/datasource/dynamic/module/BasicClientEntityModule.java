@@ -63,17 +63,11 @@ public class BasicClientEntityModule implements DataSourceModule {
 	protected final String ceilingEntityFullyQualifiedClassname;
 	protected PersistencePerspective persistencePerspective;
 	protected Long loadLevelCount = 0L;
-	protected Map<String, FieldMetadata> metadataOverrides;
 	
 	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		this(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, null);
-	}
-	
-	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
 		this.service = service;
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;
-		this.metadataOverrides = metadataOverrides;
 	}
 	
 	/**
@@ -196,7 +190,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
 		CriteriaTransferObject cto = getCto(request);
-		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = buildRecords(result, null);
@@ -239,7 +233,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) buildRecord(result, false);
@@ -289,7 +283,7 @@ public class BasicClientEntityModule implements DataSourceModule {
             	entity.setType(type);
             }
         }
-        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
 
@@ -341,7 +335,7 @@ public class BasicClientEntityModule implements DataSourceModule {
             	entity.setType(type);
             }
         }
-        service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {
@@ -395,7 +389,9 @@ public class BasicClientEntityModule implements DataSourceModule {
                     property.getValue() != null &&
                     dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
                 ) {
-                    record.setAttribute(attributeName, formatter.parse(property.getValue()));
+                    if (property.getValue() != null && !property.getValue().equals("null")) {
+                        record.setAttribute(attributeName, formatter.parse(property.getValue()));
+                    }
                 } else if (
                     dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
                 ) {
@@ -504,29 +500,22 @@ public class BasicClientEntityModule implements DataSourceModule {
 	}
     
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-    	String[] overrideKeys = null;
-    	FieldMetadata[] overrideValues = null;
-    	if (metadataOverrides != null) {
-    		overrideKeys = new String[metadataOverrides.size()];
-    		overrideValues = new FieldMetadata[metadataOverrides.size()];
-    		int j = 0;
-    		for (String key : metadataOverrides.keySet()){
-    			overrideKeys[j] = key;
-    			overrideValues[j] = metadataOverrides.get(key);
-    		}
-    	}
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), overrideKeys, overrideValues, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), new AbstractCallback<DynamicResultSet>() {
 			
 			@Override
 			protected void onOtherException(Throwable exception) {
 				super.onOtherException(exception);
-				cb.onFailure(exception);
+                if (cb != null) {
+				    cb.onFailure(exception);
+                }
 			}
 
 			@Override
 			protected void onSecurityException(ApplicationSecurityException exception) {
 				super.onSecurityException(exception);
-				cb.onFailure(exception);
+                if (cb != null) {
+				    cb.onFailure(exception);
+                }
 			}
 
 			public void onSuccess(DynamicResultSet result) {
@@ -547,8 +536,10 @@ public class BasicClientEntityModule implements DataSourceModule {
 					dataSource.getPolymorphicEntities().put(type, name);
 				}
 				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
-				
-				cb.onSuccess(dataSource);
+
+                if (cb != null) {
+				    cb.onSuccess(dataSource);
+                }
 			}
 			
 		});
@@ -623,17 +614,22 @@ public class BasicClientEntityModule implements DataSourceModule {
 				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
 				String secondaryFieldType = property.getMetadata().getSecondaryType()==null?null:property.getMetadata().getSecondaryType().toString();
 				Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
-				Boolean required = property.getMetadata().getRequired();
-				if (required == null) {
-					required = false;
-				}
+                Boolean required;
+                if (property.getMetadata().getPresentationAttributes().getRequiredOverride() != null) {
+                    required = property.getMetadata().getPresentationAttributes().getRequiredOverride();
+                } else {
+                    required = property.getMetadata().getRequired();
+                    if (required == null) {
+                        required = false;
+                    }
+                }
 				Boolean mutable = property.getMetadata().getMutable();
 				String inheritedFromType = property.getMetadata().getInheritedFromType();
 				String[] availableToTypes = property.getMetadata().getAvailableToTypes();
 				String foreignKeyClass = property.getMetadata().getForeignKeyClass();
 				String foreignKeyProperty = property.getMetadata().getForeignKeyProperty();
 				String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
-				if (friendlyName == null) {
+				if (friendlyName == null || friendlyName.equals("")) {
 					friendlyName = property.getName();
 				} else {
 					//check if the friendly name is an i18N key
@@ -649,8 +645,13 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
+                FormHiddenEnum formHidden = property.getMetadata().getPresentationAttributes().getFormHidden();
+                if (formHidden == null) {
+                    formHidden = FormHiddenEnum.NOT_SPECIFIED;
+                }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
+                Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
 				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
 				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
 				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
@@ -750,12 +751,28 @@ public class BasicClientEntityModule implements DataSourceModule {
 	        		field.setValueMap(valueMap);
 	        		//field.setValidOperators(getBasicEnumerationOperators());
 					break;
+                case EXPLICIT_ENUMERATION:
+					field = new DataSourceEnumField(propertyName, friendlyName);
+					field.setCanEdit(mutable);
+					field.setRequired(required);
+					LinkedHashMap<String,String> valueMap2 = new LinkedHashMap<String,String>();
+					for (int j=0; j<enumerationValues.length; j++) {
+						valueMap2.put(enumerationValues[j][0], enumerationValues[j][1]);
+					}
+	        		field.setValueMap(valueMap2);
+	        		//field.setValidOperators(getBasicEnumerationOperators());
+					break;
 				case PASSWORD:
 					field = new DataSourcePasswordField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
 					//field.setValidOperators(getBasicTextOperators());
 					break;
+                case ARTIFACT:
+                    field = new DataSourceImageField(propertyName, friendlyName);
+                    field.setCanEdit(mutable);
+					field.setRequired(required);
+                    break;
 				default:
 					field = new DataSourceTextField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
@@ -769,7 +786,8 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 				if (fieldType.equals(SupportedFieldType.ID.toString())) {
 					field.setHidden(true);
-					field.setAttribute("permanentlyHidden", false);
+					field.setAttribute("permanentlyHidden", true);
+                    formHidden = FormHiddenEnum.VISIBLE;
 				} else if (hidden != null) {
 					field.setHidden(hidden);
 					field.setAttribute("permanentlyHidden", hidden);
@@ -784,12 +802,16 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setAttribute("uniqueID", uniqueID);
 					field.setAttribute("securityLevel", securityLevel);
 				}
+                field.setAttribute("formHidden", formHidden);
 				if (group != null) {
 					field.setAttribute("formGroup", group);
 				}
 				if (groupOrder != null) {
 					field.setAttribute("formGroupOrder", groupOrder);
 				}
+                if (groupCollapsed != null) {
+                    field.setAttribute("formGroupCollapsed", groupCollapsed);
+                }
 				if (largeEntry != null) {
 					field.setAttribute("largeEntry", largeEntry);
 				}
@@ -806,6 +828,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setAttribute("columnWidth", columnWidth);
 				}
 				if (enumerationValues != null) {
+					field.setAttribute("enumerationValues", enumerationValues);
+				}
+                if (enumerationValues != null) {
 					field.setAttribute("enumerationValues", enumerationValues);
 				}
 				if (enumerationClass != null) {

@@ -47,7 +47,7 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -60,6 +60,22 @@ import org.hibernate.annotations.NotFoundAction;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="product.defaultCategory", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.name", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.description", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.longDescription", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.activeStartDate", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.activeEndDate", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.sku", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="sku.name", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="sku.salePrice", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="sku.retailPrice", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="bundleOrderItem", value=@AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class OrderItemImpl implements OrderItem, Cloneable {
 
 	private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
@@ -76,11 +92,13 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
+    @AdminPresentation(excluded = true)
     protected Category category;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
+    @AdminPresentation(excluded = true, hidden = true)
     protected Order order;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
@@ -113,6 +131,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @Index(name="ORDERITEM_GIFT_INDEX", columnNames={"GIFT_WRAP_ITEM_ID"})
+    @AdminPresentation(excluded = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL})
@@ -127,7 +146,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
-    @AdminPresentation(friendlyName="Item Type", order=2, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderItemType", groupOrder = 1)
+    @AdminPresentation(excluded = true)
     protected String orderItemType;
 
     public Money getRetailPrice() {

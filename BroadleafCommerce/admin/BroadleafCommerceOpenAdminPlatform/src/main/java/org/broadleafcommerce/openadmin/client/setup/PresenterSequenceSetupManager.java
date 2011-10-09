@@ -15,16 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.setup;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
-
-
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
+
+import java.util.*;
 
 /**
  * 
@@ -37,6 +34,7 @@ public class PresenterSequenceSetupManager {
 	private Iterator<PresenterSetupItem> itemsIterator;
 	private Canvas canvas;
 	private EntityPresenter presenter;
+    private Map<String, DynamicEntityDataSource> dataSourceLibrary = new HashMap<String, DynamicEntityDataSource>();
 	
 	public PresenterSequenceSetupManager(EntityPresenter presenter) {
 		this.presenter = presenter;
@@ -56,7 +54,7 @@ public class PresenterSequenceSetupManager {
 			pos = items.indexOf(item);
 			items.remove(pos);
 		}
-		item.getAdapter().registerDataSourceSetupManager(this);
+        item.getAdapter().registerDataSourceSetupManager(this);
 		if (pos >= 0) {
 			items.add(pos, item);
 		} else {
@@ -119,4 +117,12 @@ public class PresenterSequenceSetupManager {
 			presenter.postSetup(canvas);
 		}
 	}
+
+    protected void addDataSource(DynamicEntityDataSource dataSource) {
+        dataSourceLibrary.put(dataSource.getDataURL(), dataSource);
+    }
+
+    public DynamicEntityDataSource getDataSource(String dataURL) {
+        return dataSourceLibrary.get(dataURL);
+    }
 }

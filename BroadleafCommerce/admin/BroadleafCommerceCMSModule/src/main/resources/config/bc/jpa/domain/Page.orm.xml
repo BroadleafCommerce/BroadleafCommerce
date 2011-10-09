@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+	<named-query name="BC_READ_PAGE_FIELDS_BY_PAGE_ID" >
+		<query>SELECT pageField
+               FROM org.broadleafcommerce.cms.page.domain.PageField pageField
+               LEFT JOIN FETCH pageField.fieldDataList
+               WHERE pageField.page = :page
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_FOLDER_CHILD_FOLDERS" >
+		<query>SELECT pageFolder
+               FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
+               WHERE pageFolder.parentFolder = :parentFolder AND
+                     pageFolder.folderFlag = true AND
+                     pageFolder.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_NULL_PAGE_FOLDER_CHILD_FOLDERS" >
+		<query>SELECT pageFolder
+               FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
+               WHERE pageFolder.parentFolder is null AND
+                     pageFolder.folderFlag = true AND
+                     pageFolder.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_FOLDER_CHILD_PAGES" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               LEFT JOIN page.pageTemplate pageTemplate
+               WHERE
+                  page.parentFolder = :parentFolder AND
+                  (pageTemplate.locale.localeCode = :localeCode OR pageTemplate.locale.localeCode is null) AND
+                  (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null OR page.originalSandBox = :userSandbox) AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_NULL_PAGE_FOLDER_CHILD_PAGES" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               LEFT JOIN page.pageTemplate pageTemplate
+               WHERE
+                  page.parentFolder is null AND
+                  (pageTemplate.locale.localeCode = :localeCode OR pageTemplate.locale.localeCode is null) AND
+                  (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null OR page.originalSandBox = :userSandbox) AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE" >
+		<query>SELECT pageTemplate
+               FROM org.broadleafcommerce.cms.page.domain.PageTemplate pageTemplate
+               WHERE
+                  pageTemplate.locale.defaultFlag = true
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_BY_URI" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               WHERE
+                  page.fullUrl = :uri AND
+                  page.sandbox is null AND
+                  page.pageTemplate.locale = :locale AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               WHERE
+                  page.fullUrl = :uri AND
+                  page.sandbox = :sandbox AND
+                  page.pageTemplate.locale = :locale AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false
+		</query>
+	</named-query>
+
+    <named-query name="BC_READ_PAGE_BY_URI_AND_USER_SANDBOX" >
+		<query>SELECT page
+               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
+               WHERE
+                  page.fullUrl = :uri AND
+                  page.pageTemplate.locale = :locale AND
+                  page.archivedFlag = false AND
+                  page.deletedFlag = false AND
+                  page.id in
+                    (SELECT sandboxItem.temporaryItemId
+                     FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
+                     WHERE (sandboxItem.originalSandBox = :sandbox OR sandboxItem.sandBox = :sandbox) AND
+                           sandboxItem.archivedFlag = false AND
+                           sandboxItem.temporaryItemId = page.id)
+		</query>
+	</named-query>
+
+</entity-mappings>

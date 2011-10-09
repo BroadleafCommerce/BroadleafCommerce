@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+		<mapping-file>config/bc/jpa/domain/Page.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/StructuredContent.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/StaticAsset.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.cms.locale.domain.LocaleImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldGroupImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageFieldDataImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageFolderImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageTemplateImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl</class>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
+        <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
+
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <property name="hibernate.generate_statistics" value="false" />
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+	</persistence-unit>
+
+    <persistence-unit name="blCMSStorage" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/StaticAssetStorage.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl</class>
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.generate_statistics" value="false" />
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+	</persistence-unit>
+</persistence>

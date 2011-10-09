@@ -46,7 +46,6 @@ public class AdminRoleListDataSourceFactory implements DataSourceFactory {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.FOREIGNKEY, OperationType.FOREIGNKEY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ADMIN_USER, null));
-			persistencePerspective.setPopulateToOneFields(true);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.ADMIN_ROLE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

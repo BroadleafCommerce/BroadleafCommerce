@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
+import com.smartgwt.client.rpc.RPCResponse;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -107,7 +108,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 		this.associatedRecord = associatedRecord;
 		this.associatedDataSource = associatedDataSource;
 		String id = associatedDataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+		((PresentationLayerAssociatedDataSource) categoryPresenter.getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS")).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
 				setStartState();
 				if (cb != null) {
@@ -125,11 +126,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 						public void onSearchItemSelected(SearchItemSelectedEvent event) {
 							display.getGrid().addData(event.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
-									try {
-										if (!response.getErrors().isEmpty()) {
-											//do nothing
-										}
-									} catch (Exception e) {
+									if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
 										categoryPresenter.reloadParentTreeNodeRecords(true);
 									}
 								}
@@ -151,7 +148,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 				if (newIndex > originalIndex) {
 					newIndex--;
 				}
-				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+				JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) categoryPresenter.getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS")).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 				record.setAttribute(joinStructure.getSortField(), newIndex);
 				display.getGrid().updateData(record, new DSCallback() {
 					public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -174,11 +171,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							try {
-								if (!response.getErrors().isEmpty()) {
-									//do nothing
-								}
-							} catch (Exception e) {
+							if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
 								categoryPresenter.reloadParentTreeNodeRecords(true);
 								((CategoryDisplay) categoryPresenter.getDisplay()).getRemoveOrphanedButton().disable();
 								((CategoryDisplay) categoryPresenter.getDisplay()).getInsertOrphanButton().disable();

@@ -6,14 +6,38 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                         http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-2.5.xsd
                         http://www.springframework.org/schema/aop      http://www.springframework.org/schema/aop/spring-aop.xsd">
-    
+
     <aop:config/>
     
+    <bean id="multipartResolver" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadMultipartResolver"/>
+
+    <bean id="blUploadController" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadAddOrUpdateController">
+        <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
+    </bean>
+
+    <bean id="blUploadCompletedView" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadCompletedView"/>
+
+    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+        <property name="order" value="1"/>
+    </bean>
+
+    <bean id="blUploadUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="order" value="1"/>
+        <property name="alwaysUseFullPath" value="true"></property>
+        <property name="mappings">
+            <map>
+                <entry key="/**/cms.upload.service" value-ref="blUploadController"/>
+            </map>
+        </property>
+    </bean>
+
     <bean id="urlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler">
         <property name="mappings">
             <map>
                 <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService" />
                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService" />
+                <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService" />
+                <entry key="/**/utility.service" value-ref="blUtilityRemoteService" />
             </map>
         </property>
         <property name="serviceExporterFactory">

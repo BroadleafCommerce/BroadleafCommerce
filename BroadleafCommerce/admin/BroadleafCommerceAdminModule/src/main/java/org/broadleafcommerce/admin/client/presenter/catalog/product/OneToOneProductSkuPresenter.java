@@ -15,24 +15,13 @@
  */
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.admin.client.MerchandisingModule;
+import com.smartgwt.client.data.*;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductAttributeDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductMediaMapDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.*;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
@@ -50,12 +39,9 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -63,7 +49,7 @@ import com.smartgwt.client.data.Record;
  *
  */
 public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
-	
+
 	protected MapStructureEntityEditDialog mapEntityAdd = null;
 	protected EntitySearchDialog productSearchView;
 	protected SubPresentable crossSalePresenter;
@@ -102,8 +88,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultProductName"));
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newProductTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("productDS").getDefaultNewEntityFullyQualifiedClassname()});
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newProductTitle"), getPresenterSequenceSetupManager().getDataSource("productDS"), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("name", event.getRecord().getAttribute("name"));
@@ -130,7 +116,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				);
 				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
 				library.put("categorySearchView", categorySearchView);
-				((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).
+				getPresenterSequenceSetupManager().getDataSource("productDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 					"defaultCategory", 
 					categorySearchView, 

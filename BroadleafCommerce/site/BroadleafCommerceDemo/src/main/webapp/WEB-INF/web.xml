@@ -14,8 +14,11 @@
 	<context-param>
 		<param-name>patchConfigLocation</param-name>
 		<param-value>
-			classpath:/bl-open-admin-applicationContext.xml
+			classpath:/bl-open-admin-contentClient-applicationContext.xml
+            classpath:/bl-open-admin-contentCreator-applicationContext.xml
             classpath:/bl-admin-applicationContext.xml
+            classpath:/bl-cms-contentClient-applicationContext.xml
+            classpath:/bl-cms-contentCreator-applicationContext.xml
             /WEB-INF/applicationContext-demo.xml
             /WEB-INF/applicationContext-email.xml
             /WEB-INF/applicationContext-search.xml
@@ -50,21 +53,41 @@
         <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
     </filter>
 
+     <filter>
+        <filter-name>blContentFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>blAdminSandBoxFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>entityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+    <filter-mapping>
+		<filter-name>blContentFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+    <!-- specify the url pattern that will engage spring mvc -->
+	<filter-mapping>
+		<filter-name>blAdminSandBoxFilter</filter-name>
+		<url-pattern>*.service</url-pattern>
 	</filter-mapping>
 
 	<!--<filter-mapping>
 		<filter-name>changeSetInViewFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>-->
-	
-	<filter-mapping>
-		<filter-name>entityManagerInViewFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<filter-mapping>
         <filter-name>hiddenHttpMethodFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -94,7 +117,11 @@
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>classpath:/applicationContext-servlet-admin.xml</param-value>
+			<param-value>
+                classpath:/applicationContext-servlet-admin.xml
+                classpath:/applicationContext-servlet-cms-contentClient.xml
+                classpath:/applicationContext-servlet-cms-contentCreator.xml
+            </param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -103,6 +130,11 @@
 	<servlet-mapping>
 		<servlet-name>admin</servlet-name>
 		<url-pattern>*.service</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+		<servlet-name>admin</servlet-name>
+		<url-pattern>/cms/staticasset/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -115,6 +147,16 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+	<servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/org.broadleafcommerce.admin.demoAdmin/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
         <url-pattern>*.htm</url-pattern>
@@ -138,6 +180,11 @@
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
         <url-pattern>/store</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>demo</servlet-name>
+        <url-pattern>/preview/*</url-pattern>
     </servlet-mapping>
 
 	<env-entry>

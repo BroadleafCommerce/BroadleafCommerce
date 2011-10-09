@@ -27,8 +27,7 @@ public class SecurityManager {
 	private static SecurityManager manager = null;
 
 	public static AdminUser USER;
-	
-	private Map<String, List<String>> roleSecuredSections = new HashMap<String, List<String>>();
+
 	private Map<String, List<String>> permissionSecuredSections = new HashMap<String, List<String>>();
     private Map<String, HashSet<String>> moduleSectionList = new HashMap<String, HashSet<String>>();
 	private Map<String, String> securedFields = new HashMap<String, String>();
@@ -40,10 +39,9 @@ public class SecurityManager {
 		return SecurityManager.manager;
 	}
 	
-	public void registerSection(String moduleKey, String sectionViewKey, List<String> roles, List<String> permissions){
-		roleSecuredSections.put(sectionViewKey, roles);
+	public void registerSection(String moduleKey, String sectionViewKey, List<String> permissions){
 		permissionSecuredSections.put(sectionViewKey, permissions);
-        HashSet<String> currentSections = moduleSectionList.get(sectionViewKey);
+        HashSet<String> currentSections = moduleSectionList.get(moduleKey);
         if (currentSections == null) {
             currentSections = new HashSet<String>();
             moduleSectionList.put(moduleKey, currentSections);
@@ -56,13 +54,7 @@ public class SecurityManager {
 	}
 	
 	public boolean isUserAuthorizedToViewSection(String sectionViewKey){
-		List<String> authorizedRoles = roleSecuredSections.get(sectionViewKey);
 		List<String> authorizedPermissions = permissionSecuredSections.get(sectionViewKey);
-		for (String role : USER.getRoles()){
-			if (authorizedRoles != null && authorizedRoles.contains(role)){
-				return true;
-			}
-		}
 		
 		for (String permission : USER.getPermissions()){
 			if (authorizedPermissions != null && authorizedPermissions.contains(permission)){

@@ -17,11 +17,9 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.CriteriaPolicy;
-import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.SandBoxInfo;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallbackHandlerManager;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
@@ -41,7 +39,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	protected DataSourceModule[] modules;
 	protected FormItemCallbackHandlerManager formItemCallbackHandlerManager = new FormItemCallbackHandlerManager();
     //TODO change this flag to come from an annotation on the entity that defines the commit status from the server side
-	protected boolean commitImmediately = true;
+	//protected boolean commitImmediately = true;
 	
 	/**
 	 * @param name
@@ -56,14 +54,6 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 			module.setDataSource(this);
 		}
 		this.modules = modules;
-	}
-	
-	public SandBoxInfo createSandBoxInfo() {
-		SandBoxInfo sandBoxInfo = new SandBoxInfo();
-		sandBoxInfo.setCommitImmediately(commitImmediately);
-		sandBoxInfo.setSandBox(BLCMain.getModule(BLCMain.currentModuleKey).getCurrentSandBox());
-		
-		return sandBoxInfo;
 	}
 
 	public HashMap<String, String> getPolymorphicEntities() {
@@ -99,14 +89,6 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	public String getPrimaryKeyValue(Record record) {
 		String primaryKey = getPrimaryKeyFieldName();
 		return record.getAttribute(primaryKey);
-	}
-
-	public boolean isCommitImmediately() {
-		return commitImmediately;
-	}
-
-	public void setCommitImmediately(boolean commitImmediately) {
-		this.commitImmediately = commitImmediately;
 	}
 	
 }

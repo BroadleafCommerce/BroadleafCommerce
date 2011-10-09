@@ -22,11 +22,13 @@ import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +69,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException {
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -83,9 +85,19 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
-					metadataOverrides,
+                    persistencePerspective.getConfigurationKey(),
 					""
 				);
+                String idProp = null;
+                for (String key : joinMergedProperties.keySet()) {
+                    if (joinMergedProperties.get(key).getFieldType()== SupportedFieldType.ID) {
+                        idProp = key;
+                        break;
+                    }
+                }
+                if (idProp != null) {
+                    joinMergedProperties.remove(idProp);
+                }
 				allMergedProperties.put(MergedPropertyType.JOINSTRUCTURE, joinMergedProperties);
 			}
 		} catch (Exception e) {
@@ -108,16 +120,16 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		try {
 			Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
 			Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				ceilingEntityFullyQualifiedClassname, 
-				entities, 
-				null, 
-				persistencePerspective.getAdditionalNonPersistentProperties(), 
+				ceilingEntityFullyQualifiedClassname,
+				entities,
+				null,
+				persistencePerspective.getAdditionalNonPersistentProperties(),
 				persistencePerspective.getAdditionalForeignKeys(),
 				MergedPropertyType.PRIMARY,
-				persistencePerspective.getPopulateToOneFields(), 
-				persistencePerspective.getIncludeFields(), 
+				persistencePerspective.getPopulateToOneFields(),
+				persistencePerspective.getIncludeFields(),
 				persistencePerspective.getExcludeFields(),
-				null,
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -130,7 +142,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				false,
 				new String[]{},
 				new String[]{},
-				null,
+                null,
 				""
 			);
 			
@@ -215,7 +227,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
@@ -243,9 +255,28 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 					index++;
 				}
 			} else {
+                String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+                Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+                Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
+                    ceilingEntityFullyQualifiedClassname,
+                    entities,
+                    null,
+                    persistencePerspective.getAdditionalNonPersistentProperties(),
+                    persistencePerspective.getAdditionalForeignKeys(),
+                    MergedPropertyType.PRIMARY,
+                    persistencePerspective.getPopulateToOneFields(),
+                    persistencePerspective.getIncludeFields(),
+                    persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
+                    ""
+                );
 				Serializable myRecord = records.get(index);
 				myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
-				persistenceManager.getDynamicEntityDao().merge(myRecord);
+				myRecord = persistenceManager.getDynamicEntityDao().merge(myRecord);
+                List<Serializable> myList = new ArrayList<Serializable>();
+                myList.add(myRecord);
+                Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, joinStructure.getTargetObjectPath());
+                entity = payload[0];
 			}
 			
 			return entity;
@@ -275,7 +306,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				false,
 				new String[]{},
 				new String[]{},
-				null,
+                null,
 				""
 			);
 			CriteriaTransferObject ctoInserted = new CriteriaTransferObject();
@@ -313,7 +344,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -326,7 +357,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				false,
 				new String[]{},
 				new String[]{},
-				null,
+                null,
 				""
 			);
 			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);

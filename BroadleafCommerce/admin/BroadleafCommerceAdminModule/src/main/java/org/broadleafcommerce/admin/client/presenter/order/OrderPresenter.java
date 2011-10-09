@@ -23,7 +23,6 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.admin.client.datasource.order.*;
 import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
@@ -33,6 +32,7 @@ import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedLis
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleMapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
@@ -60,11 +60,11 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
-		orderItemPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		fulfillmentGroupPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		paymentInfoPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		offerCodePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
-		orderAdjustmentPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
+		orderItemPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		fulfillmentGroupPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		paymentInfoPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		offerCodePresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
+		orderAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderDS"), null);
 	}
 	
 	@Override
@@ -91,7 +91,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 							display.getListDisplay().getRemoveButton().disable();
 						} else {
 							formPresenter.setStartState();
-							((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
+							getPresenterSequenceSetupManager().getDataSource("orderDS").resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
 							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false);
 							display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
 							display.getListDisplay().getRemoveButton().enable();
@@ -105,7 +105,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onSelectionChanged(SelectionEvent event) {
 				ListGridRecord selectedRecord = event.getSelectedRecord();
 				if (event.getState()) {
-					additionalPaymentAttributesPresenter.load(selectedRecord, (AbstractDynamicDataSource) getDisplay().getPaymentInfoDisplay().getGrid().getDataSource(), null);
+					additionalPaymentAttributesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("paymentInfoDS"), null);
 				}
 			}
 		});
@@ -113,8 +113,8 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onSelectionChanged(SelectionEvent event) {
 				ListGridRecord selectedRecord = event.getSelectedRecord();
 				if (event.getState()) {
-					orderItemAdjustmentPresenter.load(selectedRecord, (AbstractDynamicDataSource) getDisplay().getOrderItemsDisplay().getGrid().getDataSource(), null);
-					feesPresenter.load(selectedRecord, (AbstractDynamicDataSource) getDisplay().getOrderItemsDisplay().getGrid().getDataSource(), null);
+					orderItemAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("orderItemDS"), null);
+					feesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("discreteOrderItemFeePriceDS"), null);
 				}
 			}
 		});
@@ -122,7 +122,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onSelectionChanged(SelectionEvent event) {
 				ListGridRecord selectedRecord = event.getSelectedRecord();
 				if (event.getState()) {
-					fulfillmentGroupAdjustmentPresenter.load(selectedRecord, (AbstractDynamicDataSource) getDisplay().getFulfillmentGroupDisplay().getGrid().getDataSource(), null);
+					fulfillmentGroupAdjustmentPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("fulfillmentGroupDS"), null);
 				}
 			}
 		});
@@ -143,19 +143,14 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "name", "orderNumber", "status"}, new Boolean[]{false, false, false, false, false});
-				library.put("orderDS", top);
+				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "name", "orderNumber", "status"});
 			}
 		}));
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
-			public void onSetupSuccess(DataSource result) {
-				library.put("orderItemDS", result);
-			}
-		}));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				orderItemPresenter = new OrderItemPresenter(((OrderDisplay) getDisplay()).getOrderItemsDisplay());
-				orderItemPresenter.setDataSource((ListGridDataSource) library.get("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
+				orderItemPresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
 				((OrderItemPresenter) orderItemPresenter).setExpansionDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
 				orderItemPresenter.setReadOnly(true);
 			}
@@ -167,7 +162,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 					"name"
 				);
 				EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result);
-				((DynamicEntityDataSource) library.get("orderDS")).
+				getPresenterSequenceSetupManager().getDataSource("orderDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 					"address.country", 
 					countrySearchView,
@@ -184,7 +179,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 					"name"
 				);
 				EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result);
-				((DynamicEntityDataSource) library.get("orderDS")).
+				getPresenterSequenceSetupManager().getDataSource("orderDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 					"address.state", 
 					stateSearchView,
