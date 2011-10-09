@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-
+import com.google.gwt.user.client.Timer;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
@@ -27,8 +27,7 @@ import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandl
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
-import com.google.gwt.user.client.Timer;
-import com.smartgwt.client.widgets.form.fields.FormItem;
+import java.util.HashMap;
 
 /**
  * 
@@ -41,7 +40,11 @@ public class FormItemCallbackHandlerManager {
 	
 	protected HashMap<String, FormItemCallback> callbacks = new HashMap<String, FormItemCallback>();
 
-	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay) {
+    public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay) {
+        addSearchFormItemCallback(fieldName, searchView, searchDialogTitle, dynamicFormDisplay, null);
+    }
+
+	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
 		callbacks.put(fieldName, new FormItemCallback() {
 			public void execute(final FormItem formItem) {
 				searchView.search(searchDialogTitle, new SearchItemSelectedEventHandler() {
@@ -69,6 +72,9 @@ public class FormItemCallbackHandlerManager {
 				            public void run() {  
 				            	formItem.setValue(myId);
 				            	dynamicFormDisplay.getSaveButton().enable();
+                                if (cb != null) {
+                                    cb.execute(formItem);
+                                }
 				            }  
 				        };
 				        timer.schedule(100);
@@ -78,11 +84,11 @@ public class FormItemCallbackHandlerManager {
 		});
 	}
 	
-	public void addSearchFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
+	public void addFormItemCallback(String fieldName, FormItemCallback formItemCallback) {
 		callbacks.put(fieldName, formItemCallback);
 	}
 	
-	public FormItemCallback getSearchFormItemCallback(String fieldName) {
+	public FormItemCallback getFormItemCallback(String fieldName) {
 		return callbacks.get(fieldName);
 	}
 	

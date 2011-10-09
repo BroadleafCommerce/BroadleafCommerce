@@ -15,13 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.LinkedHashMap;
-
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.form.DynamicForm;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.form.DynamicForm;
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -32,9 +31,13 @@ public class MapStructureEntityEditDialog extends EntityEditDialog {
 	
 	protected MapStructure mapStructure;
 	protected LinkedHashMap<String, String> mapKeys;
+    protected DataSource optionDataSource;
+    protected String displayField;
+    protected String valueField;
 	
 	public MapStructureEntityEditDialog() {
-		this(null, null);
+		super();
+        this.setHeight("300");
 	}
 
 	public MapStructureEntityEditDialog(MapStructure mapStructure, LinkedHashMap<String, String> mapKeys) {
@@ -44,9 +47,22 @@ public class MapStructureEntityEditDialog extends EntityEditDialog {
 		this.setHeight("300");
 	}
 
+    public MapStructureEntityEditDialog(MapStructure mapStructure, DataSource optionDataSource, String displayField, String valueField) {
+		super();
+		this.mapStructure = mapStructure;
+		this.optionDataSource = optionDataSource;
+        this.displayField = displayField;
+        this.valueField = valueField;
+		this.setHeight("300");
+	}
+
 	@Override
 	protected void buildFields(DataSource dataSource, DynamicForm form) {
-		FormBuilder.buildMapForm(dataSource, form, mapStructure, mapKeys, false);
+        if (mapKeys != null) {
+		    FormBuilder.buildMapForm(dataSource, form, mapStructure, mapKeys, false);
+        } else {
+            FormBuilder.buildMapForm(dataSource, form, mapStructure, optionDataSource, displayField, valueField, false);
+        }
 	}
 	
 }

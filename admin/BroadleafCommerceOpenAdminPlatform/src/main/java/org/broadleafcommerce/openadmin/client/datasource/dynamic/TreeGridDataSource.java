@@ -15,16 +15,16 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.tree.TreeGridField;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.tree.TreeGridField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -48,7 +48,18 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 		this.rootName = rootName;
 	}
 
+    public void setupGridFields(final String[] fieldNames) {
+        Boolean[] canEdit = new Boolean[fieldNames.length];
+        for (int j=0;j<fieldNames.length;j++) {
+            canEdit[j] = false;
+        }
+        setupGridFields(fieldNames, canEdit, "*", "*");
+    }
+
 	public void setupGridFields(String[] fieldNames, Boolean[] canEdit, String initialFieldWidth, String otherFieldWidth) {
+        if (fieldNames.length != canEdit.length) {
+            throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
+        }
 		if (fieldNames != null && fieldNames.length > 0) {
 			resetProminenceOnly(fieldNames);
 		}
@@ -69,6 +80,9 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         	}
         }
         int availableSlots = fieldNames==null?4:fieldNames.length;
+        if (availableSlots == 0 && prominentFields.size() == 0) {
+            throw new RuntimeException("You have explicitly specified zero length array for fieldsNames and have no fields defined as prominent via AdminPresentation annotation. Cannot proceed with a tree grid without defining at least one column to show.");
+        }
         for (DataSourceField field : prominentFields) {
         	String columnWidth = field.getAttribute("columnWidth");
         	gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
@@ -133,11 +147,11 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         		j++;
         	}
         }
-        getAssociatedGrid().setFields(gridFields);
+        ((ListGrid) getAssociatedGrid()).setFields(gridFields);
         if (fieldNames != null && fieldNames.length > 0) {
         	int pos = 0;
         	for (String fieldName : fieldNames) {
-        		getAssociatedGrid().reorderField(getAssociatedGrid().getFieldNum(fieldName), pos);
+        		((ListGrid) getAssociatedGrid()).reorderField(((ListGrid) getAssociatedGrid()).getFieldNum(fieldName), pos);
         		pos++;
         	}
         }
@@ -147,7 +161,7 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 	@Override
 	public void resetPermanentFieldVisibility(String... fieldNames) {
 		super.resetPermanentFieldVisibility(fieldNames);
-		getAssociatedGrid().refreshFields();
+		((ListGrid) getAssociatedGrid()).refreshFields();
 	}
 
 	public String getRootId() {

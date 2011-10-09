@@ -1,13 +1,4 @@
 /* Global and structural styles */
-body {
-	background: #a98b69 url("/broadleafdemo/images/coffeeTopTile.jpg") repeat-x top center;
-	margin: 0;
-	padding: 0;
-	color: #666666;
-	font-size: 12px;
-	font-family: arial, helvetica, sans-serif;
-}
-
 .bodyWrapper {
 	width: 990px;
 	margin: 0 auto;

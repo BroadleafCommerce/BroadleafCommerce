@@ -20,7 +20,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
 import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
+import org.broadleafcommerce.openadmin.client.reflection.AsyncClient;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.UIFactory;
@@ -87,20 +89,41 @@ public class AppController implements ValueChangeHandler<String> {
 		}
 	}
 	
-	protected void showView(String viewKey, String presenterKey) {
+	protected void showView(final String viewKey, final String presenterKey) {
 		if (SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)){
 			uiFactory.clearCurrentView();
-			Display view = uiFactory.getView(viewKey, false, false);
-			EntityPresenter presenter = uiFactory.getPresenter(presenterKey);
-			presenter.setDisplay(view);
-			presenter.setEventBus(eventBus);
-            if (presenter.getPresenterSequenceSetupManager() != null) {
-			    presenter.getPresenterSequenceSetupManager().setCanvas(container);
-			    presenter.setup();
-			    presenter.getPresenterSequenceSetupManager().launch();
-            } else {
-                presenter.setup();
-            }
+            uiFactory.getView(viewKey, false, false, new AsyncClient() {
+                @Override
+                public void onSuccess(Object instance) {
+                    final Display view = (Display) instance;
+                    uiFactory.getPresenter(presenterKey, new AsyncClient() {
+                        @Override
+                        public void onSuccess(Object instance) {
+                            EntityPresenter presenter = (EntityPresenter) instance;
+                            presenter.setDisplay(view);
+                            presenter.setEventBus(eventBus);
+                            BLCMain.currentViewKey = viewKey;
+                            if (presenter.getPresenterSequenceSetupManager() != null) {
+                                presenter.getPresenterSequenceSetupManager().setCanvas(container);
+                                presenter.setup();
+                                presenter.getPresenterSequenceSetupManager().launch();
+                            } else {
+                                presenter.setup();
+                            }
+                        }
+
+                        @Override
+                        public void onUnavailable() {
+                            throw new RuntimeException("Unable to show item: " + presenterKey);
+                        }
+                    });
+                }
+
+                @Override
+                public void onUnavailable() {
+                    throw new RuntimeException("Unable to show item: " + viewKey);
+                }
+            });
 		}
 	}
 }

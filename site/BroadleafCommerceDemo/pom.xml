@@ -24,6 +24,9 @@
                 <artifactId>gwt-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <configuration>
+                          <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+                        </configuration>
                         <goals>
                             <goal>compile</goal>
                             <goal>test</goal>
@@ -56,6 +59,7 @@
                 <version>6.1.22</version>
                 <configuration>
                     <webAppSourceDirectory>${webappDirectory}</webAppSourceDirectory>
+                    <webApp>${webappDirectory}</webApp>
                     <contextPath>/broadleafdemo</contextPath>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <stopPort>9966</stopPort>
@@ -74,7 +78,7 @@
                 <configuration>
                     <packaging>war</packaging>
                     <relativePath>../../</relativePath>
-                    <rootPath>$${rebel.root}</rootPath>
+                    <rootPath>${basedir}/../..</rootPath>
                 </configuration>
                 <executions>
                     <execution>
@@ -106,19 +110,32 @@
                                 <configuration>
                                     <resources>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/java</directory>
+                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/java
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java</directory>
+                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources</directory>
+                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/java</directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources</directory>
+                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/resources
+                                            </directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources
+                                            </directory>
+                                            <targetPath>./</targetPath>
+                                        </resource>
+                                        <resource>
+                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources
+                                            </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                     </resources>
@@ -175,6 +192,27 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-admin-module</artifactId>
+            <classifier>sources</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>cobertura</groupId>
+                    <artifactId>cobertura</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>cobertura</groupId>
+                    <artifactId>cobertura</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-contentmanagement-module</artifactId>
             <classifier>sources</classifier>
             <exclusions>
                 <exclusion>

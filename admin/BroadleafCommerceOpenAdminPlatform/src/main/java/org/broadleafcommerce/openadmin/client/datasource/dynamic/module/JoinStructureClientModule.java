@@ -15,21 +15,15 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.Record;
+import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -41,7 +35,6 @@ public class JoinStructureClientModule extends BasicClientEntityModule {
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
 	 * @param persistencePerspective
-	 * @param dataSource
 	 * @param service
 	 */
 	public JoinStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {

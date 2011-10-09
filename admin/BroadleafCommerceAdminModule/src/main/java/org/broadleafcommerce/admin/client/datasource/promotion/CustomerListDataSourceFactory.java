@@ -42,13 +42,12 @@ public class CustomerListDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"password", "challengeAnswer", "passwordChangeRequired", "challengeQuestion", "firstName", "lastName", "emailAddress", "auditable.dateCreated", "auditable.dateUpdated"});
+            persistencePerspective.setConfigurationKey("promotionCustomer");
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.CUSTOMER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, true, cb);
+			dataSource.buildFields(new String[]{}, true, cb);
 		} else {
 			if (cb != null) {
 				cb.onSuccess(dataSource);

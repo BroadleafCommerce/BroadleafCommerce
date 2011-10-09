@@ -73,13 +73,13 @@ public class AddressImpl implements Address {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class, optional = false)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName="State", order=9, group="Address")
+    @AdminPresentation(friendlyName="State", order=9, group="Address", excluded = true)
     protected State state;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName="Country", order=12, group="Address")
+    @AdminPresentation(friendlyName="Country", order=12, group="Address", excluded = true)
     protected Country country;
 
     @Column(name = "TOKENIZED_ADDRESS")

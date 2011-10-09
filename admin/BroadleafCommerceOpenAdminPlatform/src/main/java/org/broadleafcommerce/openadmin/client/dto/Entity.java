@@ -31,6 +31,7 @@ public class Entity implements Serializable {
 	private String[] type;
 	private Property[] properties;
     private boolean isDirty = false;
+    private boolean multiPartAvailableOnThread = false;
 	
 	public String[] getType() {
 		return type;
@@ -101,5 +102,13 @@ public class Entity implements Serializable {
 
     public void setDirty(boolean dirty) {
         isDirty = dirty;
+    }
+
+    public boolean isMultiPartAvailableOnThread() {
+        return multiPartAvailableOnThread;
+    }
+
+    public void setMultiPartAvailableOnThread(boolean multiPartAvailableOnThread) {
+        this.multiPartAvailableOnThread = multiPartAvailableOnThread;
     }
 }

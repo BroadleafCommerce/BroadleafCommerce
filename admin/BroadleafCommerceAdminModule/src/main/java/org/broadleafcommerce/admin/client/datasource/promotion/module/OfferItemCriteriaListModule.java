@@ -15,19 +15,6 @@
  */
 package org.broadleafcommerce.admin.client.datasource.promotion.module;
 
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -35,6 +22,15 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 /**
  * 
@@ -42,15 +38,6 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  *
  */
 public class OfferItemCriteriaListModule extends BasicClientEntityModule {
-
-	public OfferItemCriteriaListModule(
-			String ceilingEntityFullyQualifiedClassname,
-			PersistencePerspective persistencePerspective,
-			DynamicEntityServiceAsync service,
-			Map<String, FieldMetadata> metadataOverrides) {
-		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service,
-				metadataOverrides);
-	}
 
 	public OfferItemCriteriaListModule(
 			String ceilingEntityFullyQualifiedClassname,
@@ -66,7 +53,7 @@ public class OfferItemCriteriaListModule extends BasicClientEntityModule {
         TreeNode record = new TreeNode(data);
         record.setAttribute("_type", new String[]{((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()});
         Entity entity = buildEntity(record, request);
-        service.remove(new PersistencePackage(null, entity, persistencePerspective, dataSource.createSandBoxInfo(), customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {

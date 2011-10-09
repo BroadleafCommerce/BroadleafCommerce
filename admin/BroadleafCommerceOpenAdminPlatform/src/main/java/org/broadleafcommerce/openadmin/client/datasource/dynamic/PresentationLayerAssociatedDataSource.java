@@ -15,14 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.Hilite;
+import com.smartgwt.client.widgets.DataBoundComponent;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.widgets.grid.ListGrid;
 
 /**
  * 
@@ -38,7 +37,7 @@ public class PresentationLayerAssociatedDataSource extends DynamicEntityDataSour
         }}
     };
     
-	protected ListGrid associatedGrid;
+	protected DataBoundComponent associatedGrid;
 	
 	/**
 	 * @param name
@@ -50,11 +49,11 @@ public class PresentationLayerAssociatedDataSource extends DynamicEntityDataSour
 		super(name, persistencePerspective, service, modules);
 	}
 
-	public ListGrid getAssociatedGrid() {
+	public DataBoundComponent getAssociatedGrid() {
 		return associatedGrid;
 	}
 
-	public void setAssociatedGrid(ListGrid associatedGrid) {
+	public void setAssociatedGrid(DataBoundComponent associatedGrid) {
 		this.associatedGrid = associatedGrid;
 	}
 

@@ -30,8 +30,8 @@ public class PresenterSetupItem {
 	private Object[] additionalItems;
 	private AsyncCallbackAdapter adapter = null;
 	private DataSourceFactory factory;
-	
-	public PresenterSetupItem(String name, DataSourceFactory factory, OperationTypes operationTypes, Object[] additionalItems, AsyncCallbackAdapter adapter) {
+
+    public PresenterSetupItem(String name, DataSourceFactory factory, OperationTypes operationTypes, Object[] additionalItems, AsyncCallbackAdapter adapter) {
 		this.name = name;
 		this.factory = factory;
 		this.operationTypes = operationTypes;

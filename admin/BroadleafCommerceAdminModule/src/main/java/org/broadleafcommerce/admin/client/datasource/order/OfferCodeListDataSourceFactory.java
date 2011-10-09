@@ -46,8 +46,6 @@ public class OfferCodeListDataSourceFactory implements DataSourceFactory {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ORDER, null));
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"offer.appliesToOrderRules","offer.appliesToFulfillmentGroupRules","offer.appliesToCustomerRules","offer.maxUses","offer.uses","offer.targetItemCriteria"});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicClientEntityModule(CeilingEntities.OFFER_CODE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

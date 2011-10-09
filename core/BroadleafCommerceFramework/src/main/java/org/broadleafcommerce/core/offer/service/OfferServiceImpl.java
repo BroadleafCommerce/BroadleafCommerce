@@ -38,8 +38,8 @@ import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.time.SystemTime;
 import org.springframework.stereotype.Service;
 
 /**

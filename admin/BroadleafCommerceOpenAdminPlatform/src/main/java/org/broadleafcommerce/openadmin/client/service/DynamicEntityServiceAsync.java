@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DynamicEntityServiceAsync {
     
-	void inspect(PersistencePackage persistencePackage, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues, AsyncCallback<DynamicResultSet> cb);
+	void inspect(PersistencePackage persistencePackage, AsyncCallback<DynamicResultSet> cb);
 	
 	void fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, AsyncCallback<DynamicResultSet> cb);
     

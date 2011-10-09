@@ -33,7 +33,7 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 public interface DynamicEntityService extends RemoteService {
     
 	@Secured("PERMISSION_DEFAULT")
-	public DynamicResultSet inspect(PersistencePackage persistencePackage, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException, ApplicationSecurityException;
+	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
 	
 	@Secured("PERMISSION_DEFAULT")
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException, ApplicationSecurityException;

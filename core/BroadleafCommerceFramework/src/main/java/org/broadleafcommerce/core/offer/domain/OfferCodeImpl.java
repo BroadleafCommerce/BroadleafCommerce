@@ -36,13 +36,24 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.*;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="offer.appliesToOrderRules", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.appliesToFulfillmentGroupRules", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.appliesToCustomerRules", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.maxUses", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.uses", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;

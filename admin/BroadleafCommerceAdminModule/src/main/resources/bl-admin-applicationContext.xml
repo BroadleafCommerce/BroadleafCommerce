@@ -16,13 +16,15 @@
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
+                <!--Add any additional persistence modules here -->
+                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
 				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
 			</list>
 		</constructor-arg>
         <property name="customPersistenceHandlers">
 			<list>
+                <!--Add custom persistence handlers here -->
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
 				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
@@ -31,19 +33,395 @@
 		</property>
 		<property name="targetEntityManagers">
 			<map>
-                <!--<entry key="sandbox" value="sandBoxEntityManagerPool"/>-->
+                <!--configure target entity managers here-->
                 <entry key="sandbox" value="prodEntityManager"/>
                 <entry key="stage" value="prodEntityManager"/>
                 <entry key="prod" value="prodEntityManager"/>
             </map>
 		</property>
-		<!--<property name="sandBoxService" ref="blSandBoxService"/>-->
-		<property name="dynamicEntityDao">
-            <bean class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl">
-                <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
-                <property name="entityConfiguration" ref="blEntityConfiguration"/>
-            </bean>
-        </property>
+		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
+        <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
 	</bean>
-	
+
+    <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
+        <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
+        <property name="entityConfiguration" ref="blEntityConfiguration"/>
+        <property name="metadataOverrides">
+            <map>
+                <entry key="promotionOrderItem">
+                    <map>
+                        <entry key="org.broadleafcommerce.core.order.domain.OrderItem">
+                            <map>
+                                <entry key="category">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="false"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="id">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="category.activeEndDate">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="category.activeStartDate">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="personalMessage">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+                <entry key="promotionCustomer">
+                    <map>
+                        <entry key="org.broadleafcommerce.profile.core.domain.Customer">
+                            <map>
+                                <entry key="firstName">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="lastName">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="emailAddress">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="auditable.dateCreated">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="auditable.dateUpdated">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+                <entry key="promotionFulfillmentGroup">
+                    <map>
+                        <entry key="org.broadleafcommerce.core.order.domain.FulfillmentGroup">
+                            <map>
+                                <entry key="personalMessage">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="address.id">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="phone.id">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="id">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+                <entry key="promotionOrder">
+                    <map>
+                        <entry key="org.broadleafcommerce.core.order.domain.Order">
+                            <map>
+                                <entry key="customer">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="id">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="status">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="name">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="cityTax">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="countyTax">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="stateTax">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="districtTax">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="countryTax">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="totalTax">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="totalShipping">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="total">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="submitDate">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="orderNumber">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="emailAddress">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="auditable.dateCreated">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                                <entry key="auditable.dateUpdated">
+                                    <bean class="org.broadleafcommerce.openadmin.client.dto.FieldMetadata">
+                                        <property name="presentationAttributes">
+                                            <list>
+                                                <bean class="org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes">
+                                                    <property name="excluded" value="true"/>
+                                                </bean>
+                                            </list>
+                                        </property>
+                                    </bean>
+                                </entry>
+                            </map>
+                        </entry>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
 </beans>

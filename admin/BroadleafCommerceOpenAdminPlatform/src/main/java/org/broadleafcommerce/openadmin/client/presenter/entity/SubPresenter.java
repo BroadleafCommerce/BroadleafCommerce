@@ -44,9 +44,20 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	
 	protected Boolean disabled = false;
-	
-	public SubPresenter(SubItemDisplay display) {
+
+    protected Boolean showDisabledState = false;
+    protected Boolean canEdit = false;
+    protected Boolean showId = false;
+
+    public SubPresenter(SubItemDisplay display) {
+		this(display, false, false, false);
+	}
+
+	public SubPresenter(SubItemDisplay display, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
 		super((DynamicFormDisplay) display);
+        this.showDisabledState = showDisabledState;
+        this.canEdit = canEdit;
+        this.showId = showId;
 		this.display = display;
 	}
 	
@@ -118,7 +129,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 				if (event.getState()) {
 					display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, false);
+					((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),showDisabledState, canEdit, showId);
 					((DynamicFormDisplay) display).getFormOnlyDisplay().getForm().editRecord(event.getRecord());
 					((DynamicFormDisplay) display).getFormOnlyDisplay().getForm().enable();
 				} else {

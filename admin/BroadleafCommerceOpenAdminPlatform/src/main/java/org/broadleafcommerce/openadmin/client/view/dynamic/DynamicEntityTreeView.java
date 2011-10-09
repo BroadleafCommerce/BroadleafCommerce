@@ -44,8 +44,12 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 	protected ComboBoxItem entityType = new ComboBoxItem();
 	protected TreeGrid grid;
 	protected ToolStrip toolBar;
+
+    public DynamicEntityTreeView(String title, DataSource dataSource) {
+        this(title, dataSource, false);
+    }
 	
-	public DynamicEntityTreeView(String title, DataSource dataSource) {
+	public DynamicEntityTreeView(String title, DataSource dataSource, boolean showRoot) {
 		super();
 		toolBar = new ToolStrip();
 		toolBar.setHeight(20);
@@ -93,6 +97,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         grid.setDrawAheadRatio(4);
         grid.setCanSort(false);
         grid.setCanResizeFields(true);
+        grid.setShowRoot(showRoot);
         addMember(grid);
 	}
 

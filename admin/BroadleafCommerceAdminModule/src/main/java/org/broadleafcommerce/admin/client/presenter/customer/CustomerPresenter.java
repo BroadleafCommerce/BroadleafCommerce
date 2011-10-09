@@ -15,23 +15,19 @@
  */
 package org.broadleafcommerce.admin.client.presenter.customer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.admin.client.CustomerCareModule;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
@@ -42,13 +38,8 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -56,8 +47,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
  *
  */
 public class CustomerPresenter extends DynamicEntityPresenter implements Instantiable {
-	
-	protected HashMap<String, Object> library = new HashMap<String, Object>();
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -68,8 +57,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCustomerTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("customerDS").getDefaultNewEntityFullyQualifiedClassname()});
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCustomerTitle"), getPresenterSequenceSetupManager().getDataSource("customerDS"), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("username", event.getRecord().getAttribute("username"));
@@ -101,7 +90,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		entity.setProperties(new Property[]{prop});
 			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
 			            		
-			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage(null, entity, tempPerspective, ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).createSandBoxInfo(), new String[]{"passwordUpdate"}), new AbstractCallback<Entity>() {
+			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}), new AbstractCallback<Entity>() {
 									public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
 										SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));
@@ -120,23 +109,19 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
-				library.put("customerDS", top);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				((ListGridDataSource) result).resetPermanentFieldVisibility(
-						"question"
-					);
-					final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result);
-					
-					((DynamicEntityDataSource) library.get("customerDS")).
-					getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-						"challengeQuestion", 
-						challengeQuestionSearchView, 
-						BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
-						display.getDynamicFormDisplay()
-					);
+				((ListGridDataSource) result).resetPermanentFieldVisibility("question");
+                final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                getPresenterSequenceSetupManager().getDataSource("customerDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "challengeQuestion",
+                    challengeQuestionSearchView,
+                    BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
+                    display.getDynamicFormDisplay()
+                );
 			}
 		}));
 	}

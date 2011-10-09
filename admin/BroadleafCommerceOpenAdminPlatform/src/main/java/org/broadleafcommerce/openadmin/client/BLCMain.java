@@ -45,15 +45,18 @@ public class BLCMain implements EntryPoint {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>();
-	
+
+    public static String webAppContext;
+    public static String adminContext;
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
 	//TODO set the version as part of the build
-	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "1.5.0-M2-SNAPSHOT");
+	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
 	public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
 	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
 	public static MasterView MASTERVIEW;
 	public static boolean ISNEW = true;
 	public static String currentModuleKey;
+    public static String currentViewKey;
 	
 	public static final boolean DEBUG = true;
 	
@@ -87,12 +90,16 @@ public class BLCMain implements EntryPoint {
                     for (Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext(); ) {
                         Module currentModule = iterator.next();
                         if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(currentModule.getModuleKey())) {
-                              modules.remove(currentModule.getModuleKey());
+                            iterator.remove();
                         }
-
                     }
 
-                    if (moduleKey == null) {
+                    if (modules.size() == 0) {
+                        SC.say("Your login does not have authorization to view any modules");
+                        return;
+                    }
+
+                    if (moduleKey == null || modules.get(moduleKey) == null) {
                         moduleKey = modules.keySet().iterator().next();
                     }
 
@@ -119,6 +126,13 @@ public class BLCMain implements EntryPoint {
 		        }
 		    });
 		}
+        AppServices.UTILITY.getWebAppContext(new AbstractCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                webAppContext = result;
+            }
+        });
+        adminContext = GWT.getModuleBaseURL();
 	}
 
     public static MessageManager getMessageManager() {
@@ -140,4 +154,5 @@ public class BLCMain implements EntryPoint {
     public static native boolean isLogDebugEnabled(String category) /*-{
 		return $wnd.isc.Log.logIsDebugEnabled(category)
 	}-*/;
+
 }

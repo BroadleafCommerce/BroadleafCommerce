@@ -31,6 +31,7 @@ public class AdminUser implements Serializable {
 	protected String userName;
 	protected List<String> roles = new ArrayList<String>();
 	protected List<String> permissions = new ArrayList<String>();
+    protected String currentSandBoxId;
 	
 	public List<String> getRoles() {
 		return roles;
@@ -55,5 +56,12 @@ public class AdminUser implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+
+    public String getCurrentSandBoxId() {
+        return currentSandBoxId;
+    }
+
+    public void setCurrentSandBoxId(String currentSandBoxId) {
+        this.currentSandBoxId = currentSandBoxId;
+    }
 }

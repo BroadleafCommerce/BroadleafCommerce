@@ -1,7 +1,6 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -39,8 +38,8 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 	 * @see org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao#retrieve(java.lang.Class, java.lang.Object)
 	 */
 	@Override
-	public SandBox retrieve(Object primaryKey) {
-		return sandBoxEntityManager.find(SandBox.class, primaryKey);
+	public SandBox retrieve(Long id) {
+		return sandBoxEntityManager.find(SandBox.class, id);
 	}
 	
 	public EntityManager getSandBoxEntityManager() {
@@ -51,9 +50,31 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 		this.sandBoxEntityManager = sandBoxEntityManager;
 	}
 
-    public SandBox readSandBoxByName(String name) {
-        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_NAME");
-        query.setParameter("name", name);
+    @Override
+	public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
+		Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMPORARY_ID");
+        query.setParameter("temporaryId", temporaryId);
+        EntitySandBoxItem response = null;
+        try {
+            response = (EntitySandBoxItem) query.getSingleResult();
+        } catch (NoResultException e) {
+            //do nothing - there is no sandbox
+        }
+        return response;
+	}
+
+    public void deleteEntitySandBoxItem(EntitySandBoxItem sandBoxItem) {
+    	if (!sandBoxEntityManager.contains(sandBoxItem)) {
+    		sandBoxItem = retrieveSandBoxItemByTemporaryId(sandBoxItem.getTemporaryId());
+    	}
+        sandBoxEntityManager.remove(sandBoxItem);
+    }
+
+
+    public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType) {
+        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE");
+        query.setParameter("site", site);
+        query.setParameter("sandboxType", sandboxType.getType());
         SandBox response = null;
         try {
             response = (SandBox) query.getSingleResult();
@@ -63,23 +84,17 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
         return response;
     }
 
-    @Override
-	public SandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
-		Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMPORARY_ID");
-        query.setParameter("temporaryId", temporaryId);
-        SandBoxItem response = null;
+    public SandBox retrieveNamedSandBox(Site site, SandBoxType sandBoxType, String sandboxName) {
+        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE_AND_NAME");
+        query.setParameter("site", site);
+        query.setParameter("sandboxType", sandBoxType.getType());
+        query.setParameter("sandboxName", sandboxName);
+        SandBox response = null;
         try {
-            response = (SandBoxItem) query.getSingleResult();
+            response = (SandBox) query.getSingleResult();
         } catch (NoResultException e) {
             //do nothing - there is no sandbox
         }
         return response;
-	}
-
-    public void deleteItem(SandBoxItem sandBoxItem) {
-    	if (!sandBoxEntityManager.contains(sandBoxItem)) {
-    		sandBoxItem = retrieveSandBoxItemByTemporaryId(sandBoxItem.getTemporaryId());
-    	}
-        sandBoxEntityManager.remove(sandBoxItem);
     }
 }

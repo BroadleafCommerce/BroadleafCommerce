@@ -15,11 +15,11 @@
  */
 package org.broadleafcommerce.openadmin.client.dto;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 /**
  * 
@@ -35,8 +35,10 @@ public class FieldPresentationAttributes implements Serializable {
 	private String securityLevel;
 	private Integer order;
 	private Boolean hidden;
+    private FormHiddenEnum formHidden;
 	private String group;
 	private Integer groupOrder;
+    private Boolean groupCollapsed;
 	private SupportedFieldType explicitFieldType;
 	private Boolean largeEntry;
 	private Boolean prominent;
@@ -44,6 +46,8 @@ public class FieldPresentationAttributes implements Serializable {
 	private String broadleafEnumeration;
 	private Boolean readOnly;
 	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>();
+    private Boolean requiredOverride;
+    private Boolean excluded;
 	
 	public String getName() {
 		return name;
@@ -153,9 +157,39 @@ public class FieldPresentationAttributes implements Serializable {
 		return validationConfigurations;
 	}
 
-	public void setValidationConfigurations(
-			Map<String, Map<String, String>> validationConfigurations) {
+	public void setValidationConfigurations(Map<String, Map<String, String>> validationConfigurations) {
 		this.validationConfigurations = validationConfigurations;
 	}
 
+    public Boolean getRequiredOverride() {
+        return requiredOverride;
+    }
+
+    public void setRequiredOverride(Boolean requiredOverride) {
+        this.requiredOverride = requiredOverride;
+    }
+
+    public Boolean getGroupCollapsed() {
+        return groupCollapsed;
+    }
+
+    public void setGroupCollapsed(Boolean groupCollapsed) {
+        this.groupCollapsed = groupCollapsed;
+    }
+
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(Boolean excluded) {
+        this.excluded = excluded;
+    }
+
+    public FormHiddenEnum getFormHidden() {
+        return formHidden;
+    }
+
+    public void setFormHidden(FormHiddenEnum formHidden) {
+        this.formHidden = formHidden;
+    }
 }

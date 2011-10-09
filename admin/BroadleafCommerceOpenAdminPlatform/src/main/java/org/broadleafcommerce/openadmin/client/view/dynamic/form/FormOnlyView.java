@@ -32,8 +32,12 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 	public FormOnlyView() {
 		this(null);
 	}
+
+    public FormOnlyView(DataSource dataSource) {
+        this(dataSource, null, null, null);
+    }
 	
-	public FormOnlyView(DataSource dataSource) {
+	public FormOnlyView(DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
 		super();
 		
         setWidth100();
@@ -41,12 +45,12 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form = new DynamicForm(); 
         form.setHeight(175);
         form.setWidth100();
-        form.setNumCols(4);
+        form.setNumCols(3);
         form.setPadding(10);
         form.disable();
         form.setBackgroundColor("#eaeaea");
         if (dataSource != null) {
-        	buildFields(dataSource, true, false, false);
+        	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId);
         }
         addMember(form);
         setOverflow(Overflow.AUTO);

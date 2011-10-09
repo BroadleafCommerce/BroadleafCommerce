@@ -15,11 +15,11 @@
  */
 package org.broadleafcommerce.openadmin.client.view;
 
+import org.broadleafcommerce.openadmin.client.reflection.AsyncClient;
+import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
+
 import java.util.HashMap;
 import java.util.Stack;
-
-import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
-import org.broadleafcommerce.openadmin.client.reflection.ModuleFactory;
 
 /**
  * 
@@ -33,31 +33,43 @@ public class UIFactory extends HashMap<String, Display> {
 	private Stack<Display> currentView = new Stack<Display>();
 	private Stack<String> keyStack = new Stack<String>();
 
-	public Display getView(String value) {
-		return getView(value, true, true);
+	public void getView(String value, final AsyncClient asyncClient) {
+		getView(value, true, true, asyncClient);
 	}
 	
-	public Display getView(String value, boolean clearCurrentView, boolean storeView) {
+	public void getView(final String value, boolean clearCurrentView, final boolean storeView, final AsyncClient asyncClient) {
 		if (clearCurrentView) {
 			clearCurrentView();
 		}
 		Display view;
 		if (!containsKey(value)) {
-			view = (Display) ModuleFactory.getInstance().createItem(value);
-			if (storeView) {
-				put(value, view);
-			}
+            ModuleFactory.getInstance().createAsync(value, new AsyncClient() {
+                @Override
+                public void onSuccess(Object instance) {
+                    if (storeView) {
+                        put(value, (Display) instance);
+                    }
+                    currentView.push((Display) instance);
+		            keyStack.push(value);
+                    asyncClient.onSuccess(instance);
+                }
+
+                @Override
+                public void onUnavailable() {
+                    asyncClient.onUnavailable();
+                }
+            });
+
 		} else {
 			view = get(value);
+            currentView.push(view);
+		    keyStack.push(value);
+            asyncClient.onSuccess(view);
 		}
-		currentView.push(view);
-		keyStack.push(value);
-		
-		return view;
 	}
 	
-	public EntityPresenter getPresenter(String value) {
-		return (EntityPresenter) ModuleFactory.getInstance().createItem(value);
+	public void getPresenter(String value, AsyncClient asyncClient) {
+		ModuleFactory.getInstance().createAsync(value, asyncClient);
 	}
 	
 	public void clearCurrentView() {

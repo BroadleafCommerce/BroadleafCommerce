@@ -18,21 +18,17 @@ package org.broadleafcommerce.openadmin.server.service;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
-import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author jfischer
@@ -43,10 +39,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
 
-    @Resource(name = "blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
-
-    protected Map<String, FieldMetadata> metadataOverrides;
     protected String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
     private ApplicationContext applicationContext;
 
@@ -56,37 +48,18 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         this.applicationContext = applicationContext;
     }
 
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException {
+    public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            //use any override provided by the presentation layer
-            Map<String, FieldMetadata> metadataOverrides = null;
-            if (metadataOverrideKeys != null) {
-                metadataOverrides = new HashMap<String, FieldMetadata>();
-                for (int j = 0; j < metadataOverrideKeys.length; j++) {
-                    metadataOverrides.put(metadataOverrideKeys[j], metadataOverrideValues[j]);
-                }
-            }
-            //if no presentation layer override are defined, use any defined via configuration on the server side
-            if (metadataOverrides == null && this.metadataOverrides != null) {
-                metadataOverrides = this.metadataOverrides;
-            }
-
             PersistenceManager persistenceManager = null;
             try {
-                SandBoxContext context = new SandBoxContext();
-                context.setSandBoxName(persistencePackage.getSandBoxInfo().getSandBox());
-                context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
-                SandBoxContext.setSandBoxContext(context);
-
                 persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
                 persistenceManager.setTargetMode(TargetModeType.SANDBOX);
-                return persistenceManager.inspect(persistencePackage, metadataOverrides);
+                return persistenceManager.inspect(persistencePackage);
             } finally {
                 if (persistenceManager != null) {
                     persistenceManager.close();
                 }
-                SandBoxContext.setSandBoxContext(null);
             }
         } catch (ServiceException e) {
             throw e;
@@ -97,17 +70,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-        adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.FETCH);
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.fetch(persistencePackage, cto);
@@ -119,22 +83,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-        adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.ADD);
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.add(persistencePackage);
@@ -146,27 +100,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
-        Entity entity = persistencePackage.getEntity();
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-        for (Property p : entity.getProperties()) {
-            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
-                break;
-            }
-        }
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.update(persistencePackage);
@@ -178,27 +117,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
     }
 
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
-        Entity entity = persistencePackage.getEntity();
-        SandBoxInfo sandBoxInfo = persistencePackage.getSandBoxInfo();
-        for (Property p : entity.getProperties()) {
-            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
-                break;
-            }
-        }
-
         PersistenceManager persistenceManager = null;
         try {
-            SandBoxContext context = new SandBoxContext();
-            context.setSandBoxName(sandBoxInfo.getSandBox());
-            context.setSandBoxMode(persistencePackage.getSandBoxInfo().isCommitImmediately()?SandBoxMode.IMMEDIATE_COMMIT:SandBoxMode.SANDBOX_COMMIT);
-            SandBoxContext.setSandBoxContext(context);
-
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             persistenceManager.remove(persistencePackage);
@@ -210,16 +134,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            SandBoxContext.setSandBoxContext(null);
         }
-    }
-
-    public Map<String, FieldMetadata> getMetadataOverrides() {
-        return metadataOverrides;
-    }
-
-    public void setMetadataOverrides(Map<String, FieldMetadata> metadataOverrides) {
-        this.metadataOverrides = metadataOverrides;
     }
 
     public String getPersistenceManagerRef() {

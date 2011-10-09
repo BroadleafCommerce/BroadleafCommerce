@@ -15,39 +15,23 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
+import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.hibernate.mapping.PersistentClass;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * 
@@ -132,7 +116,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	@Override
-	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties, Map<String, FieldMetadata> metadataOverrides) throws ServiceException {
+	public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException {
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {	
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
@@ -146,8 +130,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 						mapStructure.getKeyPropertyFriendlyName(),
 						Class.forName(mapStructure.getKeyClassName()), 
 						Class.forName(ceilingEntityFullyQualifiedClassname), 
-						MergedPropertyType.MAPSTRUCTUREKEY,
-						metadataOverrides
+						MergedPropertyType.MAPSTRUCTUREKEY
 					);
 				} else {
 					keyMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -160,7 +143,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 						persistencePerspective.getPopulateToOneFields(), 
 						persistencePerspective.getIncludeFields(), 
 						persistencePerspective.getExcludeFields(),
-						metadataOverrides,
+                        persistencePerspective.getConfigurationKey(),
 						""
 					);
 				}
@@ -174,8 +157,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 						((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 						Class.forName(mapStructure.getValueClassName()), 
 						Class.forName(ceilingEntityFullyQualifiedClassname), 
-						MergedPropertyType.MAPSTRUCTUREVALUE,
-						metadataOverrides
+						MergedPropertyType.MAPSTRUCTUREVALUE
 					);
 				} else {
 					valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -188,7 +170,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 						persistencePerspective.getPopulateToOneFields(), 
 						persistencePerspective.getIncludeFields(), 
 						persistencePerspective.getExcludeFields(),
-						metadataOverrides,
+                        persistencePerspective.getConfigurationKey(),
 						""
 					);
 				}
@@ -224,8 +206,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 					Class.forName(mapStructure.getValueClassName()), 
 					Class.forName(entity.getType()[0]), 
-					MergedPropertyType.MAPSTRUCTUREVALUE,
-					null
+					MergedPropertyType.MAPSTRUCTUREVALUE
 				);
 			} else {
 				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -238,7 +219,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
-					null,
+                    persistencePerspective.getConfigurationKey(),
 					""
 				);
 			}
@@ -309,8 +290,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 					Class.forName(mapStructure.getValueClassName()), 
 					Class.forName(entity.getType()[0]), 
-					MergedPropertyType.MAPSTRUCTUREVALUE,
-					null
+					MergedPropertyType.MAPSTRUCTUREVALUE
 				);
 			} else {
 				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -323,7 +303,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					persistencePerspective.getPopulateToOneFields(), 
 					persistencePerspective.getIncludeFields(), 
 					persistencePerspective.getExcludeFields(),
-					null,
+                    persistencePerspective.getConfigurationKey(),
 					""
 				);
 			}
@@ -397,7 +377,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 				persistencePerspective.getPopulateToOneFields(), 
 				persistencePerspective.getIncludeFields(), 
 				persistencePerspective.getExcludeFields(),
-				null,
+                persistencePerspective.getConfigurationKey(),
 				""
 			);
 			MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
@@ -410,8 +390,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),
 					Class.forName(mapStructure.getValueClassName()), 
 					Class.forName(ceilingEntityFullyQualifiedClassname), 
-					MergedPropertyType.MAPSTRUCTUREVALUE,
-					null
+					MergedPropertyType.MAPSTRUCTUREVALUE
 				);
 			} else {
 				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
@@ -424,7 +403,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 					false,
 					new String[]{},
 					new String[]{},
-					null,
+                    null,
 					""
 				);
 			}

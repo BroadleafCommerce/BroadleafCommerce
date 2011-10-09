@@ -15,20 +15,19 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
-
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class SearchFormItem extends TextItem {
+public class SearchFormItem extends StaticTextItem {
 
 	public SearchFormItem() {  
         //use default trigger icon here. User can customize.  
@@ -39,7 +38,7 @@ public class SearchFormItem extends TextItem {
         addIconClickHandler(new IconClickHandler() {  
             public void onIconClick(IconClickEvent event) {  
             	final String formItemName = event.getItem().getName();
-            	((FormItemCallback) ((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getSearchFormItemCallback(formItemName)).execute(event.getItem());
+            	((FormItemCallback) ((DynamicEntityDataSource) event.getItem().getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName)).execute(event.getItem());
             }  
         });
 	}

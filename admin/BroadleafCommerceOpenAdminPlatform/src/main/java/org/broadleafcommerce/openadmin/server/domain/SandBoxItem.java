@@ -1,40 +1,55 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
-import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
+import java.util.List;
 
 public interface SandBoxItem extends Serializable {
 
-	public abstract Long getId();
+	public Long getId();
 
-	public abstract void setId(Long id);
+	public void setId(Long id);
 
-	public abstract Entity getEntity();
-
-	public abstract void setEntity(Entity entity);
-
-	public abstract PersistencePerspective getPersistencePerspective();
-
-	public abstract void setPersistencePerspective(PersistencePerspective persistencePerspective);
-
-	public SandBox getSandBox();
+    public SandBox getSandBox();
 
 	public void setSandBox(SandBox sandBox);
 
-    public String getCeilingEntityFullyQualifiedClassname();
+    public SandBox getOriginalSandBox();
 
-    public void setCeilingEntityFullyQualifiedClassname(String ceilingEntityFullyQualifiedClassname);
+	public void setOriginalSandBox(SandBox sandBox);
 
-    public String getCustomCriteria();
+    public SandBoxItemType getSandBoxItemType();
 
-    public void setCustomCriteria(String customCriteria);
+    public void setSandBoxItemType(SandBoxItemType itemType);
 
-    public ChangeType getChangeType();
+    public SandBoxOperationType getSandBoxOperationType();
 
-    public void setChangeType(ChangeType changeType);
+    public void setSandBoxOperationType(SandBoxOperationType type);
 
-    public Long getTemporaryId();
+    public String getDescription();
 
-    public void setTemporaryId(Long temporaryId);
+    public void setDescription(String description);
+
+    public Long getTemporaryItemId();
+
+    public void setTemporaryItemId(Long id);
+
+    public Long getOriginalItemId();
+
+    public void setOriginalItemId(Long id);
+
+    public List<SandBoxAction> getSandBoxActions();
+
+    public void setSandBoxActions(List<SandBoxAction> actionList);
+
+    public Boolean getArchivedFlag();
+
+    public void setArchivedFlag(Boolean archivedFlag);
+
+    public void addSandBoxAction(SandBoxAction action);
+
+    public AdminAuditable getAuditable();
+
+    public void setAuditable(AdminAuditable auditable);
 }

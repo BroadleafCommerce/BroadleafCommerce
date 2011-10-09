@@ -134,7 +134,7 @@ public class CategoryImpl implements Category {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
+    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description", excluded = true)
     protected Category defaultParentCategory;
 
     /** The all child categories. */

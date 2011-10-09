@@ -43,32 +43,12 @@ public class OrderItemListDataSourceFactory implements DataSourceFactory {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(
-				new String[]{
-					"order",
-					"giftWrapOrderItem", 
-					"bundleOrderItem",  
-					"product.defaultCategory",
-					"product.name",
-					"product.description",
-					"product.longDescription",
-					"product.activeStartDate",
-					"product.activeEndDate",
-					"product.sku",
-					"sku.name",
-					"sku.salePrice",
-					"sku.retailPrice",
-					"category.activeEndDate",
-					"category.activeStartDate",
-					"personalMessage"
-				}
-			);
+            persistencePerspective.setConfigurationKey("promotionOrderItem");
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new OrderItemEntityModule(CeilingEntities.ORDER_ITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, true, cb);
+			dataSource.buildFields(new String[]{}, true, cb);
 		} else {
 			if (cb != null) {
 				cb.onSuccess(dataSource);

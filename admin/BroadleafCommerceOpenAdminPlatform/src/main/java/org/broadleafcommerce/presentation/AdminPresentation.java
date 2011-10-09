@@ -20,6 +20,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.lang.ObjectUtils;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 
@@ -40,7 +43,7 @@ public @interface AdminPresentation {
 	 * @see AdminMessages
 	 * @return the friendly name
 	 */
-	String friendlyName();
+	String friendlyName() default "";
 	
 	/**
 	 * If a security level is specified, it is registered with org.broadleafcommerce.openadmin.client.security.SecurityManager
@@ -64,6 +67,14 @@ public @interface AdminPresentation {
 	 * @return whether or not to hide
 	 */
 	boolean hidden() default false;
+
+    /**
+     * Whether or not the field is hidden in the form. This value overrides
+     * the hidden property for forms.
+     *
+     * @return whether or not to hide the form field.
+     */
+    FormHiddenEnum formHidden() default FormHiddenEnum.NOT_SPECIFIED;
 	
 	/**
 	 * Explicity specify the type the GUI should consider this field
@@ -88,6 +99,13 @@ public @interface AdminPresentation {
 	 * @return the order for this group
 	 */
 	int groupOrder() default 99999;
+
+    /**
+     * Specify whether a group is collapsed by default in the admin UI.
+     *
+     * @return whether or not the group is collapsed by default
+     */
+    boolean groupCollapsed() default false;
 	
 	/**
 	 * If the field is a string, specify that the GUI
@@ -136,4 +154,21 @@ public @interface AdminPresentation {
 	 * @return the configuration for the validation
 	 */
 	ValidationConfiguration[] validationConfigurations() default {};
+
+
+    /**
+     * Specify whether you would like the admin to require this field,
+     * even if it is not required by the ORM.
+     *
+     * @return the required override enumeration
+     */
+    RequiredOverride requiredOverride() default RequiredOverride.IGNORED;
+
+    /**
+     * Specify if this field should be excluded from inclusion in the
+     * admin presentation layer
+     *
+     * @return whether or not the field should be excluded
+     */
+    boolean excluded() default false;
 }

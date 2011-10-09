@@ -15,22 +15,20 @@
  */
 package org.broadleafcommerce.openadmin.server.security.remote;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
-import org.broadleafcommerce.openadmin.security.SecurityConfig;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -44,73 +42,82 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 	
 	@Resource(name="blAdminSecurityService")
 	protected org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService securityService;
-	
-	private List<SecurityConfig> securityConfigs;
+
+    private boolean isEntitySecurityExplicit = true;
 	
 	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() {
+        AdminUser persistentAdminUser = getPersistentAdminUser();
+        if (persistentAdminUser != null) {
+            org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();
+            for (AdminRole role : persistentAdminUser.getAllRoles()) {
+                response.getRoles().add(role.getName());
+                for (AdminPermission permission : role.getAllPermissions()) {
+                    response.getPermissions().add(permission.getName());
+                }
+            }
+            response.setUserName(persistentAdminUser.getLogin());
+            response.setCurrentSandBoxId(String.valueOf(persistentAdminUser.getCurrentSandbox().getId()));
+            return response;
+        }
+
+        return null;
+	}
+
+    public AdminUser getPersistentAdminUser() {
 		SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
             Authentication auth = ctx.getAuthentication();
-            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {     
+            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
                 User temp = (User) auth.getPrincipal();
                 AdminUser adminUser = securityService.readAdminUserByUserName(temp.getUsername());
-                
-                org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();
-                for (AdminRole role : adminUser.getAllRoles()) {
-                	response.getRoles().add(role.getName());
-                	for (AdminPermission permission : role.getAllPermissions()) {
-                		response.getPermissions().add(permission.getName());
-                	}
-                }
-                response.setUserName(adminUser.getLogin());
-                return response;
+
+                return adminUser;
             }
         }
 
         return null;
 	}
 	
-	public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType  operationType) throws ServiceException {
-		if (securityConfigs != null) {
-			for (SecurityConfig sc : securityConfigs){
-				if (ceilingEntityFullyQualifiedName != null && 
-						ceilingEntityFullyQualifiedName.equals(sc.getCeilingEntityFullyQualifiedName()) &&
-						operationType != null &&
-						sc.getRequiredTypes().contains(operationType)){
-					
-					boolean authorized = false;
-					org.broadleafcommerce.openadmin.client.security.AdminUser adminUser = getAdminUser();
-					checkAuthorization: {
-						for (String role : sc.getRoles()) {
-							if (adminUser.getRoles() != null && adminUser.getRoles().contains(role)) {
-								authorized = true;
-								break checkAuthorization;
-							}
-						}
-						for (String permission : sc.getPermissions()){
-							if (adminUser.getPermissions() != null && adminUser.getPermissions().contains(permission)){
-								authorized = true;
-								break checkAuthorization;
-							}
-						}
-					}
-					
-					if (!authorized){
-						throw new ServiceException("Security Check Failed: AdminSecurityServiceRemote");
-					}
-					
-					break;
-				}
-			}	
-		}
+	public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException {
+        if (ceilingEntityFullyQualifiedName == null) {
+            throw new ServiceException("Security Check Failed: ceilingEntityFullyQualifiedName not specified");
+        }
+        AdminUser persistentAdminUser = getPersistentAdminUser();
+        PermissionType permissionType;
+        switch(operationType){
+            case ADD:
+                permissionType = PermissionType.CREATE;
+                break;
+            case FETCH:
+                permissionType = PermissionType.READ;
+                break;
+            case REMOVE:
+                permissionType = PermissionType.DELETE;
+                break;
+            case UPDATE:
+                permissionType = PermissionType.UPDATE;
+                break;
+            case INSPECT:
+                permissionType = PermissionType.READ;
+                break;
+            default:
+                permissionType = PermissionType.OTHER;
+                break;
+        }
+        boolean isQualified = securityService.isUserQualifiedForOperationOnCeilingEntity(persistentAdminUser, permissionType, ceilingEntityFullyQualifiedName);
+        if (!isQualified){
+            //If explicit security, then this check failed. However, if not explicit security, then check to make sure there is no configured security for this entity before allowing to pass
+            if (isEntitySecurityExplicit || securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
+                throw new ServiceException("Security Check Failed for entity operation: " + operationType.toString());
+            }
+        }
 	}
 
-	public List<SecurityConfig> getSecurityConfigs() {
-		return securityConfigs;
-	}
+    public boolean isEntitySecurityExplicit() {
+        return isEntitySecurityExplicit;
+    }
 
-	public void setSecurityConfigs(List<SecurityConfig> securityConfigs) {
-		this.securityConfigs = securityConfigs;
-	}
-
+    public void setEntitySecurityExplicit(boolean entitySecurityExplicit) {
+        isEntitySecurityExplicit = entitySecurityExplicit;
+    }
 }
