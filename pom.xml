@@ -294,14 +294,14 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-contentmanagement-module</artifactId>
-				<version>1.5.0-CHNGST-SNAPSHOT</version>
+				<version>1.5.0-M5-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-contentmanagement-module</artifactId>
-				<version>1.5.0-CHNGST-SNAPSHOT</version>
+				<version>1.5.0-M5-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 				<classifier>sources</classifier>
