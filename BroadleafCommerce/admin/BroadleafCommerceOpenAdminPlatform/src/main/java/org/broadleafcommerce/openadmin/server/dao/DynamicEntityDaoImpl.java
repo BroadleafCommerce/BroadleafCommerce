@@ -422,9 +422,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             throw new RuntimeException(e);
         }
 
-        sb.append(pad(digest, 32, '0'));
-
-        return sb.toString();
+        return pad(digest, 32, '0');
     }
 
 	protected void buildPropertiesFromPolymorphicEntities(
