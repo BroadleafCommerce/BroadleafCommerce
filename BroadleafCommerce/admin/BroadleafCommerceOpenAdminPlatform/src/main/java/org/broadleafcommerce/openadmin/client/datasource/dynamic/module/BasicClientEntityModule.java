@@ -665,7 +665,6 @@ public class BasicClientEntityModule implements DataSourceModule {
 					}
 				}
 				DataSourceField field;
-                GWT.log(ceilingEntityFullyQualifiedClassname + ":" + propertyName);
 				switch(SupportedFieldType.valueOf(fieldType)){
 				case ID:
 					field = new DataSourceTextField(propertyName, friendlyName);
