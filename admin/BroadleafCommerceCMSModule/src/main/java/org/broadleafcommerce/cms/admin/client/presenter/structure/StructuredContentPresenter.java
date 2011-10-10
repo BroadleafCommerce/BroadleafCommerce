@@ -92,18 +92,19 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+        initialValues.put("priority", new Integer(5));
 		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
-			public void onNewItemCreated(NewItemCreatedEvent event) {
+            public void onNewItemCreated(NewItemCreatedEvent event) {
                 Criteria myCriteria = new Criteria();
-				myCriteria.addCriteria("contentName", event.getRecord().getAttribute("contentName"));
+                myCriteria.addCriteria("contentName", event.getRecord().getAttribute("contentName"));
                 display.getListDisplay().getGrid().fetchData(myCriteria, new DSCallback() {
                     @Override
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
-                         getDisplay().getListDisplay().getGrid().selectRecord(0);
+                        getDisplay().getListDisplay().getGrid().selectRecord(0);
                     }
                 });
-			}
-		}, "90%", null, null);
+            }
+        }, "90%", null, null);
 	}
 
     @Override
