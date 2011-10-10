@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -464,6 +465,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 METADATA_CACHE.put(cacheKey, props);
                 cacheData = props;
             }
+            //clone the metadata before passing to the system
+            cacheData = (Map<String, FieldMetadata>) SerializationUtils.clone((Serializable) cacheData);
 			mergedProperties.putAll(cacheData);
 		}
 	}
