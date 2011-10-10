@@ -355,20 +355,23 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
 
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
-        Serializable exp = (Serializable) EXPRESSION_CACHE.get(expression);
-        if (exp == null) {
-            ParserContext context = new ParserContext();
-            try {
-                exp = MVEL.compileExpression(expression, context);
-            } catch (CompileException ce) {
-                LOG.warn("Compile exception processing phrase: " + expression,ce);
-                return Boolean.FALSE;
+        Serializable exp;
+        synchronized (EXPRESSION_CACHE) {
+            exp = (Serializable) EXPRESSION_CACHE.get(expression);
+            if (exp == null) {
+                ParserContext context = new ParserContext();
+                try {
+                    exp = MVEL.compileExpression(expression, context);
+                } catch (CompileException ce) {
+                    LOG.warn("Compile exception processing phrase: " + expression,ce);
+                    return Boolean.FALSE;
+                }
+
+                EXPRESSION_CACHE.put(expression, exp);
             }
         }
-        EXPRESSION_CACHE.put(expression, exp);
 
         return (Boolean) MVEL.executeExpression(exp, vars);
-
     }
 
     /**

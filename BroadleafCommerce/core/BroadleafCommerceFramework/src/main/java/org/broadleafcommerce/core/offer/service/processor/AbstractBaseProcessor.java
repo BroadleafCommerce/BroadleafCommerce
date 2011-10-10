@@ -133,8 +133,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     //            StringBuffer completeExpression = new StringBuffer(functions.toString());
                     //            completeExpression.append(" ").append(expression);
                     exp = MVEL.compileExpression(expression, context);
+
+                    EXPRESSION_CACHE.put(expression, exp);
                 }
-                EXPRESSION_CACHE.put(expression, exp);
             }
 
 			Object test = MVEL.executeExpression(exp, vars);
