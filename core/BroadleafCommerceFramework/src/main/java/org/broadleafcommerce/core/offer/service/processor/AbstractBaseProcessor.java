@@ -15,13 +15,6 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +33,9 @@ import org.hibernate.tool.hbm2x.StringUtils;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
+import java.io.Serializable;
+import java.util.*;
+
 /**
  * 
  * @author jfischer
@@ -48,7 +44,7 @@ import org.mvel2.ParserContext;
 public abstract class AbstractBaseProcessor implements BaseProcessor {
 
 	private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
-	private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
+	private static final Map EXPRESSION_CACHE = new LRUMap(1000);
 	
 	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
     	CandidatePromotionItems candidates = new CandidatePromotionItems();
@@ -126,17 +122,20 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
         try {
-			Serializable exp = (Serializable) EXPRESSION_CACHE.get(expression);
-			if (exp == null) {
-			    ParserContext context = new ParserContext();
-			    context.addImport("OfferType", OfferType.class);
-			    context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
-			    context.addImport("MVEL", MVEL.class);
-			    //            StringBuffer completeExpression = new StringBuffer(functions.toString());
-			    //            completeExpression.append(" ").append(expression);
-			    exp = MVEL.compileExpression(expression, context);
-			}
-			EXPRESSION_CACHE.put(expression, exp);
+            Serializable exp;
+            synchronized (EXPRESSION_CACHE) {
+                exp = (Serializable) EXPRESSION_CACHE.get(expression);
+                if (exp == null) {
+                    ParserContext context = new ParserContext();
+                    context.addImport("OfferType", OfferType.class);
+                    context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
+                    context.addImport("MVEL", MVEL.class);
+                    //            StringBuffer completeExpression = new StringBuffer(functions.toString());
+                    //            completeExpression.append(" ").append(expression);
+                    exp = MVEL.compileExpression(expression, context);
+                }
+                EXPRESSION_CACHE.put(expression, exp);
+            }
 
 			Object test = MVEL.executeExpression(exp, vars);
 			

@@ -15,9 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
+
+import java.io.Serializable;
 
 
 /**
@@ -110,5 +110,17 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
 
 	public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(manyToField);
+        sb.append(foreignKeyClass);
+        sb.append(currentValue);
+        sb.append(dataSourceName);
+        sb.append(restrictionType);
+        sb.append(displayValueProperty);
+
+        return sb.toString();
     }
 }

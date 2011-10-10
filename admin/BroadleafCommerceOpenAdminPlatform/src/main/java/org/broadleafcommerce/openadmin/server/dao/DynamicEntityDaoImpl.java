@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -57,6 +61,7 @@ import java.util.*;
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
+    private static final Map METADATA_CACHE = Collections.synchronizedMap(new LRUMap(1000));
 	
     protected EntityManager standardEntityManager;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
@@ -366,8 +371,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         List<String> explicitRemoves = new ArrayList<String>();
 
         for (String key : mergedProperties.keySet()) {
+            String testKey = prefix + key;
             for (String removeKey : removeItems) {
-                if ((key.startsWith(removeKey + ".") || key.equals(removeKey)) && mergedProperties.get(key).getFieldType() != SupportedFieldType.FOREIGN_KEY && mergedProperties.get(key).getFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+                if ((testKey.startsWith(removeKey + ".") || key.equals(removeKey)) && mergedProperties.get(key).getFieldType() != SupportedFieldType.FOREIGN_KEY && mergedProperties.get(key).getFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
                     explicitRemoves.add(key);
                 }
             }
@@ -379,6 +385,46 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
 		return mergedProperties;
 	}
+
+    protected String pad(String s, int length, char pad) {
+        StringBuffer buffer = new StringBuffer(s);
+        while (buffer.length() < length) {
+            buffer.insert(0, pad);
+        }
+        return buffer.toString();
+    }
+
+    protected String getCacheKey(ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, Class<?> clazz) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(clazz.hashCode());
+        sb.append(foreignField==null?"":foreignField.toString());
+        if (additionalNonPersistentProperties != null) {
+            for (String prop : additionalNonPersistentProperties) {
+                sb.append(prop);
+            }
+        }
+        if (additionalForeignFields != null) {
+            for (ForeignKey key : additionalForeignFields) {
+                sb.append(key.toString());
+            }
+        }
+        sb.append(mergedPropertyType);
+        sb.append(populateManyToOneFields);
+
+        String digest;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(sb.toString().getBytes());
+            BigInteger number = new BigInteger(1,messageDigest);
+            digest = number.toString(16);
+        } catch(NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        sb.append(pad(digest, 32, '0'));
+
+        return sb.toString();
+    }
 
 	protected void buildPropertiesFromPolymorphicEntities(
 		Class<?>[] entities, 
@@ -396,24 +442,33 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		String prefix
 	) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		for (Class<?> clazz : entities) {
-			Map<String, FieldMetadata> props = getPropertiesForEntityClass(clazz, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, configurationKey, removeItems, ceilingEntityFullyQualifiedClassname, prefix);
-			//first check all the properties currently in there to see if my entity inherits from them
-			for (Class<?> clazz2 : entities) {
-				if (!clazz2.getName().equals(clazz.getName())) {
-					for (String key: props.keySet()) {
-						FieldMetadata metadata = props.get(key);
-						if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(clazz2)) {
-							String[] both = (String[]) ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[]{clazz2.getName()});
-							metadata.setAvailableToTypes(both);
-						}
-					}
-				}
-			}
-			mergedProperties.putAll(props);
+            String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz);
+
+            Map<String, FieldMetadata> cacheData = (Map<String, FieldMetadata>) METADATA_CACHE.get(cacheKey);
+            if (cacheData == null) {
+                Map<String, FieldMetadata> props = getPropertiesForEntityClass(clazz, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, includeFields, excludeFields, configurationKey, removeItems, ceilingEntityFullyQualifiedClassname, prefix);
+                //first check all the properties currently in there to see if my entity inherits from them
+                for (Class<?> clazz2 : entities) {
+                    if (!clazz2.getName().equals(clazz.getName())) {
+                        for (String key: props.keySet()) {
+                            FieldMetadata metadata = props.get(key);
+                            if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(clazz2)) {
+                                String[] both = (String[]) ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[]{clazz2.getName()});
+                                metadata.setAvailableToTypes(both);
+                            }
+                        }
+                    }
+                }
+
+
+                METADATA_CACHE.put(cacheKey, props);
+                cacheData = props;
+            }
+			mergedProperties.putAll(cacheData);
 		}
 	}
-	
-	protected FieldMetadata getFieldMetadata(
+
+    protected FieldMetadata getFieldMetadata(
 		String prefix, 
 		String propertyName, 
 		List<Property> componentProperties,
