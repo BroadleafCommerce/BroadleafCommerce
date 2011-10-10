@@ -27,7 +27,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -38,15 +37,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.*;
-import org.hibernate.annotations.*;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -188,7 +195,7 @@ public class OfferImpl implements Offer {
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
-    @AdminPresentation(friendlyName="Treat As New Format", group="Application", groupOrder=4)
+    @AdminPresentation(friendlyName="Treat As New Format", group="Application", groupOrder=4, hidden=true)
     protected Boolean treatAsNewFormat;
 
     public Long getId() {
