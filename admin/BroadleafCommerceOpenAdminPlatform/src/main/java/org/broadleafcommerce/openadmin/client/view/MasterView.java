@@ -50,6 +50,7 @@ import org.broadleafcommerce.openadmin.client.Module;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 /**
@@ -92,15 +93,15 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
             // Only show menu items for modules the user has access to
             Collection<Module> allowedModules = modules.values();
 
-          //  for (Iterator<Module> iterator = allowedModules.iterator(); iterator.hasNext(); ) {
-          //      Module testModule =  iterator.next();
-          //      if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(testModule.getModuleKey())) {
-          //          iterator.remove();
-          //          if (moduleKey != null && moduleKey.equals(testModule.getModuleKey())) {
-          //              moduleKey = null;
-          //          }
-          //      }
-          //  }
+            for (Iterator<Module> iterator = allowedModules.iterator(); iterator.hasNext(); ) {
+                Module testModule =  iterator.next();
+                if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(testModule.getModuleKey())) {
+                    iterator.remove();
+                    if (moduleKey != null && moduleKey.equals(testModule.getModuleKey())) {
+                        moduleKey = null;
+                    }
+                }
+            }
 
             if (moduleKey == null && allowedModules.size() > 0) {
                 moduleKey = allowedModules.iterator().next().getModuleKey();
