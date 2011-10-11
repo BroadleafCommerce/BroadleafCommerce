@@ -437,7 +437,9 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
 		try {
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
-            createMergedProperties(persistencePackage, dynamicEntityDao, entityClasses);
+            if (getMergedProperties() == null) {
+                createMergedProperties(persistencePackage, dynamicEntityDao, entityClasses);
+            }
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, getMergedProperties());
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);

@@ -223,7 +223,9 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
 
-            createModifiedProperties(dynamicEntityDao, helper, persistencePerspective, entityClasses);
+            if (getModifiedProperties() == null) {
+                createModifiedProperties(dynamicEntityDao, helper, persistencePerspective, entityClasses);
+            }
             Map<String, FieldMetadata> originalProps = getModifiedProperties();
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
