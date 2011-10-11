@@ -113,7 +113,12 @@ public class BasicClientEntityModule implements DataSourceModule {
         	if (!fieldName.equals("_constructor") && !fieldName.equals("operator")) {
         		if (!fieldName.equals("criteria")) {
         			FilterAndSortCriteria filterCriteria = cto.get(fieldName);
-        			filterCriteria.setFilterValue(dataSource.stripDuplicateAllowSpecialCharacters((String) filterData.get(fieldName)));
+                    Object filterValue = filterData.get(fieldName);
+                    String filterString = null;
+                    if (filterValue != null) {
+                        filterString = filterValue.toString();
+                    }
+                    filterCriteria.setFilterValue(dataSource.stripDuplicateAllowSpecialCharacters(filterString));
         		} else {
         			JSONValue value = JSONParser.parse(jsObj);
         			JSONObject criteriaObj = value.isObject();
