@@ -29,9 +29,10 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
-import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.*;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -65,8 +66,6 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentStructuredContentRecord;
-    protected HandlerRegistration clearContentFilterButtonHandlerRegistration;
-    protected HandlerRegistration contentTypeFilterChangeHandlerRegistration;
     protected boolean isFetched = false;
 
 	@Override
@@ -213,33 +212,10 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 }
             }
         });
-        clearContentFilterButtonHandlerRegistration = getDisplay().getClearButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (event.isLeftButtonDown()) {
-                    getDisplay().getCurrentContentType().clearValue();
-                    ((StructuredContentListDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setPermanentCriteria(null);
-                    getDisplay().getListDisplay().getGrid().clearCriteria();
-                    getDisplay().getListDisplay().getGrid().invalidateCache();
-                }
-            }
-        });
         getDisplay().getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
                 isFetched = true;
-            }
-        });
-        contentTypeFilterChangeHandlerRegistration = getDisplay().getCurrentContentType().addChangedHandler(new ChangedHandler() {
-            @Override
-            public void onChanged(ChangedEvent event) {
-                String newContentTypeId = (String) event.getValue();
-                ((StructuredContentListDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setPermanentCriteria(new Criteria("structuredContentType", newContentTypeId));
-                if (isFetched) {
-                    getDisplay().getListDisplay().getGrid().invalidateCache();
-                } else {
-                    getDisplay().getListDisplay().getGrid().fetchData();
-                }
             }
         });
 	}
@@ -271,7 +247,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                             }
                         }
                 );
-                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "contentType", "contentName", "locale", "offlineFlag"});
+                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentTypeGrid", "contentName", "locale", "offlineFlag"});
 			}
 		}));
 	}

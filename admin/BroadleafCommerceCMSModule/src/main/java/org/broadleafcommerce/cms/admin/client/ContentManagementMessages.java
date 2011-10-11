@@ -64,4 +64,6 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String pendingApprovalTitle();
 
     public String contentTypeFilterTitle();
+    public String scDetailsTabTitle();
+    public String scRulesTabTitle();
 }

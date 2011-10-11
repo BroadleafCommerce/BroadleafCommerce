@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
@@ -25,6 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
@@ -145,6 +148,48 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
         mergedProperties.put("locale", fieldMetadata);
 
+        FieldMetadata contentTypeFieldMetadata = new FieldMetadata();
+        contentTypeFieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
+        contentTypeFieldMetadata.setMutable(true);
+        contentTypeFieldMetadata.setInheritedFromType(StructuredContentTypeImpl.class.getName());
+        contentTypeFieldMetadata.setAvailableToTypes(new String[]{StructuredContentTypeImpl.class.getName()});
+        contentTypeFieldMetadata.setCollection(false);
+        contentTypeFieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+
+        PersistencePackage contentTypeFetchPackage = new PersistencePackage();
+        contentTypeFetchPackage.setCeilingEntityFullyQualifiedClassname(StructuredContentType.class.getName());
+        PersistencePerspective contentTypeFetchPerspective = new PersistencePerspective();
+        contentTypeFetchPackage.setPersistencePerspective(contentTypeFetchPerspective);
+        contentTypeFetchPerspective.setAdditionalForeignKeys(new ForeignKey[]{});
+        contentTypeFetchPerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        contentTypeFetchPerspective.setAdditionalNonPersistentProperties(new String[]{});
+        DynamicResultSet contentTypeResultSet = ((PersistenceManager) helper).fetch(contentTypeFetchPackage, new CriteriaTransferObject());
+
+        String[][] contentTypeEnums = new String[contentTypeResultSet.getRecords().length][2];
+        int i=0;
+        for (Entity entity : contentTypeResultSet.getRecords()) {
+            contentTypeEnums[i][0] = entity.findProperty("id").getValue();
+            contentTypeEnums[i][1] = entity.findProperty("name").getValue();
+            i++;
+        }
+
+        contentTypeFieldMetadata.setEnumerationValues(contentTypeEnums);
+        FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
+        contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
+        contentTypeAttributes.setName("structuredContentTypeGrid");
+        contentTypeAttributes.setFriendlyName("Content Type");
+        contentTypeAttributes.setGroup("Description");
+        contentTypeAttributes.setOrder(2);
+        contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        contentTypeAttributes.setProminent(true);
+        contentTypeAttributes.setBroadleafEnumeration("");
+        contentTypeAttributes.setReadOnly(false);
+        contentTypeAttributes.setHidden(false);
+        contentTypeAttributes.setRequiredOverride(true);
+        contentTypeAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+
+        mergedProperties.put("structuredContentTypeGrid", contentTypeFieldMetadata);
+
         FieldMetadata iconMetadata = new FieldMetadata();
         iconMetadata.setFieldType(SupportedFieldType.ARTIFACT);
         iconMetadata.setMutable(true);
@@ -197,6 +242,23 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
+            if (cto.get("structuredContentTypeGrid").getFilterValues().length > 0) {
+                CriteriaTransferObject ctoCopy = new CriteriaTransferObject();
+                for (String prop : cto.getPropertyIdSet()) {
+                    String propertyId;
+                    if (prop.equals("structuredContentTypeGrid")) {
+                        propertyId = "structuredContentType";
+                    } else {
+                        propertyId = prop;
+                    }
+                    FilterAndSortCriteria criteria = ctoCopy.get(propertyId);
+                    FilterAndSortCriteria oldCriteria = cto.get(prop);
+                    criteria.setFilterValue(oldCriteria.getFilterValues()[0]);
+                    criteria.setIgnoreCase(oldCriteria.getIgnoreCase());
+                    criteria.setSortAscending(oldCriteria.getIgnoreCase());
+                }
+                cto = ctoCopy;
+            }
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entities);
@@ -211,18 +273,24 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             List<Serializable> convertedList = new ArrayList<Serializable>();
             convertedList.addAll(contents);
 
-            Entity[] pageEntities = helper.getRecords(originalProps, convertedList);
+            Entity[] structuredContentEntities = helper.getRecords(originalProps, convertedList);
 
-            for (Entity entity : pageEntities) {
+            for (Entity entity : structuredContentEntities) {
                 if ("true".equals(entity.findProperty("lockedFlag").getValue())) {
                     Property property = new Property();
                     property.setName("locked");
                     property.setValue("[ISOMORPHIC]/../admin/images/lock_page.png");
                     entity.addProperty(property);
                 }
+                if (entity.findProperty("structuredContentType") != null) {
+                    Property property = new Property();
+                    property.setName("structuredContentTypeGrid");
+                    property.setValue(entity.findProperty("structuredContentType").getValue());
+                    entity.addProperty(property);
+                }
             }
 
-            DynamicResultSet response = new DynamicResultSet(pageEntities, totalRecords.intValue());
+            DynamicResultSet response = new DynamicResultSet(structuredContentEntities, totalRecords.intValue());
 
             return response;
         } catch (Exception e) {
