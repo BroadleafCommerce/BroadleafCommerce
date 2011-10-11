@@ -16,18 +16,20 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.grid.HoverCustomizer;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
@@ -66,33 +68,38 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         listDisplay.getGrid().setHoverCustomizer(new HoverCustomizer() {
             @Override
             public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (record.getAttributeAsBoolean("lockedFlag")) {
+                if (record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
                     return "Last Updated By <B>" + record.getAttribute("auditable.updatedBy.name") + "</B> On <B>" + record.getAttribute("auditable.dateUpdated") + "</B>.";
                 }
                 return null;
             }
         });
-        
-        Label label = new Label();
-        label.setContents(BLCMain.getMessageManager().getString("contentTypeFilterTitle"));
-        label.setWrap(false);
-        listDisplay.getToolBar().addMember(label);
-        clearButton = new ToolStripButton();  
-        clearButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/close.png");
-        listDisplay.getToolBar().addButton(clearButton);
-        currentContentType.setShowTitle(false);
-        currentContentType.setWidth(120);
-        currentContentType.setOptionDataSource(additionalDataSources[0]);
-        currentContentType.setDisplayField("name");
-        currentContentType.setValueField("id");
-        currentContentType.setDefaultToFirstOption(false);
-        listDisplay.getToolBar().addFormItem(currentContentType);
 
         leftVerticalLayout.addMember(listDisplay);
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
 
         addMember(leftVerticalLayout);
-        addMember(dynamicFormDisplay);
+
+        TabSet topTabSet = new TabSet();
+        topTabSet.setID("scTopTabSet");
+        topTabSet.setTabBarPosition(Side.TOP);
+        topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
+        topTabSet.setWidth("50%");
+        topTabSet.setHeight100();
+        topTabSet.setPaneMargin(0);
+
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("scDetailsTabTitle"));
+        detailsTab.setID("scDetailsTab");
+        detailsTab.setPane(dynamicFormDisplay);
+        topTabSet.addTab(detailsTab);
+
+        Tab rulesTab = new Tab(BLCMain.getMessageManager().getString("scRulesTabTitle"));
+        rulesTab.setID("scRulesTab");
+        VLayout rulesLayout = new VLayout();
+        rulesTab.setPane(rulesLayout);
+        topTabSet.addTab(rulesTab);
+
+        addMember(topTabSet);
 	}
 
     public Canvas asCanvas() {
@@ -106,12 +113,4 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
-
-    public ComboBoxItem getCurrentContentType() {
-        return currentContentType;
-    }
-
-    public ToolStripButton getClearButton() {
-        return clearButton;
-    }
 }

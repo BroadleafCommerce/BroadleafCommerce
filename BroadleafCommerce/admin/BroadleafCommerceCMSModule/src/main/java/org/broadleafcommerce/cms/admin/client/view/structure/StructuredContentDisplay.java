@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
-import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 
 /**
@@ -29,8 +27,5 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
  */
 public interface StructuredContentDisplay extends DynamicEditDisplay {
 
-    public ComboBoxItem getCurrentContentType();
-
-    public ToolStripButton getClearButton();
 
 }
