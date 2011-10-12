@@ -29,10 +29,7 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.*;
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -223,6 +220,11 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 	public void setup() {
         super.setup();
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ((DynamicEntityDataSource) result).permanentlyShowFields("id");
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				ListGridDataSource structuredContentTypeDataSource = (ListGridDataSource) result;
@@ -230,7 +232,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 					"name","description"
 				);
 				EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
-                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), result);
+                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), getPresenterSequenceSetupManager().getDataSource("offerCustomerDS"));
 				getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "structuredContentType",

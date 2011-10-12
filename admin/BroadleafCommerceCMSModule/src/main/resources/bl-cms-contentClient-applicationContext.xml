@@ -77,21 +77,4 @@
 		</property>
 	</bean>
 
-     <!-- TimeDTO used by the structured content rule builder. -->
-    <bean id="blTimeDTO" class="org.broadleafcommerce.common.TimeDTO"/>
-    <!-- RequestDTO used by the structured content rule builder -->
-    <bean id="blRequestDTO" class="org.broadleafcommerce.common.RequestDTOImpl"/>
-    <!-- RequestDTO used by the structured content rule builder -->
-    <bean id="blCustomerDTO" class="org.broadleafcommerce.common.SampleCustomerDTO"/>
-
-    <bean id="blStructuredContentService" class="org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl">
-        <property name="structuredContentRuleDTOs">
-            <map>
-                <entry key="time" value-ref="blTimeDTO"/>
-                <entry key="request" value-ref="blRequestDTO"/>
-                <entry key="customer" value-ref="blCustomerDTO"/>
-            </map>
-        </property>
-    </bean>
-
 </beans>
