@@ -376,6 +376,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             for (String removeKey : removeItems) {
                 if ((testKey.startsWith(removeKey + ".") || key.equals(removeKey)) && mergedProperties.get(key).getFieldType() != SupportedFieldType.FOREIGN_KEY && mergedProperties.get(key).getFieldType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
                     explicitRemoves.add(key);
+                    break;
                 }
             }
         }
@@ -803,7 +804,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 FieldPresentationAttributes presentationAttribute = presentationAttributes.get(propertyName);
                 Boolean removeItem = !checkPropertyForInclusion(presentationAttribute);
                 if (removeItem) {
-                    removeItems.add(propertyName);
+                    removeItems.add(prefix + propertyName);
                 }
 				Boolean includeField = testFieldInclusion(prefix, propertyName);
 
@@ -993,6 +994,16 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>();
 		for (String key : newFields.keySet()) {
 			convertedFields.put(propertyName + "." + key, newFields.get(key));
+            List<String> newRemoveItems = new ArrayList<String>();
+            Iterator<String> itr = removeItems.iterator();
+            while(itr.hasNext()) {
+                String item = itr.next();
+                if (propertyName.equals(item) || key.equals(item)) {
+                    itr.remove();
+                    newRemoveItems.add(propertyName + "." + key);
+                }
+            }
+            removeItems.addAll(newRemoveItems);
 		}
 		fields.putAll(convertedFields);
 	}

@@ -68,7 +68,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         listDisplay.getGrid().setHoverCustomizer(new HoverCustomizer() {
             @Override
             public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (record.getAttributeAsBoolean("lockedFlag")) {
+                if (record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
                     return "Last Updated By <B>" + record.getAttribute("auditable.updatedBy.name") + "</B> On <B>" + record.getAttribute("auditable.dateUpdated") + "</B>.";
                 }
                 return null;

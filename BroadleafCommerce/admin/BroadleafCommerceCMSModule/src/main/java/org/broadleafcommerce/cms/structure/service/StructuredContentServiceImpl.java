@@ -546,24 +546,4 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             structuredContentDao.addOrUpdateContentItem(originalSc, false);
         }
     }
-
-
-    /**
-     * Returns a list of DTO objects that the rule builder should support for content targeting.
-     * <p/>
-     * The RuleDTO objects drive the behavior of the admin API but have a loose binding to the
-     * actual objects used in the MVEL processing.    The actual objects must have the same
-     * properties but are not strictly required to extend these DTOs.
-     * <p/>
-     * The Map key is the object reference that should be used in the MVEL processing.
-     */
-    @Override
-    public Map<String, Object> getStructuredContentRuleDTOs() {
-        return structuredContentRuleDTOMap;
-    }
-
-    @Override
-    public void setStructuredContentRuleDTOs(Map<String, Object> contentRuleDTOMap) {
-        structuredContentRuleDTOMap = contentRuleDTOMap;
-    }
 }
