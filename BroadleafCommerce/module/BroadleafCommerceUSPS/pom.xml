@@ -6,10 +6,10 @@
 		<version>1.5.0-M5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.broadleafcommerce</groupId>
+	<!-- 'groupId' inherited from parent -->
 	<artifactId>broadleaf-usps</artifactId>
 	<name>BroadleafCommerceUSPS</name>
-	<version>1.5.0-M5-SNAPSHOT</version>
+	<!-- 'version' inherited from parent -->
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>

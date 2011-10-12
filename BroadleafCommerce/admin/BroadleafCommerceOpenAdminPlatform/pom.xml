@@ -6,9 +6,9 @@
 		<groupId>org.broadleafcommerce</groupId>
 		<version>1.5.0-M5-SNAPSHOT</version>
 	</parent>
-	<groupId>org.broadleafcommerce</groupId>
+	<!-- 'groupId' inherited from parent -->
 	<artifactId>broadleaf-open-admin-platform</artifactId>
-	<version>1.5.0-M5-SNAPSHOT</version>
+	<!-- 'version' inherited from parent -->
 	<packaging>jar</packaging>
 	<name>BroadleafCommerceOpenAdminPlatform</name>
 	<url>http://maven.apache.org</url>
