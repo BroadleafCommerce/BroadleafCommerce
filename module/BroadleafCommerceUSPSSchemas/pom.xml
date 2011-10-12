@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>module</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
 		<version>1.5.0-M5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.broadleafcommerce</groupId>
+	<!-- 'groupId' inherited from parent -->
 	<artifactId>broadleaf-usps-schemas</artifactId>
 	<name>BroadleafCommerceUSPSSchemas</name>
-	<version>1.5.0-M5-SNAPSHOT</version>
+	<!-- 'version' inherited from parent -->
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
@@ -45,6 +46,24 @@
 					<relativePath>../../</relativePath>
 					<rootPath>$${rebel.root}</rootPath>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/generated-sources/xmlbeans</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

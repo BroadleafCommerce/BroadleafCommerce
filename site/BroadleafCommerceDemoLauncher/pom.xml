@@ -6,9 +6,9 @@
 		<groupId>org.broadleafcommerce</groupId>
 		<version>1.5.0-M5-SNAPSHOT</version>
 	</parent>
-	<groupId>org.broadleafcommerce</groupId>
+	<!-- 'groupId' inherited from parent -->
 	<artifactId>broadleaf-demo-launcher</artifactId>
-	<version>1.5.0-M5-SNAPSHOT</version>
+	<!-- 'version' inherited from parent -->
 	<name>BroadleafCommerceDemoLauncher</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -19,7 +19,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version> 
 				<configuration>
 					<archive>
 						<manifest>

@@ -6,10 +6,10 @@
 		<version>1.5.0-M5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.broadleafcommerce</groupId>
+	<!-- 'groupId' inherited from parent -->
 	<artifactId>broadleaf-cybersource-api</artifactId>
 	<name>BroadleafCommerceCyberSourceAPI</name>
-	<version>1.5.0-M5-SNAPSHOT</version>
+	<!-- 'version' inherited from parent -->
 	<properties>
 		<cybersource.version>1.49</cybersource.version>
 	</properties>
