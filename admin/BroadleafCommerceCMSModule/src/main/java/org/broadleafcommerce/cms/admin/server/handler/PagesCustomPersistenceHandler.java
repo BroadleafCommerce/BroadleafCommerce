@@ -90,8 +90,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			PageFolder adminInstance = (PageFolder) Class.forName(entity.getType()[0]).newInstance();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(PageFolder.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective);
 			adminInstance = (PageFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             if (PageFolderImpl.class.getName().equals(entity.getType()[0])) {
@@ -166,8 +165,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {
@@ -195,8 +193,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		Entity entity = persistencePackage.getEntity();
         try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {

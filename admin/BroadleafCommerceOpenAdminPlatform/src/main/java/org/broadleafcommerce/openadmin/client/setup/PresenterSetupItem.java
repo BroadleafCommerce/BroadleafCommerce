@@ -38,6 +38,10 @@ public class PresenterSetupItem {
 		this.additionalItems = additionalItems;
 		this.adapter = adapter;
 	}
+
+    public PresenterSetupItem(String name, DataSourceFactory factory, AsyncCallbackAdapter adapter) {
+        this(name, factory, null, new Object[]{}, adapter);
+	}
 	
 	public AsyncCallbackAdapter getAdapter() {
 		return adapter;

@@ -89,8 +89,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 	public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
 		try {
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
-			Map<String, FieldMetadata> mergedProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePackage.getPersistencePerspective(), entityClasses);
+			Map<String, FieldMetadata> mergedProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePackage.getPersistencePerspective());
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
 			/*
 			 * Add a fake property to hold the fulfillment group rules. This property is the same type as appliesToOrderRules
@@ -98,15 +97,15 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			mergedProperties.put("appliesToFulfillmentGroupRules", mergedProperties.get("appliesToOrderRules"));
 			
 			PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
-			Class<?>[] offerCodeEntityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(OfferCode.class);
-			Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective, offerCodeEntityClasses);
+			Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
 			FieldMetadata metadata = offerCodeMergedProperties.get("offerCode");
 			metadata.getPresentationAttributes().setHidden(true);
 			mergedProperties.put("offerCode.offerCode", metadata);
 			FieldMetadata metadata2 = offerCodeMergedProperties.get("id");
 			metadata2.getPresentationAttributes().setHidden(true);
 			mergedProperties.put("offerCode.id", metadata2);
-			
+
+            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
 			
 			DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
@@ -123,8 +122,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
-			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 			BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Offer.class.getName(), offerProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Offer.class.getName());
 			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Offer.class);
@@ -151,8 +149,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			}
 			
 			PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
-			Class<?>[] offerCodeEntityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(OfferCode.class);
-			Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective, offerCodeEntityClasses);
+			Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
 			for (Entity record : entities) {
 				CriteriaTransferObject offerCodeCto = new CriteriaTransferObject();
 				FilterAndSortCriteria filterCriteria = offerCodeCto.get("offer");
@@ -186,8 +183,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Offer offerInstance = (Offer) Class.forName(entity.getType()[0]).newInstance();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
-			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 			offerInstance = (Offer) helper.createPopulatedInstance(offerInstance, entity, offerProperties, false);
 			
 			addRule(entity, offerInstance, "appliesToOrderRules", OfferRuleType.ORDER);
@@ -210,8 +206,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Entity offerEntity = helper.getRecord(offerProperties, offerInstance, null, null);
 			if (offerCode != null) {
 				PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
-				Class<?>[] offerCodeEntityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(OfferCode.class);
-				Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective, offerCodeEntityClasses);
+				Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
 				Entity offerCodeEntity = helper.getRecord(offerCodeMergedProperties, offerCode, null, null);
 				
 				Entity temp = new Entity();
@@ -238,8 +233,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 					dynamicEntityDao.remove(offerCode);
 				}
 			}
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
-			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, offerProperties);
 			Offer offerInstance = (Offer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			dynamicEntityDao.remove(offerInstance);
@@ -252,8 +246,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
-			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, offerProperties);
 			Offer offerInstance = (Offer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			offerInstance = (Offer) helper.createPopulatedInstance(offerInstance, entity, offerProperties, false);
@@ -293,8 +286,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Entity offerEntity = helper.getRecord(offerProperties, offerInstance, null, null);
 			if (offerCode != null) {
 				PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
-				Class<?>[] offerCodeEntityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(OfferCode.class);
-				Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective, offerCodeEntityClasses);
+				Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
 				Entity offerCodeEntity = helper.getRecord(offerCodeMergedProperties, offerCode, null, null);
 				
 				Entity temp = new Entity();

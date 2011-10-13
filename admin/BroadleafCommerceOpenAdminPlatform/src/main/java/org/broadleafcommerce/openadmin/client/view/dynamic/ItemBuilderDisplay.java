@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.view.promotion;
+package org.broadleafcommerce.openadmin.client.view.dynamic;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.ImgButton;

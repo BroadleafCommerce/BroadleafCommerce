@@ -65,10 +65,17 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	public EntityManager getStandardEntityManager();
 	
 	public void setStandardEntityManager(EntityManager entityManager);
-	
+
+    /**
+     * Get the Hibernate PersistentClass instance associated with the fully-qualified
+     * class name. Will return null if no persistent class is associated with this name.
+     *
+     * @param targetClassName
+     * @return The PersistentClass instance
+     */
 	public PersistentClass getPersistentClass(String targetClassName);
 	
-	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 
     public FieldManager getFieldManager();
 

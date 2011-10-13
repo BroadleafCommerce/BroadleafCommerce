@@ -40,7 +40,7 @@ public class PassthroughEntityPresenter implements EntityPresenter, Instantiable
 
     @Override
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("passthroughEntityPresenter", null, null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("passthroughEntityPresenter", null, new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource top) {
                 getDisplay().build(top, null);
             }

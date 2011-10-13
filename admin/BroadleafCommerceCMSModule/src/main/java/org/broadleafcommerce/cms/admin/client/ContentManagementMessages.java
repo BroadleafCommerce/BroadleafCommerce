@@ -33,37 +33,32 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String assetListTitle();
     public String newAssetTitle();
     public String deleteAssetTitle();
-
     public String pageListTitle();
     public String newPageTitle();
     public String deletePageTitle();
-
-
-
     public String structuredContentListTitle();
     public String newStructuredContentTitle();
     public String deleteStructuredContentTitle();
-
-
-
     public String pagesTitle();
     public String detailsTitle();
     public String allChildItemsTitle();
     public String defaultPageName();
     public String newItemTitle();
-
     public String staticAssetsTitle();
     public String staticAssetFoldersTitle();
     public String assetDescriptionTitle();
     public String newAssetDescriptionTitle();
-
     public String structuredContentTitle();
-
     public String userSandBoxTitle();
     public String approverSandBoxTitle();
     public String pendingApprovalTitle();
-
     public String contentTypeFilterTitle();
     public String scDetailsTabTitle();
     public String scRulesTabTitle();
+    public String lockedMessage();
+    public String scCustomerRule();
+    public String scTimeRule();
+    public String scRequestRule();
+    public String scOrderItemRule();
+
 }

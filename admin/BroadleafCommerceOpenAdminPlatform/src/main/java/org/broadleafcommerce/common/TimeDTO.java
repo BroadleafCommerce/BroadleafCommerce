@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.common;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.presentation.AdminPresentation;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,12 +27,26 @@ import java.util.Date;
  * Created by bpolster.
  */
 public class TimeDTO {
+
+    @AdminPresentation(excluded = true)
     private Calendar cal;
+
+    @AdminPresentation(friendlyName = "Hour Of Day", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.HourOfDayType")
     private Integer hour;
+
+    @AdminPresentation(friendlyName = "Day Of Week", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.DayOfWeekType")
     private Integer dayOfWeek;
+
+    @AdminPresentation(friendlyName = "Month", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.MonthType")
     private Integer month;
+
+    @AdminPresentation(friendlyName = "Day Of Month", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.DayOfMonthType")
     private Integer dayOfMonth;
-    private Double timeAsDecimal;
+
+    @AdminPresentation(friendlyName = "Minute", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.MinuteType")
+    private Integer minute;
+
+    @AdminPresentation(friendlyName = "Date")
     private Date date;
 
     public TimeDTO() {
@@ -83,15 +99,11 @@ public class TimeDTO {
         return month;
     }
 
-    /**
-     * @return the time as a decimal (e.g. 13.5  =  (1:30 PM) or more specifically,
-     * Calendar-HOUR_OF_DAY + (CALENDAR.MINUTE_OF_HOUR / 60).
-     */
-    public double getTimeAsDecimal() {
-        if (timeAsDecimal == null) {
-            timeAsDecimal = cal.get(Calendar.HOUR_OF_DAY) + (cal.get(Calendar.MINUTE) / 60.0);
+    public int getMinute() {
+        if (minute == null) {
+            minute = cal.get(Calendar.MINUTE);
         }
-        return timeAsDecimal;
+        return minute;
     }
 
     public Date getDate() {
@@ -121,11 +133,11 @@ public class TimeDTO {
         this.dayOfMonth = dayOfMonth;
     }
 
-    public void setTimeAsDecimal(Double timeAsDecimal) {
-        this.timeAsDecimal = timeAsDecimal;
-    }
-
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setMinute(Integer minute) {
+        this.minute = minute;
     }
 }

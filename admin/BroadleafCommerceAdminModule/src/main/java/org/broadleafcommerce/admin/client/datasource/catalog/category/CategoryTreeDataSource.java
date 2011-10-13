@@ -58,7 +58,8 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 	@Override
 	protected void executeFetch(final String requestId, final DSRequest request, final DSResponse response) {
 		CriteriaTransferObject criteriaTransferObject = getCompatibleModule(OperationType.ENTITY).getCto(request);
-		String parentCategoryId = criteriaTransferObject.get(CategoryTreeDataSourceFactory.foreignKeyName).getFilterValues()[0];
+        String[] filterValues = criteriaTransferObject.get(CategoryTreeDataSourceFactory.foreignKeyName).getFilterValues();
+		String parentCategoryId = filterValues.length>0?filterValues[0]:null;
 		boolean hasChildren = true;
 		if (parentCategoryId != null) {
 			TreeNode parentNode = ((TreeGrid) associatedGrid).getTree().findById(parentCategoryId);

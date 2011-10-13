@@ -117,8 +117,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 		Entity entity = persistencePackage.getEntity();
         try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StaticAssetFolder adminInstance = (StaticAssetFolder) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
@@ -134,8 +133,7 @@ public class StaticAssetFolderCustomPersistenceHandler extends CustomPersistence
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			StaticAssetFolder adminInstance = (StaticAssetFolder) Class.forName(entity.getType()[0]).newInstance();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StaticAssetFolder.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StaticAssetFolder.class.getName(), persistencePerspective);
 			adminInstance = (StaticAssetFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = staticAssetService.addStaticAssetFolder(adminInstance, adminInstance.getParentFolder());

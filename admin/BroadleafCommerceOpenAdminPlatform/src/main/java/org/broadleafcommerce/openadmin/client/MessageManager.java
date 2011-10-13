@@ -126,4 +126,12 @@ public class MessageManager implements ConstantsWithLookup {
         }
         throw backup;
     }
+
+    public String replaceKeys(String templateProperty, String[] keyNames, String[] values) {
+        for (int j=0;j<keyNames.length;j++) {
+            templateProperty = templateProperty.replaceAll("${"+keyNames[j]+"}", values[j]);
+        }
+
+        return templateProperty;
+    }
 }

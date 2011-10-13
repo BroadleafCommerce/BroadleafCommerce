@@ -15,17 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.*;
 import com.smartgwt.client.types.DSDataFormat;
 import com.smartgwt.client.types.DSProtocol;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -59,7 +54,7 @@ public class FieldDataSourceWrapper extends DataSource {
         	if (title == null) {
         		title = field.getName();
         	}
-        	if (entered == null || entered.equals("") || (title != null && title.toLowerCase().startsWith(entered.toLowerCase()))) {
+        	if (!field.getHidden() && (entered == null || entered.equals("") || (title != null && title.toLowerCase().startsWith(entered.toLowerCase())))) {
 	        	Record record = new Record();
 	        	for (String attribute : field.getAttributes()) {
 	        		record.setAttribute(attribute, field.getAttribute(attribute));

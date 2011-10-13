@@ -104,8 +104,8 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         return mergedProperties;
     }
 
-    protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective, Class<?>[] entityClasses) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException {
-        mergedProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
+    protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException, NoSuchFieldException {
+        mergedProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 
         FieldMetadata fieldMetadata = new FieldMetadata();
         fieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
@@ -221,14 +221,14 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 		try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
 
             if (getModifiedProperties() == null) {
-                createModifiedProperties(dynamicEntityDao, helper, persistencePerspective, entityClasses);
+                createModifiedProperties(dynamicEntityDao, helper, persistencePerspective);
             }
             Map<String, FieldMetadata> originalProps = getModifiedProperties();
 
 			allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
+            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
 			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
 			DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
 
@@ -262,8 +262,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
                 cto = ctoCopy;
             }
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
-            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entities);
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StructuredContent.class.getName(), originalProps);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, StructuredContent.class.getName());
             PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), StructuredContent.class.getName());
@@ -307,8 +306,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			StructuredContent adminInstance = (StructuredContent) Class.forName(entity.getType()[0]).newInstance();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = structuredContentService.addStructuredContent(adminInstance, getSandBox());
@@ -327,8 +325,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             adminInstance.getStructuredContentFields().size();
@@ -352,8 +349,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 		Entity entity = persistencePackage.getEntity();
         try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(StructuredContent.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
