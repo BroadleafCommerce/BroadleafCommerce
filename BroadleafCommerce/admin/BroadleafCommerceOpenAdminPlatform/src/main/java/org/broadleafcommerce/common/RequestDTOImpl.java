@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
@@ -26,8 +28,13 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @AdminPresentation(friendlyName = "Request URI")
     private String requestURI;
+
+    @AdminPresentation(friendlyName = "Full Url")
     private String fullUrlWithQueryString;
+
+    @AdminPresentation(friendlyName = "Is Secure")
     private Boolean secure;
 
     public RequestDTOImpl() {

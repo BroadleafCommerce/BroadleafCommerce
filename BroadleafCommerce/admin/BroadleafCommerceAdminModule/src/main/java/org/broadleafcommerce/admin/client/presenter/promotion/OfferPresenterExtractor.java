@@ -26,7 +26,7 @@ import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteria
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.FilterType;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.admin.client.view.promotion.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 
 import java.util.HashMap;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.view.promotion;
+package org.broadleafcommerce.openadmin.client.view.dynamic;
 
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 

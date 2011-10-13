@@ -122,8 +122,7 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
             }
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SandBoxItem.class);
-            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective, entities);
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective);
             cto.get("originalSandBox").setFilterValue(mySandBox.getId().toString());
             cto.get("archivedFlag").setFilterValue(Boolean.FALSE.toString());
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);

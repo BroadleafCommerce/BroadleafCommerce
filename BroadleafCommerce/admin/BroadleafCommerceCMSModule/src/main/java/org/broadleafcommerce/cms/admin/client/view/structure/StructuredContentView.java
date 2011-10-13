@@ -20,6 +20,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.grid.HoverCustomizer;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -32,6 +33,8 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
@@ -47,6 +50,9 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     protected DynamicEntityListView listDisplay;
     protected DynamicFormView dynamicFormDisplay;
     protected FilterBuilder customerFilterBuilder;
+    protected FilterBuilder timeFilterBuilder;
+    protected FilterBuilder requestFilterBuilder;
+    protected ItemBuilderDisplay targetItemBuilder;
 
     public StructuredContentView() {
 		setHeight100();
@@ -55,9 +61,9 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
     public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
         DataSource customerDataSource = additionalDataSources[0];
-        //DataSource orderItemDataSource = additionalDataSources[1];
-        //DataSource timeDataSource = additionalDataSources[2];
-        //DataSource requestDataSource = additionalDataSources[3];
+        DataSource timeDataSource = additionalDataSources[1];
+        DataSource requestDataSource = additionalDataSources[2];
+        DataSource orderItemDataSource = additionalDataSources[3];
 
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("structureLeftVerticalLayout");
@@ -73,7 +79,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
             @Override
             public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
                 if (record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
-                    return "Last Updated By <B>" + record.getAttribute("auditable.updatedBy.name") + "</B> On <B>" + record.getAttribute("auditable.dateUpdated") + "</B>.";
+                    return BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("lockedMessage"), new String[]{"userName", "date"}, new String[]{record.getAttribute("auditable.updatedBy.name"), record.getAttribute("auditable.dateUpdated")});
                 }
                 return null;
             }
@@ -103,16 +109,56 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         rulesLayout.setHeight100();
         rulesLayout.setWidth100();
         rulesLayout.setBackgroundColor("#eaeaea");
+        rulesLayout.setLayoutMargin(20);
         rulesLayout.setOverflow(Overflow.AUTO);
 
+        Label customerLabel = new Label();
+        customerLabel.setContents(BLCMain.getMessageManager().getString("scCustomerRule"));
+        customerLabel.setHeight(20);
+        rulesLayout.addMember(customerLabel);
+        
         customerFilterBuilder = new FilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
-        customerFilterBuilder.setVisible(false);
-        customerFilterBuilder.setLayoutBottomMargin(10);
+        customerFilterBuilder.setLayoutBottomMargin(20);
         customerFilterBuilder.setAllowEmpty(true);
         customerFilterBuilder.setValidateOnChange(false);
         rulesLayout.addMember(customerFilterBuilder);
+
+        Label timeLabel = new Label();
+        timeLabel.setContents(BLCMain.getMessageManager().getString("scTimeRule"));
+        timeLabel.setHeight(20);
+        rulesLayout.addMember(timeLabel);
+
+        timeFilterBuilder = new FilterBuilder();
+        timeFilterBuilder.setDataSource(timeDataSource);
+        timeFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(timeDataSource));
+        timeFilterBuilder.setLayoutBottomMargin(20);
+        timeFilterBuilder.setAllowEmpty(true);
+        timeFilterBuilder.setValidateOnChange(false);
+        rulesLayout.addMember(timeFilterBuilder);
+
+        Label requestLabel = new Label();
+        requestLabel.setContents(BLCMain.getMessageManager().getString("scRequestRule"));
+        requestLabel.setHeight(20);
+        rulesLayout.addMember(requestLabel);
+
+        requestFilterBuilder = new FilterBuilder();
+        requestFilterBuilder.setDataSource(requestDataSource);
+        requestFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(requestDataSource));
+        requestFilterBuilder.setLayoutBottomMargin(20);
+        requestFilterBuilder.setAllowEmpty(true);
+        requestFilterBuilder.setValidateOnChange(false);
+        rulesLayout.addMember(requestFilterBuilder);
+
+        Label orderItemLabel = new Label();
+        orderItemLabel.setContents(BLCMain.getMessageManager().getString("scOrderItemRule"));
+        orderItemLabel.setHeight(20);
+        rulesLayout.addMember(orderItemLabel);
+
+        targetItemBuilder = new ItemBuilderView(orderItemDataSource, false);
+        rulesLayout.addMember((ItemBuilderView) targetItemBuilder);
+        rulesLayout.setLayoutBottomMargin(10);
 
         rulesTab.setPane(rulesLayout);
         topTabSet.addTab(rulesTab);

@@ -219,10 +219,17 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
 	public void setup() {
         super.setup();
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), null, new Object[]{}, new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("timeDTODS", new TimeDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("requestDTODS", new RequestDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scOrderItemDS", new OrderItemListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
             }
         }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentTypeSearchDS", new StructuredContentTypeSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
@@ -232,7 +239,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 					"name","description"
 				);
 				EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
-                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), getPresenterSequenceSetupManager().getDataSource("offerCustomerDS"));
+                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), getPresenterSequenceSetupManager().getDataSource("scCustomerDS"), getPresenterSequenceSetupManager().getDataSource("timeDTODS"), getPresenterSequenceSetupManager().getDataSource("requestDTODS"), getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
 				getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "structuredContentType",

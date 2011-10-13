@@ -58,8 +58,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			AdminUser adminInstance = (AdminUser) Class.forName(entity.getType()[0]).newInstance();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(AdminUser.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
 			adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 			adminInstance.setUnencodedPassword(adminInstance.getPassword());
 			adminInstance.setPassword(null);
@@ -78,8 +77,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 		Entity entity = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(AdminUser.class);
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective, entityClasses);
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);

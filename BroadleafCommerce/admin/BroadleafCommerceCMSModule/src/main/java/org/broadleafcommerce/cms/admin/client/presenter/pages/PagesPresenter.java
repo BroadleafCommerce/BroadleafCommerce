@@ -293,7 +293,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 	public void setup() {
         super.setup();
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTreeDS", new PagesTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), top);
 				((TreeGridDataSource) getPresenterSequenceSetupManager().getDataSource("pageTreeDS")).setupGridFields(new String[]{}, new Boolean[]{}, "250", "100");
