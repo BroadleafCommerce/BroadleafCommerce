@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -23,14 +26,11 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.admin.client.presenter.promotion.translation.FilterType;
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 /**
  * 
@@ -38,7 +38,15 @@ import java.util.Map;
  *
  */
 public class OfferPresenterExtractor {
-	
+
+    private static Map<FilterType, String> MVELKEYWORDMAP = new HashMap<FilterType, String>();
+	static {
+		MVELKEYWORDMAP.put(FilterType.ORDER, "order");
+		MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
+		MVELKEYWORDMAP.put(FilterType.FULFILLMENT_GROUP, "fulfillmentGroup");
+		MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
+	}
+
 	private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
 	
 	protected OfferPresenter presenter;
@@ -126,7 +134,7 @@ public class OfferPresenterExtractor {
 					if (builder.getIncompatibleMVEL()) {
 						mvel = builder.getRawItemTextArea().getValueAsString();
 					} else {
-						mvel = TRANSLATOR.createMVEL(builder.getItemFilterBuilder().getCriteria(), FilterType.ORDER_ITEM, builder.getItemFilterBuilder().getDataSource());
+						mvel = TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.ORDER_ITEM), builder.getItemFilterBuilder().getCriteria(), builder.getItemFilterBuilder().getDataSource());
 					}
 					if (!isValidation) {
 						if (builder.getRecord() != null) {
@@ -172,7 +180,7 @@ public class OfferPresenterExtractor {
 		if (type.equals("FULFILLMENT_GROUP")) {
 			if (getDisplay().getFgRuleRadio().getValue().equals("FG_RULE")) {
 				if (!presenter.initializer.fgRuleIncompatible) {
-					setData(selectedRecord, "appliesToFulfillmentGroupRules", TRANSLATOR.createMVEL(getDisplay().getFulfillmentGroupFilterBuilder().getCriteria(), FilterType.FULFILLMENT_GROUP, getDisplay().getFulfillmentGroupFilterBuilder().getDataSource()), dirtyValues);
+					setData(selectedRecord, "appliesToFulfillmentGroupRules", TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.FULFILLMENT_GROUP), getDisplay().getFulfillmentGroupFilterBuilder().getCriteria(), getDisplay().getFulfillmentGroupFilterBuilder().getDataSource()), dirtyValues);
 				} else {
 					setData(selectedRecord, "appliesToFulfillmentGroupRules", getDisplay().getRawFGTextArea().getValue(), dirtyValues);
 				}
@@ -222,7 +230,7 @@ public class OfferPresenterExtractor {
 			if (getDisplay().getTargetItemBuilder().getIncompatibleMVEL()) {
 				mvel = getDisplay().getTargetItemBuilder().getRawItemTextArea().getValueAsString();
 			} else {
-				mvel = TRANSLATOR.createMVEL(getDisplay().getTargetItemBuilder().getItemFilterBuilder().getCriteria(), FilterType.ORDER_ITEM, getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
+				mvel = TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.ORDER_ITEM), getDisplay().getTargetItemBuilder().getItemFilterBuilder().getCriteria(), getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
 			}
 			setData(selectedRecord, "targetItemCriteria.quantity", quantity, dirtyValues);
 			setData(selectedRecord, "targetItemCriteria.orderItemMatchRule", mvel, dirtyValues);
@@ -259,7 +267,7 @@ public class OfferPresenterExtractor {
 	protected void extractOrderData(final Record selectedRecord, String type, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getOrderRuleRadio().getValue().equals("ORDER_RULE")) {
 			if (!presenter.initializer.orderRuleIncompatible) {
-				setData(selectedRecord, "appliesToOrderRules", TRANSLATOR.createMVEL(getDisplay().getOrderFilterBuilder().getCriteria(), FilterType.ORDER, getDisplay().getOrderFilterBuilder().getDataSource()), dirtyValues);
+				setData(selectedRecord, "appliesToOrderRules", TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.ORDER), getDisplay().getOrderFilterBuilder().getCriteria(), getDisplay().getOrderFilterBuilder().getDataSource()), dirtyValues);
 			} else {
 				setData(selectedRecord, "appliesToOrderRules", getDisplay().getRawOrderTextArea().getValue(), dirtyValues);
 			}
@@ -277,7 +285,7 @@ public class OfferPresenterExtractor {
 	protected void extractCustomerData(final Record selectedRecord, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getCustomerRuleRadio().getValue().equals("CUSTOMER_RULE")) {
 			if (!presenter.initializer.customerRuleIncompatible) {
-				setData(selectedRecord, "appliesToCustomerRules", TRANSLATOR.createMVEL(getDisplay().getCustomerFilterBuilder().getCriteria(), FilterType.CUSTOMER, getDisplay().getCustomerFilterBuilder().getDataSource()), dirtyValues);
+				setData(selectedRecord, "appliesToCustomerRules", TRANSLATOR.createMVEL(MVELKEYWORDMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder().getCriteria(), getDisplay().getCustomerFilterBuilder().getDataSource()), dirtyValues);
 			} else {
 				setData(selectedRecord, "appliesToCustomerRules", getDisplay().getRawCustomerTextArea().getValue(), dirtyValues);
 			}

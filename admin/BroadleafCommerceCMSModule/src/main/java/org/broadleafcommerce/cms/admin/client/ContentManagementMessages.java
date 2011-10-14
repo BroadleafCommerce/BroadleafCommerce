@@ -60,5 +60,7 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String scTimeRule();
     public String scRequestRule();
     public String scOrderItemRule();
+    public String newItemRuleButtonTitle();
+    public String scProductRule();
 
 }

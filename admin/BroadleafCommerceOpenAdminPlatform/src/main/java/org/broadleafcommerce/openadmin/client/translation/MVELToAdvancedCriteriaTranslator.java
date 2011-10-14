@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation;
+package org.broadleafcommerce.openadmin.client.translation;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.grouping.Group;
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.grouping.GroupingTranslator;
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.statement.Expression;
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.statement.PhraseTranslator;
+import org.broadleafcommerce.openadmin.client.translation.grouping.Group;
+import org.broadleafcommerce.openadmin.client.translation.grouping.GroupingTranslator;
+import org.broadleafcommerce.openadmin.client.translation.statement.Expression;
+import org.broadleafcommerce.openadmin.client.translation.statement.PhraseTranslator;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 import com.google.gwt.core.client.JavaScriptObject;

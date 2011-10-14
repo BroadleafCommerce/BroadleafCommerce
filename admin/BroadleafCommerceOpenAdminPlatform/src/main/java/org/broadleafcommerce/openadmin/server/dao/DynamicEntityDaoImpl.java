@@ -16,6 +16,29 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import javax.persistence.EntityManager;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SerializationUtils;
@@ -23,11 +46,23 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.broadleafcommerce.presentation.*;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.presentation.ConfigurationItem;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.presentation.RequiredOverride;
+import org.broadleafcommerce.presentation.ValidationConfiguration;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -40,19 +75,6 @@ import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
-
-import javax.persistence.EntityManager;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.util.*;
 
 /**
  * 
@@ -289,7 +311,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         metadata.setPresentationAttributes(new FieldPresentationAttributes());
                         attr = metadata.getPresentationAttributes();
                     }
-                    attr.setExcluded(false);
+                    if (!isParentExcluded) {
+                        attr.setExcluded(false);
+                    }
                 }
                 if (key.equals(propertyName)) {
                     FieldMetadata metadata = mergedProperties.get(key);
@@ -308,7 +332,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     attr.setColumnWidth(annot.columnWidth());
                     attr.setBroadleafEnumeration(annot.broadleafEnumeration());
                     attr.setReadOnly(annot.readOnly());
-                    attr.setExcluded(annot.excluded());
+                    attr.setExcluded(isParentExcluded?true:annot.excluded());
                     attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
                     if (annot.validationConfigurations().length != 0) {
                         ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -355,7 +379,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                     metadata.setPresentationAttributes(new FieldPresentationAttributes());
                                     attr = metadata.getPresentationAttributes();
                                 }
-                                attr.setExcluded(false);
+                                if (!isParentExcluded) {
+                                    attr.setExcluded(false);
+                                }
                             }
                             if (key.equals(propertyName)) {
                                 FieldMetadata serverMetadata = mergedProperties.get(key);
@@ -404,6 +430,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 if (localMetadata.getPresentationAttributes().getExcluded() != null) {
                                     serverMetadata.getPresentationAttributes().setExcluded(localMetadata.getPresentationAttributes().getExcluded());
                                 }
+                                if (isParentExcluded) {
+                                    serverMetadata.getPresentationAttributes().setExcluded(true);
+                                }
                                 if (localMetadata.getPresentationAttributes().getRequiredOverride() != null) {
                                     serverMetadata.getPresentationAttributes().setRequiredOverride(localMetadata.getPresentationAttributes().getRequiredOverride());
                                 }
@@ -437,7 +466,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                             metadata.setPresentationAttributes(new FieldPresentationAttributes());
                             attr = metadata.getPresentationAttributes();
                         }
-                        attr.setExcluded(false);
+                        if (!isParentExcluded) {
+                            attr.setExcluded(false);
+                        }
                     }
                 }
             }
@@ -461,7 +492,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                             metadata.setPresentationAttributes(new FieldPresentationAttributes());
                             attr = metadata.getPresentationAttributes();
                         }
-                        attr.setExcluded(false);
+                        if (!isParentExcluded) {
+                            attr.setExcluded(false);
+                        }
                     }
                 }
             }

@@ -16,8 +16,16 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
@@ -26,10 +34,21 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
+import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.*;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.RequestDTOListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeSearchListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -44,14 +63,12 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -64,6 +81,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentStructuredContentRecord;
     protected boolean isFetched = false;
+    protected StructuredContentPresenterInitializer initializer;
+    protected StructuredContentPresenterExtractor extractor;
 
 	@Override
 	protected void removeClicked() {
@@ -78,7 +97,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 	}
 
     protected void destroyContentTypeForm() {
-        Canvas legacyForm = ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
+        Canvas legacyForm = ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
         if (legacyForm != null) {
             legacyForm.destroy();
         }
@@ -131,7 +150,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 });
                 formOnlyView.setID("contentTypeForm");
                 formOnlyView.setOverflow(Overflow.VISIBLE);
-                ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).addMember(formOnlyView);
+                ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).addMember(formOnlyView);
                 ((StructuredContentTypeFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
                 BLCMain.NON_MODAL_PROGRESS.startProgress();
                 formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
@@ -182,7 +201,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                             if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                 final Record newRecord = response.getData()[0];
                                 final String newId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(newRecord);
-                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
+                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
                                     if (formItem instanceof RichTextCanvasItem) {
@@ -215,7 +234,45 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 isFetched = true;
             }
         });
+        getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                    bindItemBuilderEvents(display);
+                    display.setDirty(true);
+                    getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                }
+            }
+        });
 	}
+
+    protected void bindItemBuilderEvents(final ItemBuilderDisplay display) {
+        display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (getDisplay().getItemBuilderViews().size() > 1) {
+                    extractor.removeItemQualifer(display);
+                }
+            }
+        });
+        display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            public void onItemChanged(ItemChangedEvent event) {
+                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                display.setDirty(true);
+            }
+        });
+        display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            public void onItemChanged(ItemChangedEvent event) {
+                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                display.setDirty(true);
+            }
+        });
+        display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            public void onFilterChanged(FilterChangedEvent event) {
+                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                display.setDirty(true);
+            }
+        });
+    }
 
 	public void setup() {
         super.setup();
@@ -225,6 +282,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 ((DynamicEntityDataSource) result).permanentlyShowFields("id");
             }
         }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scProductDS", new ProductListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("timeDTODS", new TimeDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("requestDTODS", new RequestDTOListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scOrderItemDS", new OrderItemListDataSourceFactory(), new AsyncCallbackAdapter() {
@@ -239,7 +297,14 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 					"name","description"
 				);
 				EntitySearchDialog structuredContentTypeSearchView = new EntitySearchDialog(structuredContentTypeDataSource, true);
-                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("structuredContentDS"), getPresenterSequenceSetupManager().getDataSource("scCustomerDS"), getPresenterSequenceSetupManager().getDataSource("timeDTODS"), getPresenterSequenceSetupManager().getDataSource("requestDTODS"), getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                setupDisplayItems(
+                    getPresenterSequenceSetupManager().getDataSource("structuredContentDS"),
+                    getPresenterSequenceSetupManager().getDataSource("scCustomerDS"),
+                    getPresenterSequenceSetupManager().getDataSource("timeDTODS"),
+                    getPresenterSequenceSetupManager().getDataSource("requestDTODS"),
+                    getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"),
+                    getPresenterSequenceSetupManager().getDataSource("scProductDS")
+                );
 				getPresenterSequenceSetupManager().getDataSource("structuredContentDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                         "structuredContentType",
@@ -259,6 +324,12 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentTypeGrid", "contentName", "locale", "offlineFlag"});
 			}
 		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scItemCriteriaDS", new StructuredContentItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                initializer = new StructuredContentPresenterInitializer(StructuredContentPresenter.this, (DynamicEntityDataSource) result, getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
+                extractor = new StructuredContentPresenterExtractor(StructuredContentPresenter.this);
+            }
+        }));
 	}
 
 	@Override

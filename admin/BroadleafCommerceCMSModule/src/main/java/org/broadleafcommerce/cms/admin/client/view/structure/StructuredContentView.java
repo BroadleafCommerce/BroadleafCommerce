@@ -16,9 +16,15 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.FilterBuilder;
@@ -27,6 +33,8 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
@@ -49,10 +57,18 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
     protected DynamicEntityListView listDisplay;
     protected DynamicFormView dynamicFormDisplay;
+
     protected FilterBuilder customerFilterBuilder;
+    protected FilterBuilder productFilterBuilder;
     protected FilterBuilder timeFilterBuilder;
     protected FilterBuilder requestFilterBuilder;
-    protected ItemBuilderDisplay targetItemBuilder;
+    protected ToolStrip structuredContentToolBar;
+	protected ToolStripButton structuredContentSaveButton;
+	protected ToolStripButton structuredContentRefreshButton;
+    protected List<ItemBuilderDisplay> itemBuilderViews = new ArrayList<ItemBuilderDisplay>();
+    protected VLayout newItemBuilderLayout;
+    protected Button addItemButton;
+    protected VLayout itemBuilderContainerLayout;
 
     public StructuredContentView() {
 		setHeight100();
@@ -64,13 +80,14 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         DataSource timeDataSource = additionalDataSources[1];
         DataSource requestDataSource = additionalDataSources[2];
         DataSource orderItemDataSource = additionalDataSources[3];
+        DataSource productDataSource = additionalDataSources[4];
 
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("structureLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
 		leftVerticalLayout.setWidth("40%");
 		leftVerticalLayout.setShowResizeBar(true);
-		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource);
+		listDisplay = new DynamicEntityListView("", entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);
         listDisplay.getGrid().setCanHover(true);
         listDisplay.getGrid().setShowHover(true);
@@ -86,7 +103,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         });
 
         leftVerticalLayout.addMember(listDisplay);
-        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView("", entityDataSource);
 
         addMember(leftVerticalLayout);
 
@@ -109,13 +126,32 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         rulesLayout.setHeight100();
         rulesLayout.setWidth100();
         rulesLayout.setBackgroundColor("#eaeaea");
-        rulesLayout.setLayoutMargin(20);
         rulesLayout.setOverflow(Overflow.AUTO);
+
+        structuredContentToolBar = new ToolStrip();
+        structuredContentToolBar.setHeight(20);
+        structuredContentToolBar.setWidth100();
+        structuredContentToolBar.addSpacer(6);
+        structuredContentSaveButton = new ToolStripButton();
+        structuredContentSaveButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/save.png");
+        structuredContentToolBar.addButton(structuredContentSaveButton);
+        structuredContentSaveButton.setDisabled(true);
+        structuredContentRefreshButton = new ToolStripButton();
+        structuredContentRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        structuredContentToolBar.addButton(structuredContentRefreshButton);
+        structuredContentToolBar.addSpacer(6);
+        rulesLayout.addMember(structuredContentToolBar);
+
+        VLayout innerLayout = new VLayout();
+        innerLayout.setHeight100();
+        innerLayout.setWidth100();
+        innerLayout.setBackgroundColor("#eaeaea");
+        innerLayout.setLayoutMargin(20);
 
         Label customerLabel = new Label();
         customerLabel.setContents(BLCMain.getMessageManager().getString("scCustomerRule"));
         customerLabel.setHeight(20);
-        rulesLayout.addMember(customerLabel);
+        innerLayout.addMember(customerLabel);
         
         customerFilterBuilder = new FilterBuilder();
         customerFilterBuilder.setDataSource(customerDataSource);
@@ -123,12 +159,12 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         customerFilterBuilder.setLayoutBottomMargin(20);
         customerFilterBuilder.setAllowEmpty(true);
         customerFilterBuilder.setValidateOnChange(false);
-        rulesLayout.addMember(customerFilterBuilder);
+        innerLayout.addMember(customerFilterBuilder);
 
         Label timeLabel = new Label();
         timeLabel.setContents(BLCMain.getMessageManager().getString("scTimeRule"));
         timeLabel.setHeight(20);
-        rulesLayout.addMember(timeLabel);
+        innerLayout.addMember(timeLabel);
 
         timeFilterBuilder = new FilterBuilder();
         timeFilterBuilder.setDataSource(timeDataSource);
@@ -136,12 +172,12 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         timeFilterBuilder.setLayoutBottomMargin(20);
         timeFilterBuilder.setAllowEmpty(true);
         timeFilterBuilder.setValidateOnChange(false);
-        rulesLayout.addMember(timeFilterBuilder);
+        innerLayout.addMember(timeFilterBuilder);
 
         Label requestLabel = new Label();
         requestLabel.setContents(BLCMain.getMessageManager().getString("scRequestRule"));
         requestLabel.setHeight(20);
-        rulesLayout.addMember(requestLabel);
+        innerLayout.addMember(requestLabel);
 
         requestFilterBuilder = new FilterBuilder();
         requestFilterBuilder.setDataSource(requestDataSource);
@@ -149,21 +185,76 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         requestFilterBuilder.setLayoutBottomMargin(20);
         requestFilterBuilder.setAllowEmpty(true);
         requestFilterBuilder.setValidateOnChange(false);
-        rulesLayout.addMember(requestFilterBuilder);
+        innerLayout.addMember(requestFilterBuilder);
+
+        Label productLabel = new Label();
+        productLabel.setContents(BLCMain.getMessageManager().getString("scProductRule"));
+        productLabel.setHeight(20);
+        innerLayout.addMember(productLabel);
+
+        productFilterBuilder = new FilterBuilder();
+        productFilterBuilder.setDataSource(customerDataSource);
+        productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
+        productFilterBuilder.setLayoutBottomMargin(20);
+        productFilterBuilder.setAllowEmpty(true);
+        productFilterBuilder.setValidateOnChange(false);
+        innerLayout.addMember(productFilterBuilder);
 
         Label orderItemLabel = new Label();
         orderItemLabel.setContents(BLCMain.getMessageManager().getString("scOrderItemRule"));
         orderItemLabel.setHeight(20);
-        rulesLayout.addMember(orderItemLabel);
+        innerLayout.addMember(orderItemLabel);
 
-        targetItemBuilder = new ItemBuilderView(orderItemDataSource, false);
-        rulesLayout.addMember((ItemBuilderView) targetItemBuilder);
-        rulesLayout.setLayoutBottomMargin(10);
+        itemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true));
 
+        newItemBuilderLayout = new VLayout();
+        HLayout buttonLayout = new HLayout();
+        buttonLayout.setID("offerButtonLayout");
+        buttonLayout.setWidth100();
+        buttonLayout.setAlign(Alignment.LEFT);
+        buttonLayout.setHeight(30);
+        addItemButton = new Button();
+        addItemButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
+        addItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
+        addItemButton.setWidth(136);
+        addItemButton.setWrap(false);
+        buttonLayout.addMember(addItemButton);
+        buttonLayout.setLayoutBottomMargin(10);
+        newItemBuilderLayout.addMember(buttonLayout);
+        itemBuilderContainerLayout = new VLayout();
+        newItemBuilderLayout.addMember(itemBuilderContainerLayout);
+        for (ItemBuilderDisplay widget : itemBuilderViews) {
+        	itemBuilderContainerLayout.addMember((ItemBuilderView) widget);
+        }
+
+        innerLayout.addMember(newItemBuilderLayout);
+
+        rulesLayout.addMember(innerLayout);
         rulesTab.setPane(rulesLayout);
         topTabSet.addTab(rulesTab);
 
         addMember(topTabSet);
+	}
+
+    public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
+		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true);
+		builder.enable();
+		builder.setDirty(true);
+		itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
+		itemBuilderViews.add(builder);
+		return builder;
+	}
+
+	public void removeItemBuilder(ItemBuilderDisplay itemBuilder) {
+		itemBuilderContainerLayout.removeMember((ItemBuilderView) itemBuilder);
+		itemBuilderViews.remove(itemBuilder);
+	}
+
+	public void removeAllItemBuilders() {
+		ItemBuilderView[] myViews = itemBuilderViews.toArray(new ItemBuilderView[]{});
+		for (ItemBuilderView view : myViews) {
+			removeItemBuilder(view);
+		}
 	}
 
     public Canvas asCanvas() {
@@ -177,4 +268,92 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
+
+    public FilterBuilder getCustomerFilterBuilder() {
+        return customerFilterBuilder;
+    }
+
+    public void setCustomerFilterBuilder(FilterBuilder customerFilterBuilder) {
+        this.customerFilterBuilder = customerFilterBuilder;
+    }
+
+    public FilterBuilder getProductFilterBuilder() {
+        return productFilterBuilder;
+    }
+
+    public void setProductFilterBuilder(FilterBuilder productFilterBuilder) {
+        this.productFilterBuilder = productFilterBuilder;
+    }
+
+    public FilterBuilder getTimeFilterBuilder() {
+        return timeFilterBuilder;
+    }
+
+    public void setTimeFilterBuilder(FilterBuilder timeFilterBuilder) {
+        this.timeFilterBuilder = timeFilterBuilder;
+    }
+
+    public FilterBuilder getRequestFilterBuilder() {
+        return requestFilterBuilder;
+    }
+
+    public void setRequestFilterBuilder(FilterBuilder requestFilterBuilder) {
+        this.requestFilterBuilder = requestFilterBuilder;
+    }
+
+    public ToolStrip getStructuredContentToolBar() {
+        return structuredContentToolBar;
+    }
+
+    public void setStructuredContentToolBar(ToolStrip structuredContentToolBar) {
+        this.structuredContentToolBar = structuredContentToolBar;
+    }
+
+    public ToolStripButton getStructuredContentSaveButton() {
+        return structuredContentSaveButton;
+    }
+
+    public void setStructuredContentSaveButton(ToolStripButton structuredContentSaveButton) {
+        this.structuredContentSaveButton = structuredContentSaveButton;
+    }
+
+    public ToolStripButton getStructuredContentRefreshButton() {
+        return structuredContentRefreshButton;
+    }
+
+    public void setStructuredContentRefreshButton(ToolStripButton structuredContentRefreshButton) {
+        this.structuredContentRefreshButton = structuredContentRefreshButton;
+    }
+
+    public List<ItemBuilderDisplay> getItemBuilderViews() {
+        return itemBuilderViews;
+    }
+
+    public void setItemBuilderViews(List<ItemBuilderDisplay> itemBuilderViews) {
+        this.itemBuilderViews = itemBuilderViews;
+    }
+
+    public VLayout getNewItemBuilderLayout() {
+        return newItemBuilderLayout;
+    }
+
+    public void setNewItemBuilderLayout(VLayout newItemBuilderLayout) {
+        this.newItemBuilderLayout = newItemBuilderLayout;
+    }
+
+    public Button getAddItemButton() {
+        return addItemButton;
+    }
+
+    public void setAddItemButton(Button addItemButton) {
+        this.addItemButton = addItemButton;
+    }
+
+    public VLayout getItemBuilderContainerLayout() {
+        return itemBuilderContainerLayout;
+    }
+
+    public void setItemBuilderContainerLayout(VLayout itemBuilderContainerLayout) {
+        this.itemBuilderContainerLayout = itemBuilderContainerLayout;
+    }
 }
