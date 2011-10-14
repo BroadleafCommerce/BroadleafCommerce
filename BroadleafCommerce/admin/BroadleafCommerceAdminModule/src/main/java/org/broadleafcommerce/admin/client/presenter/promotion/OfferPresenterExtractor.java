@@ -26,7 +26,6 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.FilterType;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
