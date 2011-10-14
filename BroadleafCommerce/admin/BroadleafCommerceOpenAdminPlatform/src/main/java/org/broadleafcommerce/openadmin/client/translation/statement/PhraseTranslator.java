@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation.statement;
+package org.broadleafcommerce.openadmin.client.translation.statement;
 
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 
 import com.smartgwt.client.types.OperatorId;
 

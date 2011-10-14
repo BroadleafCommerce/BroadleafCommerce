@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation.grouping;
+package org.broadleafcommerce.openadmin.client.translation.grouping;
 
 import java.util.Stack;
 
-import org.broadleafcommerce.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 
 import com.smartgwt.client.types.OperatorId;
 

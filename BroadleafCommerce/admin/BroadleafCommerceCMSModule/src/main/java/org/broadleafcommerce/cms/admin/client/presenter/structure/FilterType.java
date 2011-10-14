@@ -14,43 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation.statement;
-
-import com.smartgwt.client.types.OperatorId;
+package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class Expression {
-
-	protected String field;
-	protected OperatorId operator;
-	protected String value;
-	
-	public String getField() {
-		return field;
-	}
-	
-	public void setField(String field) {
-		this.field = field.trim();
-	}
-	
-	public OperatorId getOperator() {
-		return operator;
-	}
-	
-	public void setOperator(OperatorId operator) {
-		this.operator = operator;
-	}
-	
-	public String getValue() {
-		return value;
-	}
-	
-	public void setValue(String value) {
-		this.value = value.trim();
-	}
-	
+public enum FilterType {
+CUSTOMER,
+REQUEST,
+TIME,
+PRODUCT,
+ORDER_ITEM
 }

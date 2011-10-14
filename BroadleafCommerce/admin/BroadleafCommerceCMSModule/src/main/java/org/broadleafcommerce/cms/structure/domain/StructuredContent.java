@@ -15,12 +15,13 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
+
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
-
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -67,8 +68,10 @@ public interface StructuredContent extends Serializable {
 
     public void setPriority(Integer priority);
 
+    @Deprecated
     public String getDisplayRule();
 
+    @Deprecated
     public void setDisplayRule(String displayRule);
 
     public Long getOriginalItemId();
@@ -88,4 +91,12 @@ public interface StructuredContent extends Serializable {
     public SandBox getOriginalSandBox();
 
     public void setOriginalSandBox(SandBox originalSandBox);
+
+    public Map<String, StructuredContentRule> getStructuredContentMatchRules();
+
+    public void setStructuredContentMatchRules(Map<String, StructuredContentRule> structuredContentMatchRules);
+
+    public Set<StructuredContentItemCriteria> getQualifyingItemCriteria();
+
+    public void setQualifyingItemCriteria(Set<StructuredContentItemCriteria> qualifyingItemCriteria);
 }

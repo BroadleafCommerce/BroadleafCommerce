@@ -25,6 +25,8 @@
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteriaImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
 

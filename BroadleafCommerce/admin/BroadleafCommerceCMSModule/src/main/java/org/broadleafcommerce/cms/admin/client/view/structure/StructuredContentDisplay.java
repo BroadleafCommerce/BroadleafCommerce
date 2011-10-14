@@ -16,7 +16,16 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
+import java.util.List;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,5 +36,54 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
  */
 public interface StructuredContentDisplay extends DynamicEditDisplay {
 
+    public FilterBuilder getCustomerFilterBuilder();
+
+    public void setCustomerFilterBuilder(FilterBuilder customerFilterBuilder);
+
+    public FilterBuilder getProductFilterBuilder();
+
+    public void setProductFilterBuilder(FilterBuilder productFilterBuilder);
+
+    public FilterBuilder getTimeFilterBuilder();
+
+    public void setTimeFilterBuilder(FilterBuilder timeFilterBuilder);
+
+    public FilterBuilder getRequestFilterBuilder();
+
+    public void setRequestFilterBuilder(FilterBuilder requestFilterBuilder);
+
+    public ToolStrip getStructuredContentToolBar();
+
+    public void setStructuredContentToolBar(ToolStrip structuredContentToolBar);
+
+    public ToolStripButton getStructuredContentSaveButton();
+
+    public void setStructuredContentSaveButton(ToolStripButton structuredContentSaveButton);
+
+    public ToolStripButton getStructuredContentRefreshButton();
+
+    public void setStructuredContentRefreshButton(ToolStripButton structuredContentRefreshButton);
+
+    public List<ItemBuilderDisplay> getItemBuilderViews();
+
+    public void setItemBuilderViews(List<ItemBuilderDisplay> itemBuilderViews);
+
+    public VLayout getNewItemBuilderLayout();
+
+    public void setNewItemBuilderLayout(VLayout newItemBuilderLayout);
+
+    public Button getAddItemButton();
+
+    public void setAddItemButton(Button addItemButton);
+
+    public VLayout getItemBuilderContainerLayout();
+
+    public void setItemBuilderContainerLayout(VLayout itemBuilderContainerLayout);
+
+    public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource);
+
+	public void removeItemBuilder(ItemBuilderDisplay itemBuilder);
+
+	public void removeAllItemBuilders();
 
 }

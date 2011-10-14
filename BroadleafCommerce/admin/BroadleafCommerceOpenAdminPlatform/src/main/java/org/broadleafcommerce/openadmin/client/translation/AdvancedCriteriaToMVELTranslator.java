@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation;
+package org.broadleafcommerce.openadmin.client.translation;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -37,6 +34,7 @@ import com.smartgwt.client.util.EnumUtil;
 import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.form.fields.RelativeDateItem;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 /**
  * 
@@ -44,18 +42,10 @@ import com.smartgwt.client.widgets.form.fields.RelativeDateItem;
  *
  */
 public class AdvancedCriteriaToMVELTranslator {
-
-	private static Map<FilterType, String> MVELKEYWORDMAP = new HashMap<FilterType, String>();
-	static {
-		MVELKEYWORDMAP.put(FilterType.ORDER, "order");
-		MVELKEYWORDMAP.put(FilterType.ORDER_ITEM, "discreteOrderItem");
-		MVELKEYWORDMAP.put(FilterType.FULFILLMENT_GROUP, "fulfillmentGroup");
-		MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
-	}
 	
-	public String createMVEL(AdvancedCriteria criteria, FilterType filterType, DataSource dataSource) throws IncompatibleMVELTranslationException {
+	public String createMVEL(String keyWord, AdvancedCriteria criteria, DataSource dataSource) throws IncompatibleMVELTranslationException {
 		StringBuffer sb = new StringBuffer();
-		buildMVEL(criteria, sb, filterType, dataSource, null);
+		buildMVEL(criteria, sb, keyWord, dataSource, null);
 		String response = sb.toString().trim();
 		if (response.length() == 0) {
 			response = null;
@@ -63,7 +53,7 @@ public class AdvancedCriteriaToMVELTranslator {
 		return response;
 	}
 	
-	protected void buildMVEL(Criteria criteria, StringBuffer sb, FilterType filterType, DataSource dataSource, OperatorId groupOperator) throws IncompatibleMVELTranslationException {
+	protected void buildMVEL(Criteria criteria, StringBuffer sb, String keyWord, DataSource dataSource, OperatorId groupOperator) throws IncompatibleMVELTranslationException {
 		OperatorId operator = EnumUtil.getEnum(OperatorId.values(), criteria.getAttribute("operator"));
 		JavaScriptObject listJS = criteria.getAttributeAsJavaScriptObject("criteria");
 		if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
@@ -76,7 +66,7 @@ public class AdvancedCriteriaToMVELTranslator {
 			}
 		}
         if (!JSOHelper.isArray(listJS)) {
-			buildExpression(criteria, sb, filterType, operator, dataSource);
+			buildExpression(criteria, sb, keyWord, operator, dataSource);
 		} else {
 			boolean includeTopLevelParenthesis = false;
 			if (sb.length() != 0 || operator.getValue().equals(OperatorId.NOT.getValue())) {
@@ -88,7 +78,7 @@ public class AdvancedCriteriaToMVELTranslator {
 			if (includeTopLevelParenthesis) sb.append("(");
 			Criteria[] myCriterias = AdvancedCriteria.convertToCriteriaArray(listJS);
 			for (Criteria myCriteria : myCriterias) {
-				buildMVEL(myCriteria, sb, filterType, dataSource, operator);
+				buildMVEL(myCriteria, sb, keyWord, dataSource, operator);
 			}
 			if (includeTopLevelParenthesis) sb.append(")");
 		}
@@ -99,8 +89,7 @@ public class AdvancedCriteriaToMVELTranslator {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	protected void buildExpression(Criteria criteria, StringBuffer sb, FilterType filterType, OperatorId operator, DataSource dataSource) throws IncompatibleMVELTranslationException {
-		String entityKey = MVELKEYWORDMAP.get(filterType);
+	protected void buildExpression(Criteria criteria, StringBuffer sb, String keyWord, OperatorId operator, DataSource dataSource) throws IncompatibleMVELTranslationException {
 		Map values = criteria.getValues();
 		String field = (String) values.get("fieldName");
 		SupportedFieldType type = SupportedFieldType.valueOf(dataSource.getField(field).getAttribute("fieldType"));
@@ -130,127 +119,127 @@ public class AdvancedCriteriaToMVELTranslator {
 		}
 		switch(operator) {
 		case CONTAINS: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains", true, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".contains", true, false, false, false, false);
 			break;
 		}
 		case CONTAINS_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains", true, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".contains", true, true, false, false, false);
 			break;
 		}
 		case ENDS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith", true, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".endsWith", true, false, false, false, false);
 			break;
 		}
 		case ENDS_WITH_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith", true, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".endsWith", true, true, false, false, false);
 			break;
 		}
 		case EQUALS: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "==", false, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "==", false, false, false, false, false);
 			break;
 		}
 		case EQUALS_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "==", false, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "==", false, true, false, false, false);
 			break;
 		}
 		case GREATER_OR_EQUAL: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ">=", false, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ">=", false, false, false, false, false);
 			break;
 		}
 		case GREATER_OR_EQUAL_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ">=", false, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ">=", false, true, false, false, false);
 			break;
 		}
 		case GREATER_THAN: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ">", false, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ">", false, false, false, false, false);
 			break;
 		}
 		case GREATER_THAN_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ">", false, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ">", false, true, false, false, false);
 			break;
 		}
 		case ICONTAINS: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains", true, false, true, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".contains", true, false, true, false, false);
 			break;
 		}
 		case IENDS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith", true, false, true, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".endsWith", true, false, true, false, false);
 			break;
 		}
 		case IEQUALS: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "==", false, false, true, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "==", false, false, true, false, false);
 			break;
 		}
 		case INOT_CONTAINS: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains", true, false, true, true, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".contains", true, false, true, true, false);
 			break;
 		}
 		case INOT_ENDS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith", true, false, true, true, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".endsWith", true, false, true, true, false);
 			break;
 		}
 		case INOT_EQUAL: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "!=", false, false, true, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "!=", false, false, true, false, false);
 			break;
 		}
 		case INOT_STARTS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith", true, false, true, true, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".startsWith", true, false, true, true, false);
 			break;
 		}
 		case IS_NULL: {
-			buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, "==", false, false, false, false, true);
+			buildExpression(sb, keyWord, field, new Object[]{"null"}, type, secondaryType, "==", false, false, false, false, true);
 			break;
 		}
 		case ISTARTS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith", true, false, true, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".startsWith", true, false, true, false, false);
 			break;
 		}
 		case LESS_OR_EQUAL: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "<=", false, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "<=", false, false, false, false, false);
 			break;
 		}
 		case LESS_OR_EQUAL_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "<=", false, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "<=", false, true, false, false, false);
 			break;
 		}
 		case LESS_THAN: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "<", false, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "<", false, false, false, false, false);
 			break;
 		}
 		case LESS_THAN_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "<", false, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "<", false, true, false, false, false);
 			break;
 		}
 		case NOT_CONTAINS: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".contains", true, false, false, true, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".contains", true, false, false, true, false);
 			break;
 		}
 		case NOT_ENDS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".endsWith", true, false, false, true, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".endsWith", true, false, false, true, false);
 			break;
 		}
 		case NOT_EQUAL: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "!=", false, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "!=", false, false, false, false, false);
 			break;
 		}
 		case NOT_EQUAL_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, "!=", false, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, "!=", false, true, false, false, false);
 			break;
 		}
 		case NOT_NULL: {
-			buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, "!=", false, false, false, false, true);
+			buildExpression(sb, keyWord, field, new Object[]{"null"}, type, secondaryType, "!=", false, false, false, false, true);
 			break;
 		}
 		case NOT_STARTS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith", true, false, false, true, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".startsWith", true, false, false, true, false);
 			break;
 		}
 		case STARTS_WITH: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith", true, false, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".startsWith", true, false, false, false, false);
 			break;
 		}
 		case STARTS_WITH_FIELD: {
-			buildExpression(sb, entityKey, field, value, type, secondaryType, ".startsWith", true, true, false, false, false);
+			buildExpression(sb, keyWord, field, value, type, secondaryType, ".startsWith", true, true, false, false, false);
 			break;
 		}
 		case BETWEEN: {
@@ -258,15 +247,15 @@ public class AdvancedCriteriaToMVELTranslator {
 				SupportedFieldType.DATE.toString().equals(type.toString())
 			) {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.GREATER_THAN, values, "start"), type, secondaryType, ">", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, extractDate(criteria, OperatorId.GREATER_THAN, values, "start"), type, secondaryType, ">", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.LESS_THAN, values, "end"), type, secondaryType, "<", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, extractDate(criteria, OperatorId.LESS_THAN, values, "end"), type, secondaryType, "<", false, false, false, false, false);
 				sb.append(")");
 			} else {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, new Object[]{values.get("start")}, type, secondaryType, ">", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, new Object[]{values.get("start")}, type, secondaryType, ">", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, new Object[]{values.get("end")}, type, secondaryType, "<", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, new Object[]{values.get("end")}, type, secondaryType, "<", false, false, false, false, false);
 				sb.append(")");
 			}
 			break;
@@ -276,15 +265,15 @@ public class AdvancedCriteriaToMVELTranslator {
 				SupportedFieldType.DATE.toString().equals(type.toString())
 			) {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.GREATER_OR_EQUAL, (Map) values.get("start"), "start"), type, secondaryType, ">=", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, extractDate(criteria, OperatorId.GREATER_OR_EQUAL, (Map) values.get("start"), "start"), type, secondaryType, ">=", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, extractDate(criteria, OperatorId.LESS_OR_EQUAL, (Map) values.get("end"), "end"), type, secondaryType, "<=", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, extractDate(criteria, OperatorId.LESS_OR_EQUAL, (Map) values.get("end"), "end"), type, secondaryType, "<=", false, false, false, false, false);
 				sb.append(")");
 			} else {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, new Object[]{values.get("start")}, type, secondaryType, ">=", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, new Object[]{values.get("start")}, type, secondaryType, ">=", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, new Object[]{values.get("end")}, type, secondaryType, "<=", false, false, false, false, false);
+				buildExpression(sb, keyWord, field, new Object[]{values.get("end")}, type, secondaryType, "<=", false, false, false, false, false);
 				sb.append(")");
 			}
 			break;

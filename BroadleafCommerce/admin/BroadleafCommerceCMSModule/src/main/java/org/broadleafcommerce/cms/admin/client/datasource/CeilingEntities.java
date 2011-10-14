@@ -37,5 +37,7 @@ public class CeilingEntities {
     public static final String TIMEDTO = "org.broadleafcommerce.common.TimeDTO";
     public static final String REQUESTDTO = "org.broadleafcommerce.common.RequestDTOImpl";
     public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItem";
+    public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.Product";
+    public static final String STRUCTUREDCONTENTITEMCRITERIA = "org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria";
 
 }

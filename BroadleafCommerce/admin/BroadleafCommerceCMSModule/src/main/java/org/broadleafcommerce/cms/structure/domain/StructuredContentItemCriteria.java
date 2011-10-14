@@ -14,41 +14,33 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation;
+package org.broadleafcommerce.cms.structure.domain;
+
+import java.io.Serializable;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class IncompatibleMVELTranslationException extends Exception {
+public interface StructuredContentItemCriteria extends Serializable {
 
-	private static final long serialVersionUID = 1L;
+	public Long getId();
 
-	public IncompatibleMVELTranslationException() {
-		super();
-	}
+	public void setId(Long id);
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public IncompatibleMVELTranslationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+	public Integer getQuantity();
 
-	/**
-	 * @param message
-	 */
-	public IncompatibleMVELTranslationException(String message) {
-		super(message);
-	}
+	public void setQuantity(Integer quantity);
 
-	/**
-	 * @param cause
-	 */
-	public IncompatibleMVELTranslationException(Throwable cause) {
-		super(cause);
-	}
+	public String getOrderItemMatchRule();
 
+	public void setOrderItemMatchRule(String orderItemMatchRule);
+
+	public StructuredContent getStructuredContent();
+
+	public void setStructuredContent(StructuredContent structuredContent);
+
+    public StructuredContentItemCriteria cloneEntity();
+	
 }

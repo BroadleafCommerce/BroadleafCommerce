@@ -31,7 +31,10 @@ import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by bpolster.
@@ -90,7 +93,21 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Display Rule", order=1, groupOrder = 2, group="Display Rule", largeEntry = true)
     @Column(name = "DISPLAY_RULE")
+    @Deprecated
     protected String displayRule;
+
+    @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_SC_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKeyColumn(name = "MAP_KEY", nullable = false)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
+    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "ID"), inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
+    protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", hidden = true)
     @Column(name = "ORIGINAL_ITEM_ID")
@@ -226,11 +243,13 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
+    @Deprecated
     public String getDisplayRule() {
         return displayRule;
     }
 
     @Override
+    @Deprecated
     public void setDisplayRule(String displayRule) {
         this.displayRule = displayRule;
     }
@@ -279,6 +298,22 @@ public class StructuredContentImpl implements StructuredContent {
         this.originalSandBox = originalSandBox;
     }
 
+    public Map<String, StructuredContentRule> getStructuredContentMatchRules() {
+        return structuredContentMatchRules;
+    }
+
+    public void setStructuredContentMatchRules(Map<String, StructuredContentRule> structuredContentMatchRules) {
+        this.structuredContentMatchRules = structuredContentMatchRules;
+    }
+
+    public Set<StructuredContentItemCriteria> getQualifyingItemCriteria() {
+        return qualifyingItemCriteria;
+    }
+
+    public void setQualifyingItemCriteria(Set<StructuredContentItemCriteria> qualifyingItemCriteria) {
+        this.qualifyingItemCriteria = qualifyingItemCriteria;
+    }
+
     @Override
     public StructuredContent cloneEntity() {
         StructuredContentImpl newContent = new StructuredContentImpl();
@@ -291,6 +326,18 @@ public class StructuredContentImpl implements StructuredContent {
         newContent.originalItemId = originalItemId;
         newContent.priority = priority;
         newContent.structuredContentType = structuredContentType;
+
+        Map<String, StructuredContentRule> ruleMap = newContent.getStructuredContentMatchRules();
+        for (String key : ruleMap.keySet()) {
+            StructuredContentRule newField = structuredContentMatchRules.get(key).cloneEntity();
+            ruleMap.put(key, newField);
+        }
+
+        Set<StructuredContentItemCriteria> criteriaList = newContent.getQualifyingItemCriteria();
+        for (StructuredContentItemCriteria structuredContentItemCriteria : qualifyingItemCriteria) {
+            StructuredContentItemCriteria newField = structuredContentItemCriteria.cloneEntity();
+            criteriaList.add(newField);
+        }
 
         Map fieldMap = newContent.getStructuredContentFields();
         for (StructuredContentField field : structuredContentFields.values()) {
