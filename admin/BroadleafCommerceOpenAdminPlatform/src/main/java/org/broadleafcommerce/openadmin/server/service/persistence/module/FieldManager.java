@@ -15,18 +15,18 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.hibernate.mapping.PersistentClass;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.mapping.PersistentClass;
 
 /**
  * 
@@ -46,7 +46,7 @@ public class FieldManager {
         this.dynamicEntityDao = dynamicEntityDao;
     }
 
-	private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+	public Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
         try {
             return clazz.getDeclaredField(fieldName);
         } catch (NoSuchFieldException nsf) {
