@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.admin.client.presenter.promotion.translation;
+package org.broadleafcommerce.openadmin.client.translation;
 
 /**
  * 
