@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -26,8 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author jfischer
  */
@@ -37,6 +38,8 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     private static final Log LOG = LogFactory.getLog(UtilityRemoteService.class);
 
     private ApplicationContext applicationContext;
+
+    protected String previewUrlPrefix;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
@@ -54,4 +57,12 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
         }
     }
 
+    @Override
+    public String getPreviewUrlPrefix() throws ServiceException, ApplicationSecurityException {
+        return previewUrlPrefix;
+    }
+
+    public void setPreviewUrlPrefix(String previewUrlPrefix) {
+        this.previewUrlPrefix = previewUrlPrefix;
+    }
 }

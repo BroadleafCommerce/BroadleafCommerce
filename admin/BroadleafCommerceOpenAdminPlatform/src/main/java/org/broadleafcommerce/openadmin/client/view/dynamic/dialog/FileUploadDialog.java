@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import java.util.Map;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -52,8 +54,6 @@ import org.broadleafcommerce.openadmin.client.setup.AppController;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
 
-import java.util.Map;
-
 /**
  * 
  * @author jfischer
@@ -81,7 +81,7 @@ public class FileUploadDialog extends Window {
 		dynamicForm = new DynamicForm();
         dynamicForm.setEncoding(Encoding.MULTIPART);
         dynamicForm.setTarget("hidden_frame");
-        dynamicForm.setAction("cms.upload.service");
+        //dynamicForm.setAction("cms.upload.service");
 		dynamicForm.setNumCols(3);
         dynamicForm.setPadding(10);
         dynamicForm.setHeight100();
@@ -149,6 +149,7 @@ public class FileUploadDialog extends Window {
                     UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
                     progress.setCallbackName(callbackName);
                     progress.startProgress();
+                    dynamicForm.setAction("cms.upload.service?callbackName="+callbackName);
                     dynamicForm.getField("callbackName").setValue(callbackName);
                     dynamicForm.submitForm();
                     saveButton.disable();

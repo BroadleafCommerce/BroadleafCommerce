@@ -25,5 +25,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface UtilityServiceAsync {
     
 	void getWebAppContext(AsyncCallback<String> cb);
-    
+
+    void getPreviewUrlPrefix(AsyncCallback<String> cb);
+
 }
