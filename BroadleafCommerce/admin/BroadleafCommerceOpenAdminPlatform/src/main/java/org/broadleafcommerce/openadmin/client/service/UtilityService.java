@@ -28,5 +28,8 @@ public interface UtilityService extends RemoteService {
     
 	@Secured("PERMISSION_DEFAULT")
 	public String getWebAppContext() throws ServiceException, ApplicationSecurityException;
+
+    @Secured("PERMISSION_DEFAULT")
+	public String getPreviewUrlPrefix() throws ServiceException, ApplicationSecurityException;
     
 }

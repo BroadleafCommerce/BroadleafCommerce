@@ -16,15 +16,17 @@
 
 package org.broadleafcommerce.cms.admin.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
-import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.AbstractHtmlEditingModule;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
+import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 /**
  * 
@@ -110,7 +112,16 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 
     @Override
 	public void postDraw() {
-        setPreviewUrlPrefix(BLCMain.webAppContext);
+         AppServices.UTILITY.getPreviewUrlPrefix(new AbstractCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                if (result != null) {
+                    setPreviewUrlPrefix(result);
+                } else {
+                    setPreviewUrlPrefix(BLCMain.webAppContext);
+                }
+            }
+        });
         
 		ImgButton sgwtHomeButton = new ImgButton();
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
