@@ -40,7 +40,7 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true, true, true});
+				((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true});
 			}
 		}));
 
