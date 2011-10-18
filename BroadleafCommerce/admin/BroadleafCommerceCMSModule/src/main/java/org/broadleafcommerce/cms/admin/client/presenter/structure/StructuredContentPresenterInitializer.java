@@ -66,16 +66,16 @@ public class StructuredContentPresenterInitializer {
 		return presenter.getDisplay();
 	}
 	
-	public void initSectionBasedOnType(String sectionType, Record selectedRecord) {
-        initFilterBuilder(selectedRecord, getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.CUSTOMER)));
-        initFilterBuilder(selectedRecord, getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.PRODUCT)));
-        initFilterBuilder(selectedRecord, getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.REQUEST)));
-        initFilterBuilder(selectedRecord, getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.TIME)));
-		initItemQualifiers(selectedRecord, sectionType);
+	public void initSection(Record selectedRecord) {
+        initFilterBuilder(getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.CUSTOMER)));
+        initFilterBuilder(getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.PRODUCT)));
+        initFilterBuilder(getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.REQUEST)));
+        initFilterBuilder(getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.TIME)));
+		initItemQualifiers(selectedRecord);
 	}
 
-    public void initFilterBuilder(final Record selectedRecord, FilterBuilder filterBuilder, String rule) {
-		getDisplay().getProductFilterBuilder().clearCriteria();
+    public void initFilterBuilder(FilterBuilder filterBuilder, String rule) {
+		filterBuilder.clearCriteria();
 		if (rule != null) {
 			try {
 				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(rule, filterBuilder.getDataSource());
@@ -88,7 +88,7 @@ public class StructuredContentPresenterInitializer {
 		}
 	}
 
-	public void initItemQualifiers(final Record selectedRecord, final String type) {
+	public void initItemQualifiers(final Record selectedRecord) {
 		Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
 		offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {

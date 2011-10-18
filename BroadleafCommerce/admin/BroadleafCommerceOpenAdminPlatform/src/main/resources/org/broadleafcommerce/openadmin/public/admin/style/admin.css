@@ -33,3 +33,15 @@
     visibility: hidden;
     height: 0px;
 }
+
+.disabledLabel {
+    font-size:11px;
+    color:#AAAAAA;
+    font-family:Arial,Verdana,sans-serif;
+}
+
+.normalLabel {
+    font-size:11px;
+    color:#000000;
+    font-family:Arial,Verdana,sans-serif;
+}

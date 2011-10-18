@@ -15,6 +15,15 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
@@ -25,7 +34,11 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
-import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -34,10 +47,6 @@ import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Created by bpolster.
@@ -265,14 +274,19 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
             return structuredContentDao.addOrUpdateContentItem(content, true);
         } else if (checkForProductionSandbox(content.getSandbox())) {
-            // Move from production to destSandbox
-            content.setLockedFlag(true);
-            content = structuredContentDao.addOrUpdateContentItem(content, false);
-
             StructuredContent clonedContent = content.cloneEntity();
             clonedContent.setOriginalItemId(content.getId());
             clonedContent.setSandbox(destSandbox);
+            //pass true to addOrUpdateContentItem so that the entity manager is cleared before
+            //persisting the clone. This will make sure that the original changes made to the "content"
+            //instance are not persisted.
             StructuredContent returnContent = structuredContentDao.addOrUpdateContentItem(clonedContent, true);
+
+            StructuredContent prod = findStructuredContentById(content.getId());
+            // Move from production to destSandbox
+            prod.setLockedFlag(true);
+            prod = structuredContentDao.addOrUpdateContentItem(prod, false);
+
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
             return returnContent;
         } else {
@@ -406,22 +420,22 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 } else if (returnList.size() > count) {
                     return returnList.subList(0, count);
                 } else {
-                    if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
+                    /*if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
                         if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
                             tmpList.add(sc);
                         }
                     } else {
                         tmpList.add(sc);
-                    }
+                    }*/
                 }
             } else {
-                if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
+                /*if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
                     if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
                         tmpList.add(sc);
                     }
                 } else {
                     tmpList.add(sc);
-                }
+                }*/
             }
             lastPriority = sc.getPriority();
         }

@@ -20,10 +20,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.module.StructuredContentItemCriteriaListModule;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -44,9 +46,9 @@ public class StructuredContentItemCriteriaListDataSourceFactory implements DataS
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.STRUCTUREDCONTENTIMPL, null));
+			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.STRUCTUREDCONTENTIMPL, null, ForeignKeyRestrictionType.ID_EQ, "contentName"));
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new StructuredContentListClientEntityModule(CeilingEntities.STRUCTUREDCONTENTITEMCRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new StructuredContentItemCriteriaListModule(CeilingEntities.STRUCTUREDCONTENTITEMCRITERIA, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new DynamicEntityDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

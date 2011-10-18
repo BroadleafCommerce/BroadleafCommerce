@@ -68,12 +68,6 @@ public interface StructuredContent extends Serializable {
 
     public void setPriority(Integer priority);
 
-    @Deprecated
-    public String getDisplayRule();
-
-    @Deprecated
-    public void setDisplayRule(String displayRule);
-
     public Long getOriginalItemId();
 
     public void setOriginalItemId(Long originalItemId);

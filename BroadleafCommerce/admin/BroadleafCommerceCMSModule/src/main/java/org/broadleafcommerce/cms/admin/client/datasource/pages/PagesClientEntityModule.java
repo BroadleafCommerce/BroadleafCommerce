@@ -74,6 +74,7 @@ public class PagesClientEntityModule extends BasicClientEntityModule {
 
                 response.setData(recordList);
                 response.setTotalRows(result.getTotalRecords());
+                response.setInvalidateCache(true);
                 if (cb != null) {
                     cb.onSuccess(dataSource);
                 }

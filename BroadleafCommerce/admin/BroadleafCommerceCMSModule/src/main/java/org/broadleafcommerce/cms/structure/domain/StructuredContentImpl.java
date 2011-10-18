@@ -91,11 +91,6 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "PRIORITY", nullable = false)
     protected Integer priority;
 
-    @AdminPresentation(friendlyName="Display Rule", order=1, groupOrder = 2, group="Display Rule", largeEntry = true)
-    @Column(name = "DISPLAY_RULE")
-    @Deprecated
-    protected String displayRule;
-
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_SC_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -243,18 +238,6 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    @Deprecated
-    public String getDisplayRule() {
-        return displayRule;
-    }
-
-    @Override
-    @Deprecated
-    public void setDisplayRule(String displayRule) {
-        this.displayRule = displayRule;
-    }
-
-    @Override
     public Long getOriginalItemId() {
         return originalItemId;
     }
@@ -317,7 +300,6 @@ public class StructuredContentImpl implements StructuredContent {
     @Override
     public StructuredContent cloneEntity() {
         StructuredContentImpl newContent = new StructuredContentImpl();
-        newContent.displayRule = displayRule;
         newContent.archivedFlag = archivedFlag;
         newContent.contentName = contentName;
         newContent.deletedFlag = deletedFlag;
@@ -328,7 +310,7 @@ public class StructuredContentImpl implements StructuredContent {
         newContent.structuredContentType = structuredContentType;
 
         Map<String, StructuredContentRule> ruleMap = newContent.getStructuredContentMatchRules();
-        for (String key : ruleMap.keySet()) {
+        for (String key : structuredContentMatchRules.keySet()) {
             StructuredContentRule newField = structuredContentMatchRules.get(key).cloneEntity();
             ruleMap.put(key, newField);
         }

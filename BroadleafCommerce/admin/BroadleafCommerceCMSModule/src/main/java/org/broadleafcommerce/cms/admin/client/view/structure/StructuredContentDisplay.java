@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -85,5 +86,25 @@ public interface StructuredContentDisplay extends DynamicEditDisplay {
 	public void removeItemBuilder(ItemBuilderDisplay itemBuilder);
 
 	public void removeAllItemBuilders();
+
+    public Label getCustomerLabel();
+
+    public void setCustomerLabel(Label customerLabel);
+
+    public Label getTimeLabel();
+
+    public void setTimeLabel(Label timeLabel);
+
+    public Label getRequestLabel();
+
+    public void setRequestLabel(Label requestLabel);
+
+    public Label getProductLabel();
+
+    public void setProductLabel(Label productLabel);
+
+    public Label getOrderItemLabel();
+
+    public void setOrderItemLabel(Label orderItemLabel);
 
 }
