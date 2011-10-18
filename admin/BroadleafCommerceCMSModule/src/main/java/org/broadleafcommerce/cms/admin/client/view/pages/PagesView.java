@@ -68,7 +68,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
         listDisplay.getGrid().setHoverCustomizer(new HoverCustomizer() {
             @Override
             public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
+                if (record != null && record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
                     return BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("lockedMessage"), new String[]{"userName", "date"}, new String[]{record.getAttribute("auditable.updatedBy.name"), record.getAttribute("auditable.dateUpdated")});
                 }
                 return null;

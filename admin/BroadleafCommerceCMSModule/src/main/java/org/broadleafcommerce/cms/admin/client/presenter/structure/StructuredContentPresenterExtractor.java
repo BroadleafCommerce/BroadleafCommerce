@@ -23,13 +23,20 @@ import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
 /**
  * 
@@ -87,33 +94,64 @@ public class StructuredContentPresenterExtractor {
 	public void applyData(final Record selectedRecord) {
 		try {
 			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
+            //dirtyValues.putAll(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
 
             extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
             extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
             extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.REQUEST), getDisplay().getRequestFilterBuilder(), MVELKEYWORDMAP.get(FilterType.REQUEST));
             extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.TIME), getDisplay().getTimeFilterBuilder(), MVELKEYWORDMAP.get(FilterType.TIME));
-			
-			extractQualifierData(selectedRecord, true, dirtyValues);
-			
+
+			extractQualifierData(null, true, dirtyValues);
+
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
-			
-			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(selectedRecord, new DSCallback() {
-				public void execute(DSResponse response, Object rawData, DSRequest request) {
-					try {
-						extractQualifierData(selectedRecord, false, dirtyValues);
-						getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-					} catch (IncompatibleMVELTranslationException e) {
-						SC.warn(e.getMessage());
-					}
-				}
-			}, requestProperties);
+
+            for (String key : dirtyValues.keySet()) {
+               getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValue(key, (String) dirtyValues.get(key));
+            }
+
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                @Override
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+                        final Record newRecord = response.getData()[0];
+                        final String newId = presenter.getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(newRecord);
+                        FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
+                        final DynamicForm form = legacyForm.getForm();
+                        for (FormItem formItem : form.getFields()) {
+                            if (formItem instanceof RichTextCanvasItem) {
+                                form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
+                            }
+                        }
+                        StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
+                        dataSource.setCustomCriteria(new String[]{"constructForm", newId});
+                        form.saveData(new DSCallback() {
+                            @Override
+                            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
+                                    try {
+                                        extractQualifierData(newId, false, dirtyValues);
+                                        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                        getDisplay().getStructuredContentSaveButton().disable();
+                                    } catch (IncompatibleMVELTranslationException e) {
+                                        SC.warn(e.getMessage());
+                                    }
+                                }
+                            }
+                        });
+                        if (!presenter.getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(selectedRecord).equals(newId)) {
+                            getDisplay().getListDisplay().getGrid().getRecordList().remove(selectedRecord);
+                            presenter.currentStructuredContentRecord = newRecord;
+                        }
+                    }
+                }
+            }, requestProperties);
 		} catch (IncompatibleMVELTranslationException e) {
 			SC.warn(e.getMessage());
 		}
 	}
 	
-	protected void extractQualifierData(final Record selectedRecord, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
+	protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
             if (builder.getDirty()) {
                 String temper = builder.getItemQuantity().getValue().toString();
@@ -123,9 +161,11 @@ public class StructuredContentPresenterExtractor {
                     if (builder.getRecord() != null) {
                         setData(builder.getRecord(), "quantity", quantity, dirtyValues);
                         setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
-                        presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
+                        presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
+                                getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                getDisplay().getStructuredContentSaveButton().disable();
                             }
                         });
                     } else {
@@ -133,12 +173,15 @@ public class StructuredContentPresenterExtractor {
                         temp.setAttribute("quantity", quantity);
                         temp.setAttribute("orderItemMatchRule", mvel);
                         temp.setAttribute("_type", new String[]{presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").getDefaultNewEntityFullyQualifiedClassname()});
-                        temp.setAttribute(StructuredContentItemCriteriaListDataSourceFactory.foreignKeyName, presenter.getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(selectedRecord));
+                        temp.setAttribute(StructuredContentItemCriteriaListDataSourceFactory.foreignKeyName, id);
                         temp.setAttribute("id", "");
+                        presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").setLinkedValue(id);
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").addData(temp, new DSCallback() {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);
+                                getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                getDisplay().getStructuredContentSaveButton().disable();
                             }
                         });
                     }

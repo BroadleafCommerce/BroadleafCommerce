@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.admin.client.datasource.structure;
+package org.broadleafcommerce.cms.admin.client.datasource.structure.module;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,6 +24,7 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentListDataSource;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
@@ -50,8 +51,8 @@ public class StructuredContentListClientEntityModule extends BasicClientEntityMo
     public void executeFetch(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
         BLCMain.NON_MODAL_PROGRESS.startProgress();
         Criteria criteria = request.getCriteria();
-        if (((StructuredContentListDataSource) dataSource).permanentCriteria != null) {
-            criteria.addCriteria(((StructuredContentListDataSource) dataSource).permanentCriteria);
+        if (((StructuredContentListDataSource) dataSource).getPermanentCriteria() != null) {
+            criteria.addCriteria(((StructuredContentListDataSource) dataSource).getPermanentCriteria());
         }
 		CriteriaTransferObject cto = getCto(request);
 		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
@@ -60,6 +61,7 @@ public class StructuredContentListClientEntityModule extends BasicClientEntityMo
 				TreeNode[] recordList = buildRecords(result, null);
 				response.setData(recordList);
 				response.setTotalRows(result.getTotalRecords());
+                response.setInvalidateCache(true);
 				if (cb != null) {
 					cb.onSuccess(dataSource);
 				}

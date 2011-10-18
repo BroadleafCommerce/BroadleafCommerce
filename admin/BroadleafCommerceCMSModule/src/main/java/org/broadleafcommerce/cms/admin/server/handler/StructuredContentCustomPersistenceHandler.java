@@ -16,20 +16,42 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.cms.structure.service.type.StructuredContentRuleType;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -41,15 +63,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.Criteria;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.tool.hbm2x.StringUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -63,6 +79,9 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     private Log LOG = LogFactory.getLog(StructuredContentCustomPersistenceHandler.class);
 
     private static Map<String, FieldMetadata> mergedProperties;
+
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
 
     @Resource(name="blStructuredContentService")
 	protected StructuredContentService structuredContentService;
@@ -213,6 +232,32 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         iconAttributes.setRequiredOverride(true);
 
         mergedProperties.put("locked", iconMetadata);
+
+        mergedProperties.put("timeRule", createHiddenField("timeRule"));
+        mergedProperties.put("requestRule", createHiddenField("requestRule"));
+        mergedProperties.put("customerRule", createHiddenField("customerRule"));
+        mergedProperties.put("productRule", createHiddenField("productRule"));
+    }
+
+    protected FieldMetadata createHiddenField(String name) {
+        FieldMetadata fieldMetadata = new FieldMetadata();
+        fieldMetadata.setFieldType(SupportedFieldType.HIDDEN);
+        fieldMetadata.setMutable(true);
+        fieldMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
+        fieldMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName()});
+        fieldMetadata.setCollection(false);
+        fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        FieldPresentationAttributes attributes = new FieldPresentationAttributes();
+        fieldMetadata.setPresentationAttributes(attributes);
+        attributes.setName(name);
+        attributes.setFriendlyName(name);
+        attributes.setGroup("Rules");
+        attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        attributes.setProminent(false);
+        attributes.setBroadleafEnumeration("");
+        attributes.setReadOnly(false);
+        attributes.setHidden(true);
+        return fieldMetadata;
     }
 
     @Override
@@ -291,12 +336,44 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
                 }
             }
 
+            for (int j=0;j<structuredContentEntities.length;j++) {
+                addRulesToEntity(contents.get(j), structuredContentEntities[j]);
+            }
+
             DynamicResultSet response = new DynamicResultSet(structuredContentEntities, totalRecords.intValue());
 
             return response;
         } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+
+    protected void addRulesToEntity(StructuredContent structuredContent, Entity structuredContentEntity) {
+        Entity entity = structuredContentEntity;
+        StructuredContent content = structuredContent;
+        if (content.getStructuredContentMatchRules() != null) {
+            for (String key : content.getStructuredContentMatchRules().keySet()) {
+                StructuredContentRuleType type = StructuredContentRuleType.getInstance(key);
+                Property prop = null;
+                if (StructuredContentRuleType.CUSTOMER.equals(type)) {
+                    prop = new Property();
+                    prop.setName("customerRule");
+                } else if (StructuredContentRuleType.PRODUCT.equals(type)) {
+                    prop = new Property();
+                    prop.setName("productRule");
+                } else if (StructuredContentRuleType.REQUEST.equals(type)) {
+                    prop = new Property();
+                    prop.setName("requestRule");
+                } else if (StructuredContentRuleType.TIME.equals(type)) {
+                    prop = new Property();
+                    prop.setName("timeRule");
+                }
+                if (prop != null) {
+                    prop.setValue(content.getStructuredContentMatchRules().get(key).getMatchRule());
+                    entity.addProperty(prop);
+                }
+            }
         }
     }
 
@@ -309,9 +386,16 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
+            addRule(entity, adminInstance, "customerRule", StructuredContentRuleType.CUSTOMER);
+			addRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
+			addRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
+            addRule(entity, adminInstance, "timeRule", StructuredContentRuleType.TIME);
+
             adminInstance = structuredContentService.addStructuredContent(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            addRulesToEntity(adminInstance, adminEntity);
 
 			return adminEntity;
 		} catch (Exception e) {
@@ -328,14 +412,18 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StructuredContent adminInstance = (StructuredContent) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            adminInstance.getStructuredContentFields().size();
-            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            adminInstance = (StructuredContent) SerializationUtils.clone(adminInstance);
 			adminInstance = (StructuredContent) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            updateRule(entity, adminInstance, "customerRule", StructuredContentRuleType.CUSTOMER);
+			updateRule(entity, adminInstance, "productRule", StructuredContentRuleType.PRODUCT);
+			updateRule(entity, adminInstance, "requestRule", StructuredContentRuleType.REQUEST);
+            updateRule(entity, adminInstance, "timeRule", StructuredContentRuleType.TIME);
 
             adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            addRulesToEntity(adminInstance, adminEntity);
 
 			return adminEntity;
 		} catch (Exception e) {
@@ -359,4 +447,27 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
 		}
     }
+
+    protected void addRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
+		Property ruleProperty = entity.findProperty(propertyName);
+		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+			StructuredContentRule rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
+			rule.setMatchRule(ruleProperty.getValue());
+			structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
+		}
+	}
+
+	protected void updateRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
+		Property ruleProperty = entity.findProperty(propertyName);
+		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+			StructuredContentRule rule = structuredContentInstance.getStructuredContentMatchRules().get(type.getType());
+			if (rule == null) {
+				rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
+			}
+			rule.setMatchRule(ruleProperty.getValue());
+			structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
+		} else {
+			structuredContentInstance.getStructuredContentMatchRules().remove(type.getType());
+		}
+	}
 }

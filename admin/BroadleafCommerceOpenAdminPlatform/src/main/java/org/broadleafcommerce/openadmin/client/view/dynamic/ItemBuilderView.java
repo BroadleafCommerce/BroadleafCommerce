@@ -53,11 +53,18 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 
 	public ItemBuilderView(DataSource itemDataSource, Boolean allowDelete) {
 		super(10);
+        setHeight(46);
 		if (allowDelete) {
 			VLayout removeLayout = new VLayout();
-			removeLayout.setAlign(VerticalAlignment.CENTER);
-			removeLayout.setHeight(40);
+			removeLayout.setAlign(VerticalAlignment.TOP);
+			removeLayout.setHeight(46);
 			removeLayout.setWidth(16);
+
+            VLayout innerRemoveLayout = new VLayout();
+            innerRemoveLayout.setAlign(VerticalAlignment.CENTER);
+			innerRemoveLayout.setHeight(38);
+			innerRemoveLayout.setWidth(16);
+
 			removeButton = new ImgButton();
 			removeButton.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/remove.png");
 			removeButton.setShowRollOver(false);
@@ -65,55 +72,66 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 			removeButton.setShowDown(false);
 			removeButton.setWidth(16);
 			removeButton.setHeight(16);
-			removeLayout.addMember(removeButton);
+
+            innerRemoveLayout.addMember(removeButton);
+			removeLayout.addMember(innerRemoveLayout);
 			addMember(removeLayout);
 		}
         
 		VLayout formLayout = new VLayout();
-		formLayout.setAlign(VerticalAlignment.CENTER);
+		formLayout.setAlign(VerticalAlignment.TOP);
 		formLayout.setWidth(30);
-		formLayout.setHeight(40);
+		formLayout.setHeight(46);
+
+        VLayout innerFormLayout = new VLayout();
+		innerFormLayout.setAlign(VerticalAlignment.CENTER);
+		innerFormLayout.setWidth(30);
+		innerFormLayout.setHeight(38);
+
 		itemForm = new DynamicForm();
-		//if (!allowInfiniteQuantity) {
-			itemQuantity = new IntegerItem();
-			itemQuantity.setShowTitle(false);
-			itemQuantity.setValue(1);
-			itemQuantity.setWidth(40);
-		/*} else {
-			itemQuantity = new ComboBoxItem();
-			itemQuantity.setType("comboBox");  
-			LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
-			valueMap.put("-1", "All");
-			itemQuantity.setValueMap(valueMap);
-			itemQuantity.setShowTitle(false);
-			itemQuantity.setValue(1);
-			itemQuantity.setWidth(60);
-			itemQuantity.setValidators(new IsIntegerValidator());
-		}*/
+        itemQuantity = new IntegerItem();
+        itemQuantity.setShowTitle(false);
+        itemQuantity.setValue(1);
+        itemQuantity.setWidth(40);
+
 		itemForm.setItems(itemQuantity);
-		formLayout.addMember(itemForm);
+		innerFormLayout.addMember(itemForm);
+        formLayout.addMember(innerFormLayout);
 		addMember(formLayout);
 		
 		VLayout labelLayout = new VLayout();
-		labelLayout.setAlign(VerticalAlignment.CENTER);
+		labelLayout.setAlign(VerticalAlignment.TOP);
 		labelLayout.setWidth(20);
-		labelLayout.setHeight(40);
+		labelLayout.setHeight(46);
+
+        VLayout innerLabelLayout = new VLayout();
+		innerLabelLayout.setAlign(VerticalAlignment.CENTER);
+		innerLabelLayout.setWidth(20);
+		innerLabelLayout.setHeight(38);
+
 		label = new Label("Of");
 		label.setWidth(20);
 		label.setHeight(20);
-		labelLayout.addMember(label);
+		innerLabelLayout.addMember(label);
+        labelLayout.addMember(innerLabelLayout);
 		addMember(labelLayout);
 		
 		VLayout builderLayout = new VLayout();
-		builderLayout.setHeight(40);
-		builderLayout.setAlign(VerticalAlignment.TOP);
+		builderLayout.setHeight(46);
+		builderLayout.setAlign(VerticalAlignment.CENTER);
+
+        VLayout innerBuilderLayout = new VLayout();
+		innerBuilderLayout.setHeight(38);
+		innerBuilderLayout.setAlign(VerticalAlignment.CENTER);
+
 		itemFilterBuilder = new FilterBuilder();  
 		itemFilterBuilder.setDataSource(itemDataSource);
 		itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
 		itemFilterBuilder.setLayoutBottomMargin(10);
 		itemFilterBuilder.setAllowEmpty(true);
 		itemFilterBuilder.setValidateOnChange(false);
-		builderLayout.addMember(itemFilterBuilder);
+		innerBuilderLayout.addMember(itemFilterBuilder);
+        builderLayout.addMember(innerBuilderLayout);
 		
 		rawItemForm = new DynamicForm();
 		rawItemForm.setVisible(false);

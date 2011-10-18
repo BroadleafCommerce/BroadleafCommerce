@@ -69,6 +69,11 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
     protected VLayout newItemBuilderLayout;
     protected Button addItemButton;
     protected VLayout itemBuilderContainerLayout;
+    protected Label customerLabel;
+    protected Label timeLabel;
+    protected Label requestLabel;
+    protected Label productLabel;
+    protected Label orderItemLabel;
 
     public StructuredContentView() {
 		setHeight100();
@@ -95,7 +100,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         listDisplay.getGrid().setHoverCustomizer(new HoverCustomizer() {
             @Override
             public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
+                if (record != null && record.getAttribute("lockedFlag") != null && record.getAttributeAsBoolean("lockedFlag")) {
                     return BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("lockedMessage"), new String[]{"userName", "date"}, new String[]{record.getAttribute("auditable.updatedBy.name"), record.getAttribute("auditable.dateUpdated")});
                 }
                 return null;
@@ -148,9 +153,10 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         innerLayout.setBackgroundColor("#eaeaea");
         innerLayout.setLayoutMargin(20);
 
-        Label customerLabel = new Label();
+        customerLabel = new Label();
         customerLabel.setContents(BLCMain.getMessageManager().getString("scCustomerRule"));
         customerLabel.setHeight(20);
+        customerLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(customerLabel);
         
         customerFilterBuilder = new FilterBuilder();
@@ -159,11 +165,13 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         customerFilterBuilder.setLayoutBottomMargin(20);
         customerFilterBuilder.setAllowEmpty(true);
         customerFilterBuilder.setValidateOnChange(false);
+        customerFilterBuilder.setDisabled(true);
         innerLayout.addMember(customerFilterBuilder);
 
-        Label timeLabel = new Label();
+        timeLabel = new Label();
         timeLabel.setContents(BLCMain.getMessageManager().getString("scTimeRule"));
         timeLabel.setHeight(20);
+        timeLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(timeLabel);
 
         timeFilterBuilder = new FilterBuilder();
@@ -172,11 +180,13 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         timeFilterBuilder.setLayoutBottomMargin(20);
         timeFilterBuilder.setAllowEmpty(true);
         timeFilterBuilder.setValidateOnChange(false);
+        timeFilterBuilder.setDisabled(true);
         innerLayout.addMember(timeFilterBuilder);
 
-        Label requestLabel = new Label();
+        requestLabel = new Label();
         requestLabel.setContents(BLCMain.getMessageManager().getString("scRequestRule"));
         requestLabel.setHeight(20);
+        requestLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(requestLabel);
 
         requestFilterBuilder = new FilterBuilder();
@@ -185,11 +195,13 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         requestFilterBuilder.setLayoutBottomMargin(20);
         requestFilterBuilder.setAllowEmpty(true);
         requestFilterBuilder.setValidateOnChange(false);
+        requestFilterBuilder.setDisabled(true);
         innerLayout.addMember(requestFilterBuilder);
 
-        Label productLabel = new Label();
+        productLabel = new Label();
         productLabel.setContents(BLCMain.getMessageManager().getString("scProductRule"));
         productLabel.setHeight(20);
+        productLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(productLabel);
 
         productFilterBuilder = new FilterBuilder();
@@ -198,14 +210,16 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         productFilterBuilder.setLayoutBottomMargin(20);
         productFilterBuilder.setAllowEmpty(true);
         productFilterBuilder.setValidateOnChange(false);
+        productFilterBuilder.setDisabled(true);
         innerLayout.addMember(productFilterBuilder);
 
-        Label orderItemLabel = new Label();
+        orderItemLabel = new Label();
         orderItemLabel.setContents(BLCMain.getMessageManager().getString("scOrderItemRule"));
         orderItemLabel.setHeight(20);
+        orderItemLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(orderItemLabel);
 
-        itemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true));
+        //itemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true));
 
         newItemBuilderLayout = new VLayout();
         HLayout buttonLayout = new HLayout();
@@ -218,14 +232,15 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         addItemButton.setTitle(BLCMain.getMessageManager().getString("newItemRuleButtonTitle"));
         addItemButton.setWidth(136);
         addItemButton.setWrap(false);
+        addItemButton.setDisabled(true);
         buttonLayout.addMember(addItemButton);
         buttonLayout.setLayoutBottomMargin(10);
         newItemBuilderLayout.addMember(buttonLayout);
         itemBuilderContainerLayout = new VLayout();
         newItemBuilderLayout.addMember(itemBuilderContainerLayout);
-        for (ItemBuilderDisplay widget : itemBuilderViews) {
-        	itemBuilderContainerLayout.addMember((ItemBuilderView) widget);
-        }
+        //for (ItemBuilderDisplay widget : itemBuilderViews) {
+        	//itemBuilderContainerLayout.addMember((ItemBuilderView) widget);
+        //}
 
         innerLayout.addMember(newItemBuilderLayout);
 
@@ -355,5 +370,45 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
 
     public void setItemBuilderContainerLayout(VLayout itemBuilderContainerLayout) {
         this.itemBuilderContainerLayout = itemBuilderContainerLayout;
+    }
+
+    public Label getCustomerLabel() {
+        return customerLabel;
+    }
+
+    public void setCustomerLabel(Label customerLabel) {
+        this.customerLabel = customerLabel;
+    }
+
+    public Label getTimeLabel() {
+        return timeLabel;
+    }
+
+    public void setTimeLabel(Label timeLabel) {
+        this.timeLabel = timeLabel;
+    }
+
+    public Label getRequestLabel() {
+        return requestLabel;
+    }
+
+    public void setRequestLabel(Label requestLabel) {
+        this.requestLabel = requestLabel;
+    }
+
+    public Label getProductLabel() {
+        return productLabel;
+    }
+
+    public void setProductLabel(Label productLabel) {
+        this.productLabel = productLabel;
+    }
+
+    public Label getOrderItemLabel() {
+        return orderItemLabel;
+    }
+
+    public void setOrderItemLabel(Label orderItemLabel) {
+        this.orderItemLabel = orderItemLabel;
     }
 }
