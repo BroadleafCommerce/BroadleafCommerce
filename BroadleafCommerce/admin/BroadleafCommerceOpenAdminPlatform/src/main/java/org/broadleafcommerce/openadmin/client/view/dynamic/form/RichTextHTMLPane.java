@@ -1,15 +1,14 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.Element;
 import com.smartgwt.client.widgets.HTMLPane;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RichTextHTMLPane extends HTMLPane {
 
@@ -81,7 +80,7 @@ public class RichTextHTMLPane extends HTMLPane {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", String.valueOf(myId));
         setContentsURLParams(map);
-        setContentsURL(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix() + editorPath);
+        setContentsURL(BLCMain.webAppContext + editorPath);
     }
 
     public void setDisabled(Boolean disabled) {

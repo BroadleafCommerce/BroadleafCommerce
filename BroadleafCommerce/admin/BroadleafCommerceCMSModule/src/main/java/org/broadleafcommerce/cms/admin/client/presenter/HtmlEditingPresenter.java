@@ -21,7 +21,6 @@ import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEvent;
@@ -89,7 +88,7 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
     }
 
     protected String getPreviewUrlPrefix() {
-        return ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix();
+        return BLCMain.webAppContext;
     }
 
     public native void exposeNativeGetPreviewUrlPrefix() /*-{
