@@ -28,6 +28,7 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
@@ -94,7 +95,6 @@ public class StructuredContentPresenterExtractor {
 	public void applyData(final Record selectedRecord) {
 		try {
 			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
-            //dirtyValues.putAll(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
 
             extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.CUSTOMER), getDisplay().getCustomerFilterBuilder(), MVELKEYWORDMAP.get(FilterType.CUSTOMER));
             extractData(selectedRecord, dirtyValues, StructuredContentPresenterInitializer.ATTRIBUTEMAP.get(FilterType.PRODUCT), getDisplay().getProductFilterBuilder(), MVELKEYWORDMAP.get(FilterType.PRODUCT));
@@ -114,8 +114,7 @@ public class StructuredContentPresenterExtractor {
                 @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
-                        final Record newRecord = response.getData()[0];
-                        final String newId = presenter.getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(newRecord);
+                        final String newId = response.getAttribute("newId");
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
                         final DynamicForm form = legacyForm.getForm();
                         for (FormItem formItem : form.getFields()) {
@@ -139,9 +138,20 @@ public class StructuredContentPresenterExtractor {
                                 }
                             }
                         });
-                        if (!presenter.getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(selectedRecord).equals(newId)) {
-                            getDisplay().getListDisplay().getGrid().getRecordList().remove(selectedRecord);
-                            presenter.currentStructuredContentRecord = newRecord;
+                        if (!presenter.currentStructuredContentId.equals(newId)) {
+                            /*selectedRecord.setAttribute("id", newId);
+                            TreeNode[] recordList = new TreeNode[]{(TreeNode) selectedRecord};
+                            DSResponse updateResponse = new DSResponse();
+                            updateResponse.setData(recordList);
+                            getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);*/
+                            for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
+                                if (record.getAttribute("id").equals(presenter.currentStructuredContentId)) {
+                                    record.setAttribute("id", newId);
+                                    presenter.currentStructuredContentRecord = selectedRecord;
+                                    break;
+                                }
+                            }
+                            presenter.currentStructuredContentId = newId;
                         }
                     }
                 }

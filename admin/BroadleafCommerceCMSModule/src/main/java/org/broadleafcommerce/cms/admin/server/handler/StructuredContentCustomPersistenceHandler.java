@@ -395,6 +395,13 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
+            if (adminEntity.findProperty("structuredContentType") != null) {
+                Property property = new Property();
+                property.setName("structuredContentTypeGrid");
+                property.setValue(adminEntity.findProperty("structuredContentType").getValue());
+                adminEntity.addProperty(property);
+            }
+
             addRulesToEntity(adminInstance, adminEntity);
 
 			return adminEntity;
@@ -422,6 +429,13 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
             adminInstance = structuredContentService.updateStructuredContent(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            if (adminEntity.findProperty("structuredContentType") != null) {
+                Property property = new Property();
+                property.setName("structuredContentTypeGrid");
+                property.setValue(adminEntity.findProperty("structuredContentType").getValue());
+                adminEntity.addProperty(property);
+            }
 
             addRulesToEntity(adminInstance, adminEntity);
 

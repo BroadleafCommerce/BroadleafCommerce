@@ -219,8 +219,6 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         orderItemLabel.setBaseStyle("disabledLabel");
         innerLayout.addMember(orderItemLabel);
 
-        //itemBuilderViews.add(new ItemBuilderView(orderItemDataSource, true));
-
         newItemBuilderLayout = new VLayout();
         HLayout buttonLayout = new HLayout();
         buttonLayout.setID("offerButtonLayout");
@@ -238,9 +236,6 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         newItemBuilderLayout.addMember(buttonLayout);
         itemBuilderContainerLayout = new VLayout();
         newItemBuilderLayout.addMember(itemBuilderContainerLayout);
-        //for (ItemBuilderDisplay widget : itemBuilderViews) {
-        	//itemBuilderContainerLayout.addMember((ItemBuilderView) widget);
-        //}
 
         innerLayout.addMember(newItemBuilderLayout);
 
