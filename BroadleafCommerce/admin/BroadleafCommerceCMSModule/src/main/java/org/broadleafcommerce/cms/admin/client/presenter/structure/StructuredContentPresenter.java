@@ -79,6 +79,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected HandlerRegistration ruleSaveButtonHandlerRegistration;
     protected HandlerRegistration ruleRefreshButtonHandlerRegistration;
     protected Record currentStructuredContentRecord;
+    protected String currentStructuredContentId;
+    protected Integer currentStructuredContentPos;
     protected boolean isFetched = false;
     protected StructuredContentPresenterInitializer initializer;
     protected StructuredContentPresenterExtractor extractor;
@@ -157,6 +159,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             getDisplay().getListDisplay().getRemoveButton().disable();
         }
         currentStructuredContentRecord = selectedRecord;
+        currentStructuredContentId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord);
+        currentStructuredContentPos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentStructuredContentRecord);
         loadContentTypeForm(selectedRecord);
         initializer.initSection(selectedRecord);
         enableRules();

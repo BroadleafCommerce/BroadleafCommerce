@@ -36,22 +36,15 @@ public class StructuredContentListDataSourceFactory implements DataSourceFactory
 
     public static final String structuredContentTypeForeignKey = "structuredContentType";
     public static final String localeForeignKey = "locale";
-	public static StructuredContentListDataSource dataSource = null;
 
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
-		if (dataSource == null) {
-			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(structuredContentTypeForeignKey, EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
-            DataSourceModule[] modules = new DataSourceModule[]{
-                new StructuredContentListClientEntityModule(CeilingEntities.STRUCTUREDCONTENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
-			};
-			dataSource = new StructuredContentListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
-			dataSource.buildFields(null, false, cb);
-		} else {
-			if (cb != null) {
-				cb.onSuccess(dataSource);
-			}
-		}
+        operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+        PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(structuredContentTypeForeignKey, EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"), new ForeignKey(localeForeignKey, EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName")});
+        DataSourceModule[] modules = new DataSourceModule[]{
+            new StructuredContentListClientEntityModule(CeilingEntities.STRUCTUREDCONTENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+        };
+        StructuredContentListDataSource dataSource = new StructuredContentListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+        dataSource.buildFields(null, false, cb);
 	}
 
 }
