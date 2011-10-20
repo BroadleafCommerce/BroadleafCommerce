@@ -15,14 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.operation;
 
-import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
-
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.SC;
+import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 
 /**
  * 
@@ -48,25 +47,30 @@ public abstract class EntityServiceAsyncCallback<T> extends AbstractCallback<T> 
     }
     
     @Override
-	protected void onSecurityException(ApplicationSecurityException exception) {
-    	super.onSecurityException(exception);
-		onError(opType, requestId, request, response, exception);
+	protected void onSecurityException(final ApplicationSecurityException exception) {
+        super.onSecurityException(exception);
+        onError(opType, requestId, request, response, exception, false);
 	}
 
 	@Override
 	protected void onOtherException(Throwable exception) {
 		super.onOtherException(exception);
-		onError(opType, requestId, request, response, exception);
+		onError(opType, requestId, request, response, exception, false);
 	}
-	
-	protected void onError(EntityOperationType opType, String requestId,
-            DSRequest request, DSResponse response, Throwable caught) {
+
+    protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+        onError(opType, requestId, request, response, caught, true);
+    }
+
+	protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught, boolean showWarning) {
         response.setStatus(RPCResponse.STATUS_FAILURE);
         dataSource.processResponse(requestId, response);
-        
-        // show a dialog with error message
-        SC.warn("<b>" + opType.name()
-                + "</b><br/><br/>Error while processing RPC request:<br/><br/>"
-                + caught.getMessage(), null);
+
+        if (showWarning) {
+            // show a dialog with error message
+            SC.warn("<b>" + opType.name()
+                    + "</b><br/><br/>Error while processing RPC request:<br/><br/>"
+                    + caught.getMessage(), null);
+        }
     }
 }

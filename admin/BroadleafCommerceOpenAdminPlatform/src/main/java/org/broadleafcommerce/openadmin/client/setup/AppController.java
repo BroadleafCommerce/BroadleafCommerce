@@ -15,19 +15,23 @@
  */
 package org.broadleafcommerce.openadmin.client.setup;
 
+import java.util.HashMap;
+
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.AsyncClient;
+import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
+import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.UIFactory;
-
-import java.util.HashMap;
 
 /**
  * 
@@ -90,40 +94,52 @@ public class AppController implements ValueChangeHandler<String> {
 	}
 	
 	protected void showView(final String viewKey, final String presenterKey) {
-		if (SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)){
-			uiFactory.clearCurrentView();
-            uiFactory.getView(viewKey, false, false, new AsyncClient() {
-                @Override
-                public void onSuccess(Object instance) {
-                    final Display view = (Display) instance;
-                    uiFactory.getPresenter(presenterKey, new AsyncClient() {
-                        @Override
-                        public void onSuccess(Object instance) {
-                            EntityPresenter presenter = (EntityPresenter) instance;
-                            presenter.setDisplay(view);
-                            presenter.setEventBus(eventBus);
-                            BLCMain.currentViewKey = viewKey;
-                            if (presenter.getPresenterSequenceSetupManager() != null) {
-                                presenter.getPresenterSequenceSetupManager().setCanvas(container);
-                                presenter.setup();
-                                presenter.getPresenterSequenceSetupManager().launch();
-                            } else {
-                                presenter.setup();
+        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+            @Override
+            public void onSuccess(AdminUser result) {
+                if (result == null) {
+                    UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
+                    builder.setPath(BLCMain.webAppContext + "/admin.html");
+                    builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                    com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
+                } else {
+                    if (SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)){
+                        uiFactory.clearCurrentView();
+                        uiFactory.getView(viewKey, false, false, new AsyncClient() {
+                            @Override
+                            public void onSuccess(Object instance) {
+                                final Display view = (Display) instance;
+                                uiFactory.getPresenter(presenterKey, new AsyncClient() {
+                                    @Override
+                                    public void onSuccess(Object instance) {
+                                        EntityPresenter presenter = (EntityPresenter) instance;
+                                        presenter.setDisplay(view);
+                                        presenter.setEventBus(eventBus);
+                                        BLCMain.currentViewKey = viewKey;
+                                        if (presenter.getPresenterSequenceSetupManager() != null) {
+                                            presenter.getPresenterSequenceSetupManager().setCanvas(container);
+                                            presenter.setup();
+                                            presenter.getPresenterSequenceSetupManager().launch();
+                                        } else {
+                                            presenter.setup();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onUnavailable() {
+                                        throw new RuntimeException("Unable to show item: " + presenterKey);
+                                    }
+                                });
                             }
-                        }
 
-                        @Override
-                        public void onUnavailable() {
-                            throw new RuntimeException("Unable to show item: " + presenterKey);
-                        }
-                    });
+                            @Override
+                            public void onUnavailable() {
+                                throw new RuntimeException("Unable to show item: " + viewKey);
+                            }
+                        });
+                    }
                 }
-
-                @Override
-                public void onUnavailable() {
-                    throw new RuntimeException("Unable to show item: " + viewKey);
-                }
-            });
-		}
+            }
+        });
 	}
 }

@@ -155,7 +155,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         logout.setWidth(60);
         logout.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
             public void onClick(ClickEvent event) {
-                com.google.gwt.user.client.Window.open("adminLogout.htm", "_self", null);
+                UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
+                builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+                com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
             }
         });
         moduleStack.addMember(logout);

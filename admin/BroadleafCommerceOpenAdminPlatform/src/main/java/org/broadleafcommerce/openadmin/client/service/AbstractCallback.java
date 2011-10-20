@@ -15,12 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.service;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.UrlBuilder;
 import com.gwtincubator.security.client.SecuredAsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.util.SC;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.security.AdminUser;
 
 /**
  * @author jfischer
@@ -39,18 +40,50 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
     }
 
     @Override
-    protected void onOtherException(Throwable exception) {
+    protected void onOtherException(final Throwable exception) {
         final String msg = "Service Exception";
-        reportException(msg, exception);
-        String errorMsg = exception.getMessage();
-        SC.warn(errorMsg);
+        if (exception.getClass().getName().equals("com.google.gwt.user.client.rpc.InvocationException")) {
+            AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+                @Override
+                public void onSuccess(AdminUser result) {
+                    if (result == null) {
+                        reportException(msg, exception);
+                        UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
+                        builder.setPath(BLCMain.webAppContext + "/admin.html");
+                        builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                        com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
+                    } else {
+                        reportException(msg, exception);
+                        String errorMsg = exception.getMessage();
+                        SC.warn(errorMsg);
+                    }
+                }
+            });
+        } else {
+            reportException(msg, exception);
+            String errorMsg = exception.getMessage();
+            SC.warn(errorMsg);
+        }
     }
 
     @Override
-    protected void onSecurityException(ApplicationSecurityException exception) {
+    protected void onSecurityException(final ApplicationSecurityException exception) {
         final String msg = "Security Exception";
-        reportException(msg, exception);
-        SC.warn("Your Profile doesn't have the Capability necessary to perform this task.");
+        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+            @Override
+            public void onSuccess(AdminUser result) {
+                if (result == null) {
+                    reportException(msg, exception);
+                    UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
+                    builder.setPath(BLCMain.webAppContext + "/admin.html");
+                    builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                    com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
+                } else {
+                    reportException(msg, exception);
+                    SC.warn("Your Profile doesn't have the Capability necessary to perform this task.");
+                }
+            }
+        });
     }
 
     private void reportException(String msg, Throwable exception) {
