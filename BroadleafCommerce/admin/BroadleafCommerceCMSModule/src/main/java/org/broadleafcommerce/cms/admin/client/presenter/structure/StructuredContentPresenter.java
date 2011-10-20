@@ -37,6 +37,7 @@ import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
@@ -137,14 +138,10 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         initialValues.put("priority", new Integer(5));
 		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
             public void onNewItemCreated(NewItemCreatedEvent event) {
-                Criteria myCriteria = new Criteria();
-                myCriteria.addCriteria("contentName", event.getRecord().getAttribute("contentName"));
-                display.getListDisplay().getGrid().fetchData(myCriteria, new DSCallback() {
-                    @Override
-                    public void execute(DSResponse response, Object rawData, DSRequest request) {
-                        getDisplay().getListDisplay().getGrid().selectRecord(0);
-                    }
-                });
+                ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
+                DSResponse updateResponse = new DSResponse();
+                updateResponse.setData(recordList);
+                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
             }
         }, "90%", null, null);
 	}
@@ -154,16 +151,18 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
             getDisplay().getListDisplay().getRemoveButton().enable();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
+            enableRules();
+            initializer.initSection(selectedRecord, false);
         } else {
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
             getDisplay().getListDisplay().getRemoveButton().disable();
+            disableRules();
+            initializer.initSection(selectedRecord, true);
         }
         currentStructuredContentRecord = selectedRecord;
         currentStructuredContentId = getPresenterSequenceSetupManager().getDataSource("structuredContentDS").getPrimaryKeyValue(currentStructuredContentRecord);
         currentStructuredContentPos = getDisplay().getListDisplay().getGrid().getRecordIndex(currentStructuredContentRecord);
         loadContentTypeForm(selectedRecord);
-        initializer.initSection(selectedRecord);
-        enableRules();
 	}
 
     protected void loadContentTypeForm(final Record selectedRecord) {

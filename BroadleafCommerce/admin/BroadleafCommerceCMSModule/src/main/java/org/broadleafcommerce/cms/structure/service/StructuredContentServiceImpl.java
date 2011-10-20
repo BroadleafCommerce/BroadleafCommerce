@@ -127,6 +127,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             c.add(Restrictions.isNull("sandbox"));
             return c.list();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression = null;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -138,9 +139,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
 
             if (productionSandboxExpression != null) {
-                c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+                c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
             } else {
-                c.add(currentSandboxExpression);
+                c.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
             }
 
             List<StructuredContent> resultList = (List<StructuredContent>) c.list();
@@ -184,6 +185,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             c.add(Restrictions.isNull("sandbox"));
             return (Long) c.uniqueResult();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -196,18 +198,18 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
-            c.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
 
             Long resultCount = (Long) c.list().get(0);
             Long updatedCount = 0L;
             Long deletedCount = 0L;
 
             // count updated items
-            c.add(Restrictions.and(Restrictions.isNotNull("originalItemId"),Restrictions.eq("sandbox", sandbox)));
+            c.add(Restrictions.and(Restrictions.isNotNull("originalItemId"),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
             updatedCount = (Long) c.list().get(0);
 
             // count deleted items
-            c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
+            c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
             deletedCount = (Long) c.list().get(0);
 
             return resultCount - updatedCount - deletedCount;
@@ -525,7 +527,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             } else {
                 sc.setLockedFlag(true);
             }
-
+        }
+        if (sc.getOriginalSandBox() == null) {
+            sc.setOriginalSandBox(sc.getSandbox());
         }
         sc.setSandbox(destinationSandBox);
         structuredContentDao.addOrUpdateContentItem(sc, false);
@@ -540,6 +544,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (sc != null) {
             sc.setSandbox(destinationSandBox);
+            sc.setOriginalSandBox(null);
+            sc.setLockedFlag(false);
             structuredContentDao.addOrUpdateContentItem(sc, false);
         }
     }
