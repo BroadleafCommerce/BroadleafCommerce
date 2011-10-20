@@ -131,16 +131,15 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		itemFilterBuilder.setAllowEmpty(true);
 		itemFilterBuilder.setValidateOnChange(false);
 		innerBuilderLayout.addMember(itemFilterBuilder);
-        builderLayout.addMember(innerBuilderLayout);
-		
-		rawItemForm = new DynamicForm();
+        rawItemForm = new DynamicForm();
 		rawItemForm.setVisible(false);
         rawItemTextArea = new TextAreaItem();
         rawItemTextArea.setHeight(70);
         rawItemTextArea.setWidth("600");
         rawItemTextArea.setShowTitle(false);
         rawItemForm.setFields(rawItemTextArea);
-        builderLayout.addMember(rawItemForm);
+        innerBuilderLayout.addMember(rawItemForm);
+        builderLayout.addMember(innerBuilderLayout);
         
 		addMember(builderLayout);
 	}
