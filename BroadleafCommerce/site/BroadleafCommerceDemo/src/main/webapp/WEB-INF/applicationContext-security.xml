@@ -84,22 +84,6 @@
 		<property name="rememberMeServices" ref="blRememberMeServices" />
 		<property name="authenticationManager" ref="blAuthenticationManager" />
 	</bean>
-	
-	<bean id="blAdminLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
-		<constructor-arg>
-			<bean class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
-				<property name="defaultTargetUrl" value="/login.jsp"/>
-			</bean>
-		</constructor-arg>
-		<constructor-arg>
-			<list>
-				<ref local="blRememberMeServices" />
-				<bean
-					class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
-			</list>
-		</constructor-arg>
-		<property name="filterProcessesUrl" value="/adminLogout.htm" />
-	</bean>
 
 	<bean id="blLogoutFilter"
 		class="org.springframework.security.web.authentication.logout.LogoutFilter">
@@ -197,10 +181,26 @@
 		<property name="authenticationSuccessHandler" ref="springAdminAuthenticationSuccessHandler" />
 		<property name="filterProcessesUrl" value="/admin/login_admin_post" />
 	</bean>
+
+    <bean id="blAdminLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<constructor-arg>
+			<bean class="org.broadleafcommerce.profile.web.core.security.BroadleafAdminLogoutSuccessHandler">
+				<property name="defaultTargetUrl" value="/admin.html"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<ref local="blRememberMeServices" />
+				<bean
+					class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</list>
+		</constructor-arg>
+		<property name="filterProcessesUrl" value="/adminLogout.htm" />
+	</bean>
 	
 	<bean id="broadleafAdminAuthenticationFailureHandler"
 		class="org.broadleafcommerce.profile.web.core.security.BroadleafAuthenticationFailureHandler">
-		<constructor-arg value="/login.jsp" />
+		<constructor-arg value="/login.jsp?login_error=true" />
 		<property name="redirectStrategy" ref="redirectStrategy" />
 	</bean>
 
