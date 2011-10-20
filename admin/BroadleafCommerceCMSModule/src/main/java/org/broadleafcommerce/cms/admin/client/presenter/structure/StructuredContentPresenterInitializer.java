@@ -66,12 +66,12 @@ public class StructuredContentPresenterInitializer {
 		return presenter.getDisplay();
 	}
 	
-	public void initSection(Record selectedRecord) {
+	public void initSection(Record selectedRecord, boolean disabled) {
         initFilterBuilder(getDisplay().getCustomerFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.CUSTOMER)));
         initFilterBuilder(getDisplay().getProductFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.PRODUCT)));
         initFilterBuilder(getDisplay().getRequestFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.REQUEST)));
         initFilterBuilder(getDisplay().getTimeFilterBuilder(), selectedRecord.getAttribute(ATTRIBUTEMAP.get(FilterType.TIME)));
-		initItemQualifiers(selectedRecord);
+		initItemQualifiers(selectedRecord, disabled);
 	}
 
     public void initFilterBuilder(FilterBuilder filterBuilder, String rule) {
@@ -88,7 +88,7 @@ public class StructuredContentPresenterInitializer {
 		}
 	}
 
-	public void initItemQualifiers(final Record selectedRecord) {
+	public void initItemQualifiers(final Record selectedRecord, final boolean disabled) {
 		Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
 		offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -96,6 +96,9 @@ public class StructuredContentPresenterInitializer {
                 for (Record record : response.getData()) {
                     if (Integer.parseInt(record.getAttribute("quantity")) > 0) {
                         final ItemBuilderDisplay display = getDisplay().addItemBuilder(orderItemDataSource);
+                        if (disabled) {
+                            display.disable();
+                        }
                         presenter.bindItemBuilderEvents(display);
                         display.getItemFilterBuilder().clearCriteria();
                         display.setRecord(record);

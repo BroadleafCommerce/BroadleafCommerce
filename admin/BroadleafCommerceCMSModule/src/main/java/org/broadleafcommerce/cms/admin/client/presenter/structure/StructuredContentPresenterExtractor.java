@@ -139,11 +139,6 @@ public class StructuredContentPresenterExtractor {
                             }
                         });
                         if (!presenter.currentStructuredContentId.equals(newId)) {
-                            /*selectedRecord.setAttribute("id", newId);
-                            TreeNode[] recordList = new TreeNode[]{(TreeNode) selectedRecord};
-                            DSResponse updateResponse = new DSResponse();
-                            updateResponse.setData(recordList);
-                            getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);*/
                             for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
                                 if (record.getAttribute("id").equals(presenter.currentStructuredContentId)) {
                                     record.setAttribute("id", newId);
