@@ -16,18 +16,23 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import java.util.LinkedHashMap;
+
 import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.AdvancedCriteria;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-
-import java.util.LinkedHashMap;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 /**
  * 
@@ -126,6 +131,12 @@ public class OfferPresenterInitializer {
 	}
 	
 	public void initItemTargets(final Record selectedRecord) {
+        BLCMain.MASTERVIEW.getStatus().setContents(BLCMain.getMessageManager().getString("mvelTranslationProblem"));
+        getDisplay().getTargetItemBuilder().setIncompatibleMVEL(false);
+        getDisplay().getTargetItemBuilder().getItemFilterBuilder().setVisible(true);
+        getDisplay().getTargetItemBuilder().getRawItemForm().setVisible(false);
+        getDisplay().getTargetItemBuilder().getRawItemTextArea().setValue("");
+
 		getDisplay().getTargetItemBuilder().getItemFilterBuilder().clearCriteria();
 		String targetQuantity = selectedRecord.getAttribute("targetItemCriteria.quantity");
 		if (targetQuantity != null) {
