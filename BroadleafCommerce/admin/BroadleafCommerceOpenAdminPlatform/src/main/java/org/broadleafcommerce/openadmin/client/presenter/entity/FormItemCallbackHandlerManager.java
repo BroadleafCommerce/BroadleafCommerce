@@ -15,19 +15,19 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import java.util.HashMap;
+
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-
-import java.util.HashMap;
 
 /**
  * 
@@ -47,8 +47,8 @@ public class FormItemCallbackHandlerManager {
 	public void addSearchFormItemCallback(String fieldName, final EntitySearchDialog searchView, final String searchDialogTitle, final DynamicFormDisplay dynamicFormDisplay, final FormItemCallback cb) {
 		callbacks.put(fieldName, new FormItemCallback() {
 			public void execute(final FormItem formItem) {
-				searchView.search(searchDialogTitle, new SearchItemSelectedEventHandler() {
-					public void onSearchItemSelected(SearchItemSelectedEvent event) {
+				searchView.search(searchDialogTitle, new SearchItemSelectedHandler() {
+					public void onSearchItemSelected(SearchItemSelected event) {
 						final String myId = ((AbstractDynamicDataSource) event.getDataSource()).getPrimaryKeyValue(event.getRecord());
 						PersistencePerspective persistencePerspective = ((DynamicEntityDataSource) dynamicFormDisplay.getFormOnlyDisplay().getForm().getDataSource()).getPersistencePerspective();
 						ForeignKey mainForeignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);

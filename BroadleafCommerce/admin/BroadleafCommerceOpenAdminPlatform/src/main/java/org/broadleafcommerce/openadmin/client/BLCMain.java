@@ -52,6 +52,7 @@ public class BLCMain implements EntryPoint {
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>();
 
     public static String webAppContext;
+    public static String storeFrontWebAppContext;
     public static String adminContext;
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
 	//TODO set the version as part of the build
@@ -137,6 +138,16 @@ public class BLCMain implements EntryPoint {
             @Override
             public void onSuccess(String result) {
                 webAppContext = result;
+                AppServices.UTILITY.getStoreFrontWebAppContext(new AbstractCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        if (result != null) {
+                            storeFrontWebAppContext = result;
+                        } else {
+                            storeFrontWebAppContext = webAppContext;
+                        }
+                    }
+                });
             }
         });
         adminContext = GWT.getModuleBaseURL();

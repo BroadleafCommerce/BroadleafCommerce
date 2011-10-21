@@ -24,8 +24,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
@@ -123,8 +123,8 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 		display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					searchDialog.search(searchDialogTitle, new SearchItemSelectedEventHandler() {
-						public void onSearchItemSelected(SearchItemSelectedEvent event) {
+					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
+						public void onSearchItemSelected(SearchItemSelected event) {
 							display.getGrid().addData(event.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {

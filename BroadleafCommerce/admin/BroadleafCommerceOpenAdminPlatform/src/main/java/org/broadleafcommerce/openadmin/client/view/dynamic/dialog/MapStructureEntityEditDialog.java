@@ -15,12 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import java.util.LinkedHashMap;
+
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-
-import java.util.LinkedHashMap;
 
 /**
  * 

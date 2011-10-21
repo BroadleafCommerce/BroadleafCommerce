@@ -15,13 +15,21 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.grid.events.*;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
+import com.smartgwt.client.widgets.grid.events.DataArrivedEvent;
+import com.smartgwt.client.widgets.grid.events.DataArrivedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -29,9 +37,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -45,12 +50,12 @@ public class MapStructurePresenter implements SubPresentable {
 	protected String entityEditDialogTitle;
 	protected Map<String, Object> initialValues = new HashMap<String, Object>();
 	protected String[] gridFields;
-	
+
 	protected Record associatedRecord;
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	protected Boolean disabled = false;
-	
-	public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
+
+    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
 		this.display = display;
 		this.entityEditDialog = entityEditDialog;
 		this.entityEditDialogTitle = entityEditDialogTitle;
@@ -62,8 +67,8 @@ public class MapStructurePresenter implements SubPresentable {
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
 		this(display, entityEditDialog, entityEditDialogTitle, null);
 	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
@@ -118,51 +123,53 @@ public class MapStructurePresenter implements SubPresentable {
 	}
 	
 	public void bind() {
-		display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
-			public void onDataArrived(DataArrivedEvent event) {
-				display.getRemoveButton().disable();
-			}
-		});
-		display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
-			public void onEditComplete(EditCompleteEvent event) {
-				display.getGrid().deselectAllRecords();
-				setStartState();
-			}
-		});
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-					display.getRemoveButton().enable();
-				} else {
-					display.getRemoveButton().disable();
-				}
-			}
-		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
-						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							display.getRemoveButton().disable();
-						}
-					});
-				}
-			}
-		});
-		display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
-					initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
-					String[] type = associatedRecord.getAttributeAsStringArray("_type");
-					if (type == null) {
-						type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
-					}
-					initialValues.put("_type", type);
-					entityEditDialog.editNewRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, null, gridFields, null);
-				}
-			}
-		});
+        if (display.getCanEdit()) {
+            display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
+                public void onDataArrived(DataArrivedEvent event) {
+                    display.getRemoveButton().disable();
+                }
+            });
+            display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+                public void onSelectionChanged(SelectionEvent event) {
+                    if (event.getState()) {
+                        display.getRemoveButton().enable();
+                    } else {
+                        display.getRemoveButton().disable();
+                    }
+                }
+            });
+            display.getRemoveButton().addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    if (event.isLeftButtonDown()) {
+                        display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
+                            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                display.getRemoveButton().disable();
+                            }
+                        });
+                    }
+                }
+            });
+            display.getAddButton().addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    if (event.isLeftButtonDown()) {
+                        DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
+                        initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
+                        String[] type = associatedRecord.getAttributeAsStringArray("_type");
+                        if (type == null) {
+                            type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
+                        }
+                        initialValues.put("_type", type);
+                        entityEditDialog.editNewRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, null, gridFields, null);
+                    }
+                }
+            });
+            display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
+                @Override
+                public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
+                    entityEditDialog.editRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, gridFields, null);
+                }
+            });
+        }
 	}
 
 }

@@ -33,7 +33,6 @@ import org.broadleafcommerce.cms.admin.client.view.sandbox.CommentCallback;
 import org.broadleafcommerce.cms.admin.client.view.sandbox.CommentDialog;
 import org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractEntityPresenter;
@@ -107,7 +106,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
     protected void previewSelection(ListGridRecord[] records) {
-        String prefix = ((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getPreviewUrlPrefix();
+        String prefix = BLCMain.storeFrontWebAppContext;
         UrlBuilder urlBuilder = new UrlBuilder();
         if (prefix.startsWith("/")) {
             urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());

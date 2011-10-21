@@ -51,12 +51,12 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDa
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -136,8 +136,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         initialValues.put("priority", new Integer(5));
-		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
-            public void onNewItemCreated(NewItemCreatedEvent event) {
+		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
+            public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);

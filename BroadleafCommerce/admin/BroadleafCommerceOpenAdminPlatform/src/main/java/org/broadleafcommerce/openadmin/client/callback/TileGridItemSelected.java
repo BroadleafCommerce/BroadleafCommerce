@@ -13,40 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.event;
+package org.broadleafcommerce.openadmin.client.callback;
 
-import com.google.gwt.event.shared.GwtEvent;
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.data.Record;
 
 /**
  * 
- * @author jfischer
+ * @author krosenberg
  *
  */
-public class SearchItemSelectedEvent extends GwtEvent<SearchItemSelectedEventHandler> {
+public class TileGridItemSelected {
 
-	public static Type<SearchItemSelectedEventHandler> TYPE = new Type<SearchItemSelectedEventHandler>();
-
-	private ListGridRecord record;
+	private Record record;
 	private DataSource dataSource;
 
-	public SearchItemSelectedEvent(ListGridRecord record, DataSource dataSource) {
+	public TileGridItemSelected(Record record, DataSource dataSource) {
 		this.record = record;
 		this.dataSource = dataSource;
 	}
 
-	@Override
-	public Type<SearchItemSelectedEventHandler> getAssociatedType() {
-		return TYPE;
-	}
-
-	@Override
-	protected void dispatch(SearchItemSelectedEventHandler handler) {
-		handler.onSearchItemSelected(this);
-	}
-
-	public ListGridRecord getRecord() {
+	public Record getRecord() {
 		return record;
 	}
 	

@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -39,11 +38,10 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     private ApplicationContext applicationContext;
 
-    protected String previewUrlPrefix;
+    protected String storeFrontWebAppContext;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
@@ -57,12 +55,11 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
         }
     }
 
-    @Override
-    public String getPreviewUrlPrefix() throws ServiceException, ApplicationSecurityException {
-        return previewUrlPrefix;
+    public String getStoreFrontWebAppContext() {
+        return storeFrontWebAppContext;
     }
 
-    public void setPreviewUrlPrefix(String previewUrlPrefix) {
-        this.previewUrlPrefix = previewUrlPrefix;
+    public void setStoreFrontWebAppContext(String storeFrontWebAppContext) {
+        this.storeFrontWebAppContext = storeFrontWebAppContext;
     }
 }

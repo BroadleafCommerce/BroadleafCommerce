@@ -28,8 +28,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamic
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
@@ -116,8 +116,8 @@ public class UserRolePresenter implements SubPresentable {
 		display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					searchDialog.search(BLCMain.getMessageManager().getString("userRolesTitle"), new SearchItemSelectedEventHandler() {
-						public void onSearchItemSelected(SearchItemSelectedEvent event) {
+					searchDialog.search(BLCMain.getMessageManager().getString("userRolesTitle"), new SearchItemSelectedHandler() {
+						public void onSearchItemSelected(SearchItemSelected event) {
 							display.getGrid().addData(event.getRecord());
 						}
 					});

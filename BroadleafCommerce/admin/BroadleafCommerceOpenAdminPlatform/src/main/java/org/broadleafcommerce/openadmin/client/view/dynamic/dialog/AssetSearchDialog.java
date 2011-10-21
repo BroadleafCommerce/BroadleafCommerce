@@ -15,12 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEventHandler;
-import org.broadleafcommerce.openadmin.client.setup.AppController;
-
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -43,6 +37,10 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tile.TileGrid;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 
 /**
  * 
@@ -54,7 +52,7 @@ public class AssetSearchDialog extends Window {
 	protected final TileGrid tileGrid;
 	protected final TreeGrid treeGrid;
 	protected IButton saveButton;
-	protected TileGridItemSelectedEventHandler handler;
+	protected TileGridItemSelectedHandler handler;
 	
 	public AssetSearchDialog(final TileGridDataSource staticAssetDataSource, final PresentationLayerAssociatedDataSource staticAssetFolderDataSource) {
 		this.setIsModal(true);
@@ -131,9 +129,7 @@ public class AssetSearchDialog extends Window {
             public void onClick(ClickEvent event) {
             	//getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
             	Record selectedRecord = tileGrid.getSelection()[0];
-            	AppController.getInstance().getEventBus().addHandler(TileGridItemSelectedEvent.TYPE, handler);
-            	AppController.getInstance().getEventBus().fireEvent(new TileGridItemSelectedEvent(selectedRecord, tileGrid.getDataSource()));
-            	AppController.getInstance().getEventBus().removeHandler(TileGridItemSelectedEvent.TYPE, handler);
+                handler.onSearchItemSelected(new TileGridItemSelected(selectedRecord, tileGrid.getDataSource()));
             	hide();
             }
         });
@@ -184,7 +180,7 @@ public class AssetSearchDialog extends Window {
         addItem(mainLayout); 
 	}
 	
-	public void search(String title, TileGridItemSelectedEventHandler handler) {
+	public void search(String title, TileGridItemSelectedHandler handler) {
 		this.setTitle(title);
 		this.handler = handler;
 		centerInPage();
@@ -192,11 +188,11 @@ public class AssetSearchDialog extends Window {
 		show();
 	}
 
-    public TileGridItemSelectedEventHandler getHandler() {
+    public TileGridItemSelectedHandler getHandler() {
         return handler;
     }
 
-    public void setHandler(TileGridItemSelectedEventHandler handler) {
+    public void setHandler(TileGridItemSelectedHandler handler) {
         this.handler = handler;
     }
 

@@ -25,8 +25,6 @@ import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import org.broadleafcommerce.openadmin.client.AbstractHtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
-import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 /**
  * 
@@ -112,17 +110,6 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 
     @Override
 	public void postDraw() {
-         AppServices.UTILITY.getPreviewUrlPrefix(new AbstractCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                if (result != null) {
-                    setPreviewUrlPrefix(result);
-                } else {
-                    setPreviewUrlPrefix(BLCMain.webAppContext);
-                }
-            }
-        });
-        
 		ImgButton sgwtHomeButton = new ImgButton();
         sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
         sgwtHomeButton.setWidth(98);

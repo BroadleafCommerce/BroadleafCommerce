@@ -1088,13 +1088,37 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		SupportedFieldType explicitType, 
 		Class<?> returnedClass
 	) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		if (explicitType != null && explicitType.equals(SupportedFieldType.BROADLEAF_ENUMERATION)) {
-			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.BROADLEAF_ENUMERATION, type, targetClass, presentationAttribute, mergedPropertyType));
-		} else if ((explicitType != null && explicitType.equals(SupportedFieldType.BOOLEAN)) || returnedClass.equals(Boolean.class) || returnedClass.equals(Character.class)) {
+        if (
+            explicitType != null &&
+            !explicitType.equals(SupportedFieldType.UNKNOWN) &&
+            !explicitType.equals(SupportedFieldType.BOOLEAN) &&
+            !explicitType.equals(SupportedFieldType.INTEGER) &&
+            !explicitType.equals(SupportedFieldType.DATE) &&
+            !explicitType.equals(SupportedFieldType.STRING) &&
+            !explicitType.equals(SupportedFieldType.MONEY) &&
+            !explicitType.equals(SupportedFieldType.DECIMAL) &&
+            !explicitType.equals(SupportedFieldType.FOREIGN_KEY) &&
+            !explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
+        ) {
+            fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, explicitType, type, targetClass, presentationAttribute, mergedPropertyType));
+        } else if (
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.BOOLEAN)
+            ) ||
+            returnedClass.equals(Boolean.class) ||
+            returnedClass.equals(Character.class)
+        ) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.BOOLEAN, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-				(explicitType != null && explicitType.equals(SupportedFieldType.INTEGER)) || 
-				returnedClass.equals(Byte.class) || returnedClass.equals(Short.class) || returnedClass.equals(Integer.class) || returnedClass.equals(Long.class)
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.INTEGER)
+            ) ||
+            returnedClass.equals(Byte.class) ||
+            returnedClass.equals(Short.class) ||
+            returnedClass.equals(Integer.class) ||
+            returnedClass.equals(Long.class)
 		) {
 			if (propertyName.equals(idProperty)) {
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.ID, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute, mergedPropertyType));
@@ -1102,28 +1126,52 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute, mergedPropertyType));
 			}
 		} else if (
-				(explicitType != null && explicitType.equals(SupportedFieldType.DATE)) || 
-				returnedClass.equals(Calendar.class) || returnedClass.equals(Date.class) || returnedClass.equals(Timestamp.class)
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.DATE)
+            ) ||
+            returnedClass.equals(Calendar.class) ||
+            returnedClass.equals(Date.class) ||
+            returnedClass.equals(Timestamp.class)
 		) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.DATE, type, targetClass, presentationAttribute, mergedPropertyType));
-		} else if (explicitType != null && explicitType.equals(SupportedFieldType.PASSWORD)) {
-			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.PASSWORD, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-				(explicitType != null && explicitType.equals(SupportedFieldType.STRING)) || returnedClass.equals(String.class)
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.STRING)
+            ) ||
+            returnedClass.equals(String.class)
 		) {
 			if (propertyName.equals(idProperty)) {
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.ID, SupportedFieldType.STRING, type, targetClass, presentationAttribute, mergedPropertyType));
 			} else {
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.STRING, type, targetClass, presentationAttribute, mergedPropertyType));
 			}
-		} else if ((explicitType != null && explicitType.equals(SupportedFieldType.MONEY)) || returnedClass.equals(Money.class)) {
+		} else if (
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.MONEY)
+            ) ||
+            returnedClass.equals(Money.class)
+        ) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.MONEY, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-				(explicitType != null && explicitType.equals(SupportedFieldType.DECIMAL)) || 
-				returnedClass.equals(Double.class) || returnedClass.equals(BigDecimal.class)
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.DECIMAL)
+            ) ||
+            returnedClass.equals(Double.class) ||
+            returnedClass.equals(BigDecimal.class)
 		) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.DECIMAL, type, targetClass, presentationAttribute, mergedPropertyType));
-		} else if ((explicitType != null && explicitType.equals(SupportedFieldType.FOREIGN_KEY)) || foreignField != null && isPropertyForeignKey) {
+		} else if (
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.FOREIGN_KEY)
+            ) ||
+            foreignField != null &&
+            isPropertyForeignKey
+        ) {
 			ClassMetadata foreignMetadata;
 			foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(foreignField.getForeignKeyClass()));
 			Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
@@ -1135,7 +1183,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fields.get(propertyName).setForeignKeyProperty(foreignMetadata.getIdentifierPropertyName());
 			fields.get(propertyName).setForeignKeyClass(foreignField.getForeignKeyClass());
 			fields.get(propertyName).setForeignKeyDisplayValueProperty(foreignField.getDisplayValueProperty());
-		} else if ((explicitType != null && explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) || additionalForeignFields != null && additionalForeignKeyIndexPosition >= 0) {
+		} else if (
+            (
+                explicitType != null &&
+                explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
+            ) ||
+            additionalForeignFields != null &&
+            additionalForeignKeyIndexPosition >= 0
+        ) {
 			ClassMetadata foreignMetadata;
 			foreignMetadata = getSessionFactory().getClassMetadata(Class.forName(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass()));
 			Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();

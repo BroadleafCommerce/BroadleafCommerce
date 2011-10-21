@@ -16,19 +16,42 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import com.smartgwt.client.data.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.catalog.product.*;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductAttributeDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductMediaMapDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
@@ -36,13 +59,11 @@ import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePr
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -90,8 +111,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultProductName"));
 		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("productDS").getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newProductTitle"), getPresenterSequenceSetupManager().getDataSource("productDS"), initialValues, new NewItemCreatedEventHandler() {
-			public void onNewItemCreated(NewItemCreatedEvent event) {
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newProductTitle"), getPresenterSequenceSetupManager().getDataSource("productDS"), initialValues, new ItemEditedHandler() {
+			public void onItemEdited(ItemEdited event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("name", event.getRecord().getAttribute("name"));
 				display.getListDisplay().getGrid().fetchData(myCriteria);
@@ -175,6 +196,28 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetFolderTreeDS", new StaticAssetsFolderTreeDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
+            public void onSetupSuccess(DataSource dataSource) {
+            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
+            	PresentationLayerAssociatedDataSource staticAssetFolderTreeDS = (PresentationLayerAssociatedDataSource) getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS");
+             	final AssetSearchDialog assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS, staticAssetFolderTreeDS);
+                getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
+                    @Override
+                    public void execute(final FormItem formItem) {
+                        assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
+                            @Override
+                            public void onSearchItemSelected(TileGridItemSelected event) {
+                                String staticAssetFullUrl = BLCMain.storeFrontWebAppContext + "/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+                                formItem.setValue(staticAssetFullUrl);
+                                getMediaEntityView().updateMedia(staticAssetFullUrl);
+                            }
+                        });
+                    }
+                });
+            }
+        }));
 	}
 	
 	protected LinkedHashMap<String, String> getMediaMapKeys() {
@@ -189,6 +232,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected MapStructureEntityEditDialog getMediaEntityView() {
 		 if (mapEntityAdd == null) {
 			 mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE, getMediaMapKeys());
+             mapEntityAdd.setShowMedia(true);
+             mapEntityAdd.setMediaField("url");
 		 }
 		 return mapEntityAdd;
 	}

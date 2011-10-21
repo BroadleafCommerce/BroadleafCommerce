@@ -393,7 +393,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         mergedProperties.put("file", fieldMetadata);
 
         FieldMetadata iconMetadata = new FieldMetadata();
-        iconMetadata.setFieldType(SupportedFieldType.ARTIFACT);
+        iconMetadata.setFieldType(SupportedFieldType.ASSET);
         iconMetadata.setMutable(true);
         iconMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         iconMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName(), ImageStaticAssetImpl.class.getName()});
@@ -417,7 +417,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         mergedProperties.put("picture", iconMetadata);
 
         FieldMetadata iconLargeMetadata = new FieldMetadata();
-        iconLargeMetadata.setFieldType(SupportedFieldType.ARTIFACT);
+        iconLargeMetadata.setFieldType(SupportedFieldType.ASSET);
         iconLargeMetadata.setMutable(true);
         iconLargeMetadata.setInheritedFromType(StaticAssetImpl.class.getName());
         iconLargeMetadata.setAvailableToTypes(new String[]{StaticAssetImpl.class.getName(), ImageStaticAssetImpl.class.getName()});

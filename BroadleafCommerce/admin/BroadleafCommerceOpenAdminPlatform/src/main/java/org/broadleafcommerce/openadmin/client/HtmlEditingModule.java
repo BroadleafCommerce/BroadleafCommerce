@@ -17,8 +17,4 @@ public interface HtmlEditingModule extends Module {
 
 	public void setBasicHtmlEditorIFramePath(String basicHtmlEditorIFramePath);
 
-    public String getPreviewUrlPrefix();
-
-    public void setPreviewUrlPrefix(String previewUrlPrefix);
-
 }

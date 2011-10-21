@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
-import com.smartgwt.client.widgets.form.fields.StaticTextItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -26,9 +27,9 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
  * @author jfischer
  *
  */
-public class SearchFormItem extends StaticTextItem {
+public class EditableSearchFormItem extends TextItem {
 
-	public SearchFormItem() {  
+	public EditableSearchFormItem() {
         //use default trigger icon here. User can customize.  
         //[SKIN]/DynamicForm/default_formItem_icon.gif  
         FormItemIcon formItemIcon = new FormItemIcon();

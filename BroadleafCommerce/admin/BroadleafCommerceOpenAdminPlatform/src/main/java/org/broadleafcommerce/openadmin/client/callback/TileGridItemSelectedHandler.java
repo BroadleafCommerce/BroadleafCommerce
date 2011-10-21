@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.view.dynamic.grid;
-
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+package org.broadleafcommerce.openadmin.client.callback;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface GridStructureDisplay {
+public interface TileGridItemSelectedHandler {
 
-	public ToolStripButton getAddButton();
-	
-	public ListGrid getGrid();
-	
-	public ToolStripButton getRemoveButton();
-
-	public ToolStrip getToolBar();
-
-    public Boolean getCanEdit();
+  void onSearchItemSelected(TileGridItemSelected event);
 
 }

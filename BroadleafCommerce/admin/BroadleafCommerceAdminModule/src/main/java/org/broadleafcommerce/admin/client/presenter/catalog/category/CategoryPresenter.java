@@ -16,41 +16,63 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
-import com.smartgwt.client.data.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import org.broadleafcommerce.admin.client.datasource.catalog.category.*;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryTreeDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.FeaturedProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -75,8 +97,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		initialValues.put("defaultParentCategory", getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultCategoryName"));
 		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new NewItemCreatedEventHandler() {
-			public void onNewItemCreated(NewItemCreatedEvent event) {
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new ItemEditedHandler() {
+			public void onItemEdited(ItemEdited event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
 				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), null);
@@ -140,7 +162,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			public void onDataArrived(com.smartgwt.client.widgets.tree.events.DataArrivedEvent event) {
 				Record[] records = event.getParentNode().getAttributeAsRecordArray("children");
 				for (Record record : records) {
-					String hasChildren = ((TreeNode) record).getAttribute(CategoryTreeDataSourceFactory.hasChildrenProperty);
+					String hasChildren = record.getAttribute(CategoryTreeDataSourceFactory.hasChildrenProperty);
 					if (hasChildren != null && !Boolean.parseBoolean(hasChildren)) {
 						((TreeGrid) display.getListDisplay().getGrid()).getTree().loadChildren((TreeNode) record);
 					}
@@ -211,10 +233,10 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				library.put("categorySearchView", categorySearchView);
 				getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").
 				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"defaultParentCategory", 
-					categorySearchView, 
-					"Category Search", 
-					((CategoryDisplay) getDisplay()).getDynamicFormDisplay()
+					"defaultParentCategory",
+					categorySearchView,
+					"Category Search",
+					getDisplay().getDynamicFormDisplay()
 				);
 			}
 		}));
@@ -226,14 +248,14 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orphanedCategoriesDS", new OrphanedCategoryListDataSourceFactory(), null, new Object[]{rootId}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid().setDataSource(result);
-				((ListGridDataSource) result).setAssociatedGrid(((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid());
+				getDisplay().getOrphanedCategoryGrid().setDataSource(result);
+				((ListGridDataSource) result).setAssociatedGrid(getDisplay().getOrphanedCategoryGrid());
 				((ListGridDataSource) result).setupGridFields(new String[]{"name", "urlKey"});
 				
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria(OrphanedCategoryListDataSourceFactory.foreignKeyName, "0");
 				
-				((CategoryDisplay) getDisplay()).getOrphanedCategoryGrid().fetchData(myCriteria);
+				getDisplay().getOrphanedCategoryGrid().fetchData(myCriteria);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productSearchDS", new ProductListDataSourceFactory(), new AsyncCallbackAdapter() {
@@ -259,7 +281,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				childProductsPresenter = new SimpleSearchJoinStructurePresenter(((CategoryDisplay) getDisplay()).getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
+				childProductsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
 				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 			}
 		}));
@@ -268,10 +290,32 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				Map<String, Object> initialValues = new HashMap<String, Object>();
 				initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
 				initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new MapStructurePresenter(((CategoryDisplay) getDisplay()).getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
+				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
 				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "name", "url", "label"}, new Boolean[]{true, true, true, true});
 			}
 		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetFolderTreeDS", new StaticAssetsFolderTreeDataSourceFactory(), new NullAsyncCallbackAdapter()));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
+            @Override
+            public void onSetupSuccess(DataSource dataSource) {
+            	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
+            	PresentationLayerAssociatedDataSource staticAssetFolderTreeDS = (PresentationLayerAssociatedDataSource) getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS");
+             	final AssetSearchDialog assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS, staticAssetFolderTreeDS);
+                getPresenterSequenceSetupManager().getDataSource("mediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
+                    @Override
+                    public void execute(final FormItem formItem) {
+                        assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
+                            @Override
+                            public void onSearchItemSelected(TileGridItemSelected event) {
+                                String staticAssetFullUrl = BLCMain.storeFrontWebAppContext + "/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+                                formItem.setValue(staticAssetFullUrl);
+                                getMediaEntityView().updateMedia(staticAssetFullUrl);
+                            }
+                        });
+                    }
+                });
+            }
+        }));
 	}
 	
 	public void reloadAllChildRecordsForId(String id) {
@@ -308,6 +352,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	protected MapStructureEntityEditDialog getMediaEntityView() {
 		 if (mapEntityAdd == null) {
 			 mapEntityAdd = new MapStructureEntityEditDialog(MediaMapDataSourceFactory.MAPSTRUCTURE, getMediaMapKeys());
+             mapEntityAdd.setShowMedia(true);
+             mapEntityAdd.setMediaField("url");
 		 }
 		 return mapEntityAdd;
 	}
