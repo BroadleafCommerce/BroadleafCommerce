@@ -38,12 +38,12 @@ import org.broadleafcommerce.cms.admin.client.datasource.pages.*;
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.pages.PagesDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TreeGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -230,8 +230,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
                     initialValues.put("name", BLCMain.getMessageManager().getString("defaultPageName"));
                     initialValues.put("_type", new String[]{EntityImplementations.PAGEIMPL});
-                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
-                        public void onNewItemCreated(NewItemCreatedEvent event) {
+                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new ItemEditedHandler() {
+                        public void onItemEdited(ItemEdited event) {
                             if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentFolderRecord)) {
                                ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentFolderRecord);
                             }
@@ -250,8 +250,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("pageTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
                     initialValues.put("name", BLCMain.getMessageManager().getString("defaultPageName"));
                     initialValues.put("_type", new String[]{EntityImplementations.PAGEFOLDERIMPL});
-                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new NewItemCreatedEventHandler() {
-                        public void onNewItemCreated(NewItemCreatedEvent event) {
+                    BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newItemTitle"), getPresenterSequenceSetupManager().getDataSource("pageTreeDS"), initialValues, new ItemEditedHandler() {
+                        public void onItemEdited(ItemEdited event) {
                             if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentFolderRecord)) {
                                ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentFolderRecord);
                             }

@@ -26,6 +26,6 @@ public interface UtilityServiceAsync {
     
 	void getWebAppContext(AsyncCallback<String> cb);
 
-    void getPreviewUrlPrefix(AsyncCallback<String> cb);
+    void getStoreFrontWebAppContext(AsyncCallback<String> cb);
 
 }

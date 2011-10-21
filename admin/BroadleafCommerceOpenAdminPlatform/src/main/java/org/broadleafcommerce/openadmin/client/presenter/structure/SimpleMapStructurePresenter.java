@@ -57,8 +57,8 @@ public class SimpleMapStructurePresenter implements SubPresentable {
 		this.display = display;
 		this.initialValues = initialValues;
 	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);

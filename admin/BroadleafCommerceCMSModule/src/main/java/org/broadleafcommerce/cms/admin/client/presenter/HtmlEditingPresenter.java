@@ -23,8 +23,8 @@ import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGr
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.TileGridItemSelectedEventHandler;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
@@ -47,10 +47,10 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
     }
 
 	public void displayAssetSearchDialog(final JavaScriptObject editor) {
-		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedEventHandler() {
+		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
 			@Override
-			public void onSearchItemSelected(TileGridItemSelectedEvent event) {
-				String staticAssetFullUrl = BLCMain.webAppContext + "/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+			public void onSearchItemSelected(TileGridItemSelected event) {
+				String staticAssetFullUrl = BLCMain.storeFrontWebAppContext + "/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
 				String name = event.getRecord().getAttribute("name");
 				String fileExtension = event.getRecord().getAttribute("fileExtension");
 				String richContent;
@@ -88,7 +88,7 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
     }
 
     protected String getPreviewUrlPrefix() {
-        return BLCMain.webAppContext;
+        return BLCMain.storeFrontWebAppContext;
     }
 
     public native void exposeNativeGetPreviewUrlPrefix() /*-{

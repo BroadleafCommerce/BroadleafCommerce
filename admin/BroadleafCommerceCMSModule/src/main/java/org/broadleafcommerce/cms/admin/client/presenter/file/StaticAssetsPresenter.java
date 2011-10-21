@@ -33,10 +33,10 @@ import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDa
 import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenterWithoutForm;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
@@ -47,7 +47,7 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.ArtifactItem;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.AssetItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,8 +88,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
 		initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
-        BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
-			public void onNewItemCreated(NewItemCreatedEvent event) {
+        BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
+			public void onItemEdited(ItemEdited event) {
                 if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentSelectedRecord)) {
                    ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentSelectedRecord);
                 }
@@ -112,8 +112,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                     initialValues.put("customCriteria", "assetListUi");
                     initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
-                    FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
-                        public void onNewItemCreated(NewItemCreatedEvent event) {
+                    FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new ItemEditedHandler() {
+                        public void onItemEdited(ItemEdited event) {
                             Criteria myCriteria = new Criteria();
 				            myCriteria.addCriteria("fullUrl", event.getRecord().getAttribute("fullUrl"));
 				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria, new DSCallback() {
@@ -132,9 +132,9 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
                     getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().disable();
-                    ArtifactItem artifactItem = (ArtifactItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
-                    artifactItem.setPreviewSrc(getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
-                    artifactItem.setDisabled(true);
+                    AssetItem assetItem = (AssetItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+                    assetItem.setPreviewSrc(getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
+                    assetItem.setDisabled(true);
                     staticAssetDescriptionPresenter.enable();
                     staticAssetDescriptionPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), null);
 				}
@@ -180,8 +180,8 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                             initialValues.put("sandbox", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").createSandBoxInfo().getSandBox());
                             initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                             initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
-                            FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new NewItemCreatedEventHandler() {
-                                public void onNewItemCreated(NewItemCreatedEvent event) {
+                            FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new ItemEditedHandler() {
+                                public void onNewItemCreated(ItemEdited event) {
                                     final Record selectedRow = getDisplay().getListLeafDisplay().getGrid().getSelectedRecord();
                                     final int index = getDisplay().getListLeafDisplay().getGrid().getRecordIndex(selectedRow);
                                     getDisplay().getListLeafDisplay().getGrid().setData(new Record[]{});

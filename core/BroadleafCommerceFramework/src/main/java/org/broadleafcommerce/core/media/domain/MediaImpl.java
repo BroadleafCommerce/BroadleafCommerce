@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.*;
 
@@ -61,7 +62,7 @@ public class MediaImpl implements Media {
 
     @Column(name = "URL", nullable = false)
     @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
-    @AdminPresentation(friendlyName="Media Url", order=2, prominent=true)
+    @AdminPresentation(friendlyName="Media Url", order=2, prominent=true, fieldType = SupportedFieldType.ASSET_URL)
     protected String url;
 
     @Column(name = "LABEL", nullable = false)

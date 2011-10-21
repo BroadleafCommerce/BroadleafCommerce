@@ -27,10 +27,10 @@ import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionL
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
@@ -59,8 +59,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
 		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("customerDS").getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCustomerTitle"), getPresenterSequenceSetupManager().getDataSource("customerDS"), initialValues, new NewItemCreatedEventHandler() {
-			public void onNewItemCreated(NewItemCreatedEvent event) {
+		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCustomerTitle"), getPresenterSequenceSetupManager().getDataSource("customerDS"), initialValues, new ItemEditedHandler() {
+			public void onItemEdited(ItemEdited event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("username", event.getRecord().getAttribute("username"));
 				display.getListDisplay().getGrid().fetchData(myCriteria);

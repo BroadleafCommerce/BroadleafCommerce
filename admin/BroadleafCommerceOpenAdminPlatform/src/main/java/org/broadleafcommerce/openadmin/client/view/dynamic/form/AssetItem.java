@@ -11,7 +11,6 @@ import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.layout.VStack;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,12 +19,12 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
  * Time: 6:17 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ArtifactItem extends CanvasItem {
+public class AssetItem extends CanvasItem {
 
     private Img previewImg;
     protected IButton imageUpdateButton;
 
-    public ArtifactItem() {
+    public AssetItem() {
         VStack allStack = new VStack();
         allStack.setWidth(60);
         allStack.setAlign(Alignment.CENTER);
@@ -47,7 +46,7 @@ public class ArtifactItem extends CanvasItem {
             @Override
             public void onClick(ClickEvent event) {
                 final String formItemName = formItem.getName();
-                ((FormItemCallback) ((DynamicEntityDataSource) formItem.getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName)).execute(formItem);
+                ((DynamicEntityDataSource) formItem.getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName).execute(formItem);
             }
         });
         allStack.addMember(imageUpdateButton);

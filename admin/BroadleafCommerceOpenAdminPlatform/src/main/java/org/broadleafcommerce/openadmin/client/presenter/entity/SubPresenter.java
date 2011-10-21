@@ -60,8 +60,8 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
         this.showId = showId;
 		this.display = display;
 	}
-	
-	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
+
+    public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);

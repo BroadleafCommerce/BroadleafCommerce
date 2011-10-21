@@ -43,14 +43,13 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEvent;
-import org.broadleafcommerce.openadmin.client.event.NewItemCreatedEventHandler;
-import org.broadleafcommerce.openadmin.client.setup.AppController;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
 
@@ -62,7 +61,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadSta
 public class FileUploadDialog extends Window {
 
 	private DynamicForm dynamicForm;
-	private NewItemCreatedEventHandler handler;
+	private ItemEditedHandler handler;
     private Element synthesizedFrame;
     private IButton saveButton;
     private IButton cancelButton;
@@ -126,12 +125,7 @@ public class FileUploadDialog extends Window {
                                     DataSourceModule module = ((DynamicEntityDataSource) dynamicForm.getDataSource()).getCompatibleModule(OperationType.ENTITY);
                                     Record record = module.buildRecord(entity, false);
                                     if (handler != null) {
-                                        AppController.getInstance().getEventBus().addHandler(NewItemCreatedEvent.TYPE, handler);
-                                        try {
-                                            AppController.getInstance().getEventBus().fireEvent(new NewItemCreatedEvent((ListGridRecord) record, dynamicForm.getDataSource()));
-                                        } finally {
-                                            AppController.getInstance().getEventBus().removeHandler(NewItemCreatedEvent.TYPE, handler);
-                                        }
+                                        handler.onItemEdited(new ItemEdited((ListGridRecord) record, dynamicForm.getDataSource()));
                                     }
                                 }
                             } finally {
@@ -190,12 +184,12 @@ public class FileUploadDialog extends Window {
     }
 	
 	@SuppressWarnings("rawtypes")
-	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, NewItemCreatedEventHandler handler, String[] fieldNames) {
+	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
 		editNewRecord(null, dataSource, initialValues, handler, null, fieldNames, null);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, NewItemCreatedEventHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
+	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
 		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
 		this.handler = handler;
 		if (heightOverride != null) {

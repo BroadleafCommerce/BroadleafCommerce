@@ -40,5 +40,6 @@ public enum SupportedFieldType {
     HTML_BASIC,
     UPLOAD,
     HIDDEN,
-    ARTIFACT;
+    ASSET,
+    ASSET_URL
 }

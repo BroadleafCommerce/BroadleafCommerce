@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.grid;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -37,10 +36,12 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
 	protected ToolStripButton addButton;
 	protected ToolStripButton removeButton;
 	protected ListGrid grid;
+    protected Boolean canEdit;
 
 	public GridStructureView(String title, Boolean canReorder, Boolean canEdit) {
 		super(10);
-		
+
+        this.canEdit = canEdit;
 		setHeight(200);
         setWidth100();
         setBackgroundColor("#eaeaea");
@@ -82,11 +83,11 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         grid.setDisabled(true);
         grid.setCanSort(false);
         grid.setCellPadding(5);
-        grid.setCanEdit(canEdit);
-        grid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
-        grid.setEditByCell(true);
-        grid.setAutoSaveEdits(true);
-        grid.setSaveByCell(true);
+        grid.setCanEdit(false);
+        //grid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
+        //grid.setEditByCell(true);
+        //grid.setAutoSaveEdits(true);
+        //grid.setSaveByCell(true);
         grid.setAlternateRecordStyles(true);
         grid.setCanGroupBy(false);
         if (!canEdit) {
@@ -114,4 +115,11 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
 		return grid;
 	}
 
+    public Boolean getCanEdit() {
+        return canEdit;
+    }
+
+    public void setCanEdit(Boolean canEdit) {
+        this.canEdit = canEdit;
+    }
 }

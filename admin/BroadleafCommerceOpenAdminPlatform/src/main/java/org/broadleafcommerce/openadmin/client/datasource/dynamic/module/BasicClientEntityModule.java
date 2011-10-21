@@ -807,7 +807,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setRequired(required);
 					//field.setValidOperators(getBasicTextOperators());
 					break;
-                case ARTIFACT:
+                case ASSET:
                     field = new DataSourceImageField(propertyName, friendlyName);
                     field.setCanEdit(mutable);
 					field.setRequired(required);

@@ -15,12 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEvent;
-import org.broadleafcommerce.openadmin.client.event.SearchItemSelectedEventHandler;
-import org.broadleafcommerce.openadmin.client.setup.AppController;
-
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
@@ -34,6 +28,10 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 
 /**
  * 
@@ -44,7 +42,7 @@ public class EntitySearchDialog extends Window {
 		
 	protected ListGrid searchGrid;
 	protected IButton saveButton;
-	protected SearchItemSelectedEventHandler handler;
+	protected SearchItemSelectedHandler handler;
 
     public EntitySearchDialog(ListGridDataSource dataSource) {
         this(dataSource, false);
@@ -89,9 +87,7 @@ public class EntitySearchDialog extends Window {
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	Record selectedRecord = searchGrid.getSelectedRecord();
-            	AppController.getInstance().getEventBus().addHandler(SearchItemSelectedEvent.TYPE, EntitySearchDialog.this.handler);
-            	AppController.getInstance().getEventBus().fireEvent(new SearchItemSelectedEvent((ListGridRecord) selectedRecord, searchGrid.getDataSource()));
-            	AppController.getInstance().getEventBus().removeHandler(SearchItemSelectedEvent.TYPE, EntitySearchDialog.this.handler);
+                EntitySearchDialog.this.handler.onSearchItemSelected(new SearchItemSelected((ListGridRecord) selectedRecord, searchGrid.getDataSource()));
             	hide();
             }
         });
@@ -113,7 +109,7 @@ public class EntitySearchDialog extends Window {
         addItem(hLayout);
 	}
 	
-	public void search(String title, SearchItemSelectedEventHandler handler) {
+	public void search(String title, SearchItemSelectedHandler handler) {
 		this.setTitle(title);
 		this.handler = handler;
 		centerInPage();
@@ -122,11 +118,11 @@ public class EntitySearchDialog extends Window {
 		show();
 	}
 
-    public SearchItemSelectedEventHandler getHandler() {
+    public SearchItemSelectedHandler getHandler() {
         return handler;
     }
 
-    public void setHandler(SearchItemSelectedEventHandler handler) {
+    public void setHandler(SearchItemSelectedHandler handler) {
         this.handler = handler;
     }
 

@@ -210,7 +210,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         mergedProperties.put("structuredContentTypeGrid", contentTypeFieldMetadata);
 
         FieldMetadata iconMetadata = new FieldMetadata();
-        iconMetadata.setFieldType(SupportedFieldType.ARTIFACT);
+        iconMetadata.setFieldType(SupportedFieldType.ASSET);
         iconMetadata.setMutable(true);
         iconMetadata.setInheritedFromType(StructuredContentImpl.class.getName());
         iconMetadata.setAvailableToTypes(new String[]{StructuredContentImpl.class.getName()});

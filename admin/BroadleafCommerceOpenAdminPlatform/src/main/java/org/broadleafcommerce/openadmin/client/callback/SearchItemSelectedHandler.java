@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.event;
-
-import com.google.gwt.event.shared.EventHandler;
+package org.broadleafcommerce.openadmin.client.callback;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface TileGridItemSelectedEventHandler extends EventHandler {
-  void onSearchItemSelected(TileGridItemSelectedEvent event);
+public interface SearchItemSelectedHandler {
+
+  void onSearchItemSelected(SearchItemSelected event);
+
 }

@@ -13,15 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.openadmin.client.event;
+package org.broadleafcommerce.openadmin.client.callback;
 
-import com.google.gwt.event.shared.EventHandler;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface SearchItemSelectedEventHandler extends EventHandler {
-  void onSearchItemSelected(SearchItemSelectedEvent event);
+public class SearchItemSelected {
+
+	private ListGridRecord record;
+	private DataSource dataSource;
+
+	public SearchItemSelected(ListGridRecord record, DataSource dataSource) {
+		this.record = record;
+		this.dataSource = dataSource;
+	}
+
+	public ListGridRecord getRecord() {
+		return record;
+	}
+	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
 }
