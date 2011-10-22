@@ -20,7 +20,7 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.springframework.security.access.annotation.Secured;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */

@@ -15,17 +15,17 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.List;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blCategoryDao")
 public class CategoryDaoImpl implements CategoryDao {
@@ -38,56 +38,62 @@ public class CategoryDaoImpl implements CategoryDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    public Category save(Category category) {
+    @NotNull
+    public Category save(@NotNull Category category) {
         return em.merge(category);
     }
 
-    public Category readCategoryById(Long categoryId) {
+    @NotNull
+    public Category readCategoryById(@NotNull Long categoryId) {
         return (Category) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.Category"), categoryId);
     }
 
-    public Category readCategoryByName(String categoryName) {
+    @NotNull
+    public Category readCategoryByName(@NotNull String categoryName) {
         Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
         query.setParameter("categoryName", categoryName);
         query.setHint(getQueryCacheableKey(), true);
         return (Category)query.getSingleResult();
     }
 
-    @SuppressWarnings("unchecked")
+    @NotNull
     public List<Category> readAllCategories() {
         Query query = em.createNamedQuery("BC_READ_ALL_CATEGORIES");
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @NotNull
     public List<Product> readAllProducts() {
         Query query = em.createNamedQuery("BC_READ_ALL_PRODUCTS");
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Category> readAllSubCategories(final Category category) {
+    @NotNull
+    public List<Category> readAllSubCategories(@NotNull Category category) {
         Query query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES");
         query.setParameter("defaultParentCategory", category);
         return query.getResultList();
     }
 
+    @NotNull
     public String getQueryCacheableKey() {
         return queryCacheableKey;
     }
 
-    public void setQueryCacheableKey(String queryCacheableKey) {
+    @NotNull
+    public void setQueryCacheableKey(@NotNull String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
     }
     
-    public void delete(Category category){
+    public void delete(@NotNull Category category){
     	if (!em.contains(category)) {
     		category = readCategoryById(category.getId());
     	}
         em.remove(category);    	
     }
-    
+
+    @NotNull
     public Category create() {
         final Category category =  ((Category) entityConfiguration.createEntityInstance(Category.class.getName()));
         return category;
