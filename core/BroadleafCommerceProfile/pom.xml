@@ -213,5 +213,9 @@
 			<groupId>org.easymock</groupId>
 			<artifactId>easymockclassextension</artifactId>
 		</dependency>
+        <dependency>
+              <groupId>com.intellij</groupId>
+              <artifactId>annotations</artifactId>
+        </dependency>
 	</dependencies>
 </project>

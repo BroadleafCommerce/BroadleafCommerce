@@ -16,16 +16,35 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
+import java.util.List;
+
+/**
+ * @author Jeff Fischer
+ *
+ * CategoryDao provides persistence access to Category instances.
+ *
+ * @see Category
+ */
 public interface CategoryDao {
 
+    /**
+     * Retrieve a Category instance by its primary key
+     *
+     * @param categoryId the primary key of the Category
+     * @return the Category at the specified primary key
+     */
     public Category readCategoryById(Long categoryId);
 
-    public Category readCategoryByName(String categoryId);
+    /**
+     * Retrieve a Category instance by its name
+     *
+     * @param categoryName the name of the category
+     * @return the Category having the specified name
+     */
+    public Category readCategoryByName(String categoryName);
 
     public Category save(Category category);
 
