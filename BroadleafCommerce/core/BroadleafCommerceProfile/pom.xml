@@ -214,8 +214,8 @@
 			<artifactId>easymockclassextension</artifactId>
 		</dependency>
         <dependency>
-              <groupId>com.intellij</groupId>
-              <artifactId>annotations</artifactId>
+             <groupId>com.google.code.findbugs</groupId>
+             <artifactId>jsr305</artifactId>
         </dependency>
 	</dependencies>
 </project>
