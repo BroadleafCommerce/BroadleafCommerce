@@ -15,14 +15,6 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
@@ -30,6 +22,18 @@ import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * {@inheritDoc}
+ *
+ * @author Jeff Fischer
+ */
 @Repository("blProductDao")
 public class ProductDaoImpl implements ProductDao {
 
@@ -43,112 +47,118 @@ public class ProductDaoImpl implements ProductDao {
     
     protected Long currentDateResolution = 10000L;
     
-    protected Date currentDate = SystemTime.asDate();
+    private Date currentDate = SystemTime.asDate();
 
+    @Override
     public Product save(Product product) {
         return em.merge(product);
     }
 
+    @Override
     public Product readProductById(Long productId) {
         return (Product) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.Product"), productId);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Product> readProductsByName(String searchName) {
-        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME");
-        query.setParameter("name", searchName + "%");
-        query.setHint(getQueryCacheableKey(), true);
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME", Product.class);
+        query.setParameter("name", searchName + '%');
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
     	Date myDate;
-    	synchronized(this.currentDate) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > currentDateResolution) {
-	    		this.currentDate = currentDate;
+        Long myCurrentDateResolution = currentDateResolution;
+    	synchronized(this) {
+	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+	    		this.currentDate = new Date(currentDate.getTime());
 	    		myDate = currentDate;
 	    	} else {
 	    		myDate = this.currentDate;
 	    	}
     	}
-        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY");
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
         query.setParameter("currentDate", myDate);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Product> readProductsByCategory(Long categoryId) {
-        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY");
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Product> readProductsBySku(Long skuId) {
-        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU");
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU", Product.class);
         query.setParameter("skuId", skuId);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
     public List<ProductSku> readProductsBySkuOneToOne(Long skuId) {
-        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU_ONE_TO_ONE");
+        TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
         query.setParameter("skuId", skuId);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Product> readActiveProductsBySku(Long skuId, Date currentDate) {
     	Date myDate;
-    	synchronized(this.currentDate) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > currentDateResolution) {
-	    		this.currentDate = currentDate;
+        Long myCurrentDateResolution = currentDateResolution;
+    	synchronized(this) {
+	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+	    		this.currentDate = new Date(currentDate.getTime());
 	    		myDate = currentDate;
 	    	} else {
 	    		myDate = this.currentDate;
 	    	}
     	}
-        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU");
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU", Product.class);
         query.setParameter("skuId", skuId);
         query.setParameter("currentDate", myDate);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
     public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate) {
     	Date myDate;
-    	synchronized(this.currentDate) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > currentDateResolution) {
-	    		this.currentDate = currentDate;
+        Long myCurrentDateResolution = currentDateResolution;
+    	synchronized(this) {
+	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+	    		this.currentDate = new Date(currentDate.getTime());
 	    		myDate = currentDate;
 	    	} else {
 	    		myDate = this.currentDate;
 	    	}
     	}
-        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE");
+        TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
         query.setParameter("skuId", skuId);
         query.setParameter("currentDate", myDate);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(queryCacheableKey, true);
         return query.getResultList();
     }
 
+    @Override
     public void delete(Product product){
     	if (!em.contains(product)) {
     		product = readProductById(product.getId());
     	}
         em.remove(product);    	
     }
-    
-    public Product create(final ProductType productType) {
-        Product item = (Product) entityConfiguration.createEntityInstance(productType.getType());
-        return item;
+
+    @Override
+    public Product create(ProductType productType) {
+        return (Product) entityConfiguration.createEntityInstance(productType.getType());
     }
     
     public String getQueryCacheableKey() {

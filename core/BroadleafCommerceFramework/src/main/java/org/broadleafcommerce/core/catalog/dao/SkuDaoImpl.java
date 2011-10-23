@@ -15,18 +15,21 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.List;
+
+/**
+ * {@inheritDoc}
+ *
+ * @author Jeff Fischer
+ */
 @Repository("blSkuDao")
 public class SkuDaoImpl implements SkuDao {
 
@@ -36,41 +39,45 @@ public class SkuDaoImpl implements SkuDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public Sku save(Sku sku) {
         return em.merge(sku);
     }
 
+    @Override
     public Sku readSkuById(Long skuId) {
         return (Sku) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.Sku"), skuId);
     }
 
+    @Override
     public Sku readFirstSku() {
-        Query query = em.createNamedQuery("BC_READ_FIRST_SKU");
-        return (Sku) query.getSingleResult();
+        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_FIRST_SKU", Sku.class);
+        return query.getSingleResult();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Sku> readAllSkus() {
-        Query query = em.createNamedQuery("BC_READ_ALL_SKUS");
+        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_ALL_SKUS", Sku.class);
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Sku> readSkusById(List<Long> ids) {
-        Query query = em.createNamedQuery("BC_READ_SKUS_BY_ID");
+        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_SKUS_BY_ID", Sku.class);
         query.setParameter("skuIds", ids);
         return query.getResultList();
     }
-    
+
+    @Override
     public void delete(Sku sku){
     	if (!em.contains(sku)) {
     		sku = readSkuById(sku.getId());
     	}
         em.remove(sku);    	
     }
-    
+
+    @Override
     public Sku create() {
-        final Sku sku =  ((Sku) entityConfiguration.createEntityInstance(Sku.class.getName()));
-        return sku;
+        return (Sku) entityConfiguration.createEntityInstance(Sku.class.getName());
     }
 }

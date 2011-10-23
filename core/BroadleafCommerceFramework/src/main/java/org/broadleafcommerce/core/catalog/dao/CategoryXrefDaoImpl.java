@@ -15,20 +15,26 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.List;
+
+/**
+ * {@inheritDoc}
+ *
+ * @author Jeff Fischer
+ */
 @Repository("blCategoryXrefDao")
 public class CategoryXrefDaoImpl implements CategoryXrefDao {
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
@@ -37,36 +43,37 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<CategoryXrefImpl> readXrefsByCategoryId(Long categoryId){
-    	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID");
+    	TypedQuery<CategoryXrefImpl> query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_CATEGORYID", CategoryXrefImpl.class);
     	query.setParameter("categoryId", categoryId);
     	return query.getResultList();
-    	
     }
-    
-    @SuppressWarnings("unchecked")
+
+    @Override
     public List<CategoryXrefImpl> readXrefsBySubCategoryId(Long subCategoryId){
-    	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID");
+    	TypedQuery<CategoryXrefImpl> query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_SUBCATEGORYID", CategoryXrefImpl.class);
     	query.setParameter("subCategoryId", subCategoryId);
     	return query.getResultList();
     }
-    
+
+    @Override
     public CategoryXrefImpl readXrefByIds(Long categoryId, Long subCategoryId){
     	Query query = em.createNamedQuery("BC_READ_CATEGORY_XREF_BY_IDS");
     	query.setParameter("categoryId", categoryId);
     	query.setParameter("subCategoryId", subCategoryId);
     	return (CategoryXrefImpl)query.getSingleResult();
     }
-    
+
+    @Override
     public CategoryXref save(CategoryXrefImpl categoryXref){
     	return em.merge(categoryXref);
     }
-    
+
+    @Override
     public void delete(CategoryXrefImpl categoryXref){
     	if (!em.contains(categoryXref)) {
-    		categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(),
-    				                     categoryXref.getCategoryXrefPK().getSubCategory().getId());
+    		categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(), categoryXref.getCategoryXrefPK().getSubCategory().getId());
     	}
         em.remove(categoryXref);     	
     }

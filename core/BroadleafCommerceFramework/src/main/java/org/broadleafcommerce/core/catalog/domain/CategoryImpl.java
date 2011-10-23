@@ -21,36 +21,46 @@ import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.cache.CacheFactoryException;
-import org.broadleafcommerce.profile.cache.HydratedCacheManager;
 import org.broadleafcommerce.profile.cache.HydratedCacheManagerImpl;
 import org.broadleafcommerce.profile.util.DateUtil;
 import org.broadleafcommerce.profile.util.UrlUtil;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.*;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * The Class CategoryImpl is the default implementation of {@link Category}. A
- * category is a group of products. <br>
- * <br>
- * If you want to add fields specific to your implementation of
- * BroadLeafCommerce you should extend this class and add your fields. If you
- * need to make significant changes to the CategoryImpl then you should implement
- * your own version of {@link Category}. <BR>
- * <BR>
- * This implementation uses a Hibernate implementation of JPA configured through
- * annotations. The Entity references the following tables: BLC_CATEGORY,
- * BLC_CATEGORY_XREF, BLC_CATEGORY_IMAGE
- * @see {@link Category}
- * @author btaylor
+ * {@inheritDoc}
+ *
+ * @author bTaylor
+ * @author Jeff Fischer
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -59,505 +69,32 @@ import java.util.*;
 public class CategoryImpl implements Category {
 	
 	private static final long serialVersionUID = 1L;
-	
 	private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
-	
-	/** The id. */
-    @Id
-    @GeneratedValue(generator= "CategoryId")
-    @GenericGenerator(
-        name="CategoryId",
-        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
-            @Parameter(name="segment_value", value="CategoryImpl"),
-            @Parameter(name="increment_size", value="50"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryImpl")
-        }
-    )
-    @Column(name = "CATEGORY_ID")
-    @AdminPresentation(friendlyName="Category ID", group="Primary Key", hidden=true)
-    protected Long id;
 
-    /** The name. */
-    @Column(name = "NAME", nullable=false)
-    @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Category Name", order=1, group="Description", prominent=true)
-    protected String name;
-
-    /** The url. */
-    @Column(name = "URL")
-    @AdminPresentation(friendlyName="Category Url", order=2, group="Description")
-    protected String url;
-
-    /** The url key. */
-    @Column(name = "URL_KEY")
-    @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
-    protected String urlKey;
-    
-    /** The description. */
-    @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Category Description", order=5, group="Description", largeEntry=true)
-    protected String description;
-
-    /** The active start date. */
-    @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName="Category Active Start Date", order=7, group="Active Date Range")
-    protected Date activeStartDate;
-
-    /** The active end date. */
-    @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName="Category Active End Date", order=8, group="Active Date Range")
-    protected Date activeEndDate;
-
-    /** The display template. */
-    @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName="Category Display Template", order=4, group="Description")
-    protected String displayTemplate;
-    
-    /** The long description. */
-    @Lob
-    @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
-    protected String longDescription;
-    
-    @Transient
-    protected Map<String, List<Category>> childCategoryURLMap;
-    
-    @Transient
-    protected List<Category> childCategories = new ArrayList<Category>();
-    
-    /** The default parent category. */
-    @ManyToOne(targetEntity = CategoryImpl.class)
-    @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description", excluded = true)
-    protected Category defaultParentCategory;
-
-    /** The all child categories. */
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected List<Category> allChildCategories = new ArrayList<Category>();
-
-    /** The all parent categories. */	
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected List<Category> allParentCategories = new ArrayList<Category>();
-    
-    /** The all parent categories. */	
-    @ManyToMany(targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected List<Product> allProducts = new ArrayList<Product>();
-
-    /** The category images. */
-    @CollectionOfElements
-    @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
-    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    @Deprecated
-    protected Map<String, String> categoryImages = new HashMap<String, String>();
-
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected Map<String, Media> categoryMedia = new HashMap<String , Media>();
-
-    @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getId()
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#setId(java.lang.Long)
-     */
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getName()
-     */
-    public String getName() {
-        return name;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setName(java.lang.String)
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getUrl()
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setUrl(java.lang.String)
-     */
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getUrlKey()
-     */
-    public String getUrlKey() {
-        if ((urlKey == null || "".equals(urlKey.trim())) && getName() != null) {
-            return UrlUtil.generateUrlKey(getName());
-        }
-        return urlKey;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getGeneratedUrl()
-     */
-    public String getGeneratedUrl() {
-        return buildLink(null, this, false);
-    }
-
-    /**
-     * Builds the link.
-     * @param link the link
-     * @param category the category
-     * @param ignoreTopLevel the ignore top level
-     * @return the string
-     */
-    private String buildLink(final String link, final Category category, final boolean ignoreTopLevel) {
-        if (category == null || (ignoreTopLevel && category.getDefaultParentCategory() == null)) {
-            return link;
-        }
-        
-        String lLink;
-    	if (link == null) {
-    		lLink = category.getUrlKey();
-        } else {
-        	lLink = category.getUrlKey() + "/" + link;
-        }
-        return buildLink(lLink, category.getDefaultParentCategory(), ignoreTopLevel);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setUrlKey(java.lang.String)
-     */
-    public void setUrlKey(final String urlKey) {
-        this.urlKey = urlKey;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getDescription()
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setDescription(java.lang
-     * .String)
-     */
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getActiveStartDate()
-     */
-    public Date getActiveStartDate() {
-        return activeStartDate;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setActiveStartDate(java
-     * .util.Date)
-     */
-    public void setActiveStartDate(final Date activeStartDate) {
-        this.activeStartDate = activeStartDate;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getActiveEndDate()
-     */
-    public Date getActiveEndDate() {
-        return activeEndDate;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setActiveEndDate(java.util
-     * .Date)
-     */
-    public void setActiveEndDate(final Date activeEndDate) {
-        this.activeEndDate = activeEndDate;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#isActive()
-     */
-    public boolean isActive() {
-        if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
-                LOG.debug("category, " + id + ", inactive due to date");
-            }
-        }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getDisplayTemplate()
-     */
-    public String getDisplayTemplate() {
-        return displayTemplate;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setDisplayTemplate(java
-     * .lang.String)
-     */
-    public void setDisplayTemplate(final String displayTemplate) {
-        this.displayTemplate = displayTemplate;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getLongDescription()
-     */
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setLongDescription(java.lang.String)
-     */
-    public void setLongDescription(final String longDescription) {
-        this.longDescription = longDescription;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#getDefaultParentCategory()
-     */
-    public Category getDefaultParentCategory() {
-        return defaultParentCategory;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setDefaultParentCategory
-     * (org.broadleafcommerce.core.catalog.domain.Category)
-     */
-    public void setDefaultParentCategory(final Category defaultParentCategory) {
-        this.defaultParentCategory = defaultParentCategory;
-    }
-
-    /**
-     * Gets the child categories.
-     * 
-     * @return the child categories
-     */
-    public List<Category> getAllChildCategories(){
-    	return allChildCategories;
-    }
-
-    /**
-     * Checks for child categories.
-     * 
-     * @return true, if successful
-     */
-    public boolean hasAllChildCategories(){
-    	return !allChildCategories.isEmpty();
-    }
-
-    /**
-     * Sets the all child categories.
-     * 
-     * @param allChildCategories the new all child categories
-     */
-    public void setAllChildCategories(final List<Category> childCategories){
-    	this.allChildCategories.clear();
-    	for(Category category : childCategories){
-    		this.allChildCategories.add(category);
-    	}    	
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getChildCategories()
-     */
-    public List<Category> getChildCategories() {
-    	if (childCategories.isEmpty()) {
-            for (Category category : allChildCategories) {
-                if (category.isActive()) {
-                    childCategories.add(category);
+    private static String buildLink(Category category, boolean ignoreTopLevel) {
+        Category myCategory = category;
+        StringBuilder linkBuffer = new StringBuilder(50);
+        while (myCategory != null) {
+            if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
+                if (linkBuffer.length() == 0) {
+                    linkBuffer.append(myCategory.getUrlKey());
+                } else {
+                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
                 }
             }
+            myCategory = myCategory.getDefaultParentCategory();
         }
-        return childCategories;
+
+        return linkBuffer.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#hasChildCategories()
-     */
-    public boolean hasChildCategories() {
-        return getChildCategories().size() > 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setAllChildCategories(java
-     * .util.List)
-     */
-    public void setChildCategories(final List<Category> childCategories) {
-        this.childCategories.clear();
-    	for(Category category : childCategories){
-    		this.childCategories.add(category);
-    	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryImages()
-     */
-    @Deprecated
-    public Map<String, String> getCategoryImages() {
-        return categoryImages;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#getCategoryImage(java.lang
-     * .String)
-     */
-    @Deprecated
-    public String getCategoryImage(final String imageKey) {
-        return categoryImages.get(imageKey);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#setCategoryImages(java.
-     * util.Map)
-     */
-    @Deprecated
-    public void setCategoryImages(final Map<String, String> categoryImages) {
-    	this.categoryImages.clear();
-//    	for(String key : categoryImages.keySet()){
-//    		this.categoryImages.put(key, categoryImages.get(key));
-//    	}
-    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
-    		this.categoryImages.put(me.getKey(), me.getValue());
-    	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Category#getChildCategoryURLMap()
-     */
-    @SuppressWarnings("unchecked")
-	public Map<String, List<Category>> getChildCategoryURLMap() {
-    	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
-    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
-    	if (hydratedItem != null) {
-    		return (Map<String, List<Category>>) hydratedItem;
-    	}
-    	childCategoryURLMap = createChildCategoryURLMap();
-    	((HydratedCacheManager) manager).addHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
-        return childCategoryURLMap;
-    }
-    
-    public void setChildCategoryURLMap(final Map<String, List<Category>> cachedChildCategoryUrlMap) {
-    	this.childCategoryURLMap = cachedChildCategoryUrlMap;
-    }
-    
-    public Map<String, List<Category>> createChildCategoryURLMap() {
-    	try {
-    	childCategoryURLMap = new HashMap<String, List<Category>>();
-        final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
-        fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
-        childCategoryURLMap = newMap;
-        return childCategoryURLMap;
-		} catch (CacheFactoryException e) {
-			throw new RuntimeException(e);
-		}
-    }
-
-    /**
-     * Fill in url map for category.
-     * @param categoryUrlMap the category url map
-     * @param category the category
-     * @param startingPath the starting path
-     * @param startingCategoryList the starting category list
-     */
-    private void fillInURLMapForCategory(final Map<String, List<Category>> categoryUrlMap, final Category category, final String startingPath, final List<Category> startingCategoryList) throws CacheFactoryException {
-        final String urlKey = category.getUrlKey();
+    private static void fillInURLMapForCategory(Map<String, List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) throws CacheFactoryException {
+        String urlKey = category.getUrlKey();
         if (urlKey == null) {
         	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
-    	final String currentPath = startingPath + "/" + category.getUrlKey();
-        final List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
+    	String currentPath = startingPath + '/' + category.getUrlKey();
+        List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
         /*
@@ -578,32 +115,356 @@ public class CategoryImpl implements Category {
         }
     }
 
+    @Id
+    @GeneratedValue(generator= "CategoryId")
+    @GenericGenerator(
+        name="CategoryId",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="CategoryImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryImpl")
+        }
+    )
+    @Column(name = "CATEGORY_ID")
+    @AdminPresentation(friendlyName="Category ID", group="Primary Key", hidden=true)
+    protected Long id;
+
+    @Column(name = "NAME", nullable=false)
+    @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Category Name", order=1, group="Description", prominent=true)
+    protected String name;
+
+    @Column(name = "URL")
+    @AdminPresentation(friendlyName="Category Url", order=2, group="Description")
+    protected String url;
+
+    @Column(name = "URL_KEY")
+    @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
+    @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
+    protected String urlKey;
+
+    @Column(name = "DESCRIPTION")
+    @AdminPresentation(friendlyName="Category Description", order=5, group="Description", largeEntry=true)
+    protected String description;
+
+    @Column(name = "ACTIVE_START_DATE")
+    @AdminPresentation(friendlyName="Category Active Start Date", order=7, group="Active Date Range")
+    protected Date activeStartDate;
+
+    @Column(name = "ACTIVE_END_DATE")
+    @AdminPresentation(friendlyName="Category Active End Date", order=8, group="Active Date Range")
+    protected Date activeEndDate;
+
+    @Column(name = "DISPLAY_TEMPLATE")
+    @AdminPresentation(friendlyName="Category Display Template", order=4, group="Description")
+    protected String displayTemplate;
+
+    @Lob
+    @Column(name = "LONG_DESCRIPTION")
+    @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
+    protected String longDescription;
+
+    @ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
+    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
+    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description", excluded = true)
+    protected Category defaultParentCategory;
+
+    @ManyToMany(targetEntity = CategoryImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<Category> allChildCategories = new ArrayList<Category>(10);
+
+    @ManyToMany(targetEntity = CategoryImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<Category> allParentCategories = new ArrayList<Category>(10);
+
+    @ManyToMany(targetEntity = ProductImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<Product> allProducts = new ArrayList<Product>(10);
+
+    @CollectionOfElements
+    @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @Column(name = "URL")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @Deprecated
+    protected Map<String, String> categoryImages = new HashMap<String, String>(10);
+
+    @ManyToMany(targetEntity = MediaImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected Map<String, Media> categoryMedia = new HashMap<String , Media>(10);
+
+    @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
+
+    @Transient
+    protected Map<String, List<Category>> childCategoryURLMap;
+
+    @Transient
+    protected List<Category> childCategories = new ArrayList<Category>(50);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public String getUrlKey() {
+        if ((urlKey == null || "".equals(urlKey.trim())) && name != null) {
+            return UrlUtil.generateUrlKey(name);
+        }
+        return urlKey;
+    }
+
+    @Override
+    public String getGeneratedUrl() {
+        return buildLink(this, false);
+    }
+
+    @Override
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public Date getActiveStartDate() {
+        return activeStartDate;
+    }
+
+    @Override
+    public void setActiveStartDate(Date activeStartDate) {
+        this.activeStartDate = new Date(activeStartDate.getTime());
+    }
+
+    @Override
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
+
+    @Override
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = new Date(activeEndDate.getTime());
+    }
+
+    @Override
+    public boolean isActive() {
+        if (LOG.isDebugEnabled()) {
+            if (!DateUtil.isActive(activeStartDate, activeEndDate, false)) {
+                LOG.debug("category, " + id + ", inactive due to date");
+            }
+        }
+        return DateUtil.isActive(activeStartDate, activeEndDate, false);
+    }
+
+    @Override
+    public String getDisplayTemplate() {
+        return displayTemplate;
+    }
+
+    @Override
+    public void setDisplayTemplate(String displayTemplate) {
+        this.displayTemplate = displayTemplate;
+    }
+
+    @Override
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    @Override
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    @Override
+    public Category getDefaultParentCategory() {
+        return defaultParentCategory;
+    }
+
+    @Override
+    public void setDefaultParentCategory(Category defaultParentCategory) {
+        this.defaultParentCategory = defaultParentCategory;
+    }
+
+    @Override
+    public List<Category> getAllChildCategories(){
+    	return allChildCategories;
+    }
+
+    @Override
+    public boolean hasAllChildCategories(){
+    	return !allChildCategories.isEmpty();
+    }
+
+    @Override
+    public void setAllChildCategories(List<Category> childCategories){
+    	allChildCategories.clear();
+    	for(Category category : childCategories){
+    		allChildCategories.add(category);
+    	}    	
+    }
+
+    @Override
+    public List<Category> getChildCategories() {
+    	if (childCategories.isEmpty()) {
+            for (Category category : allChildCategories) {
+                if (category.isActive()) {
+                    childCategories.add(category);
+                }
+            }
+        }
+        return childCategories;
+    }
+
+    @Override
+    public boolean hasChildCategories() {
+        return !getChildCategories().isEmpty();
+    }
+
+    @Override
+    public void setChildCategories(List<Category> childCategories) {
+        this.childCategories.clear();
+    	for(Category category : childCategories){
+    		this.childCategories.add(category);
+    	}
+    }
+
+    @Override
+    @Deprecated
+    public Map<String, String> getCategoryImages() {
+        return categoryImages;
+    }
+
+    @Override
+    @Deprecated
+    public String getCategoryImage(String imageKey) {
+        return categoryImages.get(imageKey);
+    }
+
+    @Override
+    @Deprecated
+    public void setCategoryImages(Map<String, String> categoryImages) {
+    	this.categoryImages.clear();
+    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
+    		this.categoryImages.put(me.getKey(), me.getValue());
+    	}
+    }
+
+    @Override
+	public Map<String, List<Category>> getChildCategoryURLMap() {
+    	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
+    	Object hydratedItem = manager.getHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), id, "childCategoryURLMap");
+    	if (hydratedItem != null) {
+    		return (Map<String, List<Category>>) hydratedItem;
+    	}
+    	childCategoryURLMap = createChildCategoryURLMap();
+    	manager.addHydratedCacheElementItem("blStandardElements", CategoryImpl.class.getName(), id, "childCategoryURLMap", childCategoryURLMap);
+        return childCategoryURLMap;
+    }
+
+    protected Map<String, List<Category>> createChildCategoryURLMap() {
+    	try {
+            childCategoryURLMap = new HashMap<String, List<Category>>(50);
+            Map<String, List<Category>> newMap = new HashMap<String, List<Category>>(50);
+            fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>(10));
+            childCategoryURLMap = newMap;
+            return childCategoryURLMap;
+		} catch (CacheFactoryException e) {
+			throw new RuntimeException(e);
+		}
+    }
+
+    @Override
     public List<Category> getAllParentCategories() {
         return allParentCategories;
     }
 
-    public void setAllParentCategories(final List<Category> allParentCategories) {
+    @Override
+    public void setAllParentCategories(List<Category> allParentCategories) {
     	this.allParentCategories.clear();
     	for(Category category : allParentCategories){
     		this.allParentCategories.add(category);
     	}
     }
 
+    @Override
     public List<FeaturedProduct> getFeaturedProducts() {
         return featuredProducts;
     }
 
-    public void setFeaturedProducts(final List<FeaturedProduct> featuredProducts) {
+    @Override
+    public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
     	this.featuredProducts.clear();
     	for(FeaturedProduct featuredProduct : featuredProducts){
     		this.featuredProducts.add(featuredProduct);
     	}
     }
 
+    @Override
     public List<Product> getAllProducts() {
 		return allProducts;
 	}
 
+    @Override
 	public void setAllProducts(List<Product> allProducts) {
 		this.allProducts.clear();
     	for(Product product : allProducts){
@@ -611,19 +472,13 @@ public class CategoryImpl implements Category {
     	}
 	}
 
-	/*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#getCategoryMedia()
-     */
+    @Override
     public Map<String, Media> getCategoryMedia() {
         return categoryMedia;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Category#setCategoryMedia(java.util.Map)
-     */
-    public void setCategoryMedia(final Map<String, Media> categoryMedia) {
+    @Override
+    public void setCategoryMedia(Map<String, Media> categoryMedia) {
     	this.categoryMedia.clear();
     	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
     		this.categoryMedia.put(me.getKey(), me.getValue());
@@ -632,22 +487,22 @@ public class CategoryImpl implements Category {
     
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        result = prime * result + (url == null ? 0 : url.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final CategoryImpl other = (CategoryImpl) obj;
+        CategoryImpl other = (CategoryImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);
