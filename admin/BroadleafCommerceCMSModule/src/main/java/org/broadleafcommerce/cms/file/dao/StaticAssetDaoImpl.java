@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -58,11 +59,17 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAsset readStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
-        Query query2 = em.createNamedQuery("BC_READ_STATIC_ASSET_BY_FULL_URL");
-        query2.setParameter("targetSandbox", targetSandBox);
-        query2.setParameter("fullUrl", fullUrl);
+        TypedQuery<StaticAsset> query;
+        if (targetSandBox == null) {
+            query = em.createNamedQuery("BC_READ_STATIC_ASSET_BY_FULL_URL_AND_TARGET_SANDBOX_NULL", StaticAsset.class);
+            query.setParameter("fullUrl", fullUrl);
+        } else {
+            query = em.createNamedQuery("BC_READ_STATIC_ASSET_BY_FULL_URL", StaticAsset.class);
+            query.setParameter("targetSandbox", targetSandBox);
+            query.setParameter("fullUrl", fullUrl);
+        }
 
-        List<StaticAsset> results = query2.getResultList();
+        List<StaticAsset> results = query.getResultList();
         if (CollectionUtils.isEmpty(results)) {
             return null;
         } else {
