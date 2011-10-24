@@ -57,37 +57,43 @@
 		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* saveEntitySandBoxItemsandBoxItems(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>
 	</aop:config>-->
-	
-	<bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
-		<constructor-arg>
-			<list>
-                <!--Add any additional persistence modules here -->
-				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
-			</list>
-		</constructor-arg>
-        <property name="customPersistenceHandlers">
-			<list>
-                <!--Add custom persistence handlers here -->
-			</list>
-		</property>
-		<property name="targetEntityManagers">
-			<map>
-                <!--<entry key="sandbox" value="sandBoxEntityManagerPool"/>-->
+
+    <bean id="blPersistenceModules" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
+                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
+                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
                 <entry key="sandbox" value="prodEntityManager"/>
                 <entry key="stage" value="prodEntityManager"/>
                 <entry key="prod" value="prodEntityManager"/>
             </map>
-		</property>
-		<!--<property name="sandBoxService" ref="blSandBoxService"/>-->
+        </property>
+    </bean>
+
+    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean"/>
+
+    <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
+		<constructor-arg ref="blPersistenceModules"/>
+        <property name="customPersistenceHandlers" ref="blCustomPersistenceHandlers"/>
+		<property name="targetEntityManagers" ref="blTargetEntityManagers"/>
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
         <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
 	</bean>
 
+    <bean id="blMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean"/>
+
     <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
         <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
         <property name="entityConfiguration" ref="blEntityConfiguration"/>
+        <property name="metadataOverrides" ref="blMetadataOverrides"/>
     </bean>
 
     <bean id="blSessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />

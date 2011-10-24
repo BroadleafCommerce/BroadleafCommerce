@@ -13,24 +13,11 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-    <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
-		<constructor-arg>
-			<list>
-                <!--Add any additional persistence modules here -->
-                <bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.JoinStructurePersistenceModule"/>
-				<bean class="org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule"/>
-			</list>
-		</constructor-arg>
-        <property name="customPersistenceHandlers">
-			<list>
-                <!--Add any custom persistence handlers here -->
-                <bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
-				<bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler">
                     <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
@@ -42,24 +29,12 @@
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.TimeDTOCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.RequestDTOCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentItemCriteriaCustomPersistenceHandler"/>
-			</list>
-		</property>
-		<property name="targetEntityManagers">
-			<map>
-                <!--configure target entity managers here-->
-                <entry key="sandbox" value="prodEntityManager"/>
-                <entry key="stage" value="prodEntityManager"/>
-                <entry key="prod" value="prodEntityManager"/>
-            </map>
-		</property>
-		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
-        <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
-	</bean>
+            </list>
+        </property>
+    </bean>
 
-    <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
-        <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
-        <property name="entityConfiguration" ref="blEntityConfiguration"/>
-        <property name="metadataOverrides">
+    <bean id="blMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
             <map>
                 <entry key="targetProduct">
                     <map>

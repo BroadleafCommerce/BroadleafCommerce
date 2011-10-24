@@ -15,12 +15,6 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
@@ -34,6 +28,11 @@ import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObser
 import org.broadleafcommerce.profile.core.util.PasswordUtils;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -140,6 +139,10 @@ public class CustomerServiceImpl implements CustomerService {
             PostRegistrationObserver listener = iter.next();
             listener.processRegistrationEvent(customer);
         }
+    }
+
+    public Customer createCustomer() {
+        return createCustomerFromId(null);
     }
 
     public Customer createCustomerFromId(Long customerId) {
