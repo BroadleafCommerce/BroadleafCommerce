@@ -13,34 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
-
-import java.lang.reflect.Method;
+package org.broadleafcommerce.profile.cache.engine;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class HydrationItemDescriptor {
-	
-	private String factoryMethod;
-	private Method[] mutators;
-	
-	public String getFactoryMethod() {
-		return factoryMethod;
-	}
-	
-	public void setFactoryMethod(String factoryMethod) {
-		this.factoryMethod = factoryMethod;
-	}
-	
-	public Method[] getMutators() {
-		return mutators;
-	}
-	
-	public void setMutators(Method[] mutators) {
-		this.mutators = mutators;
-	}
+public interface HydratedAnnotationManager {
 
+	public HydrationDescriptor getHydrationDescriptor(Object entity);
+	
 }

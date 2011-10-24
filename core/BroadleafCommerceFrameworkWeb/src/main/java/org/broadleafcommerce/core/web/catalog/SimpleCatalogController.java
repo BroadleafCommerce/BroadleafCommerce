@@ -15,21 +15,20 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleCatalogController extends AbstractController {
 
@@ -107,7 +106,14 @@ public class SimpleCatalogController extends AbstractController {
     }
 
     protected List<Category> buildCategoryList(Category rootCategory, Category currentCategory, String url) {
-        List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+        List<Long> categoryIdList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+        List<Category> categoryList = null;
+        if (categoryIdList != null) {
+            categoryList = new ArrayList<Category>(categoryIdList.size());
+            for (Long id : categoryIdList) {
+                categoryList.add(catalogService.findCategoryById(id));
+            }
+        }
 
         if (categoryList == null) {
             categoryList = new ArrayList<Category>();

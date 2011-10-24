@@ -238,11 +238,24 @@ public interface Category extends Serializable {
      * Gets the child category url map. This map is keyed off of the {@link #getGeneratedUrl()} values
      * for this category and all of its child categories. By calling get on this map using the
      * generated url for a given category, you will receive the list of immediate child categories.
-     * 
+     * This lifecycle for this map is maintained via the {@code HydratedCacheJPAListener}. This listener
+     * keeps this map in a separate cache from the normal Hibernate level 2 cache, but will honor
+     * cache region settings for this entity, resulting in this map being evicted from its cache
+     * when this entity is removed from the Hibernate level 2 cache.
+     *
+     * @see org.broadleafcommerce.profile.cache.HydratedSetup
      * @return the child category url map
      */
     @Nonnull
-    public Map<String,List<Category>> getChildCategoryURLMap();
+    public Map<String,List<Long>> getChildCategoryURLMap();
+
+    /**
+     * Included to support the {@code HydratedCacheJPAListener}
+     *
+     * @see org.broadleafcommerce.profile.cache.HydratedSetup
+     * @param childCategoryURLMap
+     */
+    public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);
 
     /**
      * Gets the child categories. This list includes all categories, regardless
@@ -388,5 +401,5 @@ public interface Category extends Serializable {
      * @param allProducts the list of products to associate with this category
      */
 	public void setAllProducts(@Nonnull List<Product> allProducts);
-	
+
 }

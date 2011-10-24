@@ -15,14 +15,14 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public interface CatalogService {
 
@@ -56,7 +56,7 @@ public interface CatalogService {
 
     public Sku findSkuById(Long skuId);
 
-    public Map<String, List<Category>> getChildCategoryURLMapByCategoryId(Long categoryId);
+    public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
     public Category createCategory();
     

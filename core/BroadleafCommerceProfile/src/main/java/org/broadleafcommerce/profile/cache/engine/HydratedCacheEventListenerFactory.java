@@ -13,31 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
+package org.broadleafcommerce.profile.cache.engine;
+
+import net.sf.ehcache.event.CacheEventListener;
+import net.sf.ehcache.event.CacheEventListenerFactory;
+
+import java.util.Properties;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class CacheFactoryException extends Exception {
+public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
 
-	private static final long serialVersionUID = 1L;
-
-	public CacheFactoryException() {
-		super();
-	}
-
-	public CacheFactoryException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public CacheFactoryException(String message) {
-		super(message);
-	}
-
-	public CacheFactoryException(Throwable cause) {
-		super(cause);
+    @Override
+	public CacheEventListener createCacheEventListener(Properties props) {
+        return HydratedCacheManagerImpl.getInstance();
 	}
 
 }

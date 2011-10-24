@@ -13,19 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
+package org.broadleafcommerce.profile.cache.engine;
 
-import java.io.Serializable;
+import java.lang.reflect.Method;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface HydratedCacheManager {
-
-	public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName);
-
-	public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue);
+public class HydrationItemDescriptor {
 	
+	private String factoryMethod;
+	private Method[] mutators;
+	
+	public String getFactoryMethod() {
+		return factoryMethod;
+	}
+	
+	public void setFactoryMethod(String factoryMethod) {
+		this.factoryMethod = factoryMethod;
+	}
+	
+	public Method[] getMutators() {
+		return mutators;
+	}
+	
+	public void setMutators(Method[] mutators) {
+		this.mutators = mutators;
+	}
+
 }

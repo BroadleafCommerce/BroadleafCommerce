@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
+package org.broadleafcommerce.profile.cache.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.persistence.Id;
 
+import org.broadleafcommerce.profile.cache.Hydrated;
 import org.hibernate.annotations.Cache;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
