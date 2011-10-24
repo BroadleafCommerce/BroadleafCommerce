@@ -113,7 +113,7 @@ public class CatalogServiceImpl implements CatalogService {
         this.categoryDao = categoryDao;
     }
 
-    public Map<String, List<Category>> getChildCategoryURLMapByCategoryId(Long categoryId) {
+    public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId) {
         Category category = findCategoryById(categoryId);
         if (category != null) {
             return category.getChildCategoryURLMap();

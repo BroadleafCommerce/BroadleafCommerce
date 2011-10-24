@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
+package org.broadleafcommerce.profile.cache.engine;
 
-import java.util.Properties;
-
-import net.sf.ehcache.event.CacheEventListener;
-import net.sf.ehcache.event.CacheEventListenerFactory;
+import java.io.Serializable;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
+public interface HydratedCacheManager {
 
-    @Override
-	public CacheEventListener createCacheEventListener(Properties props) {
-        return (CacheEventListener) HydratedCacheManagerImpl.getInstance();
-	}
+	public Object getHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName);
 
+	public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue);
+	
 }

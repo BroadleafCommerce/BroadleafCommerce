@@ -132,7 +132,14 @@ public class CatalogController {
             }
         }
 
-        List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+        List<Long> categoryIdList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+        List<Category> categoryList = null;
+        if (categoryIdList != null) {
+            categoryList = new ArrayList<Category>(categoryIdList.size());
+            for (Long id : categoryIdList) {
+                categoryList.add(catalogService.findCategoryById(id));
+            }
+        }
 
         addCategoryListToModel(categoryList, rootCategory, url, model);
         model.addAttribute("rootCategory", rootCategory);
@@ -156,11 +163,17 @@ public class CatalogController {
 
             int pos = url.indexOf("/");
             if (pos == -1) {
-                categoryList = new ArrayList<Category>();
+                categoryList = new ArrayList<Category>(1);
                 categoryList.add(rootCategory);
             } else {
                 url = url.substring(0, url.lastIndexOf("/"));
-                categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+                List<Long> categoryIdList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+                if (categoryIdList != null) {
+                    categoryList = new ArrayList<Category>(categoryIdList.size());
+                    for (Long id : categoryIdList) {
+                        categoryList.add(catalogService.findCategoryById(id));
+                    }
+                }
             }
         }
         
@@ -201,7 +214,14 @@ public class CatalogController {
                 String url = currentCategory.getGeneratedUrl();
 
                 // override category list settings using this products default
-                List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+                List<Long> categoryIdList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+                List <Category> categoryList = null;
+                if (categoryIdList != null) {
+                    categoryList = new ArrayList<Category>(categoryIdList.size());
+                    for (Long id : categoryIdList) {
+                        categoryList.add(catalogService.findCategoryById(id));
+                    }
+                }
                 if (categoryList != null && !addCategoryListToModel(categoryList, rootCategory, url, model)) {
                     productPosition = findProductPositionInList(product, productList);
                 }

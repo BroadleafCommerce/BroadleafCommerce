@@ -13,15 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
+package org.broadleafcommerce.profile.cache.engine;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface HydratedAnnotationManager {
+public class CacheFactoryException extends Exception {
 
-	public HydrationDescriptor getHydrationDescriptor(Object entity);
-	
+	private static final long serialVersionUID = 1L;
+
+	public CacheFactoryException() {
+		super();
+	}
+
+	public CacheFactoryException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public CacheFactoryException(String message) {
+		super(message);
+	}
+
+	public CacheFactoryException(Throwable cause) {
+		super(cause);
+	}
+
 }

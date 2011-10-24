@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.cache;
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Hashtable;
-import java.util.Map;
+package org.broadleafcommerce.profile.cache.engine;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cache.CacheKey;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * 
