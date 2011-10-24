@@ -1,30 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright 2008-2009 the original author or authors.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <inspections version="1.0" is_locked="false">
   <option name="myName" value="Project Default" />
   <option name="myLocal" value="false" />
   <inspection_tool class="AndroidDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
-  <inspection_tool class="AnonymousClassComplexity" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_limit" value="3" />
-  </inspection_tool>
-  <inspection_tool class="AnonymousClassMethodCount" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_limit" value="1" />
-  </inspection_tool>
   <inspection_tool class="AssignmentToCatchBlockParameter" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="AssignmentToCollectionFieldFromParameter" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignorePrivateMethods" value="true" />
@@ -35,9 +13,6 @@
   <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_checkForeachParameters" value="false" />
   </inspection_tool>
-  <inspection_tool class="AssignmentToMethodParameter" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="ignoreTransformationOfOriginalParameter" value="false" />
-  </inspection_tool>
   <inspection_tool class="AssignmentToNull" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="AssignmentToStaticFieldFromInstanceMethod" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="AssignmentUsedAsCondition" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -46,9 +21,6 @@
   </inspection_tool>
   <inspection_tool class="CallToSimpleSetterInClass" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreSetterCallsOnOtherObjects" value="false" />
-  </inspection_tool>
-  <inspection_tool class="ClassComplexity" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_limit" value="80" />
   </inspection_tool>
   <inspection_tool class="ClassCoupling" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_includeJavaClasses" value="false" />
@@ -66,18 +38,21 @@
     <option name="CHECK_ACTIONS" value="true" />
     <option name="IGNORE_NON_PUBLIC" value="true" />
   </inspection_tool>
+  <inspection_tool class="ConstantConditions" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="true" />
+    <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+  </inspection_tool>
   <inspection_tool class="ConstructorCount" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_limit" value="5" />
   </inspection_tool>
+  <inspection_tool class="Deprecation" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
   <inspection_tool class="DynamicRegexReplaceableByCompiledPattern" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="EqualsCalledOnEnumConstant" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="FaceletsDetectingInspection" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="FacesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="FieldAccessNotGuarded" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="FieldCount" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_countConstantFields" value="false" />
-    <option name="m_considerStaticFinalFieldsConstant" value="false" />
-    <option name="m_limit" value="10" />
+  <inspection_tool class="FieldAccessedSynchronizedAndUnsynchronized" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="countGettersAndSetters" value="false" />
   </inspection_tool>
   <inspection_tool class="FieldMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="FtlCallsInspection" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -89,9 +64,6 @@
   <inspection_tool class="FtlWellformednessInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="Geronimo" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="Glassfish" enabled="false" level="ERROR" enabled_by_default="false" />
-  <inspection_tool class="HardcodedFileSeparators" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_recognizeExampleMediaType" value="false" />
-  </inspection_tool>
   <inspection_tool class="HardcodedLineSeparators" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="HibernateConfigDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="HibernateMappingDatasourceDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -111,6 +83,7 @@
     <option name="insideTryAllowed" value="false" />
   </inspection_tool>
   <inspection_tool class="JpaDataSourceORMDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+  <inspection_tool class="JpaDataSourceORMInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="JpaORMDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="JsfManagedBeansInconsistencyInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="KeySetIterationMayUseEntrySet" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -119,10 +92,6 @@
   <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="LiteralAsArgToStringEquals" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="MethodCount" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_limit" value="20" />
-    <option name="ignoreGettersAndSetters" value="false" />
-  </inspection_tool>
   <inspection_tool class="MethodMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_onlyPrivateOrFinal" value="false" />
     <option name="m_ignoreEmptyMethods" value="true" />
@@ -133,8 +102,20 @@
   </inspection_tool>
   <inspection_tool class="NativeMethods" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="NestedAssignment" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="NonAtomicOperationOnVolatileField" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="NonFinalFieldInImmutable" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="NonFinalGuard" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="NonSynchronizedMethodOverridesSynchronizedMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="NullableProblems" enabled="false" level="WARNING" enabled_by_default="false">
+    <option name="REPORT_NULLABLE_METHOD_OVERRIDES_NOTNULL" value="true" />
+    <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="true" />
+    <option name="REPORT_NOTNULL_PARAMETER_OVERRIDES_NULLABLE" value="true" />
+    <option name="REPORT_NOT_ANNOTATED_PARAMETER_OVERRIDES_NOTNULL" value="true" />
+    <option name="REPORT_NOT_ANNOTATED_GETTER" value="true" />
+    <option name="REPORT_NOT_ANNOTATED_SETTER_PARAMETER" value="true" />
+    <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="true" />
+    <option name="REPORT_NULLS_PASSED_TO_NON_ANNOTATED_METHOD" value="true" />
+  </inspection_tool>
   <inspection_tool class="ObsoleteCollection" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreRequiredObsoleteCollectionTypes" value="false" />
   </inspection_tool>
@@ -166,6 +147,7 @@
   <inspection_tool class="PhpWrongForeachArgumentTypeInspection" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="PhpWrongStringConcatenationInspection" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="PluginXmlValidity" enabled="false" level="ERROR" enabled_by_default="false" />
+  <inspection_tool class="PublicFieldAccessedInSynchronizedContext" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="RedundantFieldInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="RedundantImplements" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreSerializable" value="false" />
@@ -213,9 +195,6 @@
   <inspection_tool class="ThrowablePrintStackTrace" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="TodoComment" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnknownGuard" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="UnnecessarilyQualifiedInnerClassAccess" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="ignoreReferencesToForeignInnerClasses" value="false" />
-  </inspection_tool>
   <inspection_tool class="UnnecessarilyQualifiedStaticUsage" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_ignoreStaticFieldAccesses" value="false" />
     <option name="m_ignoreStaticMethodCalls" value="false" />
@@ -236,7 +215,6 @@
     <option name="m_ignoreJavadoc" value="false" />
   </inspection_tool>
   <inspection_tool class="UnnecessaryInheritDoc" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="UnnecessaryInterfaceModifier" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnnecessaryJavaDocLink" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreInlineLinkToSuper" value="false" />
   </inspection_tool>
@@ -250,10 +228,6 @@
   <inspection_tool class="UnnecessaryThis" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnresolvedReference" enabled="false" level="ERROR" enabled_by_default="false" />
   <inspection_tool class="UseOfAWTPeerClass" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="UseOfAnotherObjectsPrivateField" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="ignoreSameClass" value="false" />
-    <option name="ignoreEquals" value="false" />
-  </inspection_tool>
   <inspection_tool class="UseOfJDBCDriverClass" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UseOfProcessBuilder" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UseOfSunClasses" enabled="true" level="WARNING" enabled_by_default="true" />

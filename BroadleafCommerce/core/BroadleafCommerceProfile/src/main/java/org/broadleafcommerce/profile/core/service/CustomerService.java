@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
+
+import java.util.List;
 
 public interface CustomerService {
 
@@ -38,6 +38,8 @@ public interface CustomerService {
     public Customer changePassword(PasswordChange passwordChange);
 
     public Customer readCustomerById(Long userId);
+
+    public Customer createCustomer();
 
     /**
      * Returns a <code>Customer</code> by first looking in the database, otherwise creating a new non-persisted <code>Customer</code>

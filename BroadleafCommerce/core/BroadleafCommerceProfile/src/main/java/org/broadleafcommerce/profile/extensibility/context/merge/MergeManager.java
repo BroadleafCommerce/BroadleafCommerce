@@ -15,6 +15,23 @@
  */
 package org.broadleafcommerce.profile.extensibility.context.merge;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeException;
+import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeManagerSetupException;
+import org.broadleafcommerce.profile.extensibility.context.merge.handlers.MergeHandler;
+import org.broadleafcommerce.profile.extensibility.context.merge.handlers.MergeHandlerAdapter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,24 +43,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeException;
-import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeManagerSetupException;
-import org.broadleafcommerce.profile.extensibility.context.merge.handlers.MergeHandler;
-import org.broadleafcommerce.profile.extensibility.context.merge.handlers.MergeHandlerAdapter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 /**
  * This class manages all xml merge interactions with callers. It is responsible for
