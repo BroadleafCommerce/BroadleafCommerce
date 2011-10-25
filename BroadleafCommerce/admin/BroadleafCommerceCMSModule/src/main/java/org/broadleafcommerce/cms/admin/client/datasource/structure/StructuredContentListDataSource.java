@@ -31,7 +31,7 @@ public class StructuredContentListDataSource extends ListGridDataSource {
         super(name, persistencePerspective, service, modules);
     }
 
-    protected Criteria permanentCriteria = new Criteria();
+    protected Criteria permanentCriteria = null;
 
     public Criteria getPermanentCriteria() {
         return permanentCriteria;

@@ -25,7 +25,7 @@ package org.broadleafcommerce.cms.admin.client.datasource;
  */
 public class CeilingEntities {
 
-    public static final String PAGEFOLDER = "org.broadleafcommerce.cms.page.domain.PageFolder";
+    public static final String PAGE = "org.broadleafcommerce.cms.page.domain.Page";
     public static final String PAGETEMPLATE = "org.broadleafcommerce.cms.page.domain.PageTemplate";
     public static final String LOCALE = "org.broadleafcommerce.cms.locale.domain.Locale";
     public static final String STATICFOLDERASSETS = "org.broadleafcommerce.cms.file.domain.StaticAssetFolder";

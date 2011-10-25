@@ -11,49 +11,6 @@
 		</query>
 	</named-query>
 
-    <named-query name="BC_READ_PAGE_FOLDER_CHILD_FOLDERS" >
-		<query>SELECT pageFolder
-               FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
-               WHERE pageFolder.parentFolder = :parentFolder AND
-                     pageFolder.folderFlag = true AND
-                     pageFolder.deletedFlag = false
-		</query>
-	</named-query>
-
-    <named-query name="BC_READ_NULL_PAGE_FOLDER_CHILD_FOLDERS" >
-		<query>SELECT pageFolder
-               FROM org.broadleafcommerce.cms.page.domain.PageFolder pageFolder
-               WHERE pageFolder.parentFolder is null AND
-                     pageFolder.folderFlag = true AND
-                     pageFolder.deletedFlag = false
-		</query>
-	</named-query>
-
-    <named-query name="BC_READ_PAGE_FOLDER_CHILD_PAGES" >
-		<query>SELECT page
-               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
-               LEFT JOIN page.pageTemplate pageTemplate
-               WHERE
-                  page.parentFolder = :parentFolder AND
-                  (pageTemplate.locale.localeCode = :localeCode OR pageTemplate.locale.localeCode is null) AND
-                  (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null OR page.originalSandBox = :userSandbox) AND
-                  page.archivedFlag = false AND
-                  page.deletedFlag = false
-		</query>
-	</named-query>
-
-    <named-query name="BC_READ_NULL_PAGE_FOLDER_CHILD_PAGES" >
-		<query>SELECT page
-               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
-               LEFT JOIN page.pageTemplate pageTemplate
-               WHERE
-                  page.parentFolder is null AND
-                  (pageTemplate.locale.localeCode = :localeCode OR pageTemplate.locale.localeCode is null) AND
-                  (page.sandbox = :userSandbox OR page.sandbox = :productionSandbox OR page.sandbox is null OR page.originalSandBox = :userSandbox) AND
-                  page.archivedFlag = false AND
-                  page.deletedFlag = false
-		</query>
-	</named-query>
 
     <named-query name="BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE" >
 		<query>SELECT pageTemplate

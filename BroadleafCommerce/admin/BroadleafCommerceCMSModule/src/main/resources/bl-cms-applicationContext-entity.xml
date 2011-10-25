@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     
     <!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.cms.page.domain.PageFolder" class="org.broadleafcommerce.cms.page.domain.PageFolderImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.cms.page.domain.Page" class="org.broadleafcommerce.cms.page.domain.PageImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.cms.page.domain.PageTemplate" class="org.broadleafcommerce.cms.page.domain.PageTemplateImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.file.domain.StaticAssetStorage" class="org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.file.domain.StaticAssetFolder" class="org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl" scope="prototype"/>

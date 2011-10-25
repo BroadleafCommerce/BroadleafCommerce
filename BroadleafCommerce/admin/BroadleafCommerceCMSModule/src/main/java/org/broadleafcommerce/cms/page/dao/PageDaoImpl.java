@@ -15,22 +15,22 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import java.util.*;
+
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.*;
 
 /**
  * Created by bpolster.
@@ -50,8 +50,8 @@ public class PageDaoImpl implements PageDao {
     protected EntityConfiguration entityConfiguration;
 
     @Override
-    public PageFolder readPageById(Long id) {
-        return (PageFolder) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.PageFolder"), id);
+    public Page readPageById(Long id) {
+        return (Page) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.Page"), id);
     }
 
     @Override
@@ -73,58 +73,6 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<PageFolder> readPageFolderChildren(PageFolder parentFolder, String localeCode, SandBox userSandBox, SandBox productionSandBox) {
-        String queryPrefix = "BC_READ_";
-        if (parentFolder == null) {
-                queryPrefix = "BC_READ_NULL_";
-        }
-        Query query = em.createNamedQuery(queryPrefix + "PAGE_FOLDER_CHILD_PAGES");
-        if (parentFolder != null) {
-            query.setParameter("parentFolder", parentFolder);
-        }
-        query.setParameter("userSandbox", userSandBox == null ? DUMMY_SANDBOX : userSandBox);
-        query.setParameter("productionSandbox", productionSandBox == null ? DUMMY_SANDBOX : productionSandBox);
-        query.setParameter("localeCode", localeCode);
-
-        List<Page> childPages = query.getResultList();
-        filterPagesForSandbox(userSandBox, productionSandBox, childPages);
-
-        Query query2 = em.createNamedQuery(queryPrefix + "PAGE_FOLDER_CHILD_FOLDERS");
-        if (parentFolder != null) {
-            query2.setParameter("parentFolder", parentFolder);
-        }
-        List<PageFolder> childFolders = query2.getResultList();
-        childFolders.addAll(childPages);
-
-        return childFolders;
-    }
-
-    private void filterPagesForSandbox(SandBox userSandBox, SandBox productionSandBox, List<Page> pageList) {
-        if (userSandBox != null) {
-
-            List<Long> removeIds = new ArrayList<Long>();
-            for (Page page : pageList) {
-                if (page.getOriginalPageId() != null) {
-                    removeIds.add(page.getOriginalPageId());
-                }
-
-                if (page.getDeletedFlag()) {
-                    removeIds.add(page.getId());
-                }
-            }
-
-            Iterator<Page> pageIterator = pageList.iterator();
-
-            while (pageIterator.hasNext()) {
-                Page page = pageIterator.next();
-                if (removeIds.contains(page.getId())) {
-                  pageIterator.remove();
-                }
-            }
-        }
-    }
-
-    @Override
     public Page updatePage(Page page, boolean clearLevel1Cache) {
         if (clearLevel1Cache) {
             em.clear();
@@ -141,18 +89,8 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public PageFolder updatePageFolder(PageFolder pageFolder) {
-        return em.merge(pageFolder);
-    }
-
-    @Override
     public Page addPage(Page clonedPage) {
         return (Page) em.merge(clonedPage);
-    }
-
-    @Override
-    public PageFolder addPageFolder(PageFolder pageFolder) {
-        return (PageFolder) em.merge(pageFolder);
     }
 
     @Override
