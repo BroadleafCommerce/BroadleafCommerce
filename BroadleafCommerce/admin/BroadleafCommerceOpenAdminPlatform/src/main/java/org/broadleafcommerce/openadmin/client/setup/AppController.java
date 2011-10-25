@@ -78,7 +78,12 @@ public class AppController implements ValueChangeHandler<String> {
 				}
 			}
 		} else {
-			History.fireCurrentHistoryState();
+           String[] vals = pages.get(History.getToken());
+            if (vals == null) {
+                go(container, pages, true);
+            } else {
+    			History.fireCurrentHistoryState();
+            }
 		}
 	}
 
@@ -92,10 +97,9 @@ public class AppController implements ValueChangeHandler<String> {
 		if (token != null) {
 			if (!uiFactory.equalsCurrentView(token)) {
 				String[] vals = pages.get(token);
-                if (vals == null) {
-                    vals = pages.get(0);
+                if (vals != null) {
+				    showView(vals[0], vals[1]);
                 }
-				showView(vals[0], vals[1]);
 			}
 		}
 	}
