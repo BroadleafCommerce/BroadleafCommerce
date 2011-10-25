@@ -93,4 +93,5 @@ public interface StructuredContent extends Serializable {
     public Set<StructuredContentItemCriteria> getQualifyingItemCriteria();
 
     public void setQualifyingItemCriteria(Set<StructuredContentItemCriteria> qualifyingItemCriteria);
+
 }

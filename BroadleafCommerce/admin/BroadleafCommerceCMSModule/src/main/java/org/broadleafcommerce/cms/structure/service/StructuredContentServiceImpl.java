@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.cms.structure.service;
 
+import javax.annotation.Resource;
+
+import java.io.Serializable;
+import java.util.*;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
@@ -34,10 +39,6 @@ import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Created by bpolster.
