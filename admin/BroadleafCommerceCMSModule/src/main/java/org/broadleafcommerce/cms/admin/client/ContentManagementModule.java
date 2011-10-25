@@ -21,8 +21,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
-import com.smartgwt.client.widgets.ImgButton;
-import com.smartgwt.client.widgets.events.ClickEvent;
 import org.broadleafcommerce.openadmin.client.AbstractHtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 
@@ -107,23 +105,4 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
         setBasicHtmlEditorIFramePath("/richTextBasic.html");
         registerModule();
     }
-
-    @Override
-	public void postDraw() {
-		ImgButton sgwtHomeButton = new ImgButton();
-        sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
-        sgwtHomeButton.setWidth(98);
-        sgwtHomeButton.setHeight(50);
-        sgwtHomeButton.setPrompt(BLCMain.getMessageManager().getString("blcProjectPage"));
-        sgwtHomeButton.setHoverStyle("interactImageHover");
-        sgwtHomeButton.setShowRollOver(false);
-        sgwtHomeButton.setShowDownIcon(false);
-        sgwtHomeButton.setShowDown(false);
-        sgwtHomeButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
-            public void onClick(ClickEvent event) {
-                com.google.gwt.user.client.Window.open("http://www.broadleafcommerce.org", "sgwt", null);
-            }
-        });
-        BLCMain.MASTERVIEW.getTopBar().addMember(sgwtHomeButton, 1);
-	}
 }

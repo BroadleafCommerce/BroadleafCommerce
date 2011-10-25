@@ -15,10 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client;
 
-import com.google.gwt.core.client.GWT;
-import com.smartgwt.client.widgets.ImgButton;
-import com.smartgwt.client.widgets.events.ClickEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,24 +65,4 @@ public class UserManagementModule extends AbstractModule {
 		
 		registerModule();
 	}
-
-	@Override
-	public void postDraw() {
-		ImgButton sgwtHomeButton = new ImgButton();
-        sgwtHomeButton.setSrc(GWT.getModuleBaseURL() + "admin/images/blc_logo.png");
-        sgwtHomeButton.setWidth(98);
-        sgwtHomeButton.setHeight(50);
-        sgwtHomeButton.setPrompt(BLCMain.getMessageManager().getString("blcProjectPage"));
-        sgwtHomeButton.setHoverStyle("interactImageHover");
-        sgwtHomeButton.setShowRollOver(false);
-        sgwtHomeButton.setShowDownIcon(false);
-        sgwtHomeButton.setShowDown(false);
-        sgwtHomeButton.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
-            public void onClick(ClickEvent event) {
-                com.google.gwt.user.client.Window.open("http://www.broadleafcommerce.org", "sgwt", null);
-            }
-        });
-        BLCMain.MASTERVIEW.getTopBar().addMember(sgwtHomeButton, 1);
-	}
-
 }
