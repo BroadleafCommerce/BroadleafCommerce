@@ -62,11 +62,15 @@ public class AppController implements ValueChangeHandler<String> {
 		History.addValueChangeHandler(this);
 	}
 
-	public void go(final Canvas container, HashMap<String, String[]> pages) {
+    public void go(final Canvas container, HashMap<String, String[]> pages) {
+        go(container, pages, false);
+    }
+
+	public void go(final Canvas container, HashMap<String, String[]> pages, boolean reset) {
 		this.pages = pages;
 		this.container = container;
 
-		if ("".equals(History.getToken())) {
+		if ("".equals(History.getToken()) || reset) {
 			for (String sectionTitle : pages.keySet()){
 				if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
 					History.newItem(sectionTitle);
@@ -88,6 +92,9 @@ public class AppController implements ValueChangeHandler<String> {
 		if (token != null) {
 			if (!uiFactory.equalsCurrentView(token)) {
 				String[] vals = pages.get(token);
+                if (vals == null) {
+                    vals = pages.get(0);
+                }
 				showView(vals[0], vals[1]);
 			}
 		}
