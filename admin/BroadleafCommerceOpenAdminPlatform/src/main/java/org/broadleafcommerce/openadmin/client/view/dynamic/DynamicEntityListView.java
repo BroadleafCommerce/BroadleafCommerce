@@ -19,19 +19,12 @@ import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.SelectionStyle;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.events.FocusEvent;
-import com.smartgwt.client.widgets.form.fields.events.FocusHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * 
@@ -45,6 +38,10 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 	protected ComboBoxItem entityType = new ComboBoxItem();
 	protected ListGrid grid;
 	protected ToolStrip toolBar;
+
+    public DynamicEntityListView(DataSource dataSource) {
+		this("", dataSource, true, true);
+	}
 	
 	public DynamicEntityListView(String title, DataSource dataSource) {
 		this(title, dataSource, true, true);
@@ -52,25 +49,34 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 	
 	public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder, Boolean canEdit) {
 		super();
+        if ("".equals(title) || title == null) {
+            title = "Item";
+        }
+
+
 		toolBar = new ToolStrip();
-		toolBar.setHeight(20);
+		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
-        addButton = new ToolStripButton();  
+
+        addButton = new ToolStripButton();
         //addButton.setDisabled(true);
-        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
+        addButton.setTitle("Add New " + title);
+        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
         toolBar.addButton(addButton);
-        removeButton = new ToolStripButton(); 
-        removeButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+
+        toolBar.addSpacer(6);
+
+        removeButton = new ToolStripButton();
+        removeButton.setTitle("Remove " + title);
+        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
-        toolBar.addSpacer(6);
-        Label productLabel = new Label();
-        productLabel.setContents(title);
-        productLabel.setWrap(false);
-        toolBar.addMember(productLabel);
+
         toolBar.addFill();
-        HashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
+
+
+     /*   HashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
         if (polymorphicEntities.size() > 1) { 
             entityType.setShowTitle(false);  
             entityType.setWidth(180); 
@@ -87,7 +93,10 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 				}
             });
             toolBar.addFormItem(entityType);
-        }
+        } */
+
+
+
         addMember(toolBar);
 
         grid = new ListGrid();

@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import javax.persistence.*;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
@@ -28,13 +35,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-
-import javax.persistence.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by bpolster.
@@ -120,7 +120,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
-    @AdminPresentation(friendlyName="Content Type", order=2, group="Description", requiredOverride = RequiredOverride.REQUIRED, excluded = true, formHidden = FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Content Type", order=2, group="Description", requiredOverride = RequiredOverride.REQUIRED, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)

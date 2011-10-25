@@ -22,13 +22,18 @@ import org.broadleafcommerce.cms.locale.service.LocaleService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.*;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +60,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
      * @return The associated page.
      */
     @Override
-    public PageFolder findPageById(Long pageId) {
+    public Page findPageById(Long pageId) {
         return pageDao.readPageById(pageId);
     }
 
@@ -79,33 +84,6 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
     }
 
     /**
-     * Merges sandbox and site production content
-     *
-     * @param
-     * @param parentFolder if null then root folder for the site.
-     * @return
-     */
-    @Override
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox,PageFolder parentFolder, String localeCode) {
-        SandBox productionSandbox = null;
-        SandBox userSandbox = sandbox;
-
-        if (localeCode == null) {
-            localeCode = localeService.findDefaultLocale().getLocaleCode();
-        }
-
-        if (sandbox != null && sandbox.getSite() != null && sandbox.getSite().getProductionSandbox() != null) {
-            productionSandbox = sandbox.getSite().getProductionSandbox();
-            if (userSandbox.getId().equals(productionSandbox.getId())) {
-                userSandbox = null;
-            }
-        }
-
-        List<PageFolder> pageFolders =  pageDao.readPageFolderChildren(parentFolder, localeCode, userSandbox, productionSandbox);
-        return pageFolders;
-    }
-
-    /**
      * This method is intended to be called from within the CMS
      * admin only.
      * <p/>
@@ -113,11 +91,8 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
      * <p/>
      */
     @Override
-    public Page addPage(Page page, PageFolder parentFolder, SandBox destinationSandbox) {
+    public Page addPage(Page page, SandBox destinationSandbox) {
         page.setSandbox(destinationSandbox);
-        page.setParentFolder(parentFolder);
-        String parentUrl = (parentFolder == null ? "" : parentFolder.getFullUrl());
-        page.setFullUrl(parentUrl + "/" + page.getName());
         Page newPage = pageDao.addPage(page);
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
@@ -162,10 +137,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             throw new IllegalArgumentException("Unable to update a locked record");
         }
 
-        String parentUrl = (page.getParentFolder() == null ? "" : page.getParentFolder().getFullUrl());
-
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
-            page.setFullUrl(parentUrl + "/" + page.getName());
             return pageDao.updatePage(page, true);
         } else if (isProductionSandBox(page.getSandbox())) {
             page.setLockedFlag(true);
@@ -175,7 +147,6 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             Page clonedPage = page.cloneEntity();
             clonedPage.setOriginalPageId(page.getId());
             clonedPage.setSandbox(destSandbox);
-            clonedPage.setFullUrl(parentUrl + "/" + page.getName());
             Page returnPage = pageDao.addPage(clonedPage);
 
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
@@ -223,32 +194,6 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         updatePage(page, destinationSandbox);
     }
 
-    /**
-     * Sets the delete flag on the folder.   Throws an exception if the
-     * folder contains non-archived items.
-     *
-     * @param pageFolder
-     */
-    @Override
-    public void deletePageFolder(PageFolder pageFolder) {
-        if (! pageFolder.getSubFolders().isEmpty()) {
-            throw new UnsupportedOperationException("Cannot delete folder with children.");
-        } else {
-            pageFolder.setDeletedFlag(true);
-            pageDao.updatePageFolder(pageFolder);
-        }
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * @param pageFolder
-     * @return
-     */
-    @Override
-    public PageFolder addPageFolder(PageFolder pageFolder, PageFolder parentFolder) {
-        pageFolder.setParentFolder(parentFolder);
-        return pageDao.addPageFolder(pageFolder);
-    }
 
     /**
      * Retrieve the page if one is available for the passed in uri.
@@ -277,6 +222,93 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             return productionPage;
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public Long countPages(SandBox sandbox, Criteria criteria) {
+        criteria.add(Restrictions.eq("archivedFlag", false));
+        criteria.setProjection(Projections.rowCount());
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            criteria.add(Restrictions.isNull("sandbox"));
+            return (Long) criteria.uniqueResult();
+        } else {
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression;
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                // Query is hitting the production sandbox.
+                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
+                    return (Long) criteria.uniqueResult();
+                }
+                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+            }
+
+            criteria.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+
+            Long resultCount = (Long) criteria.list().get(0);
+            Long updatedCount = 0L;
+            Long deletedCount = 0L;
+
+            // count updated items
+            criteria.add(Restrictions.and(Restrictions.isNotNull("originalPageId"),Restrictions.eq("sandbox", sandbox)));
+            updatedCount = (Long) criteria.list().get(0);
+
+            // count deleted items
+            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
+            deletedCount = (Long) criteria.list().get(0);
+
+            return resultCount - updatedCount - deletedCount;
+        }
+    }
+
+    @Override
+    public List<Page> findPages(SandBox sandbox, Criteria criteria) {
+        criteria.add(Restrictions.eq("archivedFlag", false));
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            criteria.add(Restrictions.isNull("sandbox"));
+            return (List<Page>) criteria.list();
+        } else {
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression = null;
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
+                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+                }
+            }
+
+            if (productionSandboxExpression != null) {
+                criteria.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            } else {
+                criteria.add(currentSandboxExpression);
+            }
+
+            List<Page> resultList = (List<Page>) criteria.list();
+
+            // Iterate once to build the map
+            LinkedHashMap returnItems = new LinkedHashMap<Long,Page>();
+            for (Page page : resultList) {
+                returnItems.put(page.getId(), page);
+            }
+
+            // Iterate to remove items from the final list
+            for (Page page : resultList) {
+                if (page.getOriginalPageId() != null) {
+                    returnItems.remove(page.getOriginalPageId());
+                }
+
+                if (page.getDeletedFlag()) {
+                    returnItems.remove(page.getId());
+                }
+            }
+            return new ArrayList<Page>(returnItems.values());
         }
     }
 
@@ -350,4 +382,6 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             pageDao.updatePage(originalPage, false);
         }
     }
+
+
 }

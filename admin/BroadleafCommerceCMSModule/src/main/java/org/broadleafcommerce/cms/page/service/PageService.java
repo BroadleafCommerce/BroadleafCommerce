@@ -15,15 +15,15 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageFolder;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
-
-import java.util.List;
-import java.util.Map;
+import org.hibernate.Criteria;
 
 /**
  * Created by bpolster.
@@ -37,7 +37,7 @@ public interface PageService {
      * @param pageId - The id of the page.
      * @return The associated page.
      */
-    public PageFolder findPageById(Long pageId);
+    Page findPageById(Long pageId);
 
     /**
      * Returns the page template with the passed in id.
@@ -45,7 +45,7 @@ public interface PageService {
      * @param id - the id of the page template
      * @return The associated page template.
      */
-    public PageTemplate findPageTemplateById(Long id);
+    PageTemplate findPageTemplateById(Long id);
 
     /**
      * Returns the page-fields associated with the passed in page-id.
@@ -55,19 +55,7 @@ public interface PageService {
      * @param pageId - The id of the page.
      * @return The associated page.
      */
-    public Map<String,PageField> findPageFieldsByPageId(Long pageId);
-
-
-    /**
-     * Merges sandbox and site production content
-     * @param sandbox - the sandbox to find pages (null indicates pages that are in production for
-     *                  sites that are single tennant.
-     * @param parentFolder if null then root folder for the site.
-     * @param localeCode - the locale to include (null is typical for non-internationalized sites)
-     * @return
-     */
-    public List<PageFolder> findPageFolderChildren(SandBox sandbox, PageFolder parentFolder, String localeCode);
-
+    Map<String,PageField> findPageFieldsByPageId(Long pageId);
 
     /**
      * This method is intended to be called from within the CMS
@@ -77,7 +65,7 @@ public interface PageService {
      *
      * Creates a sandbox/site if one doesn't already exist.
      */
-    public Page addPage(Page page, PageFolder parentFolder, SandBox destinationSandbox);
+    Page addPage(Page page, SandBox destinationSandbox);
 
     /**
      * This method is intended to be called from within the CMS
@@ -110,7 +98,7 @@ public interface PageService {
      *
      * 4.  If the sandbox is the same then just update the page.
      */
-    public Page updatePage(Page page, SandBox sandbox);
+    Page updatePage(Page page, SandBox sandbox);
 
 
     /**
@@ -124,29 +112,16 @@ public interface PageService {
      * @param destinationSandbox
      * @return
      */
-    public void deletePage(Page page, SandBox destinationSandbox);
-
-
-    /**
-     * Sets the delete flag on the folder.   Throws an exception if the
-     * folder contains non-archived items.
-     *
-     * @param pageFolder
-     */
-    public void deletePageFolder(PageFolder pageFolder);
-
-
-    /**
-     * Adds a sub-folder to the passed in parentFolder
-     * @param pageFolder
-     * @return
-     */
-    public PageFolder addPageFolder(PageFolder pageFolder, PageFolder parentFolder);
+    void deletePage(Page page, SandBox destinationSandbox);
 
 
     /**
      * Retrieve the page if one is available for the passed in uri.
      */
-    public Page findPageByURI(SandBox currentSandbox, Locale locale, String uri);
+    Page findPageByURI(SandBox currentSandbox, Locale locale, String uri);
+
+    List<Page> findPages(SandBox sandBox, Criteria criteria);
+
+    Long countPages(SandBox sandBox, Criteria criteria);
 
 }

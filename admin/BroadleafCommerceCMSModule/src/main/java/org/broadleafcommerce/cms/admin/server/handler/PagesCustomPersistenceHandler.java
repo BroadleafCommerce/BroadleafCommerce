@@ -16,31 +16,39 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import javax.annotation.Resource;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import org.apache.commons.lang.ArrayUtils;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.pages.PagesTreeDataSourceFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageFolder;
-import org.broadleafcommerce.cms.page.domain.PageFolderImpl;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.Criteria;
 
 /**
  * Created by IntelliJ IDEA.
@@ -59,10 +67,16 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
 
+    private static Map<String, FieldMetadata> mergedProperties;
+
+    protected synchronized Map<String, FieldMetadata> getModifiedProperties() {
+        return mergedProperties;
+    }
+
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return PageFolder.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return Page.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -80,6 +94,12 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         return canHandleFetch(persistencePackage);
     }
 
+    @Override
+    public Boolean canHandleInspect(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return Page.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+    }
+
     protected SandBox getSandBox() {
         return sandBoxService.retrieveSandboxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
@@ -89,15 +109,11 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Entity entity  = persistencePackage.getEntity();
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-			PageFolder adminInstance = (PageFolder) Class.forName(entity.getType()[0]).newInstance();
-			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageFolder.class.getName(), persistencePerspective);
-			adminInstance = (PageFolder) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+			Page adminInstance = (Page) Class.forName(entity.getType()[0]).newInstance();
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
+			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            if (PageFolderImpl.class.getName().equals(entity.getType()[0])) {
-                pageService.addPageFolder(adminInstance, adminInstance.getParentFolder());
-            } else {
-                pageService.addPage((Page) adminInstance, adminInstance.getParentFolder(), getSandBox());
-            }
+            pageService.addPage((Page) adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -112,27 +128,57 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String parentCategoryId = cto.get(PagesTreeDataSourceFactory.parentFolderForeignKey).getFilterValues()[0];
-            PageFolder pageOrFolder = null;
-            if (parentCategoryId != null) {
-                pageOrFolder = pageService.findPageById(Long.valueOf(parentCategoryId));
+            if (cto.get("pageTemplateGrid").getFilterValues().length > 0) {
+                CriteriaTransferObject ctoCopy = new CriteriaTransferObject();
+                for (String prop : cto.getPropertyIdSet()) {
+                    String propertyId;
+                    if (prop.equals("pageTemplateGrid")) {
+                        propertyId = "pageTemplate";
+                    } else {
+                        propertyId = prop;
+                    }
+                    FilterAndSortCriteria criteria = ctoCopy.get(propertyId);
+                    FilterAndSortCriteria oldCriteria = cto.get(prop);
+                    criteria.setFilterValue(oldCriteria.getFilterValues()[0]);
+                    criteria.setIgnoreCase(oldCriteria.getIgnoreCase());
+                    criteria.setSortAscending(oldCriteria.getIgnoreCase());
+                }
+                cto = ctoCopy;
             }
-            String[] filterValues = cto.get("pageTemplate.locale.defaultFlag").getFilterValues();
-            String localeCode;
-            if (!ArrayUtils.isEmpty(filterValues)) {
-                localeCode = null;
-            } else {
-                localeCode = cto.get("pageTemplate.locale.localeCode").getFilterValues()[0];
-            }
-            List<PageFolder> folders = pageService.findPageFolderChildren(getSandBox(), pageOrFolder, localeCode);
-            List<Serializable> convertedList = new ArrayList<Serializable>();
-            convertedList.addAll(folders);
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> pageProperties = getMergedProperties(PageFolder.class, dynamicEntityDao, persistencePerspective.getPopulateToOneFields(), persistencePerspective.getIncludeFields(), persistencePerspective.getExcludeFields(), persistencePerspective.getConfigurationKey(), persistencePerspective.getAdditionalForeignKeys());
-            Entity[] pageEntities = helper.getRecords(pageProperties, convertedList);
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
+            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Page.class.getName(), originalProps);
+			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Page.class.getName());
+            PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), Page.class.getName());
+            Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, Page.class);
+            Criteria count = dynamicEntityDao.getCriteria(countCriteria, Page.class);
 
-            DynamicResultSet response = new DynamicResultSet(pageEntities, pageEntities.length);
+            // TODO: Add Locale to Criteria
+
+            List<Page> pages = pageService.findPages(getSandBox(), criteria);
+            Long totalRecords = pageService.countPages(getSandBox(), count);
+            List<Serializable> convertedList = new ArrayList<Serializable>();
+            convertedList.addAll(pages);
+
+            Entity[] pageEntities = helper.getRecords(originalProps, convertedList);
+
+            for (Entity entity : pageEntities) {
+                if (entity.findProperty("pageTemplate") != null) {
+                    Property property = new Property();
+                    property.setName("pageTemplateGrid");
+                    property.setValue(entity.findProperty("pageTemplate").getValue());
+                    entity.addProperty(property);
+                }
+                if ("true".equals(entity.findProperty("lockedFlag").getValue())) {
+                    Property property = new Property();
+                    property.setName("locked");
+                    property.setValue("[ISOMORPHIC]/../admin/images/lock_page.png");
+                    entity.addProperty(property);
+                }
+            }
+
+            DynamicResultSet response = new DynamicResultSet(pageEntities, totalRecords.intValue());
 
             return response;
         } catch (Exception e) {
@@ -160,6 +206,77 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 		return mergedProperties;
 	}
 
+       protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException, NoSuchFieldException {
+        mergedProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
+
+        FieldMetadata contentTypeFieldMetadata = new FieldMetadata();
+        contentTypeFieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
+        contentTypeFieldMetadata.setMutable(true);
+        contentTypeFieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
+        contentTypeFieldMetadata.setAvailableToTypes(new String[]{PageTemplateImpl.class.getName()});
+        contentTypeFieldMetadata.setCollection(false);
+        contentTypeFieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+
+        PersistencePackage pageTemplatePersistencePackage = new PersistencePackage();
+        pageTemplatePersistencePackage.setCeilingEntityFullyQualifiedClassname(PageTemplate.class.getName());
+        PersistencePerspective pageTemplateFetchPerspective = new PersistencePerspective();
+        pageTemplatePersistencePackage.setPersistencePerspective(pageTemplateFetchPerspective);
+        pageTemplateFetchPerspective.setAdditionalForeignKeys(new ForeignKey[]{});
+        pageTemplateFetchPerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY));
+        pageTemplateFetchPerspective.setAdditionalNonPersistentProperties(new String[]{});
+        DynamicResultSet pageTemplateResultSet = ((PersistenceManager) helper).fetch(pageTemplatePersistencePackage, new CriteriaTransferObject());
+
+        String[][] pageTemplateEnums = new String[pageTemplateResultSet.getRecords().length][2];
+        int i=0;
+        for (Entity entity : pageTemplateResultSet.getRecords()) {
+            pageTemplateEnums[i][0] = entity.findProperty("id").getValue();
+            pageTemplateEnums[i][1] = entity.findProperty("templateName").getValue();
+            i++;
+        }
+
+        contentTypeFieldMetadata.setEnumerationValues(pageTemplateEnums);
+        FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
+        contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
+        contentTypeAttributes.setName("pageTemplateGrid");
+        contentTypeAttributes.setFriendlyName("Page Template");
+        contentTypeAttributes.setGroup("Description");
+        contentTypeAttributes.setOrder(2);
+        contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        contentTypeAttributes.setProminent(false);
+        contentTypeAttributes.setBroadleafEnumeration("");
+        contentTypeAttributes.setReadOnly(false);
+        contentTypeAttributes.setHidden(false);
+        contentTypeAttributes.setRequiredOverride(true);
+        contentTypeAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+
+        mergedProperties.put("pageTemplateGrid", contentTypeFieldMetadata);
+    }
+
+    @Override
+    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+		try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+
+            if (getModifiedProperties() == null) {
+                createModifiedProperties(dynamicEntityDao, helper, persistencePerspective);
+            }
+            Map<String, FieldMetadata> originalProps = getModifiedProperties();
+
+			allMergedProperties.put(MergedPropertyType.PRIMARY, originalProps);
+            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Page.class);
+			ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
+			DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
+
+			return results;
+		} catch (Exception e) {
+            ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
+            throw ex;
+		}
+    }
+
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
@@ -168,9 +285,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {
-                throw new ServiceException("Unable to update PageFolder instances.");
-            }
+
 			Page adminInstance = (Page) persistenceObject;
             adminInstance.getPageFields().size();
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
@@ -196,13 +311,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            if (!Page.class.isAssignableFrom(persistenceObject.getClass())) {
-                PageFolder adminInstance = (PageFolder) persistenceObject;
-                pageService.deletePageFolder(adminInstance);
-            } else {
-			    Page adminInstance = (Page) persistenceObject;
-                pageService.deletePage(adminInstance, getSandBox());
-            }
+			Page adminInstance = (Page) persistenceObject;
+            pageService.deletePage(adminInstance, getSandBox());
 		} catch (Exception e) {
             LOG.error("Unable to remove entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);

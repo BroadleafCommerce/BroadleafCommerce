@@ -16,26 +16,33 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-
+import java.io.Serializable;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.Site;
 
 /**
  * Created by bpolster.
  */
-public interface Page extends PageFolder {
+public interface Page extends Serializable {
+
+    public Long getId();
+
+    public void setId(Long id);
+
+    public String getFullUrl();
+
+    public void setFullUrl(String fullUrl);
+
+    public String getDescription();
+
+    public void setDescription(String description);
 
     public PageTemplate getPageTemplate();
 
     public void setPageTemplate(PageTemplate pageTemplate);
-
-    public String getMetaKeywords();
-
-    public void setMetaKeywords(String metaKeywords);
-
-    public String getMetaDescription();
-
-    public void setMetaDescription(String metaDescription);
 
     public Map<String, PageField> getPageFields();
 
@@ -53,18 +60,26 @@ public interface Page extends PageFolder {
 
     public void setSandbox(SandBox sandbox);
 
+    public Site getSite();
+
+    public void setSite(Site site);
+
+    public Boolean getLockedFlag();
+
+    public void setLockedFlag(Boolean lockedFlag);
+
     public Long getOriginalPageId();
 
     public void setOriginalPageId(Long originalPageId);
 
-    public Page cloneEntity();
-
-    public String getFullUrl();
-
-    public void setFullUrl(String fullUrl);
-
     public SandBox getOriginalSandBox();
 
     public void setOriginalSandBox(SandBox originalSandBox);
+
+    public AdminAuditable getAuditable();
+
+    public void setAuditable(AdminAuditable auditable);
+
+    public Page cloneEntity();
 
 }

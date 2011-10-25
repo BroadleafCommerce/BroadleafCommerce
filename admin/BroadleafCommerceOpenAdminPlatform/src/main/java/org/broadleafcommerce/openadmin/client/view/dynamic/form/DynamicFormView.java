@@ -34,6 +34,10 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
 	protected ToolStripButton saveButton;
 	protected ToolStripButton refreshButton;
 	protected FormOnlyView formOnlyView;
+
+    public DynamicFormView(DataSource dataSource) {
+        this("", dataSource);
+    }
 	
 	public DynamicFormView(String title, DataSource dataSource) {
 		super();

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.view.pages;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
@@ -24,12 +23,10 @@ import com.smartgwt.client.widgets.grid.HoverCustomizer;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
@@ -42,11 +39,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
  */
 public class PagesView extends HLayout implements Instantiable, PagesDisplay {
 
-    protected DynamicEntityTreeView listDisplay;
+    protected DynamicEntityListView listDisplay;
     protected DynamicFormView dynamicFormDisplay;
     protected ComboBoxItem currentLocale = new ComboBoxItem();
-    protected ToolStripButton addPageFolderButton;
-    protected ToolStripButton addPageButton;
 
     public PagesView() {
 		setHeight100();
@@ -60,7 +55,7 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
 		leftVerticalLayout.setWidth("40%");
 		leftVerticalLayout.setShowResizeBar(true);
 
-		listDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("pagesTitle"), entityDataSource, true);
+		listDisplay = new DynamicEntityListView(entityDataSource);
         listDisplay.getGrid().setHoverMoveWithMouse(true);
         listDisplay.getGrid().setCanHover(true);
         listDisplay.getGrid().setShowHover(true);
@@ -74,30 +69,10 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
                 return null;
             }
         });
-        Canvas[] members = listDisplay.getToolBar().getMembers();
-
-        currentLocale.setShowTitle(false);
-        currentLocale.setWidth(120);
-        currentLocale.setOptionDataSource(additionalDataSources[0]);
-        currentLocale.setDisplayField("friendlyName");
-        currentLocale.setValueField("localeCode");
-        currentLocale.setDefaultToFirstOption(true);
-        listDisplay.getToolBar().addFormItem(currentLocale, 6);
-        listDisplay.getToolBar().getMember(7).destroy();
-        listDisplay.getToolBar().getMember(1).destroy();
-        addPageFolderButton = new ToolStripButton();
-        addPageFolderButton.setDisabled(true);
-        addPageFolderButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/folder_open.png");
-        listDisplay.getToolBar().addButton(addPageFolderButton, 1);
-        addPageButton = new ToolStripButton();
-        addPageButton.setDisabled(true);
-        addPageButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/file.png");
-        listDisplay.getToolBar().addButton(addPageButton, 2);
-        listDisplay.getToolBar().addMember(new ToolStripSeparator(), 3);
 
         leftVerticalLayout.addMember(listDisplay);
 
-        dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("detailsTitle"), entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(entityDataSource);
 
         addMember(leftVerticalLayout);
         addMember(dynamicFormDisplay);
@@ -114,22 +89,6 @@ public class PagesView extends HLayout implements Instantiable, PagesDisplay {
     public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
-
-    public ToolStripButton getAddPageButton() {
-        return addPageButton;
-    }
-
-    public void setAddPageButton(ToolStripButton addPageButton) {
-        this.addPageButton = addPageButton;
-    }
-
-    public ToolStripButton getAddPageFolderButton() {
-        return addPageFolderButton;
-    }
-
-    public void setAddPageFolderButton(ToolStripButton addPageFolderButton) {
-        this.addPageFolderButton = addPageFolderButton;
-    }
 
     public ComboBoxItem getCurrentLocale() {
         return currentLocale;
