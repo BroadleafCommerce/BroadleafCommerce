@@ -4,6 +4,13 @@
 	<div class="breadcrumb">
 		<blc:breadcrumb categoryList="${breadcrumbCategories}" />
 	</div>
+
+    <cms:content contentType="Message" contentItemVar="item" product="${currentProduct}">
+        <c:if test="${numResults > 0}">
+            <h3>${item.messageText}</h3>
+        </c:if>
+    </cms:content>
+
 	<div id="productContainer" class="mainContentArea">
 		<h3 class="productName">${currentProduct.name}</h3>
 		<jsp:include page="relatedProducts.jsp" />

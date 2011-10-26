@@ -17,11 +17,9 @@ package org.broadleafcommerce.cms.structure.service;
 
 import javax.annotation.Resource;
 
-import java.io.Serializable;
 import java.util.*;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.locale.domain.Locale;
@@ -35,9 +33,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.mvel2.CompileException;
-import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -53,10 +48,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
 
-    private Map<String, Object> structuredContentRuleDTOMap;
-
-    private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
-
+    private List<StructuredContentRuleProcessor> contentRuleProcessors;
 
     /**
      * Returns the StructuredContent item associated with the passed in id.
@@ -361,27 +353,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return returnList;
     }
 
-
-    protected Boolean executeExpression(String expression, Map<String, Object> vars) {
-        Serializable exp;
-        synchronized (EXPRESSION_CACHE) {
-            exp = (Serializable) EXPRESSION_CACHE.get(expression);
-            if (exp == null) {
-                ParserContext context = new ParserContext();
-                try {
-                    exp = MVEL.compileExpression(expression, context);
-                } catch (CompileException ce) {
-                    LOG.warn("Compile exception processing phrase: " + expression,ce);
-                    return Boolean.FALSE;
-                }
-
-                EXPRESSION_CACHE.put(expression, exp);
-            }
-        }
-
-        return (Boolean) MVEL.executeExpression(exp, vars);
-    }
-
     /**
      * This method loops through the content and orders by priority.   If multiple items have the same priority,
      * it will randomize the order of those results.   IF the item has a display rule, the code will evaluate
@@ -414,22 +385,14 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 } else if (returnList.size() > count) {
                     return returnList.subList(0, count);
                 } else {
-                    /*if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
-                        if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
-                            tmpList.add(sc);
-                        }
-                    } else {     */
-                        tmpList.add(sc);
-                   /* } */
-                }
-            } else {
-                /*if (sc.getDisplayRule() != null && ! "".equals(sc.getDisplayRule())) {
-                    if (executeExpression(sc.getDisplayRule(), ruleDTOs)) {
+                    if (processContentRules(sc, ruleDTOs)) {
                         tmpList.add(sc);
                     }
-                } else {  */
+                }
+            } else {
+                if (processContentRules(sc, ruleDTOs)) {
                     tmpList.add(sc);
-               /* } */
+                }
             }
             lastPriority = sc.getPriority();
         }
@@ -445,6 +408,18 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             return returnList.subList(0, count);
         }
         return returnList;
+    }
+
+    private boolean processContentRules(StructuredContent sc, Map<String, Object> ruleDTOs) {
+        if (contentRuleProcessors != null) {
+            for (StructuredContentRuleProcessor processor : contentRuleProcessors) {
+                boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
+                if (! matchFound) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -557,5 +532,13 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             originalSc.setLockedFlag(false);
             structuredContentDao.addOrUpdateContentItem(originalSc, false);
         }
+    }
+
+    public List<StructuredContentRuleProcessor> getContentRuleProcessors() {
+        return contentRuleProcessors;
+    }
+
+    public void setContentRuleProcessors(List<StructuredContentRuleProcessor> contentRuleProcessors) {
+        this.contentRuleProcessors = contentRuleProcessors;
     }
 }

@@ -57,5 +57,18 @@
 		</constructor-arg>
 		<constructor-arg value="X"/>
 	</bean>
-	
+
+    <bean id="blContentCartRuleProcessor" class="org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor">
+        <property name="orderDao" ref="blOrderDao"/>
+    </bean>
+
+    <!-- Append the content rule processor that checks for cart contents -->
+    <bean id="blContentRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blContentCartRuleProcessor"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

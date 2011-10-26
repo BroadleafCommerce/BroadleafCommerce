@@ -2,6 +2,12 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 
+    <cms:content contentType="Message" contentItemVar="item">
+        <c:if test="${numResults > 0}">
+            <h3>${item.messageText}</h3>
+        </c:if>
+    </cms:content>
+
 	<div class="splashContainer">
 	<div class="dontMiss">
         <cms:content contentType="Homepage Banner Ad" contentItemVar="item">

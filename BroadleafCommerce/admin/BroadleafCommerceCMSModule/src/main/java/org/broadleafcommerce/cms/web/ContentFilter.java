@@ -15,22 +15,6 @@
  */
 package org.broadleafcommerce.cms.web;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.locale.domain.Locale;
-import org.broadleafcommerce.cms.locale.service.LocaleService;
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.service.PageService;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
-import org.broadleafcommerce.openadmin.time.FixedTimeSource;
-import org.broadleafcommerce.openadmin.time.SystemTime;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -39,6 +23,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +31,23 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.cms.locale.service.LocaleService;
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.common.RequestDTOImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.openadmin.server.domain.Site;
+import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
+import org.broadleafcommerce.openadmin.time.FixedTimeSource;
+import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * This filter sets up the current sandbox, time of day, and languageCode that
@@ -65,14 +67,17 @@ public class ContentFilter extends OncePerRequestFilter {
     private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
     private static final SimpleDateFormat CONTENT_DATE_DISPLAY_HOURS_FORMATTER = new SimpleDateFormat("h");
     private static final SimpleDateFormat CONTENT_DATE_DISPLAY_MINUTES_FORMATTER = new SimpleDateFormat("mm");
-	private static final SimpleDateFormat CONTENT_DATE_PARSE_FORMAT = new SimpleDateFormat("MM/dd/yyyyhmma");
-	   
+	private static final SimpleDateFormat CONTENT_DATE_PARSE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+
 
     // Parameter/Attribute name for the current language
     public static String LOCALE_VAR = "blLocale";
 
     // Parameter/Attribute name for the current language
     public static String LOCALE_CODE_PARAM = "blLocaleCode";
+
+    // Parameter/Attribute name for the current language
+    public static String REQUEST_DTO = "blRequestDTO";
 
     // Parameter/Attribute name for the sandbox id
     private static String SANDBOX_ID_VAR = "blSandboxId";
@@ -108,11 +113,13 @@ public class ContentFilter extends OncePerRequestFilter {
 
 
 
-
 	/** (non-Javadoc)
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        if (request.getAttribute(REQUEST_DTO) == null) {
+            request.setAttribute(REQUEST_DTO, new RequestDTOImpl(request));
+        }
         Site site = determineSite(request);
         Locale locale = determineLocale(request, site);
         SandBox currentSandbox = determineSandbox(request, site);
@@ -303,8 +310,10 @@ public class ContentFilter extends OncePerRequestFilter {
     	if (StringUtils.isEmpty(hours)) {
     		hours = Integer.toString(SystemTime.asCalendar().get(Calendar.HOUR_OF_DAY));
     	}
+
+        String dateString = date + " " + hours + ":" + minutes + " " + ampm;
     	
-		Date parsedDate = CONTENT_DATE_PARSE_FORMAT.parse(date + hours + minutes + ampm);
+		Date parsedDate = CONTENT_DATE_PARSE_FORMAT.parse(dateString);
 		return parsedDate;
     }
 

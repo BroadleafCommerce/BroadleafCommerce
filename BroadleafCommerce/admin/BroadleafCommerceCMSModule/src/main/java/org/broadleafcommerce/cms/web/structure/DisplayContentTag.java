@@ -16,6 +16,16 @@
 
 package org.broadleafcommerce.cms.web.structure;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
@@ -23,29 +33,24 @@ import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.cms.web.ContentFilter;
 import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.broadleafcommerce.common.RequestDTO;
-import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.mvel2.MVEL;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DisplayContentTag extends BodyTagSupport {
     private static final long serialVersionUID = 1L;
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
+    // The following attribute is set in ContentFilter
+    public static final String REQUEST_DTO = "blRequestDTO";
+
     private String contentType;
     private String contentName;
+    private Object product;
     private Integer count;
     private String contentListVar = "contentList";
     private String contentItemVar = "contentItem";
@@ -64,11 +69,12 @@ public class DisplayContentTag extends BodyTagSupport {
      */
     private Map<String,Object> buildMvelParameters(HttpServletRequest request) {
         TimeDTO timeDto = SystemTime.asTimeDTO();
-        RequestDTO requestDto = new RequestDTOImpl(request);
+        RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
 
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
+        mvelParameters.put("MVEL", MVEL.class);
 
         Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (blcRuleMap != null) {
@@ -76,6 +82,11 @@ public class DisplayContentTag extends BodyTagSupport {
                 mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
             }
         }
+
+        if (product != null) {
+            mvelParameters.put("product", product);
+        }
+
         return mvelParameters;
     }
 
@@ -130,6 +141,7 @@ public class DisplayContentTag extends BodyTagSupport {
             pageContext.setAttribute(contentItemVar, returnFields.get(0));
             pageContext.setAttribute(contentListVar, returnFields);
             pageContext.setAttribute("structuredContentList", contentItems);
+            pageContext.setAttribute(numResultsVar, contentItems.size());
         } else {
             pageContext.setAttribute(contentItemVar, contentItems);
             pageContext.setAttribute(contentListVar, null);
@@ -195,5 +207,13 @@ public class DisplayContentTag extends BodyTagSupport {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public Object getProduct() {
+        return product;
+    }
+
+    public void setProduct(Object product) {
+        this.product = product;
     }
 }

@@ -66,6 +66,12 @@
 			<rtexprvalue>true</rtexprvalue>
 			<description>Name of the page scoped variable that stores the number of results.  Defaults to numResults.</description>
 		</attribute>
+        <attribute>
+			<name>product</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Product to include in rule processing.</description>
+		</attribute>
     </tag>
 
 </taglib>

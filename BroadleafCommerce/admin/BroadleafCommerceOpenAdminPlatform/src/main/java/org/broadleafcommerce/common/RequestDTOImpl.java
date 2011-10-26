@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.common;
 
-import org.broadleafcommerce.presentation.AdminPresentation;
-
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.Serializable;
+
+import org.broadleafcommerce.presentation.AdminPresentation;
 
 /**
  * Created by bpolster.
