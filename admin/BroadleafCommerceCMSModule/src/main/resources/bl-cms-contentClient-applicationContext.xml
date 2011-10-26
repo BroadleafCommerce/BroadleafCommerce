@@ -77,4 +77,18 @@
 		</property>
 	</bean>
 
+    <bean id="blContentDefaultRuleProcessor" class="org.broadleafcommerce.cms.structure.service.StructuredContentDefaultRuleProcessor"/>
+
+    <bean id="blContentRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blContentDefaultRuleProcessor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blStructuredContentService" class="org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl">
+        <property name="contentRuleProcessors" ref="blContentRuleProcessors"/>
+	</bean>
+
 </beans>

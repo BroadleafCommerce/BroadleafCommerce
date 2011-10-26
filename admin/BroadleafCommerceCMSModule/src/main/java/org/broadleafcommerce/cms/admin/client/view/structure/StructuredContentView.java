@@ -205,7 +205,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         innerLayout.addMember(productLabel);
 
         productFilterBuilder = new FilterBuilder();
-        productFilterBuilder.setDataSource(customerDataSource);
+        productFilterBuilder.setDataSource(productDataSource);
         productFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(productDataSource));
         productFilterBuilder.setLayoutBottomMargin(20);
         productFilterBuilder.setAllowEmpty(true);

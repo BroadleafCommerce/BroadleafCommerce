@@ -328,4 +328,5 @@ public class StructuredContentImpl implements StructuredContent {
         }
         return newContent;
     }
+
 }
