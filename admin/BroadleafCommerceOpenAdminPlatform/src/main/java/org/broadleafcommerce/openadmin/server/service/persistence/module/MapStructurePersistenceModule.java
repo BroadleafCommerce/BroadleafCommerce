@@ -20,7 +20,18 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -31,7 +42,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -55,7 +70,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
 		String idProperty = null;
 		for (String property : valueMergedProperties.keySet()) {
@@ -135,7 +149,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 				} else {
 					keyMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 						mapStructure.getKeyClassName(), 
-						new Class[]{Class.forName(mapStructure.getKeyClassName())}, 
+						new Class[]{Class.forName(mapStructure.getKeyClassName())},
 						null, 
 						new String[]{}, 
 						new ForeignKey[]{}, 
@@ -162,7 +176,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 				} else {
 					valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 						mapStructure.getValueClassName(), 
-						new Class[]{Class.forName(mapStructure.getValueClassName())}, 
+						new Class[]{Class.forName(mapStructure.getValueClassName())},
 						null, 
 						new String[]{}, 
 						new ForeignKey[]{}, 
@@ -211,7 +225,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			} else {
 				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					mapStructure.getValueClassName(), 
-					new Class[]{Class.forName(mapStructure.getValueClassName())}, 
+					new Class[]{Class.forName(mapStructure.getValueClassName())},
 					null, 
 					new String[]{}, 
 					new ForeignKey[]{}, 
@@ -295,7 +309,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			} else {
 				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					mapStructure.getValueClassName(), 
-					new Class[]{Class.forName(mapStructure.getValueClassName())}, 
+					new Class[]{Class.forName(mapStructure.getValueClassName())},
 					null, 
 					new String[]{}, 
 					new ForeignKey[]{}, 
@@ -395,7 +409,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			} else {
 				valueMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					mapStructure.getValueClassName(), 
-					new Class[]{Class.forName(mapStructure.getValueClassName())}, 
+					new Class[]{Class.forName(mapStructure.getValueClassName())},
 					null, 
 					new String[]{}, 
 					new ForeignKey[]{}, 

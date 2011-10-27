@@ -24,7 +24,11 @@ import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.module.StructuredContentListClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 /**

@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
@@ -67,7 +68,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,8 +84,8 @@ import java.util.TreeMap;
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
-    private static final Map METADATA_CACHE = Collections.synchronizedMap(new LRUMap(1000));
-    private static final Map POLYMORPHIC_ENTITY_CACHE = Collections.synchronizedMap(new LRUMap(1000));
+    private static final Map METADATA_CACHE = new LRUMap(1000);
+    private static final Map POLYMORPHIC_ENTITY_CACHE = new LRUMap(1000);
 	
     protected EntityManager standardEntityManager;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
@@ -137,43 +137,85 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     public PersistentClass getPersistentClass(String targetClassName) {
 		return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
 	}
+
+    protected void addClassToTree(Class<?> clazz, ClassTree tree) {
+        Class<?> testClass;
+        try {
+            testClass = Class.forName(tree.getFullyQualifiedClassname());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (clazz.equals(testClass)) {
+            return;
+        }
+        if (clazz.getSuperclass().equals(testClass)) {
+            ClassTree myTree = new ClassTree(clazz.getName());
+            //TODO set the friendly name for the class
+            tree.setChildren((ClassTree[]) ArrayUtils.add(tree.getChildren(), myTree));
+        } else {
+            for (ClassTree child : tree.getChildren()) {
+                addClassToTree(clazz, child);
+            }
+        }
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
 	 */
 	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
-        if (POLYMORPHIC_ENTITY_CACHE.get(ceilingClass) == null) {
-            List<Class<?>> entities = new ArrayList<Class<?>>();
-            for (Object item : getSessionFactory().getAllClassMetadata().values()) {
-                ClassMetadata metadata = (ClassMetadata) item;
-                Class<?> mappedClass = metadata.getMappedClass(EntityMode.POJO);
-                if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
-                    entities.add(mappedClass);
-                }
-            }
-            /*
-             * Sort entities in descending order of inheritance
-             */
-            Class<?>[] sortedEntities = new Class<?>[entities.size()];
-            sortedEntities = entities.toArray(sortedEntities);
-            Arrays.sort(sortedEntities, new Comparator<Class<?>>() {
-
-                public int compare(Class<?> o1, Class<?> o2) {
-                    if (o1.equals(o2)) {
-                        return 0;
-                    } else if (o1.isAssignableFrom(o2)) {
-                        return 1;
+        Class<?>[] cache;
+        synchronized(this) {
+            cache = (Class<?>[]) POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+            if (cache == null) {
+                List<Class<?>> entities = new ArrayList<Class<?>>();
+                for (Object item : getSessionFactory().getAllClassMetadata().values()) {
+                    ClassMetadata metadata = (ClassMetadata) item;
+                    Class<?> mappedClass = metadata.getMappedClass(EntityMode.POJO);
+                    if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
+                        entities.add(mappedClass);
                     }
-                    return -1;
                 }
+                /*
+                 * Sort entities with the most derived appearing first
+                 */
+                Class<?>[] sortedEntities = new Class<?>[entities.size()];
+                sortedEntities = entities.toArray(sortedEntities);
+                Arrays.sort(sortedEntities, new Comparator<Class<?>>() {
 
-            });
+                    public int compare(Class<?> o1, Class<?> o2) {
+                        if (o1.equals(o2)) {
+                            return 0;
+                        } else if (o1.isAssignableFrom(o2)) {
+                            return 1;
+                        }
+                        return -1;
+                    }
 
-            POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, sortedEntities);
+                });
+                cache = sortedEntities;
+                POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, sortedEntities);
+            }
         }
 
-        return (Class<?>[]) POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+        return cache;
 	}
+
+    public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
+        ClassTree classTree = null;
+        if (!ArrayUtils.isEmpty(polymorphicClasses)) {
+            classTree = new ClassTree(polymorphicClasses[polymorphicClasses.length-1].getName());
+            for (int j=polymorphicClasses.length-1; j >= 0; j--) {
+                addClassToTree(polymorphicClasses[j], classTree);
+            }
+            classTree.finalizeStructure(1);
+        }
+        return classTree;
+    }
+
+    public ClassTree getClassTreeFromCeiling(Class<?> ceilingClass) {
+        Class<?>[] sortedEntities = getAllPolymorphicEntitiesFromCeiling(ceilingClass);
+        return getClassTree(sortedEntities);
+    }
 	
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         Class<?>[] entityClasses = getAllPolymorphicEntitiesFromCeiling(Class.forName(entityName));
@@ -252,7 +294,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 
         return mergedProperties;
     }
-	
+
 	protected Map<String, FieldMetadata> getMergedPropertiesRecursively(
         String ceilingEntityFullyQualifiedClassname,
         Class<?>[] entities,
@@ -563,7 +605,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     }
 
     protected String getCacheKey(ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, Class<?> clazz, String configurationKey, Boolean isParentExcluded) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder(150);
         sb.append(clazz.hashCode());
         sb.append(foreignField==null?"":foreignField.toString());
         sb.append(configurationKey);
@@ -595,7 +637,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     }
 
 	protected void buildPropertiesFromPolymorphicEntities(
-		Class<?>[] entities, 
+		Class<?>[] entities,
 		ForeignKey foreignField, 
 		String[] additionalNonPersistentProperties, 
 		ForeignKey[] additionalForeignFields, 
@@ -612,44 +654,47 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		for (Class<?> clazz : entities) {
             String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
-            Map<String, FieldMetadata> cacheData = (Map<String, FieldMetadata>) METADATA_CACHE.get(cacheKey);
-            if (cacheData == null) {
-                Map<String, FieldMetadata> props = getPropertiesForEntityClass(
-                    clazz,
-                    foreignField,
-                    additionalNonPersistentProperties,
-                    additionalForeignFields,
-                    mergedPropertyType,
-                    populateManyToOneFields,
-                    includeFields,
-                    excludeFields,
-                    configurationKey,
-                    ceilingEntityFullyQualifiedClassname,
-                    prefix,
-                    isParentExcluded
-                );
-                //first check all the properties currently in there to see if my entity inherits from them
-                for (Class<?> clazz2 : entities) {
-                    if (!clazz2.getName().equals(clazz.getName())) {
-                        for (String key: props.keySet()) {
-                            FieldMetadata metadata = props.get(key);
-                            if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(clazz2)) {
-                                String[] both = (String[]) ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[]{clazz2.getName()});
-                                metadata.setAvailableToTypes(both);
+            Map<String, FieldMetadata> cacheData;
+            synchronized(this) {
+                cacheData = (Map<String, FieldMetadata>) METADATA_CACHE.get(cacheKey);
+                if (cacheData == null) {
+                    Map<String, FieldMetadata> props = getPropertiesForEntityClass(
+                        clazz,
+                        foreignField,
+                        additionalNonPersistentProperties,
+                        additionalForeignFields,
+                        mergedPropertyType,
+                        populateManyToOneFields,
+                        includeFields,
+                        excludeFields,
+                        configurationKey,
+                        ceilingEntityFullyQualifiedClassname,
+                        prefix,
+                        isParentExcluded
+                    );
+                    //first check all the properties currently in there to see if my entity inherits from them
+                    for (Class<?> clazz2 : entities) {
+                        if (!clazz2.getName().equals(clazz.getName())) {
+                            for (String key: props.keySet()) {
+                                FieldMetadata metadata = props.get(key);
+                                if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(clazz2)) {
+                                    String[] both = (String[]) ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[]{clazz2.getName()});
+                                    metadata.setAvailableToTypes(both);
+                                }
                             }
                         }
                     }
+
+
+                    METADATA_CACHE.put(cacheKey, props);
+                    cacheData = props;
                 }
-
-
-                METADATA_CACHE.put(cacheKey, props);
-                cacheData = props;
             }
             //clone the metadata before passing to the system
             cacheData = (Map<String, FieldMetadata>) SerializationUtils.clone((Serializable) cacheData);
-			mergedProperties.putAll(cacheData);
-		}
-	}
+            mergedProperties.putAll(cacheData);
+        }
+    }
 
     protected FieldMetadata getFieldMetadata(
 		String prefix, 
@@ -983,7 +1028,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			int additionalForeignKeyIndexPosition = findAdditionalForeignKeyIndex(additionalForeignFields, prefix, propertyName);
 			j++;
 			if (
-					(!type.isAnyType() && !type.isCollectionType()) || 
+					!type.isAnyType() && !type.isCollectionType() ||
 					isPropertyForeignKey ||
 					additionalForeignKeyIndexPosition >= 0 ||
 					presentationAttributes.containsKey(propertyName)
@@ -1091,31 +1136,29 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         if (
             explicitType != null &&
-            !explicitType.equals(SupportedFieldType.UNKNOWN) &&
-            !explicitType.equals(SupportedFieldType.BOOLEAN) &&
-            !explicitType.equals(SupportedFieldType.INTEGER) &&
-            !explicitType.equals(SupportedFieldType.DATE) &&
-            !explicitType.equals(SupportedFieldType.STRING) &&
-            !explicitType.equals(SupportedFieldType.MONEY) &&
-            !explicitType.equals(SupportedFieldType.DECIMAL) &&
-            !explicitType.equals(SupportedFieldType.FOREIGN_KEY) &&
-            !explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
+            explicitType != SupportedFieldType.UNKNOWN &&
+            explicitType != SupportedFieldType.BOOLEAN &&
+            explicitType != SupportedFieldType.INTEGER &&
+            explicitType != SupportedFieldType.DATE &&
+            explicitType != SupportedFieldType.STRING &&
+            explicitType != SupportedFieldType.MONEY &&
+            explicitType != SupportedFieldType.DECIMAL &&
+            explicitType != SupportedFieldType.FOREIGN_KEY &&
+            explicitType != SupportedFieldType.ADDITIONAL_FOREIGN_KEY
         ) {
             fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, explicitType, type, targetClass, presentationAttribute, mergedPropertyType));
         } else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.BOOLEAN)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.BOOLEAN
+            ||
             returnedClass.equals(Boolean.class) ||
             returnedClass.equals(Character.class)
         ) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.BOOLEAN, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.INTEGER)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.INTEGER
+            ||
             returnedClass.equals(Byte.class) ||
             returnedClass.equals(Short.class) ||
             returnedClass.equals(Integer.class) ||
@@ -1127,20 +1170,18 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute, mergedPropertyType));
 			}
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.DATE)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.DATE
+            ||
             returnedClass.equals(Calendar.class) ||
             returnedClass.equals(Date.class) ||
             returnedClass.equals(Timestamp.class)
 		) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.DATE, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.STRING)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.STRING
+            ||
             returnedClass.equals(String.class)
 		) {
 			if (propertyName.equals(idProperty)) {
@@ -1149,27 +1190,24 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.STRING, type, targetClass, presentationAttribute, mergedPropertyType));
 			}
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.MONEY)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.MONEY
+            ||
             returnedClass.equals(Money.class)
         ) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.MONEY, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.DECIMAL)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.DECIMAL
+            ||
             returnedClass.equals(Double.class) ||
             returnedClass.equals(BigDecimal.class)
 		) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, componentProperties, SupportedFieldType.DECIMAL, type, targetClass, presentationAttribute, mergedPropertyType));
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.FOREIGN_KEY)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.FOREIGN_KEY
+            ||
             foreignField != null &&
             isPropertyForeignKey
         ) {
@@ -1185,10 +1223,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fields.get(propertyName).setForeignKeyClass(foreignField.getForeignKeyClass());
 			fields.get(propertyName).setForeignKeyDisplayValueProperty(foreignField.getDisplayValueProperty());
 		} else if (
-            (
-                explicitType != null &&
-                explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
-            ) ||
+            explicitType != null &&
+            explicitType == SupportedFieldType.ADDITIONAL_FOREIGN_KEY
+            ||
             additionalForeignFields != null &&
             additionalForeignKeyIndexPosition >= 0
         ) {
@@ -1288,16 +1325,16 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             includeFields,
             excludeFields,
             configurationKey,
-            prefix + propertyName + ".",
+            prefix + propertyName + '.',
             isParentExcluded
         );
 		for (FieldMetadata newMetadata : newFields.values()) {
 			newMetadata.setInheritedFromType(targetClass.getName());
 			newMetadata.setAvailableToTypes(new String[]{targetClass.getName()});
 		}
-		Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>();
-		for (String key : newFields.keySet()) {
-			convertedFields.put(propertyName + "." + key, newFields.get(key));
+		Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>(newFields.size());
+		for (Map.Entry<String, FieldMetadata> key : newFields.entrySet()) {
+			convertedFields.put(propertyName + '.' + key.getKey(), key.getValue());
 		}
 		fields.putAll(convertedFields);
 	}
@@ -1321,15 +1358,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         Boolean isParentExcluded
 	) throws MappingException, HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String[] componentProperties = ((ComponentType) type).getPropertyNames();
-		List<String> componentPropertyNames = new ArrayList<String>();
-		for (String componentProperty : componentProperties) {
-			componentPropertyNames.add(componentProperty);
-		}
+		List<String> componentPropertyNames = Arrays.asList(componentProperties);
 		Type[] componentTypes = ((ComponentType) type).getSubtypes();
-		List<Type> componentPropertyTypes = new ArrayList<Type>();
-		for (Type componentType : componentTypes) {
-			componentPropertyTypes.add(componentType);
-		}
+		List<Type> componentPropertyTypes = Arrays.asList(componentTypes);
 		Map<String, FieldPresentationAttributes> componentPresentationAttributes = getFieldPresentationAttributes(returnedClass);
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {

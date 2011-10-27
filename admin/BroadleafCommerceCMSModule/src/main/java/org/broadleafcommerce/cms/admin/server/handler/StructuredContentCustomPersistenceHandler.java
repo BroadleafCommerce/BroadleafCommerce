@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
@@ -66,6 +58,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.tool.hbm2x.StringUtils;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -262,7 +262,6 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();

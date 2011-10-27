@@ -27,8 +27,8 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -63,7 +63,7 @@ public class DynamicEntityColumnTreeView extends VLayout implements DynamicEntit
         categoryLabel.setWrap(false);
         toolBar.addMember(categoryLabel);
         toolBar.addFill();
-        HashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
+        Map<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
         if (polymorphicEntities.size() > 1) { 
             entityType.setShowTitle(false);  
             entityType.setWidth(120); 

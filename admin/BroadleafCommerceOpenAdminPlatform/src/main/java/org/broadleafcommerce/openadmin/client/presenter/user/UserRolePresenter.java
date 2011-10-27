@@ -24,15 +24,20 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
+import org.broadleafcommerce.openadmin.client.view.user.UserRoleView;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -47,6 +52,7 @@ public class UserRolePresenter implements SubPresentable {
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	protected Boolean disabled = false;
 	protected EntitySearchDialog searchDialog;
+    protected String[] availableToTypes = {EntityImplementations.ADMIN_USER};
 	
 	public UserRolePresenter(UserRoleDisplay display, EntitySearchDialog searchDialog) {
 		this.display = display;
@@ -63,8 +69,8 @@ public class UserRolePresenter implements SubPresentable {
 		display.getExpansionGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getExpansionGrid());
 		dataSource.setupGridFields(gridFields, editable);
-	}
-	
+    }
+
 	public void setStartState() {
 		if (!disabled) {
 			display.getAddButton().enable();
@@ -98,18 +104,45 @@ public class UserRolePresenter implements SubPresentable {
 		}
 	}
 	
-	public void load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+	public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
-		String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				setStartState();
-				if (cb != null) {
-					cb.execute(response, rawData, request);
-				}
-			}
-		});
+        ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
+        String[] types = associatedRecord.getAttributeAsStringArray("_type");
+        boolean shouldLoad = availableToTypes == null;
+        if (types != null && types.length > 0) {
+            if (availableToTypes != null) {
+                if (Arrays.binarySearch(availableToTypes, types[0]) >= 0) {
+                    shouldLoad = true;
+                } else {
+                    ClassTree myTypeResult = classTree.find(types[0]);
+                    if (myTypeResult != null) {
+                        for (String availableType : availableToTypes) {
+                            ClassTree availableTypeResult = classTree.find(availableType);
+                            if (availableTypeResult.getLeft() < myTypeResult.getLeft() && availableTypeResult.getRight() > myTypeResult.getRight()) {
+                                shouldLoad = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ((UserRoleView) display).setVisible(shouldLoad);
+
+        if (shouldLoad) {
+            String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+            ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    setStartState();
+                    if (cb != null) {
+                        cb.execute(response, rawData, request);
+                    }
+                }
+            });
+        }
+
+        return shouldLoad;
 	}
 	
 	public void bind() {

@@ -17,7 +17,12 @@
 package org.broadleafcommerce.cms.admin.client.presenter.file;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -33,10 +38,10 @@ import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDa
 import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenterWithoutForm;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
@@ -69,6 +74,10 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
     @Override
 	protected void changeSelection(final Record selectedRecord) {
         currentSelectedRecord = (TreeNode) selectedRecord;
+        String[] types = selectedRecord.getAttributeAsStringArray("_type");
+        if (types == null) {
+            selectedRecord.setAttribute("_type", new String[]{EntityImplementations.STATICASSETIMPL});
+        }
 		leafAssetPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
                 if (response.getStatus()== RPCResponse.STATUS_FAILURE) {
@@ -166,7 +175,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
-                leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), true, true, false);
+                leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), new String[]{EntityImplementations.STATICASSETIMPL}, true, true, false);
 				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
                 /*((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
                         @Override
@@ -201,7 +210,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetDescriptionMapDS", new StaticAssetDescriptionMapDataSourceFactory(this), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				staticAssetDescriptionPresenter = new MapStructurePresenter(getDisplay().getAssetDescriptionDisplay(), getStaticAssetDescriptionEntityView(), BLCMain.getMessageManager().getString("newAssetDescriptionTitle"));
+				staticAssetDescriptionPresenter = new MapStructurePresenter(getDisplay().getAssetDescriptionDisplay(), getStaticAssetDescriptionEntityView(), new String[]{EntityImplementations.STATICASSETIMPL}, BLCMain.getMessageManager().getString("newAssetDescriptionTitle"));
 				staticAssetDescriptionPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "description", "longDescription"}, new Boolean[]{true, true, true});
 			}
 		}));

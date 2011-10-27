@@ -22,7 +22,11 @@ import org.broadleafcommerce.presentation.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -62,5 +66,5 @@ public class OtherProductImpl extends ProductSkuImpl implements OtherProduct {
 	public void setReleaseDate(Date releaseDate) {
 		this.releaseDate = releaseDate;
 	}
-	
+
 }

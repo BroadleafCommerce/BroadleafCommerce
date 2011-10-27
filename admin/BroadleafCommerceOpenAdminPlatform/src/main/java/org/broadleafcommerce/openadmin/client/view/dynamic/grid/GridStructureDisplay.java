@@ -36,4 +36,6 @@ public interface GridStructureDisplay {
 
     public Boolean getCanEdit();
 
+    public void setVisible(boolean visible);
+
 }

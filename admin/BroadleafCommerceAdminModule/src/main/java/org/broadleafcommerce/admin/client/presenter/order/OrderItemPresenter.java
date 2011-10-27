@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
-import org.broadleafcommerce.admin.client.view.order.OrderItemDisplay;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -33,6 +24,17 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.admin.client.view.order.OrderItemDisplay;
+import org.broadleafcommerce.admin.client.view.order.OrderItemView;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -46,10 +48,12 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 	protected Record associatedRecord;
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
 	protected Boolean disabled = false;
+    protected String[] availableToTypes;
 	
-	public OrderItemPresenter(OrderItemDisplay display) {
-		super((DynamicFormDisplay) display);
+	public OrderItemPresenter(OrderItemDisplay display, String[] availableToTypes) {
+		super(display);
 		this.display = display;
+        this.availableToTypes = availableToTypes;
 	}
 	
 	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
@@ -100,19 +104,46 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 			enable();
 		}
 	}
-	
-	public void load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
-		String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				setStartState();
-				if (cb != null) {
-					cb.execute(response, rawData, request);
-				}
-			}
-		});
+        ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
+        String[] types = associatedRecord.getAttributeAsStringArray("_type");
+        boolean shouldLoad = availableToTypes == null;
+        if (types != null && types.length > 0) {
+            if (availableToTypes != null) {
+                if (Arrays.binarySearch(availableToTypes, types[0]) >= 0) {
+                    shouldLoad = true;
+                } else {
+                    ClassTree myTypeResult = classTree.find(types[0]);
+                    if (myTypeResult != null) {
+                        for (String availableType : availableToTypes) {
+                            ClassTree availableTypeResult = classTree.find(availableType);
+                            if (availableTypeResult.getLeft() < myTypeResult.getLeft() && availableTypeResult.getRight() > myTypeResult.getRight()) {
+                                shouldLoad = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ((OrderItemView) display).setVisible(shouldLoad);
+
+        if (shouldLoad) {
+            String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+            ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    setStartState();
+                    if (cb != null) {
+                        cb.execute(response, rawData, request);
+                    }
+                }
+            });
+        }
+
+        return shouldLoad;
 	}
 	
 	public void bind() {

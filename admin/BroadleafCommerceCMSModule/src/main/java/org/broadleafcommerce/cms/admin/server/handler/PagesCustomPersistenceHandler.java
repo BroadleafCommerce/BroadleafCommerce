@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import javax.annotation.Resource;
-
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
@@ -36,7 +27,19 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -49,6 +52,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.Criteria;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -96,8 +107,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return Page.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandleFetch(persistencePackage);
     }
 
     protected SandBox getSandBox() {

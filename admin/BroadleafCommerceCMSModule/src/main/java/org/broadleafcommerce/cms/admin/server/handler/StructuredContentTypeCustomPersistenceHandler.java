@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import javax.annotation.Resource;
-
-import java.util.*;
-
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -29,9 +25,23 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.structure.domain.*;
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldData;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -41,6 +51,14 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jfischer
@@ -97,10 +115,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeById(Long.valueOf(structuredContentTypeId));
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(StructuredContentType.class.getName());
-            PolymorphicEntity entity = new PolymorphicEntity();
-            entity.setName("StructuredContentTypeImpl");
-            entity.setType(StructuredContentTypeImpl.class.getName());
-            PolymorphicEntity[] entities = new PolymorphicEntity[]{entity};
+            ClassTree entities = new ClassTree(StructuredContentTypeImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
             int groupCount = 1;
             int fieldCount = 0;

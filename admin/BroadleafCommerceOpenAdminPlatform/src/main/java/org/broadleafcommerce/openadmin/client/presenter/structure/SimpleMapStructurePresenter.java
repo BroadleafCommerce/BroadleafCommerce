@@ -15,20 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.DataArrivedEvent;
@@ -37,25 +26,27 @@ import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
 import com.smartgwt.client.widgets.grid.events.EditCompleteHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class SimpleMapStructurePresenter implements SubPresentable {
-	
-	protected GridStructureDisplay display;
-	protected Map<String, Object> initialValues;
+public class SimpleMapStructurePresenter extends AbstractSubPresentable {
+
+	protected Map<String, Object> initialValues = new LinkedHashMap<String, Object>(10);
 	protected String[] gridFields;
 	
-	protected Record associatedRecord;
-	protected AbstractDynamicDataSource abstractDynamicDataSource;
-	protected Boolean disabled = false;
-	
-	public SimpleMapStructurePresenter(GridStructureDisplay display, Map<String, Object> initialValues) {
-		this.display = display;
-		this.initialValues = initialValues;
+	public SimpleMapStructurePresenter(GridStructureDisplay display, String[] availableToTypes, Map<String, Object> initialValues) {
+		super(display, availableToTypes);
+		this.initialValues.putAll(initialValues);
 	}
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
@@ -63,53 +54,6 @@ public class SimpleMapStructurePresenter implements SubPresentable {
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
 		this.gridFields = gridFields;
-	}
-	
-	public void setStartState() {
-		if (!disabled) {
-			display.getAddButton().enable();
-			display.getGrid().enable();
-			display.getRemoveButton().disable();
-		}
-	}
-	
-	public void enable() {
-		disabled = false;
-		display.getAddButton().enable();
-		display.getGrid().enable();
-		display.getRemoveButton().enable();
-		display.getToolBar().enable();
-	}
-	
-	public void disable() {
-		disabled = true;
-		display.getAddButton().disable();
-		display.getGrid().disable();
-		display.getRemoveButton().disable();
-		display.getToolBar().disable();
-	}
-	
-	public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-		} else {
-			enable();
-		}
-	}
-	
-	public void load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
-		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = abstractDynamicDataSource;
-		String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				setStartState();
-				if (cb != null) {
-					cb.execute(response, rawData, request);
-				}
-			}
-		});
 	}
 	
 	public void bind() {
@@ -149,7 +93,7 @@ public class SimpleMapStructurePresenter implements SubPresentable {
 				if (event.isLeftButtonDown()) {
 					DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
 					if (initialValues == null) {
-						initialValues = new LinkedHashMap<String, Object>();
+						initialValues = new LinkedHashMap<String, Object>(10);
 					}
 					initialValues.put("symbolicId", dataSource.getCompatibleModule(dataSource.getPersistencePerspective().getOperationTypes().getAddType()).getLinkedValue());
 					String[] type = associatedRecord.getAttributeAsStringArray("_type");
