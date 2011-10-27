@@ -15,13 +15,12 @@
  */
 package org.broadleafcommerce.profile.cache.engine;
 
+import javax.persistence.Id;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.persistence.Id;
 
 import org.broadleafcommerce.profile.cache.Hydrated;
 import org.hibernate.annotations.Cache;
@@ -69,9 +68,9 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
 	public void init() {
 		try {
 			InputStream in = HydrationScanner.class.getClassLoader().getResourceAsStream(topEntityClass.getName().replace('.', '/') + ".class");
-			new ClassReader(in).accept(this, true);
+			new ClassReader(in).accept(this, ClassReader.SKIP_DEBUG);
 			in = HydrationScanner.class.getClassLoader().getResourceAsStream(entityClass.getName().replace('.', '/') + ".class");
-			new ClassReader(in).accept(this, true);
+			new ClassReader(in).accept(this, ClassReader.SKIP_DEBUG);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
