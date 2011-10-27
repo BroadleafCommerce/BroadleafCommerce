@@ -23,6 +23,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
@@ -94,6 +95,9 @@ public class MasterView extends VLayout {
         header.setLayoutMargin(10);
         header.setBackgroundImage(GWT.getModuleBaseURL() + "admin/images/header_bg.png");
 
+        LayoutSpacer sp = new LayoutSpacer();
+        sp.setWidth(20);
+        header.addMember(sp);
         header.addMember(buildLogo());
         header.addMember(new LayoutSpacer());
 
@@ -127,6 +131,7 @@ public class MasterView extends VLayout {
        for (Module module : allowedModules) {
            boolean selected = module.getModuleKey().equals(moduleKey);
            menuHolder.addMember(buildPrimaryMenuOption(module, selected));
+           menuHolder.addMember(buildMenuSpacer());
        }
     }
 
@@ -144,6 +149,7 @@ public class MasterView extends VLayout {
         primaryMenuOptionsHolder.setMembersMargin(5);
         primaryMenuOptionsHolder.setWidth100();
         primaryMenuOptionsHolder.setHeight(30);
+        primaryMenuOptionsHolder.setAlign(VerticalAlignment.TOP);
 
         LayoutSpacer sp = new LayoutSpacer();
         sp.setWidth(20);
@@ -160,8 +166,9 @@ public class MasterView extends VLayout {
         LayoutSpacer sp2 = new LayoutSpacer();
         sp2.setWidth(10);
         secondaryMenu.addMember(sp2);
-        secondaryMenu.setHeight(35);
-        secondaryMenu.setBackgroundColor("#78a22F");
+        secondaryMenu.setHeight(40);
+        //secondaryMenu.setBackgroundColor("#78a22F");
+        secondaryMenu.setBackgroundImage(GWT.getModuleBaseURL() + "admin/images/nav_sec_bg.png");
         secondaryMenu.addMember(sp2);
 
         LinkedHashMap<String, String[]> pages = modules.get(moduleKey).getPages();
@@ -206,12 +213,26 @@ public class MasterView extends VLayout {
         return logo;
     }
 
+    private Canvas buildMenuSpacer(){
+        ImgButton spacer = new ImgButton();
+        spacer.setSrc(GWT.getModuleBaseURL() + "admin/images/nav_spacer_36.png");
+
+        spacer.setWidth(2);
+        spacer.setHeight(38);
+        spacer.setShowRollOver(false);
+        spacer.setShowDownIcon(false);
+        spacer.setShowDown(false);
+        return spacer;
+    }
+
     private Label buildPrimaryMenuOption(final Module module, boolean selected) {
         Label tmp = new Label(module.getModuleTitle());
         tmp.setValign(VerticalAlignment.BOTTOM);
         tmp.setAlign(Alignment.CENTER);
         tmp.setWrap(false);
         tmp.setPadding(10);
+        tmp.setShowRollOver(true);
+        tmp.setCursor(Cursor.POINTER);
 
         final String style;
         if (selected) {
@@ -254,6 +275,9 @@ public class MasterView extends VLayout {
         tmp.setValign(VerticalAlignment.BOTTOM);
         tmp.setAlign(Alignment.CENTER);
         tmp.setPadding(10);
+        tmp.setShowRollOver(true);
+        tmp.setCursor(Cursor.POINTER);
+
         String style;
 
         if (selected) {

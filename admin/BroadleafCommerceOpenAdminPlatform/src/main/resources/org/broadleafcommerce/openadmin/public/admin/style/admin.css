@@ -58,43 +58,46 @@
 
 
 .primaryMenuText,
-.primaryMenuText-hover,
 .primaryMenuText-selected {
     font-family:helvetica, sans-serif;
-    font-size:16px;
+    font-size:14px;
     color:white;
-    font-weight:400;
     text-align:center;
     padding: 10px 5px 5px 10px;
 }
 
-.primaryMenuText-hover {
-    color: #78A22F;
+.primaryMenuTextOver {
+    font-size: 14px;
+    color: #94b12c;
 }
-
-.primaryMenuText-selected {
-    font-weight:600;
+.primaryMenuText-selectedOver  {
+    font-size: 14px;
+    color:#454545;
     background-color: #78A22F;
 }
 
+.primaryMenuText-selected {
+    background-color: #78A22F;
+    color:#454545;
+}
+
 .secondaryMenuText,
-.secondaryMenuText-hover,
 .secondaryMenuText-selected {
     font-family:helvetica, sans-serif;
-    font-size:14px;
-    color:black;
-    font-weight:300;
+    font-size:12px;
+    color:white;
     text-align:center;
 }
 
-.secondaryMenuText-hover {
-    font-weight:800;
+.secondaryMenuTextOver,
+.secondaryMenuText-selectedOver {
+    font-size: 12px;
+    color:#454545;
 }
 
 .secondaryMenuText-selected {
-    color:greenyellow;
+    color:#454545;
 }
-
 
 
 
