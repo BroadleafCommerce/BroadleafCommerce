@@ -20,6 +20,7 @@
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>

@@ -172,6 +172,10 @@ INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENT
 INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (121, 'org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria', 31);
 INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (122, 'org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria', 32);
 INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (123, 'org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria', 33);
+INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (124, 'org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate', 30);
+INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (125, 'org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate', 31);
+INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (126, 'org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate', 32);
+INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (127, 'org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate', 33);
 
 INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (101, 'org.broadleafcommerce.openadmin.server.domain.SandBoxItem', 34);
 INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENTITY, ADMIN_PERMISSION_ID) VALUES (102, 'org.broadleafcommerce.openadmin.server.domain.SandBoxItem', 35);
@@ -2441,27 +2445,46 @@ INSERT INTO BLC_PGFLD_FLD_XREF(PAGE_FIELD_ID, PAGE_FIELD_DATA_ID, FIELD_ORDER) V
 
 --INSERT INTO BLC_PGFLD_FLD_XREF(PAGE_FIELD_ID, PAGE_FIELD_DATA_ID, FIELD_ORDER) VALUES (21,21,0);
 
-INSERT INTO BLC_STRUCTURED_CONTENT_TYPE (STRUCTURED_CONTENT_TYPE_ID, NAME, DESCRIPTION) VALUES (1, 'Homepage Banner Ad', NULL);
-INSERT INTO BLC_STRUCTURED_CONTENT_TYPE (STRUCTURED_CONTENT_TYPE_ID, NAME, DESCRIPTION) VALUES (2, 'Homepage Small Ad', NULL);
-INSERT INTO BLC_STRUCTURED_CONTENT_TYPE (STRUCTURED_CONTENT_TYPE_ID, NAME, DESCRIPTION) VALUES (3, 'Message', NULL);
-
-
--- Structured Ad Content Fields
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Structured Content Step 1:   Create Field Groups
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Ad Fields - Defining the ad field group as a group of two fields: Image URL and Target URL
 INSERT INTO BLC_FIELD_GROUP(FIELD_GROUP_ID, NAME, INIT_COLLAPSED_FLAG) VALUES (4, 'Ad Fields', false);
-
 INSERT INTO BLC_FIELD_DEFINITION(FIELD_DEFINITION_ID, NAME, FRIENDLY_NAME, FIELD_TYPE, SECURITY_LEVEL, HIDDEN_FLAG, VLDTN_REGEX, VLDTN_ERROR_MSSG_KEY, MAX_LENGTH, COLUMN_WIDTH, TEXT_AREA_FLAG, FIELD_ENUM_ID, ALLOW_MULTIPLES, FIELD_GROUP_ID, FIELD_ORDER) VALUES (7, 'imageUrl', 'Image URL', 'STRING', NULL, false, null, null, 150, '*', false, NULL, false, 4, 0);
 INSERT INTO BLC_FIELD_DEFINITION(FIELD_DEFINITION_ID, NAME, FRIENDLY_NAME, FIELD_TYPE, SECURITY_LEVEL, HIDDEN_FLAG, VLDTN_REGEX, VLDTN_ERROR_MSSG_KEY, MAX_LENGTH, COLUMN_WIDTH, TEXT_AREA_FLAG, FIELD_ENUM_ID, ALLOW_MULTIPLES, FIELD_GROUP_ID, FIELD_ORDER) VALUES (8, 'targetUrl', 'Target URL', 'STRING', NULL, false, null, null, 150, '*', false, NULL, false, 4, 1);
 
 
--- Structured Message Content Fields
+-- Message Fields - Defining the message field group as a single field called messageText
 INSERT INTO BLC_FIELD_GROUP(FIELD_GROUP_ID, NAME, INIT_COLLAPSED_FLAG) VALUES (5, 'Message Fields', false);
 INSERT INTO BLC_FIELD_DEFINITION(FIELD_DEFINITION_ID, NAME, FRIENDLY_NAME, FIELD_TYPE, SECURITY_LEVEL, HIDDEN_FLAG, VLDTN_REGEX, VLDTN_ERROR_MSSG_KEY, MAX_LENGTH, COLUMN_WIDTH, TEXT_AREA_FLAG, FIELD_ENUM_ID, ALLOW_MULTIPLES, FIELD_GROUP_ID, FIELD_ORDER) VALUES (9, 'messageText', 'Message Text', 'STRING', NULL, false, null, null, 150, '*', false, NULL, false, 5, 0);
 
 
-INSERT INTO BLC_STRCTRDCNTNT_FLDGRP_XREF(STRUCTURED_CONTENT_TYPE_ID, FIELD_GROUP_ID, GROUP_ORDER) VALUES (1,4,0);
-INSERT INTO BLC_STRCTRDCNTNT_FLDGRP_XREF(STRUCTURED_CONTENT_TYPE_ID, FIELD_GROUP_ID, GROUP_ORDER) VALUES (2,4,0);
-INSERT INTO BLC_STRCTRDCNTNT_FLDGRP_XREF(STRUCTURED_CONTENT_TYPE_ID, FIELD_GROUP_ID, GROUP_ORDER) VALUES (3,5,0);
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Structured Content Step 2:   Create Templates.     The examples below create field templates for Ads and Messages.
+-----------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO BLC_SC_FIELD_TEMPLATE(SC_FIELD_TEMPLATE_ID, NAME) VALUES(1, 'Ad Template');
+INSERT INTO BLC_SC_FIELD_TEMPLATE(SC_FIELD_TEMPLATE_ID, NAME) VALUES(2, 'Message Template');
 
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Structured Content Step 3:   Add Fields to Templates
+-----------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO BLC_SC_FLDGRP_XREF(SC_FIELD_TEMPLATE_ID, FIELD_GROUP_ID, GROUP_ORDER) VALUES (1,4,0);
+INSERT INTO BLC_SC_FLDGRP_XREF(SC_FIELD_TEMPLATE_ID, FIELD_GROUP_ID, GROUP_ORDER) VALUES (2,5,0);
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Structured Content Step 4:   Create Types (These represent areas on a page or general types:  e.g 'Homepage Banner Ad' or 'FAQ')
+-----------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO BLC_STRUCTURED_CONTENT_TYPE (STRUCTURED_CONTENT_TYPE_ID, NAME, DESCRIPTION, SC_FIELD_TEMPLATE_ID) VALUES (1, 'Homepage Banner Ad', NULL, 1);
+INSERT INTO BLC_STRUCTURED_CONTENT_TYPE (STRUCTURED_CONTENT_TYPE_ID, NAME, DESCRIPTION, SC_FIELD_TEMPLATE_ID) VALUES (2, 'Homepage Small Ad', NULL, 1);
+INSERT INTO BLC_STRUCTURED_CONTENT_TYPE (STRUCTURED_CONTENT_TYPE_ID, NAME, DESCRIPTION, SC_FIELD_TEMPLATE_ID) VALUES (3, 'Message', NULL, 2);
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+-- BELOW STATEMENTS INSERT DATA - TYPICALLY THIS WOULD BE MANGED VIA THE ADMIN
+-----------------------------------------------------------------------------------------------------------------------------------
 
 -- Structured Content Data for Demo Ads BEGIN
 -- Structured Content
