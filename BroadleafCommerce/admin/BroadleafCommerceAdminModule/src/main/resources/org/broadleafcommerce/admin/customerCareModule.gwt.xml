@@ -3,7 +3,7 @@
 "http://google-web-toolkit.googlecode.com/svn/tags/2.1.1/distro-source/core/src/gwt-module.dtd">
 <module>
 	<inherits name="com.google.gwt.user.User" />
-	<inherits name="org.broadleafcommerce.openadmin.openadmin" />
+	<inherits name="org.broadleafcommerce.cms.admin.contentManagementModule" />
 	
 	<source path="client" />
 	<entry-point class="org.broadleafcommerce.admin.client.CustomerCareModule" />

@@ -60,7 +60,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
         
-        List<Property> newPropList = new ArrayList<Property>();
+        List<Property> newPropList = new ArrayList<Property>(5 + entity.getProperties().length);
         {
 	        Property myProp = entity.findProperty("name");
 	        if (myProp != null) {
@@ -150,12 +150,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
 				dataSource.getField("sku.description").setAttribute("permanentlyHidden", true);
 				dataSource.getField("sku.longDescription").setHidden(true);
 				dataSource.getField("sku.longDescription").setAttribute("permanentlyHidden", true);
-				
-				for (PolymorphicEntity polymorphicEntity : metadata.getPolymorphicEntities()){
-					String name = polymorphicEntity.getName();
-					String type = polymorphicEntity.getType();
-					dataSource.getPolymorphicEntities().put(type, name);
-				}
+				dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
 				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 				
 				cb.onSuccess(dataSource);

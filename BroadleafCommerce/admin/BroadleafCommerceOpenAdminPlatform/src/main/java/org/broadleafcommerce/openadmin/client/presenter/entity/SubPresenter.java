@@ -15,13 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -30,6 +23,14 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
+
+import java.util.Arrays;
 
 /**
  * 
@@ -48,24 +49,34 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
     protected Boolean showDisabledState = false;
     protected Boolean canEdit = false;
     protected Boolean showId = false;
+    protected String[] availableToTypes;
 
     public SubPresenter(SubItemDisplay display) {
-		this(display, false, false, false);
+        this(display, null, false, false, false);
+    }
+
+    public SubPresenter(SubItemDisplay display, String[] availableToTypes) {
+		this(display, availableToTypes, false, false, false);
 	}
 
-	public SubPresenter(SubItemDisplay display, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
-		super((DynamicFormDisplay) display);
+    public SubPresenter(SubItemDisplay display, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
+		this(display, null, showDisabledState, canEdit, showId);
+	}
+
+	public SubPresenter(SubItemDisplay display, String[] availableToTypes, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
+		super(display);
         this.showDisabledState = showDisabledState;
         this.canEdit = canEdit;
         this.showId = showId;
 		this.display = display;
+        this.availableToTypes = availableToTypes;
 	}
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
-		((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(dataSource, true, false, false);
+		display.getFormOnlyDisplay().buildFields(dataSource, true, false, false);
 	}
 	
 	@Override
@@ -107,18 +118,45 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 		}
 	}
 	
-	public void load(Record associatedRecord, AbstractDynamicDataSource dataSource, final DSCallback cb) {
+	public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = dataSource;
-		String id = dataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				setStartState();
-				if (cb != null) {
-					cb.execute(response, rawData, request);
-				}
-			}
-		});
+		this.abstractDynamicDataSource = abstractDynamicDataSource;
+        ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
+        String[] types = associatedRecord.getAttributeAsStringArray("_type");
+        boolean shouldLoad = availableToTypes == null || types == null;
+        if (types != null && types.length > 0) {
+            if (availableToTypes != null) {
+                if (Arrays.binarySearch(availableToTypes, types[0]) >= 0) {
+                    shouldLoad = true;
+                } else {
+                    ClassTree myTypeResult = classTree.find(types[0]);
+                    if (myTypeResult != null) {
+                        for (String availableType : availableToTypes) {
+                            ClassTree availableTypeResult = classTree.find(availableType);
+                            if (availableTypeResult.getLeft() < myTypeResult.getLeft() && availableTypeResult.getRight() > myTypeResult.getRight()) {
+                                shouldLoad = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        display.setVisible(shouldLoad);
+
+        if (shouldLoad) {
+            String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+            ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                    setStartState();
+                    if (cb != null) {
+                        cb.execute(response, rawData, request);
+                    }
+                }
+            });
+        }
+
+        return shouldLoad;
 	}
 	
 	@Override
@@ -129,9 +167,9 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 				if (event.getState()) {
 					display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),showDisabledState, canEdit, showId);
-					((DynamicFormDisplay) display).getFormOnlyDisplay().getForm().editRecord(event.getRecord());
-					((DynamicFormDisplay) display).getFormOnlyDisplay().getForm().enable();
+					display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),showDisabledState, canEdit, showId);
+					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
+					display.getFormOnlyDisplay().getForm().enable();
 				} else {
 					display.getRemoveButton().disable();
 				}

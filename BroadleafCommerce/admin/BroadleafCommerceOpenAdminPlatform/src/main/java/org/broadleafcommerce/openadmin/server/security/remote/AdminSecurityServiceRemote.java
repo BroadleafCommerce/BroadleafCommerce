@@ -108,7 +108,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         if (!isQualified){
             //If explicit security, then this check failed. However, if not explicit security, then check to make sure there is no configured security for this entity before allowing to pass
             if (isEntitySecurityExplicit || securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
-                throw new ServiceException("Security Check Failed for entity operation: " + operationType.toString());
+                throw new ServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
             }
         }
 	}

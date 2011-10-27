@@ -21,7 +21,17 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -77,7 +87,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			if (joinStructure != null) {
 				Map<String, FieldMetadata> joinMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					joinStructure.getJoinStructureEntityClassname(), 
-					new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
+					new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
 					null, 
 					new String[]{}, 
 					new ForeignKey[]{},
@@ -134,7 +144,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
+				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
@@ -216,10 +226,10 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				FilterAndSortCriteria sortCriteria = cto.get(joinStructure.getSortField());
 				sortCriteria.setSortAscending(joinStructure.getSortAscending());
 			}
-			
+
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
+				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
@@ -298,7 +308,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
+				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
@@ -349,7 +359,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			);
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())}, 
+				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},

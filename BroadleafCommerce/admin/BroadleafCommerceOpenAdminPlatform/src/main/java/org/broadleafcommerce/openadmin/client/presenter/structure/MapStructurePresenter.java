@@ -15,13 +15,9 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
@@ -30,42 +26,38 @@ import com.smartgwt.client.widgets.grid.events.DataArrivedEvent;
 import com.smartgwt.client.widgets.grid.events.DataArrivedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class MapStructurePresenter implements SubPresentable {
-	
-	protected GridStructureDisplay display;
+public class MapStructurePresenter extends AbstractSubPresentable {
+
 	protected MapStructureEntityEditDialog entityEditDialog;
 	protected String entityEditDialogTitle;
-	protected Map<String, Object> initialValues = new HashMap<String, Object>();
+	protected Map<String, Object> initialValues = new HashMap<String, Object>(10);
 	protected String[] gridFields;
 
-	protected Record associatedRecord;
-	protected AbstractDynamicDataSource abstractDynamicDataSource;
-	protected Boolean disabled = false;
-
-    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
-		this.display = display;
+    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle, Map<String, Object> initialValues) {
+		super(display, availableToTypes);
 		this.entityEditDialog = entityEditDialog;
 		this.entityEditDialogTitle = entityEditDialogTitle;
         if (initialValues != null) {
-		    this.initialValues = initialValues;
+		    this.initialValues.putAll(initialValues);
         }
 	}
 
-    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
-		this(display, entityEditDialog, entityEditDialogTitle, null);
+    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle) {
+		this(display, entityEditDialog, availableToTypes, entityEditDialogTitle, null);
 	}
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
@@ -73,53 +65,6 @@ public class MapStructurePresenter implements SubPresentable {
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
 		this.gridFields = gridFields;
-	}
-	
-	public void setStartState() {
-		if (!disabled) {
-			display.getAddButton().enable();
-			display.getGrid().enable();
-			display.getRemoveButton().disable();
-		}
-	}
-	
-	public void enable() {
-		disabled = false;
-		display.getAddButton().enable();
-		display.getGrid().enable();
-		display.getRemoveButton().enable();
-		display.getToolBar().enable();
-	}
-	
-	public void disable() {
-		disabled = true;
-		display.getAddButton().disable();
-		display.getGrid().disable();
-		display.getRemoveButton().disable();
-		display.getToolBar().disable();
-	}
-	
-	public void setReadOnly(Boolean readOnly) {
-		if (readOnly) {
-			disable();
-			display.getGrid().enable();
-		} else {
-			enable();
-		}
-	}
-	
-	public void load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
-		this.associatedRecord = associatedRecord;
-		this.abstractDynamicDataSource = abstractDynamicDataSource;
-		String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
-		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				setStartState();
-				if (cb != null) {
-					cb.execute(response, rawData, request);
-				}
-			}
-		});
 	}
 	
 	public void bind() {

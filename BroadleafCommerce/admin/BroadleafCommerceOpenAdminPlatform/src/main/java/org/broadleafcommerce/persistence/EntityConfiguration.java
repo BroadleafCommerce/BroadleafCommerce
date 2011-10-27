@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.persistence;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.Resource;
@@ -25,13 +27,15 @@ import java.util.HashMap;
 @Component("blEntityConfiguration")
 public class EntityConfiguration {
 
-    private final HashMap<String, Class<?>> entityMap = new HashMap<String, Class<?>>();
+    private static final Log LOG = LogFactory.getLog(EntityConfiguration.class);
+
+    private final HashMap<String, Class<?>> entityMap = new HashMap<String, Class<?>>(50);
 
     private ApplicationContext applicationcontext;
     private Resource[] entityContexts;
 
     public Class<?> lookupEntityClass(String beanId) {
-        Class<?> clazz = null;
+        Class<?> clazz;
         if (entityMap.containsKey(beanId)) {
             clazz = entityMap.get(beanId);
         } else {
@@ -39,11 +43,18 @@ public class EntityConfiguration {
             clazz = object.getClass();
             entityMap.put(beanId, clazz);
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Returning class (" + clazz.getName() + ") configured with bean id (" + beanId + ')');
+        }
         return clazz;
     }
 
     public Object createEntityInstance(String beanId) {
-        return applicationcontext.getBean(beanId);
+        Object bean = applicationcontext.getBean(beanId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Returning instance of class (" + bean.getClass().getName() + ") configured with bean id (" + beanId + ')');
+        }
+        return bean;
     }
 
 	public Resource[] getEntityContexts() {

@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -37,6 +33,9 @@ import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import com.smartgwt.client.widgets.tree.events.DataArrivedEvent;
+import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
@@ -74,6 +73,10 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDia
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * 
  * @author jfischer
@@ -81,7 +84,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEn
  */
 public class CategoryPresenter extends DynamicEntityPresenter implements Instantiable {
 
-	protected MapStructureEntityEditDialog mapEntityAdd = null;
+	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected String rootId = "1";
 	protected String rootName = "Store";
 	
@@ -89,11 +92,11 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	protected SubPresentable mediaPresenter;
 	protected AllChildCategoriesPresenter allChildCategoriesPresenter;
 	protected SubPresentable childProductsPresenter;
-	protected HashMap<String, Object> library = new HashMap<String, Object>();
+	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
 	@Override
 	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
+		Map<String, Object> initialValues = new HashMap<String, Object>(10);
 		initialValues.put("defaultParentCategory", getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultCategoryName"));
 		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getDefaultNewEntityFullyQualifiedClassname()});
@@ -101,7 +104,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			public void onItemEdited(ItemEdited event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
-				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), null);
+				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS"), null);
 			}
 		}, "90%", null, null);
 	}
@@ -158,8 +161,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		mediaPresenter.bind();
 		allChildCategoriesPresenter.bind();
 		childProductsPresenter.bind();
-		((TreeGrid) display.getListDisplay().getGrid()).addDataArrivedHandler(new com.smartgwt.client.widgets.tree.events.DataArrivedHandler() {
-			public void onDataArrived(com.smartgwt.client.widgets.tree.events.DataArrivedEvent event) {
+		((TreeGrid) display.getListDisplay().getGrid()).addDataArrivedHandler(new DataArrivedHandler() {
+			public void onDataArrived(DataArrivedEvent event) {
 				Record[] records = event.getParentNode().getAttributeAsRecordArray("children");
 				for (Record record : records) {
 					String hasChildren = record.getAttribute(CategoryTreeDataSourceFactory.hasChildrenProperty);
@@ -242,7 +245,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildCategoriesDS", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, ((CategoryDisplay) getDisplay()).getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchTitle"));
+				allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("categorySearchTitle"));
 				allChildCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
@@ -275,22 +278,22 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("featuredProductsDS", new FeaturedProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				featuredPresenter = new EditableJoinStructurePresenter(getDisplay().getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				featuredPresenter = new EditableJoinStructurePresenter(getDisplay().getFeaturedDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildProductsDS", new AllProductsDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				childProductsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), BLCMain.getMessageManager().getString("productSearchPrompt"));
+				childProductsPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllProductsDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchPrompt"));
 				childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("mediaMapDS", new MediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>();
+				Map<String, Object> initialValues = new HashMap<String, Object>(2);
 				initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
 				initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
+				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
 				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "name", "url", "label"}, new Boolean[]{true, true, true, true});
 			}
 		}));
@@ -339,13 +342,13 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 			getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();
 		}
 	}
-	
-	protected LinkedHashMap<String, String> getMediaMapKeys() {
-		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+
+    protected LinkedHashMap<String, String> getMediaMapKeys() {
+		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);
 		keys.put("small", BLCMain.getMessageManager().getString("mediaSizeSmall"));
 		keys.put("medium", BLCMain.getMessageManager().getString("mediaSizeMedium"));
 		keys.put("large", BLCMain.getMessageManager().getString("mediaSizeLarge"));
-		
+
 		return keys;
 	}
 	

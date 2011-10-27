@@ -32,5 +32,7 @@ public interface SubItemDisplay extends DynamicFormDisplay {
 	public ListGrid getGrid();
 	
 	public ToolStripButton getRemoveButton();
+
+    public void setVisible(boolean visible);
 	
 }

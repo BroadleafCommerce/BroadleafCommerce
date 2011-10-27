@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -27,6 +23,7 @@ import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
@@ -65,6 +62,10 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDia
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * 
  * @author jfischer
@@ -72,14 +73,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEn
  */
 public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
 
-	protected MapStructureEntityEditDialog mapEntityAdd = null;
+	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
 	protected SubPresentable crossSalePresenter;
 	protected SubPresentable upSalePresenter;
 	protected SubPresentable mediaPresenter;
 	protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
-	protected HashMap<String, Object> library = new HashMap<String, Object>();
+	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -108,7 +109,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	
 	@Override
 	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
+		Map<String, Object> initialValues = new HashMap<String, Object>(2);
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultProductName"));
 		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("productDS").getDefaultNewEntityFullyQualifiedClassname()});
 		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newProductTitle"), getPresenterSequenceSetupManager().getDataSource("productDS"), initialValues, new ItemEditedHandler() {
@@ -163,36 +164,36 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("crossSaleProductsDS", new CrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				crossSalePresenter = new EditableJoinStructurePresenter(getDisplay().getCrossSaleDisplay(), productSearchView, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				crossSalePresenter = new EditableJoinStructurePresenter(getDisplay().getCrossSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("upSaleProductsDS", new UpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				upSalePresenter = new EditableJoinStructurePresenter(getDisplay().getUpSaleDisplay(), productSearchView, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				upSalePresenter = new EditableJoinStructurePresenter(getDisplay().getUpSaleDisplay(), productSearchView, new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
 				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productMediaMapDS", new ProductMediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>();
+				Map<String, Object> initialValues = new HashMap<String, Object>(2);
 				initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
 				initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
-				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
+				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
 				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "name", "url", "label"}, new Boolean[]{true, true, true, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productAttributeDS", new ProductAttributeDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				Map<String, Object> initialValues = new HashMap<String, Object>();
+				Map<String, Object> initialValues = new HashMap<String, Object>(1);
 				initialValues.put("name", "Untitled");
-				productAttributePresenter = new CreateBasedListStructurePresenter(getDisplay().getAttributesDisplay(), BLCMain.getMessageManager().getString("newAttributeTitle"), initialValues);
+				productAttributePresenter = new CreateBasedListStructurePresenter(getDisplay().getAttributesDisplay(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("newAttributeTitle"), initialValues);
 				productAttributePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "value", "searchable"}, new Boolean[]{true, true, true});
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("parentCategoriesDS", new ParentCategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				parentCategoriesPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), BLCMain.getMessageManager().getString("categorySearchPrompt"));
+				parentCategoriesPresenter = new SimpleSearchJoinStructurePresenter(getDisplay().getAllCategoriesDisplay(), (EntitySearchDialog) library.get("categorySearchView"), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("categorySearchPrompt"));
 				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
@@ -219,13 +220,13 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         }));
 	}
-	
-	protected LinkedHashMap<String, String> getMediaMapKeys() {
-		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
+
+    protected LinkedHashMap<String, String> getMediaMapKeys() {
+		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>(3);
 		keys.put("small", BLCMain.getMessageManager().getString("mediaSizeSmall"));
 		keys.put("medium", BLCMain.getMessageManager().getString("mediaSizeMedium"));
 		keys.put("large", BLCMain.getMessageManager().getString("mediaSizeLarge"));
-		
+
 		return keys;
 	}
 	

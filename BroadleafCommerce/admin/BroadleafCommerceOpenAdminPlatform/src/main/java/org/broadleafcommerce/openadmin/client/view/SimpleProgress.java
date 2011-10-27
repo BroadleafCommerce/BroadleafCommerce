@@ -27,7 +27,7 @@ public class SimpleProgress extends Progressbar {
 	
 	private int barValue;
 	private Timer timer;
-	private boolean isActive = false;
+	private boolean isActive;
 	private Double current = 1D;
 	
 	public SimpleProgress(Integer height) {
@@ -43,7 +43,7 @@ public class SimpleProgress extends Progressbar {
             	//asymptote calculation
             	Double factor = 1D/current;
             	current += .25D;
-                barValue = (int) (100 - (100D * factor));  
+                barValue = (int) (100 - 100D * factor);
                 setPercentDone(barValue);
                 if(isActive)  
                     schedule(50); 
@@ -100,7 +100,7 @@ public class SimpleProgress extends Progressbar {
 		return isActive;
 	}
 	
-	private class IntContainer {
+	private static class IntContainer {
 		
 		public IntContainer(int val) {
 			this.val = val;

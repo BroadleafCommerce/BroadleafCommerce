@@ -321,12 +321,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 				typeField.setHidden(true);
 				typeField.setAttribute("rawName", "_type");
 				dataSource.addField(typeField);
-				
-				for (PolymorphicEntity polymorphicEntity : metadata.getPolymorphicEntities()){
-					String name = polymorphicEntity.getName();
-					String type = polymorphicEntity.getType();
-					dataSource.getPolymorphicEntities().put(type, name);
-				}
+				dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
 				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {

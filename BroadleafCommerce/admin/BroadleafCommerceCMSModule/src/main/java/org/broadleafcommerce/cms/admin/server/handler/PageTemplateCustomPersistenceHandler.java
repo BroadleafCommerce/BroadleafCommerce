@@ -94,10 +94,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             PageTemplate template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(PageTemplate.class.getName());
-            PolymorphicEntity entity = new PolymorphicEntity();
-            entity.setName("PageTemplateImpl");
-            entity.setType(PageTemplateImpl.class.getName());
-            PolymorphicEntity[] entities = new PolymorphicEntity[]{entity};
+            ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
             int groupCount = 1;
             int fieldCount = 0;

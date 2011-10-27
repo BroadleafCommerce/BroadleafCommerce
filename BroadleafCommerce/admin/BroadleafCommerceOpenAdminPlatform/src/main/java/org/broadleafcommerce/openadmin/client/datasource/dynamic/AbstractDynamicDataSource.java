@@ -19,11 +19,13 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.CriteriaPolicy;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallbackHandlerManager;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -32,7 +34,8 @@ import java.util.HashMap;
  */
 public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 
-	protected HashMap<String, String> polymorphicEntities = new HashMap<String, String>();
+	protected LinkedHashMap<String, String> polymorphicEntities = new LinkedHashMap<String, String>(10);
+    protected ClassTree polymorphicEntityTree;
 	protected String defaultNewEntityFullyQualifiedClassname;
 	protected DynamicEntityServiceAsync service;
 	protected PersistencePerspective persistencePerspective;
@@ -56,7 +59,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 		this.modules = modules;
 	}
 
-	public HashMap<String, String> getPolymorphicEntities() {
+	public Map<String, String> getPolymorphicEntities() {
 		return polymorphicEntities;
 	}
 	
@@ -90,5 +93,27 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 		String primaryKey = getPrimaryKeyFieldName();
 		return record.getAttribute(primaryKey);
 	}
-	
+
+    public ClassTree getPolymorphicEntityTree() {
+        return polymorphicEntityTree;
+    }
+
+    public void setPolymorphicEntityTree(ClassTree polymorphicEntityTree) {
+        this.polymorphicEntityTree = polymorphicEntityTree;
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>(polymorphicEntityTree.getRight()/2);
+        buildPolymorphicEntityMap(polymorphicEntityTree, map);
+        Map.Entry[] entries = new Map.Entry[map.size()];
+        entries = map.entrySet().toArray(entries);
+        //reverse the order
+        for (int i = entries.length - 1; i >= 0; i--) {
+            polymorphicEntities.put((String) entries[i].getKey(), (String) entries[i].getValue());
+        }
+    }
+
+    protected void buildPolymorphicEntityMap(ClassTree entity, LinkedHashMap<String, String> map) {
+        map.put(entity.getFullyQualifiedClassname(), entity.getName());
+        for (ClassTree child : entity.getChildren()) {
+            buildPolymorphicEntityMap(child, map);
+        }
+    }
 }

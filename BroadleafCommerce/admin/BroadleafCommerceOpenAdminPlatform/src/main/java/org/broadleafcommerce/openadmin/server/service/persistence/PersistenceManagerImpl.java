@@ -4,7 +4,15 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
@@ -19,7 +27,12 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
@@ -103,15 +116,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	@Override
 	public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {
 		ClassMetadata classMetadata = new ClassMetadata();
-		PolymorphicEntity[] polyEntities = new PolymorphicEntity[entities.length];
-		int j = 0;
-		for (Class<?> type : entities) {
-			polyEntities[j] = new PolymorphicEntity();
-			polyEntities[j].setType(type.getName());
-			polyEntities[j].setName(type.getSimpleName());
-			j++;
-		}
-		classMetadata.setPolymorphicEntities(polyEntities);
+		classMetadata.setPolymorphicEntities(dynamicEntityDao.getClassTree(entities));
 
 		List<Property> propertiesList = new ArrayList<Property>();
 		for (PersistenceModule module : modules) {
@@ -162,15 +167,15 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return classMetadata;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #inspect(java.lang.String,
-	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-	 * java.lang.String[], java.util.Map)
-	 */
+    /*
+      * (non-Javadoc)
+      *
+      * @see
+      * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
+      * #inspect(java.lang.String,
+      * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
+      * java.lang.String[], java.util.Map)
+      */
 	@Override
 	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
 		// check to see if there is a custom handler registered

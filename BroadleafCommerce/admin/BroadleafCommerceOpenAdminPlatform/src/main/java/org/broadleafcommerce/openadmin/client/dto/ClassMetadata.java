@@ -28,7 +28,7 @@ public class ClassMetadata implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String ceilingType;
-	private PolymorphicEntity[] polymorphicEntities; 
+	private ClassTree polymorphicEntities;
 	private Property[] properties;
 	
 	public String getCeilingType() {
@@ -38,16 +38,16 @@ public class ClassMetadata implements Serializable {
 	public void setCeilingType(String type) {
 		this.ceilingType = type;
 	}
-	
-	public PolymorphicEntity[] getPolymorphicEntities() {
-		return polymorphicEntities;
-	}
-	
-	public void setPolymorphicEntities(PolymorphicEntity[] polymorphicEntities) {
-		this.polymorphicEntities = polymorphicEntities;
-	}
-	
-	public Property[] getProperties() {
+
+    public ClassTree getPolymorphicEntities() {
+        return polymorphicEntities;
+    }
+
+    public void setPolymorphicEntities(ClassTree polymorphicEntities) {
+        this.polymorphicEntities = polymorphicEntities;
+    }
+
+    public Property[] getProperties() {
 		return properties;
 	}
 	

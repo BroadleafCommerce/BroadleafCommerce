@@ -33,7 +33,6 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
-import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +86,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				userRolePresenter = new UserRolePresenter((UserRoleDisplay) getDisplay().getUserRolesDisplay(), roleSearchView);
+				userRolePresenter = new UserRolePresenter(getDisplay().getUserRolesDisplay(), roleSearchView);
 				userRolePresenter.setDataSource((ListGridDataSource) library.get("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.setExpansionDataSource((ListGridDataSource) result , new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.setReadOnly(false);

@@ -15,16 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
-
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.google.gwt.core.client.GWT;
@@ -74,7 +64,6 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.PolymorphicEntity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -82,6 +71,16 @@ import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Set;
 
 /**
  * 
@@ -569,12 +568,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				typeField.setHidden(true);
 				typeField.setAttribute("permanentlyHidden", true);
 				dataSource.addField(typeField);
-				
-				for (PolymorphicEntity polymorphicEntity : metadata.getPolymorphicEntities()){
-					String name = polymorphicEntity.getName();
-					String type = polymorphicEntity.getType();
-					dataSource.getPolymorphicEntities().put(type, name);
-				}
+                dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
 				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {

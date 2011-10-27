@@ -15,18 +15,18 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.mapping.PersistentClass;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.hibernate.mapping.PersistentClass;
 
 /**
  * 
@@ -39,14 +39,14 @@ public class FieldManager {
 
     protected EntityConfiguration entityConfiguration;
 	protected DynamicEntityDao dynamicEntityDao;
-	protected List<SortableValue> middleFields = new ArrayList<SortableValue>();
+	protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
 
     public FieldManager(EntityConfiguration entityConfiguration, DynamicEntityDao dynamicEntityDao) {
         this.entityConfiguration = entityConfiguration;
         this.dynamicEntityDao = dynamicEntityDao;
     }
 
-	public Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
+	public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
         try {
             return clazz.getDeclaredField(fieldName);
         } catch (NoSuchFieldException nsf) {
@@ -117,7 +117,7 @@ public class FieldManager {
 
     }
 	
-	public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {	
+	public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
 		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field = null;
@@ -194,11 +194,11 @@ public class FieldManager {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
+			int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((entityClass == null) ? 0 : entityClass.hashCode());
-			result = prime * result + ((pos == null) ? 0 : pos.hashCode());
+			result = prime * result + (entityClass == null ? 0 : entityClass.hashCode());
+			result = prime * result + (pos == null ? 0 : pos.hashCode());
 			return result;
 		}
 

@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
@@ -41,6 +42,10 @@ import java.util.Map;
 public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
 	public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
+
+    public ClassTree getClassTreeFromCeiling(Class<?> ceilingClass);
+
+    public ClassTree getClassTree(Class<?>[] polymorphicClasses);
 	
 	public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 	
