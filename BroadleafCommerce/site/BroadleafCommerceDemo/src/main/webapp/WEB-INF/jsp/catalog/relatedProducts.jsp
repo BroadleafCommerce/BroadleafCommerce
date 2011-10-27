@@ -31,6 +31,7 @@
 									<p>
 								    	<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
 						   					<c:param name="skuId" value="${item.relatedProduct.skus[0].id}"/>
+						   					<c:param name="productId" value="${item.relatedProduct.id}"/>
 						   					<c:param name="categoryId" value="${item.relatedProduct.defaultCategory.id}"/>
 											<c:param name="quantity" value="1"/>
 											</c:url>" >Add to Cart</a>
@@ -68,6 +69,7 @@
 									<p>
 										<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
 											<c:param name="skuId" value="${item.relatedProduct.skus[0].id}"/>
+											<c:param name="productId" value="${item.relatedProduct.id}" />
 											<c:param name="categoryId" value="${item.relatedProduct.defaultCategory.id}"/>
 											<c:param name="quantity" value="1"/>
 											</c:url>">Add to Cart</a>

@@ -71,6 +71,7 @@
 						<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
 								<c:param name="skuId" value="${currentProduct.skus[0].id}"/>
 								<c:param name="categoryId" value="${currentProduct.defaultCategory.id}"/>
+								<c:param name="productId" value="${currentProduct.id}"/>
 								<c:param name="quantity" value="1"/>
 								</c:url>">Add to Cart</a><br/> <br/>
 						<form:form method="post" modelAttribute="wishlistRequest" action="../../wishlist/addToWishlist.htm">

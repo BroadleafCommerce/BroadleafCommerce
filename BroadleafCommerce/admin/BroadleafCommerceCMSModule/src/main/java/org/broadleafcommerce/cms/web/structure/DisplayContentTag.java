@@ -36,7 +36,6 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.time.SystemTime;
-import org.mvel2.MVEL;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -74,7 +73,6 @@ public class DisplayContentTag extends BodyTagSupport {
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
-        mvelParameters.put("MVEL", MVEL.class);
 
         Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (blcRuleMap != null) {

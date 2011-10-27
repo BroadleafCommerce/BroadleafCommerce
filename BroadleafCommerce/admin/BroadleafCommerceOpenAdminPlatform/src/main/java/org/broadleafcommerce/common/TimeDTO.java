@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.common;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.presentation.AdminPresentation;
-
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by bpolster.
@@ -61,7 +61,7 @@ public class TimeDTO {
     /**
      * @return  int representing the hour of day as 0 - 23
      */
-    public int getHour() {
+    public Integer getHour() {
         if (hour == null) {
             hour = cal.get(Calendar.HOUR_OF_DAY);
         }
@@ -72,7 +72,7 @@ public class TimeDTO {
      * @return int representing the day of week using Calendar.DAY_OF_WEEK values.
      * 1 = Sunday, 7 = Saturday
      */
-    public int getDayOfWeek() {
+    public Integer getDayOfWeek() {
         if (dayOfWeek == null) {
             dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         }
@@ -82,7 +82,7 @@ public class TimeDTO {
     /**
      * @return the current day of the month (1-31).
      */
-    public int getDayOfMonth() {
+    public Integer getDayOfMonth() {
         if (dayOfMonth == null) {
             dayOfMonth =  cal.get(Calendar.DAY_OF_MONTH);
         }
@@ -92,14 +92,14 @@ public class TimeDTO {
     /**
      * @return int representing the current month (1-12)
      */
-    public int getMonth() {
+    public Integer getMonth() {
         if (month == null) {
             month = cal.get(Calendar.MONTH);
         }
         return month;
     }
 
-    public int getMinute() {
+    public Integer getMinute() {
         if (minute == null) {
             minute = cal.get(Calendar.MINUTE);
         }
