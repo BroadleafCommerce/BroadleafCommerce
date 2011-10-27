@@ -15,13 +15,15 @@
  */
 package org.broadleafcommerce.openadmin.client.setup;
 
-import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.Canvas;
-import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -93,21 +95,10 @@ public class PresenterSequenceSetupManager {
 	}
 	
 	protected void launch() {
-		if (!BLCMain.ISNEW) {
-			BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
-				public void run() {
-					if (!presenter.getLoaded()) {
-						itemsIterator = items.iterator();
-						next();
-					}
-				}
-			});
-		} else {
-			if (!presenter.getLoaded()) {
-				itemsIterator = items.iterator();
-				next();
-			}
-		}
+        if (!presenter.getLoaded()) {
+            itemsIterator = items.iterator();
+            next();
+        }
 	}
 
 	protected void next() {

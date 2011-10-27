@@ -15,13 +15,12 @@
  */
 package org.broadleafcommerce.openadmin.client.setup;
 
-import java.util.HashMap;
-
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
@@ -32,6 +31,8 @@ import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.UIFactory;
+
+import java.util.HashMap;
 
 /**
  * 
@@ -103,8 +104,22 @@ public class AppController implements ValueChangeHandler<String> {
 			}
 		}
 	}
+
+
 	
 	protected void showView(final String viewKey, final String presenterKey) {
+        if (!BLCMain.ISNEW) {
+            BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
+                public void run() {
+                    setupView(viewKey, presenterKey);
+                }
+            });
+        } else {
+            setupView(viewKey, presenterKey);
+        }
+	}
+
+    protected void setupView(final String viewKey, final String presenterKey) {
         AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
@@ -152,5 +167,5 @@ public class AppController implements ValueChangeHandler<String> {
                 }
             }
         });
-	}
+    }
 }
