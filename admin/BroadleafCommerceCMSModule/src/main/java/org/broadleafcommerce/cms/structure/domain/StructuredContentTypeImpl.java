@@ -15,18 +15,14 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import javax.persistence.*;
+
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.BatchSize;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-
-import javax.persistence.*;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -51,16 +47,13 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected String name;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=2, group="Details", prominent=true)
+    @AdminPresentation(friendlyName="Description", order=2, group="Details",prominent=true)
     protected String description;
 
-    @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_STRCTRDCNTNT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_TYPE_ID", referencedColumnName = "STRUCTURED_CONTENT_TYPE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "GROUP_ORDER")
-    @BatchSize(size = 20)
-    protected List<FieldGroup> fieldGroups;
+    @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
+    @JoinColumn(name="SC_FIELD_TEMPLATE_ID")
+    @AdminPresentation(friendlyName="Content Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, hidden = true)
+    protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override
     public Long getId() {
@@ -93,13 +86,13 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     }
 
     @Override
-    public List<FieldGroup> getFieldGroups() {
-        return fieldGroups;
+    public StructuredContentFieldTemplate getStructuredContentFieldTemplate() {
+        return structuredContentFieldTemplate;
     }
 
     @Override
-    public void setFieldGroups(List<FieldGroup> fieldGroups) {
-        this.fieldGroups = fieldGroups;
+    public void setStructuredContentFieldTemplate(StructuredContentFieldTemplate scft) {
+        this.structuredContentFieldTemplate = scft;
     }
 }
 

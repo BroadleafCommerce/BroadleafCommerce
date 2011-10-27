@@ -32,6 +32,7 @@ public class CeilingEntities {
     public static final String STATICASSETS = "org.broadleafcommerce.cms.file.domain.StaticAsset";
     public static final String STRUCTUREDCONTENT = "org.broadleafcommerce.cms.structure.domain.StructuredContent";
     public static final String STRUCTUREDCONTENTTYPE = "org.broadleafcommerce.cms.structure.domain.StructuredContentType";
+    public static final String STRUCTUREDCONTENTFIELDTEMPLATE = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate";
     public static final String SANDBOXITEM = "org.broadleafcommerce.openadmin.server.domain.SandBoxItem";
     public static final String CUSTOMER = "org.broadleafcommerce.profile.core.domain.Customer";
     public static final String TIMEDTO = "org.broadleafcommerce.common.TimeDTO";

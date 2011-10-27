@@ -16,11 +16,21 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import java.io.Serializable;
+import java.util.List;
+
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
 
 /**
+ * A structured content field template holds the structure for a
+ * structured content.
+ *
+ * For example, an 'Ad' template might describe the fields 'Ad URL' and
+ * 'Target URL'.   The 'Ad' template might be used in multiple StructuredContentType
+ * instances such as 'Home Page Banner Ad' or 'Cart Bottom Ad', etc.
+ *
  * Created by bpolster.
  */
-public interface StructuredContentType extends Serializable {
+public interface StructuredContentFieldTemplate extends Serializable {
 
     Long getId();
 
@@ -30,11 +40,7 @@ public interface StructuredContentType extends Serializable {
 
     void setName(String name);
 
-    String getDescription();
+    List<FieldGroup> getFieldGroups();
 
-    void setDescription(String description);
-
-    StructuredContentFieldTemplate getStructuredContentFieldTemplate();
-
-    void setStructuredContentFieldTemplate(StructuredContentFieldTemplate scft);
+    void setFieldGroups(List<FieldGroup> fieldGroups);
 }

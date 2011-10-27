@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import javax.annotation.Resource;
+
+import java.util.*;
+
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -37,9 +41,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-
-import javax.annotation.Resource;
-import java.util.*;
 
 /**
  * Created by jfischer
@@ -104,7 +105,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             int groupCount = 1;
             int fieldCount = 0;
             List<Property> propertiesList = new ArrayList<Property>();
-            List<FieldGroup> groups = structuredContentType.getFieldGroups();
+            List<FieldGroup> groups = structuredContentType.getStructuredContentFieldTemplate().getFieldGroups();
             for (FieldGroup group : groups) {
                 List<FieldDefinition> definitions = group.getFieldDefinitions();
                 for (FieldDefinition definition : definitions) {
@@ -238,7 +239,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         Entity entity = new Entity();
         entity.setType(new String[]{StructuredContentType.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
-        for (FieldGroup fieldGroup : structuredContent.getStructuredContentType().getFieldGroups()) {
+        for (FieldGroup fieldGroup : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
             for (FieldDefinition definition : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
                 propertiesList.add(property);
@@ -277,7 +278,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             StructuredContent structuredContent = (StructuredContent) structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
             //build up some fields before we detach page from the session
             List<String> templateFieldNames = new ArrayList<String>();
-            for (FieldGroup group : structuredContent.getStructuredContentType().getFieldGroups()) {
+            for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
                 for (FieldDefinition definition: group.getFieldDefinitions()) {
                     templateFieldNames.add(definition.getName());
                 }
