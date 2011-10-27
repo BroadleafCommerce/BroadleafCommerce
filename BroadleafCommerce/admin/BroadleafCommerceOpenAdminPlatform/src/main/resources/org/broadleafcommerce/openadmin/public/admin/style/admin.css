@@ -72,31 +72,31 @@
 }
 .primaryMenuText-selectedOver  {
     font-size: 14px;
-    color:#454545;
+    color:white;
     background-color: #78A22F;
 }
 
 .primaryMenuText-selected {
     background-color: #78A22F;
-    color:#454545;
+    color:white;
 }
 
 .secondaryMenuText,
 .secondaryMenuText-selected {
     font-family:helvetica, sans-serif;
     font-size:12px;
-    color:white;
+    color:#454545;
     text-align:center;
 }
 
 .secondaryMenuTextOver,
 .secondaryMenuText-selectedOver {
     font-size: 12px;
-    color:#454545;
+    color:white;
 }
 
 .secondaryMenuText-selected {
-    color:#454545;
+    color:white;
 }
 
 
