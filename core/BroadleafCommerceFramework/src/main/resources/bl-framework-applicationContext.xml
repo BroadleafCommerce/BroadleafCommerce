@@ -60,6 +60,11 @@
 
     <bean id="blContentCartRuleProcessor" class="org.broadleafcommerce.core.order.service.StructuredContentCartRuleProcessor">
         <property name="orderDao" ref="blOrderDao"/>
+        <property name="contextClassNames">
+            <map>
+                <entry key="discreteOrderItem" value="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" />
+            </map>
+	    </property>
     </bean>
 
     <!-- Append the content rule processor that checks for cart contents -->
