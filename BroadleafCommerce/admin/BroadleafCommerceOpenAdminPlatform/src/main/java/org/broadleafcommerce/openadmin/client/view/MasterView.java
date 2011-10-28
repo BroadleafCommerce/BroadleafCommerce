@@ -338,6 +338,17 @@ public class MasterView extends VLayout {
         return logo;
     }
 
+    private Canvas buildLogoutImage() {
+        ImgButton logo = new ImgButton();
+        logo.setSrc(GWT.getModuleBaseURL() + "admin/images/logout_arrow.png");
+        logo.setSize(11);
+        logo.setValign(VerticalAlignment.CENTER);
+        logo.setShowRollOver(false);
+        logo.setShowDownIcon(false);
+        logo.setShowDown(false);
+        return logo;
+    }
+
     private Canvas buildUserInfo() {
         HLayout userFields = new HLayout();
         userFields.setAlign(Alignment.RIGHT);
@@ -350,7 +361,10 @@ public class MasterView extends VLayout {
 
         userFields.addMember(userLabel);
 
-        Label logoutLink = new Label("(logout)");
+        userFields.addMember(buildLogoutImage());
+        Label logoutLink = new Label("LOGOUT");
+        logoutLink.setCursor(Cursor.POINTER);
+        logoutLink.setShowRollOver(true);
         logoutLink.setBaseStyle("userLogout");
 
 
