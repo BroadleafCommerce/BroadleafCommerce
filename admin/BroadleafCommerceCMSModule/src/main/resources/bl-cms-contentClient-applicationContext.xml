@@ -92,7 +92,6 @@
         <property name="sourceList">
             <list>
                 <ref bean="blContentDefaultRuleProcessor"/>
-                <ref bean="blContentCartRuleProcessor"/>
             </list>
         </property>
     </bean>
