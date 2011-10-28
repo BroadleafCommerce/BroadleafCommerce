@@ -15,18 +15,13 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import javax.persistence.*;
+
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -57,13 +52,12 @@ public class PageFieldImpl implements PageField {
     @JoinColumn(name="PAGE_ID")
     protected Page page;
 
-    @OneToMany(targetEntity = PageFieldDataImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_PGFLD_FLD_XREF", joinColumns = @JoinColumn(name = "PAGE_FIELD_ID", referencedColumnName = "PAGE_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_FIELD_DATA_ID", referencedColumnName = "PAGE_FIELD_DATA_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "FIELD_ORDER")
-    @BatchSize(size = 20)
-    private List<PageFieldData> fieldDataList = new ArrayList<PageFieldData>();
+    @Column (name = "VALUE")
+    protected String stringValue;
+
+    @Column (name = "LOB_VALUE")
+    @Lob
+    protected String lobValue;
 
     @Override
     public Long getId() {
@@ -96,41 +90,28 @@ public class PageFieldImpl implements PageField {
     }
 
     @Override
-    public List<PageFieldData> getFieldDataList() {
-        return fieldDataList;
-    }
-
-    @Override
-    public void addFieldData(PageFieldData fieldData) {
-        if (! fieldDataList.contains(fieldData)) {
-              fieldDataList.add(fieldData);
-        }
-    }
-
-    @Override
-    public void setFieldDataList(List<PageFieldData> fieldDataList) {
-        this.fieldDataList = fieldDataList;
-    }
-
-    @Override
-    public PageField cloneEntity() {
-        PageFieldImpl newPageField = new PageFieldImpl();
-        newPageField.fieldKey = fieldKey;
-        newPageField.page = page;
-
-        for (PageFieldData oldPageData: fieldDataList) {
-            PageFieldData newFieldData = oldPageData.cloneEntity();
-            newPageField.fieldDataList.add(newFieldData);
-        }
-        return newPageField;
-    }
-
-    @Override
     public String getValue() {
-        if (fieldDataList != null && fieldDataList.size() >= 1) {
-            return fieldDataList.get(0).getValue();
+        if (lobValue != null && lobValue.length() > 0) {
+            return lobValue;
+        } else {
+            return stringValue;
         }
-        return null;
+    }
+
+    @Override
+    public void setValue(String value) {
+        if (value != null) {
+            if (value.length() <= 256) {
+                stringValue = value;
+                lobValue = null;
+            } else {
+                stringValue = null;
+                lobValue = value;
+            }
+        } else {
+            lobValue = null;
+            stringValue = null;
+        }
     }
 
     public AdminAuditable getAuditable() {
@@ -139,6 +120,16 @@ public class PageFieldImpl implements PageField {
 
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
+    }
+
+    @Override
+    public PageField cloneEntity() {
+        PageFieldImpl newPageField = new PageFieldImpl();
+        newPageField.fieldKey = fieldKey;
+        newPageField.page = page;
+        newPageField.lobValue = lobValue;
+        newPageField.stringValue = stringValue;
+        return newPageField;
     }
 }
 

@@ -16,13 +16,19 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import javax.annotation.Resource;
+
+import java.util.*;
+
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.field.domain.*;
+import org.broadleafcommerce.cms.field.domain.FieldDefinition;
+import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.page.domain.*;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.openadmin.client.dto.*;
@@ -35,9 +41,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-
-import javax.annotation.Resource;
-import java.util.*;
 
 /**
  * Created by jfischer
@@ -238,18 +241,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 Property property = new Property();
                 propertiesList.add(property);
                 property.setName(definition.getName());
-                String value;
-                checkValue: {
-                    if (!MapUtils.isEmpty(pageFieldMap)) {
-                        PageField pageField = pageFieldMap.get(definition.getName());
-                        List<PageFieldData> fieldDataList = pageField.getFieldDataList();
-                        if (!CollectionUtils.isEmpty(fieldDataList)) {
-                            //TODO add support for multiple values
-                            value = fieldDataList.get(0).getValue();
-                            break checkValue;
-                        }
-                    }
-                    value = null;
+                String value = null;
+                if (!MapUtils.isEmpty(pageFieldMap)) {
+                    PageField pageField = pageFieldMap.get(definition.getName());
+                    value = pageField.getValue();
                 }
                 property.setValue(value);
             }
@@ -277,9 +272,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     templateFieldNames.add(definition.getName());
                 }
             }
+            // Retrieve page fields while we are still in the hibernate session
             for (String key : page.getPageFields().keySet()) {
                 PageField pageField = page.getPageFields().get(key);
-                pageField.getFieldDataList().size();
             }
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
             page = (Page) SerializationUtils.clone(page);
@@ -288,22 +283,13 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 if (templateFieldNames.contains(property.getName())) {
                     PageField pageField = pageFieldMap.get(property.getName());
                     if (pageField != null) {
-                        if (!CollectionUtils.isEmpty(pageField.getFieldDataList())) {
-                            PageFieldData fieldData = pageField.getFieldDataList().get(0);
-                            fieldData.setValue(property.getValue());
-                        } else {
-                            PageFieldData fieldData = new PageFieldDataImpl();
-                            pageField.getFieldDataList().add(fieldData);
-                            fieldData.setValue(property.getValue());
-                        }
+                        pageField.setValue(property.getValue());
                     } else {
                         pageField = new PageFieldImpl();
                         pageFieldMap.put(property.getName(), pageField);
                         pageField.setFieldKey(property.getName());
                         pageField.setPage(page);
-                        PageFieldData fieldData = new PageFieldDataImpl();
-                        pageField.getFieldDataList().add(fieldData);
-                        fieldData.setValue(property.getValue());
+                        pageField.setValue(property.getValue());
                     }
                 }
             }

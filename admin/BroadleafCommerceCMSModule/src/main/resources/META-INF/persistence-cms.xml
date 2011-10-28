@@ -11,7 +11,6 @@
         <class>org.broadleafcommerce.cms.locale.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldGroupImpl</class>
-        <class>org.broadleafcommerce.cms.page.domain.PageFieldDataImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageTemplateImpl</class>
@@ -24,7 +23,6 @@
         <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteriaImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>

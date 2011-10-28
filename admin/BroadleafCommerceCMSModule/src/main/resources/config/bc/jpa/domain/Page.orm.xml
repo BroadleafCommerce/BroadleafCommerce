@@ -6,7 +6,6 @@
 	<named-query name="BC_READ_PAGE_FIELDS_BY_PAGE_ID" >
 		<query>SELECT pageField
                FROM org.broadleafcommerce.cms.page.domain.PageField pageField
-               LEFT JOIN FETCH pageField.fieldDataList
                WHERE pageField.page = :page
 		</query>
 	</named-query>

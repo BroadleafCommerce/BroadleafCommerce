@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.Site;
@@ -70,11 +71,11 @@ public class PageImpl implements Page {
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
-    @AdminPresentation(friendlyName="Page Template", order=3, group="Basic", excluded=true)
+    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, hidden=true, formHidden= FormHiddenEnum.VISIBLE)
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=2, group="Basic", prominent=true)
+    @AdminPresentation(friendlyName="Description", order=3, group="Basic", prominent=true)
     protected String description;
 
     @Column (name = "FULL_URL")

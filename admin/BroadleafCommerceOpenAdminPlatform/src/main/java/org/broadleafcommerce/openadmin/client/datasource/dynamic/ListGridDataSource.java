@@ -15,6 +15,10 @@
  */
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.widgets.grid.CellFormatter;
@@ -25,10 +29,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSour
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 
@@ -114,7 +114,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         		if (field.getAttributeAsBoolean("permanentlyHidden")) {
         			gridFields[j].setHidden(true);
 	        		gridFields[j].setCanHide(false);
-        		} else if (field.getAttributeAsBoolean("hidden")) {
+        		} else if (field.getAttributeAsBoolean("hidden") || field.getAttributeAsBoolean("excluded")) {
         			gridFields[j].setHidden(true);
         		} else if (availableSlots <= 0) {
 	        		gridFields[j].setHidden(true);
