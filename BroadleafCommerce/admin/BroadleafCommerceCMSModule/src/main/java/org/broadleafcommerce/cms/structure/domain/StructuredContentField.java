@@ -15,10 +15,9 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-
 import java.io.Serializable;
-import java.util.List;
+
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * Created by bpolster.
@@ -37,11 +36,9 @@ public interface StructuredContentField extends Serializable {
 
     public void setStructuredContent(StructuredContent structuredContent);
 
-    public List<StructuredContentFieldData> getFieldDataList();
-
-    public void setFieldDataList(List<StructuredContentFieldData> fieldDataList);
-
     public StructuredContentField cloneEntity();
+
+    public void setValue(String value);
     
     public String getValue();
 

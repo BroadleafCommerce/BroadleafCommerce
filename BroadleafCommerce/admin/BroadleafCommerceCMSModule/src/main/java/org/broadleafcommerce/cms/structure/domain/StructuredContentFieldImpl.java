@@ -15,17 +15,13 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import javax.persistence.*;
+
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -56,13 +52,12 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     @JoinColumn(name="STRUCTURED_CONTENT_ID")
     protected StructuredContent structuredContent;
 
-    @OneToMany(targetEntity = StructuredContentFieldDataImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_STRUCT_CNTNT_FLD_XREF", joinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_FIELD_ID", referencedColumnName = "STRUCTURED_CONTENT_FIELD_ID"), inverseJoinColumns = @JoinColumn(name = "STRCTRD_CNTNT_FLD_DATA_ID", referencedColumnName = "STRCTRD_CNTNT_FLD_DATA_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "FIELD_ORDER")
-    @BatchSize(size = 20)
-    private List<StructuredContentFieldData> fieldDataList = new ArrayList<StructuredContentFieldData>();
+    @Column (name = "VALUE")
+    protected String stringValue;
+
+    @Column (name = "LOB_VALUE")
+    @Lob
+    protected String lobValue;
 
     @Override
     public Long getId() {
@@ -95,13 +90,28 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     }
 
     @Override
-    public List<StructuredContentFieldData> getFieldDataList() {
-        return fieldDataList;
+    public String getValue() {
+        if (lobValue != null && lobValue.length() > 0) {
+            return lobValue;
+        } else {
+            return stringValue;
+        }
     }
 
     @Override
-    public void setFieldDataList(List<StructuredContentFieldData> fieldDataList) {
-        this.fieldDataList = fieldDataList;
+    public void setValue(String value) {
+        if (value != null) {
+            if (value.length() <= 256) {
+                stringValue = value;
+                lobValue = null;
+            } else {
+                stringValue = null;
+                lobValue = value;
+            }
+        } else {
+            lobValue = null;
+            stringValue = null;
+        }
     }
 
     @Override
@@ -109,21 +119,11 @@ public class StructuredContentFieldImpl implements StructuredContentField {
         StructuredContentFieldImpl newContentField = new StructuredContentFieldImpl();
         newContentField.fieldKey = fieldKey;
         newContentField.structuredContent = structuredContent;
+        newContentField.lobValue = lobValue;
+        newContentField.stringValue = stringValue;
 
-        for (StructuredContentFieldData oldFieldData: fieldDataList) {
-            StructuredContentFieldData newFieldData = oldFieldData.cloneEntity();
-            newContentField.fieldDataList.add(newFieldData);
-        }
         return newContentField;
 
-    }
-
-    @Override
-    public String getValue() {
-        if (fieldDataList != null && fieldDataList.size() >= 1) {
-            return fieldDataList.get(0).getValue();
-        }
-        return null;
     }
 
     public AdminAuditable getAuditable() {

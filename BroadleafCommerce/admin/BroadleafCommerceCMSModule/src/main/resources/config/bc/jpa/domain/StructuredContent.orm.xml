@@ -19,7 +19,6 @@
     <named-query name="BC_READ_CONTENT_FIELDS_BY_CONTENT_ID" >
 		<query>SELECT scField
                FROM org.broadleafcommerce.cms.structure.domain.StructuredContentField scField
-               LEFT JOIN FETCH scField.fieldDataList
                WHERE scField.structuredContent = :structuredContent
 		</query>
 	</named-query>

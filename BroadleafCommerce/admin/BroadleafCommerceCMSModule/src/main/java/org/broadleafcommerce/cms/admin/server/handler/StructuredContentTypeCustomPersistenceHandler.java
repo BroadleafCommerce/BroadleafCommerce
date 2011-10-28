@@ -259,18 +259,10 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 Property property = new Property();
                 propertiesList.add(property);
                 property.setName(definition.getName());
-                String value;
-                checkValue: {
-                    if (!MapUtils.isEmpty(structuredContentFieldMap)) {
-                        StructuredContentField structuredContentField = structuredContentFieldMap.get(definition.getName());
-                        List<StructuredContentFieldData> fieldDataList = structuredContentField.getFieldDataList();
-                        if (!CollectionUtils.isEmpty(fieldDataList)) {
-                            //TODO add support for multiple values
-                            value = fieldDataList.get(0).getValue();
-                            break checkValue;
-                        }
-                    }
-                    value = null;
+                String value = null;
+                if (!MapUtils.isEmpty(structuredContentFieldMap)) {
+                    StructuredContentField structuredContentField = structuredContentFieldMap.get(definition.getName());
+                    value = structuredContentField.getValue();
                 }
                 property.setValue(value);
             }
@@ -299,9 +291,10 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 }
             }
             for (String key : structuredContent.getStructuredContentFields().keySet()) {
+                // Load fields before we detach from the session
                 StructuredContentField structuredContentField = structuredContent.getStructuredContentFields().get(key);
-                structuredContentField.getFieldDataList().size();
             }
+
             //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
             structuredContent = (StructuredContent) SerializationUtils.clone(structuredContent);
             Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
@@ -309,24 +302,13 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 if (templateFieldNames.contains(property.getName())) {
                     StructuredContentField structuredContentField = structuredContentFieldMap.get(property.getName());
                     if (structuredContentField != null) {
-                        if (!CollectionUtils.isEmpty(structuredContentField.getFieldDataList())) {
-                            StructuredContentFieldData fieldData = structuredContentField.getFieldDataList().get(0);
-                            fieldData.setValue(property.getValue());
-                        } else {
-                            StructuredContentFieldData fieldData = new StructuredContentFieldDataImpl();
-                            fieldData.setValue(property.getValue());
-                            //fileService.addFieldData(fieldData);
-                            structuredContentField.getFieldDataList().add(fieldData);
-                        }
+                        structuredContentField.setValue(property.getValue());
                     } else {
                         structuredContentField = new StructuredContentFieldImpl();
                         structuredContentFieldMap.put(property.getName(), structuredContentField);
                         structuredContentField.setFieldKey(property.getName());
                         structuredContentField.setStructuredContent(structuredContent);
-                        StructuredContentFieldData fieldData = new StructuredContentFieldDataImpl();
-                        fieldData.setValue(property.getValue());
-                        //fileService.addFieldData(fieldData);
-                        structuredContentField.getFieldDataList().add(fieldData);
+                        structuredContentField.setValue(property.getValue());
                     }
                 }
             }
