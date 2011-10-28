@@ -53,6 +53,10 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 		this.searchDialog = searchDialog;
 		this.searchDialogTitle = searchDialogTitle;
 	}
+
+    public SimpleSearchJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle) {
+		this(display, searchDialog, null, searchDialogTitle);
+	}
 	
 	public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
