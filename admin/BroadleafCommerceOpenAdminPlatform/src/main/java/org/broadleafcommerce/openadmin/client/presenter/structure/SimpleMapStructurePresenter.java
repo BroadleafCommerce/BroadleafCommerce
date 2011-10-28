@@ -49,6 +49,10 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 		this.initialValues.putAll(initialValues);
 	}
 
+    public SimpleMapStructurePresenter(GridStructureDisplay display, Map<String, Object> initialValues) {
+		this(display, null, initialValues);
+	}
+
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());

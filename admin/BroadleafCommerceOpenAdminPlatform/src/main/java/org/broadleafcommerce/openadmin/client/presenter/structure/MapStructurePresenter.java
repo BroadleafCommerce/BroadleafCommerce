@@ -56,8 +56,16 @@ public class MapStructurePresenter extends AbstractSubPresentable {
         }
 	}
 
+    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle, Map<String, Object> initialValues) {
+		this(display, entityEditDialog, null, entityEditDialogTitle, initialValues);
+	}
+
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle) {
 		this(display, entityEditDialog, availableToTypes, entityEditDialogTitle, null);
+	}
+
+    public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String entityEditDialogTitle) {
+		this(display, entityEditDialog, null, entityEditDialogTitle, null);
 	}
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {

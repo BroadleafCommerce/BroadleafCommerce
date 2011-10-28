@@ -46,9 +46,17 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 
 	protected String editDialogTitle;
 	protected Map<String, Object> initialValues;
-	
+
+    public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle) {
+		this(display, null, editDialogTitle, new HashMap<String, Object>());
+	}
+
 	public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle) {
 		this(display, availableToTypes, editDialogTitle, new HashMap<String, Object>());
+	}
+
+    public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle, Map<String, Object> initialValues) {
+		this(display, null, editDialogTitle, initialValues);
 	}
 	
 	public CreateBasedListStructurePresenter(GridStructureDisplay display, String[] availableToTypes, String editDialogTitle, Map<String, Object> initialValues) {

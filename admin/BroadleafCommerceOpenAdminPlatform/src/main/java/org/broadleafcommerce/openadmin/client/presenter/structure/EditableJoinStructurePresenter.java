@@ -60,6 +60,10 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 		this.joinStructureEditTitle = joinStructureEditTitle;
 		this.joinStructureFields = joinStructureFields;
 	}
+
+    public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
+		this(display, searchDialog, null, searchDialogTitle, joinStructureEditTitle, joinStructureFields);
+	}
 	
 	public void bind() {
 		display.getAddButton().addClickHandler(new ClickHandler() {
