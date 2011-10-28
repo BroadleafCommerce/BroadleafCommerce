@@ -27,8 +27,6 @@ import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldData;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldDataImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
