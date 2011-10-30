@@ -15,14 +15,10 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.user;
 
-import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminRoleListDataSourceFactory;
@@ -35,7 +31,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDi
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -55,15 +50,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	
 	@Override
 	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newAdminUserTitle"), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
-			public void onItemEdited(ItemEdited event) {
-				Criteria myCriteria = new Criteria();
-				myCriteria.addCriteria("login", event.getRecord().getAttribute("login"));
-				display.getListDisplay().getGrid().fetchData(myCriteria);
-			}
-		}, "90%", null, null);
+        addClicked(BLCMain.getMessageManager().getString("newAdminUserTitle"));
 	}
 	
 	@Override

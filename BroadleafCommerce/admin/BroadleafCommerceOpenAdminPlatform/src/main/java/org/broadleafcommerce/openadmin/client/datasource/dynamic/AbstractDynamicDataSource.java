@@ -43,6 +43,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	protected FormItemCallbackHandlerManager formItemCallbackHandlerManager = new FormItemCallbackHandlerManager();
     //TODO change this flag to come from an annotation on the entity that defines the commit status from the server side
 	//protected boolean commitImmediately = true;
+    protected Record addedRecord;
 	
 	/**
 	 * @param name
@@ -115,5 +116,13 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
         for (ClassTree child : entity.getChildren()) {
             buildPolymorphicEntityMap(child, map);
         }
+    }
+
+    public Record getAddedRecord() {
+        return addedRecord;
+    }
+
+    public void setAddedRecord(Record addedRecord) {
+        this.addedRecord = addedRecord;
     }
 }

@@ -229,43 +229,60 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
     	BLCMain.NON_MODAL_PROGRESS.startProgress();
-		CriteriaTransferObject cto = getCto(request);
-		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
-			public void onSuccess(DynamicResultSet result) {
-				super.onSuccess(result);
-				TreeNode[] recordList = buildRecords(result, null);
-				response.setData(recordList);
-				response.setTotalRows(result.getTotalRecords());
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
-			}
-			
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+        if (request.getCriteria() != null && request.getCriteria().getAttribute("blc.fetch.from.cache") != null) {
+            Criteria currentCriteria = request.getCriteria();
+            String cacheFetchId = currentCriteria.getAttribute("blc.fetch.from.cache");
+            Record cachedData = dataSource.getAddedRecord();
+            if (cachedData != null) {
+                Record[] recordList = new Record[]{cachedData};
+                response.setData(recordList);
+                response.setTotalRows(1);
+                if (cb != null) {
+                    cb.onSuccess(dataSource);
+                }
+                dataSource.processResponse(requestId, response);
+            } else {
+                throw new RuntimeException("Unable to find cached record with id: " + cacheFetchId);
+            }
+        } else {
+            CriteriaTransferObject cto = getCto(request);
+            service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+                public void onSuccess(DynamicResultSet result) {
+                    super.onSuccess(result);
+                    TreeNode[] recordList = buildRecords(result, null);
+                    response.setData(recordList);
+                    response.setTotalRows(result.getTotalRecords());
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+                    dataSource.processResponse(requestId, response);
+                }
 
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-				if (cb != null) {
-					cb.onFailure(exception);
-				}
-			}
+                @Override
+                protected void onSecurityException(ApplicationSecurityException exception) {
+                    super.onSecurityException(exception);
+                    if (cb != null) {
+                        cb.onFailure(exception);
+                    }
+                }
 
-			@Override
-			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
-				super.onError(opType, requestId, request, response, caught);
-				if (cb != null) {
-					cb.onFailure(caught);
-				}
-			}
-		});
+                @Override
+                protected void onOtherException(Throwable exception) {
+                    super.onOtherException(exception);
+                    if (cb != null) {
+                        cb.onFailure(exception);
+                    }
+                }
+
+                @Override
+                protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+                    super.onError(opType, requestId, request, response, caught);
+                    if (cb != null) {
+                        cb.onFailure(caught);
+                    }
+                }
+            });
+        }
 	}
     
     public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {

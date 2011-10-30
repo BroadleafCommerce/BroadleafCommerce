@@ -20,7 +20,6 @@ import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
@@ -123,7 +122,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            pageService.addPage((Page) adminInstance, getSandBox());
+            adminInstance = pageService.addPage(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -264,7 +263,6 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 		try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
@@ -294,12 +292,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Page.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Serializable persistenceObject = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-
-			Page adminInstance = (Page) persistenceObject;
-            adminInstance.getPageFields().size();
-            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            adminInstance = (Page) SerializationUtils.clone(adminInstance);
+            Page adminInstance = (Page) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			adminInstance = (Page) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             adminInstance = pageService.updatePage(adminInstance, getSandBox());

@@ -74,7 +74,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 						public void onSearchItemSelected(SearchItemSelected event) {
 							Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
 							initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
-							BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, "200", joinStructureFields, null);
+							BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, joinStructureFields, null);
 						}
 					});
 				}

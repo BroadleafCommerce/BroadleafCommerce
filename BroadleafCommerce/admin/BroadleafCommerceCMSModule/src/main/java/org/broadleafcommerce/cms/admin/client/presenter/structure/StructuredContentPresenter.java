@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -37,7 +34,6 @@ import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
@@ -51,12 +47,10 @@ import org.broadleafcommerce.cms.admin.client.datasource.structure.TimeDTOListDa
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -133,17 +127,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
     @Override
     protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-        initialValues.put("priority", new Integer(5));
-		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
-            public void onItemEdited(ItemEdited event) {
-                ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
-                DSResponse updateResponse = new DSResponse();
-                updateResponse.setData(recordList);
-                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
-            }
-        }, "90%", null, null);
+        initialValues.put("priority", 5);
+        super.addClicked();
 	}
 
     @Override
@@ -235,6 +220,12 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 if (event.isLeftButtonDown()) {
                     save();
                 }
+            }
+        });
+        display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                destroyContentTypeForm();
             }
         });
         getDisplay().getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
@@ -368,14 +359,14 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                         new FormItemCallback() {
                             @Override
                             public void execute(FormItem formItem) {
-                                if (currentStructuredContentRecord != null) {
+                                if (currentStructuredContentRecord != null && !BLCMain.ENTITY_ADD.isVisible()) {
                                     destroyContentTypeForm();
                                     loadContentTypeForm(currentStructuredContentRecord);
                                 }
                             }
                         }
                 );
-                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentTypeGrid", "contentName", "locale", "offlineFlag"});
+                ((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("structuredContentDS")).setupGridFields(new String[]{"locked", "structuredContentType_Grid", "contentName", "locale", "offlineFlag"});
 			}
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scItemCriteriaDS", new StructuredContentItemCriteriaListDataSourceFactory(), new AsyncCallbackAdapter() {

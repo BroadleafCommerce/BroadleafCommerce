@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
-import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
@@ -27,10 +26,13 @@ import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionL
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
@@ -38,9 +40,6 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -56,16 +55,8 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	
 	@Override
 	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("username", BLCMain.getMessageManager().getString("usernameDefault"));
-		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("customerDS").getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCustomerTitle"), getPresenterSequenceSetupManager().getDataSource("customerDS"), initialValues, new ItemEditedHandler() {
-			public void onItemEdited(ItemEdited event) {
-				Criteria myCriteria = new Criteria();
-				myCriteria.addCriteria("username", event.getRecord().getAttribute("username"));
-				display.getListDisplay().getGrid().fetchData(myCriteria);
-			}
-		}, "90%", null, null);
+        super.addClicked(BLCMain.getMessageManager().getString("newCustomerTitle"));
 	}
 
 	@Override

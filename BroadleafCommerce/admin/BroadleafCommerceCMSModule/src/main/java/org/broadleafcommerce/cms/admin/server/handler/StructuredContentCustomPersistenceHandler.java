@@ -195,7 +195,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         contentTypeFieldMetadata.setEnumerationValues(contentTypeEnums);
         FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
         contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
-        contentTypeAttributes.setName("structuredContentTypeGrid");
+        contentTypeAttributes.setName("structuredContentType_Grid");
         contentTypeAttributes.setFriendlyName("Content Type");
         contentTypeAttributes.setGroup("Description");
         contentTypeAttributes.setOrder(2);
@@ -207,7 +207,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         contentTypeAttributes.setRequiredOverride(true);
         contentTypeAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
 
-        mergedProperties.put("structuredContentTypeGrid", contentTypeFieldMetadata);
+        mergedProperties.put("structuredContentType_Grid", contentTypeFieldMetadata);
 
         FieldMetadata iconMetadata = new FieldMetadata();
         iconMetadata.setFieldType(SupportedFieldType.ASSET);
@@ -288,11 +288,11 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            if (cto.get("structuredContentTypeGrid").getFilterValues().length > 0) {
+            if (cto.get("structuredContentType_Grid").getFilterValues().length > 0) {
                 CriteriaTransferObject ctoCopy = new CriteriaTransferObject();
                 for (String prop : cto.getPropertyIdSet()) {
                     String propertyId;
-                    if (prop.equals("structuredContentTypeGrid")) {
+                    if (prop.equals("structuredContentType_Grid")) {
                         propertyId = "structuredContentType";
                     } else {
                         propertyId = prop;
@@ -329,7 +329,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
                 }
                 if (entity.findProperty("structuredContentType") != null) {
                     Property property = new Property();
-                    property.setName("structuredContentTypeGrid");
+                    property.setName("structuredContentType_Grid");
                     property.setValue(entity.findProperty("structuredContentType").getValue());
                     entity.addProperty(property);
                 }
@@ -396,7 +396,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             if (adminEntity.findProperty("structuredContentType") != null) {
                 Property property = new Property();
-                property.setName("structuredContentTypeGrid");
+                property.setName("structuredContentType_Grid");
                 property.setValue(adminEntity.findProperty("structuredContentType").getValue());
                 adminEntity.addProperty(property);
             }
@@ -431,7 +431,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             if (adminEntity.findProperty("structuredContentType") != null) {
                 Property property = new Property();
-                property.setName("structuredContentTypeGrid");
+                property.setName("structuredContentType_Grid");
                 property.setValue(adminEntity.findProperty("structuredContentType").getValue());
                 adminEntity.addProperty(property);
             }

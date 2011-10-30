@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -37,8 +36,6 @@ import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSk
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
@@ -109,16 +106,8 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	
 	@Override
 	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>(2);
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultProductName"));
-		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("productDS").getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newProductTitle"), getPresenterSequenceSetupManager().getDataSource("productDS"), initialValues, new ItemEditedHandler() {
-			public void onItemEdited(ItemEdited event) {
-				Criteria myCriteria = new Criteria();
-				myCriteria.addCriteria("name", event.getRecord().getAttribute("name"));
-				display.getListDisplay().getGrid().fetchData(myCriteria);
-			}
-		}, "90%", null, null);
+        addClicked(BLCMain.getMessageManager().getString("newProductTitle"));
 	}
 
 	public void setup() {

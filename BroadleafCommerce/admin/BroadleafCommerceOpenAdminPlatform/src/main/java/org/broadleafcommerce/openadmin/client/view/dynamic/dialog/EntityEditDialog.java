@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.Map;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -43,6 +41,8 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 
+import java.util.Map;
+
 /**
  * 
  * @author jfischer
@@ -56,18 +56,18 @@ public class EntityEditDialog extends Window {
     private VStack pictureStack;
     protected boolean showMedia = false;
     protected String mediaField;
+    protected HStack hStack;
+    protected VLayout vLayout;
 
 	public EntityEditDialog() {
 		this.setIsModal(true);
 		this.setShowModalMask(true);
 		this.setShowMinimizeButton(false);
 		this.setWidth(600);
-		this.setAutoHeight();
-		this.setHeight(300);
 		this.setCanDragResize(true);
 		this.setOverflow(Overflow.VISIBLE);
 
-        HStack hStack = new HStack();
+        hStack = new HStack();
         
 		VStack stack = new VStack();
         stack.setWidth("80%");
@@ -122,7 +122,7 @@ public class EntityEditDialog extends Window {
             }
         });
 
-        VLayout vLayout = new VLayout();
+        vLayout = new VLayout();
         vLayout.setHeight100();
         vLayout.setAlign(VerticalAlignment.BOTTOM);
         HLayout hLayout = new HLayout(10);
@@ -137,17 +137,14 @@ public class EntityEditDialog extends Window {
 
 	@SuppressWarnings("rawtypes")
 	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
-		editNewRecord(null, dataSource, initialValues, handler, null, fieldNames, null);
+		editNewRecord(null, dataSource, initialValues, handler, fieldNames, null);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
+	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         pictureStack.setVisible(false);
 		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
 		this.handler = handler;
-		if (heightOverride != null) {
-			setHeight(heightOverride);
-		}
 		if (fieldNames != null && fieldNames.length > 0) {
 			dataSource.resetVisibilityOnly(fieldNames);
 		} else {
@@ -165,9 +162,16 @@ public class EntityEditDialog extends Window {
 		}
 		buildFields(dataSource, dynamicForm);
         dynamicForm.editNewRecord(initialValues);
-        centerInPage();
 		show();
-	}
+        setHeight(20);
+        int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
+        if (formHeight > 600) {
+            setHeight(600);
+        } else {
+            setHeight(formHeight);
+        }
+        centerInPage();
+    }
 
     public void updateMedia(String url) {
         pictureStack.setVisible(true);
@@ -180,14 +184,11 @@ public class EntityEditDialog extends Window {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
+	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         if (showMedia && mediaField != null) {
             updateMedia(record.getAttribute(mediaField));
         }
 		this.handler = handler;
-		if (heightOverride != null) {
-			setHeight(heightOverride);
-		}
 		if (fieldNames != null && fieldNames.length > 0) {
 			dataSource.resetVisibilityOnly(fieldNames);
 		} else {
@@ -206,7 +207,15 @@ public class EntityEditDialog extends Window {
 		buildFields(dataSource, dynamicForm);
         dynamicForm.editRecord(record);
         centerInPage();
+		setTop(70);
 		show();
+        setHeight(20);
+        int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
+        if (formHeight > 600) {
+            setHeight(600);
+        } else {
+            setHeight(formHeight);
+        }
 	}
 	
 	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {

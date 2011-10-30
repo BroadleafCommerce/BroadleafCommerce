@@ -15,13 +15,6 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import java.util.*;
-
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
@@ -31,6 +24,14 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -89,8 +90,11 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Page addPage(Page clonedPage) {
-        return (Page) em.merge(clonedPage);
+    public Page addPage(Page clonedPage, boolean clearLevel1Cache) {
+        if (clearLevel1Cache) {
+            em.clear();;
+        }
+        return em.merge(clonedPage);
     }
 
     @Override

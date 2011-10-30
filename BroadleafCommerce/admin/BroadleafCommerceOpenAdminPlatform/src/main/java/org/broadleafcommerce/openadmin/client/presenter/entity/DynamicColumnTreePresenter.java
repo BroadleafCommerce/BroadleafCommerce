@@ -191,7 +191,7 @@ public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter
 				    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
                 }
 			}
-		}, "90%", null, null);
+		}, null, null);
 	}
 	
 	protected void removeClicked() {
