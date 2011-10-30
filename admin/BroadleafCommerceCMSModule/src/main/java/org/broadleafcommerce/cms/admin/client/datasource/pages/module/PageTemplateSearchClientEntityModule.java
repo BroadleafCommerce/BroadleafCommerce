@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.admin.client.datasource.file;
+package org.broadleafcommerce.cms.admin.client.datasource.pages.module;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,6 +24,7 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateSearchListDataSource;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
@@ -40,9 +41,9 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
  * Time: 12:30 PM
  * To change this template use File | Settings | File Templates.
  */
-public class StaticAssetsFolderClientEntityModule extends BasicClientEntityModule {
+public class PageTemplateSearchClientEntityModule extends BasicClientEntityModule {
 
-    public StaticAssetsFolderClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+    public PageTemplateSearchClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
         super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
     }
 
@@ -50,19 +51,12 @@ public class StaticAssetsFolderClientEntityModule extends BasicClientEntityModul
     public void executeFetch(final String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
         BLCMain.NON_MODAL_PROGRESS.startProgress();
         Criteria criteria = request.getCriteria();
+        criteria.addCriteria(((PageTemplateSearchListDataSource) dataSource).getPermanentCriteria());
 		CriteriaTransferObject cto = getCto(request);
 		service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
             public void onSuccess(DynamicResultSet result) {
                 super.onSuccess(result);
                 TreeNode[] recordList = buildRecords(result, null);
-
-                //mark page items as leaf nodes
-                for (TreeNode node : recordList) {
-                    if ("org.broadleafcommerce.cms.file.domain.StatiAssetImpl".equals(node.getAttribute("_type"))) {
-                        node.setIsFolder(false);
-                    }
-                }
-
                 response.setData(recordList);
                 response.setTotalRows(result.getTotalRecords());
                 if (cb != null) {

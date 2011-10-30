@@ -26,6 +26,7 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
@@ -40,6 +41,7 @@ import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenterWithoutForm;
@@ -64,18 +66,18 @@ import java.util.Map;
  */
 public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm implements Instantiable {
 
-    protected MapStructureEntityEditDialog staticAssetDescriptionEntityAdd = null;
     public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();
+
+    protected MapStructureEntityEditDialog staticAssetDescriptionEntityAdd;
     protected HandlerRegistration leafAddClickHandlerRegistration;
     protected SubPresentable leafAssetPresenter;
     protected SubPresentable staticAssetDescriptionPresenter;
     protected TreeNode currentSelectedRecord;
 
     @Override
-	protected void changeSelection(final Record selectedRecord) {
+	protected void changeSelection(Record selectedRecord) {
         currentSelectedRecord = (TreeNode) selectedRecord;
-        String[] types = selectedRecord.getAttributeAsStringArray("_type");
-        if (types == null) {
+        if (selectedRecord.getAttributeAsStringArray("_type") == null) {
             selectedRecord.setAttribute("_type", new String[]{EntityImplementations.STATICASSETIMPL});
         }
 		leafAssetPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), new DSCallback() {
@@ -94,7 +96,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 
     @Override
     protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
+		Map<String, Object> initialValues = new HashMap<String, Object>(2);
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
 		initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
@@ -104,7 +106,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                 }
                 resetForm();
 			}
-		}, "90%", null, null);
+		}, null, null);
 	}
 
     @Override
@@ -116,22 +118,37 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
                     getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.STATICASSETIMPL);
-					Map<String, Object> initialValues = new HashMap<String, Object>();
+					Map<String, Object> initialValues = new HashMap<String, Object>(4);
                     initialValues.put("operation", "add");
                     initialValues.put("customCriteria", "assetListUi");
                     initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
                     initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
                     FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new ItemEditedHandler() {
                         public void onItemEdited(ItemEdited event) {
-                            Criteria myCriteria = new Criteria();
-				            myCriteria.addCriteria("fullUrl", event.getRecord().getAttribute("fullUrl"));
-				            getDisplay().getListLeafDisplay().getGrid().fetchData(myCriteria, new DSCallback() {
-                                @Override
-                                public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                    getDisplay().getListLeafDisplay().getGrid().selectRecord(0);
+                            ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
+                            DSResponse updateResponse = new DSResponse();
+                            updateResponse.setData(recordList);
+                            getDisplay().getListLeafDisplay().getGrid().getDataSource().updateCaches(updateResponse);
+                            getDisplay().getListLeafDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
+                            String primaryKey = getDisplay().getListLeafDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+                            boolean foundRecord = false;
+                            for (Record record : getDisplay().getListLeafDisplay().getGrid().getRecords()) {
+                                if (record.getAttribute(primaryKey).equals(event.getRecord().getAttribute(primaryKey))) {
+                                    foundRecord = true;
+                                    break;
                                 }
-                            });
-                            resetForm();
+                            }
+                            if (!foundRecord) {
+                                ((AbstractDynamicDataSource) getDisplay().getListLeafDisplay().getGrid().getDataSource()).setAddedRecord(event.getRecord());
+                                getDisplay().getListLeafDisplay().getGrid().getDataSource().fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
+                                    @Override
+                                    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                        getDisplay().getListLeafDisplay().getGrid().setData(response.getData());
+                                        getDisplay().getListLeafDisplay().getGrid().selectRecord(0);
+                                    }
+                                });
+                            }
+                            //resetForm();
                         }
                     }, null, new String[]{"file", "name", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);
 				}

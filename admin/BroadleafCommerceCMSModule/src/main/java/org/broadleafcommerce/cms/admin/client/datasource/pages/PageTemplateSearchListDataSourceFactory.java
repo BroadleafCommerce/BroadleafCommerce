@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.admin.client.datasource.pages;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.module.PageTemplateSearchClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;

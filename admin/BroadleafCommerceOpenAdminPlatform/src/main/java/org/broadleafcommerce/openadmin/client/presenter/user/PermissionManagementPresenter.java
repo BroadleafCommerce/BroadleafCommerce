@@ -32,11 +32,15 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 public class PermissionManagementPresenter extends DynamicEntityPresenter implements Instantiable {
 
     public PermissionManagementPresenter() {
-        setAddNewItemTitle(BLCMain.getMessageManager().getString("newPermissionTitle"));
         setGridFields(new String[]{"name","description"});
     }
 
-	public void setup() {
+    @Override
+    protected void addClicked() {
+        addClicked(BLCMain.getMessageManager().getString("newPermissionTitle"));
+    }
+
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);

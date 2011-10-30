@@ -32,11 +32,12 @@ import org.broadleafcommerce.openadmin.client.view.user.RoleManagementDisplay;
  */
 public class RoleManagementPresenter extends DynamicEntityPresenter implements Instantiable {
 
-    public RoleManagementPresenter() {
-        setAddNewItemTitle(BLCMain.getMessageManager().getString("newRoleTitle"));
+    @Override
+    protected void addClicked() {
+        addClicked(BLCMain.getMessageManager().getString("newRoleTitle"));
     }
 
-	public void setup() {
+    public void setup() {
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);

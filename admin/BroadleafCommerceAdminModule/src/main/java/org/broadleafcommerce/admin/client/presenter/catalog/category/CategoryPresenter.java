@@ -100,13 +100,14 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		initialValues.put("defaultParentCategory", getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultCategoryName"));
 		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getDefaultNewEntityFullyQualifiedClassname()});
+        compileDefaultValuesFromCurrentFilter(initialValues);
 		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new ItemEditedHandler() {
 			public void onItemEdited(ItemEdited event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
 				allChildCategoriesPresenter.load(display.getListDisplay().getGrid().getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("allChildCategoriesDS"), null);
 			}
-		}, "90%", null, null);
+		}, null, null);
 	}
 
 	@Override

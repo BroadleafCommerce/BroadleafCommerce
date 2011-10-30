@@ -17,7 +17,12 @@
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.util.BooleanCallback;
@@ -31,6 +36,7 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
@@ -61,7 +67,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     protected HandlerRegistration saveButtonHandlerRegistration;
     protected HandlerRegistration refreshButtonHandlerRegistration;
     protected Record currentPageRecord;
-    protected boolean isFetched = false;
+    protected String currentPageId;
 	protected EntitySearchDialog pageTemplateDialogView;
 
 	@Override
@@ -99,6 +105,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
             getDisplay().getListDisplay().getRemoveButton().disable();
         }
         currentPageRecord = selectedRecord;
+        currentPageId = getPresenterSequenceSetupManager().getDataSource("pageDS").getPrimaryKeyValue(currentPageRecord);
         loadTemplateForm(selectedRecord);
 
 	}
@@ -118,7 +125,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 });
                 formOnlyView.setID("pageTemplateForm");
                 formOnlyView.setOverflow(Overflow.VISIBLE);
-                ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).addMember(formOnlyView);
+                ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).addMember(formOnlyView);
                 ((PageTemplateFormListDataSource) dataSource).setCustomCriteria(new String[]{"constructForm", selectedRecord.getAttribute("id")});
                 BLCMain.NON_MODAL_PROGRESS.startProgress();
                 formOnlyView.getForm().fetchData(new Criteria(), new DSCallback() {
@@ -166,9 +173,8 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
-                                final Record newRecord = response.getData()[0];
-                                final String newId = getPresenterSequenceSetupManager().getDataSource("pageDS").getPrimaryKeyValue(newRecord);
-                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                                final String newId = response.getAttribute("newId");
+                                FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
                                     if (formItem instanceof RichTextCanvasItem) {
@@ -185,9 +191,15 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                         }
                                     }
                                 });
-                                if (getPresenterSequenceSetupManager().getDataSource("pageDS").getPrimaryKeyValue(currentPageRecord).equals(newId)) {
-                                    display.getListDisplay().getGrid().getRecordList().remove(currentPageRecord);
-                                    currentPageRecord = newRecord;
+                                if (!currentPageId.equals(newId)) {
+                                    for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
+                                        if (record.getAttribute("id").equals(currentPageId)) {
+                                            record.setAttribute("id", newId);
+                                            currentPageRecord = record;
+                                            break;
+                                        }
+                                    }
+                                    currentPageId = newId;
                                 }
 							}
                         }
@@ -195,11 +207,10 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 }
             }
         });
-
-        getDisplay().getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+        display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                isFetched = true;
+                destroyTemplateForm();
             }
         });
 
@@ -242,7 +253,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         new FormItemCallback() {
                             @Override
                             public void execute(FormItem formItem) {
-                                if (currentPageRecord != null) {
+                                if (currentPageRecord != null && !BLCMain.ENTITY_ADD.isVisible()) {
                                     destroyTemplateForm();
                                     loadTemplateForm(currentPageRecord);
                                 }

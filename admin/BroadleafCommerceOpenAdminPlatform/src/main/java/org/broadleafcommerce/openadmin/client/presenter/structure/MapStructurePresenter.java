@@ -112,14 +112,14 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                             type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
                         }
                         initialValues.put("_type", type);
-                        entityEditDialog.editNewRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, null, gridFields, null);
+                        entityEditDialog.editNewRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, gridFields, null);
                     }
                 }
             });
             display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
                 @Override
                 public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
-                    entityEditDialog.editRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, gridFields, null);
+                    entityEditDialog.editRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, gridFields, null);
                 }
             });
         }

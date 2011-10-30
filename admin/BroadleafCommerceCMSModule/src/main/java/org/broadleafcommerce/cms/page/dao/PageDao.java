@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
-import java.util.Map;
-
 import org.broadleafcommerce.cms.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -38,7 +38,7 @@ public interface PageDao {
 
     public void delete(Page page);
 
-    public Page addPage(Page clonedPage);
+    public Page addPage(Page clonedPage, boolean clearLevel1Cache);
 
     public Page findPageByURI(SandBox sandBox, Locale locale, String uri);
 }

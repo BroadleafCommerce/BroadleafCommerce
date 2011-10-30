@@ -21,11 +21,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.cms.admin.client.datasource.pages.module.PagesListClientyEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKeyRestrictionType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
 /**
@@ -44,7 +48,7 @@ public class PageDataSourceFactory implements DataSourceFactory {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[] {}, new ForeignKey[]{new ForeignKey(pageTemplateForeignKey, EntityImplementations.PAGETEMPLATE, null, ForeignKeyRestrictionType.ID_EQ, "templateName")});
 
             DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicClientEntityModule(CeilingEntities.PAGE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new PagesListClientyEntityModule(CeilingEntities.PAGE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);

@@ -93,7 +93,9 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
     @Override
     public Page addPage(Page page, SandBox destinationSandbox) {
         page.setSandbox(destinationSandbox);
-        Page newPage = pageDao.addPage(page);
+        page.setArchivedFlag(false);
+        page.setDeletedFlag(false);
+        Page newPage = pageDao.addPage(page, true);
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
         }
@@ -140,14 +142,15 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
             return pageDao.updatePage(page, true);
         } else if (isProductionSandBox(page.getSandbox())) {
-            page.setLockedFlag(true);
-            page = pageDao.updatePage(page, false);
-
             // Move from production to destSandbox
             Page clonedPage = page.cloneEntity();
             clonedPage.setOriginalPageId(page.getId());
             clonedPage.setSandbox(destSandbox);
-            Page returnPage = pageDao.addPage(clonedPage);
+            Page returnPage = pageDao.addPage(clonedPage, true);
+
+            Page prod = findPageById(page.getId());
+            page.setLockedFlag(true);
+            pageDao.updatePage(prod, false);
 
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
             return returnPage;

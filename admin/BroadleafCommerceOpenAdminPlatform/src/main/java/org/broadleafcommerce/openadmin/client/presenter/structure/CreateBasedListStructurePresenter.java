@@ -112,7 +112,7 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 					initialValues.put(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
 					String[] type = new String[] {((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()};
 					initialValues.put("_type", type);
-					BLCMain.ENTITY_ADD.editNewRecord(editDialogTitle, ds, initialValues, null, null, null, null);
+					BLCMain.ENTITY_ADD.editNewRecord(editDialogTitle, ds, initialValues, null, null, null);
 				}
 			}
 		});
