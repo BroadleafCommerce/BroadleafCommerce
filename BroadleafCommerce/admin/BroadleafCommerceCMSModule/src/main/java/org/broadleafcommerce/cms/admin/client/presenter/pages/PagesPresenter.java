@@ -52,7 +52,6 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
@@ -89,7 +88,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 	}
 
     protected void destroyTemplateForm() {
-        Canvas legacyForm = ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+        Canvas legacyForm = ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
         if (legacyForm != null) {
             legacyForm.destroy();
         }
@@ -154,7 +153,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
-                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("pageTemplateForm");
+                    FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
                     if (legacyForm != null) {
                         legacyForm.getForm().reset();
                     }
@@ -213,16 +212,6 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 destroyTemplateForm();
             }
         });
-
-      /*  getDisplay().getCurrentLocale().addChangedHandler(new ChangedHandler() {
-            @Override
-            public void onChanged(ChangedEvent event) {
-                String newLocaleCode = (String) event.getValue();
-                getDisplay().getListDisplay().getGrid().invalidateCache();
-                ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).setPermanentCriteria(new Criteria("locale.localeCode", newLocaleCode));
-                ((PageTemplateSearchListDataSource) getPresenterSequenceSetupManager().getDataSource("pageTemplateSearchDS")).getAssociatedGrid().invalidateCache();
-            }
-        });  */
 	}
 
 
@@ -231,7 +220,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageDS", new PageDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
-				((ListGridDataSource) top).setupGridFields(new String[]{}, new Boolean[]{});
+				((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
 			}
         }));
 
@@ -253,7 +242,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         new FormItemCallback() {
                             @Override
                             public void execute(FormItem formItem) {
-                                if (currentPageRecord != null && !BLCMain.ENTITY_ADD.isVisible()) {
+                                if (currentPageRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
                                     destroyTemplateForm();
                                     loadTemplateForm(currentPageRecord);
                                 }

@@ -58,7 +58,6 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 
@@ -280,7 +279,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
     protected void refresh() {
         getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
-        FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) ((DynamicFormView) getDisplay().getDynamicFormDisplay()).getFormOnlyDisplay()).getMember("contentTypeForm");
+        FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
         if (legacyForm != null) {
             legacyForm.getForm().reset();
         }
@@ -359,7 +358,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                         new FormItemCallback() {
                             @Override
                             public void execute(FormItem formItem) {
-                                if (currentStructuredContentRecord != null && !BLCMain.ENTITY_ADD.isVisible()) {
+                                if (currentStructuredContentRecord != null && BLCMain.ENTITY_ADD.getHidden()) {
                                     destroyContentTypeForm();
                                     loadContentTypeForm(currentStructuredContentRecord);
                                 }

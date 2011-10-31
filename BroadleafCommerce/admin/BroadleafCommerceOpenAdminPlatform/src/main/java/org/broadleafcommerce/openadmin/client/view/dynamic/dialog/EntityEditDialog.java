@@ -58,6 +58,7 @@ public class EntityEditDialog extends Window {
     protected String mediaField;
     protected HStack hStack;
     protected VLayout vLayout;
+    protected Boolean isHidden = true;
 
 	public EntityEditDialog() {
 		this.setIsModal(true);
@@ -111,6 +112,7 @@ public class EntityEditDialog extends Window {
 						}
             		});
             		hide();
+                    isHidden = true;
             	}
             }
         });
@@ -119,6 +121,7 @@ public class EntityEditDialog extends Window {
         cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	hide();
+                isHidden = true;
             }
         });
 
@@ -171,6 +174,7 @@ public class EntityEditDialog extends Window {
             setHeight(formHeight);
         }
         centerInPage();
+        isHidden = false;
     }
 
     public void updateMedia(String url) {
@@ -216,6 +220,7 @@ public class EntityEditDialog extends Window {
         } else {
             setHeight(formHeight);
         }
+        isHidden = false;
 	}
 	
 	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
@@ -236,5 +241,13 @@ public class EntityEditDialog extends Window {
 
     public void setMediaField(String mediaField) {
         this.mediaField = mediaField;
+    }
+
+    public Boolean getHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(Boolean hidden) {
+        isHidden = hidden;
     }
 }

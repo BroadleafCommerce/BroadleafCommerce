@@ -23,6 +23,7 @@ import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
@@ -126,6 +127,13 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
+            if (adminEntity.findProperty("pageTemplate") != null) {
+                Property property = new Property();
+                property.setName("pageTemplate_Grid");
+                property.setValue(adminEntity.findProperty("pageTemplate").getValue());
+                adminEntity.addProperty(property);
+            }
+
 			return adminEntity;
 		} catch (Exception e) {
             LOG.error("Unable to add entity for " + entity.getType()[0], e);
@@ -137,11 +145,11 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            if (cto.get("pageTemplateGrid").getFilterValues().length > 0) {
+            if (cto.get("pageTemplate_Grid").getFilterValues().length > 0) {
                 CriteriaTransferObject ctoCopy = new CriteriaTransferObject();
                 for (String prop : cto.getPropertyIdSet()) {
                     String propertyId;
-                    if (prop.equals("pageTemplateGrid")) {
+                    if (prop.equals("pageTemplate_Grid")) {
                         propertyId = "pageTemplate";
                     } else {
                         propertyId = prop;
@@ -175,7 +183,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             for (Entity entity : pageEntities) {
                 if (entity.findProperty("pageTemplate") != null) {
                     Property property = new Property();
-                    property.setName("pageTemplateGrid");
+                    property.setName("pageTemplate_Grid");
                     property.setValue(entity.findProperty("pageTemplate").getValue());
                     entity.addProperty(property);
                 }
@@ -246,7 +254,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         contentTypeFieldMetadata.setEnumerationValues(pageTemplateEnums);
         FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
         contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
-        contentTypeAttributes.setName("pageTemplateGrid");
+        contentTypeAttributes.setName("pageTemplate_Grid");
         contentTypeAttributes.setFriendlyName("Page Template");
         contentTypeAttributes.setGroup("Description");
         contentTypeAttributes.setOrder(2);
@@ -258,7 +266,31 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         contentTypeAttributes.setRequiredOverride(true);
         contentTypeAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
 
-        mergedProperties.put("pageTemplateGrid", contentTypeFieldMetadata);
+        mergedProperties.put("pageTemplate_Grid", contentTypeFieldMetadata);
+
+        FieldMetadata iconMetadata = new FieldMetadata();
+        iconMetadata.setFieldType(SupportedFieldType.ASSET);
+        iconMetadata.setMutable(true);
+        iconMetadata.setInheritedFromType(PageImpl.class.getName());
+        iconMetadata.setAvailableToTypes(new String[]{PageImpl.class.getName()});
+        iconMetadata.setCollection(false);
+        iconMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
+        iconMetadata.setPresentationAttributes(iconAttributes);
+        iconAttributes.setName("picture");
+        iconAttributes.setFriendlyName(" ");
+        iconAttributes.setGroup("Locked Details");
+        iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        iconAttributes.setProminent(true);
+        iconAttributes.setBroadleafEnumeration("");
+        iconAttributes.setReadOnly(false);
+        iconAttributes.setHidden(false);
+        iconAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+        iconAttributes.setColumnWidth("25");
+        iconAttributes.setOrder(0);
+        iconAttributes.setRequiredOverride(true);
+
+        mergedProperties.put("locked", iconMetadata);
     }
 
     @Override
@@ -298,6 +330,13 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             adminInstance = pageService.updatePage(adminInstance, getSandBox());
 
 			Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            if (adminEntity.findProperty("pageTemplate") != null) {
+                Property property = new Property();
+                property.setName("pageTemplate_Grid");
+                property.setValue(adminEntity.findProperty("pageTemplate").getValue());
+                adminEntity.addProperty(property);
+            }
 
 			return adminEntity;
 		} catch (Exception e) {

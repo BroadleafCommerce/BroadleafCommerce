@@ -19,7 +19,6 @@ package org.broadleafcommerce.cms.admin.server.handler;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
@@ -280,21 +279,13 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
-            StructuredContent structuredContent = (StructuredContent) structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
-            //build up some fields before we detach page from the session
-            List<String> templateFieldNames = new ArrayList<String>();
+            StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+            List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
                 for (FieldDefinition definition: group.getFieldDefinitions()) {
                     templateFieldNames.add(definition.getName());
                 }
             }
-            for (String key : structuredContent.getStructuredContentFields().keySet()) {
-                // Load fields before we detach from the session
-                StructuredContentField structuredContentField = structuredContent.getStructuredContentFields().get(key);
-            }
-
-            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            structuredContent = (StructuredContent) SerializationUtils.clone(structuredContent);
             Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 if (templateFieldNames.contains(property.getName())) {
