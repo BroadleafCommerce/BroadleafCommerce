@@ -15,9 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -37,6 +34,10 @@ import org.broadleafcommerce.openadmin.client.view.SimpleProgress;
 import org.broadleafcommerce.openadmin.client.view.SplashView;
 import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -62,6 +63,7 @@ public class BLCMain implements EntryPoint {
 	public static MasterView MASTERVIEW;
 	public static boolean ISNEW = true;
 	public static String currentModuleKey;
+    public static String currentPageKey;
     public static String currentViewKey;
 	
 	public static final boolean DEBUG = true;
@@ -81,8 +83,50 @@ public class BLCMain implements EntryPoint {
 	public static void removeSplashWindow() {
 		SPLASH_PROGRESS = null;
 	}
+
+    private static void setCurrentModuleKey(String requestedModuleKey) {
+        if (requestedModuleKey != null && modules.get(requestedModuleKey) != null) {
+            if (SecurityManager.getInstance().isUserAuthorizedToViewModule(requestedModuleKey)) {
+                currentModuleKey = requestedModuleKey;
+                return;
+            }
+        }
+
+        currentModuleKey = null;
+
+        for (Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext(); ) {
+            Module currentModule = iterator.next();
+            if (SecurityManager.getInstance().isUserAuthorizedToViewModule(currentModule.getModuleKey())) {
+                currentModuleKey = currentModule.getModuleKey();
+                return;
+            }
+        }
+    }
+
+    private static void setCurrentPageKey(String requestedPageKey) {
+        Map<String,String[]> pagesMap = modules.get(currentModuleKey).getPages();
+
+        if (pagesMap.get(requestedPageKey) != null) {
+            String pageView = pagesMap.get(requestedPageKey)[0];
+            if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pageView)) {
+                currentPageKey = requestedPageKey;
+                return;
+            }
+        }
+
+        currentPageKey = null;
+        if (pagesMap != null) {
+            for(String pageKey : pagesMap.keySet()) {
+                String view = pagesMap.get(pageKey)[0];
+                if (SecurityManager.getInstance().isUserAuthorizedToViewSection(view)) {
+                    currentPageKey = pageKey;
+                    return;
+                }
+            }
+        }
+    }
 	
-	public static void drawCurrentState(final String requestedModuleKey) {
+	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
 		AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
@@ -93,31 +137,26 @@ public class BLCMain implements EntryPoint {
                     builder.setPath(BLCMain.webAppContext + "/admin.html");
                     com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
                 } else {
-                    String moduleKey = requestedModuleKey;
+                    setCurrentModuleKey(requestedModuleKey);
 
-                    for (Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext(); ) {
-                        Module currentModule = iterator.next();
-                        if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(currentModule.getModuleKey())) {
-                            iterator.remove();
-                        }
-                    }
 
-                    if (modules.size() == 0) {
-                        SC.say("Your login does not have authorization to view any modules");
+                    if (currentModuleKey == null) {
+                        SC.say("Your login does not have authorization to view any modules.");
                         return;
                     }
 
-                    if (moduleKey == null || modules.get(moduleKey) == null) {
-                        moduleKey = modules.keySet().iterator().next();
+                    setCurrentPageKey(requestedPageKey);
+
+                    if (currentPageKey == null) {
+                        SC.say("Your login does not have authorization to view any pages for the passed in module.");
+                        return;
                     }
 
-                    currentModuleKey = moduleKey;
                     modules.get(currentModuleKey).preDraw();
-                    MASTERVIEW = new MasterView(moduleKey, modules);
+                    MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
                     MASTERVIEW.draw();
-
-                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(moduleKey).getPages());
-                    modules.get(moduleKey).postDraw();
+                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, true);
+                    modules.get(currentModuleKey).postDraw();
                 }
             }
         }); 

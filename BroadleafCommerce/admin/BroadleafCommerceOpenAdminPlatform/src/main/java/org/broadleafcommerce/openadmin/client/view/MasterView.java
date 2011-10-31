@@ -15,14 +15,11 @@
  */
 package org.broadleafcommerce.openadmin.client.view;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.BkgndRepeat;
 import com.smartgwt.client.types.Cursor;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -44,6 +41,10 @@ import org.broadleafcommerce.openadmin.client.Module;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+
 
 /**
  * 
@@ -61,13 +62,14 @@ public class MasterView extends VLayout {
 
     protected HLayout secondaryMenu = new HLayout();
 
-    protected String moduleKey;
-    protected String selectedPage;
+    public static String moduleKey;
+    protected String pageKey;
     protected LinkedHashMap<String, Module> modules;
 
 
-    public MasterView(String moduleKey, LinkedHashMap<String, Module> modules) {
+    public MasterView(String moduleKey, String pageKey, LinkedHashMap<String, Module> modules) {
         this.moduleKey = moduleKey;
+        this.pageKey = pageKey;
         this.modules = modules;
 
         setWidth100();
@@ -75,7 +77,7 @@ public class MasterView extends VLayout {
 
         addMember(buildHeader());
         addMember(buildPrimaryMenu());
-        addMember(buildSecondaryMenu(null));
+        addMember(buildSecondaryMenu(pageKey));
 
 
         canvas = new HLayout();
@@ -137,19 +139,24 @@ public class MasterView extends VLayout {
 
     private Layout buildPrimaryMenu() {
 
-        VLayout moduleLayout = new VLayout();
-        moduleLayout.setAlign(VerticalAlignment.TOP);
+        HLayout moduleLayout = new HLayout();
         moduleLayout.setWidth100();
-        moduleLayout.setAlign(Alignment.LEFT);
-        moduleLayout.setHeight(40);
+        moduleLayout.setHeight(38);
         moduleLayout.setBackgroundImage(GWT.getModuleBaseURL() + "admin/images/nav_bg.png");
+        moduleLayout.setBackgroundRepeat(BkgndRepeat.REPEAT_X);
+
         moduleLayout.addMember(new LayoutSpacer());
 
+
         HLayout primaryMenuOptionsHolder = new HLayout();
+        primaryMenuOptionsHolder.setLayoutAlign(VerticalAlignment.BOTTOM);
+        //primaryMenuOptionsHolder.setLayoutAlign(Alignment.LEFT);
         primaryMenuOptionsHolder.setMembersMargin(5);
         primaryMenuOptionsHolder.setWidth100();
         primaryMenuOptionsHolder.setHeight(30);
-        primaryMenuOptionsHolder.setAlign(VerticalAlignment.TOP);
+        primaryMenuOptionsHolder.setAlign(Alignment.LEFT);
+
+
 
         LayoutSpacer sp = new LayoutSpacer();
         sp.setWidth(20);
@@ -218,7 +225,7 @@ public class MasterView extends VLayout {
         spacer.setSrc(GWT.getModuleBaseURL() + "admin/images/nav_spacer_36.png");
 
         spacer.setWidth(2);
-        spacer.setHeight(38);
+        spacer.setHeight(30);
         spacer.setShowRollOver(false);
         spacer.setShowDownIcon(false);
         spacer.setShowDown(false);
@@ -227,10 +234,11 @@ public class MasterView extends VLayout {
 
     private Label buildPrimaryMenuOption(final Module module, boolean selected) {
         Label tmp = new Label(module.getModuleTitle());
-        tmp.setValign(VerticalAlignment.BOTTOM);
+        tmp.setValign(VerticalAlignment.CENTER);
+        tmp.setHeight(30);
         tmp.setAlign(Alignment.CENTER);
         tmp.setWrap(false);
-        tmp.setPadding(10);
+        tmp.setPadding(0);
         tmp.setShowRollOver(true);
         tmp.setCursor(Cursor.POINTER);
 
@@ -256,10 +264,7 @@ public class MasterView extends VLayout {
                         selectedPrimaryMenuOption = lbl;
                         moduleKey = module.getModuleKey();
                         buildSecondaryMenu(null);
-
-                        //History.newItem(lbl.getTitle());
-
-                        AppController.getInstance().go(canvas, module.getPages(), true);
+                        AppController.getInstance().go(canvas, module.getPages(), null, false);
 	                 }
                 }
 	        }
@@ -298,7 +303,7 @@ public class MasterView extends VLayout {
                         selectedSecondaryMenuOption.setBaseStyle("secondaryMenuText");
                         lbl.setBaseStyle("secondaryMenuText-selected");
                         selectedSecondaryMenuOption = lbl;
-					    History.newItem(lbl.getTitle());
+                        History.newItem("moduleKey="+moduleKey+"&pageKey="+lbl.getTitle());
                     }
                 }
             }
@@ -382,9 +387,6 @@ public class MasterView extends VLayout {
         return userFields;
     }
 
-
-
-
     private void buildFooter() {
         bottomBar = new ToolStrip();
         bottomBar.setBackgroundImage(GWT.getModuleBaseURL() + "admin/images/header_bg.png");
@@ -402,144 +404,6 @@ public class MasterView extends VLayout {
         addMember(bottomBar);
 
     }
-
-
-
-
-
-         /*
-
-		
-		topBar = new ToolStrip();
-        topBar.setHeight(62);
-        topBar.setWidth100();
-        topBar.addSpacer(6);
-        topBar.addSpacer(6);
-
-        VStack temp = new VStack();
-        temp.setAlign(VerticalAlignment.BOTTOM);
-        temp.setWidth100();
-        temp.setHeight100();
-        
-        HStack moduleStack = new HStack(10);
-        moduleStack.setWidth100();
-        moduleStack.setHeight(20);
-        moduleStack.setAlign(Alignment.RIGHT);
-        moduleStack.setLayoutBottomMargin(10);
-        temp.addMember(moduleStack);
-        if (modules.size() > 1) {
-	        Menu modulesMenu = new Menu();  
-	        modulesMenu.setCanSelectParentItems(true);
-
-            // Only show menu items for modules the user has access to
-            Collection<Module> allowedModules = modules.values();
-
-            for (Iterator<Module> iterator = allowedModules.iterator(); iterator.hasNext(); ) {
-                Module testModule =  iterator.next();
-                if (! SecurityManager.getInstance().isUserAuthorizedToViewModule(testModule.getModuleKey())) {
-                    iterator.remove();
-                    if (moduleKey != null && moduleKey.equals(testModule.getModuleKey())) {
-                        moduleKey = null;
-                    }
-                }
-            }
-
-            if (moduleKey == null && allowedModules.size() > 0) {
-                moduleKey = allowedModules.iterator().next().getModuleKey();
-            }
-
-	        MenuItem[] menuItems = new MenuItem[allowedModules.size()];
-	        int j = 0;
-	        for (Module module : allowedModules) {
-	        	MenuItem tempMenuItem = new MenuItem(module.getModuleTitle());
-	        	tempMenuItem.setAttribute("key", module.getModuleKey());
-	        	menuItems[j] = tempMenuItem;
-	        	j++;
-	        }
-	        modulesMenu.setData(menuItems);
-            modulesMenu.setShowIcons(false);
-	        
-	        modulesMenu.addItemClickHandler(new ItemClickHandler() {  
-	            public void onItemClick(final ItemClickEvent event) {  
-	            	BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
-						@Override
-						public void run() {
-							UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
-			            	builder.setParameter("defaultModule", event.getItem().getAttribute("key"));
-			            	String url = builder.buildString();
-			            	//remove any history tokens
-			            	if (url.indexOf("#") >= 0) {
-			            		url = url.substring(0, url.indexOf("#"));
-			            	}
-			            	com.google.gwt.user.client.Window.Location.assign(url);
-						}
-	            	});
-	            }  
-	        });
-	        
-	        IMenuButton moduleSelectionButton = new IMenuButton(modules.get(moduleKey).getModuleTitle(), modulesMenu);
-            moduleSelectionButton.setOverflow(Overflow.VISIBLE);
-
-	        //moduleSelectionButton.setWidth(22);
-
-            moduleSelectionButton.setTitle(modules.get(moduleKey).getModuleTitle());
-            moduleSelectionButton.setShowMenuBelow(true);
-
-
-	        moduleStack.addMember(moduleSelectionButton);
-        }
-
-        HStack spacer = new HStack();
-        spacer.setWidth(30);
-        moduleStack.addMember(spacer);
-        Label userName = new Label(BLCMain.getMessageManager().getString("currentUser") + ": <B>" + SecurityManager.USER.getUserName() + "</B>");
-        userName.setWrap(false);
-        userName.setStyleName("label-bold");
-        moduleStack.addMember(userName);
-        IButton logout = new IButton();
-        logout.setTitle(BLCMain.getMessageManager().getString("logout"));
-        logout.setWidth(60);
-        logout.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
-            public void onClick(ClickEvent event) {
-                UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
-                builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
-                com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
-            }
-        });
-        moduleStack.addMember(logout);
-        HStack spacer2 = new HStack();
-        spacer2.setWidth(30);
-        moduleStack.addMember(spacer2);
-        
-        topTabSet = new TabSet();
-        topTabSet.setTabBarPosition(Side.TOP);  
-        topTabSet.setHeight(23);
-        LinkedHashMap<String, String[]> pages = modules.get(moduleKey).getPages();
-        for (String page : pages.keySet()) {
-	        Tab tab = new Tab(page); 
-	        tab.setAttribute("token", page);
-	        tab.setID(page.replace(' ', '_'));
-	        topTabSet.setShowPaneContainerEdges(false);
-	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])){
-	        	topTabSet.addTab(tab);
-	        }
-        }
-        topTabSet.addTabSelectedHandler(new TabSelectedHandler() {
-			public void onTabSelected(TabSelectedEvent event) {
-				if (event.isLeftButtonDown()) {
-
-					History.newItem(event.getTab().getAttribute("token"));
-				}
-			}
-        });
-
-        temp.addMember(topTabSet);
-        topBar.addMember(temp);
-        
-        topBar.addFill();
-
-        addMember(topBar);    */
-	
 
 	public Canvas getContainer() {
 		return canvas;

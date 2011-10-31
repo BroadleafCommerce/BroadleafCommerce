@@ -22,6 +22,7 @@ import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.Canvas;
+import org.broadleafcommerce.openadmin.client.BLCLaunch;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.AsyncClient;
@@ -30,6 +31,7 @@ import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.view.Display;
+import org.broadleafcommerce.openadmin.client.view.MasterView;
 import org.broadleafcommerce.openadmin.client.view.UIFactory;
 
 import java.util.HashMap;
@@ -63,28 +65,32 @@ public class AppController implements ValueChangeHandler<String> {
 		History.addValueChangeHandler(this);
 	}
 
-    public void go(final Canvas container, HashMap<String, String[]> pages) {
-        go(container, pages, false);
-    }
-
-	public void go(final Canvas container, HashMap<String, String[]> pages, boolean reset) {
+	public void go(final Canvas container, HashMap<String, String[]> pages, String pageKey, boolean firstTime) {
 		this.pages = pages;
 		this.container = container;
 
-		if ("".equals(History.getToken()) || reset) {
-			for (String sectionTitle : pages.keySet()){
-				if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
-					History.newItem(sectionTitle);
-					break;
-				}
-			}
-		} else {
-           String[] vals = pages.get(History.getToken());
-            if (vals == null) {
-                go(container, pages, true);
+        if (firstTime) {
+            String token = History.getToken();
+            if (pageKey.equals(BLCLaunch.getSelectedPage(token)) && MasterView.moduleKey.equals(BLCLaunch.getSelectedModule(token))) {
+                showView(pages.get(pageKey)[0], pages.get(pageKey)[1]);
             } else {
-    			History.fireCurrentHistoryState();
+                History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey);
             }
+            return;
+        }
+
+        if (pageKey != null && pages.get(pageKey) != null) {
+            if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(pageKey)[0])) {
+                History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey);
+                return;
+            }
+        }
+
+        for (String sectionTitle : pages.keySet()){
+	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
+			    History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+sectionTitle);
+			    break;
+	    	}
 		}
 	}
 
@@ -95,18 +101,20 @@ public class AppController implements ValueChangeHandler<String> {
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue();
 
-		if (token != null) {
-			if (!uiFactory.equalsCurrentView(token)) {
-				String[] vals = pages.get(token);
-                if (vals != null) {
-				    showView(vals[0], vals[1]);
+        if (token != null) {
+            String page = BLCLaunch.getSelectedPage(token);
+
+            if (page != null) {
+                if (!uiFactory.equalsCurrentView(page)) {
+                    String[] vals = pages.get(page);
+                    if (vals != null) {
+                        showView(vals[0], vals[1]);
+                    }
                 }
-			}
-		}
+            }
+        }
 	}
 
-
-	
 	protected void showView(final String viewKey, final String presenterKey) {
         if (!BLCMain.ISNEW) {
             BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
