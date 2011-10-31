@@ -17,8 +17,8 @@ package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.locale.domain.Locale;
-import org.broadleafcommerce.cms.locale.service.LocaleService;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
@@ -251,18 +251,18 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
-            criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
+            criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression, productionSandboxExpression), originalSandboxExpression));
 
             Long resultCount = (Long) criteria.list().get(0);
             Long updatedCount = 0L;
             Long deletedCount = 0L;
 
             // count updated items
-            criteria.add(Restrictions.and(Restrictions.isNotNull("originalPageId"),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
+            criteria.add(Restrictions.and(Restrictions.isNotNull("originalPageId"),Restrictions.or(currentSandboxExpression, originalSandboxExpression)));
             updatedCount = (Long) criteria.list().get(0);
 
             // count deleted items
-            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
+            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression, originalSandboxExpression)));
             deletedCount = (Long) criteria.list().get(0);
 
             return resultCount - updatedCount - deletedCount;
@@ -290,7 +290,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             }
 
             if (productionSandboxExpression != null) {
-                criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
+                criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression, productionSandboxExpression), originalSandboxExpression));
             } else {
                 criteria.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
             }

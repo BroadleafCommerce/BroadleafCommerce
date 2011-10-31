@@ -13,30 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.broadleafcommerce.common.locale.dao;
 
-package org.broadleafcommerce.cms.locale.domain;
+import org.broadleafcommerce.common.locale.domain.Locale;
 
-import java.io.Serializable;
+import java.util.List;
 
 /**
- * Created by jfischer
+ * Created by bpolster.
  */
-public interface Locale extends Serializable {
+public interface LocaleDao {
 
-    Long getId();
+    /**
+     * @return The locale for the passed in code
+     */
+    public Locale findLocaleByCode(String localeCode);
 
-    void setId(Long id);
+    /**
+     * Returns the page template with the passed in id.
+     *
+     * @return The default locale
+     */
+    public Locale findDefaultLocale();
 
-    String getLocaleCode();
-
-    void setLocaleCode(String localeCode);
-
-    public String getFriendlyName();
-
-    public void setFriendlyName(String friendlyName);
-
-    public void setDefaultFlag(Boolean defaultFlag);
-
-    public Boolean getDefaultFlag();
+    /**
+     * Returns all supported BLC locales.
+     * @return
+     */
+    public List<Locale> findAllLocales();
 
 }

@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.locale.dao;
+package org.broadleafcommerce.common.locale.service;
 
-import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface LocaleDao {
+public interface LocaleService {
+
 
     /**
      * @return The locale for the passed in code
@@ -37,9 +38,9 @@ public interface LocaleDao {
     public Locale findDefaultLocale();
 
     /**
-     * Returns all supported BLC locales.
-     * @return
+     * Returns the page template with the passed in id.
+     *
+     * @return The default locale
      */
     public List<Locale> findAllLocales();
-
 }

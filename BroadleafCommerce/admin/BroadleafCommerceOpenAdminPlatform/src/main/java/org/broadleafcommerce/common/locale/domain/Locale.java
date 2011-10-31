@@ -13,34 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.locale.service;
 
-import org.broadleafcommerce.cms.locale.domain.Locale;
+package org.broadleafcommerce.common.locale.domain;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * Created by bpolster.
+ * Created by jfischer
  */
-public interface LocaleService {
+public interface Locale extends Serializable {
 
+    Long getId();
 
-    /**
-     * @return The locale for the passed in code
-     */
-    public Locale findLocaleByCode(String localeCode);
+    void setId(Long id);
 
-    /**
-     * Returns the page template with the passed in id.
-     *
-     * @return The default locale
-     */
-    public Locale findDefaultLocale();
+    String getLocaleCode();
 
-    /**
-     * Returns the page template with the passed in id.
-     *
-     * @return The default locale
-     */
-    public List<Locale> findAllLocales();
+    void setLocaleCode(String localeCode);
+
+    public String getFriendlyName();
+
+    public void setFriendlyName(String friendlyName);
+
+    public void setDefaultFlag(Boolean defaultFlag);
+
+    public Boolean getDefaultFlag();
+
 }
