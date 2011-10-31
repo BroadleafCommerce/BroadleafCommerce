@@ -149,7 +149,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             Page returnPage = pageDao.addPage(clonedPage, true);
 
             Page prod = findPageById(page.getId());
-            page.setLockedFlag(true);
+            prod.setLockedFlag(true);
             pageDao.updatePage(prod, false);
 
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());

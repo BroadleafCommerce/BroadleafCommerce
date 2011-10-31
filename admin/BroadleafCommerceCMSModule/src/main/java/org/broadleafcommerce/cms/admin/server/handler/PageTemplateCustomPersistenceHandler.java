@@ -16,22 +16,29 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import javax.annotation.Resource;
-
-import java.util.*;
-
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.page.domain.*;
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -41,6 +48,14 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jfischer
@@ -264,20 +279,13 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
-            Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
-            //build up some fields before we detach page from the session
-            List<String> templateFieldNames = new ArrayList<String>();
+            Page page = pageService.findPageById(Long.valueOf(pageId));
+            List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : page.getPageTemplate().getFieldGroups()) {
                 for (FieldDefinition definition: group.getFieldDefinitions()) {
                     templateFieldNames.add(definition.getName());
                 }
             }
-            // Retrieve page fields while we are still in the hibernate session
-            for (String key : page.getPageFields().keySet()) {
-                PageField pageField = page.getPageFields().get(key);
-            }
-            //detach page from the session so that our changes are not persisted here (we want to let the service take care of this)
-            page = (Page) SerializationUtils.clone(page);
             Map<String, PageField> pageFieldMap = page.getPageFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 if (templateFieldNames.contains(property.getName())) {
