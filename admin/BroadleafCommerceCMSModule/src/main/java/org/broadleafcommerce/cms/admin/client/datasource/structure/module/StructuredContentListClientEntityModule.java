@@ -40,11 +40,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/24/11
- * Time: 12:30 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class StructuredContentListClientEntityModule extends BasicClientEntityModule {
 

@@ -187,19 +187,20 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                                         if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                            if (!currentPageId.equals(newId)) {
+                                                for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
+                                                    if (record.getAttribute("id").equals(currentPageId)) {
+                                                        record.setAttribute("id", newId);
+                                                        currentPageRecord = record;
+                                                        break;
+                                                    }
+                                                }
+                                                currentPageId = newId;
+                                            }
+                                            getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentPageRecord));
                                         }
                                     }
                                 });
-                                if (!currentPageId.equals(newId)) {
-                                    for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
-                                        if (record.getAttribute("id").equals(currentPageId)) {
-                                            record.setAttribute("id", newId);
-                                            currentPageRecord = record;
-                                            break;
-                                        }
-                                    }
-                                    currentPageId = newId;
-                                }
 							}
                         }
                     }, requestProperties);
