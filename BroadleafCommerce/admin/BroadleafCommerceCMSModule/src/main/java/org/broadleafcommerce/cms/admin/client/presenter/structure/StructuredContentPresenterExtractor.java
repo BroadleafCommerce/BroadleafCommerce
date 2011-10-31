@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -38,6 +35,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -132,22 +132,23 @@ public class StructuredContentPresenterExtractor {
                                         extractQualifierData(newId, false, dirtyValues);
                                         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                         getDisplay().getStructuredContentSaveButton().disable();
+                                        if (!presenter.currentStructuredContentId.equals(newId)) {
+                                            for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
+                                                if (record.getAttribute("id").equals(presenter.currentStructuredContentId)) {
+                                                    record.setAttribute("id", newId);
+                                                    presenter.currentStructuredContentRecord = record;
+                                                    break;
+                                                }
+                                            }
+                                            presenter.currentStructuredContentId = newId;
+                                        }
+                                        getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentStructuredContentRecord));
                                     } catch (IncompatibleMVELTranslationException e) {
                                         SC.warn(e.getMessage());
                                     }
                                 }
                             }
                         });
-                        if (!presenter.currentStructuredContentId.equals(newId)) {
-                            for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
-                                if (record.getAttribute("id").equals(presenter.currentStructuredContentId)) {
-                                    record.setAttribute("id", newId);
-                                    presenter.currentStructuredContentRecord = selectedRecord;
-                                    break;
-                                }
-                            }
-                            presenter.currentStructuredContentId = newId;
-                        }
                     }
                 }
             }, requestProperties);
