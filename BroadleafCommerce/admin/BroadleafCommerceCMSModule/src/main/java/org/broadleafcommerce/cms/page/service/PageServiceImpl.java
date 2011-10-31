@@ -238,6 +238,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             criteria.add(Restrictions.isNull("sandbox"));
             return (Long) criteria.uniqueResult();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -250,18 +251,18 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                 productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
             }
 
-            criteria.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+            criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
 
             Long resultCount = (Long) criteria.list().get(0);
             Long updatedCount = 0L;
             Long deletedCount = 0L;
 
             // count updated items
-            criteria.add(Restrictions.and(Restrictions.isNotNull("originalPageId"),Restrictions.eq("sandbox", sandbox)));
+            criteria.add(Restrictions.and(Restrictions.isNotNull("originalPageId"),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
             updatedCount = (Long) criteria.list().get(0);
 
             // count deleted items
-            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
+            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
             deletedCount = (Long) criteria.list().get(0);
 
             return resultCount - updatedCount - deletedCount;
@@ -277,6 +278,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             criteria.add(Restrictions.isNull("sandbox"));
             return (List<Page>) criteria.list();
         } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
             Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
             Criterion productionSandboxExpression = null;
             if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
@@ -288,9 +290,9 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             }
 
             if (productionSandboxExpression != null) {
-                criteria.add(Restrictions.or(currentSandboxExpression,productionSandboxExpression));
+                criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
             } else {
-                criteria.add(currentSandboxExpression);
+                criteria.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
             }
 
             List<Page> resultList = (List<Page>) criteria.list();
