@@ -15,15 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
@@ -40,10 +31,10 @@ import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.DateTimeItem;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.HeaderItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.PasswordItem;
-import com.smartgwt.client.widgets.form.fields.SectionItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
@@ -57,6 +48,15 @@ import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -224,8 +224,8 @@ public class FormBuilder {
 				}
         	});
         	for (String group : groups) {
-        		SectionItem section = new SectionItem();  
-                section.setDefaultValue(group);
+                HeaderItem headerItem = new HeaderItem();
+                headerItem.setDefaultValue(group);
                 List<FormItem> formItems = sections.get(group);
                 String[] ids = new String[formItems.size()];
                 int x=0;
@@ -240,14 +240,8 @@ public class FormBuilder {
                 if (containsRichTextItem == null) {
                     containsRichTextItem = false;
                 }
-                //Disallow collapsing of sections
-                //boolean shouldExpand = sectionCollapsed.get(group)==null?true:!sectionCollapsed.get(group);
-                //section.setSectionExpanded(containsRichTextItem || shouldExpand);
-                //section.setCanCollapse(!containsRichTextItem);
-                section.setSectionExpanded(true);
-                section.setCanCollapse(false);
-                section.setItemIds(ids);
-                allItems.add(section);
+
+                allItems.add(headerItem);
                 allItems.addAll(formItems);
                 j++;
         	}
