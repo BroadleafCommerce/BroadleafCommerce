@@ -153,8 +153,10 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         fetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                setStartState();
-                formPresenter.disable();
+                if (display.getListDisplay().getGrid().getSelectedRecord() == null) {
+                    setStartState();
+                    formPresenter.disable();
+                }
             }
         });
 		selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
