@@ -1,18 +1,16 @@
 package org.broadleafcommerce.profile.core.service.handler;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.service.type.LocaleType;
 import org.broadleafcommerce.profile.email.service.EmailService;
 import org.broadleafcommerce.profile.email.service.info.EmailInfo;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class EmailNotificationPasswordUpdatedHandler implements PasswordUpdatedHandler {
 
@@ -31,9 +29,14 @@ public class EmailNotificationPasswordUpdatedHandler implements PasswordUpdatedH
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void passwordChanged(PasswordReset passwordReset, Customer customer, String newPassword) {
 		Locale localeToUse = null;
-		LocaleType localeType = customer.getCustomerLocale();
-		if (localeType != null) {
-			localeToUse = localeType.getLocale();
+		org.broadleafcommerce.common.locale.domain.Locale blLocale = customer.getCustomerLocale();
+		if (blLocale != null) {
+            String[] splitLocale = blLocale.getLocaleCode().split("_");
+            if (splitLocale.length > 1) {
+			    localeToUse = new Locale(splitLocale[0], splitLocale[1]);
+            } else {
+                localeToUse = new Locale(splitLocale[0]);
+            }
 		}
 		if (localeToUse == null) {
 			localeToUse = getPasswordResetEmailDefaultLocale();

@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.cms.locale.domain.Locale;
-import org.broadleafcommerce.cms.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;

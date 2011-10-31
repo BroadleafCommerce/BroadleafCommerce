@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.dao;
 
-import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;

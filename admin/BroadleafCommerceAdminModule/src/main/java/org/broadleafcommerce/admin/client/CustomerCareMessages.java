@@ -65,5 +65,6 @@ public interface CustomerCareMessages extends ConstantsWithLookup {
 	public String confirmResetPassword();
 	public String resetPasswordSuccessful();
 	public String challengeQuestionSearchPrompt();
+    public String localeSearchPrompt();
 	
 }

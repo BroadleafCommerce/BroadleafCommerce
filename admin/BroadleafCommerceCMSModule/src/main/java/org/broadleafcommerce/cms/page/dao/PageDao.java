@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
-import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;

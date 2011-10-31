@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.cms.locale.service;
+package org.broadleafcommerce.common.locale.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.locale.dao.LocaleDao;
-import org.broadleafcommerce.cms.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.dao.LocaleDao;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

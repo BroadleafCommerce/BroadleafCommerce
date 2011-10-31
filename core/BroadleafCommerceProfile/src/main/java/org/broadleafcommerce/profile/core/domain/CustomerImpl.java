@@ -15,19 +15,30 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.audit.Auditable;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.openadmin.audit.AuditableListener;
+import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.profile.core.service.type.LocaleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
-import java.util.Locale;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -72,7 +83,7 @@ public class CustomerImpl implements Customer {
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    @AdminPresentation(friendlyName="Challenge Question", group="Customer", excluded = true)
+    @AdminPresentation(friendlyName="Challenge Question", group="Customer", excluded = true, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
@@ -90,10 +101,11 @@ public class CustomerImpl implements Customer {
     @Column(name = "IS_REGISTERED")
     @AdminPresentation(friendlyName="Customer Registered", group="Customer")
     protected boolean registered = false;
-    
-    @Column(name = "CUSTOMER_LOCALE")
-    @AdminPresentation(friendlyName="Customer Locale", group="Customer", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.core.service.type.LocaleType")
-    protected String customerLocale = Locale.US.toString();
+
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_ID")
+    @AdminPresentation(friendlyName="Customer Locale", group="Customer", excluded = true, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
+    protected Locale customerLocale;
 
     @Transient
     protected String unencodedPassword;
@@ -257,17 +269,14 @@ public class CustomerImpl implements Customer {
             cookied = false;
         }
     }
-    
-    public LocaleType getCustomerLocale() {
-    	if (customerLocale == null) {
-    		return null;
-    	}
-    	return LocaleType.getInstance(customerLocale);
-	}
 
-	public void setCustomerLocale(LocaleType customerLocale) {
-		this.customerLocale = customerLocale.getType();
-	}
+    public Locale getCustomerLocale() {
+        return customerLocale;
+    }
+
+    public void setCustomerLocale(Locale customerLocale) {
+        this.customerLocale = customerLocale;
+    }
 
     @Override
     public boolean equals(Object obj) {

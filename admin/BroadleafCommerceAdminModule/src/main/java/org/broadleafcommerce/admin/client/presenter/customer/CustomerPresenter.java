@@ -24,6 +24,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.customer.LocaleListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -106,12 +107,25 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				((ListGridDataSource) result).resetPermanentFieldVisibility("question");
-                final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                final EntitySearchDialog challengeQuestionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 getPresenterSequenceSetupManager().getDataSource("customerDS").
                 getFormItemCallbackHandlerManager().addSearchFormItemCallback(
                     "challengeQuestion",
                     challengeQuestionSearchView,
                     BLCMain.getMessageManager().getString("challengeQuestionSearchPrompt"),
+                    display.getDynamicFormDisplay()
+                );
+			}
+		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("localeDS", new LocaleListDataSourceFactory(), new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				((ListGridDataSource) result).resetPermanentFieldVisibility("friendlyName");
+                final EntitySearchDialog localeSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
+                getPresenterSequenceSetupManager().getDataSource("customerDS").
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "customerLocale",
+                    localeSearchView,
+                    BLCMain.getMessageManager().getString("localeSearchPrompt"),
                     display.getDynamicFormDisplay()
                 );
 			}

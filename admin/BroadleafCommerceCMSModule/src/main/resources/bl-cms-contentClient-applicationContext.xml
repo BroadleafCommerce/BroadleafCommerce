@@ -14,6 +14,7 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce.cms"/>
+    <context:component-scan base-package="org.broadleafcommerce.common.locale"/>
 
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
