@@ -16,7 +16,7 @@
 package org.broadleafcommerce.openadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.History;
 
 /**
  * 
@@ -24,13 +24,48 @@ import com.google.gwt.user.client.Window;
  *
  */
 public class BLCLaunch implements EntryPoint {
+    private static String PAGE_FRAGMENT = "pageKey=";
+    private static String MODULE_FRAGMENT = "moduleKey=";
+
 
 	public void onModuleLoad() {
 		if (BLCMain.SPLASH_PROGRESS != null) {
 			BLCMain.SPLASH_PROGRESS.startProgress();
 		}
-		String moduleParam = Window.Location.getParameter("defaultModule");
-		BLCMain.drawCurrentState(moduleParam);
+
+        String currentModulePage = History.getToken();
+        BLCMain.drawCurrentState(getSelectedModule(currentModulePage), getSelectedPage(currentModulePage));
 	}
+
+    public static String getSelectedModule(String currentModulePage) {
+        String moduleParam = null;
+        if (currentModulePage != null) {
+            int moduleStart = currentModulePage.indexOf(MODULE_FRAGMENT);
+            int ampLocation = currentModulePage.indexOf("&");
+
+            if (moduleStart >= 0) {
+                moduleStart = moduleStart + MODULE_FRAGMENT.length();
+                int moduleEnd = currentModulePage.length();
+                if (ampLocation > 0 && ampLocation > moduleStart) {
+                    moduleEnd = ampLocation;
+                }
+
+                moduleParam = currentModulePage.substring(moduleStart,moduleEnd);
+            }
+        }
+        return moduleParam;
+    }
+
+    public static String getSelectedPage(String currentModulePage) {
+        String pageParam = null;
+        if (currentModulePage != null) {
+            int pageStart = currentModulePage.indexOf(PAGE_FRAGMENT);
+
+            if (pageStart >= 0) {
+                pageParam = currentModulePage.substring(pageStart + PAGE_FRAGMENT.length());
+            }
+        }
+        return pageParam;
+    }
 
 }

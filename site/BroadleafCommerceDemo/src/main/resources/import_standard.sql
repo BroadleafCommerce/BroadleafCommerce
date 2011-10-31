@@ -3,8 +3,8 @@
 
 --start of security configuration
 INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (1,'admin@yourdomain.com','admin','Administrator','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (2,'promo@yourdomain.com','promo','Promotion Manager','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (3,'merchandise@yourdomain.com','merchandise','Merchandise Manager','admin');
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (2,'merchandise@yourdomain.com','merchandise','Merchandise Manager','admin');
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (3,'promo@yourdomain.com','promo','Promotion Manager','admin');
 INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (4,'csr@yourdomain.com','csr','CSR','admin');
 INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (5,'cms_edit@yourdomain.com','cmsEditor','CMS Editor','admin');
 INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (6,'cms_approver@yourdomain.com','cmsApprover','CMS Approver','admin');

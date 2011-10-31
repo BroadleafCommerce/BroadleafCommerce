@@ -15,23 +15,6 @@
  */
 package org.broadleafcommerce.cms.web;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +31,22 @@ import org.broadleafcommerce.openadmin.time.FixedTimeSource;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This filter sets up the current sandbox, time of day, and languageCode that
@@ -102,6 +101,11 @@ public class ContentFilter extends OncePerRequestFilter {
 
     private static final String BLC_PAGE = "BLC_PAGE";
 
+
+    // Path for BLC Admin requests
+    public static final String BLC_ADMIN = "org.broadleafcommerce.admin";
+    private static final String BLC_ADMIN_SERVICE = ".service";
+
     @Resource(name="blSandBoxService")
     private SandBoxService sandBoxService;
 
@@ -111,12 +115,27 @@ public class ContentFilter extends OncePerRequestFilter {
     @Resource(name="blLocaleService")
     private LocaleService localeService;
 
+    private boolean shouldExcludeURL(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return (requestURI.contains(BLC_ADMIN) || requestURI.endsWith(BLC_ADMIN_SERVICE));
+    }
+
 
 
 	/** (non-Javadoc)
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
 	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+
+        if (shouldExcludeURL(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("CONTENT FILTER BEGIN " + request.getPathInfo());
+        }
         if (request.getAttribute(REQUEST_DTO) == null) {
             request.setAttribute(REQUEST_DTO, new RequestDTOImpl(request));
         }
