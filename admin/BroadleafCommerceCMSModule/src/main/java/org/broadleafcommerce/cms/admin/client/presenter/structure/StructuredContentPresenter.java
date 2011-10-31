@@ -223,7 +223,9 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                destroyContentTypeForm();
+                if (display.getListDisplay().getGrid().getSelectedRecord() == null) {
+                    destroyContentTypeForm();
+                }
             }
         });
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {

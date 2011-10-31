@@ -205,7 +205,9 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                destroyTemplateForm();
+                if (display.getListDisplay().getGrid().getSelectedRecord() == null) {
+                    destroyTemplateForm();
+                }
             }
         });
 	}
