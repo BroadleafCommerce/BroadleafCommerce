@@ -25,7 +25,6 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
@@ -133,13 +132,9 @@ public class StructuredContentPresenterExtractor {
                                         getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                         getDisplay().getStructuredContentSaveButton().disable();
                                         if (!presenter.currentStructuredContentId.equals(newId)) {
-                                            for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
-                                                if (record.getAttribute("id").equals(presenter.currentStructuredContentId)) {
-                                                    record.setAttribute("id", newId);
-                                                    presenter.currentStructuredContentRecord = record;
-                                                    break;
-                                                }
-                                            }
+                                            Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentStructuredContentId);
+                                            myRecord.setAttribute("id", newId);
+                                            presenter.currentStructuredContentRecord = myRecord;
                                             presenter.currentStructuredContentId = newId;
                                         }
                                         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentStructuredContentRecord));

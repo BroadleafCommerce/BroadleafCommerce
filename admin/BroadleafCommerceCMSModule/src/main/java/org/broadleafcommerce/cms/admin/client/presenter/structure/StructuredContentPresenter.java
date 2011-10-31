@@ -75,7 +75,6 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
     protected Record currentStructuredContentRecord;
     protected String currentStructuredContentId;
     protected Integer currentStructuredContentPos;
-    protected boolean isFetched = false;
     protected StructuredContentPresenterInitializer initializer;
     protected StructuredContentPresenterExtractor extractor;
 
@@ -225,12 +224,6 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
             @Override
             public void onFilterData(FetchDataEvent event) {
                 destroyContentTypeForm();
-            }
-        });
-        getDisplay().getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
-            @Override
-            public void onFilterData(FetchDataEvent event) {
-                isFetched = true;
             }
         });
         getDisplay().getAddItemButton().addClickHandler(new ClickHandler() {

@@ -36,7 +36,6 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
@@ -188,13 +187,9 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                         if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                                             if (!currentPageId.equals(newId)) {
-                                                for (ListGridRecord record : getDisplay().getListDisplay().getGrid().getRecords()) {
-                                                    if (record.getAttribute("id").equals(currentPageId)) {
-                                                        record.setAttribute("id", newId);
-                                                        currentPageRecord = record;
-                                                        break;
-                                                    }
-                                                }
+                                                Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", currentPageId);
+                                                myRecord.setAttribute("id", newId);
+                                                currentPageRecord = myRecord;
                                                 currentPageId = newId;
                                             }
                                             getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentPageRecord));

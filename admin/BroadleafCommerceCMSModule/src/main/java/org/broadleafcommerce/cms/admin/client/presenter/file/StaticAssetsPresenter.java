@@ -131,13 +131,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm imp
                             getDisplay().getListLeafDisplay().getGrid().getDataSource().updateCaches(updateResponse);
                             getDisplay().getListLeafDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
                             String primaryKey = getDisplay().getListLeafDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
-                            boolean foundRecord = false;
-                            for (Record record : getDisplay().getListLeafDisplay().getGrid().getRecords()) {
-                                if (record.getAttribute(primaryKey).equals(event.getRecord().getAttribute(primaryKey))) {
-                                    foundRecord = true;
-                                    break;
-                                }
-                            }
+                            boolean foundRecord = getDisplay().getListLeafDisplay().getGrid().getResultSet().find(primaryKey, event.getRecord().getAttribute(primaryKey)) != null;
                             if (!foundRecord) {
                                 ((AbstractDynamicDataSource) getDisplay().getListLeafDisplay().getGrid().getDataSource()).setAddedRecord(event.getRecord());
                                 getDisplay().getListLeafDisplay().getGrid().getDataSource().fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
