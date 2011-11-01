@@ -157,6 +157,12 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                     if (legacyForm != null) {
                         legacyForm.getForm().reset();
                     }
+
+                    for (FormItem formItem : legacyForm.getForm().getFields()) {
+                        if (formItem instanceof RichTextCanvasItem) {
+                            formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
+                        }
+                    }
 					getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                     getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
 				}

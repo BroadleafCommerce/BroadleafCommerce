@@ -290,6 +290,12 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         if (legacyForm != null) {
             legacyForm.getForm().reset();
         }
+
+        for (FormItem formItem : legacyForm.getForm().getFields()) {
+            if (formItem instanceof RichTextCanvasItem) {
+                formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
+            }
+        }
         getDisplay().getDynamicFormDisplay().getSaveButton().enable();
         getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
         getDisplay().getStructuredContentSaveButton().enable();

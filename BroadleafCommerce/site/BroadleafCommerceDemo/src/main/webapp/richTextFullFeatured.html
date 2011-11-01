@@ -33,6 +33,9 @@
                 tinymce.dom.Event.add(doc, 'keypress', function(e) {
                     window.parent.enableSaveButton();
                 });
+                tinymce.dom.Event.add(doc, 'click', function(e) {
+                    window.parent.enableSaveButton();
+                });
             });
             ed.addButton('assetSearch', {
                 title : 'Asset Search',
