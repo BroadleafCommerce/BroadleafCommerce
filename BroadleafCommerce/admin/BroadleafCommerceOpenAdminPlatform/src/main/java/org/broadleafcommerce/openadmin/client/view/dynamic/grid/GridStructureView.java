@@ -24,6 +24,7 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 
 /**
  * 
@@ -57,12 +58,15 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         toolBar.setWidth100();
         toolBar.setMinWidth(300);
         toolBar.addSpacer(6);
-        addButton = new ToolStripButton();  
-        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png"); 
+        addButton = new ToolStripButton();
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         addButton.setDisabled(true);
         toolBar.addButton(addButton);
+        toolBar.addSpacer(6);
         removeButton = new ToolStripButton();
-        removeButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
+        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
         toolBar.setDisabled(false);

@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -30,6 +27,9 @@ import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -113,6 +113,7 @@ public class OfferPresenterExtractor {
 					try {
 						extractQualifierData(selectedRecord, type, false, dirtyValues);
 						getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
 					} catch (IncompatibleMVELTranslationException e) {
 						SC.warn(e.getMessage());
 					}

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.client.view.user;
 
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyDisplay;
@@ -75,22 +76,27 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         toolBar.setWidth100();
         toolBar.setMinWidth(300);
         toolBar.addSpacer(6);
-        addButton = new ToolStripButton();  
-        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png"); 
+        addButton = new ToolStripButton();
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         addButton.setDisabled(true);
         toolBar.addButton(addButton);
         removeButton = new ToolStripButton();
-        removeButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle") + " " + title);
+        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
         toolBar.addSpacer(6);
-        saveButton = new ToolStripButton();  
-        saveButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/save.png"); 
+        saveButton = new ToolStripButton();
+        saveButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/save.png");
+        saveButton.setTitle(BLCMain.getMessageManager().getString("saveTitle"));
         saveButton.setDisabled(true);
         toolBar.addButton(saveButton);
         saveButton.setDisabled(true);
-        refreshButton = new ToolStripButton();  
-        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png"); 
+        refreshButton = new ToolStripButton();
+        refreshButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/refresh.png");
+        refreshButton.setTitle(BLCMain.getMessageManager().getString("restoreTitle"));
+        refreshButton.setTooltip(BLCMain.getMessageManager().getString("restoreTooltip"));
         refreshButton.setDisabled(true);
         toolBar.addButton(refreshButton);
         toolBar.setDisabled(false);

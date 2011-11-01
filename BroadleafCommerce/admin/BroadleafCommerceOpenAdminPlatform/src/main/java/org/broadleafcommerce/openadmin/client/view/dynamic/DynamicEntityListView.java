@@ -58,44 +58,18 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
-
         addButton = new ToolStripButton();
-        //addButton.setDisabled(true);
-        addButton.setTitle("Add New " + title);
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
         addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
         toolBar.addButton(addButton);
-
         toolBar.addSpacer(6);
-
         removeButton = new ToolStripButton();
-        removeButton.setTitle("Remove " + title);
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
         removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
 
         toolBar.addFill();
-
-
-     /*   HashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
-        if (polymorphicEntities.size() > 1) { 
-            entityType.setShowTitle(false);  
-            entityType.setWidth(180); 
-            
-            LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
-            for (String name : polymorphicEntities.keySet()) {
-            	valueMap.put(name, polymorphicEntities.get(name)); 
-            }
-            entityType.setValueMap(valueMap);  
-            entityType.setDefaultValue(((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()); 
-            entityType.addFocusHandler(new FocusHandler() {
-				public void onFocus(FocusEvent event) {
-					((ComboBoxItem) event.getItem()).selectValue();
-				}
-            });
-            toolBar.addFormItem(entityType);
-        } */
-
-
 
         addMember(toolBar);
 

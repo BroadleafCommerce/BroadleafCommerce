@@ -25,6 +25,7 @@ import com.smartgwt.client.widgets.grid.ColumnTree;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 
 import java.util.LinkedHashMap;
@@ -45,18 +46,26 @@ public class DynamicEntityColumnTreeView extends VLayout implements DynamicEntit
 
 	public DynamicEntityColumnTreeView(String title, DataSource dataSource) {
 		super();
+        if ("".equals(title) || title == null) {
+            title = "Item";
+        }
 		toolBar = new ToolStrip();
 		toolBar.setHeight(20);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
+
         addButton = new ToolStripButton();  
         addButton.setDisabled(true);
-        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
         toolBar.addButton(addButton);
-        removeButton = new ToolStripButton(); 
-        removeButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+
+        removeButton = new ToolStripButton();
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
+        removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
+
         toolBar.addSpacer(6);
         Label categoryLabel = new Label();
         categoryLabel.setContents(title);

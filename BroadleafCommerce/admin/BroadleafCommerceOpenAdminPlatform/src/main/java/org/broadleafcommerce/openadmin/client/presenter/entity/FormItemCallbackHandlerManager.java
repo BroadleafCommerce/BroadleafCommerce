@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
@@ -28,6 +26,8 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+
+import java.util.HashMap;
 
 /**
  * 
@@ -72,6 +72,7 @@ public class FormItemCallbackHandlerManager {
 				            public void run() {  
 				            	formItem.setValue(myId);
 				            	dynamicFormDisplay.getSaveButton().enable();
+                                dynamicFormDisplay.getRefreshButton().enable();
                                 if (cb != null) {
                                     cb.execute(formItem);
                                 }

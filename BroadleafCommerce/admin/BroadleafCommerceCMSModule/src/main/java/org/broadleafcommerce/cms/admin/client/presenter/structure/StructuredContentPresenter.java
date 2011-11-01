@@ -159,7 +159,9 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
                     public void onItemChanged(ItemChangedEvent event) {
                         getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                        getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                         getDisplay().getStructuredContentSaveButton().enable();
+                        getDisplay().getStructuredContentRefreshButton().enable();
                     }
                 });
                 formOnlyView.setID("contentTypeForm");
@@ -235,7 +237,9 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                     bindItemBuilderEvents(display);
                     display.setDirty(true);
                     getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                    getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                     getDisplay().getStructuredContentSaveButton().enable();
+                    getDisplay().getStructuredContentRefreshButton().enable();
                 }
             }
         });
@@ -245,25 +249,33 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
             }
         });
         getDisplay().getProductFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
             }
         });
         getDisplay().getRequestFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
             }
         });
         getDisplay().getTimeFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
             }
         });
 	}
@@ -278,8 +290,10 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         if (legacyForm != null) {
             legacyForm.getForm().reset();
         }
-        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-        getDisplay().getStructuredContentSaveButton().disable();
+        getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+        getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
+        getDisplay().getStructuredContentSaveButton().enable();
+        getDisplay().getStructuredContentRefreshButton().enable();
     }
 
     protected void bindItemBuilderEvents(final ItemBuilderDisplay display) {
@@ -293,21 +307,27 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
                 display.setDirty(true);
             }
         });
         display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
                 display.setDirty(true);
             }
         });
         display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getStructuredContentSaveButton().enable();
+                getDisplay().getStructuredContentRefreshButton().enable();
                 display.setDirty(true);
             }
         });

@@ -22,6 +22,7 @@ import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 
 /**
  * 
@@ -48,11 +49,15 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
         toolbar.setWidth100();
         toolbar.addSpacer(6);
         saveButton = new ToolStripButton();  
-        saveButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/save.png");   
+        saveButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/save.png");
+        saveButton.setTitle(BLCMain.getMessageManager().getString("saveTitle"));
         toolbar.addButton(saveButton);
         saveButton.setDisabled(true);
         refreshButton = new ToolStripButton();  
-        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");   
+        refreshButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/refresh.png");
+        refreshButton.setTitle(BLCMain.getMessageManager().getString("restoreTitle"));
+        refreshButton.setTooltip(BLCMain.getMessageManager().getString("restoreTooltip"));
+        refreshButton.setDisabled(true);
         toolbar.addButton(refreshButton);
         toolbar.addSpacer(6);
         Label productDetailsLabel = new Label();
