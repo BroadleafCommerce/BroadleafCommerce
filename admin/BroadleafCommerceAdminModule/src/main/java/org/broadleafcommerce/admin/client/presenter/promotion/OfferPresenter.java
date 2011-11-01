@@ -143,86 +143,103 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         getDisplay().getStepFGForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getStepItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getStepBogoForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getOrderCombineForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getOrderItemCombineForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRawCustomerForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRawOrderForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRawFGForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getRestrictForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getCustomerObtainForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getWhichCustomerForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getOrderForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getReceiveFromAnotherPromoForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getQualifyForAnotherPromoForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getReceiveFromAnotherPromoTargetForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getQualifyForAnotherPromoTargetForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getFGCombineForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
             }
         });
         getDisplay().getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
@@ -379,6 +396,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                     bindItemBuilderEvents(display);
                     display.setDirty(true);
                     getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                    getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 }
             }
         });
@@ -388,36 +406,42 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getRawCustomerTextArea().setAttribute("dirty", true);
             }
         });
         getDisplay().getOrderFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getRawOrderTextArea().setAttribute("dirty", true);
             }
         });
         getDisplay().getFulfillmentGroupFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getRawFGTextArea().setAttribute("dirty", true);
             }
         });
         getDisplay().getTargetItemBuilder().getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getTargetItemBuilder().setDirty(true);
             }
         });
         getDisplay().getTargetItemBuilder().getItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getTargetItemBuilder().setDirty(true);
             }
         });
         getDisplay().getTargetItemBuilder().getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 getDisplay().getTargetItemBuilder().setDirty(true);
             }
         });
@@ -441,18 +465,21 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
         display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 display.setDirty(true);
             }
         });
         display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
             public void onItemChanged(ItemChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 display.setDirty(true);
             }
         });
         display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                 display.setDirty(true);
             }
         });

@@ -63,21 +63,31 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
-        revertRejectSelectionButton = new ToolStripButton();
-        revertRejectSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_left.png");
-        toolBar.addButton(revertRejectSelectionButton);
-        revertRejectAllButton = new ToolStripButton();
-        revertRejectAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_left.png");
-        toolBar.addButton(revertRejectAllButton);
+        promoteSelectionButton = new ToolStripButton();
+        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteTitle"));
+        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteTooltip"));
+        toolBar.addButton(promoteSelectionButton);
+        promoteAllButton = new ToolStripButton();
+        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteAllTitle"));
+        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteAllTooltip"));
+        toolBar.addButton(promoteAllButton);
+
 
         toolBar.addSeparator();
 
-        promoteSelectionButton = new ToolStripButton();
-        promoteSelectionButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/arrow_right.png");
-        toolBar.addButton(promoteSelectionButton);
-        promoteAllButton = new ToolStripButton();
-        promoteAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_right.png");
-        toolBar.addButton(promoteAllButton);
+        revertRejectSelectionButton = new ToolStripButton();
+        revertRejectSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
+        revertRejectSelectionButton.setTitle(BLCMain.getMessageManager().getString("rejectTitle"));
+        revertRejectSelectionButton.setTooltip(BLCMain.getMessageManager().getString("rejectTooltip"));
+        toolBar.addButton(revertRejectSelectionButton);
+        revertRejectAllButton = new ToolStripButton();
+        revertRejectAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
+        revertRejectAllButton.setTitle(BLCMain.getMessageManager().getString("rejectAllTitle"));
+        revertRejectAllButton.setTooltip(BLCMain.getMessageManager().getString("rejectAllTooltip"));
+        toolBar.addButton(revertRejectAllButton);
+
 
         toolBar.addSpacer(6);
         Label productLabel = new Label();
@@ -88,9 +98,11 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         toolBar.addFill();
         refreshButton = new ToolStripButton();
         refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        refreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         toolBar.addButton(refreshButton);
         previewButton = new ToolStripButton();
         previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        previewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
         toolBar.addButton(previewButton);
         toolBar.addSpacer(6);
 

@@ -73,23 +73,32 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
-        revertSelectionButton = new ToolStripButton();
-        revertSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_down.png");
-        toolBar.addButton(revertSelectionButton);
-        revertRejectAllButton = new ToolStripButton();
-        revertRejectAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_down.png");
-        toolBar.addButton(revertRejectAllButton);
+        promoteSelectionButton = new ToolStripButton();
+        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteTitle"));
+        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteTooltip"));
+        toolBar.addButton(promoteSelectionButton);
+        promoteAllButton = new ToolStripButton();
+        promoteAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteAllButton.setTitle(BLCMain.getMessageManager().getString("promoteAllTitle"));
+        promoteAllButton.setTooltip(BLCMain.getMessageManager().getString("promoteAllTooltip"));
+        toolBar.addButton(promoteAllButton);
 
         toolBar.addSeparator();
 
-        promoteSelectionButton = new ToolStripButton();
-        promoteSelectionButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/arrow_up.png");
-        toolBar.addButton(promoteSelectionButton);
-        promoteAllButton = new ToolStripButton();
-        promoteAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_up.png");
-        toolBar.addButton(promoteAllButton);
-
+        revertSelectionButton = new ToolStripButton();
+        revertSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
+        revertSelectionButton.setTitle(BLCMain.getMessageManager().getString("revertTitle"));
+        revertSelectionButton.setTooltip(BLCMain.getMessageManager().getString("revertTooltip"));
+        toolBar.addButton(revertSelectionButton);
+        revertRejectAllButton = new ToolStripButton();
+        revertRejectAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
+        revertRejectAllButton.setTitle(BLCMain.getMessageManager().getString("revertAllTitle"));
+        revertRejectAllButton.setTooltip(BLCMain.getMessageManager().getString("revertAllTooltip"));
+        toolBar.addButton(revertRejectAllButton);
         toolBar.addSpacer(6);
+
+
         Label mySandBoxLabel = new Label();
         mySandBoxLabel.setContents(BLCMain.getMessageManager().getString("userSandBoxTitle"));
         mySandBoxLabel.setWrap(false);
@@ -98,9 +107,11 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         toolBar.addFill();
         refreshButton = new ToolStripButton();
         refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        refreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         toolBar.addButton(refreshButton);
         previewButton = new ToolStripButton();
         previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        previewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
         toolBar.addButton(previewButton);
         toolBar.addSpacer(6);
 
@@ -133,19 +144,27 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
 		pendingToolBar.addSpacer(6);
 
         reclaimSelectionButton = new ToolStripButton();
-        reclaimSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_left.png");
+        reclaimSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/reclaim.png");
+        reclaimSelectionButton.setTitle(BLCMain.getMessageManager().getString("reclaimTitle"));
+        reclaimSelectionButton.setTooltip(BLCMain.getMessageManager().getString("reclaimTooltip"));
         pendingToolBar.addButton(reclaimSelectionButton);
         reclaimAllButton = new ToolStripButton();
-        reclaimAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_left.png");
+        reclaimAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/reclaim.png");
+        reclaimAllButton.setTitle(BLCMain.getMessageManager().getString("reclaimAllTitle"));
+        reclaimAllButton.setTooltip(BLCMain.getMessageManager().getString("reclaimAllTooltip"));
         pendingToolBar.addButton(reclaimAllButton);
 
         pendingToolBar.addSeparator();
 
         releaseSelectionButton = new ToolStripButton();
-        releaseSelectionButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/arrow_down.png");
+        releaseSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/unlock.png");
+        releaseSelectionButton.setTitle(BLCMain.getMessageManager().getString("unlockTitle"));
+        releaseSelectionButton.setTooltip(BLCMain.getMessageManager().getString("unlockTooltip"));
         pendingToolBar.addButton(releaseSelectionButton);
         releaseAllButton = new ToolStripButton();
-        releaseAllButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_down.png");
+        releaseAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/unlock.png");
+        releaseAllButton.setTitle(BLCMain.getMessageManager().getString("unlockAllTitle"));
+        releaseAllButton.setTooltip(BLCMain.getMessageManager().getString("unlockAllTooltip"));
         pendingToolBar.addButton(releaseAllButton);
 
         pendingToolBar.addSpacer(6);
@@ -157,9 +176,11 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         pendingToolBar.addFill();
         pendingRefreshButton = new ToolStripButton();
         pendingRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        pendingRefreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         pendingToolBar.addButton(pendingRefreshButton);
         pendingPreviewButton = new ToolStripButton();
         pendingPreviewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
+        pendingPreviewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
         pendingToolBar.addButton(pendingPreviewButton);
         pendingToolBar.addSpacer(6);
 

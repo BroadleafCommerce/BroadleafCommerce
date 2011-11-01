@@ -54,4 +54,46 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String permissionManagementMainTitle();
     public String newPermissionTitle();
     public String newItemTitle();
+
+    // Toolbar operations
+    public String addTitle();
+    public String saveTitle();
+    public String removeTitle();
+    public String restoreTitle();
+    public String restoreTooltip();
+
+    // Sandbox Operations
+    public String promoteTitle();
+    public String promoteTooltip();
+
+    public String promoteAllTitle();
+    public String promoteAllTooltip();
+
+    public String revertTitle();
+    public String revertTooltip();
+
+    public String revertAllTitle();
+    public String revertAllTooltip();
+
+    public String rejectTitle();
+    public String rejectTooltip();
+
+    public String rejectAllTitle();
+    public String rejectAllTooltip();
+
+    public String unlockTitle();
+    public String unlockTooltip();
+
+    public String unlockAllTitle();
+    public String unlockAllTooltip();
+
+    public String reclaimTitle();
+    public String reclaimTooltip();
+
+    public String reclaimAllTitle();
+    public String reclaimAllTooltip();
+
+    public String previewTitle();
+    public String refreshTitle();
+
 }

@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.view.structure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
@@ -45,6 +42,9 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -138,11 +138,15 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         structuredContentToolBar.setWidth100();
         structuredContentToolBar.addSpacer(6);
         structuredContentSaveButton = new ToolStripButton();
-        structuredContentSaveButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/save.png");
+        structuredContentSaveButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/save.png");
+        structuredContentSaveButton.setTitle(BLCMain.getMessageManager().getString("saveTitle"));
         structuredContentToolBar.addButton(structuredContentSaveButton);
         structuredContentSaveButton.setDisabled(true);
         structuredContentRefreshButton = new ToolStripButton();
-        structuredContentRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
+        structuredContentRefreshButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/refresh.png");
+        structuredContentRefreshButton.setTitle(BLCMain.getMessageManager().getString("restoreTitle"));
+        structuredContentRefreshButton.setTooltip(BLCMain.getMessageManager().getString("restoreTooltip"));
+        structuredContentRefreshButton.setDisabled(true);
         structuredContentToolBar.addButton(structuredContentRefreshButton);
         structuredContentToolBar.addSpacer(6);
         rulesLayout.addMember(structuredContentToolBar);

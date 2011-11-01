@@ -42,7 +42,7 @@ public class DynamicFormPresenter {
 	public void setStartState() {
 		display.getSaveButton().disable();
 		display.getFormOnlyDisplay().getForm().enable();
-		display.getRefreshButton().enable();
+		display.getRefreshButton().disable();
 	}
 	
 	public void enable() {
@@ -67,6 +67,7 @@ public class DynamicFormPresenter {
 					requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
 					display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
 					display.getSaveButton().disable();
+                    display.getRefreshButton().disable();
 				}
 			}
         });
@@ -75,12 +76,14 @@ public class DynamicFormPresenter {
 				if (event.isLeftButtonDown()) {
 					display.getFormOnlyDisplay().getForm().reset();
 					display.getSaveButton().disable();
+                    display.getRefreshButton().disable();
 				}
 			}
         });
 		itemChangedHandlerRegistration=display.getFormOnlyDisplay().getForm().addItemChangedHandler(new ItemChangedHandler() {
 			public void onItemChanged(ItemChangedEvent event) {
 				display.getSaveButton().enable();
+                display.getRefreshButton().enable();
 			}
 		});
 		

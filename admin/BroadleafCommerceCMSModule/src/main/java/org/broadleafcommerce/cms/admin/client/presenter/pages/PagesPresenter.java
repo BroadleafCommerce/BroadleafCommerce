@@ -119,6 +119,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
                     public void onItemChanged(ItemChangedEvent event) {
                         getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                        getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                     }
                 });
                 formOnlyView.setID("pageTemplateForm");
@@ -157,6 +158,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         legacyForm.getForm().reset();
                     }
 					getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                    getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
 				}
 			}
         });
@@ -186,6 +188,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                                         if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                             getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                            getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
                                             if (!currentPageId.equals(newId)) {
                                                 Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", currentPageId);
                                                 myRecord.setAttribute("id", newId);

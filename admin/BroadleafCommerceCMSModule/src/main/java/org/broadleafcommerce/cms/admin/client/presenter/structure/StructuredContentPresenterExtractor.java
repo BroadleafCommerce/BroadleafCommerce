@@ -129,8 +129,10 @@ public class StructuredContentPresenterExtractor {
                                 if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                     try {
                                         extractQualifierData(newId, false, dirtyValues);
-                                        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                                        getDisplay().getStructuredContentSaveButton().disable();
+                                        getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                                        getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
+                                        getDisplay().getStructuredContentSaveButton().enable();
+                                        getDisplay().getStructuredContentRefreshButton().enable();
                                         if (!presenter.currentStructuredContentId.equals(newId)) {
                                             Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentStructuredContentId);
                                             myRecord.setAttribute("id", newId);
@@ -165,8 +167,10 @@ public class StructuredContentPresenterExtractor {
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
-                                getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                                getDisplay().getStructuredContentSaveButton().disable();
+                                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
+                                getDisplay().getStructuredContentSaveButton().enable();
+                                getDisplay().getStructuredContentRefreshButton().enable();
                             }
                         });
                     } else {
@@ -181,8 +185,10 @@ public class StructuredContentPresenterExtractor {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);
-                                getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                                getDisplay().getStructuredContentSaveButton().disable();
+                                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
+                                getDisplay().getStructuredContentSaveButton().enable();
+                                getDisplay().getStructuredContentRefreshButton().enable();
                             }
                         });
                     }
