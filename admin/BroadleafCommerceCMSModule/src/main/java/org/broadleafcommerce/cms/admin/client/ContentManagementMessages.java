@@ -62,5 +62,12 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String scOrderItemRule();
     public String newItemRuleButtonTitle();
     public String scProductRule();
+    public String basePage();
+    public String basePageTemplate();
+    public String baseStructuredContent();
+    public String baseStructuredContentType();
+    public String baseStructuredContentItemCriteria();
+    public String baseStructuredContentFieldTemplate();
+    public String baseSandBoxItem();
 
 }

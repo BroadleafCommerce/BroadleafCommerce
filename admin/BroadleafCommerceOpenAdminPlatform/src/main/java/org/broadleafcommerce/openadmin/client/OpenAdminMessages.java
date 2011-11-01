@@ -54,7 +54,11 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String permissionManagementMainTitle();
     public String newPermissionTitle();
     public String newItemTitle();
-
+    public String baseLocale();
+    public String baseAdminUser();
+    public String baseAdminRole();
+    public String baseAdminPermission();
+    
     // Toolbar operations
     public String addTitle();
     public String saveTitle();
@@ -95,5 +99,4 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
 
     public String previewTitle();
     public String refreshTitle();
-
 }

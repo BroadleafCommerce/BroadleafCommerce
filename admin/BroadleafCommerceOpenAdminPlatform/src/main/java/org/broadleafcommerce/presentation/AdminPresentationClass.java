@@ -39,4 +39,13 @@ public @interface AdminPresentationClass {
 	 */
 	PopulateToOneFieldsEnum populateToOneFields() default PopulateToOneFieldsEnum.NOT_SPECIFIED;
 
+    /**
+	 * The friendly name to present to a user for this field in a GUI. If supporting i18N,
+	 * the friendly name may be a key to retrieve a localized friendly name using
+	 * the GWT support for i18N. This name will be presented to users when they add a
+     * new entity in the GUI and select the polymorphic type for that new added entity.
+	 *
+	 * @return the friendly name
+	 */
+	String friendlyName() default "";
 }

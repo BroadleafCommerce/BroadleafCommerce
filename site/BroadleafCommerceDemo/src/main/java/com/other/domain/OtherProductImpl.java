@@ -17,6 +17,7 @@ package com.other.domain;
 
 import org.broadleafcommerce.core.catalog.domain.ProductSkuImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.presentation.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
@@ -38,6 +39,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "OTHER_PRODUCT")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationClass(friendlyName = "otherProduct")
 @AdminPresentationOverrides(@AdminPresentationOverride(name="description", value=@AdminPresentation(friendlyName="My Company Description", order=2, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)))
 public class OtherProductImpl extends ProductSkuImpl implements OtherProduct {
 

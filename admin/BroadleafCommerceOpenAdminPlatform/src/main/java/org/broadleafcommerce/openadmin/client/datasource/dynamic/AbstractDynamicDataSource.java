@@ -17,6 +17,7 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.CriteriaPolicy;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
@@ -26,6 +27,7 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 /**
  * 
@@ -112,7 +114,19 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
     }
 
     protected void buildPolymorphicEntityMap(ClassTree entity, LinkedHashMap<String, String> map) {
-        map.put(entity.getFullyQualifiedClassname(), entity.getName());
+        String friendlyName = entity.getFriendlyName();
+        if (friendlyName != null && !friendlyName.equals("")) {
+            //check if the friendly name is an i18N key
+            try {
+                String val = BLCMain.getMessageManager().getString(friendlyName);
+                if (val != null) {
+                    friendlyName = val;
+                }
+            } catch (MissingResourceException e) {
+                //do nothing
+            }
+        }
+        map.put(entity.getFullyQualifiedClassname(), friendlyName!=null?friendlyName:entity.getName());
         for (ClassTree child : entity.getChildren()) {
             buildPolymorphicEntityMap(child, map);
         }
