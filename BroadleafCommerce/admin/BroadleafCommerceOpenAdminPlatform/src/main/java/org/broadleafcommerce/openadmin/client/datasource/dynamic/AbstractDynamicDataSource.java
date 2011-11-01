@@ -62,7 +62,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 		this.modules = modules;
 	}
 
-	public Map<String, String> getPolymorphicEntities() {
+	public LinkedHashMap<String, String> getPolymorphicEntities() {
 		return polymorphicEntities;
 	}
 	

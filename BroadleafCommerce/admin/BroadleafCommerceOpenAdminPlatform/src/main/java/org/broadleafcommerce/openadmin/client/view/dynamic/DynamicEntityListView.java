@@ -53,7 +53,6 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
             title = "Item";
         }
 
-
 		toolBar = new ToolStrip();
 		toolBar.setHeight(30);
 		toolBar.setWidth100();

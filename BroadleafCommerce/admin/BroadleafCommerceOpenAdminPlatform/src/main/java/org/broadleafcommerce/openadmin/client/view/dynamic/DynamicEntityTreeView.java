@@ -20,18 +20,12 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
-import com.smartgwt.client.widgets.form.fields.events.FocusEvent;
-import com.smartgwt.client.widgets.form.fields.events.FocusHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -75,7 +69,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         categoryLabel.setWrap(false);
         toolBar.addMember(categoryLabel);
         toolBar.addFill();
-        Map<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
+        /*Map<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
         if (polymorphicEntities.size() > 1) { 
             entityType.setShowTitle(false);  
             entityType.setWidth(120); 
@@ -92,7 +86,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 				}
             });
             toolBar.addFormItem(entityType);
-        }
+        }*/
         addMember(toolBar);
         grid = new TreeGrid();
         grid.setAlternateRecordStyles(true);
