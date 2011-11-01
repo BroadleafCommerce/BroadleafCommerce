@@ -41,6 +41,8 @@ import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
@@ -49,6 +51,7 @@ import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -236,11 +239,25 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         addClicked(BLCMain.getMessageManager().getString("newItemTitle"));
     }
 
-	protected void addClicked(String newItemTitle) {
-        initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+	protected void addClicked(final String newItemTitle) {
+        initialValues.remove("_type");
+        LinkedHashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getPolymorphicEntities();
+        if (polymorphicEntities.size() > 1) {
+            BLCMain.POLYMORPHIC_ADD.search(BLCMain.getMessageManager().getString("selectPolymorphicType"), polymorphicEntities, new SearchItemSelectedHandler() {
+                @Override
+                public void onSearchItemSelected(SearchItemSelected event) {
+                    ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname(event.getRecord().getAttribute("fullyQualifiedType"));
+                    initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+                    addNewItem(newItemTitle);
+                }
+            });
+        }
+	}
+
+    protected void addNewItem(String newItemTitle) {
         compileDefaultValuesFromCurrentFilter(initialValues);
-		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
-            public void onItemEdited(final ItemEdited event) {
+        BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
+            public void onItemEdited(ItemEdited event) {
                 ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
@@ -260,7 +277,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 }
             }
         }, null, null);
-	}
+    }
 	
 	protected void removeClicked() {
 		SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {

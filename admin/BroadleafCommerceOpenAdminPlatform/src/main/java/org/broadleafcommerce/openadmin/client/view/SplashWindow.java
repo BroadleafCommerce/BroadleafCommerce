@@ -16,7 +16,6 @@
 package org.broadleafcommerce.openadmin.client.view;
 
 import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -52,11 +51,11 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
     	HLayout spacer3 = new HLayout();
     	spacer3.setWidth(25);
     	versionLayout.addMember(spacer3);
-    	Label versionLabel = new Label("Version " + version);
+    	/*Label versionLabel = new Label("Version " + version);
     	versionLabel.setWrap(false);
     	versionLabel.setStyleName("versionStyle");
     	versionLabel.setHeight(15);
-    	versionLayout.addMember(versionLabel);
+    	versionLayout.addMember(versionLabel);*/
     	layout.addMember(versionLayout);
     	VLayout spacer2 = new VLayout();
     	spacer2.setHeight(10);

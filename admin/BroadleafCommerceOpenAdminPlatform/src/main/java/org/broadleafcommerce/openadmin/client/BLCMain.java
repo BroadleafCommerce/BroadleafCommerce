@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.client.view.SimpleProgress;
 import org.broadleafcommerce.openadmin.client.view.SplashView;
 import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,16 +51,16 @@ public class BLCMain implements EntryPoint {
     static {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
-	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>();
+	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
 
     public static String webAppContext;
     public static String storeFrontWebAppContext;
     public static String adminContext;
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
-	//TODO set the version as part of the build
 	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
 	public static SimpleProgress NON_MODAL_PROGRESS = new SimpleProgress(16, 150);
 	public static EntityEditDialog ENTITY_ADD = new EntityEditDialog();
+    public static PolymorphicTypeSelectionDialog POLYMORPHIC_ADD = new PolymorphicTypeSelectionDialog();
 	public static MasterView MASTERVIEW;
 	public static boolean ISNEW = true;
 	public static String currentModuleKey;
