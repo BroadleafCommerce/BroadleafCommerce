@@ -67,4 +67,10 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
 	public String categoryMainTitle();
 	public String productMainTitle();
     public String merchandisingModuleTitle();
+    public String baseProduct();
+    public String skuProduct();
+    public String otherProduct();
+    public String baseCategory();
+    public String baseProductAttribute();
+
 }

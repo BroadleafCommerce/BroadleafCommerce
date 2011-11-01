@@ -64,7 +64,7 @@ import java.util.*;
 @Table(name="BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 public class ProductImpl implements Product {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);

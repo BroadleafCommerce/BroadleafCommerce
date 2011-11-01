@@ -56,7 +56,7 @@ import java.util.List;
         }
 )
 @EntityListeners(value = { AdminAuditableListener.class })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseSandBoxItem")
 public class SandBoxItemImpl implements SandBoxItem {
 
 	private static final long serialVersionUID = 1L;

@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.profile.cache.Hydrated;
 import org.broadleafcommerce.profile.cache.HydratedSetup;
 import org.broadleafcommerce.profile.cache.engine.CacheFactoryException;
@@ -65,6 +66,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(friendlyName = "baseCategory")
 public class CategoryImpl implements Category {
 	
 	private static final long serialVersionUID = 1L;

@@ -66,5 +66,22 @@ public interface CustomerCareMessages extends ConstantsWithLookup {
 	public String resetPasswordSuccessful();
 	public String challengeQuestionSearchPrompt();
     public String localeSearchPrompt();
-	
+    public String baseCustomer();
+	public String baseFulfillmentGroup();
+    public String baseOrderItem();
+    public String bundleOrderItem();
+    public String giftWrapOrderItem();
+    public String discreteOrderItem();
+    public String dynamicPriceOrderItem();
+    public String baseOrder();
+    public String baseDiscreteOrderItemFreePrice();
+    public String baseFulfillmentGroupAdjustment();
+    public String baseOfferCode();
+    public String baseOrderAdjustment();
+    public String baseOrderItemAdjustment();
+    public String basePaymentInfo();
+    public String baseCountry();
+    public String baseState();
+    public String baseChallengeQuestion();
+
 }

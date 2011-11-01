@@ -98,8 +98,8 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 
     public Criteria createCriteria(Class<?> entityClass);
 
-    public Map<String, Map<String, Map<String, FieldMetadata>>> getMetadataOverrides();
+    public Map<String, Map<String, Map<String, FieldMetadata>>> getFieldMetadataOverrides();
 
-    public void setMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides);
+    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides);
 
 }

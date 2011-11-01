@@ -15,11 +15,25 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,30 +45,17 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_DISCRETE_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationClass(friendlyName = "discreteOrderItem")
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;

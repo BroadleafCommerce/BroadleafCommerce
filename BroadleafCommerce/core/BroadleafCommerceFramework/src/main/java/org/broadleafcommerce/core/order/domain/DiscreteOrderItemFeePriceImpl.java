@@ -15,7 +15,11 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -29,17 +33,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_DISC_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+@AdminPresentationClass(friendlyName = "baseDiscreteOrderItemFreePrice")
 public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice  {
 
     private static final long serialVersionUID = 1L;

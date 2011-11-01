@@ -17,10 +17,19 @@
 package org.broadleafcommerce.common.locale.domain;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * Created by jfischer
@@ -29,6 +38,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_LOCALE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationClass(friendlyName = "baseLocale")
 public class LocaleImpl implements Locale {
 
     private static final long serialVersionUID = 1L;

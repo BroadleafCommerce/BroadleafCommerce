@@ -93,7 +93,7 @@
     <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
         <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
         <property name="entityConfiguration" ref="blEntityConfiguration"/>
-        <property name="metadataOverrides" ref="blMetadataOverrides"/>
+        <property name="fieldMetadataOverrides" ref="blMetadataOverrides"/>
     </bean>
 
     <bean id="blSessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />

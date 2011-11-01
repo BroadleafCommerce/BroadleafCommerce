@@ -90,7 +90,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected EntityManager standardEntityManager;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
     protected EntityConfiguration entityConfiguration;
-    protected Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides;
+    protected Map<String, Map<String, Map<String, FieldMetadata>>> fieldMetadataOverrides;
 
 	@Override
 	public Class<? extends Serializable> getEntityClass() {
@@ -150,7 +150,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
         if (clazz.getSuperclass().equals(testClass)) {
             ClassTree myTree = new ClassTree(clazz.getName());
-            //TODO set the friendly name for the class
+            AdminPresentationClass classPresentation = clazz.getAnnotation(AdminPresentationClass.class);
+            if (classPresentation != null) {
+                String friendlyName = classPresentation.friendlyName();
+                if (!StringUtils.isEmpty(friendlyName)) {
+                    myTree.setFriendlyName(friendlyName);
+                }
+            }
             tree.setChildren((ClassTree[]) ArrayUtils.add(tree.getChildren(), myTree));
         } else {
             for (ClassTree child : tree.getChildren()) {
@@ -203,7 +209,15 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
         ClassTree classTree = null;
         if (!ArrayUtils.isEmpty(polymorphicClasses)) {
-            classTree = new ClassTree(polymorphicClasses[polymorphicClasses.length-1].getName());
+            Class<?> topClass = polymorphicClasses[polymorphicClasses.length-1];
+            classTree = new ClassTree(topClass.getName());
+            AdminPresentationClass classPresentation = topClass.getAnnotation(AdminPresentationClass.class);
+            if (classPresentation != null) {
+                String friendlyName = classPresentation.friendlyName();
+                if (!StringUtils.isEmpty(friendlyName)) {
+                    classTree.setFriendlyName(friendlyName);
+                }
+            }
             for (int j=polymorphicClasses.length-1; j >= 0; j--) {
                 addClassToTree(polymorphicClasses[j], classTree);
             }
@@ -437,8 +451,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     }
 
     protected void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
-        if (metadataOverrides != null && configurationKey != null) {
-            Map<String, Map<String, FieldMetadata>> configuredOverrides = metadataOverrides.get(configurationKey);
+        if (fieldMetadataOverrides != null && configurationKey != null) {
+            Map<String, Map<String, FieldMetadata>> configuredOverrides = fieldMetadataOverrides.get(configurationKey);
             if (configuredOverrides != null) {
                 Map<String, FieldMetadata> entityOverrides = configuredOverrides.get(ceilingEntityFullyQualifiedClassname);
                 if (entityOverrides != null) {
@@ -1431,11 +1445,11 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         this.entityConfiguration = entityConfiguration;
     }
 
-    public Map<String, Map<String, Map<String, FieldMetadata>>> getMetadataOverrides() {
-        return metadataOverrides;
+    public Map<String, Map<String, Map<String, FieldMetadata>>> getFieldMetadataOverrides() {
+        return fieldMetadataOverrides;
     }
 
-    public void setMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> metadataOverrides) {
-        this.metadataOverrides = metadataOverrides;
+    public void setFieldMetadataOverrides(Map<String, Map<String, Map<String, FieldMetadata>>> fieldMetadataOverrides) {
+        this.fieldMetadataOverrides = fieldMetadataOverrides;
     }
 }

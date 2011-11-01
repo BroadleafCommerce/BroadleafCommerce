@@ -85,7 +85,7 @@ import java.util.Set;
             @AdminPresentationOverride(name="locale.defaultFlag", value=@AdminPresentation(excluded = true))
         }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContent")
 public class StructuredContentImpl implements StructuredContent {
 
     private static final long serialVersionUID = 1L;

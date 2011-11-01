@@ -52,7 +52,7 @@ import java.util.*;
         @AdminPresentationOverride(name="customer.registered", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOrder")
 public class OrderImpl implements Order {
 
     private static final long serialVersionUID = 1L;

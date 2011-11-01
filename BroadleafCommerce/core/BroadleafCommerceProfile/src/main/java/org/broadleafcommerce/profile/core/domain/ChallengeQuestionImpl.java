@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,14 +30,11 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CHALLENGE_QUESTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(friendlyName = "baseChallengeQuestion")
 public class ChallengeQuestionImpl implements ChallengeQuestion {
 
     private static final long serialVersionUID = 1L;

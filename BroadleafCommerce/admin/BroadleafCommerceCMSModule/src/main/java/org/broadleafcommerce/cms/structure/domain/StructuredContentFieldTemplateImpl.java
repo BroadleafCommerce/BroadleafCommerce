@@ -15,10 +15,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import javax.persistence.*;
-
-import java.util.List;
-
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -29,6 +25,22 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import java.util.List;
+
 /**
  * Created by bpolster.
  */
@@ -36,7 +48,7 @@ import org.hibernate.annotations.Cascade;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FIELD_TEMPLATE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContentFieldTemplate")
 public class StructuredContentFieldTemplateImpl implements StructuredContentFieldTemplate {
 
     private static final long serialVersionUID = 1L;

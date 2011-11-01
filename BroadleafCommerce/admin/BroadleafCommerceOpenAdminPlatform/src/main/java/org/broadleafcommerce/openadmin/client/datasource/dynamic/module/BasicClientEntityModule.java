@@ -688,7 +688,6 @@ public class BasicClientEntityModule implements DataSourceModule {
                         String val = BLCMain.getMessageManager().getString(friendlyName);
                         if (val != null) {
                             friendlyName = val;
-                            break;
                         }
                     } catch (MissingResourceException e) {
                         //do nothing

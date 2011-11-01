@@ -58,7 +58,7 @@ import org.hibernate.annotations.Cascade;
         @AdminPresentationOverride(name="pageTemplate.locale", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "basePage")
 public class PageImpl implements Page {
 
     private static final long serialVersionUID = 1L;

@@ -15,14 +15,24 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import javax.persistence.*;
-
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
@@ -31,7 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STRUCTURED_CONTENT_TYPE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContentType")
 public class StructuredContentTypeImpl implements StructuredContentType {
 
     private static final long serialVersionUID = 1L;

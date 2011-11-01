@@ -45,7 +45,7 @@ import javax.persistence.UniqueConstraint;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseCustomer")
 public class CustomerImpl implements Customer {
 
     private static final long serialVersionUID = 1L;

@@ -15,25 +15,30 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
+import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemImpl;
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.presentation.*;
-import org.hibernate.annotations.*;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -65,7 +70,7 @@ import org.hibernate.annotations.*;
         @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOrderItemAdjustment")
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     public static final long serialVersionUID = 1L;

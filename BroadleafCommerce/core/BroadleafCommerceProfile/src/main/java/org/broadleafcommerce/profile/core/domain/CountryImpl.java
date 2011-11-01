@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,14 +27,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_COUNTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(friendlyName = "baseCountry")
 public class CountryImpl implements Country {
 
     private static final long serialVersionUID = 1L;

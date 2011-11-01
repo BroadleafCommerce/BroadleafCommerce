@@ -73,5 +73,7 @@ public interface PromotionMessages extends ConstantsWithLookup {
 	public String offerObtainSettingsHelpContent();
 	public String bogoHelpTitle();
 	public String bogoHelpContent();
+    public String baseOffer();
+    public String baseOfferItemCriteria();
 
 }
