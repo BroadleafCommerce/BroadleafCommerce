@@ -453,9 +453,6 @@ public class SandBoxServiceImpl implements SandBoxService {
 
         for(SandBoxItem sandBoxItem : sandBoxItems) {
             action.addSandBoxItem(sandBoxItem);
-            for (SandBoxItemListener listener : sandboxItemListeners) {
-                listener.itemPromoted(sandBoxItem, destinationSandBox);
-            }
 
             if (destinationSandBox == null || SandBoxType.PRODUCTION.equals(destinationSandBox)) {
                 sandBoxItem.setArchivedFlag(true);
@@ -465,6 +462,10 @@ public class SandBoxServiceImpl implements SandBoxService {
                 sandBoxItem.setOriginalSandBox(fromSandBox);
             }
             sandBoxItem.addSandBoxAction(action);
+
+            for (SandBoxItemListener listener : sandboxItemListeners) {
+                listener.itemPromoted(sandBoxItem, destinationSandBox);
+            }
         }
     }
 

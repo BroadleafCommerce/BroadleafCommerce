@@ -92,6 +92,7 @@ public class DynamicFormPresenter {
 	
 	public void enableSaveButton() {
 		display.getSaveButton().enable();
+        display.getRefreshButton().enable();
 	}
 
 	private native void exposeNativeEnableSaveButton() /*-{

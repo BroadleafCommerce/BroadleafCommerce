@@ -134,7 +134,7 @@ public class StructuredContentView extends HLayout implements Instantiable, Stru
         rulesLayout.setOverflow(Overflow.AUTO);
 
         structuredContentToolBar = new ToolStrip();
-        structuredContentToolBar.setHeight(20);
+        structuredContentToolBar.setHeight(30);
         structuredContentToolBar.setWidth100();
         structuredContentToolBar.addSpacer(6);
         structuredContentSaveButton = new ToolStripButton();

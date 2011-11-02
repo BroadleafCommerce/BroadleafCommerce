@@ -16,8 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.openadmin.server.domain.*;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxAction;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxActionType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +38,7 @@ import java.util.List;
 
 @Repository("blSandBoxItemDao")
 public class SandBoxItemDaoImpl implements SandBoxItemDao {
+    private static final Log LOG = LogFactory.getLog(SandBoxItemDaoImpl.class);
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -62,10 +72,14 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
     }
 
     @Override
-    public SandBoxItem addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
+    public void addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding sandbox item.  " + originalId);
+        }
+        SandBox sbox = em.find(SandBoxImpl.class, sandBox.getId());
         SandBoxItemImpl sandBoxItem = new SandBoxItemImpl();
         sandBoxItem.setSandBoxOperationType(operationType);
-        sandBoxItem.setSandBox(sandBox);
+        sandBoxItem.setSandBox(sbox);
         sandBoxItem.setArchivedFlag(false);
         //sandBoxItem.setLastUpdateDate(Calendar.getInstance().getTime());
         sandBoxItem.setDescription(description);
@@ -81,7 +95,9 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         sandBoxItem.addSandBoxAction(action);
         action.addSandBoxItem(sandBoxItem);
 
-        return em.merge(sandBoxItem);
+        sbox.getSandBoxItems().add(sandBoxItem);
+
+        em.merge(sbox);
     }
 
     @Override

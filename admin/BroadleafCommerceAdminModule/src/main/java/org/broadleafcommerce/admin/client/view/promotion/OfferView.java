@@ -170,12 +170,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutLeftMargin(10);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).setLayoutTopMargin(10);
         
-        Label basicInformationLabel = new Label(BLCMain.getMessageManager().getString("basicPromotionLabel"));
-        basicInformationLabel.setHeight(30);
-        basicInformationLabel.setBackgroundColor("#eaeaea");
-        basicInformationLabel.setStyleName("label-bold");
-        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(basicInformationLabel, 0);
-        
+
         VLayout restrictLayout = new VLayout();
         restrictLayout.setID("offerRestrictLayout");
         restrictLayout.setLayoutLeftMargin(10);

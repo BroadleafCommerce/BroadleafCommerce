@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.client.view.dynamic;
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.SelectionStyle;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -47,27 +46,23 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 	public DynamicEntityTreeView(String title, DataSource dataSource, boolean showRoot) {
 		super();
 		toolBar = new ToolStrip();
-		toolBar.setHeight(20);
+		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
         addButton = new ToolStripButton();  
         addButton.setDisabled(true);
-        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         toolBar.addButton(addButton);
 
         removeButton = new ToolStripButton();
-        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
         removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
 
         toolBar.addSpacer(6);
-        Label categoryLabel = new Label();
-        categoryLabel.setContents(title);
-        categoryLabel.setWrap(false);
-        toolBar.addMember(categoryLabel);
         toolBar.addFill();
         /*Map<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
         if (polymorphicEntities.size() > 1) { 

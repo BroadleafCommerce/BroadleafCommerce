@@ -50,18 +50,18 @@ public class DynamicEntityColumnTreeView extends VLayout implements DynamicEntit
             title = "Item";
         }
 		toolBar = new ToolStrip();
-		toolBar.setHeight(20);
+		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
         addButton = new ToolStripButton();  
         addButton.setDisabled(true);
-        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
         toolBar.addButton(addButton);
 
         removeButton = new ToolStripButton();
-        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
         removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);

@@ -58,42 +58,49 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
 
         VLayout insideLayout = new VLayout();
 
+        Label header = new Label(BLCMain.getMessageManager().getString("approverSandBoxTitle"));
+        header.setBaseStyle("blcHeader");
+        header.setHeight(15);
+
+        insideLayout.addMember(header);
+
 		toolBar = new ToolStrip();
-		toolBar.setHeight(20);
+		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
-        promoteSelectionButton = new ToolStripButton();
-        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
-        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteTitle"));
-        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteTooltip"));
-        toolBar.addButton(promoteSelectionButton);
         promoteAllButton = new ToolStripButton();
-        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
-        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteAllTitle"));
-        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteAllTooltip"));
+        promoteAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteAllButton.setTitle(BLCMain.getMessageManager().getString("promoteAllTitle"));
+        promoteAllButton.setTooltip(BLCMain.getMessageManager().getString("promoteAllTooltip"));
         toolBar.addButton(promoteAllButton);
 
+        toolBar.addSpacer(3);
 
-        toolBar.addSeparator();
-
-        revertRejectSelectionButton = new ToolStripButton();
-        revertRejectSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
-        revertRejectSelectionButton.setTitle(BLCMain.getMessageManager().getString("rejectTitle"));
-        revertRejectSelectionButton.setTooltip(BLCMain.getMessageManager().getString("rejectTooltip"));
-        toolBar.addButton(revertRejectSelectionButton);
         revertRejectAllButton = new ToolStripButton();
         revertRejectAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
         revertRejectAllButton.setTitle(BLCMain.getMessageManager().getString("rejectAllTitle"));
         revertRejectAllButton.setTooltip(BLCMain.getMessageManager().getString("rejectAllTooltip"));
         toolBar.addButton(revertRejectAllButton);
 
+        toolBar.addSpacer(3);
+        toolBar.addSeparator();
+        toolBar.addSpacer(3);
 
-        toolBar.addSpacer(6);
-        Label productLabel = new Label();
-        productLabel.setContents(BLCMain.getMessageManager().getString("userSandBoxTitle"));
-        productLabel.setWrap(false);
-        toolBar.addMember(productLabel);
+        promoteSelectionButton = new ToolStripButton();
+        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteTitle"));
+        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteTooltip"));
+        toolBar.addButton(promoteSelectionButton);
+
+        toolBar.addSpacer(3);
+
+        revertRejectSelectionButton = new ToolStripButton();
+        revertRejectSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
+        revertRejectSelectionButton.setTitle(BLCMain.getMessageManager().getString("rejectTitle"));
+        revertRejectSelectionButton.setTooltip(BLCMain.getMessageManager().getString("rejectTooltip"));
+        toolBar.addButton(revertRejectSelectionButton);
+
 
         toolBar.addFill();
         refreshButton = new ToolStripButton();
