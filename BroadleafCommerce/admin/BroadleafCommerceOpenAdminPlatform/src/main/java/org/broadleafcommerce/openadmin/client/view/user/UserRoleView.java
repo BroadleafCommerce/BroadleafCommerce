@@ -72,17 +72,17 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         //stack.setLayoutMargin(12);
         
         toolBar = new ToolStrip();
-        toolBar.setHeight(26);
+        toolBar.setHeight(30);
         toolBar.setWidth100();
         toolBar.setMinWidth(300);
         toolBar.addSpacer(6);
         addButton = new ToolStripButton();
-        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         addButton.setDisabled(true);
         toolBar.addButton(addButton);
         removeButton = new ToolStripButton();
-        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle") + " " + title);
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
         removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);

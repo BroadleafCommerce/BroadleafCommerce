@@ -53,7 +53,7 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
 
 		treeDisplay = new DynamicEntityTreeView(BLCMain.getMessageManager().getString("staticAssetFoldersTitle"), entityDataSource, true);
         treeDisplay.setHeight("80%");
-        treeDisplay.getToolBar().getMember(6).destroy();
+        treeDisplay.getToolBar().getMember(5).destroy();
         treeGridLayout.addMember(treeDisplay);
 
         VLayout listGridLayout = new VLayout();
@@ -66,6 +66,7 @@ public class StaticAssetsView extends HLayout implements Instantiable, StaticAss
         listGridLayout.addMember(listDisplay);
 
         assetDescriptionDisplay = new GridStructureView(BLCMain.getMessageManager().getString("assetDescriptionTitle"), false, true);
+
         ((FormOnlyView) listDisplay.getFormOnlyDisplay()).addMember(assetDescriptionDisplay);
 
         addMember(treeGridLayout);

@@ -68,47 +68,54 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         VLayout insideLayout = new VLayout();
         insideLayout.setHeight("50%");
 
+
+        Label header = new Label(BLCMain.getMessageManager().getString("userSandBoxTitle"));
+        header.setBaseStyle("blcHeader");
+        header.setHeight(15);
+
+        insideLayout.addMember(header);
+
 		toolBar = new ToolStrip();
-		toolBar.setHeight(20);
+		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
 
-        promoteSelectionButton = new ToolStripButton();
-        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
-        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteTitle"));
-        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteTooltip"));
-        toolBar.addButton(promoteSelectionButton);
         promoteAllButton = new ToolStripButton();
         promoteAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
         promoteAllButton.setTitle(BLCMain.getMessageManager().getString("promoteAllTitle"));
         promoteAllButton.setTooltip(BLCMain.getMessageManager().getString("promoteAllTooltip"));
         toolBar.addButton(promoteAllButton);
 
-        toolBar.addSeparator();
-
-        revertSelectionButton = new ToolStripButton();
-        revertSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
-        revertSelectionButton.setTitle(BLCMain.getMessageManager().getString("revertTitle"));
-        revertSelectionButton.setTooltip(BLCMain.getMessageManager().getString("revertTooltip"));
-        toolBar.addButton(revertSelectionButton);
+        toolBar.addSpacer(3);
         revertRejectAllButton = new ToolStripButton();
         revertRejectAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
         revertRejectAllButton.setTitle(BLCMain.getMessageManager().getString("revertAllTitle"));
         revertRejectAllButton.setTooltip(BLCMain.getMessageManager().getString("revertAllTooltip"));
         toolBar.addButton(revertRejectAllButton);
-        toolBar.addSpacer(6);
 
+        toolBar.addSpacer(3);
+        toolBar.addSeparator();
+        toolBar.addSpacer(3);
 
-        Label mySandBoxLabel = new Label();
-        mySandBoxLabel.setContents(BLCMain.getMessageManager().getString("userSandBoxTitle"));
-        mySandBoxLabel.setWrap(false);
-        toolBar.addMember(mySandBoxLabel);
+        promoteSelectionButton = new ToolStripButton();
+        promoteSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/promote.png");
+        promoteSelectionButton.setTitle(BLCMain.getMessageManager().getString("promoteTitle"));
+        promoteSelectionButton.setTooltip(BLCMain.getMessageManager().getString("promoteTooltip"));
+        toolBar.addButton(promoteSelectionButton);
+        toolBar.addSpacer(3);
+        revertSelectionButton = new ToolStripButton();
+        revertSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/revert.png");
+        revertSelectionButton.setTitle(BLCMain.getMessageManager().getString("revertTitle"));
+        revertSelectionButton.setTooltip(BLCMain.getMessageManager().getString("revertTooltip"));
+        toolBar.addButton(revertSelectionButton);
+
 
         toolBar.addFill();
         refreshButton = new ToolStripButton();
         refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
         refreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         toolBar.addButton(refreshButton);
+        toolBar.addSpacer(3);
         previewButton = new ToolStripButton();
         previewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
         previewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));
@@ -138,46 +145,59 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         VLayout insideLayout2 = new VLayout();
         insideLayout2.setHeight("50%");
 
+        Label pendingApprovalLabel = new Label();
+        pendingApprovalLabel.setContents(BLCMain.getMessageManager().getString("pendingApprovalTitle"));
+        pendingApprovalLabel.setWrap(false);
+        pendingApprovalLabel.setBaseStyle("blcHeader");
+        pendingApprovalLabel.setHeight(15);
+        insideLayout2.addMember(pendingApprovalLabel);
+
 		pendingToolBar = new ToolStrip();
-		pendingToolBar.setHeight(20);
+		pendingToolBar.setHeight(30);
 		pendingToolBar.setWidth100();
 		pendingToolBar.addSpacer(6);
 
-        reclaimSelectionButton = new ToolStripButton();
-        reclaimSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/reclaim.png");
-        reclaimSelectionButton.setTitle(BLCMain.getMessageManager().getString("reclaimTitle"));
-        reclaimSelectionButton.setTooltip(BLCMain.getMessageManager().getString("reclaimTooltip"));
-        pendingToolBar.addButton(reclaimSelectionButton);
+
         reclaimAllButton = new ToolStripButton();
         reclaimAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/reclaim.png");
         reclaimAllButton.setTitle(BLCMain.getMessageManager().getString("reclaimAllTitle"));
         reclaimAllButton.setTooltip(BLCMain.getMessageManager().getString("reclaimAllTooltip"));
         pendingToolBar.addButton(reclaimAllButton);
-
-        pendingToolBar.addSeparator();
-
-        releaseSelectionButton = new ToolStripButton();
-        releaseSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/unlock.png");
-        releaseSelectionButton.setTitle(BLCMain.getMessageManager().getString("unlockTitle"));
-        releaseSelectionButton.setTooltip(BLCMain.getMessageManager().getString("unlockTooltip"));
-        pendingToolBar.addButton(releaseSelectionButton);
+        pendingToolBar.addSpacer(3);
         releaseAllButton = new ToolStripButton();
         releaseAllButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/unlock.png");
         releaseAllButton.setTitle(BLCMain.getMessageManager().getString("unlockAllTitle"));
         releaseAllButton.setTooltip(BLCMain.getMessageManager().getString("unlockAllTooltip"));
         pendingToolBar.addButton(releaseAllButton);
 
+        pendingToolBar.addSpacer(3);
+        pendingToolBar.addSeparator();
+        pendingToolBar.addSpacer(3);
+
+
+        reclaimSelectionButton = new ToolStripButton();
+        reclaimSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/reclaim.png");
+        reclaimSelectionButton.setTitle(BLCMain.getMessageManager().getString("reclaimTitle"));
+        reclaimSelectionButton.setTooltip(BLCMain.getMessageManager().getString("reclaimTooltip"));
+        pendingToolBar.addButton(reclaimSelectionButton);
+        pendingToolBar.addSpacer(3);
+
+        releaseSelectionButton = new ToolStripButton();
+        releaseSelectionButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/unlock.png");
+        releaseSelectionButton.setTitle(BLCMain.getMessageManager().getString("unlockTitle"));
+        releaseSelectionButton.setTooltip(BLCMain.getMessageManager().getString("unlockTooltip"));
+        pendingToolBar.addButton(releaseSelectionButton);
+
+
         pendingToolBar.addSpacer(6);
-        Label pendingApprovalLabel = new Label();
-        pendingApprovalLabel.setContents(BLCMain.getMessageManager().getString("pendingApprovalTitle"));
-        pendingApprovalLabel.setWrap(false);
-        pendingToolBar.addMember(pendingApprovalLabel);
+
 
         pendingToolBar.addFill();
         pendingRefreshButton = new ToolStripButton();
         pendingRefreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");
         pendingRefreshButton.setTitle(BLCMain.getMessageManager().getString("refreshTitle"));
         pendingToolBar.addButton(pendingRefreshButton);
+        pendingToolBar.addSpacer(3);
         pendingPreviewButton = new ToolStripButton();
         pendingPreviewButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/zoom.png");
         pendingPreviewButton.setTitle(BLCMain.getMessageManager().getString("previewTitle"));

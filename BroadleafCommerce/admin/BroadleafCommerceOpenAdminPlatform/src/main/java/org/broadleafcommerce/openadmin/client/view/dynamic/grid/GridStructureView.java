@@ -52,29 +52,30 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         stack.setHeight(150);
         stack.setWidth100();
         stack.setLayoutMargin(12);
+
+        Label header = new Label(title);
+        header.setBaseStyle("blcHeader");
+        header.setHeight(15);
+
+        stack.addMember(header);
         
         toolBar = new ToolStrip();
-        toolBar.setHeight(26);
+        toolBar.setHeight(30);
         toolBar.setWidth100();
         toolBar.setMinWidth(300);
         toolBar.addSpacer(6);
         addButton = new ToolStripButton();
-        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/add.png");
         addButton.setDisabled(true);
         toolBar.addButton(addButton);
         toolBar.addSpacer(6);
         removeButton = new ToolStripButton();
-        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
         removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
         toolBar.setDisabled(false);
-        Label crossSaleLabel = new Label();
-        crossSaleLabel.setContents(title);
-        crossSaleLabel.setWrap(false);
-        toolBar.addSpacer(6);
-        toolBar.addMember(crossSaleLabel);
         toolBar.addFill();
         stack.addMember(toolBar);
         grid = new ListGrid();
@@ -100,7 +101,7 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         stack.addMember(grid);
         
         addMember(stack);
-        setOverflow(Overflow.AUTO);
+        setOverflow(Overflow.VISIBLE);
 	}
 
 	public ToolStrip getToolBar() {

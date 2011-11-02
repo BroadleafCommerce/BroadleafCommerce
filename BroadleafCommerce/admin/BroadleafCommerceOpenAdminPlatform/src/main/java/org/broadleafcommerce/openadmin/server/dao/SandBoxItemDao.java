@@ -29,7 +29,7 @@ public interface SandBoxItemDao {
 
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(SandBox sandBox, SandBoxItemType type, Long tempItemId);
 
-    public SandBoxItem addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId);
+    public void addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId);
 
     public SandBoxItem updateSandBoxItem(SandBoxItem sandBoxItem);
 

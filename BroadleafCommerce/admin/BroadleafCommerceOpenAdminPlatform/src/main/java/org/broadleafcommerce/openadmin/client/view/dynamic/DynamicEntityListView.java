@@ -49,21 +49,17 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
 	
 	public DynamicEntityListView(String title, DataSource dataSource, Boolean canReorder, Boolean canEdit) {
 		super();
-        if ("".equals(title) || title == null) {
-            title = "Item";
-        }
-
 		toolBar = new ToolStrip();
 		toolBar.setHeight(30);
 		toolBar.setWidth100();
 		toolBar.addSpacer(6);
         addButton = new ToolStripButton();
-        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle") + " " + title);
+        addButton.setTitle(BLCMain.getMessageManager().getString("addTitle"));
         addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/add.png");
         toolBar.addButton(addButton);
         toolBar.addSpacer(6);
         removeButton = new ToolStripButton();
-        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle")  + " " + title);
+        removeButton.setTitle(BLCMain.getMessageManager().getString("removeTitle"));
         removeButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/actions/remove.png");
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);

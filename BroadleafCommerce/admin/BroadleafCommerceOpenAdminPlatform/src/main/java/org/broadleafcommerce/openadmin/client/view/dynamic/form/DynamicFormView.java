@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -45,7 +44,7 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
 		
         setLayoutMargin(0);
         toolbar = new ToolStrip();
-        toolbar.setHeight(20);
+        toolbar.setHeight(30);
         toolbar.setWidth100();
         toolbar.addSpacer(6);
         saveButton = new ToolStripButton();  
@@ -53,6 +52,7 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
         saveButton.setTitle(BLCMain.getMessageManager().getString("saveTitle"));
         toolbar.addButton(saveButton);
         saveButton.setDisabled(true);
+        toolbar.addSpacer(3);
         refreshButton = new ToolStripButton();  
         refreshButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/refresh.png");
         refreshButton.setTitle(BLCMain.getMessageManager().getString("restoreTitle"));
@@ -60,10 +60,7 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
         refreshButton.setDisabled(true);
         toolbar.addButton(refreshButton);
         toolbar.addSpacer(6);
-        Label productDetailsLabel = new Label();
-        productDetailsLabel.setContents(title);
-        productDetailsLabel.setWrap(false);
-        toolbar.addMember(productDetailsLabel);
+
         addMember(toolbar);
         
         formOnlyView = new FormOnlyView(dataSource);
