@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.hibernate.annotations.BatchSize;
@@ -55,7 +56,7 @@ public class AdminRoleImpl implements AdminRole {
     @GeneratedValue(generator = "AdminRoleId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminRoleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminRoleImpl", allocationSize = 50)
     @Column(name = "ADMIN_ROLE_ID")
-    @AdminPresentation(friendlyName="Admin Role ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Admin Role ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)

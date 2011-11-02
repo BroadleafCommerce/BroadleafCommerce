@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
@@ -88,7 +89,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 50)
     @Column(name = "ORDER_ITEM_ID")
-    @AdminPresentation(friendlyName="Order Item ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Order Item ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -101,7 +102,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
-    @AdminPresentation(excluded = true, hidden = true)
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Order order;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)

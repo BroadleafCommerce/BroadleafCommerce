@@ -20,7 +20,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -67,10 +67,10 @@ import java.util.Set;
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
         {
-            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(hidden = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(hidden = true)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(hidden = true)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
@@ -105,7 +105,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_ID")
-    @AdminPresentation(hidden = true)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Locale locale;
 
     @AdminPresentation(friendlyName="Priority", order=3, group="Description")
@@ -125,7 +125,7 @@ public class StructuredContentImpl implements StructuredContent {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
-    @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", hidden = true)
+    @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "ORIGINAL_ITEM_ID")
     protected Long originalItemId;
 
@@ -141,7 +141,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
-    @AdminPresentation(friendlyName="Content Type", order=2, group="Description", excluded=true, hidden=true, formHidden= FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Content Type", order=2, group="Description", excluded=true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
@@ -152,11 +152,11 @@ public class StructuredContentImpl implements StructuredContent {
     @BatchSize(size = 20)
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
-    @AdminPresentation(friendlyName="Deleted", order=2, group="Internal", hidden = true)
+    @AdminPresentation(friendlyName="Deleted", order=2, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "DELETED_FLAG")
     protected Boolean deletedFlag;
 
-    @AdminPresentation(friendlyName="Archived", order=3, group="Internal", hidden = true)
+    @AdminPresentation(friendlyName="Archived", order=3, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "ARCHIVED_FLAG")
     protected Boolean archivedFlag;
 
@@ -165,7 +165,7 @@ public class StructuredContentImpl implements StructuredContent {
     protected Boolean offlineFlag = false;
 
     @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName="Is Locked", hidden = true)
+    @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean lockedFlag = false;
 
     @Override

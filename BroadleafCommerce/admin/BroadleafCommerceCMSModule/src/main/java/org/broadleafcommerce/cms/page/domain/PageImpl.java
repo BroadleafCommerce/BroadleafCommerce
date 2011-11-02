@@ -15,22 +15,41 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import javax.persistence.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.presentation.*;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -42,10 +61,10 @@ import org.hibernate.annotations.Cascade;
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
     {
-        @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(hidden = true)),
-        @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(hidden = true)),
-        @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(hidden = true)),
-        @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(hidden = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
@@ -71,7 +90,7 @@ public class PageImpl implements Page {
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TEMPLATE_ID")
-    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, hidden=true, formHidden= FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
@@ -101,19 +120,19 @@ public class PageImpl implements Page {
 	protected SandBox originalSandBox;
 
     @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName="Deleted", order=2, group="Description", hidden = true)
+    @AdminPresentation(friendlyName="Deleted", order=2, group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean deletedFlag = false;
 
     @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName="Archived", order=5, group="Page", hidden = true)
+    @AdminPresentation(friendlyName="Archived", order=5, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean archivedFlag = false;
 
     @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName="Is Locked", hidden = true)
+    @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean lockedFlag = false;
 
     @Column (name = "ORIGINAL_PAGE_ID")
-    @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", hidden = true)
+    @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long originalPageId;
 
     /*@ManyToOne(targetEntity = SiteImpl.class)

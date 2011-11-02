@@ -43,7 +43,6 @@ import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -78,7 +77,7 @@ public class FormBuilder {
 		DataSourceField[] fields = dataSource.getFields();
 		Boolean originalEdit = canEdit;
         for (DataSourceField field : fields) {
-        	
+
         	if (field.getAttribute("securityLevel") != null && field.getAttribute("uniqueID") != null && !SecurityManager.getInstance().isUserAuthorizedToEditField(field.getAttribute("uniqueID"))){
         		canEdit = false;
         	}

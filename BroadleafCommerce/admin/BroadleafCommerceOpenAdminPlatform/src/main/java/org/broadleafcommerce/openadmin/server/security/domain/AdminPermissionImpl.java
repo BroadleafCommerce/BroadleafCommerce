@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -61,7 +62,7 @@ public class AdminPermissionImpl implements AdminPermission {
     @GeneratedValue(generator = "AdminPermissionId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminPermissionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminPermissionImpl", allocationSize = 50)
     @Column(name = "ADMIN_PERMISSION_ID")
-    @AdminPresentation(friendlyName="Admin Permission ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Admin Permission ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)

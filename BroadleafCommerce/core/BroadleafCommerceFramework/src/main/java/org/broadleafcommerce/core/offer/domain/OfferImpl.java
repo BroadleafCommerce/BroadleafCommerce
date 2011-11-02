@@ -19,6 +19,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
@@ -81,7 +82,7 @@ public class OfferImpl implements Offer {
         }
     )
     @Column(name = "OFFER_ID")
-    @AdminPresentation(friendlyName="Offer Id", order=1, group="Description", groupOrder=1, hidden=true)
+    @AdminPresentation(friendlyName="Offer Id", order=1, group="Description", groupOrder=1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "OFFER_NAME", nullable=false)
@@ -145,7 +146,7 @@ public class OfferImpl implements Offer {
     protected boolean applyDiscountToMarkedItems;
     
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
-    @AdminPresentation(friendlyName="Offer Combinable", group="Application", groupOrder=4, hidden=true)
+    @AdminPresentation(friendlyName="Offer Combinable", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
@@ -158,7 +159,7 @@ public class OfferImpl implements Offer {
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="Offer Current Uses", hidden=true)
+    @AdminPresentation(friendlyName="Offer Current Uses", visibility =VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     
@@ -177,13 +178,13 @@ public class OfferImpl implements Offer {
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @ManyToOne(targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
-    @AdminPresentation(friendlyName="Target Item Criteria", group="Application", groupOrder=4, hidden=true)
+    @AdminPresentation(friendlyName="Target Item Criteria", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected OfferItemCriteria targetItemCriteria;
     
     @Column(name = "TOTALITARIAN_OFFER")
-    @AdminPresentation(friendlyName="Totalitarian Offer", group="Application", groupOrder=4, hidden=true)
+    @AdminPresentation(friendlyName="Totalitarian Offer", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected Boolean totalitarianOffer;
     
     @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
@@ -194,7 +195,7 @@ public class OfferImpl implements Offer {
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
-    @AdminPresentation(friendlyName="Treat As New Format", group="Application", groupOrder=4, hidden=true)
+    @AdminPresentation(friendlyName="Treat As New Format", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat;
 
     public Long getId() {

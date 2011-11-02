@@ -17,7 +17,7 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.audit.Auditable;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
@@ -36,10 +36,10 @@ import java.util.List;
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationOverrides(
         {
-            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(hidden = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(hidden = true)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(hidden = true)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(hidden = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
@@ -83,15 +83,15 @@ public class StaticAssetFolderImpl implements StaticAssetFolder {
     protected List<StaticAssetFolder> subFolders;
 
     @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName="Deleted Flag", hidden = true)
+    @AdminPresentation(friendlyName="Deleted Flag", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean deletedFlag = false;
 
     @Column (name = "IS_FOLDER_FLAG")
-    @AdminPresentation(friendlyName="Is Folder", hidden = true)
+    @AdminPresentation(friendlyName="Is Folder", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean folderFlag = true;
 
     @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName="Is Locked", hidden = true)
+    @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean lockedFlag = false;
 
     @Override

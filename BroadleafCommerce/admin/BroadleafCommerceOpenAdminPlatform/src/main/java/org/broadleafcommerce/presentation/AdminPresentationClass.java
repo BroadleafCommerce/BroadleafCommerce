@@ -48,4 +48,16 @@ public @interface AdminPresentationClass {
 	 * @return the friendly name
 	 */
 	String friendlyName() default "";
+
+    /**
+     * Specify the fully qualified class name of the ceiling entity for this inheritance hierarchy. This
+     * value affects the list of polymorphic types presented to the administrative user in the admin
+     * UI. By specifying a class lower in the inheritance hierarchy, you can cause only a subset of
+     * the entire JPA inheritance hierarchy to be presented to the user as options when creating new
+     * entities. This value will override any previous settings for this inheritance hierarchy.
+     *
+     * @return the fully qualified classname of the new top-level member of this inheritance hierarchy
+     * to be displayed to the admin user
+     */
+    String ceilingDisplayEntity() default "";
 }

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
@@ -62,7 +63,7 @@ public class StructuredContentTypeImpl implements StructuredContentType {
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
     @JoinColumn(name="SC_FIELD_TEMPLATE_ID")
-    @AdminPresentation(friendlyName="Content Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, hidden = true)
+    @AdminPresentation(friendlyName="Content Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override

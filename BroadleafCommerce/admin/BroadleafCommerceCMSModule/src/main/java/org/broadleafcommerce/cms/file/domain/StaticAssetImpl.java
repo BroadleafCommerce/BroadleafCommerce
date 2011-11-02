@@ -16,6 +16,7 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -76,11 +77,11 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
 	protected SandBox originalSandBox;
 
     @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName="Archived Flag", hidden = true)
+    @AdminPresentation(friendlyName="Archived Flag", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean archivedFlag = false;
 
     @Column (name = "ORIGINAL_ASSET_ID")
-    @AdminPresentation(friendlyName="Original Asset ID", hidden = true)
+    @AdminPresentation(friendlyName="Original Asset ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long originalAssetId;
 
     public StaticAssetImpl() {

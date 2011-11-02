@@ -37,7 +37,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
@@ -162,7 +162,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         attributes.setProminent(true);
         attributes.setBroadleafEnumeration("");
         attributes.setReadOnly(false);
-        attributes.setHidden(false);
+        attributes.setVisibility(VisibilityEnum.VISIBLE_ALL);
         attributes.setRequiredOverride(true);
 
         mergedProperties.put("locale", fieldMetadata);
@@ -203,9 +203,8 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         contentTypeAttributes.setProminent(true);
         contentTypeAttributes.setBroadleafEnumeration("");
         contentTypeAttributes.setReadOnly(false);
-        contentTypeAttributes.setHidden(false);
+        contentTypeAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
         contentTypeAttributes.setRequiredOverride(true);
-        contentTypeAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
 
         mergedProperties.put("structuredContentType_Grid", contentTypeFieldMetadata);
 
@@ -225,8 +224,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
         iconAttributes.setReadOnly(false);
-        iconAttributes.setHidden(false);
-        iconAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+        iconAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
         iconAttributes.setColumnWidth("25");
         iconAttributes.setOrder(0);
         iconAttributes.setRequiredOverride(true);
@@ -256,7 +254,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         attributes.setProminent(false);
         attributes.setBroadleafEnumeration("");
         attributes.setReadOnly(false);
-        attributes.setHidden(true);
+        attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
         return fieldMetadata;
     }
 

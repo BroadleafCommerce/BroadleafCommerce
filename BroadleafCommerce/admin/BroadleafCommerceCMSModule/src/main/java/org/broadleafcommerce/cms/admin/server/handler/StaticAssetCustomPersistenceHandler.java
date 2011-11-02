@@ -39,7 +39,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -387,7 +387,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         attributes.setProminent(false);
         attributes.setBroadleafEnumeration("");
         attributes.setReadOnly(false);
-        attributes.setHidden(true);
+        attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
         attributes.setRequiredOverride(true);
 
         mergedProperties.put("file", fieldMetadata);
@@ -408,8 +408,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
         iconAttributes.setReadOnly(false);
-        iconAttributes.setHidden(false);
-        iconAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+        iconAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
         iconAttributes.setColumnWidth("25");
         iconAttributes.setOrder(0);
         iconAttributes.setRequiredOverride(true);
@@ -432,7 +431,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconLargeAttributes.setProminent(false);
         iconLargeAttributes.setBroadleafEnumeration("");
         iconLargeAttributes.setReadOnly(true);
-        iconLargeAttributes.setHidden(false);
+        iconLargeAttributes.setVisibility(VisibilityEnum.VISIBLE_ALL);
         iconLargeAttributes.setRequiredOverride(true);
         iconLargeAttributes.setOrder(0);
         iconLargeAttributes.setGroupOrder(0);
@@ -490,7 +489,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         attributes.setProminent(false);
         attributes.setBroadleafEnumeration("");
         attributes.setReadOnly(false);
-        attributes.setHidden(true);
+        attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
         return fieldMetadata;
     }
 

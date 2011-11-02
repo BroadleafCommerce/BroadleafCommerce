@@ -15,15 +15,13 @@
  */
 package org.broadleafcommerce.presentation;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.lang.ObjectUtils;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 
 /**
@@ -39,8 +37,7 @@ public @interface AdminPresentation {
 	 * The friendly name to present to a user for this field in a GUI. If supporting i18N,
 	 * the friendly name may be a key to retrieve a localized friendly name using
 	 * the GWT support for i18N.
-	 * 
-	 * @see AdminMessages
+	 *
 	 * @return the friendly name
 	 */
 	String friendlyName() default "";
@@ -60,21 +57,13 @@ public @interface AdminPresentation {
 	 * @return the display order
 	 */
 	int order() default 99999;
-	
-	/**
-	 * Whether or not the field should be hidden in the GUI
-	 * 
-	 * @return whether or not to hide
-	 */
-	boolean hidden() default false;
 
     /**
-     * Whether or not the field is hidden in the form. This value overrides
-     * the hidden property for forms.
+     * Describes how the field is shown in admin GUI.
      *
      * @return whether or not to hide the form field.
      */
-    FormHiddenEnum formHidden() default FormHiddenEnum.NOT_SPECIFIED;
+    VisibilityEnum visibility() default VisibilityEnum.VISIBLE_ALL;
 	
 	/**
 	 * Explicity specify the type the GUI should consider this field

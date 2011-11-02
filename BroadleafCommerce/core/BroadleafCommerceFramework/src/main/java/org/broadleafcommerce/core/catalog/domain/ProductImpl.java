@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
@@ -88,7 +89,7 @@ public class ProductImpl implements Product {
     )
     @Column(name = "PRODUCT_ID")
     @SearchableId
-    @AdminPresentation(friendlyName="Product ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Product ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     /** The name. */
