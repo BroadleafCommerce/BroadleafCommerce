@@ -18,9 +18,8 @@ package org.broadleafcommerce.openadmin.server.domain;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.presentation.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -28,7 +27,6 @@ import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @javax.persistence.Entity
@@ -65,7 +63,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     @GeneratedValue(generator = "SandBoxItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SandBoxItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxItemImpl", allocationSize = 50)
     @Column(name = "SANDBOX_ITEM_ID")
-    @AdminPresentation(hidden = true)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Embedded
@@ -101,7 +99,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     protected Long originalItemId;
 
     @Column(name = "ARCHIVED_FLAG")
-    @AdminPresentation(hidden=true)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean archivedFlag = Boolean.FALSE;
 
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)

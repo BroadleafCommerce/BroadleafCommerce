@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -53,7 +54,7 @@ public class SiteImpl implements Site {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
-    @AdminPresentation(friendlyName="Production SandBox", order=4, group="Site", hidden = true)
+    @AdminPresentation(friendlyName="Production SandBox", order=4, group="Site", visibility = VisibilityEnum.HIDDEN_ALL)
     protected SandBox productionSandbox;
 
     @Override

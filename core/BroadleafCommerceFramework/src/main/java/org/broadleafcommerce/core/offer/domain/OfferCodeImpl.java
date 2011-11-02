@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.AdminPresentationOverride;
@@ -78,7 +79,7 @@ public class OfferCodeImpl implements OfferCode {
         }
     )
     @Column(name = "OFFER_CODE_ID")
-    @AdminPresentation(friendlyName="Offer Code Id", group="Description", hidden=true)
+    @AdminPresentation(friendlyName="Offer Code Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
@@ -105,7 +106,7 @@ public class OfferCodeImpl implements OfferCode {
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="Code Uses", hidden=true)
+    @AdminPresentation(friendlyName="Code Uses", visibility =VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     

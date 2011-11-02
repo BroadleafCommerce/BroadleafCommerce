@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
@@ -643,7 +644,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			properties.add(prop);
 			prop.setMetadata(metadata);
 			if (isHiddenOverride) {
-				prop.getMetadata().getPresentationAttributes().setHidden(true);
+				prop.getMetadata().getPresentationAttributes().setVisibility(VisibilityEnum.HIDDEN_ALL);
 			}
 		}
 	}

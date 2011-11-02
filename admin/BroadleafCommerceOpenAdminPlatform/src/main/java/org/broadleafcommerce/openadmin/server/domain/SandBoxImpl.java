@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.*;
@@ -40,7 +41,7 @@ public class SandBoxImpl implements SandBox {
     @GeneratedValue(generator = "SandBoxId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SandBoxId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxImpl", allocationSize = 50)
     @Column(name = "SANDBOX_ID")
-    @AdminPresentation(hidden = true)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "SANDBOX_NAME")

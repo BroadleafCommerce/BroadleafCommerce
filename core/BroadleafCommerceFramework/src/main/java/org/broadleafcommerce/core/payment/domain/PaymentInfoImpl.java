@@ -19,6 +19,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
@@ -67,7 +68,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
-    @AdminPresentation(excluded = true, hidden = true)
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })

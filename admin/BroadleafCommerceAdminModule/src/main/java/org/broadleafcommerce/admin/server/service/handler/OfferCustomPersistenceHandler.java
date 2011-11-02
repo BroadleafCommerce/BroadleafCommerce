@@ -99,10 +99,10 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
 			Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
 			FieldMetadata metadata = offerCodeMergedProperties.get("offerCode");
-			metadata.getPresentationAttributes().setHidden(true);
+			metadata.getPresentationAttributes().setVisibility(VisibilityEnum.HIDDEN_ALL);
 			mergedProperties.put("offerCode.offerCode", metadata);
 			FieldMetadata metadata2 = offerCodeMergedProperties.get("id");
-			metadata2.getPresentationAttributes().setHidden(true);
+			metadata2.getPresentationAttributes().setVisibility(VisibilityEnum.HIDDEN_ALL);
 			mergedProperties.put("offerCode.id", metadata2);
 
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);

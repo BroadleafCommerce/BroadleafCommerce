@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.audit;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 
 import javax.persistence.Column;
@@ -35,7 +36,7 @@ public class Auditable implements Serializable {
     protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
-    @AdminPresentation(friendlyName="Created By", group="Audit", hidden=true, readOnly=true)
+    @AdminPresentation(friendlyName="Created By", group="Audit", visibility = VisibilityEnum.HIDDEN_ALL, readOnly=true)
     protected Long createdBy;
 
     @Column(name = "DATE_UPDATED")
@@ -44,7 +45,7 @@ public class Auditable implements Serializable {
     protected Date dateUpdated;
 
     @Column(name = "UPDATED_BY")
-    @AdminPresentation(friendlyName="Updated By", group="Audit", hidden=true, readOnly = true)
+    @AdminPresentation(friendlyName="Updated By", group="Audit", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected Long updatedBy;
 
     public Date getDateCreated() {

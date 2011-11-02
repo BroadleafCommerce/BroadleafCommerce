@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -148,7 +149,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     attributes.setFriendlyName(definition.getFriendlyName());
                     attributes.setSecurityLevel(definition.getSecurityLevel()==null?"":definition.getSecurityLevel());
                     attributes.setOrder(fieldCount++);
-                    attributes.setHidden(definition.getHiddenFlag());
+                    attributes.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
                     attributes.setGroup(group.getName());
                     attributes.setGroupOrder(groupCount);
                     attributes.setGroupCollapsed(group.getInitCollapsedFlag());
@@ -185,7 +186,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             attributes.setName("id");
             attributes.setFriendlyName("ID");
             attributes.setSecurityLevel("");
-            attributes.setHidden(true);
+            attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
             attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
             attributes.setLargeEntry(false);
             attributes.setProminent(false);

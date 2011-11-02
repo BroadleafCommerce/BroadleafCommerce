@@ -247,14 +247,16 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 @Override
                 public void onSearchItemSelected(SearchItemSelected event) {
                     ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname(event.getRecord().getAttribute("fullyQualifiedType"));
-                    initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
                     addNewItem(newItemTitle);
                 }
             });
+        } else {
+            addNewItem(newItemTitle);
         }
 	}
 
     protected void addNewItem(String newItemTitle) {
+        initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         compileDefaultValuesFromCurrentFilter(initialValues);
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
             public void onItemEdited(ItemEdited event) {

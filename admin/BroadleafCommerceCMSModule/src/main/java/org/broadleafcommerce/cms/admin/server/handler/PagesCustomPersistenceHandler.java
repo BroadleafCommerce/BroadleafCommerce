@@ -33,7 +33,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
@@ -262,9 +262,8 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         contentTypeAttributes.setProminent(false);
         contentTypeAttributes.setBroadleafEnumeration("");
         contentTypeAttributes.setReadOnly(false);
-        contentTypeAttributes.setHidden(false);
+        contentTypeAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
         contentTypeAttributes.setRequiredOverride(true);
-        contentTypeAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
 
         mergedProperties.put("pageTemplate_Grid", contentTypeFieldMetadata);
 
@@ -284,8 +283,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
         iconAttributes.setReadOnly(false);
-        iconAttributes.setHidden(false);
-        iconAttributes.setFormHidden(FormHiddenEnum.HIDDEN);
+        iconAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
         iconAttributes.setColumnWidth("25");
         iconAttributes.setOrder(0);
         iconAttributes.setRequiredOverride(true);

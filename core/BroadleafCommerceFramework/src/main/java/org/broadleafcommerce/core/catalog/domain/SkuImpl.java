@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsideratio
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.util.DateUtil;
@@ -87,7 +88,7 @@ public class SkuImpl implements Sku {
     )
     @Column(name = "SKU_ID")
     @SearchableId
-    @AdminPresentation(friendlyName="Sku ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Sku ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     /** The sale price. */

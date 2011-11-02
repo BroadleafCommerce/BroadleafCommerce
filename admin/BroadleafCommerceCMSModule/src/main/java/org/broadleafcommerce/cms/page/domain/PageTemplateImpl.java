@@ -19,6 +19,7 @@ import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
@@ -60,7 +61,7 @@ public class PageTemplateImpl implements PageTemplate {
     @GeneratedValue(generator = "PageTemplateId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PageTemplateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageTemplateImpl", allocationSize = 10)
     @Column(name = "PAGE_TEMPLATE_ID")
-    @AdminPresentation(friendlyName = "Template Id", hidden = true, readOnly = true)
+    @AdminPresentation(friendlyName = "Template Id", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected Long id;
 
     @Column (name = "TEMPLATE_NAME")
@@ -71,7 +72,7 @@ public class PageTemplateImpl implements PageTemplate {
     protected String templateDescription;
 
     @Column (name = "TEMPLATE_PATH")
-    @AdminPresentation(friendlyName = "Template Path", hidden = true,readOnly = true)
+    @AdminPresentation(friendlyName = "Template Path", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected String templatePath;
 
     @ManyToOne(targetEntity = LocaleImpl.class)

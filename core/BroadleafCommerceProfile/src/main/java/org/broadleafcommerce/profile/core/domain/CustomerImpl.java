@@ -19,7 +19,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.openadmin.audit.AuditableListener;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
@@ -52,7 +52,7 @@ public class CustomerImpl implements Customer {
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName="Customer Id", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Customer Id", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Embedded
@@ -83,7 +83,7 @@ public class CustomerImpl implements Customer {
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    @AdminPresentation(friendlyName="Challenge Question", group="Customer", excluded = true, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Challenge Question", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
@@ -104,7 +104,7 @@ public class CustomerImpl implements Customer {
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_ID")
-    @AdminPresentation(friendlyName="Customer Locale", group="Customer", excluded = true, hidden = true, formHidden = FormHiddenEnum.VISIBLE)
+    @AdminPresentation(friendlyName="Customer Locale", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
 
     @Transient

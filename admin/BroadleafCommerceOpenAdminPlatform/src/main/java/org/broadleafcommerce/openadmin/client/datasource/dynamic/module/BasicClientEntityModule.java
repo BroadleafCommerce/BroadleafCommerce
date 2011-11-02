@@ -58,19 +58,20 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.FormHiddenEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -694,10 +695,22 @@ public class BasicClientEntityModule implements DataSourceModule {
                     }
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
-				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
-                FormHiddenEnum formHidden = property.getMetadata().getPresentationAttributes().getFormHidden();
-                if (formHidden == null) {
-                    formHidden = FormHiddenEnum.NOT_SPECIFIED;
+                VisibilityEnum visibility = property.getMetadata().getPresentationAttributes().getVisibility();
+                if (visibility == null) {
+                    visibility = VisibilityEnum.HIDDEN_ALL;
+                }
+				Boolean hidden = visibility == VisibilityEnum.HIDDEN_ALL || visibility == VisibilityEnum.GRID_HIDDEN;
+                FormHiddenEnum formHidden;
+                switch (visibility) {
+                    case FORM_HIDDEN:
+                        formHidden = FormHiddenEnum.HIDDEN;
+                        break;
+                    default:
+                        formHidden = FormHiddenEnum.NOT_SPECIFIED;
+                        break;
+                    case GRID_HIDDEN:
+                        formHidden = FormHiddenEnum.VISIBLE;
+                        break;
                 }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();

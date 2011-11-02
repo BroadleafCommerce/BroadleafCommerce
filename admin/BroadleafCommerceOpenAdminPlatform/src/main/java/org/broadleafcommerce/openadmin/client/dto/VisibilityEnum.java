@@ -7,6 +7,10 @@ package org.broadleafcommerce.openadmin.client.dto;
  * Time: 1:26 PM
  * To change this template use File | Settings | File Templates.
  */
-public enum FormHiddenEnum {
-    HIDDEN, VISIBLE, NOT_SPECIFIED
+public enum VisibilityEnum {
+    HIDDEN_ALL,
+    VISIBLE_ALL,
+    FORM_HIDDEN,
+    GRID_HIDDEN,
+    NOT_SPECIFIED
 }

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
@@ -49,7 +50,7 @@ public class AdminUserImpl implements AdminUser {
     @GeneratedValue(generator = "AdminUserId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminUserId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminUserImpl", allocationSize = 50)
     @Column(name = "ADMIN_USER_ID")
-    @AdminPresentation(friendlyName="Admin User ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Admin User ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     private Long id;
 
     @Column(name = "NAME", nullable=false)

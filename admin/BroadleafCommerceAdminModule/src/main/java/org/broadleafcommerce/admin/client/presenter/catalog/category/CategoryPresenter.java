@@ -53,6 +53,7 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
@@ -94,14 +95,19 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	protected SubPresentable childProductsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
-	@Override
-	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>(10);
+    @Override
+    protected void addClicked() {
+        initialValues = new HashMap<String, Object>(10);
 		initialValues.put("defaultParentCategory", getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
 		initialValues.put("name", BLCMain.getMessageManager().getString("defaultCategoryName"));
-		initialValues.put("_type", new String[]{getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").getDefaultNewEntityFullyQualifiedClassname()});
+        super.addClicked(BLCMain.getMessageManager().getString("newCategoryTitle"));
+    }
+
+	@Override
+	protected void addNewItem(String newItemTitle) {
+        initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
         compileDefaultValuesFromCurrentFilter(initialValues);
-		BLCMain.ENTITY_ADD.editNewRecord(BLCMain.getMessageManager().getString("newCategoryTitle"), getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new ItemEditedHandler() {
+		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, getPresenterSequenceSetupManager().getDataSource("categoryTreeDS"), initialValues, new ItemEditedHandler() {
 			public void onItemEdited(ItemEdited event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();

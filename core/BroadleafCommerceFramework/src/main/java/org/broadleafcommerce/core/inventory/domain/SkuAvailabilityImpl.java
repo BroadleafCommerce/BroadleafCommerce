@@ -15,7 +15,14 @@
  */
 package org.broadleafcommerce.core.inventory.domain;
 
-import java.util.Date;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,14 +33,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import java.util.Date;
 
 /**
  * The Class SkuAvailabilityImpl is the default implementation of {@link SkuAvailability}.
@@ -64,13 +64,13 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @GeneratedValue(generator = "SkuAvailabilityId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SkuAvailabilityId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAvailabilityImpl", allocationSize = 50)
     @Column(name = "SKU_AVAILABILITY_ID")
-    @AdminPresentation(friendlyName="Sku Availability ID", group="Primary Key", hidden=true)
+    @AdminPresentation(friendlyName="Sku Availability ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     /** The sale price. */
     @Column(name = "SKU_ID")
     @Index(name="SKUAVAIL_SKU_INDEX", columnNames={"SKU_ID"})
-    @AdminPresentation(friendlyName="Sku ID", hidden=true)
+    @AdminPresentation(friendlyName="Sku ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long skuId;
 
     /** The retail price. */

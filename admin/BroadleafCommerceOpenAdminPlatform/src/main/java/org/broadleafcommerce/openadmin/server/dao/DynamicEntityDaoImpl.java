@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
@@ -137,33 +138,6 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     public PersistentClass getPersistentClass(String targetClassName) {
 		return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
 	}
-
-    protected void addClassToTree(Class<?> clazz, ClassTree tree) {
-        Class<?> testClass;
-        try {
-            testClass = Class.forName(tree.getFullyQualifiedClassname());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        if (clazz.equals(testClass)) {
-            return;
-        }
-        if (clazz.getSuperclass().equals(testClass)) {
-            ClassTree myTree = new ClassTree(clazz.getName());
-            AdminPresentationClass classPresentation = clazz.getAnnotation(AdminPresentationClass.class);
-            if (classPresentation != null) {
-                String friendlyName = classPresentation.friendlyName();
-                if (!StringUtils.isEmpty(friendlyName)) {
-                    myTree.setFriendlyName(friendlyName);
-                }
-            }
-            tree.setChildren((ClassTree[]) ArrayUtils.add(tree.getChildren(), myTree));
-        } else {
-            for (ClassTree child : tree.getChildren()) {
-                addClassToTree(clazz, child);
-            }
-        }
-    }
 	
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
@@ -206,18 +180,71 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         return cache;
 	}
 
+    protected void addClassToTree(Class<?> clazz, ClassTree tree) {
+        Class<?> testClass;
+        try {
+            testClass = Class.forName(tree.getFullyQualifiedClassname());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (clazz.equals(testClass)) {
+            return;
+        }
+        if (clazz.getSuperclass().equals(testClass)) {
+            ClassTree myTree = new ClassTree(clazz.getName());
+            createClassTreeFromAnnotation(clazz, myTree);
+            tree.setChildren((ClassTree[]) ArrayUtils.add(tree.getChildren(), myTree));
+        } else {
+            for (ClassTree child : tree.getChildren()) {
+                addClassToTree(clazz, child);
+            }
+        }
+    }
+
+    protected void createClassTreeFromAnnotation(Class<?> clazz, ClassTree myTree) {
+        AdminPresentationClass classPresentation = clazz.getAnnotation(AdminPresentationClass.class);
+        if (classPresentation != null) {
+            String friendlyName = classPresentation.friendlyName();
+            if (!StringUtils.isEmpty(friendlyName)) {
+                myTree.setFriendlyName(friendlyName);
+            }
+        }
+    }
+
     public ClassTree getClassTree(Class<?>[] polymorphicClasses) {
+        String ceilingClass = null;
+        for (Class<?> clazz : polymorphicClasses) {
+            AdminPresentationClass classPresentation = clazz.getAnnotation(AdminPresentationClass.class);
+            if (classPresentation != null) {
+               String ceilingEntity = classPresentation.ceilingDisplayEntity();
+                if (!StringUtils.isEmpty(ceilingEntity)) {
+                    ceilingClass = ceilingEntity;
+                    break;
+                }
+            }
+        }
+        if (ceilingClass != null) {
+            int pos = -1;
+            int j = 0;
+            for (Class<?> clazz : polymorphicClasses) {
+                if (clazz.getName().equals(ceilingClass)) {
+                    pos = j;
+                    break;
+                }
+                j++;
+            }
+            if (pos >= 0) {
+                Class<?>[] temp = new Class<?>[pos + 1];
+                System.arraycopy(polymorphicClasses, 0, temp, 0, j + 1);
+                polymorphicClasses = temp;
+            }
+        }
+        
         ClassTree classTree = null;
         if (!ArrayUtils.isEmpty(polymorphicClasses)) {
             Class<?> topClass = polymorphicClasses[polymorphicClasses.length-1];
             classTree = new ClassTree(topClass.getName());
-            AdminPresentationClass classPresentation = topClass.getAnnotation(AdminPresentationClass.class);
-            if (classPresentation != null) {
-                String friendlyName = classPresentation.friendlyName();
-                if (!StringUtils.isEmpty(friendlyName)) {
-                    classTree.setFriendlyName(friendlyName);
-                }
-            }
+            createClassTreeFromAnnotation(topClass, classTree);
             for (int j=polymorphicClasses.length-1; j >= 0; j--) {
                 addClassToTree(polymorphicClasses[j], classTree);
             }
@@ -493,11 +520,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 if (localMetadata.getPresentationAttributes().getSecurityLevel() != null) {
                                     serverMetadata.getPresentationAttributes().setSecurityLevel(localMetadata.getPresentationAttributes().getSecurityLevel());
                                 }
-                                if (localMetadata.getPresentationAttributes().isHidden() != null) {
-                                    serverMetadata.getPresentationAttributes().setHidden(localMetadata.getPresentationAttributes().isHidden());
-                                }
-                                if (localMetadata.getPresentationAttributes().getFormHidden() != null) {
-                                    serverMetadata.getPresentationAttributes().setFormHidden(localMetadata.getPresentationAttributes().getFormHidden());
+                                if (localMetadata.getPresentationAttributes().getVisibility() != null) {
+                                    serverMetadata.getPresentationAttributes().setVisibility(localMetadata.getPresentationAttributes().getVisibility());
                                 }
                                 if (localMetadata.getPresentationAttributes().getOrder() != null) {
                                     serverMetadata.getPresentationAttributes().setOrder(localMetadata.getPresentationAttributes().getOrder());
@@ -580,8 +604,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     FieldPresentationAttributes attr = metadata.getPresentationAttributes();
                     attr.setFriendlyName(annot.friendlyName());
                     attr.setSecurityLevel(annot.securityLevel());
-                    attr.setHidden(annot.hidden());
-                    attr.setFormHidden(annot.formHidden());
+                    attr.setVisibility(annot.visibility());
                     attr.setOrder(annot.order());
                     attr.setExplicitFieldType(annot.fieldType());
                     attr.setGroup(annot.group());
@@ -817,8 +840,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setName(field.getName());
 				attr.setFriendlyName(annot.friendlyName());
 				attr.setSecurityLevel(annot.securityLevel());
-				attr.setHidden(annot.hidden());
-                attr.setFormHidden(annot.formHidden());
+				attr.setVisibility(annot.visibility());
 				attr.setOrder(annot.order());
 				attr.setExplicitFieldType(annot.fieldType());
 				attr.setGroup(annot.group());
@@ -865,19 +887,19 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		presentationAttribute.setFriendlyName(friendlyPropertyName);
 		if (String.class.isAssignableFrom(targetClass)) {
 			presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
-			presentationAttribute.setHidden(false);
+			presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.STRING, null, parentClass, presentationAttribute, mergedPropertyType));
 		} else if (Boolean.class.isAssignableFrom(targetClass)) {
 			presentationAttribute.setExplicitFieldType(SupportedFieldType.BOOLEAN);
-			presentationAttribute.setHidden(false);
+			presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.BOOLEAN, null, parentClass, presentationAttribute, mergedPropertyType));
 		} else if (Date.class.isAssignableFrom(targetClass)) {
 			presentationAttribute.setExplicitFieldType(SupportedFieldType.DATE);
-			presentationAttribute.setHidden(false);
+			presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.DATE, null, parentClass, presentationAttribute, mergedPropertyType));
 		} else if (Money.class.isAssignableFrom(targetClass)) {
 			presentationAttribute.setExplicitFieldType(SupportedFieldType.MONEY);
-			presentationAttribute.setHidden(false);
+			presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.MONEY, null, parentClass, presentationAttribute, mergedPropertyType));
 		} else if (
 				Byte.class.isAssignableFrom(targetClass) ||
@@ -886,14 +908,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				Short.class.isAssignableFrom(targetClass)
 			) {
 			presentationAttribute.setExplicitFieldType(SupportedFieldType.INTEGER);
-			presentationAttribute.setHidden(false);
+			presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.INTEGER, null, parentClass, presentationAttribute, mergedPropertyType));
 		} else if (
 				Double.class.isAssignableFrom(targetClass) ||
 				BigDecimal.class.isAssignableFrom(targetClass)
 			) {
 			presentationAttribute.setExplicitFieldType(SupportedFieldType.DECIMAL);
-			presentationAttribute.setHidden(false);
+			presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
 			fields.put(propertyName, getFieldMetadata("", propertyName, null, SupportedFieldType.DECIMAL, null, parentClass, presentationAttribute, mergedPropertyType));
 		}
 		fields.get(propertyName).setLength(255);
@@ -1005,7 +1027,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		);
 		FieldPresentationAttributes presentationAttribute = new FieldPresentationAttributes();
 		presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
-		presentationAttribute.setHidden(true);
+		presentationAttribute.setVisibility(VisibilityEnum.HIDDEN_ALL);
 		if (additionalNonPersistentProperties != null) {
 			for (String additionalNonPersistentProperty : additionalNonPersistentProperties) {
 				fields.put(additionalNonPersistentProperty, getFieldMetadata(prefix, additionalNonPersistentProperty, propertyList, SupportedFieldType.STRING, null, targetClass, presentationAttribute, mergedPropertyType));

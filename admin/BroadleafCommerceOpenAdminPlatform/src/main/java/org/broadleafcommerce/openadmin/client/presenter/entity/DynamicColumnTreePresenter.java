@@ -16,7 +16,12 @@
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
@@ -28,15 +33,18 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.NodeSelectedEvent;
 import com.smartgwt.client.widgets.grid.events.NodeSelectedHandler;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ColumnTreeDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditColumnTreeDisplay;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -63,6 +71,7 @@ public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter
     private String newItemTitle = "Create new item";
     private Criteria fetchAfterAddCriteria = new Criteria();
     private String[] gridFields;
+    protected Map<String, Object> initialValues = new HashMap<String, Object>();
 	
 	public void setStartState() {
 		if (!disabled) {
@@ -182,17 +191,36 @@ public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter
         // place holder
     }
 
-	protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
+    protected void addClicked(final String newItemTitle) {
+        initialValues.remove("_type");
+        LinkedHashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getPolymorphicEntities();
+        if (polymorphicEntities.size() > 1) {
+            BLCMain.POLYMORPHIC_ADD.search(BLCMain.getMessageManager().getString("selectPolymorphicType"), polymorphicEntities, new SearchItemSelectedHandler() {
+                @Override
+                public void onSearchItemSelected(SearchItemSelected event) {
+                    ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).setDefaultNewEntityFullyQualifiedClassname(event.getRecord().getAttribute("fullyQualifiedType"));
+                    addNewItem(newItemTitle);
+                }
+            });
+        } else {
+            addNewItem(newItemTitle);
+        }
+	}
+
+    protected void addNewItem(String newItemTitle) {
+        initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+        BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
 			public void onItemEdited(ItemEdited event) {
                 if (fetchAfterAddCriteria != null) {
 				    display.getListDisplay().getGrid().fetchData(fetchAfterAddCriteria);
                 }
 			}
 		}, null, null);
-	}
+    }
+
+	protected void addClicked() {
+        addClicked(BLCMain.getMessageManager().getString("newItemTitle"));
+    }
 	
 	protected void removeClicked() {
 		SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
