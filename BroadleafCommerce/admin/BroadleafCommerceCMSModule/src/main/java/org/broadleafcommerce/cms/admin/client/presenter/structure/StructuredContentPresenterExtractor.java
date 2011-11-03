@@ -129,10 +129,10 @@ public class StructuredContentPresenterExtractor {
                                 if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                     try {
                                         extractQualifierData(newId, false, dirtyValues);
-                                        getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                                        getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                                        getDisplay().getStructuredContentSaveButton().enable();
-                                        getDisplay().getStructuredContentRefreshButton().enable();
+                                        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+                                        getDisplay().getStructuredContentSaveButton().disable();
+                                        getDisplay().getStructuredContentRefreshButton().disable();
                                         if (!presenter.currentStructuredContentId.equals(newId)) {
                                             Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentStructuredContentId);
                                             myRecord.setAttribute("id", newId);
