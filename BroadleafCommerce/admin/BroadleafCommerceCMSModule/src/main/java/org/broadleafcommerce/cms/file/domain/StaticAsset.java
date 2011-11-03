@@ -16,14 +16,41 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.Site;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by bpolster.
  */
-public interface StaticAsset extends StaticAssetFolder {
+public interface StaticAsset extends Serializable {
+
+    public Long getId();
+
+    public void setId(Long id);
+
+    public Site getSite();
+
+    public void setSite(Site site);
+
+    public Boolean getDeletedFlag();
+
+    public void setDeletedFlag(Boolean deletedFlag);
+
+    public String getName();
+
+    public void setName(String name);
+
+    public AdminAuditable getAuditable();
+
+    public void setAuditable(AdminAuditable auditable);
+
+    public Boolean getLockedFlag();
+
+    public void setLockedFlag(Boolean lockedFlag);
 
     public String getFullUrl();
 
@@ -62,4 +89,5 @@ public interface StaticAsset extends StaticAssetFolder {
     public SandBox getOriginalSandBox();
 
     public void setOriginalSandBox(SandBox originalSandBox);
+
 }

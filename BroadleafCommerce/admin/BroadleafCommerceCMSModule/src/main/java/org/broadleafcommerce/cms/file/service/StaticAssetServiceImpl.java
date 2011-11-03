@@ -19,10 +19,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
-import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -52,7 +55,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     protected StaticAssetStorageService staticAssetStorageService;
 
     @Override
-    public StaticAssetFolder findStaticAssetById(Long id) {
+    public StaticAsset findStaticAssetById(Long id) {
         return staticAssetDao.readStaticAssetById(id);
     }
 
@@ -61,119 +64,12 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
     }
 
-    /**
-     * Retuns content items for the passed in sandbox that match the passed in criteria.
-     * <p/>
-     * Merges the sandbox content with the production content.
-     *
-     * @param sandbox      - the sandbox to find structured content items (null indicates items that are in production for
-     *                     sites that are single tenant.
-     * @return
-     */
     @Override
-    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, Criteria c) {
-        c.add(Restrictions.eq("archivedFlag", false));
-        c.add(Restrictions.eq("folderFlag", false));
-
-        if (sandbox == null) {
-            // Query is hitting the production sandbox.
-            c.add(Restrictions.isNull("sandbox"));
-            return c.list();
-        } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
-            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
-            Criterion productionSandboxExpression = null;
-            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-                productionSandboxExpression = Restrictions.isNull("sandbox");
-            } else {
-                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
-                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-                }
-            }
-
-            if (productionSandboxExpression != null) {
-                c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
-            } else {
-                c.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
-            }
-
-            List<StaticAsset> resultList = (List<StaticAsset>) c.list();
-
-            // Iterate once to build the map
-            LinkedHashMap returnItems = new LinkedHashMap<Long,StructuredContent>();
-            for (StaticAsset asset : resultList) {
-                returnItems.put(asset.getId(), asset);
-            }
-
-            // Iterate to remove items from the final list
-            for (StaticAsset asset : resultList) {
-                if (asset.getDeletedFlag()) {
-                    returnItems.remove(asset.getId());
-                }
-            }
-            return new ArrayList<StaticAsset>(returnItems.values());
-        }
-
-    }
-
-    /**
-     * Returns the count of items that match the passed in criteria.
-     *
-     * This counts the items in production + the new items in the sandbox - the
-     * existing items that have been deleted in the sandbox.
-     *
-     * @return the count of items in this sandbox that match the passed in Criteria
-     */
-    @Override
-    public Long countStaticAssetFolderChildren(SandBox sandbox, Criteria c) {
-        c.add(Restrictions.eq("archivedFlag", false));
-        c.add(Restrictions.eq("folderFlag", false));
-        c.setProjection(Projections.rowCount());
-
-        if (sandbox == null) {
-            // Query is hitting the production sandbox.
-            c.add(Restrictions.isNull("sandbox"));
-            return (Long) c.uniqueResult();
-        } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
-            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
-            Criterion productionSandboxExpression;
-            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-                productionSandboxExpression = Restrictions.isNull("sandbox");
-            } else {
-                // Query is hitting the production sandbox.
-                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
-                    return (Long) c.uniqueResult();
-                }
-                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-            }
-
-            c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
-
-            Long resultCount = (Long) c.list().get(0);
-            Long deletedCount = 0L;
-
-            // count deleted items
-            c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.eq("sandbox", sandbox)));
-            deletedCount = (Long) c.list().get(0);
-
-            return resultCount - deletedCount;
-        }
-    }
-
-    @Override
-    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(StaticAssetFolder parentFolder) {
-        List<StaticAssetFolder> staticAssetFolders =  staticAssetDao.readStaticAssetFolderChildFolders(parentFolder);
-        return staticAssetFolders;
-    }
-
-    @Override
-    public StaticAsset addStaticAsset(StaticAsset staticAsset, StaticAssetFolder parentFolder, SandBox destinationSandbox) {
+    public StaticAsset addStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
         staticAsset.setSandbox(destinationSandbox);
-        staticAsset.setParentFolder(parentFolder);
-        String parentUrl = (parentFolder == null ? "" : parentFolder.getFullUrl());
-        staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName() + "." + staticAsset.getFileExtension());
-        StaticAsset newAsset =  staticAssetDao.updateStaticAsset(staticAsset);
+        staticAsset.setArchivedFlag(false);
+        staticAsset.setDeletedFlag(false);
+        StaticAsset newAsset = staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
         }
@@ -182,18 +78,22 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Override
     public StaticAsset updateStaticAsset(StaticAsset staticAsset, SandBox destSandbox) {
-        String parentUrl = (staticAsset.getParentFolder() == null ? "" : staticAsset.getParentFolder().getFullUrl());
+        if (staticAsset.getLockedFlag()) {
+            throw new IllegalArgumentException("Unable to update a locked record");
+        }
 
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {
-            staticAsset.setFullUrl(parentUrl + "/" + staticAsset.getName() + "." + staticAsset.getFileExtension());
-            return staticAssetDao.updateStaticAsset(staticAsset);
-        } else if (checkForProductionSandbox(staticAsset.getSandbox())) {
-            // Moving from production to destSandbox
+            return staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
+        } else if (isProductionSandBox(staticAsset.getSandbox())) {
+            // Move from production to destSandbox
             StaticAsset clonedAsset = staticAsset.cloneEntity();
             clonedAsset.setOriginalAssetId(staticAsset.getId());
             clonedAsset.setSandbox(destSandbox);
-            clonedAsset.setFullUrl(parentUrl + "/" + clonedAsset.getName() + "." + clonedAsset.getFileExtension());
-            StaticAsset returnAsset =  staticAssetDao.addStaticAsset(clonedAsset);
+            StaticAsset returnAsset = staticAssetDao.addOrUpdateStaticAsset(clonedAsset, true);
+
+            StaticAsset prod = findStaticAssetById(staticAsset.getId());
+            prod.setLockedFlag(true);
+            staticAssetDao.addOrUpdateStaticAsset(prod, false);
 
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
             return returnAsset;
@@ -228,29 +128,6 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return productionSandbox;
     }
 
-    @Override
-    public void deleteStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
-        staticAsset.setDeletedFlag(true);
-        updateStaticAsset(staticAsset, destinationSandbox);
-    }
-
-    @Override
-    public void deleteStaticAssetFolder(StaticAssetFolder staticAssetFolder) {
-        if (!staticAssetFolder.getSubFolders().isEmpty()) {
-            throw new UnsupportedOperationException("Cannot delete folder with children.");
-        } else {
-            staticAssetFolder.setDeletedFlag(true);
-            staticAssetDao.updateStaticAssetFolder(staticAssetFolder);
-        }
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public StaticAssetFolder addStaticAssetFolder(StaticAssetFolder staticAssetFolder, StaticAssetFolder parentStaticAssetFolder) {
-        staticAssetFolder.setParentFolder(parentStaticAssetFolder);
-        return staticAssetDao.addStaticAssetFolder(staticAssetFolder);
-    }
-
     // Returns true if the dest sandbox is production.
     private boolean isProductionSandBox(SandBox dest) {
         if (dest == null) {
@@ -261,11 +138,106 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     @Override
+    public void deleteStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
+        staticAsset.setDeletedFlag(true);
+        updateStaticAsset(staticAsset, destinationSandbox);
+    }
+
+    @Override
+    public Long countAssets(SandBox sandbox, Criteria criteria) {
+        criteria.add(Restrictions.eq("archivedFlag", false));
+        criteria.setProjection(Projections.rowCount());
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            criteria.add(Restrictions.isNull("sandbox"));
+            return (Long) criteria.uniqueResult();
+        } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression;
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                // Query is hitting the production sandbox.
+                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
+                    return (Long) criteria.uniqueResult();
+                }
+                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+            }
+
+            criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression, productionSandboxExpression), originalSandboxExpression));
+
+            Long resultCount = (Long) criteria.list().get(0);
+            Long updatedCount = 0L;
+            Long deletedCount = 0L;
+
+            // count updated items
+            criteria.add(Restrictions.and(Restrictions.isNotNull("originalAssetId"),Restrictions.or(currentSandboxExpression, originalSandboxExpression)));
+            updatedCount = (Long) criteria.list().get(0);
+
+            // count deleted items
+            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression, originalSandboxExpression)));
+            deletedCount = (Long) criteria.list().get(0);
+
+            return resultCount - updatedCount - deletedCount;
+        }
+    }
+
+    @Override
+    public List<StaticAsset> findAssets(SandBox sandbox, Criteria criteria) {
+        criteria.add(Restrictions.eq("archivedFlag", false));
+
+        if (sandbox == null) {
+            // Query is hitting the production sandbox.
+            criteria.add(Restrictions.isNull("sandbox"));
+            return (List<StaticAsset>) criteria.list();
+        } else {
+            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
+            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
+            Criterion productionSandboxExpression = null;
+            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
+                productionSandboxExpression = Restrictions.isNull("sandbox");
+            } else {
+                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
+                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
+                }
+            }
+
+            if (productionSandboxExpression != null) {
+                criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression, productionSandboxExpression), originalSandboxExpression));
+            } else {
+                criteria.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
+            }
+
+            List<StaticAsset> resultList = (List<StaticAsset>) criteria.list();
+
+            // Iterate once to build the map
+            LinkedHashMap returnItems = new LinkedHashMap<Long,Page>();
+            for (StaticAsset page : resultList) {
+                returnItems.put(page.getId(), page);
+            }
+
+            // Iterate to remove items from the final list
+            for (StaticAsset asset : resultList) {
+                if (asset.getOriginalAssetId() != null) {
+                    returnItems.remove(asset.getOriginalAssetId());
+                }
+
+                if (asset.getDeletedFlag()) {
+                    returnItems.remove(asset.getId());
+                }
+            }
+            return new ArrayList<StaticAsset>(returnItems.values());
+        }
+    }
+
+    @Override
     public void itemPromoted(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
         if (! SandBoxItemType.STATIC_ASSET.equals(sandBoxItem.getSandBoxItemType())) {
             return;
         }
-        StaticAsset asset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+        StaticAsset asset = staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
 
         if (asset == null) {
             if (LOG.isDebugEnabled()) {
@@ -282,9 +254,9 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Asset promoted to production.  " + asset.getId() + ".  Archiving original asset " + asset.getOriginalAssetId());
                 }
-                StaticAsset originalAsset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+                StaticAsset originalAsset = staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
                 originalAsset.setArchivedFlag(Boolean.TRUE);
-                staticAssetDao.updateStaticAsset(originalAsset);
+                staticAssetDao.addOrUpdateStaticAsset(originalAsset, false);
                 asset.setOriginalAssetId(null);
             }
         }
@@ -292,7 +264,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             asset.setOriginalSandBox(asset.getSandbox());
         }
         asset.setSandbox(destinationSandBox);
-        staticAssetDao.updateStaticAsset(asset);
+        staticAssetDao.addOrUpdateStaticAsset(asset, false);
     }
 
     @Override
@@ -300,14 +272,13 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (! SandBoxItemType.STATIC_ASSET.equals(sandBoxItem.getSandBoxItemType())) {
             return;
         }
-        StaticAsset asset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
-
+        StaticAsset asset = staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
 
         if (asset != null) {
             asset.setSandbox(destinationSandBox);
             asset.setOriginalSandBox(null);
             asset.setLockedFlag(false);
-            staticAssetDao.updateStaticAsset(asset);
+            staticAssetDao.addOrUpdateStaticAsset(asset, false);
         }
     }
 
@@ -316,16 +287,16 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (! SandBoxItemType.STATIC_ASSET.equals(sandBoxItem.getSandBoxItemType())) {
             return;
         }
-        StaticAsset asset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
+        StaticAsset asset = staticAssetDao.readStaticAssetById(sandBoxItem.getTemporaryItemId());
 
         if (asset != null) {
             asset.setArchivedFlag(Boolean.TRUE);
             asset.setLockedFlag(false);
-            staticAssetDao.updateStaticAsset(asset);
+            staticAssetDao.addOrUpdateStaticAsset(asset, false);
 
-            StaticAsset originalAsset = (StaticAsset) staticAssetDao.readStaticAssetById(sandBoxItem.getOriginalItemId());
+            StaticAsset originalAsset = staticAssetDao.readStaticAssetById(sandBoxItem.getOriginalItemId());
             originalAsset.setLockedFlag(false);
-            staticAssetDao.updateStaticAsset(originalAsset);
+            staticAssetDao.addOrUpdateStaticAsset(originalAsset, false);
         }
     }
 }

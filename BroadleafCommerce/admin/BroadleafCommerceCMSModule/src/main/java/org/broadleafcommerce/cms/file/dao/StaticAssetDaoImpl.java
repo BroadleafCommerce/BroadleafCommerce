@@ -16,7 +16,6 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.persistence.EntityConfiguration;
@@ -26,10 +25,8 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,8 +50,8 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @Override
-    public StaticAssetFolder readStaticAssetById(Long id) {
-        return (StaticAssetFolder) em.find(entityConfiguration.lookupEntityClass(StaticAssetFolder.class.getName()), id);
+    public StaticAsset readStaticAssetById(Long id) {
+        return (StaticAsset) em.find(entityConfiguration.lookupEntityClass(StaticAsset.class.getName()), id);
     }
 
     @Override
@@ -75,40 +72,6 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         } else {
             return results.iterator().next();
         }
-    }
-
-    @Override
-    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder) {
-        String queryPrefix = "BC_READ_";
-        if (parentFolder == null) {
-                queryPrefix = "BC_READ_NULL_";
-        }
-        Query query2 = em.createNamedQuery(queryPrefix + "STATIC_ASSET_FOLDER_CHILD_FOLDERS");
-        if (parentFolder != null) {
-            query2.setParameter("parentFolder", parentFolder);
-        }
-        List<StaticAssetFolder> childFolders = query2.getResultList();
-
-        return childFolders;
-    }
-
-    @Override
-    public List<StaticAsset> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandBox, SandBox productionSandBox) {
-        String queryPrefix = "BC_READ_";
-        if (parentFolder == null) {
-                queryPrefix = "BC_READ_NULL_";
-        }
-        Query query = em.createNamedQuery(queryPrefix + "STATIC_ASSET_FOLDER_CHILD_PAGES");
-        if (parentFolder != null) {
-            query.setParameter("parentFolder", parentFolder);
-        }
-        query.setParameter("userSandbox", userSandBox == null ? DUMMY_SANDBOX : userSandBox);
-        query.setParameter("productionSandbox", productionSandBox == null ? DUMMY_SANDBOX : productionSandBox);
-
-        List<StaticAsset> childAssets = query.getResultList();
-        filterStaticAssetsForSandbox(userSandBox, productionSandBox, childAssets);
-
-        return childAssets;
     }
 
     private void filterStaticAssetsForSandbox(SandBox userSandBox, SandBox productionSandBox, List<StaticAsset> assetList) {
@@ -136,25 +99,10 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     }
 
     @Override
-    public StaticAsset updateStaticAsset(StaticAsset asset) {
-        StaticAssetFolder parentFolder = asset.getParentFolder();
-        List<String> parentFolders = new ArrayList<String>();
-        while (parentFolder != null) {
-            parentFolders.add(parentFolder.getName());
-            parentFolder = parentFolder.getParentFolder();
+    public StaticAsset addOrUpdateStaticAsset(StaticAsset asset, boolean clearLevel1Cache) {
+        if (clearLevel1Cache) {
+            em.clear();
         }
-        Collections.reverse(parentFolders);
-        StringBuffer sb = new StringBuffer();
-        sb.append("/");
-        for (String folderName : parentFolders) {
-            sb.append(folderName);
-            sb.append("/");
-        }
-        sb.append(asset.getName());
-        sb.append(".");
-        sb.append(asset.getFileExtension());
-        asset.setFullUrl(sb.toString());
-
         return em.merge(asset);
     }
 
@@ -164,21 +112,6 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             asset = (StaticAsset) readStaticAssetById(asset.getId());
         }
         em.remove(asset);
-    }
-
-    @Override
-    public StaticAssetFolder updateStaticAssetFolder(StaticAssetFolder staticAssetFolder) {
-        return em.merge(staticAssetFolder);
-    }
-
-    @Override
-    public StaticAsset addStaticAsset(StaticAsset clonedAsset) {
-        return (StaticAsset) em.merge(clonedAsset);
-    }
-
-    @Override
-    public StaticAssetFolder addStaticAssetFolder(StaticAssetFolder staticAssetFolder) {
-        return (StaticAssetFolder) em.merge(staticAssetFolder);
     }
 
 }

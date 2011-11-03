@@ -17,7 +17,6 @@
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl</class>
-        <class>org.broadleafcommerce.cms.file.domain.StaticAssetFolderImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.ContentDisplayRuleImpl</class>
@@ -27,7 +26,6 @@
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteriaImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
-
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

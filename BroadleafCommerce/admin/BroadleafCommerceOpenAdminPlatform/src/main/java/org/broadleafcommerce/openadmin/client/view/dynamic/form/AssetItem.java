@@ -37,15 +37,15 @@ public class AssetItem extends CanvasItem {
         previewImg.setImageType(ImageStyle.CENTER);
         previewImg.setVisible(true);
         previewImg.setShowDisabled(false);
-        previewImg.setSrc(GWT.getModuleBaseURL()+"admin/images/blank.gif");
+        previewImg.setSrc(GWT.getModuleBaseURL() + "admin/images/blank.gif");
         previewImg.setShowDown(false);
         previewContainer.addChild(previewImg);
-        imageUpdateButton = new IButton("Update Artifact");
         final FormItem formItem = this;
+        imageUpdateButton = new IButton("Update Artifact");
         imageUpdateButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final String formItemName = formItem.getName();
+                String formItemName = formItem.getName();
                 ((DynamicEntityDataSource) formItem.getForm().getDataSource()).getFormItemCallbackHandlerManager().getFormItemCallback(formItemName).execute(formItem);
             }
         });

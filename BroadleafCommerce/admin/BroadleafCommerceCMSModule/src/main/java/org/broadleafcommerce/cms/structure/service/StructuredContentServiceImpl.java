@@ -481,13 +481,18 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         }
 
         StructuredContent sc = structuredContentDao.findStructuredContentById(sandBoxItem.getTemporaryItemId());
-
         if (sc == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Structured Content Item not found " + sandBoxItem.getTemporaryItemId());
             }
         } else {
-            if (isProductionSandBox(destinationSandBox) && sc.getOriginalItemId() != null) {
+            boolean productionSandBox = isProductionSandBox(destinationSandBox);
+            if (productionSandBox) {
+                sc.setLockedFlag(false);
+            } else {
+                sc.setLockedFlag(true);
+            }
+            if (productionSandBox && sc.getOriginalItemId() != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Structured content promoted to production.  " + sc.getId() + ".  Archiving original item " + sc.getOriginalItemId());
                 }
@@ -495,12 +500,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 originalSC.setArchivedFlag(Boolean.TRUE);
                 structuredContentDao.addOrUpdateContentItem(originalSC, false);
 
-               // We are archiving the old item and making this the new "production item", so
-               // null out the original item id before saving.
-                sc.setOriginalItemId(null);
-                sc.setLockedFlag(false);
-            } else {
-                sc.setLockedFlag(true);
+               // We are archiving the old page and making this the new "production page", so
+               // null out the original page id before saving.
+               sc.setOriginalItemId(null);
             }
         }
         if (sc.getOriginalSandBox() == null) {

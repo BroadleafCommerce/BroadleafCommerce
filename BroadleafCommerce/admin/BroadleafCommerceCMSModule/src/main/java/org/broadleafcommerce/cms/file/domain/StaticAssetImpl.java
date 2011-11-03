@@ -15,19 +15,39 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,11 +59,47 @@ import java.util.Map;
 @EntityListeners(value = { AdminAuditableListener.class })
 @Table(name = "BLC_STATIC_ASSET")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationOverrides(
+        {
+            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))
+        }
+)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsset {
+public class StaticAssetImpl implements StaticAsset {
 
-    @Column(name ="FULL_URL")
-    @AdminPresentation(friendlyName="Full URL", order=2, group = "Details", readOnly = true)
+    @Id
+    @GeneratedValue(generator = "StaticAssetId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "StaticAssetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetFolderImpl", allocationSize = 10)
+    @Column(name = "STATIC_ASSET_ID")
+    protected Long id;
+
+    @Embedded
+    protected AdminAuditable auditable = new AdminAuditable();
+
+    @Column (name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName="Item Name", order=1, group = "Details")
+    protected String name;
+
+    /*@ManyToOne(targetEntity = SiteImpl.class)
+    @JoinColumn(name="SITE_ID")*/
+    @Transient
+    @AdminPresentation(excluded = true)
+    protected Site site;
+
+    @Column(name ="FULL_URL", nullable = false)
+    @AdminPresentation(friendlyName="Full URL", order=2, group = "Details")
     protected String fullUrl;
 
     @Column(name = "FILE_SIZE")
@@ -80,13 +136,17 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
     @AdminPresentation(friendlyName="Archived Flag", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean archivedFlag = false;
 
+    @Column (name = "DELETED_FLAG")
+    @AdminPresentation(friendlyName="Deleted Flag", visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Boolean deletedFlag = false;
+
+    @Column (name = "LOCKED_FLAG")
+    @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Boolean lockedFlag = false;
+
     @Column (name = "ORIGINAL_ASSET_ID")
     @AdminPresentation(friendlyName="Original Asset ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long originalAssetId;
-
-    public StaticAssetImpl() {
-        folderFlag = false;
-    }
 
     public String getFullUrl() {
         return fullUrl;
@@ -160,11 +220,58 @@ public class StaticAssetImpl extends StaticAssetFolderImpl implements StaticAsse
         this.originalSandBox = originalSandBox;
     }
 
+    public AdminAuditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(AdminAuditable auditable) {
+        this.auditable = auditable;
+    }
+
+    public Boolean getDeletedFlag() {
+        return deletedFlag;
+    }
+
+    public void setDeletedFlag(Boolean deletedFlag) {
+        this.deletedFlag = deletedFlag;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean getLockedFlag() {
+        return lockedFlag;
+    }
+
+    public void setLockedFlag(Boolean lockedFlag) {
+        this.lockedFlag = lockedFlag;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Site getSite() {
+        return site;
+    }
+
+    public void setSite(Site site) {
+        this.site = site;
+    }
+
     @Override
     public StaticAsset cloneEntity() {
         StaticAssetImpl asset = new StaticAssetImpl();
         asset.name = name;
-        asset.parentFolder = parentFolder;
         asset.site = site;
         asset.archivedFlag = archivedFlag;
         asset.deletedFlag = deletedFlag;

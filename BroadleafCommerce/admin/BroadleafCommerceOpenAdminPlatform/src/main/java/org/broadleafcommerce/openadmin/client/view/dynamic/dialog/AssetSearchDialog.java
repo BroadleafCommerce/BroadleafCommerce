@@ -16,9 +16,6 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
 import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
@@ -28,19 +25,15 @@ import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 import com.smartgwt.client.widgets.form.fields.TextItem;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tile.TileGrid;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import com.smartgwt.client.widgets.tile.events.SelectionChangedHandler;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 
 /**
  * 
@@ -50,58 +43,31 @@ import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandl
 public class AssetSearchDialog extends Window {
 		
 	protected final TileGrid tileGrid;
-	protected final TreeGrid treeGrid;
 	protected IButton saveButton;
 	protected TileGridItemSelectedHandler handler;
 	
-	public AssetSearchDialog(final TileGridDataSource staticAssetDataSource, final PresentationLayerAssociatedDataSource staticAssetFolderDataSource) {
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		this.setWidth(600);
-		this.setHeight(340);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.AUTO);
-		this.setVisible(true);
-		
-		treeGrid = new TreeGrid();
-		treeGrid.setDataSource(staticAssetFolderDataSource);
-		treeGrid.setHeight(230);
-		treeGrid.setWidth("30%");
-		treeGrid.setAlternateRecordStyles(true);
-	    treeGrid.setSelectionType(SelectionStyle.SINGLE);
-	    treeGrid.setCanEdit(false);
-	    treeGrid.setAutoFetchData(true);
-	    treeGrid.setDrawAheadRatio(4);
-	    treeGrid.setCanSort(false);
-	    treeGrid.setCanResizeFields(true);
-	    treeGrid.setShowRoot(true);
-		treeGrid.addSelectionChangedHandler(new com.smartgwt.client.widgets.grid.events.SelectionChangedHandler() {
-			@Override
-			public void onSelectionChanged(SelectionEvent event) {
-			if (event.getSelectedRecord() != null) {
-				String id = staticAssetFolderDataSource.getPrimaryKeyValue(event.getSelectedRecord());
-				((PresentationLayerAssociatedDataSource) tileGrid.getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
-					public void execute(DSResponse response, Object rawData, DSRequest request) {
-						tileGrid.enable();
-					}
-				});
-			} 
-		}});
-		
-        
+	public AssetSearchDialog(TileGridDataSource staticAssetDataSource) {
+		setIsModal(true);
+		setShowModalMask(true);
+		setShowMinimizeButton(false);
+		setWidth(600);
+		setHeight(500);
+		setCanDragResize(true);
+		setOverflow(Overflow.AUTO);
+		setVisible(true);
+
 		tileGrid = new TileGrid();
         tileGrid.setTileWidth(80);
         tileGrid.setTileHeight(120);
-        tileGrid.setAutoFetchData(false);
+        tileGrid.setAutoFetchData(true);
         tileGrid.setSelectionType(SelectionStyle.SINGLE);
         tileGrid.setShowAllRecords(false);
-        tileGrid.setHeight(230);
-        tileGrid.setWidth("70%");
+        tileGrid.setHeight100();
+        tileGrid.setWidth100();
         staticAssetDataSource.setAssociatedGrid(tileGrid);
         staticAssetDataSource.setupGridFields(new String[]{"pictureLarge", "name"});
         tileGrid.setDataSource(staticAssetDataSource);
-        tileGrid.addSelectionChangedHandler(new com.smartgwt.client.widgets.tile.events.SelectionChangedHandler() {
+        tileGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
         	@Override
         	public void onSelectionChanged(SelectionChangedEvent event) {
         		saveButton.enable();
@@ -117,12 +83,6 @@ public class AssetSearchDialog extends Window {
                 }
             }
         });
-        
-
-        
-		HLayout browseHLayout = new HLayout();
-		browseHLayout.addMember(treeGrid);
-		browseHLayout.addMember(tileGrid);
 		
         saveButton = new IButton("Ok");
         saveButton.addClickHandler(new ClickHandler() {
@@ -147,34 +107,42 @@ public class AssetSearchDialog extends Window {
         buttonsLayout.addMember(cancelButton);
         buttonsLayout.setLayoutTopMargin(10);
         buttonsLayout.setLayoutBottomMargin(10);
+        buttonsLayout.setWidth100();
         
-        HLayout filterLayout = new HLayout();
-        filterLayout.setAlign(Alignment.RIGHT);
+        HLayout filterLayout = new HLayout(15);
+        filterLayout.setAlign(Alignment.CENTER);
         filterLayout.setLayoutTopMargin(10);
         filterLayout.setLayoutRightMargin(5);
+        filterLayout.setLayoutBottomMargin(10);
+        filterLayout.setWidth100();
         
         final DynamicForm filterForm = new DynamicForm();  
         filterForm.setDataSource(staticAssetDataSource);  
         filterForm.setAutoFocus(false);
+        filterForm.setNumCols(2);
         
-        TextItem nameFilterItem = new TextItem("name", "Search");
+        TextItem nameFilterItem = new TextItem("name", "Name");
+        nameFilterItem.setWrapTitle(false);
+
+        TextItem urlFilterItem = new TextItem("fullUrl", "Url");
         nameFilterItem.setWrapTitle(false);
         
-        filterForm.setFields(nameFilterItem);  
-        filterForm.addItemChangedHandler(new ItemChangedHandler() {  
-            public void onItemChanged(ItemChangedEvent event) {  
-            	String id = staticAssetFolderDataSource.getPrimaryKeyValue(treeGrid.getSelectedRecord());
+        filterForm.setFields(nameFilterItem, urlFilterItem);
+
+        IButton searchButton = new IButton("Search");
+        searchButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
             	Criteria valuesAsCriteria = filterForm.getValuesAsCriteria();
-            	valuesAsCriteria.addCriteria(new Criteria("parentFolder", id));
-                tileGrid.fetchData(valuesAsCriteria); 
-            }  
-        });  
+                tileGrid.fetchData(valuesAsCriteria);
+            }
+        });
         
         filterLayout.addMember(filterForm);
+        filterLayout.addMember(searchButton);
         VLayout mainLayout = new VLayout();
         
         mainLayout.addMember(filterLayout);
-        mainLayout.addMember(browseHLayout);
+        mainLayout.addMember(tileGrid);
         mainLayout.addMember(buttonsLayout);
 
         addItem(mainLayout); 

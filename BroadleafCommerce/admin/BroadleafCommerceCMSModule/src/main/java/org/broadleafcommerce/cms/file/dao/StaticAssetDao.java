@@ -16,31 +16,18 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
-
-import java.util.List;
 
 /**
  * Created by bpolster.
  */
 public interface StaticAssetDao {
 
-    public StaticAssetFolder readStaticAssetById(Long id);
-
-    public List<StaticAsset> readStaticAssetFolderChildren(StaticAssetFolder parentFolder, SandBox userSandbox, SandBox productionSandBox);
-
-    public StaticAsset updateStaticAsset(StaticAsset asset);
+    public StaticAsset readStaticAssetById(Long id);
 
     public void delete(StaticAsset asset);
 
-    public StaticAssetFolder updateStaticAssetFolder(StaticAssetFolder staticAssetFolder);
-
-    public StaticAsset addStaticAsset(StaticAsset clonedAsset);
-
-    public StaticAssetFolder addStaticAssetFolder(StaticAssetFolder staticAssetFolder);
-
-    public List<StaticAssetFolder> readStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
+    public StaticAsset addOrUpdateStaticAsset(StaticAsset asset, boolean clearLevel1Cache);
 
     public StaticAsset readStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
 

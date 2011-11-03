@@ -94,7 +94,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     }
 
     @Override
-	protected void changeSelection(final Record selectedRecord) {
+	protected void changeSelection(Record selectedRecord) {
         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
             getDisplay().getListDisplay().getRemoveButton().enable();
             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
@@ -230,7 +230,6 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 				((ListGridDataSource) top).setupGridFields(new String[]{"locked", "fullUrl", "description", "pageTemplate_Grid"});
 			}
         }));
-
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("pageTemplateSearchDS", new PageTemplateSearchListDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				ListGridDataSource pageTemplateDataSource = (ListGridDataSource) result;

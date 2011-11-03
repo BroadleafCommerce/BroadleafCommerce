@@ -92,7 +92,7 @@ public class PageDaoImpl implements PageDao {
     @Override
     public Page addPage(Page clonedPage, boolean clearLevel1Cache) {
         if (clearLevel1Cache) {
-            em.clear();;
+            em.clear();
         }
         return em.merge(clonedPage);
     }

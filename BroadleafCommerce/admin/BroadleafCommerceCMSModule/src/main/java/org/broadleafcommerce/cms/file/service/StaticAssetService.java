@@ -16,7 +16,6 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetFolder;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.hibernate.Criteria;
@@ -29,13 +28,7 @@ import java.util.List;
 public interface StaticAssetService extends SandBoxItemListener {
 
 
-    public StaticAssetFolder findStaticAssetById(Long id);
-
-    public List<StaticAsset> findStaticAssetFolderChildren(SandBox sandbox, Criteria c);
-
-    public Long countStaticAssetFolderChildren(SandBox sandbox, Criteria c);
-
-    public List<StaticAssetFolder> findStaticAssetFolderChildFolders(StaticAssetFolder parentFolder);
+    public StaticAsset findStaticAssetById(Long id);
 
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
 
@@ -47,7 +40,7 @@ public interface StaticAssetService extends SandBoxItemListener {
      *
      * Creates a sandbox/site if one doesn't already exist.
      */
-    public StaticAsset addStaticAsset(StaticAsset staticAsset, StaticAssetFolder parentFolder, SandBox destinationSandbox);
+    public StaticAsset addStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox);
 
     /**
      * This method is intended to be called from within the CMS
@@ -98,23 +91,9 @@ public interface StaticAssetService extends SandBoxItemListener {
     public void deleteStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox);
 
 
-    /**
-     * Sets the delete flag on the folder.   Throws an exception if the
-     * folder contains non-archived items.
-     *
-     * @param staticAssetFolder
-     */
-    public void deleteStaticAssetFolder(StaticAssetFolder staticAssetFolder);
+    public Long countAssets(SandBox sandbox, Criteria criteria);
 
-
-    /**
-     * Adds a sub-folder to the passed in parentFolder
-     *
-     * @param staticAssetFolder
-     * @param parentStaticAssetFolder
-     * @return
-     */
-    public StaticAssetFolder addStaticAssetFolder(StaticAssetFolder staticAssetFolder, StaticAssetFolder parentStaticAssetFolder);
+    public List<StaticAsset> findAssets(SandBox sandbox, Criteria criteria);
 
 
 }
