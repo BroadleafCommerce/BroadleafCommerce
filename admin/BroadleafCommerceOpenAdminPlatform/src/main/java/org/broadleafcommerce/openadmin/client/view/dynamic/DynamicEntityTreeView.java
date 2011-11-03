@@ -44,7 +44,6 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
     }
 	
 	public DynamicEntityTreeView(String title, DataSource dataSource, boolean showRoot) {
-		super();
 		toolBar = new ToolStrip();
 		toolBar.setHeight(30);
 		toolBar.setWidth100();
@@ -64,24 +63,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 
         toolBar.addSpacer(6);
         toolBar.addFill();
-        /*Map<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
-        if (polymorphicEntities.size() > 1) { 
-            entityType.setShowTitle(false);  
-            entityType.setWidth(120); 
-            
-            LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
-            for (String name : polymorphicEntities.keySet()) {
-            	valueMap.put(name, polymorphicEntities.get(name)); 
-            }
-            entityType.setValueMap(valueMap);  
-            entityType.setDefaultValue(((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()); 
-            entityType.addFocusHandler(new FocusHandler() {
-				public void onFocus(FocusEvent event) {
-					((ComboBoxItem) event.getItem()).selectValue();
-				}
-            });
-            toolBar.addFormItem(entityType);
-        }*/
+        
         addMember(toolBar);
         grid = new TreeGrid();
         grid.setAlternateRecordStyles(true);

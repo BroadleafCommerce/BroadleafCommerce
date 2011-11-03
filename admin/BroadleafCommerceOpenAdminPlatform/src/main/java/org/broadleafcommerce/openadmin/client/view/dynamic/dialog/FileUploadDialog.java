@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.Map;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -43,15 +41,17 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
+
+import java.util.Map;
 
 /**
  * 
@@ -182,14 +182,16 @@ public class FileUploadDialog extends Window {
         synthesizedFrame = dummy.getFirstChildElement();
         Document.get().getBody().appendChild(synthesizedFrame);
     }
-	
-	@SuppressWarnings("rawtypes")
+
 	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
 		editNewRecord(null, dataSource, initialValues, handler, null, fieldNames, null);
 	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
+
+    public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
+        editNewRecord(title, dataSource, initialValues, null, handler, heightOverride, fieldNames, ignoreFields);
+    }
+
+	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, Map<String, String> hints, ItemEditedHandler handler, String heightOverride, String[] fieldNames, String[] ignoreFields) {
 		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
 		this.handler = handler;
 		if (heightOverride != null) {
@@ -206,11 +208,16 @@ public class FileUploadDialog extends Window {
 			}
 		}
 		if (title != null) {
-			this.setTitle(title);
+		    setTitle(title);
 		} else {
-			this.setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
+			setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
 		}
 		buildFields(dataSource, dynamicForm);
+        if (hints != null) {
+            for (Map.Entry<String, String> entry : hints.entrySet()) {
+                dynamicForm.getField(entry.getKey()).setHint(entry.getValue());
+            }
+        }
         dynamicForm.editNewRecord(initialValues);
         centerInPage();
 		show();

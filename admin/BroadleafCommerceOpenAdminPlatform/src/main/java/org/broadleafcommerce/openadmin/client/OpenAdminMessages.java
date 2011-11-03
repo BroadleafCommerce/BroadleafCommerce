@@ -101,4 +101,5 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String refreshTitle();
 
     public String selectPolymorphicType();
+    public String viewFullSize();
 }

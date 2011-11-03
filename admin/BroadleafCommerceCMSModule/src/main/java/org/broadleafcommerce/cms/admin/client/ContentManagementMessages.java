@@ -69,5 +69,7 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String baseStructuredContentItemCriteria();
     public String baseStructuredContentFieldTemplate();
     public String baseSandBoxItem();
+    public String assetUploadNameHint();
+    public String assetUploadFullUrlHint();
 
 }

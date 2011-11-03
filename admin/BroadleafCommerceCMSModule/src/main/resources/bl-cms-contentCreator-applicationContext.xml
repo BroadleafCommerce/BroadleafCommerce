@@ -18,7 +18,6 @@
             <list>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetFolderCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler">
                     <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
                 </bean>

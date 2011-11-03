@@ -65,7 +65,6 @@ public class ImageStaticAssetImpl extends StaticAssetImpl implements ImageStatic
 
         ImageStaticAssetImpl asset = new ImageStaticAssetImpl();
         asset.name = name;
-        asset.parentFolder = parentFolder;
         asset.site = site;
         asset.archivedFlag = archivedFlag;
         asset.deletedFlag = deletedFlag;

@@ -3,46 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-    <named-query name="BC_READ_STATIC_ASSET_FOLDER_CHILD_FOLDERS" >
-		<query>SELECT staticAssetFolder
-               FROM org.broadleafcommerce.cms.file.domain.StaticAssetFolder staticAssetFolder
-               WHERE staticAssetFolder.parentFolder = :parentFolder AND
-                     staticAssetFolder.folderFlag = true AND
-                     staticAssetFolder.deletedFlag = false
-		</query>
-	</named-query>
-
-    <named-query name="BC_READ_NULL_STATIC_ASSET_FOLDER_CHILD_FOLDERS" >
-		<query>SELECT staticAssetFolder
-               FROM org.broadleafcommerce.cms.file.domain.StaticAssetFolder staticAssetFolder
-               WHERE staticAssetFolder.parentFolder is null AND
-                     staticAssetFolder.folderFlag = true AND
-                     staticAssetFolder.deletedFlag = false
-		</query>
-	</named-query>
-
-    <named-query name="BC_READ_STATIC_ASSET_FOLDER_CHILD_PAGES" >
-		<query>SELECT staticAsset
-               FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
-               WHERE
-                  staticAsset.parentFolder = :parentFolder AND
-                  (staticAsset.sandbox = :userSandbox OR staticAsset.sandbox = :productionSandbox OR staticAsset.sandbox is null OR staticAsset.originalSandBox = :userSandbox) AND
-                  staticAsset.archivedFlag = false AND
-                  staticAsset.deletedFlag = false
-		</query>
-	</named-query>
-
-    <named-query name="BC_READ_NULL_STATIC_ASSET_FOLDER_CHILD_PAGES" >
-		<query>SELECT staticAsset
-               FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
-               WHERE
-                  staticAsset.parentFolder is null AND
-                  (staticAsset.sandbox = :userSandbox OR staticAsset.sandbox = :productionSandbox OR staticAsset.sandbox is null OR staticAsset.originalSandBox = :userSandbox) AND
-                  staticAsset.archivedFlag = false AND
-                  staticAsset.deletedFlag = false
-		</query>
-	</named-query>
-
     <named-query name="BC_READ_STATIC_ASSET_BY_FULL_URL" >
 		<query>SELECT staticAsset
                FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset

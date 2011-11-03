@@ -23,18 +23,14 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.ResultSet;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetDescriptionMapDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsFolderTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTreeDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.LocaleListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.view.file.StaticAssetsDisplay;
@@ -44,9 +40,8 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenterWithoutForm;
+import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -64,130 +59,136 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class StaticAssetsPresenter extends DynamicEntityPresenterWithoutForm implements Instantiable {
+public class StaticAssetsPresenter extends DynamicEntityPresenter implements Instantiable {
 
     public static FileUploadDialog FILE_UPLOAD = new FileUploadDialog();
 
     protected MapStructureEntityEditDialog staticAssetDescriptionEntityAdd;
-    protected HandlerRegistration leafAddClickHandlerRegistration;
-    protected SubPresentable leafAssetPresenter;
     protected SubPresentable staticAssetDescriptionPresenter;
-    protected TreeNode currentSelectedRecord;
+    protected Record currentSelectedRecord;
+    protected String currentId;
+    protected HandlerRegistration saveButtonHandlerRegistration;
 
     @Override
 	protected void changeSelection(Record selectedRecord) {
-        currentSelectedRecord = (TreeNode) selectedRecord;
-        if (selectedRecord.getAttributeAsStringArray("_type") == null) {
-            selectedRecord.setAttribute("_type", new String[]{EntityImplementations.STATICASSETIMPL});
+        if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
+            getDisplay().getListDisplay().getRemoveButton().enable();
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().enable();
+        } else {
+            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+            getDisplay().getListDisplay().getRemoveButton().disable();
         }
-		leafAssetPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-                if (response.getStatus()== RPCResponse.STATUS_FAILURE) {
-				    leafAssetPresenter.disable();
-				} else {
-					leafAssetPresenter.enable();
-                    leafAssetPresenter.setStartState();
-                    display.getListDisplay().getAddButton().enable();
-                    resetForm();
-				}
-			}
-		});
+        currentSelectedRecord = selectedRecord;
+        currentId = getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getPrimaryKeyValue(currentSelectedRecord);
+        getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
+        AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+        assetItem.setPreviewSrc(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
+        assetItem.setDisabled(true);
+        staticAssetDescriptionPresenter.enable();
+        staticAssetDescriptionPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), null);
 	}
 
     @Override
     protected void addClicked() {
-		Map<String, Object> initialValues = new HashMap<String, Object>(2);
-		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
-        BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
-			public void onItemEdited(ItemEdited event) {
-                if (!((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().isOpen(currentSelectedRecord)) {
-                   ((TreeGrid) getDisplay().getListDisplay().getGrid()).getTree().openFolder(currentSelectedRecord);
+        initialValues = new HashMap<String, Object>(10);
+        initialValues.put("operation", "add");
+        initialValues.put("customCriteria", "assetListUi");
+        initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
+        addNewItem(BLCMain.getMessageManager().getString("newItemTitle"));
+    }
+
+	@Override
+	protected void addNewItem(String newItemTitle) {
+        initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+        compileDefaultValuesFromCurrentFilter(initialValues);
+        Map<String, String> hints = new HashMap<String, String>();
+        hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
+        hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
+		FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, hints, new ItemEditedHandler() {
+            public void onItemEdited(ItemEdited event) {
+                ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
+                DSResponse updateResponse = new DSResponse();
+                updateResponse.setData(recordList);
+                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
+                getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
+                String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+                ResultSet results = getDisplay().getListDisplay().getGrid().getResultSet();
+                boolean foundRecord = false;
+                if (results != null) {
+                    foundRecord = getDisplay().getListDisplay().getGrid().getResultSet().find(primaryKey, event.getRecord().getAttribute(primaryKey)) != null;
                 }
-                resetForm();
-			}
-		}, null, null);
+                if (!foundRecord) {
+                    ((AbstractDynamicDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).setAddedRecord(event.getRecord());
+                    getDisplay().getListDisplay().getGrid().getDataSource().fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            getDisplay().getListDisplay().getGrid().setData(response.getData());
+                            getDisplay().getListDisplay().getGrid().selectRecord(0);
+                        }
+                    });
+                }
+                //resetForm();
+            }
+        }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);
 	}
 
     @Override
 	public void bind() {
 		super.bind();
-        leafAssetPresenter.bind();
         staticAssetDescriptionPresenter.bind();
-        leafAddClickHandlerRegistration = getDisplay().getListLeafDisplay().getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-                    getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").setDefaultNewEntityFullyQualifiedClassname(EntityImplementations.STATICASSETIMPL);
-					Map<String, Object> initialValues = new HashMap<String, Object>(4);
-                    initialValues.put("operation", "add");
-                    initialValues.put("customCriteria", "assetListUi");
-                    initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
-                    initialValues.put("parentFolder", getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS").getPrimaryKeyValue(getDisplay().getListDisplay().getGrid().getSelectedRecord()));
-                    FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, new ItemEditedHandler() {
-                        public void onItemEdited(ItemEdited event) {
-                            ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
-                            DSResponse updateResponse = new DSResponse();
-                            updateResponse.setData(recordList);
-                            getDisplay().getListLeafDisplay().getGrid().getDataSource().updateCaches(updateResponse);
-                            getDisplay().getListLeafDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
-                            String primaryKey = getDisplay().getListLeafDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
-                            boolean foundRecord = getDisplay().getListLeafDisplay().getGrid().getResultSet().find(primaryKey, event.getRecord().getAttribute(primaryKey)) != null;
-                            if (!foundRecord) {
-                                ((AbstractDynamicDataSource) getDisplay().getListLeafDisplay().getGrid().getDataSource()).setAddedRecord(event.getRecord());
-                                getDisplay().getListLeafDisplay().getGrid().getDataSource().fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
-                                    @Override
-                                    public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                        getDisplay().getListLeafDisplay().getGrid().setData(response.getData());
-                                        getDisplay().getListLeafDisplay().getGrid().selectRecord(0);
-                                    }
-                                });
-                            }
-                            //resetForm();
-                        }
-                    }, null, new String[]{"file", "name", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria"}, null);
-				}
-			}
-        });
-        getDisplay().getListLeafDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
-			public void onSelectionChanged(SelectionEvent event) {
-				if (event.getState()) {
-                    getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().disable();
-                    AssetItem assetItem = (AssetItem) getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
-                    assetItem.setPreviewSrc(getDisplay().getListLeafDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
-                    assetItem.setDisabled(true);
-                    staticAssetDescriptionPresenter.enable();
-                    staticAssetDescriptionPresenter.load(event.getSelectedRecord(), getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), null);
-				}
-			}
-		});
-        getDisplay().getListLeafDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
+        /*getDisplay().getListLeafDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
 					resetForm();
 				}
             }
-        });
+        });*/
         if (!FILE_UPLOAD.isDrawn()) {
             FILE_UPLOAD.draw();
             FILE_UPLOAD.hide();
         }
+        formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                //save the regular entity form and the page template form
+                if (event.isLeftButtonDown()) {
+                    DSRequest requestProperties = new DSRequest();
+					requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+                                final String newId = response.getAttribute("newId");
+                                getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+                                if (!currentId.equals(newId)) {
+                                    Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", currentId);
+                                    myRecord.setAttribute("id", newId);
+                                    currentSelectedRecord = myRecord;
+                                    currentId = newId;
+                                }
+                                getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentSelectedRecord));
+							}
+                        }
+                    }, requestProperties);
+                }
+            }
+        });
 	}
 
     public void resetForm() {
         getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").resetPermanentFieldVisibilityBasedOnType(new String[]{EntityImplementations.STATICASSETIMPL});
-		getDisplay().getListLeafDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), true, false, false);
+		getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), true, false, false);
         staticAssetDescriptionPresenter.disable();
     }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetFolderTreeDS", new StaticAssetsFolderTreeDataSourceFactory(), new NullAsyncCallbackAdapter()));
-        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTreeDataSourceFactory(), new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTreeDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {
-                setupDisplayItems(getPresenterSequenceSetupManager().getDataSource("staticAssetFolderTreeDS"), dataSource);
-                leafAssetPresenter = new SubPresenter(getDisplay().getListLeafDisplay(), new String[]{EntityImplementations.STATICASSETIMPL}, true, true, false);
-				leafAssetPresenter.setDataSource((ListGridDataSource) dataSource, new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"}, new Boolean[]{false, true, false, false, false});
+                setupDisplayItems(dataSource);
+                ((ListGridDataSource) dataSource).setupGridFields(new String[]{"picture", "name", "fullUrl", "fileSize", "mimeType"});
                 /*((ListGridDataSource) dataSource).getFormItemCallbackHandlerManager().addFormItemCallback("pictureLarge", new FormItemCallback() {
                         @Override
                         public void execute(FormItem formItem) {
