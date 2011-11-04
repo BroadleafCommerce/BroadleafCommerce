@@ -169,8 +169,13 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             prod.setLockedFlag(true);
             pageDao.updatePage(prod);
 
+            SandBoxOperationType type = SandBoxOperationType.UPDATE;
+            if (clonedPage.getDeletedFlag()) {
+                type = SandBoxOperationType.DELETE;
+            }
+
             // Add this item to the sandbox.
-            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
+            sandBoxItemDao.addSandBoxItem(destSandbox, type, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
             return returnPage;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service
@@ -400,9 +405,11 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             page.setLockedFlag(false);
             pageDao.updatePage(page);
 
-            Page originalPage = pageDao.readPageById(page.getOriginalPageId());
-            originalPage.setLockedFlag(false);
-            pageDao.updatePage(originalPage);
+            if (page.getOriginalPageId() != null) {
+                Page originalPage = pageDao.readPageById(page.getOriginalPageId());
+                originalPage.setLockedFlag(false);
+                pageDao.updatePage(originalPage);
+            }
         }
     }
 
