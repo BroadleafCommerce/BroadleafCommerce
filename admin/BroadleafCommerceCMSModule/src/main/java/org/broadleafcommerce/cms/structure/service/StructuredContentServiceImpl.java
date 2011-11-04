@@ -270,6 +270,21 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         }
 
         if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
+
+            if (content.getDeletedFlag()) {
+                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(content.getSandbox(), SandBoxItemType.STRUCTURED_CONTENT, content.getId());
+                if (content.getOriginalItemId() == null) {
+                    // This page was added in this sandbox and now needs to be deleted.
+                    content.setArchivedFlag(true);
+                    item.setArchivedFlag(true);
+                } else {
+                    // This page was being updated but now is being deleted - so change the
+                    // sandbox operation type to deleted
+                    item.setSandBoxOperationType(SandBoxOperationType.DELETE);
+                    sandBoxItemDao.updateSandBoxItem(item);
+                }
+
+            }
             return structuredContentDao.addOrUpdateContentItem(content);
         } else if (checkForProductionSandbox(content.getSandbox())) {
             // The passed in content is an existing content item whose values were updated

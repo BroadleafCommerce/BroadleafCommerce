@@ -83,6 +83,19 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         }
 
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {
+            if (staticAsset.getDeletedFlag()) {
+                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(staticAsset.getSandbox(), SandBoxItemType.STATIC_ASSET, staticAsset.getId());
+                if (staticAsset.getOriginalAssetId() == null) {
+                    // This page was added in this sandbox and now needs to be deleted.
+                    staticAsset.setArchivedFlag(true);
+                    item.setArchivedFlag(true);
+                } else {
+                    // This page was being updated but now is being deleted - so change the
+                    // sandbox operation type to deleted
+                    item.setSandBoxOperationType(SandBoxOperationType.DELETE);
+                    sandBoxItemDao.updateSandBoxItem(item);
+                }
+            }
             return staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
         } else if (isProductionSandBox(staticAsset.getSandbox())) {
             // Move from production to destSandbox

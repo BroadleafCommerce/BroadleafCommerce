@@ -149,6 +149,20 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         }
 
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
+            if (page.getDeletedFlag()) {
+                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(page.getSandbox(), SandBoxItemType.PAGE, page.getId());
+                if (page.getOriginalPageId() == null) {
+                    // This page was added in this sandbox and now needs to be deleted.
+                    item.setArchivedFlag(true);
+                    page.setArchivedFlag(true);
+                } else {
+                    // This page was being updated but now is being deleted - so change the
+                    // sandbox operation type to deleted
+                    item.setSandBoxOperationType(SandBoxOperationType.DELETE);
+                    sandBoxItemDao.updateSandBoxItem(item);
+                }
+
+            }
             return pageDao.updatePage(page);
         } else if (isProductionSandBox(page.getSandbox())) {
 
