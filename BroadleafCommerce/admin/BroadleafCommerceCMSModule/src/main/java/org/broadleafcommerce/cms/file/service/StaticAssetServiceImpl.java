@@ -263,6 +263,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
                 originalAsset.setArchivedFlag(Boolean.TRUE);
                 staticAssetDao.addOrUpdateStaticAsset(originalAsset, false);
                 asset.setOriginalAssetId(null);
+
+                if (asset.getDeletedFlag()) {
+                    asset.setArchivedFlag(Boolean.TRUE);
+                }
             }
         }
         if (asset.getOriginalSandBox() == null) {
