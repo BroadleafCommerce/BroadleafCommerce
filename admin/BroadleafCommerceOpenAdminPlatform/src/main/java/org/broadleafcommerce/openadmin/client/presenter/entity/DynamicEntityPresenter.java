@@ -15,6 +15,10 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -50,10 +54,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -265,6 +265,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
                 getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
+                getDisplay().getListDisplay().getGrid().deselectAllRecords();
                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
                 String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
                 ResultSet results = display.getListDisplay().getGrid().getResultSet();
