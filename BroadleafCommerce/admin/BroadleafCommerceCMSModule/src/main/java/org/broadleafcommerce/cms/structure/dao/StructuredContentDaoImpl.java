@@ -80,10 +80,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     }
 
     @Override
-    public StructuredContent addOrUpdateContentItem(StructuredContent content, boolean clearLevel1Cache) {
-        if (clearLevel1Cache) {
-            em.clear();
-        }
+    public StructuredContent addOrUpdateContentItem(StructuredContent content) {
         return em.merge(content);
     }
 
@@ -150,6 +147,10 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         } else {
             return null;
         }
+    }
 
+    @Override
+    public void detach(StructuredContent sc) {
+        em.detach(sc);
     }
 }

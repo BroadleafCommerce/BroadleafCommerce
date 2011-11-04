@@ -74,10 +74,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Page updatePage(Page page, boolean clearLevel1Cache) {
-        if (clearLevel1Cache) {
-            em.clear();
-        }
+    public Page updatePage(Page page) {
         return em.merge(page);
     }
 
@@ -90,10 +87,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Page addPage(Page clonedPage, boolean clearLevel1Cache) {
-        if (clearLevel1Cache) {
-            em.clear();
-        }
+    public Page addPage(Page clonedPage) {
         return em.merge(clonedPage);
     }
 
@@ -126,6 +120,11 @@ public class PageDaoImpl implements PageDao {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void detachPage(Page page) {
+        em.detach(page);
     }
 
 }

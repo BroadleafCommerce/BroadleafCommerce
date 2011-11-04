@@ -22,12 +22,12 @@ import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxAction;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionType;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -45,6 +45,9 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blTransactionManager")
+    protected JpaTransactionManager manager;
 
     @Override
     public SandBoxItem retrieveById(Long id) {
@@ -72,25 +75,21 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
     }
 
     @Override
-    public void addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
+    public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding sandbox item.  " + originalId);
         }
-        SandBox sbox = em.find(SandBoxImpl.class, sandBox.getId());
         SandBoxItemImpl sandBoxItem = new SandBoxItemImpl();
         sandBoxItem.setSandBoxOperationType(operationType);
         sandBoxItem.setSandBox(sbox);
         sandBoxItem.setArchivedFlag(false);
-        //sandBoxItem.setLastUpdateDate(Calendar.getInstance().getTime());
         sandBoxItem.setDescription(description);
         sandBoxItem.setOriginalItemId(originalId);
         sandBoxItem.setTemporaryItemId(temporaryId);
         sandBoxItem.setSandBoxItemType(itemType);
 
         SandBoxAction action = new SandBoxActionImpl();
-        //action.setActionDate(sandBoxItem.getLastUpdateDate());
         action.setActionType(SandBoxActionType.EDIT);
-        //action.setUser(sandBoxItem.getCreatedBy());
 
         sandBoxItem.addSandBoxAction(action);
         action.addSandBoxItem(sandBoxItem);

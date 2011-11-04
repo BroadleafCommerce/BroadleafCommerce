@@ -173,7 +173,11 @@ public class StaticAssetImpl implements StaticAsset {
     }
 
     public Boolean getArchivedFlag() {
-        return archivedFlag;
+        if (archivedFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return archivedFlag;
+        }
     }
 
     public void setArchivedFlag(Boolean archivedFlag) {

@@ -23,6 +23,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
@@ -55,6 +56,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
+
+    @Resource(name="blSandBoxDao")
+    protected SandBoxDao sandBoxDao;
 
     private List<StructuredContentRuleProcessor> contentRuleProcessors;
 
@@ -221,7 +225,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         content.setSandbox(destinationSandbox);
         content.setArchivedFlag(false);
         content.setDeletedFlag(false);
-        StructuredContent sc = structuredContentDao.addOrUpdateContentItem(content, true);
+        StructuredContent sc = structuredContentDao.addOrUpdateContentItem(content);
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STRUCTURED_CONTENT, sc.getContentName(), sc.getId(), null);
         }
@@ -266,20 +270,26 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         }
 
         if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
-            return structuredContentDao.addOrUpdateContentItem(content, true);
+            return structuredContentDao.addOrUpdateContentItem(content);
         } else if (checkForProductionSandbox(content.getSandbox())) {
+            // The passed in content is an existing content item whose values were updated
+            // Instead, we want to create a clone of this item for the destSandbox
+
+            // Create the clone
             StructuredContent clonedContent = content.cloneEntity();
             clonedContent.setOriginalItemId(content.getId());
             clonedContent.setSandbox(destSandbox);
-            //pass true to addOrUpdateContentItem so that the entity manager is cleared before
-            //persisting the clone. This will make sure that the original changes made to the "content"
-            //instance are not persisted.
-            StructuredContent returnContent = structuredContentDao.addOrUpdateContentItem(clonedContent, true);
 
+            // Detach the old item so it doesn't get updated
+            structuredContentDao.detach(content);
+
+            // Update the new item
+            StructuredContent returnContent = structuredContentDao.addOrUpdateContentItem(clonedContent);
+
+            // Lookup the previous item so that we can update its locked status
             StructuredContent prod = findStructuredContentById(content.getId());
-            // Move from production to destSandbox
             prod.setLockedFlag(true);
-            prod = structuredContentDao.addOrUpdateContentItem(prod, false);
+            prod = structuredContentDao.addOrUpdateContentItem(prod);
 
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
             return returnContent;
@@ -498,7 +508,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 }
                 StructuredContent originalSC = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
                 originalSC.setArchivedFlag(Boolean.TRUE);
-                structuredContentDao.addOrUpdateContentItem(originalSC, false);
+                structuredContentDao.addOrUpdateContentItem(originalSC);
 
                // We are archiving the old page and making this the new "production page", so
                // null out the original page id before saving.
@@ -509,7 +519,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             sc.setOriginalSandBox(sc.getSandbox());
         }
         sc.setSandbox(destinationSandBox);
-        structuredContentDao.addOrUpdateContentItem(sc, false);
+        structuredContentDao.addOrUpdateContentItem(sc);
     }
 
     @Override
@@ -523,7 +533,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             sc.setSandbox(destinationSandBox);
             sc.setOriginalSandBox(null);
             sc.setLockedFlag(false);
-            structuredContentDao.addOrUpdateContentItem(sc, false);
+            structuredContentDao.addOrUpdateContentItem(sc);
         }
     }
 
@@ -536,11 +546,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (sc != null) {
             sc.setArchivedFlag(Boolean.TRUE);
-            structuredContentDao.addOrUpdateContentItem(sc, false);
+            structuredContentDao.addOrUpdateContentItem(sc);
 
             StructuredContent originalSc = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
             originalSc.setLockedFlag(false);
-            structuredContentDao.addOrUpdateContentItem(originalSc, false);
+            structuredContentDao.addOrUpdateContentItem(originalSc);
         }
     }
 

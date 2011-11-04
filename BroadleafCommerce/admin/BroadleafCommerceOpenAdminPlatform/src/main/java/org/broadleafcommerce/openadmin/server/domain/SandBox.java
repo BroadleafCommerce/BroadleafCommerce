@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.server.domain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 public interface SandBox extends Serializable {
 
@@ -36,9 +36,9 @@ public interface SandBox extends Serializable {
 
 	public void setName(String name);
 
-	public List<SandBoxItem> getSandBoxItems();
+	public Set<SandBoxItem> getSandBoxItems();
 
-	public void setSandBoxItems(List<SandBoxItem> sandBoxItems);
+	public void setSandBoxItems(Set<SandBoxItem> sandBoxItems);
 
     public SandBoxType getSandBoxType();
 
