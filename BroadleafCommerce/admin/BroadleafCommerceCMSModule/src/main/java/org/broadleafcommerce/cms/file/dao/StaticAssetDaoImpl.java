@@ -101,7 +101,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     @Override
     public StaticAsset addOrUpdateStaticAsset(StaticAsset asset, boolean clearLevel1Cache) {
         if (clearLevel1Cache) {
-            em.clear();
+            em.detach(asset);
         }
         return em.merge(asset);
     }
