@@ -515,9 +515,14 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 originalSC.setArchivedFlag(Boolean.TRUE);
                 structuredContentDao.addOrUpdateContentItem(originalSC);
 
-               // We are archiving the old page and making this the new "production page", so
-               // null out the original page id before saving.
-               sc.setOriginalItemId(null);
+                if (sc.getDeletedFlag()) {
+                    // if this deleted page is being pushed to production, set it as archived.
+                    sc.setArchivedFlag(true);
+                }
+
+                // We are archiving the old page and making this the new "production page", so
+                // null out the original page id before saving.
+                sc.setOriginalItemId(null);
             }
         }
         if (sc.getOriginalSandBox() == null) {

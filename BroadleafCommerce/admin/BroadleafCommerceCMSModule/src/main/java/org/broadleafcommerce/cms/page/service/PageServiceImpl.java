@@ -369,6 +369,11 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                // We are archiving the old page and making this the new "production page", so
                // null out the original page id before saving.
                page.setOriginalPageId(null);
+
+               if (page.getDeletedFlag()) {
+                   // If this page is being deleted, set it as archived.
+                   page.setArchivedFlag(true);
+               }
             }
         }
         if (page.getOriginalSandBox() == null) {
