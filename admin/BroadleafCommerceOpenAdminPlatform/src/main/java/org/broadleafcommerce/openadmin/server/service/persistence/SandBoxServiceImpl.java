@@ -1,7 +1,15 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
-import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxAction;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxActionType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
@@ -21,6 +29,8 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
+
+    private static String CREATE_SANDBOX_LOCK_TOKEN = "CreateSandBoxLockToken";
 
     /*@Override
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
@@ -425,16 +435,23 @@ public class SandBoxServiceImpl implements SandBoxService {
             userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
 
             if (userSandbox == null) {
-                SandBox sandBox = new SandBoxImpl();
-                sandBox.setSite(site);
-                sandBox.setName(adminUser.getLogin());
-                sandBox.setSandBoxType(SandBoxType.USER);
-                sandBox.setAuthor(adminUser.getId());
-                sandBox = sandBoxDao.persist(sandBox);
 
-                adminUser.setCurrentSandbox(sandBox);
-                adminSecurityService.saveAdminUser(adminUser);
-                userSandbox = sandBox;
+                synchronized (CREATE_SANDBOX_LOCK_TOKEN) {
+                    userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
+
+                    if (userSandbox == null) {
+                        SandBox sandBox = new SandBoxImpl();
+                        sandBox.setSite(site);
+                        sandBox.setName(adminUser.getLogin());
+                        sandBox.setSandBoxType(SandBoxType.USER);
+                        sandBox.setAuthor(adminUser.getId());
+                        sandBox = sandBoxDao.persist(sandBox);
+
+                        adminUser.setCurrentSandbox(sandBox);
+                        adminSecurityService.saveAdminUser(adminUser);
+                        userSandbox = sandBox;
+                    }
+                }
             }
         }
 
@@ -443,7 +460,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
-        promoteSelectedItems(fromSandBox, comment, fromSandBox.getSandBoxItems());
+        promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(fromSandBox.getSandBoxItems()));
     }
 
     @Override
@@ -477,7 +494,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                  items.add(item);
              }
          }
-        revertSelectedSandBoxItems(sandBox, sandBox.getSandBoxItems());
+        revertSelectedSandBoxItems(sandBox, items);
     }
 
     @Override
@@ -557,9 +574,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     protected SandBoxAction createSandBoxAction(SandBoxActionType type, String comment) {
         SandBoxAction action = new SandBoxActionImpl();
         action.setActionType(type);
-        //action.setActionDate(Calendar.getInstance().getTime());
         action.setComment(comment);
-        //action.setUser(user);
         return action;
     }
 
@@ -583,11 +598,19 @@ public class SandBoxServiceImpl implements SandBoxService {
 
         // If the approval sandbox doesn't exist, create it.
         if (approvalSandbox == null) {
-            approvalSandbox = new SandBoxImpl();
-            approvalSandbox.setSite(sandBox.getSite());
-            approvalSandbox.setName(APPROVAL_SANDBOX_NAME);
-            approvalSandbox.setSandBoxType(SandBoxType.APPROVAL);
-            approvalSandbox = sandBoxDao.persist(approvalSandbox);
+
+            synchronized (CREATE_SANDBOX_LOCK_TOKEN) {
+                // try again before creating
+                approvalSandbox = sandBoxDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
+
+                if (approvalSandbox == null) {
+                    approvalSandbox = new SandBoxImpl();
+                    approvalSandbox.setSite(sandBox.getSite());
+                    approvalSandbox.setName(APPROVAL_SANDBOX_NAME);
+                    approvalSandbox.setSandBoxType(SandBoxType.APPROVAL);
+                    approvalSandbox = sandBoxDao.persist(approvalSandbox);
+                }
+            }
         }
         return approvalSandbox;
     }

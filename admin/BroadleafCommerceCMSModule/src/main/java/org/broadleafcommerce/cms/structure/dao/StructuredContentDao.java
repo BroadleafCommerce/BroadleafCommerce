@@ -37,7 +37,7 @@ public interface StructuredContentDao {
 
     public Map<String,StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc);
 
-    public StructuredContent addOrUpdateContentItem(StructuredContent content, boolean clearLevel1Cache);
+    public StructuredContent addOrUpdateContentItem(StructuredContent content);
 
     public void delete(StructuredContent content);
 
@@ -46,4 +46,6 @@ public interface StructuredContentDao {
     public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale);
 
     public StructuredContentType findStructuredContentTypeByName(String name);
+
+    public void detach(StructuredContent sc);
 }

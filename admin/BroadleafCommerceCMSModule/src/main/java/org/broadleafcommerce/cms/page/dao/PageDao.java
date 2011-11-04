@@ -34,11 +34,13 @@ public interface PageDao {
 
     public Map<String, PageField> readPageFieldsByPage(Page page);
 
-    public Page updatePage(Page page, boolean clearLevel1Cache);
+    public Page updatePage(Page page);
 
     public void delete(Page page);
 
-    public Page addPage(Page clonedPage, boolean clearLevel1Cache);
+    public Page addPage(Page clonedPage);
 
     public Page findPageByURI(SandBox sandBox, Locale locale, String uri);
+
+    public void detachPage(Page page);
 }

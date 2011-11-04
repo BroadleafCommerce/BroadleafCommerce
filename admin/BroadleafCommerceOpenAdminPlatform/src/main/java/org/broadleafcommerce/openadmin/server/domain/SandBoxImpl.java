@@ -24,6 +24,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,8 +40,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -70,9 +71,10 @@ public class SandBoxImpl implements SandBox {
     
     @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Where(clause = "ARCHIVED_FLAG = 0")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     @BatchSize(size = 50)
-    protected List<SandBoxItem> sandBoxItems = new ArrayList<SandBoxItem>();
+    protected Set<SandBoxItem> sandBoxItems = new HashSet<SandBoxItem>();
 
 
     @Column(name = "SANDBOX_TYPE")
@@ -115,7 +117,7 @@ public class SandBoxImpl implements SandBox {
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getSandBoxItems()
 	 */
 	@Override
-	public List<SandBoxItem> getSandBoxItems() {
+	public Set<SandBoxItem> getSandBoxItems() {
 		return sandBoxItems;
 	}
 
@@ -123,7 +125,7 @@ public class SandBoxImpl implements SandBox {
 	 * @see org.broadleafcommerce.openadmin.domain.SandBox#setSandBoxItems(java.util.List)
 	 */
 	@Override
-	public void setSandBoxItems(List<SandBoxItem> sandBoxItems) {
+	public void setSandBoxItems(Set<SandBoxItem> sandBoxItems) {
 		this.sandBoxItems = sandBoxItems;
 	}
 

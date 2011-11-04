@@ -36,7 +36,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
 	@Override
 	public SandBox retrieve(Long id) {
-		return sandBoxEntityManager.find(SandBoxImpl.class, id);
+		return  sandBoxEntityManager.find(SandBoxImpl.class, id);
 	}
 
     @Override

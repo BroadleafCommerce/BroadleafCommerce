@@ -17,14 +17,20 @@ package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
-import org.broadleafcommerce.openadmin.server.domain.*;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
@@ -49,6 +55,9 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
 
     @Resource(name="blSandBoxItemDao")
     protected SandBoxItemDao sandBoxItemDao;
+
+    @Resource(name="blSandBoxDao")
+    protected SandBoxDao sandBoxDao;
 
     @Resource(name="blLocaleService")
     protected LocaleService localeService;
@@ -95,7 +104,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         page.setSandbox(destinationSandbox);
         page.setArchivedFlag(false);
         page.setDeletedFlag(false);
-        Page newPage = pageDao.addPage(page, true);
+        Page newPage = pageDao.addPage(page);
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
         }
@@ -140,18 +149,27 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         }
 
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
-            return pageDao.updatePage(page, true);
+            return pageDao.updatePage(page);
         } else if (isProductionSandBox(page.getSandbox())) {
-            // Move from production to destSandbox
+
+            // The passed in page is an existing page with updated values.
+            // Instead, we want to create a clone of this page for the destSandbox
             Page clonedPage = page.cloneEntity();
             clonedPage.setOriginalPageId(page.getId());
             clonedPage.setSandbox(destSandbox);
-            Page returnPage = pageDao.addPage(clonedPage, true);
 
+            // Detach the old page from the session so it is not updated.
+            pageDao.detachPage(page);
+
+            // Save the cloned page
+            Page returnPage = pageDao.addPage(clonedPage);
+
+            // Lookup the original page and mark it as locked
             Page prod = findPageById(page.getId());
             prod.setLockedFlag(true);
-            pageDao.updatePage(prod, false);
+            pageDao.updatePage(prod);
 
+            // Add this item to the sandbox.
             sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
             return returnPage;
         } else {
@@ -341,7 +359,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
                 }
                 Page originalPage = pageDao.readPageById(page.getOriginalPageId());
                 originalPage.setArchivedFlag(Boolean.TRUE);
-                pageDao.updatePage(originalPage, false);
+                pageDao.updatePage(originalPage);
 
                // We are archiving the old page and making this the new "production page", so
                // null out the original page id before saving.
@@ -352,7 +370,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             page.setOriginalSandBox(page.getSandbox());
         }
         page.setSandbox(destinationSandBox);
-        pageDao.updatePage(page, false);
+        pageDao.updatePage(page);
     }
 
     @Override
@@ -366,7 +384,7 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             page.setSandbox(destinationSandBox);
             page.setOriginalSandBox(null);
             page.setLockedFlag(false);
-            pageDao.updatePage(page, false);
+            pageDao.updatePage(page);
         }
     }
 
@@ -380,11 +398,11 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
         if (page != null) {
             page.setArchivedFlag(Boolean.TRUE);
             page.setLockedFlag(false);
-            pageDao.updatePage(page, false);
+            pageDao.updatePage(page);
 
             Page originalPage = pageDao.readPageById(page.getOriginalPageId());
             originalPage.setLockedFlag(false);
-            pageDao.updatePage(originalPage, false);
+            pageDao.updatePage(originalPage);
         }
     }
 

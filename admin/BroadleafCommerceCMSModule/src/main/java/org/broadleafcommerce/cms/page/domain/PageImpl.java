@@ -176,7 +176,11 @@ public class PageImpl implements Page {
 
     @Override
     public Boolean getDeletedFlag() {
-        return deletedFlag;
+        if (deletedFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return deletedFlag;
+        }
     }
 
     @Override
@@ -186,7 +190,11 @@ public class PageImpl implements Page {
 
     @Override
     public Boolean getArchivedFlag() {
-        return archivedFlag;
+        if (archivedFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return archivedFlag;
+        }
     }
 
     @Override
@@ -259,7 +267,11 @@ public class PageImpl implements Page {
     }
 
     public Boolean getLockedFlag() {
-        return lockedFlag;
+        if (lockedFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return lockedFlag;
+        }
     }
 
     public void setLockedFlag(Boolean lockedFlag) {
