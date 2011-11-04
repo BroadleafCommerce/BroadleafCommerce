@@ -291,7 +291,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             prod.setLockedFlag(true);
             prod = structuredContentDao.addOrUpdateContentItem(prod);
 
-            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
+            SandBoxOperationType type = SandBoxOperationType.UPDATE;
+            if (clonedContent.getDeletedFlag()) {
+                type = SandBoxOperationType.DELETE;
+            }
+
+            sandBoxItemDao.addSandBoxItem(destSandbox, type, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
             return returnContent;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service
@@ -545,12 +550,15 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         StructuredContent sc = structuredContentDao.findStructuredContentById(sandBoxItem.getTemporaryItemId());
 
         if (sc != null) {
-            sc.setArchivedFlag(Boolean.TRUE);
-            structuredContentDao.addOrUpdateContentItem(sc);
+            if (sandBoxItem.getOriginalItemId() != null) {
+                sc.setArchivedFlag(Boolean.TRUE);
+                sc.setLockedFlag(Boolean.FALSE);
+                structuredContentDao.addOrUpdateContentItem(sc);
 
-            StructuredContent originalSc = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
-            originalSc.setLockedFlag(false);
-            structuredContentDao.addOrUpdateContentItem(originalSc);
+                StructuredContent originalSc = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
+                originalSc.setLockedFlag(false);
+                structuredContentDao.addOrUpdateContentItem(originalSc);
+            }
         }
     }
 

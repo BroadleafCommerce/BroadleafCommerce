@@ -95,7 +95,12 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             prod.setLockedFlag(true);
             staticAssetDao.addOrUpdateStaticAsset(prod, false);
 
-            sandBoxItemDao.addSandBoxItem(destSandbox, SandBoxOperationType.UPDATE, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
+            SandBoxOperationType type = SandBoxOperationType.UPDATE;
+            if (clonedAsset.getDeletedFlag()) {
+                type = SandBoxOperationType.DELETE;
+            }
+
+            sandBoxItemDao.addSandBoxItem(destSandbox, type, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
             return returnAsset;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service
