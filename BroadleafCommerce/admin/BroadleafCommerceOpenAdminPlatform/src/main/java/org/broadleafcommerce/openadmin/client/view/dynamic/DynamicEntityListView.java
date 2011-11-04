@@ -79,12 +79,12 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         grid.setSaveByCell(true);
         grid.setDataSource(dataSource);
         grid.setAutoFetchData(false);
-        grid.setDrawAllMaxCells(10);
+        //grid.setDrawAllMaxCells(10);
         grid.setCanSort(true);
         grid.setCanResizeFields(true);
         grid.setShowFilterEditor(true);
         grid.setCanGroupBy(false);
-        grid.setDataPageSize(10);
+        //grid.setDataPageSize(10);
         grid.setEmptyMessage(BLCMain.getMessageManager().getString("emptyMessage"));
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");

@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.file;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -50,9 +53,6 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.AssetItem;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -110,6 +110,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
                 getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
+                getDisplay().getListDisplay().getGrid().deselectAllRecords();
                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
                 String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
                 ResultSet results = getDisplay().getListDisplay().getGrid().getResultSet();
