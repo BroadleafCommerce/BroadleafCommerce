@@ -35,7 +35,6 @@ import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserRoleDisplay;
-import org.broadleafcommerce.openadmin.client.view.user.UserRoleView;
 
 import java.util.Arrays;
 
@@ -128,7 +127,7 @@ public class UserRolePresenter implements SubPresentable {
                 }
             }
         }
-        ((UserRoleView) display).setVisible(shouldLoad);
+        //((UserRoleView) display).setVisible(shouldLoad);
 
         if (shouldLoad) {
             String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);

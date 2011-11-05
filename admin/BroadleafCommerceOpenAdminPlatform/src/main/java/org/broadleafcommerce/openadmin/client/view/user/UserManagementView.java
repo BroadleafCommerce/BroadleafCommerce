@@ -15,15 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.view.user;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.UserManagementModule;
-import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.TabSet;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
-
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Side;
@@ -31,6 +22,13 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
+import org.broadleafcommerce.openadmin.client.view.TabSet;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 
 /**
  * 
@@ -75,7 +73,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         
         Tab userRolesTab = new Tab(BLCMain.getMessageManager().getString("userRolesTitle"));
         userRolesTab.setID("userUserRolesTab");
-        userRolesDisplay = new UserRoleView(BLCMain.getMessageManager().getString("userRolesTitle"), false, false);
+        userRolesDisplay = new UserRoleView(false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);
         

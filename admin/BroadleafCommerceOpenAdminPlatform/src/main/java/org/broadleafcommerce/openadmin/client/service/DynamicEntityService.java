@@ -15,15 +15,13 @@
  */
 package org.broadleafcommerce.openadmin.client.service;
 
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.springframework.security.access.annotation.Secured;
-
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.springframework.security.access.annotation.Secured;
 
 /**
  * 
@@ -32,19 +30,19 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
  */
 public interface DynamicEntityService extends RemoteService {
     
-	@Secured("PERMISSION_DEFAULT")
+	@Secured("PERMISSION_OTHER_DEFAULT")
 	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
 	
-	@Secured("PERMISSION_DEFAULT")
+	@Secured("PERMISSION_OTHER_DEFAULT")
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException, ApplicationSecurityException;
     
-	@Secured("PERMISSION_DEFAULT")
+	@Secured("PERMISSION_OTHER_DEFAULT")
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
     
-	@Secured("PERMISSION_DEFAULT")
+	@Secured("PERMISSION_OTHER_DEFAULT")
     public Entity update(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
     
-	@Secured("PERMISSION_DEFAULT")
+	@Secured("PERMISSION_OTHER_DEFAULT")
     public void remove(PersistencePackage persistencePackage) throws ServiceException, ApplicationSecurityException;
     
 }

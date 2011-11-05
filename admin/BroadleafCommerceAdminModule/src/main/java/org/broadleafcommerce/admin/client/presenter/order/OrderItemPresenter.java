@@ -25,7 +25,6 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import org.broadleafcommerce.admin.client.view.order.OrderItemDisplay;
-import org.broadleafcommerce.admin.client.view.order.OrderItemView;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -129,7 +128,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
                 }
             }
         }
-        ((OrderItemView) display).setVisible(shouldLoad);
+        //((OrderItemView) display).setVisible(shouldLoad);
 
         if (shouldLoad) {
             String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);

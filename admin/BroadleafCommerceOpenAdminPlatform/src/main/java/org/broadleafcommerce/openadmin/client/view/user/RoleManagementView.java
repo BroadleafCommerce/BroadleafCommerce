@@ -29,6 +29,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisp
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 
@@ -39,6 +41,7 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
 
 	protected DynamicFormView dynamicFormDisplay;
 	protected DynamicEntityListView listDisplay;
+    protected GridStructureView permissionsDisplay;
 
 	public RoleManagementView() {
 		setHeight100();
@@ -66,7 +69,9 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
         Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("roleDetailsTitle"));
         detailsTab.setID("roleDetailsTab");
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("roleDetailsTitle"), entityDataSource);
-        
+        permissionsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("permissionListTitle"), false, false);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(permissionsDisplay);
+
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
@@ -85,4 +90,8 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
 	public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
+
+    public GridStructureView getPermissionsDisplay() {
+        return permissionsDisplay;
+    }
 }

@@ -15,25 +15,23 @@
  */
 package org.broadleafcommerce.openadmin.client.view.user;
 
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 
 /**
  * 
@@ -51,7 +49,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
 	protected ListGrid expansionGrid;
 	protected FormOnlyView orderItemFormDisplay;
 
-	public UserRoleView(String title, Boolean canReorder, Boolean canEdit) {
+	public UserRoleView(Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
@@ -100,11 +98,6 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         refreshButton.setDisabled(true);
         toolBar.addButton(refreshButton);
         toolBar.setDisabled(false);
-        Label crossSaleLabel = new Label();
-        crossSaleLabel.setContents(title);
-        crossSaleLabel.setWrap(false);
-        toolBar.addSpacer(6);
-        toolBar.addMember(crossSaleLabel);
         toolBar.addFill();
         stack.addMember(toolBar);
         

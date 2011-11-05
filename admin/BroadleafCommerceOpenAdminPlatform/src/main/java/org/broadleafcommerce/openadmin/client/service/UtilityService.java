@@ -26,10 +26,10 @@ import org.springframework.security.access.annotation.Secured;
  */
 public interface UtilityService extends RemoteService {
     
-	@Secured("PERMISSION_DEFAULT")
+	@Secured("PERMISSION_OTHER_DEFAULT")
 	public String getWebAppContext() throws ServiceException, ApplicationSecurityException;
 
-    @Secured("PERMISSION_DEFAULT")
+    @Secured("PERMISSION_OTHER_DEFAULT")
 	public String getStoreFrontWebAppContext() throws ServiceException, ApplicationSecurityException;
     
 }

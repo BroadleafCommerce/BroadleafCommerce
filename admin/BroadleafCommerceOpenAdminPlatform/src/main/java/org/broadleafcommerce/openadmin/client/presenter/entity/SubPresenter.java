@@ -142,7 +142,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
                 }
             }
         }
-        display.setVisible(shouldLoad);
+        //display.setVisible(shouldLoad);
 
         if (shouldLoad) {
             String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);

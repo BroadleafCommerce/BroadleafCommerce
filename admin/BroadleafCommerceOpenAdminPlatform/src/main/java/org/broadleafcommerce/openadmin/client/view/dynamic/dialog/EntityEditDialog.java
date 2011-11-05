@@ -21,6 +21,7 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ImageStyle;
 import com.smartgwt.client.types.Overflow;
@@ -105,10 +106,12 @@ public class EntityEditDialog extends Window {
             	if (dynamicForm.validate()) {
             		dynamicForm.saveData(new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							TreeNode record = new TreeNode(request.getData());
-							if (handler != null) {
-                                handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
-							}
+                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+                                TreeNode record = new TreeNode(request.getData());
+                                if (handler != null) {
+                                    handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
+                                }
+                            }
 						}
             		});
             		hide();
