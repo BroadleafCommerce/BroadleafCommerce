@@ -26,7 +26,7 @@ import org.springframework.security.access.annotation.Secured;
  */
 public interface UploadProgressService extends RemoteService {
 
-    @Secured("PERMISSION_DEFAULT")
+    @Secured("PERMISSION_OTHER_DEFAULT")
 	public Double getPercentUploadComplete(String callbackName) throws ServiceException, ApplicationSecurityException;
 	
 }

@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.view.user;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 
@@ -29,7 +30,7 @@ public interface RoleManagementDisplay extends DynamicEditDisplay {
 	public DynamicFormDisplay getDynamicFormDisplay();
 
 	public DynamicEntityListDisplay getListDisplay();
-	
-	//public AdminPermissionDisplay getAdminPermissionDisplay();
+
+    public GridStructureView getPermissionsDisplay();
 
 }

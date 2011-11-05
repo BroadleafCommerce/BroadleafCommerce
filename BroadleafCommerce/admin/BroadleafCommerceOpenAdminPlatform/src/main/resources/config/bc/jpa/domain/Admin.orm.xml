@@ -28,7 +28,7 @@
                JOIN adminPermission.allRoles role
                JOIN role.allUsers user
                WHERE user = :adminUser AND
-                     adminPermission.type = :type AND
+                     (adminPermission.type = :type OR adminPermission.type = 'ALL') AND
                      qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity
 		</query>
 	</named-query>
@@ -37,7 +37,7 @@
 		<query>SELECT COUNT(adminPermission)
                FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
                JOIN adminPermission.qualifiedEntities qualifiedEntity
-               WHERE adminPermission.type = :type AND
+               WHERE (adminPermission.type = :type OR adminPermission.type = 'ALL') AND
                      qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity
 		</query>
 	</named-query>

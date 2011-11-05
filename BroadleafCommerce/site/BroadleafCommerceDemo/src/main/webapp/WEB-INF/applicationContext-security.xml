@@ -239,8 +239,8 @@
 		<property name="authenticationManager" ref="blAuthenticationManager" />
 		<property name="securityMetadataSource">
 			<sec:filter-security-metadata-source>
-				<sec:intercept-url pattern="/admin.html*" access="PERMISSION_DEFAULT" />
-				<sec:intercept-url pattern="/dynamic.entity.service" access="PERMISSION_DEFAULT" />
+				<sec:intercept-url pattern="/admin.html*" access="PERMISSION_OTHER_DEFAULT" />
+				<sec:intercept-url pattern="/dynamic.entity.service" access="PERMISSION_OTHER_DEFAULT" />
 			</sec:filter-security-metadata-source>
 		</property>
 	</bean>

@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.broadleafcommerce.openadmin.client.datasource.user;
 
 import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.SimpleDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 
@@ -27,17 +30,18 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
  * @author bpolster
  *
  */
-public class AdminPermissionListDataSourceFactory extends SimpleDataSourceFactory {
+public class AdminPermissionRelatedToUserListDataSourceFactory extends SimpleDataSourceFactory {
 
 	public static final String foreignKeyName = "allRoles";
 
-    public AdminPermissionListDataSourceFactory() {
+    public AdminPermissionRelatedToUserListDataSourceFactory() {
         // For non-BLC this would be super("AdminPermissionImpl")
         super(CeilingEntities.ADMIN_PERMISSION);
     }
 
     public PersistencePerspective setupPersistencePerspective(PersistencePerspective persistencePerspective) {
         persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ADMIN_ROLE, null));
+        persistencePerspective.setOperationTypes(new OperationTypes(OperationType.ENTITY, OperationType.FOREIGNKEY, OperationType.FOREIGNKEY, OperationType.FOREIGNKEY, OperationType.ENTITY));
         return persistencePerspective;
     }
 }
