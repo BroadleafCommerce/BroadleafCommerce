@@ -58,6 +58,8 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 					richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
 				}
 				insertRichTextContent(editor, richContent);
+                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
 			}
 		});
 	}
