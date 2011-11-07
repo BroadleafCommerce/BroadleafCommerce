@@ -17,7 +17,6 @@ package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
-import org.springframework.security.access.annotation.Secured;
 
 /**
  *
@@ -26,10 +25,8 @@ import org.springframework.security.access.annotation.Secured;
  */
 public interface UtilityService extends RemoteService {
     
-	@Secured("PERMISSION_OTHER_DEFAULT")
 	public String getWebAppContext() throws ServiceException, ApplicationSecurityException;
 
-    @Secured("PERMISSION_OTHER_DEFAULT")
 	public String getStoreFrontWebAppContext() throws ServiceException, ApplicationSecurityException;
     
 }

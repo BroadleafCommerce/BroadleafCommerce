@@ -12,5 +12,5 @@
     <extend-property name="locale" values="en_US"/>
 
 	<entry-point class="org.broadleafcommerce.openadmin.client.BLCLaunch" />
-	<!-- <set-property name="user.agent" value="gecko1_8" /> -->
+	<set-property name="user.agent" value="gecko1_8" />
 </module>
