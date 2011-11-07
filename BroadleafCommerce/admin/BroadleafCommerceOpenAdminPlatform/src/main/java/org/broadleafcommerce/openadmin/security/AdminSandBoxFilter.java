@@ -46,7 +46,7 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
             SandBoxContext.setSandBoxContext(null);
         } else {
             SandBox sandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
-            session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId().toString());
+            session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());
             session.removeAttribute(SANDBOX_ID_VAR);
             SandBoxContext context = new SandBoxContext();
             context.setSandBoxId(sandBox.getId());

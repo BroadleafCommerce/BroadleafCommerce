@@ -88,7 +88,7 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
                 }
             }
 
-            String requiredPermission = "PERMISSION_USER_SANDBOX";
+            String requiredPermission = "PERMISSION_ALL_USER_SANDBOX";
 
             boolean allowOperation = false;
             for (AdminRole role : adminUser.getAllRoles()) {

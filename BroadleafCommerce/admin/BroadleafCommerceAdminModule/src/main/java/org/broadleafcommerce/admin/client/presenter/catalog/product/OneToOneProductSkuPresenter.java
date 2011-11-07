@@ -194,7 +194,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
                         assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
                             @Override
                             public void onSearchItemSelected(TileGridItemSelected event) {
-                                String staticAssetFullUrl = BLCMain.storeFrontWebAppContext + "/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+                                String staticAssetFullUrl = "cms/staticasset" + event.getRecord().getAttribute("fullUrl");
                                 formItem.setValue(staticAssetFullUrl);
                                 getMediaEntityView().updateMedia(staticAssetFullUrl);
                             }

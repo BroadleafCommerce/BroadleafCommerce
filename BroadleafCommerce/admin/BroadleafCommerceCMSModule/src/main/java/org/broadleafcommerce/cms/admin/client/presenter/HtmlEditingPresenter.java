@@ -47,7 +47,7 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
 			@Override
 			public void onSearchItemSelected(TileGridItemSelected event) {
-				String staticAssetFullUrl = BLCMain.storeFrontWebAppContext + "/cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+				String staticAssetFullUrl = "cms/staticasset" + event.getRecord().getAttribute("fullUrl");
 				String name = event.getRecord().getAttribute("name");
 				String fileExtension = event.getRecord().getAttribute("fileExtension");
 				String richContent;
