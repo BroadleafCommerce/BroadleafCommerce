@@ -139,9 +139,9 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
 
             String requiredPermission;
             if (moduleKey.equals("userSandBox")) {
-                requiredPermission = "PERMISSION_USER_SANDBOX";
+                requiredPermission = "PERMISSION_ALL_USER_SANDBOX";
             } else {
-                requiredPermission = "PERMISSION_APPROVER_SANDBOX";
+                requiredPermission = "PERMISSION_ALL_APPROVER_SANDBOX";
             }
 
             boolean allowOperation = false;

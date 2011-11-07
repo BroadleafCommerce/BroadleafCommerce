@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.cms.admin.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.AbstractHtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -80,7 +80,7 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 		);
 
         List<String> userSandBoxPermissions = new ArrayList<String>();
-		userSandBoxPermissions.add("PERMISSION_USER_SANDBOX");
+		userSandBoxPermissions.add("PERMISSION_ALL_USER_SANDBOX");
         setSection(
             BLCMain.getMessageManager().getString("userSandBoxTitle"),
 			"userSandBox",
@@ -91,7 +91,7 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 		);
 
         List<String> approverSandBoxPermissions = new ArrayList<String>();
-		approverSandBoxPermissions.add("PERMISSION_APPROVER_SANDBOX");
+		approverSandBoxPermissions.add("PERMISSION_ALL_APPROVER_SANDBOX");
         setSection(
             BLCMain.getMessageManager().getString("approverSandBoxTitle"),
 			"approverSandBox",

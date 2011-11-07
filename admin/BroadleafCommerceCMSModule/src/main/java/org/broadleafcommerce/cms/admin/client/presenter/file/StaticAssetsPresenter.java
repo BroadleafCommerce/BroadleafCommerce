@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.file;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -53,6 +50,9 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.AssetItem;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 

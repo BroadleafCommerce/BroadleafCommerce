@@ -52,7 +52,7 @@ import java.util.Map;
 public class StaticAssetViewController {
 
     private static final String SANDBOX_ADMIN_ID_VAR = "blAdminCurrentSandboxId";
-    private static String SANDBOX_ID_VAR = "blSandboxId";
+    private static final String SANDBOX_ID_VAR = "blSandboxId";
 
     private static final Log LOG = LogFactory.getLog(StaticAssetViewController.class);
     private static final File DEFAULTCACHEDIRECTORY = new File(System.getProperty("java.io.tmpdir"));
@@ -71,15 +71,16 @@ public class StaticAssetViewController {
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
 
-    private List<CleanupOperation> operations = new ArrayList<CleanupOperation>();
+    private final List<CleanupOperation> operations = new ArrayList<CleanupOperation>(100);
 
     protected Thread cleanupThread = new Thread(new Runnable() {
         @Override
         public void run() {
             while (true) {
                 try {
-                    List<CleanupOperation> myList = new ArrayList<CleanupOperation>();
+                    List<CleanupOperation> myList;
                     synchronized (operations) {
+                        myList = new ArrayList<CleanupOperation>(operations.size());
                         myList.addAll(operations);
                         operations.clear();
                     }
@@ -89,10 +90,7 @@ public class StaticAssetViewController {
                             File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
                                 @Override
                                 public boolean accept(File file, String s) {
-                                    if (s.startsWith(operation.assetName + "---") && !operation.getCacheFile().getName().equals(s)) {
-                                        return true;
-                                    }
-                                    return false;
+                                    return s.startsWith(operation.assetName + "---") && !operation.getCacheFile().getName().equals(s);
                                 }
                             });
                             if (obsoleteFiles != null) {
@@ -101,7 +99,9 @@ public class StaticAssetViewController {
                                         LOG.debug("Deleting obsolete asset cache file: " + file.getAbsolutePath());
                                     }
                                     try {
-                                        file.delete();
+                                        if (!file.delete()) {
+                                            LOG.warn("Unable to cleanup obsolete static file: " + file.getAbsolutePath());
+                                        }
                                     } catch (Throwable e) {
                                         //do nothing
                                     }
@@ -115,7 +115,7 @@ public class StaticAssetViewController {
                         }
                     }
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    LOG.error("Cleanup operation failed", e);
                 }
                 try {
                     Thread.sleep(10000);
@@ -134,19 +134,17 @@ public class StaticAssetViewController {
     public ModelAndView viewItem(@PathVariable String fileName, HttpServletRequest request) {
         try {
             String fullUrl = request.getPathInfo();
-            String sandBoxId = (String) request.getSession().getAttribute(SANDBOX_ID_VAR);
+            Long sandBoxId = (Long) request.getSession().getAttribute(SANDBOX_ID_VAR);
             if (sandBoxId == null) {
-                sandBoxId = (String) request.getSession().getAttribute(SANDBOX_ADMIN_ID_VAR);
+                sandBoxId = (Long) request.getSession().getAttribute(SANDBOX_ADMIN_ID_VAR);
             }
-            SandBox sandBox;
+            SandBox sandBox = null;
             if (sandBoxId != null) {
-                sandBox = sandBoxService.retrieveSandboxById(Long.valueOf(sandBoxId));
-            } else {
-                sandBox = null;
+                sandBox = sandBoxService.retrieveSandboxById(sandBoxId);
             }
-            StaticAsset staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
+            StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
             if (staticAsset == null && sandBox != null) {
-                staticAsset = (StaticAsset) staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
+                staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
             }
             if (staticAsset == null) {
                 throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBoxId + "), or the production sandBox.");
@@ -177,32 +175,34 @@ public class StaticAssetViewController {
                         if (is != null) {
                             try{
                                 is.close();
-                            } catch (Throwable e) {}
+                            } catch (Throwable e) {
+                                //do nothing
+                            }
                         }
                     }
                     InputStream original = new ByteArrayInputStream(baos.toByteArray());
                     Operation[] operations = artifactService.buildOperations(request.getParameterMap(), original, staticAsset.getMimeType());
                     InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
                     createCacheFile(converted, cacheFile);
-                    if (mimeType.equals("image/gif")) {
+                    if ("image/gif".equals(mimeType)) {
                         mimeType = "image/png";
                     }
                 } else {
                     createCacheFile(storage.getFileData().getBinaryStream(), cacheFile);
                 }
             }
-            Map<String, String> model = new HashMap<String, String>();
+            Map<String, String> model = new HashMap<String, String>(2);
             model.put("cacheFilePath", cacheFile.getAbsolutePath());
             model.put("mimeType", mimeType);
 
             return new ModelAndView("blStaticAssetView", model);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Unable to retrieve static asset", e);
             throw new RuntimeException(e);
         }
     }
 
-    protected void clearObsoleteCacheFiles(final StaticAsset staticAsset, final File cacheFile) {
+    protected void clearObsoleteCacheFiles(StaticAsset staticAsset, File cacheFile) {
         File parentDir = cacheFile.getParentFile();
         if (parentDir.exists()) {
             CleanupOperation operation = new CleanupOperation();
@@ -216,13 +216,14 @@ public class StaticAssetViewController {
 
     protected void createCacheFile(InputStream is, File cacheFile) throws SQLException, IOException {
         if (!cacheFile.getParentFile().exists()) {
-            cacheFile.getParentFile().mkdirs();
+            if (!cacheFile.getParentFile().mkdirs()) {
+                throw new RuntimeException("Unable to create middle directories for file: " + cacheFile.getAbsolutePath());
+            }
         }
-        BufferedOutputStream bos = null;
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
         try {
-            bos = new BufferedOutputStream(new FileOutputStream(cacheFile));
             boolean eof = false;
-            int temp = -1;
+            int temp;
             while (!eof) {
                 temp = is.read();
                 if (temp < 0) {
@@ -232,30 +233,28 @@ public class StaticAssetViewController {
                 }
             }
         } finally {
-            if (bos != null) {
-                try {
-                    bos.flush();
-                    bos.close();
-                } catch (Throwable e) {
-                    //do nothing
-                }
+            try {
+                bos.flush();
+                bos.close();
+            } catch (Throwable e) {
+                //do nothing
             }
         }
     }
 
     protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String[]> parameterMap) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(staticAsset.getFullUrl().substring(0, staticAsset.getFullUrl().lastIndexOf(".")));
+        StringBuilder sb = new StringBuilder(200);
+        sb.append(staticAsset.getFullUrl().substring(0, staticAsset.getFullUrl().lastIndexOf('.')));
         sb.append("---");
 
-        StringBuffer sb2 = new StringBuffer();
+        StringBuilder sb2 = new StringBuilder(200);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         sb2.append(format.format(staticAsset.getAuditable().getDateUpdated()==null?staticAsset.getAuditable().getDateCreated():staticAsset.getAuditable().getDateUpdated()));
-        for (String key : parameterMap.keySet()) {
-            sb2.append("-");
-            sb2.append(key);
-            sb2.append("-");
-            sb2.append(parameterMap.get(key)[0]);
+        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            sb2.append('-');
+            sb2.append(entry.getKey());
+            sb2.append('-');
+            sb2.append(entry.getValue()[0]);
         }
 
         String digest;
@@ -269,14 +268,14 @@ public class StaticAssetViewController {
         }
 
         sb.append(pad(digest, 32, '0'));
-        sb.append(".");
+        sb.append('.');
         sb.append(staticAsset.getFileExtension());
 
         return sb.toString();
     }
 
     protected String pad(String s, int length, char pad) {
-        StringBuffer buffer = new StringBuffer(s);
+        StringBuilder buffer = new StringBuilder(s);
         while (buffer.length() < length) {
             buffer.insert(0, pad);
         }
@@ -291,7 +290,7 @@ public class StaticAssetViewController {
         this.cacheDirectory = cacheDirectory;
     }
 
-    public class CleanupOperation {
+    public static class CleanupOperation {
 
         private String assetName;
         private File cacheFile;
