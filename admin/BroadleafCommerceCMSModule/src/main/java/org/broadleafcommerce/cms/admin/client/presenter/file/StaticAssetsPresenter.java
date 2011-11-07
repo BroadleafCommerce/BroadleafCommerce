@@ -80,12 +80,12 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         }
         currentSelectedRecord = selectedRecord;
         currentId = getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").getPrimaryKeyValue(currentSelectedRecord);
-        getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().disable();
-        AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
-        assetItem.setPreviewSrc(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge").getValue().toString());
-        assetItem.setDisabled(true);
         staticAssetDescriptionPresenter.enable();
         staticAssetDescriptionPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), null);
+        getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("name").disable();
+        getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("fullUrl").disable();
+        AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+        assetItem.updateState();
 	}
 
     @Override
