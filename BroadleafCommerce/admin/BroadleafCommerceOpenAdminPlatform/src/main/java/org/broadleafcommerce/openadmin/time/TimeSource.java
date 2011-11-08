@@ -24,7 +24,7 @@ package org.broadleafcommerce.openadmin.time;
  * A convenient example of this is when previewing content.   An approver may want to view
  * the site as it would appear on a particular date or time.
  *
- * See ContentFilter for example usage of this construct.
+ * See BroadleafProcessURLFilter for example usage of this construct.
  */
 public interface TimeSource {
 

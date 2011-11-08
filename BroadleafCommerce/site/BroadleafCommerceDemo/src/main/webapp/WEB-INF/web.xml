@@ -80,7 +80,7 @@
     </filter>
 
      <filter>
-        <filter-name>blContentFilter</filter-name>
+        <filter-name>blProcessURLFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
@@ -100,7 +100,7 @@
 	</filter-mapping>
 
     <filter-mapping>
-		<filter-name>blContentFilter</filter-name>
+		<filter-name>blProcessURLFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
