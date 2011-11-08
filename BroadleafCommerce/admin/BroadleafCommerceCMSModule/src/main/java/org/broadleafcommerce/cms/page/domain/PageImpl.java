@@ -30,6 +30,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,6 +99,7 @@ public class PageImpl implements Page {
     protected String description;
 
     @Column (name = "FULL_URL")
+    @Index(name="blPageUrlIndex")
     @AdminPresentation(friendlyName="Full Url", order=1, group="Basic", prominent=true)
     protected String fullUrl;
 
