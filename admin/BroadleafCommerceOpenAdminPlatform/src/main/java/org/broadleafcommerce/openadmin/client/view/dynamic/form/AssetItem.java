@@ -4,11 +4,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/13/11
- * Time: 6:17 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class AssetItem extends CanvasItem {
 
