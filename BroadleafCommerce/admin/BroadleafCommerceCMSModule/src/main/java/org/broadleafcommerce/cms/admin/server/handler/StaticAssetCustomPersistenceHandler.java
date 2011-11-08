@@ -421,7 +421,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
         iconAttributes.setColumnWidth("25");
         iconAttributes.setOrder(0);
-        iconAttributes.setRequiredOverride(true);
+        iconAttributes.setRequiredOverride(false);
 
         mergedProperties.put("picture", iconMetadata);
 
@@ -442,7 +442,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconLargeAttributes.setBroadleafEnumeration("");
         iconLargeAttributes.setReadOnly(true);
         iconLargeAttributes.setVisibility(VisibilityEnum.VISIBLE_ALL);
-        iconLargeAttributes.setRequiredOverride(true);
+        iconLargeAttributes.setRequiredOverride(false);
         iconLargeAttributes.setOrder(0);
         iconLargeAttributes.setGroupOrder(0);
 

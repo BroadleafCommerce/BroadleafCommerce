@@ -119,7 +119,6 @@ public class AssetSearchDialog extends Window {
         final DynamicForm filterForm = new DynamicForm();  
         filterForm.setDataSource(staticAssetDataSource);  
         filterForm.setAutoFocus(false);
-        filterForm.setNumCols(2);
         
         TextItem nameFilterItem = new TextItem("name", "Name");
         nameFilterItem.setWrapTitle(false);

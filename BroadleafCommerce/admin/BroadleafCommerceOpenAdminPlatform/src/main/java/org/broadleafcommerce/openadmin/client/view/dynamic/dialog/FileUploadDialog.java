@@ -15,28 +15,24 @@
  */
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.NamedFrame;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Encoding;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
-import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -49,7 +45,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadStatusProgress;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadProgressWindow;
 
 import java.util.Map;
 
@@ -60,19 +56,20 @@ import java.util.Map;
  */
 public class FileUploadDialog extends Window {
 
-	private DynamicForm dynamicForm;
-	private ItemEditedHandler handler;
-    private Element synthesizedFrame;
-    private IButton saveButton;
-    private IButton cancelButton;
+    private static final UploadProgressWindow uploadProgressWindow = new UploadProgressWindow();
+
+	protected DynamicForm dynamicForm;
+	protected ItemEditedHandler handler;
+    protected IButton saveButton;
+    protected IButton cancelButton;
 
 	public FileUploadDialog() {
-		this.setIsModal(true);
-		this.setShowModalMask(true);
-		this.setShowMinimizeButton(false);
-		this.setAutoSize(true);
-		this.setCanDragResize(true);
-		this.setOverflow(Overflow.HIDDEN);
+		setIsModal(true);
+		setShowModalMask(true);
+		setShowMinimizeButton(false);
+		setAutoSize(true);
+		setCanDragResize(true);
+		setOverflow(Overflow.HIDDEN);
 		
 		VStack stack = new VStack();
         stack.setWidth(630);
@@ -81,7 +78,6 @@ public class FileUploadDialog extends Window {
         dynamicForm.setEncoding(Encoding.MULTIPART);
         dynamicForm.setTarget("hidden_frame");
         //dynamicForm.setAction("cms.upload.service");
-		dynamicForm.setNumCols(3);
         dynamicForm.setPadding(10);
         dynamicForm.setHeight100();
         stack.addMember(dynamicForm);
@@ -98,9 +94,8 @@ public class FileUploadDialog extends Window {
             public void onClick(ClickEvent event) {  
             	if (dynamicForm.validate()) {
                     String callbackName = JavaScriptMethodHelper.registerCallbackFunction(new JavaScriptMethodCallback() {
-                        public void execute(JavaScriptObject obj) {
+                        public void execute(String jsObj) {
                             try {
-                                String jsObj = JSON.encode(obj);
                                 JSONObject entityJs = JSONParser.parse(jsObj).isObject();
                                 JSONValue errorJs = entityJs.get("error");
 
@@ -128,11 +123,13 @@ public class FileUploadDialog extends Window {
                                         handler.onItemEdited(new ItemEdited((ListGridRecord) record, dynamicForm.getDataSource()));
                                     }
                                 }
+                            } catch (Exception e) {
+                                SC.warn(e.getMessage());
                             } finally {
-                                UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
-                                progress.stopProgress();
+                                uploadProgressWindow.stopProgress();
                                 Timer timer = new Timer() {
                                     public void run() {
+                                        uploadProgressWindow.finalizeProgress();
                                         hide();
                                     }
                                 };
@@ -140,10 +137,9 @@ public class FileUploadDialog extends Window {
                             }
                         }
                     });
-                    UploadStatusProgress progress = (UploadStatusProgress) ((CanvasItem) dynamicForm.getField("__display_file")).getCanvas();
-                    progress.setCallbackName(callbackName);
-                    progress.startProgress();
-                    dynamicForm.setAction("cms.upload.service?callbackName="+callbackName);
+                    uploadProgressWindow.getProgressBar().setCallbackName(callbackName);
+                    uploadProgressWindow.startProgress();
+                    dynamicForm.setAction("cms.upload.service?callbackName=" + callbackName);
                     dynamicForm.getField("callbackName").setValue(callbackName);
                     dynamicForm.submitForm();
                     saveButton.disable();
@@ -165,23 +161,13 @@ public class FileUploadDialog extends Window {
 
         addItem(stack);
         
-        createFrame();
+        NamedFrame frame = new NamedFrame("hidden_frame");
+		frame.setWidth("1");
+		frame.setHeight("1");
+		frame.setVisible(false);
+        
+        addItem(frame);
 	}
-
-    private void createFrame() {
-        // Attach a hidden IFrame to the form. This is the target iframe to
-        // which
-        // the form will be submitted. We have to create the iframe using
-        // innerHTML,
-        // because setting an iframe's 'name' property dynamically doesn't work
-        // on
-        // most browsers.
-        Element dummy = Document.get().createDivElement();
-        dummy.setInnerHTML("<iframe src=\"javascript:''\" name='hidden_frame' style='position:absolute;width:0;height:0;border:0'>");
-
-        synthesizedFrame = dummy.getFirstChildElement();
-        Document.get().getBody().appendChild(synthesizedFrame);
-    }
 
 	public void editNewRecord(DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames) {
 		editNewRecord(null, dataSource, initialValues, handler, null, fieldNames, null);

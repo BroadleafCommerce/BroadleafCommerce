@@ -40,13 +40,13 @@ public class UploadCompletedView implements View {
         sb.append("<html><head><script type=\"text/javascript\">");
         sb.append("window.top.");
         sb.append(model.get("callbackName"));
-        sb.append("(eval('(");
+        sb.append("('(");
         if (model.get("error") != null) {
             sb.append(model.get("error"));
         } else {
             sb.append(model.get("result"));
         }
-        sb.append(")'));");
+        sb.append(")');");
         sb.append("</script></head><body>Upload Completed</body></html>");
 
         OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());

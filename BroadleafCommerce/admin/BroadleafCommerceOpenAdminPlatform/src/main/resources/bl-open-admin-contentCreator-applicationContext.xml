@@ -95,8 +95,6 @@
         <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
 	</bean>
 
-    <bean id="blMetadataOverrides" class="org.springframework.beans.factory.config.MapFactoryBean"/>
-
     <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
         <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>
         <property name="entityConfiguration" ref="blEntityConfiguration"/>

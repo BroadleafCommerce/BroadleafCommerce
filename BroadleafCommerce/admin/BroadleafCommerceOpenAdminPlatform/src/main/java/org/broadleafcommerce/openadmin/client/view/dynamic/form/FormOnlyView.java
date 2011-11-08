@@ -45,7 +45,6 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form = new DynamicForm(); 
         form.setHeight(175);
         form.setWidth100();
-        form.setNumCols(3);
         form.setPadding(10);
         form.disable();
         form.setBackgroundColor("#eaeaea");

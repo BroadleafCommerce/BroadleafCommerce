@@ -15,7 +15,7 @@ public class JavaScriptMethodHelper {
 
     private native static void createCallbackFunction(JavaScriptMethodCallback obj, String callbackName )/*-{
         tmpcallback = function( j ){
-            obj.@org.broadleafcommerce.openadmin.client.view.dynamic.dialog.JavaScriptMethodCallback::execute(Lcom/google/gwt/core/client/JavaScriptObject;)( j );
+            obj.@org.broadleafcommerce.openadmin.client.view.dynamic.dialog.JavaScriptMethodCallback::execute(Ljava/lang/String;)( j );
         };
         $wnd[callbackName]=tmpcallback;
     }-*/;
