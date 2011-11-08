@@ -23,9 +23,6 @@
 			</list>
 		</property>
 	</bean>
-	
-	<!--<bean id="blcContentFilter" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
-	</bean>-->
 
     <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="jpaVendorAdapter">
@@ -100,5 +97,23 @@
     <bean id="blStructuredContentService" class="org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl">
         <property name="contentRuleProcessors" ref="blContentRuleProcessors"/>
 	</bean>
+
+    <bean id="blPageURLProcessor" class="org.broadleafcommerce.cms.web.PageURLProcessor"/>
+
+    <bean id="blURLProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageURLProcessor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blProcessURLFilter" class="org.broadleafcommerce.cms.web.BroadleafProcessURLFilter">
+        <property name="urlProcessorList">
+            <list>
+                <ref bean="blURLProcessors"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

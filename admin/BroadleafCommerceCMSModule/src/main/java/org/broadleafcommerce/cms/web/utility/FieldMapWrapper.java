@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * FieldMapWrapper is used in combination with PageField and StructuredContentField classes.
- * It is used by the DisplayContentTag and ContentFilter to allow for simpler use of these
+ * It is used by the DisplayContentTag to allow for simpler use of these
  * entities within JSP pages.
  *
  * For example, instead of ${page.pageFields.body.value}, this class allows the JSP

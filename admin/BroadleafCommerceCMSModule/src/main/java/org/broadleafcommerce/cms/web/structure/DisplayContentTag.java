@@ -16,35 +16,34 @@
 
 package org.broadleafcommerce.cms.web.structure;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
-import org.broadleafcommerce.cms.web.ContentFilter;
+import org.broadleafcommerce.cms.web.BroadleafProcessURLFilter;
 import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DisplayContentTag extends BodyTagSupport {
     private static final long serialVersionUID = 1L;
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    // The following attribute is set in ContentFilter
+    // The following attribute is set in BroadleafProcessURLFilter
     public static final String REQUEST_DTO = "blRequestDTO";
 
     private String contentType;
@@ -116,13 +115,13 @@ public class DisplayContentTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         Map<String, Object> mvelParameters = buildMvelParameters(request);
-        SandBox currentSandbox = (SandBox) request.getAttribute(ContentFilter.SANDBOX_VAR);
+        SandBox currentSandbox = (SandBox) request.getAttribute(BroadleafProcessURLFilter.SANDBOX_VAR);
 
         List<StructuredContent> contentItems;
         StructuredContentType structuredContentType = getStructuredContentService(pageContext).findStructuredContentTypeByName(contentType);
 
         if (locale == null) {
-            locale = (Locale) request.getAttribute(ContentFilter.LOCALE_VAR);
+            locale = (Locale) request.getAttribute(BroadleafProcessURLFilter.LOCALE_VAR);
         }
 
         int cnt = (count == null) ? Integer.MAX_VALUE : count;
