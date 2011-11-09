@@ -45,15 +45,19 @@ public interface AdminUser extends Serializable {
      * This is primarily intended to be used by the BLC-CMS workflow
      * processes.
      *
+     * If null, the user is using their own SandBox.
+     *
      * @return
      */
-    public SandBox getCurrentSandbox();
+    public SandBox getOverrideSandBox();
 
     /**
-     * Sets the user's current sandbox.    This is typically called by the
-     * BLC-CMS engine in order to switch the default workspace for the user.
+     * Overrides the user's sandbox.    This could be used
+     * to setup shared sandboxes.  Setting to null will
+     * mean that the user is setup to use the sandbox associated
+     * with their user.
      *
      * @param sandbox
      */
-    public void setCurrentSandbox(SandBox sandbox);
+    public void setOverrideSandBox(SandBox sandbox);
 }

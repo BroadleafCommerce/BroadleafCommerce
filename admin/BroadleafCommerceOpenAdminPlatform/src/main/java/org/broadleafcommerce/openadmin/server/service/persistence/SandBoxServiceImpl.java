@@ -429,8 +429,8 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Override
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {
         SandBox userSandbox = null;
-        if (adminUser.getCurrentSandbox() != null) {
-            userSandbox = adminUser.getCurrentSandbox();
+        if (adminUser.getOverrideSandBox() != null) {
+            userSandbox = adminUser.getOverrideSandBox();
         } else {
             userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
 
@@ -445,11 +445,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                         sandBox.setName(adminUser.getLogin());
                         sandBox.setSandBoxType(SandBoxType.USER);
                         sandBox.setAuthor(adminUser.getId());
-                        sandBox = sandBoxDao.persist(sandBox);
-
-                        adminUser.setCurrentSandbox(sandBox);
-                        adminSecurityService.saveAdminUser(adminUser);
-                        userSandbox = sandBox;
+                        userSandbox = sandBoxDao.persist(sandBox);
                     }
                 }
             }
