@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD_ENUM")
+@Table(name = "BLC_FLD_ENUM")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class FieldEnumerationImpl implements FieldEnumeration {
 
@@ -38,7 +38,7 @@ public class FieldEnumerationImpl implements FieldEnumeration {
     @Id
     @GeneratedValue(generator = "FieldEnumerationId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldEnumerationId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldEnumerationImpl", allocationSize = 10)
-    @Column(name = "FIELD_ENUM_ID")
+    @Column(name = "FLD_ENUM_ID")
     protected Long id;
 
     @Column (name = "NAME")
@@ -47,7 +47,7 @@ public class FieldEnumerationImpl implements FieldEnumeration {
     @OneToMany(mappedBy = "fieldEnumeration", targetEntity = FieldEnumerationItemImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "FIELD_ORDER")
+    @OrderColumn(name = "FLD_ORDER")
     @BatchSize(size = 20)
     protected List<FieldEnumerationItem> enumerationItems;
 

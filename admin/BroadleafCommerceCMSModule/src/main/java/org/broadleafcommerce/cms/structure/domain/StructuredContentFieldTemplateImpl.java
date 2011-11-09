@@ -46,7 +46,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SC_FIELD_TEMPLATE")
+@Table(name = "BLC_SC_FLD_TMPLT")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContentFieldTemplate")
 public class StructuredContentFieldTemplateImpl implements StructuredContentFieldTemplate {
@@ -56,7 +56,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     @Id
     @GeneratedValue(generator = "StructuredContentFieldTemplateImpl", strategy = GenerationType.TABLE)
     @TableGenerator(name = "StructuredContentFieldTemplateImpl", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentFieldTemplateImpl", allocationSize = 10)
-    @Column(name = "SC_FIELD_TEMPLATE_ID")
+    @Column(name = "SC_FLD_TMPLT_ID")
     protected Long id;
 
     @Column (name = "NAME")
@@ -64,7 +64,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     protected String name;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_SC_FLDGRP_XREF", joinColumns = @JoinColumn(name = "SC_FIELD_TEMPLATE_ID", referencedColumnName = "SC_FIELD_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
+    @JoinTable(name = "BLC_SC_FLDGRP_XREF", joinColumns = @JoinColumn(name = "SC_FLD_TMPLT_ID", referencedColumnName = "SC_FLD_TMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "FLD_GROUP_ID", referencedColumnName = "FLD_GROUP_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "GROUP_ORDER")

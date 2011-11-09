@@ -26,7 +26,7 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD_ENUM_ITEM")
+@Table(name = "BLC_FLD_ENUM_ITEM")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class FieldEnumerationItemImpl implements FieldEnumerationItem {
 
@@ -35,7 +35,7 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
     @Id
     @GeneratedValue(generator = "FieldEnumerationItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldEnumerationItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldEnumerationItemImpl", allocationSize = 10)
-    @Column(name = "FIELD_ENUM_ITEM_ID")
+    @Column(name = "FLD_ENUM_ITEM_ID")
     protected Long id;
 
     @Column (name = "NAME")
@@ -44,11 +44,11 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
     @Column (name = "FRIENDLY_NAME")
     protected String friendlyName;
 
-    @Column(name="FIELD_ORDER")
+    @Column(name="FLD_ORDER")
     protected int fieldOrder;
 
     @ManyToOne(targetEntity = FieldEnumerationImpl.class)
-    @JoinColumn(name = "FIELD_ENUM_ID")
+    @JoinColumn(name = "FLD_ENUM_ID")
 	protected FieldEnumeration fieldEnumeration;
 
     @Override

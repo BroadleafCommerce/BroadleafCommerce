@@ -50,7 +50,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PAGE_TEMPLATE")
+@Table(name = "BLC_PAGE_TMPLT")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "basePageTemplate")
 public class PageTemplateImpl implements PageTemplate {
@@ -60,18 +60,18 @@ public class PageTemplateImpl implements PageTemplate {
     @Id
     @GeneratedValue(generator = "PageTemplateId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PageTemplateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageTemplateImpl", allocationSize = 10)
-    @Column(name = "PAGE_TEMPLATE_ID")
+    @Column(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "Template Id", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected Long id;
 
-    @Column (name = "TEMPLATE_NAME")
+    @Column (name = "TMPLT_NAME")
     @AdminPresentation(friendlyName = "Template Name", prominent = true)
     protected String templateName;
 
-    @Column (name = "TEMPLATE_DESCRIPTION")
+    @Column (name = "TMPLT_DESCR")
     protected String templateDescription;
 
-    @Column (name = "TEMPLATE_PATH")
+    @Column (name = "TMPLT_PATH")
     @AdminPresentation(friendlyName = "Template Path", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected String templatePath;
 
@@ -80,7 +80,7 @@ public class PageTemplateImpl implements PageTemplate {
     protected Locale locale;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_PGTMPLT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "PAGE_TEMPLATE_ID", referencedColumnName = "PAGE_TEMPLATE_ID"), inverseJoinColumns = @JoinColumn(name = "FIELD_GROUP_ID", referencedColumnName = "FIELD_GROUP_ID"))
+    @JoinTable(name = "BLC_PGTMPLT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "PAGE_TMPLT_ID", referencedColumnName = "PAGE_TMPLT_ID"), inverseJoinColumns = @JoinColumn(name = "FLD_GROUP_ID", referencedColumnName = "FLD_GROUP_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "GROUP_ORDER")

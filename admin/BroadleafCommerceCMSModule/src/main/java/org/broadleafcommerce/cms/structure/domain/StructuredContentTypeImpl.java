@@ -40,7 +40,7 @@ import javax.persistence.TableGenerator;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_STRUCTURED_CONTENT_TYPE")
+@Table(name = "BLC_SC_TYPE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContentType")
 public class StructuredContentTypeImpl implements StructuredContentType {
@@ -50,7 +50,7 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     @Id
     @GeneratedValue(generator = "StructuredContentTypeId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "StructuredContentTypeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentTypeImpl", allocationSize = 10)
-    @Column(name = "STRUCTURED_CONTENT_TYPE_ID")
+    @Column(name = "SC_TYPE_ID")
     protected Long id;
 
     @Column (name = "NAME")
@@ -62,7 +62,7 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected String description;
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
-    @JoinColumn(name="SC_FIELD_TEMPLATE_ID")
+    @JoinColumn(name="SC_FLD_TMPLT_ID")
     @AdminPresentation(friendlyName="Content Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 

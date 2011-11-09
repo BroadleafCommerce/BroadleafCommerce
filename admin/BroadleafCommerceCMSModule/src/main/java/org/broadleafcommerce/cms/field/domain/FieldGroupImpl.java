@@ -15,14 +15,23 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import java.util.List;
 
 /**
@@ -30,7 +39,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD_GROUP")
+@Table(name = "BLC_FLD_GROUP")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class FieldGroupImpl implements FieldGroup {
 
@@ -39,7 +48,7 @@ public class FieldGroupImpl implements FieldGroup {
     @Id
     @GeneratedValue(generator = "FieldGroupId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldGroupImpl", allocationSize = 10)
-    @Column(name = "FIELD_GROUP_ID")
+    @Column(name = "FLD_GROUP_ID")
     protected Long id;
 
     @Column (name = "NAME")
@@ -51,7 +60,7 @@ public class FieldGroupImpl implements FieldGroup {
     @OneToMany(mappedBy = "fieldGroup", targetEntity = FieldDefinitionImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "FIELD_ORDER")
+    @OrderColumn(name = "FLD_ORDER")
     @BatchSize(size = 20)
     protected List<FieldDefinition> fieldDefinitions;
 

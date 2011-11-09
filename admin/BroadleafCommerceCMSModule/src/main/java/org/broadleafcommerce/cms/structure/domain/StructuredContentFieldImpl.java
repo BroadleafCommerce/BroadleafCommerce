@@ -15,20 +15,33 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import javax.persistence.*;
-
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_STRUCTURED_CONTENT_FIELD")
+@Table(name = "BLC_SC_FLD")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 public class StructuredContentFieldImpl implements StructuredContentField {
@@ -38,18 +51,18 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     @Id
     @GeneratedValue(generator = "StructuredContentFieldId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "StructuredContentFieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentFieldImpl", allocationSize = 10)
-    @Column(name = "STRUCTURED_CONTENT_FIELD_ID")
+    @Column(name = "SC_FLD_ID")
     protected Long id;
 
     @Embedded
     @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
-    @Column (name = "FIELD_KEY")
+    @Column (name = "FLD_KEY")
     protected String fieldKey;
 
     @ManyToOne(targetEntity = StructuredContentImpl.class)
-    @JoinColumn(name="STRUCTURED_CONTENT_ID")
+    @JoinColumn(name="SC_ID")
     protected StructuredContent structuredContent;
 
     @Column (name = "VALUE")
