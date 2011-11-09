@@ -72,7 +72,7 @@
 		</artifact:mvn>
 	</target>
 	
-	<target name="jetty-debug-broadleaf-instrumented" depends="start-db">
+	<target name="jetty-debug-yourkit" depends="start-db">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:dependencies pathId="agentPathId">
 			<dependency groupId="org.broadleafcommerce" artifactId="broadleaf-instrument" version="1.5.0-M2-SNAPSHOT"/>
