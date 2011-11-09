@@ -15,22 +15,28 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.RequiredOverride;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD_DEFINITION")
+@Table(name = "BLC_FLD_DEF")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class FieldDefinitionImpl implements FieldDefinition {
 
@@ -39,7 +45,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Id
     @GeneratedValue(generator = "FieldDefinitionId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FieldDefinitionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldDefinitionImpl", allocationSize = 10)
-    @Column(name = "FIELD_DEFINITION_ID")
+    @Column(name = "FLD_DEF_ID")
     protected Long id;
 
     @Column (name = "NAME")
@@ -48,7 +54,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column (name = "FRIENDLY_NAME")
     protected String friendlyName;
 
-    @Column (name = "FIELD_TYPE")
+    @Column (name = "FLD_TYPE")
     protected String fieldType;
 
     @Column (name = "SECURITY_LEVEL")
@@ -73,17 +79,17 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected Boolean textAreaFlag = false;
 
     @ManyToOne (targetEntity = FieldEnumerationImpl.class)
-    @JoinColumn(name = "FIELD_ENUM_ID")
+    @JoinColumn(name = "FLD_ENUM_ID")
     protected FieldEnumeration fieldEnumeration;
 
     @Column (name = "ALLOW_MULTIPLES")
     protected Boolean allowMultiples = false;
 
     @ManyToOne(targetEntity = FieldGroupImpl.class)
-    @JoinColumn(name = "FIELD_GROUP_ID")
+    @JoinColumn(name = "FLD_GROUP_ID")
 	protected FieldGroup fieldGroup;
 
-    @Column(name="FIELD_ORDER")
+    @Column(name="FLD_ORDER")
     protected int fieldOrder;
 
     @Override

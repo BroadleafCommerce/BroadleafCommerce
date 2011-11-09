@@ -62,7 +62,7 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_STRUCTURED_CONTENT")
+@Table(name = "BLC_SC")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
@@ -93,7 +93,7 @@ public class StructuredContentImpl implements StructuredContent {
     @Id
     @GeneratedValue(generator = "StructuredContentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "StructuredContentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentImpl", allocationSize = 10)
-    @Column(name = "ID")
+    @Column(name = "SC_ID")
     protected Long id;
 
     @Embedded
@@ -126,7 +126,7 @@ public class StructuredContentImpl implements StructuredContent {
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Column(name = "ORIGINAL_ITEM_ID")
+    @Column(name = "ORIG_ITEM_ID")
     protected Long originalItemId;
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
@@ -135,17 +135,17 @@ public class StructuredContentImpl implements StructuredContent {
     protected SandBox sandbox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
 	protected SandBox originalSandBox;
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
-    @JoinColumn(name="STRUCTURED_CONTENT_TYPE_ID")
+    @JoinColumn(name="SC_TYPE_ID")
     @AdminPresentation(friendlyName="Content Type", order=2, group="Description", excluded=true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_STRCTR_CNTNT_FLD_MAP", inverseJoinColumns = @JoinColumn(name = "STRUCTURED_CONTENT_FIELD_ID", referencedColumnName = "STRUCTURED_CONTENT_FIELD_ID"))
+    @JoinTable(name = "BLC_SC_FLD_MAP", joinColumns = @JoinColumn(name = "SC_ID", referencedColumnName = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_FLD_ID", referencedColumnName = "SC_FLD_ID"))
     @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")

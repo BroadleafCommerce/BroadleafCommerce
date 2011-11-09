@@ -16,12 +16,16 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.audit.Auditable;
-import org.broadleafcommerce.presentation.AdminPresentation;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import java.sql.Blob;
 
 /**
@@ -29,7 +33,7 @@ import java.sql.Blob;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_ASSET_STORAGE")
+@Table(name = "BLC_STATIC_ASSET_STRG")
 public class StaticAssetStorageImpl implements StaticAssetStorage {
 
     private static final long serialVersionUID = 1L;
@@ -37,7 +41,7 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Id
     @GeneratedValue(generator = "StaticAssetStorageId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "StaticAssetStorageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetStorageImpl", allocationSize = 10)
-    @Column(name = "STATIC_ASSET_STORAGE_ID")
+    @Column(name = "STATIC_ASSET_STRG_ID")
     protected Long id;
 
     @Column(name ="STATIC_ASSET_ID", nullable = false)

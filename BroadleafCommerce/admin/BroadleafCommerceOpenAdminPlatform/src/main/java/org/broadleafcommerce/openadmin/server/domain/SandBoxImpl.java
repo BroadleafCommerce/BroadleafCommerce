@@ -59,7 +59,7 @@ public class SandBoxImpl implements SandBox {
     protected Long id;
     
     @Column(name = "SANDBOX_NAME")
-    @Index(name="SNDBX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
+    @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
     protected String name;
     
     @Column(name="AUTHOR")

@@ -17,19 +17,29 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.audit.Auditable;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CONTENT_DISPLAY_RULE")
+@Table(name = "BLC_CNTNT_DSPLY_RULE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 public class ContentDisplayRuleImpl implements ContentDisplayRule {
@@ -39,7 +49,7 @@ public class ContentDisplayRuleImpl implements ContentDisplayRule {
     @Id
     @GeneratedValue(generator = "ContentDisplayRuleId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ContentDisplayRuleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ContentDisplayRuleImpl", allocationSize = 10)
-    @Column(name = "CONTENT_DISPLAY_RULE_ID")
+    @Column(name = "CNTNT_DSPLY_RULE_ID")
     protected Long id;
 
     @Embedded
@@ -49,7 +59,7 @@ public class ContentDisplayRuleImpl implements ContentDisplayRule {
     @Column (name = "PRIORITY")
     protected Integer priority;
 
-    @Column (name = "RULE_DESCRIPTION")
+    @Column (name = "RULE_DESCR")
     protected String ruleDesciption;
 
     @Column (name = "MVEL_RULE")

@@ -86,11 +86,11 @@ public class PageImpl implements Page {
     @Id
     @GeneratedValue(generator = "PageId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageImpl", allocationSize = 10)
-    @Column(name = "ID")
+    @Column(name = "PAGE_ID")
     protected Long id;
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
-    @JoinColumn(name = "PAGE_TEMPLATE_ID")
+    @JoinColumn(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected PageTemplate pageTemplate;
 
@@ -104,7 +104,7 @@ public class PageImpl implements Page {
     protected String fullUrl;
 
     @ManyToMany(targetEntity = PageFieldImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_PAGE_FIELD_MAP", inverseJoinColumns = @JoinColumn(name = "PAGE_FIELD_ID", referencedColumnName = "PAGE_FIELD_ID"))
+    @JoinTable(name = "BLC_PAGE_FLD_MAP", joinColumns = @JoinColumn(name = "PAGE_ID", referencedColumnName = "PAGE_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_FLD_ID", referencedColumnName = "PAGE_FLD_ID"))
     @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
@@ -117,7 +117,7 @@ public class PageImpl implements Page {
     protected SandBox sandbox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
 	protected SandBox originalSandBox;
 
@@ -133,7 +133,7 @@ public class PageImpl implements Page {
     @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean lockedFlag = false;
 
-    @Column (name = "ORIGINAL_PAGE_ID")
+    @Column (name = "ORIG_PAGE_ID")
     @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long originalPageId;
 

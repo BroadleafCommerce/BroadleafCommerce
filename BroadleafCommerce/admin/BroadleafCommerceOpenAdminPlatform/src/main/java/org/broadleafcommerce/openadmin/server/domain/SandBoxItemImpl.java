@@ -74,7 +74,7 @@ public class SandBoxItemImpl implements SandBoxItem {
 	protected SandBox sandBox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @JoinColumn(name = "ORIG_SANDBOX_ID")
 	protected SandBox originalSandBox;
 
     @Column(name = "SANDBOX_ITEM_TYPE")

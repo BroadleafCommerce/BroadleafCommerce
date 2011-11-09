@@ -128,7 +128,7 @@ public class StaticAssetImpl implements StaticAsset {
     protected SandBox sandbox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIGINAL_SANDBOX_ID")
+    @JoinColumn(name = "ORIG_SANDBOX_ID")
     @AdminPresentation(excluded = true)
 	protected SandBox originalSandBox;
 
@@ -144,7 +144,7 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean lockedFlag = false;
 
-    @Column (name = "ORIGINAL_ASSET_ID")
+    @Column (name = "ORIG_ASSET_ID")
     @AdminPresentation(friendlyName="Original Asset ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long originalAssetId;
 
