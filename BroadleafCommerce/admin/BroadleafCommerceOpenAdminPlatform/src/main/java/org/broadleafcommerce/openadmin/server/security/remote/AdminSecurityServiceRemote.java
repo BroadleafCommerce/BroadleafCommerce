@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,7 +57,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
                 }
             }
             response.setUserName(persistentAdminUser.getLogin());
-            response.setCurrentSandBoxId(String.valueOf(persistentAdminUser.getCurrentSandbox().getId()));
+            response.setCurrentSandBoxId(String.valueOf(SandBoxContext.getSandBoxContext().getSandBoxId()));
             return response;
         }
 

@@ -99,7 +99,7 @@ public class AdminUserImpl implements AdminUser {
     @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
     @AdminPresentation(excluded = true)
-    protected SandBox currentSandBox;
+    protected SandBox overrideSandBox;
 
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
@@ -153,12 +153,11 @@ public class AdminUserImpl implements AdminUser {
         this.allRoles = allRoles;
     }
 
-    public SandBox getCurrentSandbox() {
-        return currentSandBox;
+    public SandBox getOverrideSandBox() {
+        return overrideSandBox;
     }
 
-    public void setCurrentSandbox(SandBox currentSandBox) {
-        this.currentSandBox = currentSandBox;
+    public void setOverrideSandBox(SandBox overrideSandBox) {
+        this.overrideSandBox = overrideSandBox;
     }
-
 }
