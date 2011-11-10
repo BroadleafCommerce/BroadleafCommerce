@@ -63,6 +63,7 @@
         <property name="configLocations">
             <list>
                 <value>classpath:bl-override-ehcache.xml</value>
+                <value>classpath:bl-cms-ehcache.xml</value>
             </list>
         </property>
     </bean>

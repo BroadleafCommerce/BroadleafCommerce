@@ -104,7 +104,7 @@ public class StructuredContentImpl implements StructuredContent {
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
-    @JoinColumn(name = "LOCALE_ID")
+    @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Locale locale;
 

@@ -146,7 +146,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         String[][] enums = new String[resultSet.getRecords().length][2];
         int j=0;
         for (Entity entity : resultSet.getRecords()) {
-            enums[j][0] = entity.findProperty("id").getValue();
+            enums[j][0] = entity.findProperty("localeCode").getValue();
             enums[j][1] = entity.findProperty("friendlyName").getValue();
             j++;
         }
