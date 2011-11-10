@@ -23,13 +23,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * Created by jfischer
@@ -44,11 +41,6 @@ public class LocaleImpl implements Locale {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "LocaleId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "LocaleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "LocaleImpl", allocationSize = 10)
-    @Column(name = "LOCALE_ID")
-    protected Long id;
-
     @Column (name = "LOCALE_CODE")
     @AdminPresentation(friendlyName="Locale Code", order=1, group="Details", prominent=true)
     protected String localeCode;
@@ -60,16 +52,6 @@ public class LocaleImpl implements Locale {
     @Column (name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName="Is Default", order=3, group="Details", prominent=true)
     protected Boolean defaultFlag;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @Override
     public String getLocaleCode() {
@@ -108,10 +90,6 @@ public class LocaleImpl implements Locale {
 
         LocaleImpl locale = (LocaleImpl) o;
 
-        if (id != null && locale.id != null) {
-            return id.equals(locale.id);
-        }
-
         if (localeCode != null ? !localeCode.equals(locale.localeCode) : locale.localeCode != null) return false;
         if (friendlyName != null ? !friendlyName.equals(locale.friendlyName) : locale.friendlyName != null) return false;
 
@@ -120,8 +98,7 @@ public class LocaleImpl implements Locale {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (localeCode != null ? localeCode.hashCode() : 0);
+        int result = localeCode != null ? localeCode.hashCode() : 0;
         result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
         return result;
     }

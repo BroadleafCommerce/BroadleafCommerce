@@ -103,7 +103,7 @@ public class CustomerImpl implements Customer {
     protected boolean registered = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
-    @JoinColumn(name = "LOCALE_ID")
+    @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName="Customer Locale", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
 

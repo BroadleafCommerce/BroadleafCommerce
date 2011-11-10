@@ -76,7 +76,7 @@ public class PageTemplateImpl implements PageTemplate {
     protected String templatePath;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
-    @JoinColumn(name = "LOCALE_ID")
+    @JoinColumn(name = "LOCALE_CODE")
     protected Locale locale;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})

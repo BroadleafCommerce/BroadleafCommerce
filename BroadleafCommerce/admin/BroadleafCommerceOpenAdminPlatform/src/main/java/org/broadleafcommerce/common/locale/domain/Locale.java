@@ -23,10 +23,6 @@ import java.io.Serializable;
  */
 public interface Locale extends Serializable {
 
-    Long getId();
-
-    void setId(Long id);
-
     String getLocaleCode();
 
     void setLocaleCode(String localeCode);
