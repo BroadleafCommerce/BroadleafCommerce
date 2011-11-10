@@ -19,14 +19,39 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 /**
+ * {@code UtilityService} provides several basic function to the admin revolving
+ * around retrieving current context information for the admin app.
+ *
+ * NOTE - this service is NOT secured. Do not put features in this service
+ * interface that require security!
  *
  * @author jfischer
  *
  */
 public interface UtilityService extends RemoteService {
-    
+
+    /**
+     * Retrieve the current web application context (if any) in use for this admin application. When
+     * a web app context is in use, it appears as the first part of the url. For example, in the url
+     * http://localhost:8080/broadleafdemo/admin.html, the web app context is 'broadleafdemo'. Null
+     * may be returned if there is no app context.
+     *
+     * @return The first part of the app url that constitutes the web application context (if any).
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
 	public String getWebAppContext() throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Retrieve the current web application context (if any) for the actual store front associated
+     * with this admin instance. For example, if the storefront is http://localhost:8080/myStore, then
+     * the store front web app context is 'myStore'. Null may be returned if there is no web app context
+     * set for the storefront.
+     *
+     * @return The first part of the storefront url that constitutes the web application context (if any)
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
 	public String getStoreFrontWebAppContext() throws ServiceException, ApplicationSecurityException;
     
 }
