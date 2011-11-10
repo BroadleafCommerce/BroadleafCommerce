@@ -18,8 +18,26 @@
 			<sec:filter-chain pattern="/css/**" filters="none" />
 			<sec:filter-chain pattern="/images/**" filters="none" />
 			<sec:filter-chain pattern="/js/**" filters="none" />
-			<sec:filter-chain pattern="/org.broadleafcommerce.admin.demoAdmin/**" filters="none" />
-			<sec:filter-chain pattern="/admin*"
+            <sec:filter-chain pattern="/utility.service" filters="none" />
+            <sec:filter-chain pattern="/org.broadleafcommerce.admin.demoAdmin/**"
+				filters="
+                	blSecurityContextPersistenceFilterWithASCTrue,
+                	blAdminLogoutFilter,
+                	blAdminAuthenticationProcessingFilter,
+                	blRequestWrapperFilter,
+                	blAdminRememberMeAuthenticationFilter,
+                	blAdminExceptionTranslationFilter,
+                	blAdminFilterSecurityInterceptor" />
+            <sec:filter-chain pattern="/admin*"
+				filters="
+                	blSecurityContextPersistenceFilterWithASCTrue,
+                	blAdminLogoutFilter,
+                	blAdminAuthenticationProcessingFilter,
+                	blRequestWrapperFilter,
+                	blAdminRememberMeAuthenticationFilter,
+                	blAdminExceptionTranslationFilter,
+                	blAdminFilterSecurityInterceptor" />
+			<sec:filter-chain pattern="/admin/*"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
                 	blAdminLogoutFilter,               	
@@ -28,16 +46,7 @@
                 	blAdminRememberMeAuthenticationFilter, 
                 	blAdminExceptionTranslationFilter,
                 	blAdminFilterSecurityInterceptor" />
-            <sec:filter-chain pattern="/admin/*"
-				filters="
-                	blSecurityContextPersistenceFilterWithASCTrue,
-                	blAdminLogoutFilter,               	
-                	blAdminAuthenticationProcessingFilter,
-                	blRequestWrapperFilter,
-                	blAdminRememberMeAuthenticationFilter, 
-                	blAdminExceptionTranslationFilter,
-                	blAdminFilterSecurityInterceptor" />
-            <sec:filter-chain pattern="/dynamic.entity.service"
+            <sec:filter-chain pattern="/*.service"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
                 	blAdminLogoutFilter,               	

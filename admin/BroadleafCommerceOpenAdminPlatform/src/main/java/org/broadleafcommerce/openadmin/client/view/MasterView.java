@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.view;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.BkgndRepeat;
 import com.smartgwt.client.types.Cursor;
@@ -68,7 +69,7 @@ public class MasterView extends VLayout {
 
 
     public MasterView(String moduleKey, String pageKey, LinkedHashMap<String, Module> modules) {
-        this.moduleKey = moduleKey;
+        MasterView.moduleKey = moduleKey;
         this.pageKey = pageKey;
         this.modules = modules;
 
@@ -376,9 +377,10 @@ public class MasterView extends VLayout {
 	    logoutLink.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
+                UrlBuilder builder = Window.Location.createUrlBuilder();
                 builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
-                com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
+                builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                Window.open(builder.buildString(), "_self", null);
             }
         } );
 

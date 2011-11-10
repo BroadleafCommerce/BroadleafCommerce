@@ -21,6 +21,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.BLCLaunch;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -132,10 +133,10 @@ public class AppController implements ValueChangeHandler<String> {
             @Override
             public void onSuccess(AdminUser result) {
                 if (result == null) {
-                    UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
-                    builder.setPath(BLCMain.webAppContext + "/admin.html");
+                    UrlBuilder builder = Window.Location.createUrlBuilder();
+                    builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
                     builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
-                    com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
+                    Window.open(builder.buildString(), "_self", null);
                 } else {
                     if (SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)){
                         uiFactory.clearCurrentView();

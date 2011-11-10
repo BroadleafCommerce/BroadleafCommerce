@@ -19,6 +19,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
+import com.google.gwt.user.client.Window;
 import com.smartgwt.client.core.KeyIdentifier;
 import com.smartgwt.client.util.KeyCallback;
 import com.smartgwt.client.util.Page;
@@ -36,7 +37,6 @@ import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -95,8 +95,8 @@ public class BLCMain implements EntryPoint {
 
         currentModuleKey = null;
 
-        for (Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext(); ) {
-            Module currentModule = iterator.next();
+        for (Map.Entry<String, Module> entry : modules.entrySet()) {
+            Module currentModule = entry.getValue();
             if (SecurityManager.getInstance().isUserAuthorizedToViewModule(currentModule.getModuleKey())) {
                 currentModuleKey = currentModule.getModuleKey();
                 return;
@@ -116,51 +116,72 @@ public class BLCMain implements EntryPoint {
         }
 
         currentPageKey = null;
-        if (pagesMap != null) {
-            for(String pageKey : pagesMap.keySet()) {
-                String view = pagesMap.get(pageKey)[0];
-                if (SecurityManager.getInstance().isUserAuthorizedToViewSection(view)) {
-                    currentPageKey = pageKey;
-                    return;
-                }
+        for(String pageKey : pagesMap.keySet()) {
+            String view = pagesMap.get(pageKey)[0];
+            if (SecurityManager.getInstance().isUserAuthorizedToViewSection(view)) {
+                currentPageKey = pageKey;
+                return;
             }
         }
     }
 	
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
-		AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+        SC.logWarn("Retrieving web app context...");
+        AppServices.UTILITY.getWebAppContext(new AbstractCallback<String>() {
             @Override
-            public void onSuccess(AdminUser result) {
-            	SecurityManager.USER  = result;
+            public void onSuccess(String result) {
+                webAppContext = result;
+                SC.logWarn("Web app context retrieved (" + result + ")");
+                SC.logWarn("Retrieving storefront web app context...");
+                AppServices.UTILITY.getStoreFrontWebAppContext(new AbstractCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        if (result != null) {
+                            storeFrontWebAppContext = result;
+                        } else {
+                            storeFrontWebAppContext = webAppContext;
+                        }
+                        SC.logWarn("Web app context retrieved (" + result + ")");
+                        SC.logWarn("Retrieving admin user...");
+                        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+                            @Override
+                            public void onSuccess(AdminUser result) {
+                                SecurityManager.USER  = result;
+                                if (result == null) {
+                                    SC.logWarn("Admin user not found. Logging out...");
+                                    UrlBuilder builder = Window.Location.createUrlBuilder();
+                                    builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+                                    builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                                    Window.open(builder.buildString(), "_self", null);
+                                } else {
+                                    SC.logWarn("Admin user found. Loading interface...");
+                                    setCurrentModuleKey(requestedModuleKey);
 
-                if (result == null) {
-                    UrlBuilder builder = com.google.gwt.user.client.Window.Location.createUrlBuilder();
-                    builder.setPath(BLCMain.webAppContext + "/admin.html");
-                    com.google.gwt.user.client.Window.open(builder.buildString(), "_self", null);
-                } else {
-                    setCurrentModuleKey(requestedModuleKey);
+                                    if (currentModuleKey == null) {
+                                        SC.say("Your login does not have authorization to view any modules.");
+                                        return;
+                                    }
 
+                                    setCurrentPageKey(requestedPageKey);
 
-                    if (currentModuleKey == null) {
-                        SC.say("Your login does not have authorization to view any modules.");
-                        return;
+                                    if (currentPageKey == null) {
+                                        SC.say("Your login does not have authorization to view any pages for the passed in module.");
+                                        return;
+                                    }
+
+                                    modules.get(currentModuleKey).preDraw();
+                                    MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
+                                    MASTERVIEW.draw();
+                                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, true);
+                                    modules.get(currentModuleKey).postDraw();
+                                }
+                            }
+                        });
                     }
-
-                    setCurrentPageKey(requestedPageKey);
-
-                    if (currentPageKey == null) {
-                        SC.say("Your login does not have authorization to view any pages for the passed in module.");
-                        return;
-                    }
-
-                    modules.get(currentModuleKey).preDraw();
-                    MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
-                    MASTERVIEW.draw();
-                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, true);
-                    modules.get(currentModuleKey).postDraw();
-                }
+                });
             }
-        }); 
+        });
+        adminContext = GWT.getModuleBaseURL();
 	}
 
 	public void onModuleLoad() {
@@ -174,23 +195,6 @@ public class BLCMain implements EntryPoint {
 		        }
 		    });
 		}
-        AppServices.UTILITY.getWebAppContext(new AbstractCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                webAppContext = result;
-                AppServices.UTILITY.getStoreFrontWebAppContext(new AbstractCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        if (result != null) {
-                            storeFrontWebAppContext = result;
-                        } else {
-                            storeFrontWebAppContext = webAppContext;
-                        }
-                    }
-                });
-            }
-        });
-        adminContext = GWT.getModuleBaseURL();
 	}
 
     public static MessageManager getMessageManager() {
