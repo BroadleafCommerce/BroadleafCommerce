@@ -1,8 +1,5 @@
 package org.broadleafcommerce.cms.structure.service;
 
-import java.io.Serializable;
-import java.util.*;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,12 +7,17 @@ import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * This class is useful for rule processors that need to execute MVEL rules.
+ * This class is useful as a starting point for rule processors that need to execute MVEL rules.
  *
  * Sets up an LRU cache for rule processing and a convenience method for executing MVEL rules.
  *
- * Created by bpolster.
+ * @author bpolster
  *
  */
 public abstract class AbstractStructuredContentRuleProcessor implements StructuredContentRuleProcessor {
@@ -48,7 +50,14 @@ public abstract class AbstractStructuredContentRuleProcessor implements Structur
         return parserContext;
     }
 
-
+    /**
+     * Helpful method for processing a boolean MVEL expression and associated arguments.
+     *
+     * Caches the expression in an LRUCache.
+     * @param expression
+     * @param vars
+     * @return the result of the expression
+     */
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
         Serializable exp = (Serializable) expressionCache.get(expression);
         vars.put("MVEL", MVEL.class);
@@ -72,10 +81,23 @@ public abstract class AbstractStructuredContentRuleProcessor implements Structur
         return false;
     }
 
+    /**
+     * List of class names to add to the MVEL ParserContext.
+     *
+     * @return
+     * @see {@link ParserContext}
+     */
     public Map<String, String> getContextClassNames() {
         return contextClassNames;
     }
 
+
+    /**
+     * List of class names to add to the MVEL ParserContext.
+     *
+     * @return
+     * @see {@link ParserContext}
+     */
     public void setContextClassNames(Map<String, String> contextClassNames) {
         this.contextClassNames = contextClassNames;
     }

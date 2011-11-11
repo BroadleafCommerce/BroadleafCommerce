@@ -15,34 +15,115 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.Serializable;
+
 /**
- * Created by bpolster.
+ * Holds the values for custom fields that are part of a <code>StructuredContent</code> item.
+ * <br>
+ * Each item maintains a list of its custom fields.    The fields associated with an item are
+ * determined by the {@link org.broadleafcommerce.cms.field.domain.FieldDefinition}s  associated
+ * with the {@link StructuredContentType}.
+ *
+ * @see StructuredContentType
+ * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
+ * @author bpolster
+ *
  */
 public interface StructuredContentField extends Serializable {
 
+    /**
+     * Gets the primary key.
+     *
+     * @return the primary key
+     */
+    @Nullable
     public Long getId();
 
-    public void setId(Long id);
 
+    /**
+     * Sets the primary key.
+     *
+     * @param id the new primary key
+     */
+    public void setId(@Nullable Long id);
+
+    /**
+     * Returns the fieldKey associated with this field.   The key used for a
+     * <code>StructuredContentField</code> is determined by the associated
+     * {@link org.broadleafcommerce.cms.field.domain.FieldDefinition} that was used by the
+     * Content Management System to create this instance.
+     *
+     * As an example, a <code>StructuredContentType</code> might be configured to contain a
+     * field definition with a key of "targetUrl".
+     *
+     * @return the key associated with this item
+     * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
+     */
+    @Nonnull
     public String getFieldKey();
 
-    public void setFieldKey(String fieldKey);
+    /**
+     * Sets the fieldKey.
+     * @param fieldKey
+     * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
+     */
+    public void setFieldKey(@Nonnull String fieldKey);
 
+    /**
+     * Returns the parent <code>StructuredContent</code> item to which this
+     * field belongs.
+     *
+     * @return
+     */
+    @Nonnull
     public StructuredContent getStructuredContent();
 
-    public void setStructuredContent(StructuredContent structuredContent);
+    /**
+     * Sets the parent <code>StructuredContent</code> item.
+     * @param structuredContent
+     */
+    public void setStructuredContent(@Nonnull StructuredContent structuredContent);
 
+    /**
+     * Builds a copy of this item.   Used by the content management system when an
+     * item is edited.
+     *
+     * @return a copy of this item
+     */
+    @Nonnull
     public StructuredContentField cloneEntity();
 
-    public void setValue(String value);
-    
+    /**
+     * Returns the value for this custom field.
+     *
+     * @param value
+     */
+    public void setValue(@Nonnull String value);
+
+    /**
+     * Sets the value of this custom field.
+     * @return
+     */
+    @Nonnull
     public String getValue();
 
+    /**
+     * Returns audit information for this content item.
+     *
+     * @return
+     */
+    @Nullable
     public AdminAuditable getAuditable();
 
-    public void setAuditable(AdminAuditable auditable);
+    /**
+     * Sets audit information for this content item.   Default implementations automatically
+     * populate this data during persistence.
+     *
+     * @param auditable
+     */
+    public void setAuditable(@Nullable AdminAuditable auditable);
 }

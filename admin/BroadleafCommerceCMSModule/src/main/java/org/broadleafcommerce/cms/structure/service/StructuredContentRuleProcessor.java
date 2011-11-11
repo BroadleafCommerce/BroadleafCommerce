@@ -1,8 +1,8 @@
 package org.broadleafcommerce.cms.structure.service;
 
-import java.util.Map;
-
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+
+import java.util.Map;
 
 /**
  * StructuredContent rule processors check each content item to see if it qualifies
@@ -17,18 +17,20 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContent;
  * For example, checking for cart rules would tie the CMS rules engine with a direct
  * dependency on the cart.
  *
- * Instead, we've opted to create this interface and allow other components to
+ * Instead, we've opted to create this interface which allows other components to
  * add rule-processors as needed.
  *
- * @see StructuredContentDefaultRuleProcessor and StructuredContentCartRuleProcessor
+ * @see {@link StructuredContentDefaultRuleProcessor}
  *
  *
- * Created by bpolster.
+ * @author bpolster.
  */
 public interface StructuredContentRuleProcessor {
 
     /**
-     * Returns true if the
+     * Returns true if the passed in <code>StructuredContent</code> is valid according
+     * to this rule processor.
+     *
      * @param sc
      * @return
      */

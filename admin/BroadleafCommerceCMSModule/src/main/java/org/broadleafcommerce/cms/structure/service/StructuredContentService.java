@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by bpolster.
+ * Provides services to manage <code>StructuredContent</code> items.
+ *
+ * @author bpolster
  */
 public interface StructuredContentService extends SandBoxItemListener {
 
@@ -40,12 +42,28 @@ public interface StructuredContentService extends SandBoxItemListener {
      */
     public StructuredContent findStructuredContentById(Long contentId);
 
+
+    /**
+     * Returns the <code>StructuredContentType</code> associated with the passed in id.
+     *
+     * @param id - The id of the content type.
+     * @return The associated <code>StructuredContentType</code>.
+     */
     public StructuredContentType findStructuredContentTypeById(Long id);
 
+
+    /**
+     * Returns the <code>StructuredContentType</code> associated with the passed in
+     * String value.
+     *
+     * @param name - The name of the content type.
+     * @return The associated <code>StructuredContentType</code>.
+     */
     public StructuredContentType findStructuredContentTypeByName(String name);
 
     /**
-     * Returns the list of structured content types.
+     *
+     * @return a list of all <code>StructuredContentType</code>s
      */
     public List<StructuredContentType> retrieveAllStructuredContentTypes();
 
@@ -60,16 +78,30 @@ public interface StructuredContentService extends SandBoxItemListener {
     public Map<String,StructuredContentField> findFieldsByContentId(Long contentId);
 
     /**
-     * Retuns content items for the passed in sandbox that match the passed in criteria.
+     * This method is intended to be called solely from the CMS admin.    Similar methods
+     * exist that are intended for other clients (e.g. lookupStructuredContentItemsBy....
+     * <br>
+     * Returns content items for the passed in sandbox that match the passed in criteria.
+     * The criteria acts as a where clause to be used in the search for content items.
+     * Implementations should automatically add criteria such that no archived items
+     * are returned from this method.
+     * <br>
+     * The SandBox parameter impacts the results as follows.  If a <code>SandBoxType</code> of
+     * production is passed in, only those items in that SandBox are returned.
+     * <br>
+     * If a non-production SandBox is passed in, then the method will return the items associatd
+     * with the related production SandBox and then merge in the results of the passed in SandBox.
      *
-     * Merges the sandbox content with the production content.
      * @param sandbox - the sandbox to find structured content items (null indicates items that are in production for
      *                  sites that are single tenant.
+     * @param criteria - the criteria used to search for content
      * @return
      */
-    public List<StructuredContent> findContentItems(SandBox sandbox, Criteria c);
+    public List<StructuredContent> findContentItems(SandBox sandbox, Criteria criteria);
 
     /**
+     * Follows the same rules as {@link #findContentItems(org.broadleafcommerce.openadmin.server.domain.SandBox, org.hibernate.Criteria) findContentItems}.
+     *
      * @return the count of items in this sandbox that match the passed in Criteria
      */
     public Long countContentItems(SandBox sandBox, Criteria c);
@@ -125,14 +157,54 @@ public interface StructuredContentService extends SandBoxItemListener {
      * If the originalItemId is null, then this method marks
      * the items as deleted within the passed in sandbox.
      *
-     * @param page
+     * @param content
      * @param destinationSandbox
      * @return
      */
     public void deleteStructuredContent(StructuredContent content, SandBox destinationSandbox);
 
+    /**
+     * This method returns content
+     * <br>
+     * Returns active content items for the passed in sandbox that match the passed in type.
+     * <br>
+     * The SandBox parameter impacts the results as follows.  If a <code>SandBoxType</code> of
+     * production is passed in, only those items in that SandBox are returned.
+     * <br>
+     * If a non-production SandBox is passed in, then the method will return the items associatd
+     * with the related production SandBox and then merge in the results of the passed in SandBox.
+     *
+     * @param sandBox - the sandbox to find structured content items (null indicates items that are in production for
+     *                  sites that are single tenant.
+     * @param contentType - the type of content to return
+     * @param count - the max number of content items to return
+     * @param ruleDTOs - a Map of objects that will be used in MVEL processing.
+     * @return - The matching items
+     * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
+     */
     public List<StructuredContent> lookupStructuredContentItemsByType(SandBox sandBox, StructuredContentType contentType, Locale locale, Integer count, Map<String,Object> ruleDTOs);
 
+
+    /**
+     * This method returns content
+     * <br>
+     * Returns active content items for the passed in sandbox that match the passed in type.
+     * <br>
+     * The SandBox parameter impacts the results as follows.  If a <code>SandBoxType</code> of
+     * production is passed in, only those items in that SandBox are returned.
+     * <br>
+     * If a non-production SandBox is passed in, then the method will return the items associatd
+     * with the related production SandBox and then merge in the results of the passed in SandBox.
+     *
+     * @param sandBox - the sandbox to find structured content items (null indicates items that are in production for
+     *                  sites that are single tenant.
+     * @param contentType - the type of content to return
+     * @param contentName - the name of content to return
+     * @param count - the max number of content items to return
+     * @param ruleDTOs - a Map of objects that will be used in MVEL processing.
+     * @return - The matching items
+     * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
+     */
     public List<StructuredContent> lookupStructuredContentItemsByName(SandBox sandBox, StructuredContentType contentType, String contentName, Locale locale, Integer count, Map<String,Object> ruleDTOs);
 
 }

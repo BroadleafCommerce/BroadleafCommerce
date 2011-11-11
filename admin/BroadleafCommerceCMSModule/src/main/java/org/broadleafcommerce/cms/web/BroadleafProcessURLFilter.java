@@ -276,7 +276,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
             int pos = requestURI.lastIndexOf(".");
             if (pos > 0) {
                 String suffix = requestURI.substring(pos);
-                if (getIgnoreSuffixes().contains(suffix)) {
+                if (getIgnoreSuffixes().contains(suffix.toLowerCase())) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("BroadleafProcessURLFilter ignoring request due to suffix " + requestURI);
                     }
