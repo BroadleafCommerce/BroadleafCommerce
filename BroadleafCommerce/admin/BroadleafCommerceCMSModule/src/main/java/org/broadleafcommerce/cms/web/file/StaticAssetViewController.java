@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.web.file;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,8 +61,7 @@ public class StaticAssetViewController {
             if (sandBoxId != null) {
                 sandBox = sandBoxService.retrieveSandboxById(sandBoxId);
             }
-
-            Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, sandBox, request.getParameterMap());
+            Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, sandBox, convertParameterMap(request.getParameterMap()));
 
             return new ModelAndView("blStaticAssetView", model);
         } catch (Exception e) {
@@ -69,7 +70,13 @@ public class StaticAssetViewController {
         }
     }
 
+    protected Map<String, String> convertParameterMap(Map<String, String[]> parameterMap) {
+        Map<String, String> convertedMap = new HashMap<String, String>(parameterMap.size());
+        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            convertedMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ','));
+        }
 
-
+        return convertedMap;
+    }
 
 }

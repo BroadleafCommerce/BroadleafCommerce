@@ -147,7 +147,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         cleanupThread.start();
     }
 
-    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String[]> parameterMap) throws Exception {
+    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
         if (staticAsset == null && sandBox != null) {
             staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
@@ -275,7 +275,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }
 
-    protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String[]> parameterMap) {
+    protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String> parameterMap) {
         StringBuilder sb = new StringBuilder(200);
         sb.append(staticAsset.getFullUrl().substring(0, staticAsset.getFullUrl().lastIndexOf('.')));
         sb.append("---");
@@ -283,11 +283,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         StringBuilder sb2 = new StringBuilder(200);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         sb2.append(format.format(staticAsset.getAuditable().getDateUpdated()==null?staticAsset.getAuditable().getDateCreated():staticAsset.getAuditable().getDateUpdated()));
-        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+        for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
             sb2.append('-');
             sb2.append(entry.getKey());
             sb2.append('-');
-            sb2.append(entry.getValue()[0]);
+            sb2.append(entry.getValue());
         }
 
         String digest;

@@ -30,6 +30,6 @@ import java.util.Map;
  */
 public interface OperationBuilder {
 
-    public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType);
+    public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType);
 
 }

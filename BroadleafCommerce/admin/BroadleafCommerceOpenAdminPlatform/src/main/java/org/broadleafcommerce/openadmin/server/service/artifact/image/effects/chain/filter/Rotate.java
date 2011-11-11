@@ -44,20 +44,20 @@ public class Rotate extends BaseFilter {
 	}
 
     @Override
-    public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.ROTATE.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
+        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
             Operation operation = new Operation();
             operation.setName(key);
-            String[] factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor[0]));
+            String factor = parameterMap.get(key + "-factor");
+            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
             UnmarshalledParameter rotate = new UnmarshalledParameter();
-            String[] rotateApplyFactor = parameterMap.get(key + "-rotate-apply-factor");
-            rotate.setApplyFactor(rotateApplyFactor == null ? false : Boolean.valueOf(rotateApplyFactor[0]));
+            String rotateApplyFactor = parameterMap.get(key + "-rotate-apply-factor");
+            rotate.setApplyFactor(rotateApplyFactor == null ? false : Boolean.valueOf(rotateApplyFactor));
             rotate.setName("rotate");
             rotate.setType(ParameterTypeEnum.DOUBLE.toString());
-            rotate.setValue(parameterMap.get(key + "-rotate-amount")[0]);
+            rotate.setValue(parameterMap.get(key + "-rotate-amount"));
 
             operation.setParameters(new UnmarshalledParameter[]{rotate});
             return operation;

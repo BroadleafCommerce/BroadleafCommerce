@@ -102,27 +102,27 @@ public class GaussianBlur extends BaseFilter {
 	}
 
     @Override
-    public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.GAUSSIANBLUR.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
+        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
             Operation operation = new Operation();
             operation.setName(key);
-            String[] factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor[0]));
+            String factor = parameterMap.get(key + "-factor");
+            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
             UnmarshalledParameter kernelSize = new UnmarshalledParameter();
-            String[] kernelSizeApplyFactor = parameterMap.get(key + "-kernel-size-apply-factor");
-            kernelSize.setApplyFactor(kernelSizeApplyFactor == null ? false : Boolean.valueOf(kernelSizeApplyFactor[0]));
+            String kernelSizeApplyFactor = parameterMap.get(key + "-kernel-size-apply-factor");
+            kernelSize.setApplyFactor(kernelSizeApplyFactor == null ? false : Boolean.valueOf(kernelSizeApplyFactor));
             kernelSize.setName("kernel-size");
             kernelSize.setType(ParameterTypeEnum.INT.toString());
-            kernelSize.setValue(parameterMap.get(key + "-kernel-size-amount")[0]);
+            kernelSize.setValue(parameterMap.get(key + "-kernel-size-amount"));
 
             UnmarshalledParameter numOfPasses = new UnmarshalledParameter();
-            String[] numOfPassesApplyFactor = parameterMap.get(key + "-num-passes-apply-factor");
-            numOfPasses.setApplyFactor(numOfPassesApplyFactor == null ? false : Boolean.valueOf(numOfPassesApplyFactor[0]));
+            String numOfPassesApplyFactor = parameterMap.get(key + "-num-passes-apply-factor");
+            numOfPasses.setApplyFactor(numOfPassesApplyFactor == null ? false : Boolean.valueOf(numOfPassesApplyFactor));
             numOfPasses.setName("num-passes");
             numOfPasses.setType(ParameterTypeEnum.FLOAT.toString());
-            numOfPasses.setValue(parameterMap.get(key + "-num-passes-amount")[0]);
+            numOfPasses.setValue(parameterMap.get(key + "-num-passes-amount"));
 
             operation.setParameters(new UnmarshalledParameter[]{kernelSize, numOfPasses});
             return operation;

@@ -47,34 +47,34 @@ public class AlterRGB extends BaseFilter {
 	}
 
     @Override
-    public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.ALTERRGB.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
+        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
             Operation operation = new Operation();
             operation.setName(key);
-            String[] factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor[0]));
+            String factor = parameterMap.get(key + "-factor");
+            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
             UnmarshalledParameter red = new UnmarshalledParameter();
-            String[] redApplyFactor = parameterMap.get(key + "-red-apply-factor");
-            red.setApplyFactor(redApplyFactor == null ? false : Boolean.valueOf(redApplyFactor[0]));
+            String redApplyFactor = parameterMap.get(key + "-red-apply-factor");
+            red.setApplyFactor(redApplyFactor == null ? false : Boolean.valueOf(redApplyFactor));
             red.setName("red");
             red.setType(ParameterTypeEnum.FLOAT.toString());
-            red.setValue(parameterMap.get(key + "-red-amount")[0]);
+            red.setValue(parameterMap.get(key + "-red-amount"));
 
             UnmarshalledParameter green = new UnmarshalledParameter();
-            String[] greenApplyFactor = parameterMap.get(key + "-green-apply-factor");
-            green.setApplyFactor(greenApplyFactor == null ? false : Boolean.valueOf(greenApplyFactor[0]));
+            String greenApplyFactor = parameterMap.get(key + "-green-apply-factor");
+            green.setApplyFactor(greenApplyFactor == null ? false : Boolean.valueOf(greenApplyFactor));
             green.setName("green");
             green.setType(ParameterTypeEnum.FLOAT.toString());
-            green.setValue(parameterMap.get(key + "-green-amount")[0]);
+            green.setValue(parameterMap.get(key + "-green-amount"));
 
             UnmarshalledParameter blue = new UnmarshalledParameter();
-            String[] blueApplyFactor = parameterMap.get(key + "-blue-apply-factor");
-            blue.setApplyFactor(blueApplyFactor == null ? false : Boolean.valueOf(blueApplyFactor[0]));
+            String blueApplyFactor = parameterMap.get(key + "-blue-apply-factor");
+            blue.setApplyFactor(blueApplyFactor == null ? false : Boolean.valueOf(blueApplyFactor));
             blue.setName("blue");
             blue.setType(ParameterTypeEnum.FLOAT.toString());
-            blue.setValue(parameterMap.get(key + "-blue-amount")[0]);
+            blue.setValue(parameterMap.get(key + "-blue-amount"));
 
             operation.setParameters(new UnmarshalledParameter[]{red, green, blue});
             return operation;

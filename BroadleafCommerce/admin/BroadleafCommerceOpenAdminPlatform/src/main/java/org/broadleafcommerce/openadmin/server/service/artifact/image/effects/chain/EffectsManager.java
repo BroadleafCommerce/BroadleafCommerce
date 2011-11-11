@@ -53,7 +53,7 @@ public class EffectsManager {
         filters.put(FilterTypeEnum.UNSHARPMASK.toString().toLowerCase(), new UnsharpMask());
     }
 
-    public Operation[] buildOperations(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         List<Operation> operations = new ArrayList<Operation>();
         for (OperationBuilder builder : filters.values()) {
             Operation operation = builder.buildOperation(parameterMap, artifactStream, mimeType);

@@ -46,27 +46,27 @@ public class Crop extends BaseFilter {
 	}
 
     @Override
-    public Operation buildOperation(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.CROP.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType")[0])) {
+        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
             Operation operation = new Operation();
             operation.setName(key);
-            String[] factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor[0]));
+            String factor = parameterMap.get(key + "-factor");
+            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
             UnmarshalledParameter rectangle = new UnmarshalledParameter();
-            String[] rectangleApplyFactor = parameterMap.get(key + "-apply-factor");
-            rectangle.setApplyFactor(rectangleApplyFactor == null ? false : Boolean.valueOf(rectangleApplyFactor[0]));
+            String rectangleApplyFactor = parameterMap.get(key + "-apply-factor");
+            rectangle.setApplyFactor(rectangleApplyFactor == null ? false : Boolean.valueOf(rectangleApplyFactor));
             rectangle.setName("rectangle");
             rectangle.setType(ParameterTypeEnum.RECTANGLE.toString());
             StringBuffer sb = new StringBuffer();
-            sb.append(parameterMap.get(key + "-x-amount")[0]);
+            sb.append(parameterMap.get(key + "-x-amount"));
             sb.append(",");
-            sb.append(parameterMap.get(key + "-y-amount")[0]);
+            sb.append(parameterMap.get(key + "-y-amount"));
             sb.append(",");
-            sb.append(parameterMap.get(key + "-width-amount")[0]);
+            sb.append(parameterMap.get(key + "-width-amount"));
             sb.append(",");
-            sb.append(parameterMap.get(key + "-height-amount")[0]);
+            sb.append(parameterMap.get(key + "-height-amount"));
             rectangle.setValue(sb.toString());
 
             operation.setParameters(new UnmarshalledParameter[]{rectangle});
