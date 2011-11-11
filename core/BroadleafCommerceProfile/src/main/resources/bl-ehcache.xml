@@ -22,23 +22,20 @@
     	maxElementsInMemory="100000"
     	eternal="false"
     	overflowToDisk="true"
-    	timeToLiveSeconds="60"
-    	timeToIdleSeconds="30"/>
+    	timeToLiveSeconds="60"/>
         
     <cache
     	name="org.hibernate.cache.StandardQueryCache"
     	maxElementsInMemory="100000"
     	eternal="false"
     	overflowToDisk="false"
-    	timeToLiveSeconds="600"
-    	timeToIdleSeconds="300"/>
+    	timeToLiveSeconds="600"/>
     	
    	<cache
     	name="blOrderElements"
     	maxElementsInMemory="1000000"
     	eternal="false"
     	overflowToDisk="true"
-    	timeToLiveSeconds="600"
-    	timeToIdleSeconds="300"/>
+    	timeToLiveSeconds="600"/>
     	
 </ehcache>

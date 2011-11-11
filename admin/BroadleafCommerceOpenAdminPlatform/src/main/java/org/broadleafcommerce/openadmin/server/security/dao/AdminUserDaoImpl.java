@@ -15,16 +15,15 @@
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import java.util.List;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  * 
@@ -44,22 +43,22 @@ public class AdminUserDaoImpl implements AdminUserDao {
 
     public void deleteAdminUser(AdminUser user) {
     	if (!em.contains(user)) {
-        	user = (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser"), user.getId());
+        	user = em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), user.getId());
     	}
         em.remove(user);
     }
 
     public AdminUser readAdminUserById(Long id) {
-        return (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser"), id);
+        return em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), id);
     }
 
     public AdminUser saveAdminUser(AdminUser user) {
         return em.merge(user);
     }
 
-    @SuppressWarnings("unchecked")
     public AdminUser readAdminUserByUserName(String userName) {
-        Query query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_USERNAME");
+        TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_USERNAME", AdminUser.class);
+        query.setHint(queryCacheableKey, true);
         query.setParameter("userName", userName);
         List<AdminUser> users = query.getResultList();
         if (users != null && !users.isEmpty()) {
@@ -68,10 +67,9 @@ public class AdminUserDaoImpl implements AdminUserDao {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public List<AdminUser> readAllAdminUsers() {
-        Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS");
-        List<AdminUser> users = query.getResultList();
-        return users;
+        TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS", AdminUser.class);
+        query.setHint(queryCacheableKey, true);
+        return query.getResultList();
     }
 }

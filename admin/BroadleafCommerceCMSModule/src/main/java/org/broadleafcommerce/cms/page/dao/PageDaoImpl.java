@@ -96,11 +96,7 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public Page findPageByURI(SandBox sandBox, Locale locale, String uri) {
-        String[] pathElements = uri.split("//");
-        String pageName = pathElements[pathElements.length - 1];
-
-        Query query = null;
-
+        Query query;
         if (sandBox == null) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
             query.setParameter("uri", uri);
@@ -120,7 +116,7 @@ public class PageDaoImpl implements PageDao {
         query.setHint(queryCacheableKey, true);
 
         List<Page> results = query.getResultList();
-        if (results != null && results.size() > 0) {
+        if (results != null && !results.isEmpty()) {
             return results.get(0);
         } else {
             return null;

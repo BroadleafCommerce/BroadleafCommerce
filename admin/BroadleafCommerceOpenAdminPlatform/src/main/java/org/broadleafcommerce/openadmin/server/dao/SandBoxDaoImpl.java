@@ -26,13 +26,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 @Repository("blSandBoxDao")
 public class SandBoxDaoImpl implements SandBoxDao {
 
 	@PersistenceContext(unitName = "blPU")
 	protected EntityManager sandBoxEntityManager;
-	
+	protected String queryCacheableKey = "org.hibernate.cacheable";
 
 	@Override
 	public SandBox retrieve(Long id) {
@@ -41,12 +42,13 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @Override
     public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType) {
-        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE");
+        TypedQuery<SandBox> query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE", SandBox.class);
+        query.setHint(queryCacheableKey, true);
         //query.setParameter("site", site);
         query.setParameter("sandboxType", sandboxType.getType());
         SandBox response = null;
         try {
-            response = (SandBox) query.getSingleResult();
+            response = query.getSingleResult();
         } catch (NoResultException e) {
             //do nothing - there is no sandbox
         }
@@ -56,6 +58,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     public SandBox retrieveNamedSandBox(Site site, SandBoxType sandboxType, String sandboxName) {
         Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE_AND_NAME");
+        query.setHint(queryCacheableKey, true);
         //query.setParameter("site", site);
         query.setParameter("sandboxType", sandboxType.getType());
         query.setParameter("sandboxName", sandboxName);

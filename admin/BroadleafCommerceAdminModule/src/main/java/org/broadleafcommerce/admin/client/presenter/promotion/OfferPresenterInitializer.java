@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.LinkedHashMap;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.Criteria;
@@ -33,6 +31,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+
+import java.util.LinkedHashMap;
 
 /**
  * 
@@ -131,7 +131,6 @@ public class OfferPresenterInitializer {
 	}
 	
 	public void initItemTargets(final Record selectedRecord) {
-        BLCMain.MASTERVIEW.getStatus().setContents(BLCMain.getMessageManager().getString("mvelTranslationProblem"));
         getDisplay().getTargetItemBuilder().setIncompatibleMVEL(false);
         getDisplay().getTargetItemBuilder().getItemFilterBuilder().setVisible(true);
         getDisplay().getTargetItemBuilder().getRawItemForm().setVisible(false);

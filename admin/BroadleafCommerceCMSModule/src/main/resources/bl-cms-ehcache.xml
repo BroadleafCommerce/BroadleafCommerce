@@ -22,8 +22,7 @@
     	maxElementsInMemory="100000"
     	eternal="false"
     	overflowToDisk="true"
-    	timeToLiveSeconds="60"
-    	timeToIdleSeconds="30"/>
+    	timeToLiveSeconds="60"/>
 
     <!-- 12 hour cache -->
     <cache
@@ -31,15 +30,13 @@
     	maxElementsInMemory="100000"
     	eternal="false"
         overflowToDisk="true"
-        timeToLiveSeconds="43200"
-    	timeToIdleSeconds="43200"/>
+        timeToLiveSeconds="43200"/>
 
     <cache
     	name="org.hibernate.cache.StandardQueryCache"
     	maxElementsInMemory="100000"
     	eternal="false"
     	overflowToDisk="false"
-    	timeToLiveSeconds="600"
-    	timeToIdleSeconds="300"/>
+    	timeToLiveSeconds="600"/>
     	
 </ehcache>
