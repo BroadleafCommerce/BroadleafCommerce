@@ -44,7 +44,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private String columnWidth;
 	private String broadleafEnumeration;
 	private Boolean readOnly;
-	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>();
+	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
     private Boolean requiredOverride;
     private Boolean excluded;
 	
@@ -182,5 +182,34 @@ public class FieldPresentationAttributes implements Serializable {
 
     public void setVisibility(VisibilityEnum visibility) {
         this.visibility = visibility;
+    }
+
+    public FieldPresentationAttributes cloneFieldPresentationAttributes() {
+        FieldPresentationAttributes attr = new FieldPresentationAttributes();
+        attr.name = name;
+        attr.friendlyName = friendlyName;
+        attr.securityLevel = securityLevel;
+        attr.order = order;
+        attr.visibility = visibility;
+        attr.group = group;
+        attr.groupOrder = groupOrder;
+        attr.groupCollapsed = groupCollapsed;
+        attr.explicitFieldType = explicitFieldType;
+        attr.largeEntry = largeEntry;
+        attr.prominent = prominent;
+        attr.columnWidth = columnWidth;
+        attr.broadleafEnumeration = broadleafEnumeration;
+        attr.readOnly = readOnly;
+        attr.requiredOverride = requiredOverride;
+        attr.excluded = excluded;
+        for (Map.Entry<String, Map<String, String>> entry : validationConfigurations.entrySet()) {
+            Map<String, String> clone = new HashMap<String, String>(entry.getValue().size());
+            for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
+                clone.put(entry2.getKey(), entry2.getValue());
+            }
+            attr.validationConfigurations.put(entry.getKey(), clone);
+        }
+
+        return attr;
     }
 }
