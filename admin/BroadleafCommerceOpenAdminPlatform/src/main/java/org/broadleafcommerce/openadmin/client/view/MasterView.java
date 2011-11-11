@@ -264,6 +264,7 @@ public class MasterView extends VLayout {
                         lbl.setBaseStyle("primaryMenuText-selected");
                         selectedPrimaryMenuOption = lbl;
                         moduleKey = module.getModuleKey();
+                        BLCMain.setCurrentModuleKey(moduleKey);
                         buildSecondaryMenu(null);
                         AppController.getInstance().go(canvas, module.getPages(), null, false);
 	                 }
@@ -304,6 +305,7 @@ public class MasterView extends VLayout {
                         selectedSecondaryMenuOption.setBaseStyle("secondaryMenuText");
                         lbl.setBaseStyle("secondaryMenuText-selected");
                         selectedSecondaryMenuOption = lbl;
+                        BLCMain.setCurrentPageKey(lbl.getTitle());
                         History.newItem("moduleKey="+moduleKey+"&pageKey="+lbl.getTitle());
                     }
                 }

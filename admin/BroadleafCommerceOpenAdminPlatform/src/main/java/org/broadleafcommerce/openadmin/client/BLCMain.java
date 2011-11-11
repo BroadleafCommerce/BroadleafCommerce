@@ -85,7 +85,7 @@ public class BLCMain implements EntryPoint {
 		SPLASH_PROGRESS = null;
 	}
 
-    private static void setCurrentModuleKey(String requestedModuleKey) {
+    public static void setCurrentModuleKey(String requestedModuleKey) {
         if (requestedModuleKey != null && modules.get(requestedModuleKey) != null) {
             if (SecurityManager.getInstance().isUserAuthorizedToViewModule(requestedModuleKey)) {
                 currentModuleKey = requestedModuleKey;
@@ -104,7 +104,7 @@ public class BLCMain implements EntryPoint {
         }
     }
 
-    private static void setCurrentPageKey(String requestedPageKey) {
+    public static void setCurrentPageKey(String requestedPageKey) {
         Map<String,String[]> pagesMap = modules.get(currentModuleKey).getPages();
 
         if (pagesMap.get(requestedPageKey) != null) {
