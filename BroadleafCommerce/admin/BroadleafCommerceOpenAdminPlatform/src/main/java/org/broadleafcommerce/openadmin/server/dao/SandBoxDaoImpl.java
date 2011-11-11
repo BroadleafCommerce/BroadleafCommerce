@@ -33,7 +33,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
 	@PersistenceContext(unitName = "blPU")
 	protected EntityManager sandBoxEntityManager;
-	protected String queryCacheableKey = "org.hibernate.cacheable";
 
 	@Override
 	public SandBox retrieve(Long id) {
@@ -43,7 +42,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType) {
         TypedQuery<SandBox> query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE", SandBox.class);
-        query.setHint(queryCacheableKey, true);
         //query.setParameter("site", site);
         query.setParameter("sandboxType", sandboxType.getType());
         SandBox response = null;
@@ -58,7 +56,6 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     public SandBox retrieveNamedSandBox(Site site, SandBoxType sandboxType, String sandboxName) {
         Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE_AND_NAME");
-        query.setHint(queryCacheableKey, true);
         //query.setParameter("site", site);
         query.setParameter("sandboxType", sandboxType.getType());
         query.setParameter("sandboxName", sandboxName);

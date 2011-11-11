@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.openadmin.client.dto;
 
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+
 import java.io.Serializable;
 import java.util.Arrays;
-
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 /**
  * 
@@ -194,4 +194,36 @@ public class FieldMetadata implements Serializable {
 		this.enumerationClass = enumerationClass;
 	}
 
+    public FieldMetadata cloneFieldMetadata() {
+        FieldMetadata metadata = new FieldMetadata();
+        metadata.fieldType = fieldType;
+        metadata.secondaryType = secondaryType;
+        metadata.length = length;
+        metadata.required = required;
+        metadata.unique = unique;
+        metadata.scale = scale;
+        metadata.precision = precision;
+        metadata.mutable = mutable;
+        metadata.inheritedFromType = inheritedFromType;
+        if (availableToTypes != null) {
+            metadata.availableToTypes = new String[availableToTypes.length];
+            System.arraycopy(availableToTypes, 0, metadata.availableToTypes, 0, availableToTypes.length);
+        }
+        metadata.foreignKeyProperty = foreignKeyProperty;
+        metadata.foreignKeyClass = foreignKeyClass;
+        metadata.foreignKeyDisplayValueProperty = foreignKeyDisplayValueProperty;
+        metadata.collection = collection;
+        metadata.mergedPropertyType = mergedPropertyType;
+        metadata.enumerationClass = enumerationClass;
+        if (enumerationValues != null) {
+            metadata.enumerationValues = new String[enumerationValues.length][];
+            for (int j=0;j<enumerationValues.length;j++) {
+                metadata.enumerationValues[j] = new String[enumerationValues[j].length];
+                System.arraycopy(enumerationValues[j], 0, metadata.enumerationValues[j], 0, enumerationValues[j].length);
+            }
+        }
+        metadata.presentationAttributes = presentationAttributes.cloneFieldPresentationAttributes();
+
+        return metadata;
+    }
 }

@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,10 +26,10 @@ import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldPresentationAttributes;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.persistence.EntityConfiguration;
@@ -712,8 +711,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     //first check all the properties currently in there to see if my entity inherits from them
                     for (Class<?> clazz2 : entities) {
                         if (!clazz2.getName().equals(clazz.getName())) {
-                            for (String key: props.keySet()) {
-                                FieldMetadata metadata = props.get(key);
+                            for (Map.Entry<String, FieldMetadata> entry : props.entrySet()) {
+                                FieldMetadata metadata = entry.getValue();
                                 if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(clazz2)) {
                                     String[] both = (String[]) ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[]{clazz2.getName()});
                                     metadata.setAvailableToTypes(both);
@@ -721,15 +720,16 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                             }
                         }
                     }
-
-
                     METADATA_CACHE.put(cacheKey, props);
                     cacheData = props;
                 }
             }
             //clone the metadata before passing to the system
-            cacheData = (Map<String, FieldMetadata>) SerializationUtils.clone((Serializable) cacheData);
-            mergedProperties.putAll(cacheData);
+            Map<String, FieldMetadata> clonedCache = new HashMap<String, FieldMetadata>(cacheData.size());
+            for (Map.Entry<String, FieldMetadata> entry : cacheData.entrySet()) {
+                clonedCache.put(entry.getKey(), entry.getValue().cloneFieldMetadata());
+            }
+            mergedProperties.putAll(clonedCache);
         }
     }
 
