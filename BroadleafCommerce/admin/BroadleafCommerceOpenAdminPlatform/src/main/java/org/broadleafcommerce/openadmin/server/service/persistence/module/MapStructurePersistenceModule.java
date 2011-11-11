@@ -32,7 +32,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.hibernate.mapping.PersistentClass;
@@ -71,13 +70,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	}
 
 	protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
-		String idProperty = null;
-		for (String property : valueMergedProperties.keySet()) {
-			if (valueMergedProperties.get(property).getFieldType().equals(SupportedFieldType.ID)) {
-				idProperty = property;
-				break;
-			}
-		}
 		FieldManager fieldManager = getFieldManager();
 		Map map = (Map) fieldManager.getFieldValue(record, mapStructure.getMapProperty());
 		Entity[] entities = new Entity[map.size()];
@@ -114,7 +106,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 	    		temp.setValue(String.valueOf(map.get(key)));
 	    		props.add(temp);
 	    	} else {
-	    		extractPropertiesFromPersistentEntity(valueMergedProperties, idProperty, (Serializable) map.get(key), props);
+	    		extractPropertiesFromPersistentEntity(valueMergedProperties, (Serializable) map.get(key), props);
 	    	}
 	    	if (symbolicIdProperty != null) {
 	    		props.add(symbolicIdProperty);

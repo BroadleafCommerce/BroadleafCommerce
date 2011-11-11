@@ -49,8 +49,31 @@ public class EntityConfiguration {
         return clazz;
     }
 
+    public <T> Class<T> lookupEntityClass(String beanId, Class<T> resultClass) {
+        Class<T> clazz;
+        if (entityMap.containsKey(beanId)) {
+            clazz = (Class<T>) entityMap.get(beanId);
+        } else {
+            Object object = applicationcontext.getBean(beanId);
+            clazz = (Class<T>) object.getClass();
+            entityMap.put(beanId, clazz);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Returning class (" + clazz.getName() + ") configured with bean id (" + beanId + ')');
+        }
+        return clazz;
+    }
+
     public Object createEntityInstance(String beanId) {
         Object bean = applicationcontext.getBean(beanId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Returning instance of class (" + bean.getClass().getName() + ") configured with bean id (" + beanId + ')');
+        }
+        return bean;
+    }
+
+    public <T> T createEntityInstance(String beanId, Class<T> resultClass) {
+        T bean = (T) applicationcontext.getBean(beanId);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Returning instance of class (" + bean.getClass().getName() + ") configured with bean id (" + beanId + ')');
         }

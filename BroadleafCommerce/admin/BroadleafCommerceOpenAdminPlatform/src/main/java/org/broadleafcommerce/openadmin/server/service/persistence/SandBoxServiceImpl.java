@@ -428,7 +428,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {
-        SandBox userSandbox = null;
+        SandBox userSandbox;
         if (adminUser.getOverrideSandBox() != null) {
             userSandbox = adminUser.getOverrideSandBox();
         } else {

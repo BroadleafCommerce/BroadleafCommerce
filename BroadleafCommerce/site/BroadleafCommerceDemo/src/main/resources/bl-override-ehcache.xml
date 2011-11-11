@@ -5,8 +5,7 @@
     	maxElementsInMemory="100000"
     	eternal="false"
         overflowToDisk="true"
-        timeToLiveSeconds="1"
-    	timeToIdleSeconds="1">
+        timeToLiveSeconds="1000">
     	<cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
     
@@ -15,7 +14,6 @@
     	maxElementsInMemory="1000000"
     	eternal="false"
     	overflowToDisk="true"
-    	timeToLiveSeconds="1"
-    	timeToIdleSeconds="1"/>
+    	timeToLiveSeconds="100"/>
     	
 </ehcache>
