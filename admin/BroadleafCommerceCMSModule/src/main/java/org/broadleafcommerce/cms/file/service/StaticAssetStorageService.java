@@ -42,6 +42,6 @@ public interface StaticAssetStorageService {
 
     public Blob createBlob(MultipartFile uploadedFile) throws IOException;
 
-    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String[]> parameterMap) throws Exception;
+    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception;
 
 }

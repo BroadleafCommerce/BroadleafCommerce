@@ -36,5 +36,5 @@ public interface ArtifactService {
 
     void setArtifactProcessors(ArtifactProcessor[] artifactProcessors);
 
-    public Operation[] buildOperations(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType);
+    public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType);
 }

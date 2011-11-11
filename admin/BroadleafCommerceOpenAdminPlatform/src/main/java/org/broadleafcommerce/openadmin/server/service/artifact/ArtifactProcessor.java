@@ -34,6 +34,6 @@ public interface ArtifactProcessor {
 
     public InputStream convert(InputStream artifactStream, Operation[] operations, String mimeType) throws Exception;
 
-    public Operation[] buildOperations(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType);
+    public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType);
 
 }

@@ -45,7 +45,7 @@ public class ArtifactServiceImpl implements ArtifactService {
         return artifactStream;
     }
 
-    public Operation[] buildOperations(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         for (ArtifactProcessor artifactProcessor : artifactProcessors) {
             if (artifactProcessor.isSupported(artifactStream, mimeType)) {
                 return artifactProcessor.buildOperations(parameterMap, artifactStream, mimeType);

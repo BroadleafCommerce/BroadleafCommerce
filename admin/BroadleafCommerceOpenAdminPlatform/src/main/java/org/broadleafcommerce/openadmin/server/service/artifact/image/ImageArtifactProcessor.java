@@ -60,7 +60,7 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
     }
 
     @Override
-    public Operation[] buildOperations(Map<String, String[]> parameterMap, InputStream artifactStream, String mimeType) {
+    public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         return effectsManager.buildOperations(parameterMap, artifactStream, mimeType);
     }
 
