@@ -40,7 +40,27 @@ public interface CatalogService {
 
     public Category findCategoryById(Long categoryId);
 
+    /**
+     * Retrieve a {@code Category} instance based on its name property.
+     *
+     * Broadleaf allows more than one category to have the same name. Calling
+     * this method could produce an exception in such situations. Use
+     * {@link #findCategoriesByName(String)} instead.
+     *
+     * @param categoryName the category name to search by
+     * @return the Category instance matching the categoryName
+     */
+    @Deprecated
     public Category findCategoryByName(String categoryName);
+
+    /**
+     * Retrieve a list of {@code Category} instance based on the name
+     * property.
+     *
+     * @param categoryName the category name to search by
+     * @return the list of matching Category instances
+     */
+    public List<Category> findCategoriesByName(String categoryName);
 
     public List<Category> findAllCategories();
 

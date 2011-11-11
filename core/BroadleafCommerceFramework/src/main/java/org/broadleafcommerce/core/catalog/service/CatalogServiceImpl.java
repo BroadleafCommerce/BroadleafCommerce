@@ -61,8 +61,14 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readCategoryById(categoryId);
     }
 
+    @Deprecated
     public Category findCategoryByName(String categoryName) {
         return categoryDao.readCategoryByName(categoryName);
+    }
+
+    @Override
+    public List<Category> findCategoriesByName(String categoryName) {
+        return categoryDao.readCategoriesByName(categoryName);
     }
 
     public Category saveCategory(Category category) {

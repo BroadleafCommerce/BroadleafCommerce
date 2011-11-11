@@ -54,11 +54,20 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    @Deprecated
     public Category readCategoryByName(String categoryName) {
         Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
         query.setParameter("categoryName", categoryName);
         query.setHint(queryCacheableKey, true);
         return (Category)query.getSingleResult();
+    }
+
+    @Override
+    public List<Category> readCategoriesByName(String categoryName) {
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME", Category.class);
+        query.setParameter("categoryName", categoryName);
+        query.setHint(queryCacheableKey, true);
+        return query.getResultList();
     }
 
     @Override

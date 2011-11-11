@@ -41,13 +41,27 @@ public interface CategoryDao {
     public Category readCategoryById(@Nonnull Long categoryId);
 
     /**
-     * Retrieve a {@code Category} instance by its name
+     * Retrieve a {@code Category} instance by its name.
+     *
+     * Broadleaf allows more than one category to have the same name. Calling
+     * this method could produce an exception in such situations. Use
+     * {@link #readCategoriesByName(String)} instead.
      *
      * @param categoryName the name of the category
-     * @return the {@code Category} having the specified name
+     * @return the Category having the specified name
      */
     @Nonnull
+    @Deprecated
     public Category readCategoryByName(@Nonnull String categoryName);
+
+    /**
+     * Retrieve a list of {@code Category} instances by name.
+     *
+     * @param categoryName the name to search by
+     * @return the Category instances having the specified name
+     */
+    @Nonnull
+    public List<Category> readCategoriesByName(@Nonnull String categoryName);
 
     /**
      * Persist a {@code Category} instance to the datastore
