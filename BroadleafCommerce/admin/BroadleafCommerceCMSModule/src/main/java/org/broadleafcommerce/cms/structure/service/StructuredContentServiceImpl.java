@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by bpolster.
+ * @author bpolster
  */
 @Service("blStructuredContentService")
 public class StructuredContentServiceImpl implements StructuredContentService {
@@ -62,12 +62,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     private List<StructuredContentRuleProcessor> contentRuleProcessors;
 
-    /**
-     * Returns the StructuredContent item associated with the passed in id.
-     *
-     * @param contentId - The id of the content item.
-     * @return The associated structured content item.
-     */
     @Override
     public StructuredContent findStructuredContentById(Long contentId) {
         return structuredContentDao.findStructuredContentById(contentId);
@@ -83,37 +77,17 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return structuredContentDao.findStructuredContentTypeByName(name);
     }
 
-    /**
-     * Returns the list of structured content types.
-     */
     @Override
     public List<StructuredContentType> retrieveAllStructuredContentTypes() {
         return structuredContentDao.retrieveAllStructuredContentTypes();
     }
 
-    /**
-     * Returns the fields associated with the passed in contentId.
-     * This is preferred over the direct access from the ContentItem so that the
-     * two items can be cached distinctly
-     *
-     * @param contentId - The id of the content.
-     * @return Map of fields for this content id
-     */
     @Override
     public Map<String, StructuredContentField> findFieldsByContentId(Long contentId) {
         StructuredContent sc = findStructuredContentById(contentId);
         return structuredContentDao.readFieldsForStructuredContentItem(sc);
     }
 
-    /**
-     * Retuns content items for the passed in sandbox that match the passed in criteria.
-     * <p/>
-     * Merges the sandbox content with the production content.
-     *
-     * @param sandbox      - the sandbox to find structured content items (null indicates items that are in production for
-     *                     sites that are single tenant.
-     * @return
-     */
     @Override
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria c) {
         c.add(Restrictions.eq("archivedFlag", false));
@@ -163,14 +137,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     }
 
-    /**
-     * Returns the count of items that match the passed in criteria.
-     *
-     * This counts the items in production + the new items in the sandbox - the
-     * existing items that have been deleted in the sandbox.
-     *
-     * @return the count of items in this sandbox that match the passed in Criteria
-     */
     @Override
     public Long countContentItems(SandBox sandbox, Criteria c) {
         c.add(Restrictions.eq("archivedFlag", false));
@@ -212,14 +178,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         }
     }
 
-    /**
-     * This method is intended to be called from within the CMS
-     * admin only.
-     * <p/>
-     * Adds the passed in contentItem to the DB.
-     * <p/>
-     * Creates a sandbox/site if one doesn't already exist.
-     */
     @Override
     public StructuredContent addStructuredContent(StructuredContent content, SandBox destinationSandbox) {
         content.setSandbox(destinationSandbox);
@@ -232,37 +190,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return sc;
     }
 
-    /**
-     * This method is intended to be called from within the CMS
-     * admin only.
-     * <p/>
-     * Updates the structuredContent according to the following rules:
-     * <p/>
-     * 1.  If sandbox has changed from null to a value
-     * This means that the user is editing an item in production and
-     * the edit is taking place in a sandbox.
-     * <p/>
-     * Clone the item and add it to the new sandbox and set the cloned
-     * item's originalItemId to the id of the item being updated.
-     * <p/>
-     * 2.  If the sandbox has changed from one value to another
-     * This means that the user is moving the item from one sandbox
-     * to another.
-     * <p/>
-     * Update the siteId for the item to the one associated with the
-     * new sandbox
-     * <p/>
-     * 3.  If the sandbox has changed from a value to null
-     * This means that the item is moving from the sandbox to production.
-     * <p/>
-     * If the item has an originalItemId, then update that item by
-     * setting it's archived flag to true.
-     * <p/>
-     * Then, update the siteId of the item being updated to be the
-     * siteId of the original item.
-     * <p/>
-     * 4.  If the sandbox is the same then just update the item.
-     */
     @Override
     public StructuredContent updateStructuredContent(StructuredContent content, SandBox destSandbox) {
         if (content.getLockedFlag()) {
@@ -319,7 +246,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         }
     }
 
-    // Returns true if the src and dest sandbox are the same.
     private boolean checkForSandboxMatch(SandBox src, SandBox dest) {
         if (src != null) {
             if (dest != null) {
@@ -329,7 +255,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return (src == null && dest == null);
     }
 
-    // Returns true if the dest sandbox is production.
     private boolean checkForProductionSandbox(SandBox dest) {
         boolean productionSandbox = false;
 
@@ -344,17 +269,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return productionSandbox;
     }
 
-    /**
-     * If deleting and item where content.originalItemId != null
-     * then the item is deleted from the database.
-     * <p/>
-     * If the originalItemId is null, then this method marks
-     * the items as deleted within the passed in sandbox.
-     *
-     * @param content
-     * @param destinationSandbox
-     * @return
-     */
     @Override
     public void deleteStructuredContent(StructuredContent content, SandBox destinationSandbox) {
         content.setDeletedFlag(true);
@@ -391,13 +305,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return returnList;
     }
 
-    /**
-     * This method loops through the content and orders by priority.   If multiple items have the same priority,
-     * it will randomize the order of those results.   IF the item has a display rule, the code will evaluate
-     * the rule before and ensure a match before returning.
-     *
-     * @return
-     */
     private List<StructuredContent> evaluateAndPriortizeContent(List<StructuredContent> structuredContentList, int count, Map<String, Object> ruleDTOs) {
 
         Iterator<StructuredContent> structuredContentIterator = structuredContentList.iterator();

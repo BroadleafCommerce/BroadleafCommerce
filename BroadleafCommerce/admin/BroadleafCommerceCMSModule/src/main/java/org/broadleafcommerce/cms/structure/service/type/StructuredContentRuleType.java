@@ -16,15 +16,18 @@
 
 package org.broadleafcommerce.cms.structure.service.type;
 
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.presentation.BroadleafEnumerationType;
-
 /**
- * An extendible enumeration of offer rule types.
- *
+ * An extendible enumeration of offer rule types.<BR>
+ * REQUEST - indicates a rule based on the incoming http request.<BR>
+ * TIME - indicates a rule based on {@link org.broadleafcommerce.common.TimeDTO time}<br>
+ * PRODUCT - indicates a rule based on {@link org.broadleafcommerce.core.catalog.domain.Product product}
+ * CUSTOMER - indicates a rule based on {@link org.broadleafcommerce.profile.core.domain}
  */
 public class StructuredContentRuleType implements Serializable, BroadleafEnumerationType {
 
@@ -37,6 +40,11 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
     public static final StructuredContentRuleType PRODUCT = new StructuredContentRuleType("PRODUCT", "Product");
     public static final StructuredContentRuleType CUSTOMER = new StructuredContentRuleType("CUSTOMER", "Customer");
 
+    /**
+     * Allows translation from the passed in String to a <code>StructuredContentRuleType</code>
+     * @param type
+     * @return The matching rule type
+     */
     public static StructuredContentRuleType getInstance(final String type) {
         return TYPES.get(type);
     }
@@ -48,11 +56,20 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
         //do nothing
     }
 
+    /**
+     * Initialize the type and friendlyType
+     * @param <code>type</code>
+     * @param <code>friendlyType</code>
+     */
     public StructuredContentRuleType(final String type, final String friendlyType) {
     	this.friendlyType = friendlyType;
         setType(type);
     }
 
+    /**
+     * Sets the type
+     * @param type
+     */
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -60,10 +77,18 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
         }
     }
 
+    /**
+     * Gets the type
+     * @return
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Gets the name of the type
+     * @return
+     */
     public String getFriendlyType() {
 		return friendlyType;
 	}

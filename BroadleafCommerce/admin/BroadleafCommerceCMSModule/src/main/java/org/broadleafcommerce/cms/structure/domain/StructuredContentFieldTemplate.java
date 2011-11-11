@@ -15,10 +15,12 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
-
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
 
 /**
  * A structured content field template holds the structure for a
@@ -28,19 +30,49 @@ import org.broadleafcommerce.cms.field.domain.FieldGroup;
  * 'Target URL'.   The 'Ad' template might be used in multiple StructuredContentType
  * instances such as 'Home Page Banner Ad' or 'Cart Bottom Ad', etc.
  *
- * Created by bpolster.
+ * @author bpolster
  */
 public interface StructuredContentFieldTemplate extends Serializable {
 
-    Long getId();
+    /**
+     * Gets the primary key.
+     *
+     * @return the primary key
+     */
+    @Nullable
+    public Long getId();
 
-    void setId(Long id);
 
+    /**
+     * Sets the primary key.
+     *
+     * @param id the new primary key
+     */
+    public void setId(@Nullable Long id);
+
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
+    @Nonnull
     String getName();
 
-    void setName(String name);
+    /**
+     * Sets the name.
+     */
+    void setName(@Nonnull String name);
 
+    /**
+     * Returns the list of the field groups for this template.
+     * @return a list of FieldGroups associated with this template
+     */
+    @Nullable
     List<FieldGroup> getFieldGroups();
 
-    void setFieldGroups(List<FieldGroup> fieldGroups);
+    /**
+     * Sets the list of field groups for this template.
+     * @param fieldGroups
+     */
+    void setFieldGroups(@Nullable List<FieldGroup> fieldGroups);
 }

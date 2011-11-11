@@ -1,20 +1,19 @@
 package org.broadleafcommerce.cms.structure.service;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
- * By default, this rule processor can handles all map values except for "cart".
+ * By default, this rule processor combines all of the rules from
+ * {@link org.broadleafcommerce.cms.structure.domain.StructuredContent#getStructuredContentMatchRules()}
+ * into a single MVEL expression.
  *
- * For BLC out of box implementations, this includes customer, time, and request based
- * rules.
- *
- * Created by bpolster.
+ * @author bpolster.
  *
  */
 @Service("blContentDefaultRuleProcessor")
@@ -24,9 +23,14 @@ public class StructuredContentDefaultRuleProcessor extends AbstractStructuredCon
     private static String AND = " && ";
 
     /**
-     * Returns true if the
-     * @param sc
-     * @return
+     * Returns true if all of the rules associated with the passed in <code>StructuredContent</code>
+     * item match based on the passed in vars.
+     *
+     * Also returns true if no rules are present for the passed in item.
+     *
+     * @param sc - a structured content item to test
+     * @param vars - a map of objects used by the rule MVEL expressions
+     * @return the result of the rule checks
      */
     public boolean checkForMatch(StructuredContent sc, Map<String, Object> vars) {
         StringBuffer ruleExpression = null;
