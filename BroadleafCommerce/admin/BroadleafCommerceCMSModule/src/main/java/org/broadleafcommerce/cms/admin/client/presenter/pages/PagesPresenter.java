@@ -147,7 +147,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     @Override
 	public void bind() {
 		super.bind();
-        formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -214,9 +214,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
         display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                if (display.getListDisplay().getGrid().getSelectedRecord() == null) {
-                    destroyTemplateForm();
-                }
+                destroyTemplateForm();
             }
         });
 	}

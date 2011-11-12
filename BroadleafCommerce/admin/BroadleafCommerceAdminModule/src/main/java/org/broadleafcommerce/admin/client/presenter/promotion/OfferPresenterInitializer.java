@@ -61,6 +61,10 @@ public class OfferPresenterInitializer {
 	}
 	
 	public void initSectionBasedOnType(String sectionType, Record selectedRecord) {
+        getDisplay().getCustomerLayout().setVisible(true);
+        getDisplay().getOrderSectionLayout().setVisible(true);
+        getDisplay().getCustomerSection().setVisible(true);
+        getDisplay().getOrderSection().setVisible(true);
 		getDisplay().getItemQualificationSectionView().setVisible(true);
 		if (sectionType.equals("FULFILLMENT_GROUP")) {
 			getDisplay().getFgSectionView().setVisible(true);
@@ -378,6 +382,10 @@ public class OfferPresenterInitializer {
 		getDisplay().getOrderItemLayout().setVisible(false);
 		getDisplay().getOrderCombineForm().setVisible(false);
 		getDisplay().getOrderCombineLabel().setVisible(false);
+        getDisplay().getCustomerLayout().setVisible(false);
+        getDisplay().getOrderSectionLayout().setVisible(false);
+        getDisplay().getCustomerSection().setVisible(false);
+        getDisplay().getOrderSection().setVisible(false);
 	}
 	
 	public void initDeliveryType(String deliveryType, Record selectedRecord) {

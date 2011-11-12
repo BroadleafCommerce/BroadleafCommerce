@@ -59,6 +59,10 @@ public class AssetCanvas extends VStack {
         previewContainer.setContents("<table width='99' height='99'><tr><td align='center' valign='middle'><img src='" + src + "' align='middle'/></td></tr></table>");
     }
 
+    public void clearImage() {
+        previewContainer.setContents("&nbsp;");
+    }
+
     public IButton getImageUpdateButton() {
         return imageUpdateButton;
     }

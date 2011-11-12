@@ -17,6 +17,8 @@
 package org.broadleafcommerce.cms.web.file;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,10 @@ import java.util.Map;
  */
 public class StaticAssetView implements View {
 
+    private static final Log LOG = LogFactory.getLog(StaticAssetView.class);
+
+    protected boolean browserAssetCachingEnabled = true;
+
     @Override
     public String getContentType() {
         return null;
@@ -38,15 +44,16 @@ public class StaticAssetView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        BufferedInputStream bis = null;
+        String cacheFilePath = (String) model.get("cacheFilePath");
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(cacheFilePath));
         try {
-            String cacheFilePath = (String) model.get("cacheFilePath");
             String mimeType = (String) model.get("mimeType");
             response.setContentType(mimeType);
-			response.setHeader("Cache-Control","no-cache");
-	        response.setHeader("Pragma","no-cache");
-	        response.setDateHeader ("Expires", 0);
-			bis = new BufferedInputStream(new FileInputStream(cacheFilePath));
+            if (!browserAssetCachingEnabled) {
+			    response.setHeader("Cache-Control","no-cache");
+	            response.setHeader("Pragma","no-cache");
+	            response.setDateHeader ("Expires", 0);
+            }
             OutputStream os = response.getOutputStream();
             boolean eof = false;
             while (!eof) {
@@ -59,16 +66,22 @@ public class StaticAssetView implements View {
             }
             os.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Unable to stream asset", e);
             throw e;
 		} finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (Throwable e) {
-                    //do nothing
-                }
+            try {
+                bis.close();
+            } catch (Throwable e) {
+                //do nothing
             }
         }
+    }
+
+    public boolean isBrowserAssetCachingEnabled() {
+        return browserAssetCachingEnabled;
+    }
+
+    public void setBrowserAssetCachingEnabled(boolean browserAssetCachingEnabled) {
+        this.browserAssetCachingEnabled = browserAssetCachingEnabled;
     }
 }

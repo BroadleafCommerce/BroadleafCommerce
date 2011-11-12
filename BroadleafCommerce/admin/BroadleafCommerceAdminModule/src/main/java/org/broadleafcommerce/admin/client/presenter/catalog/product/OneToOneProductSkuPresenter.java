@@ -79,10 +79,10 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		AbstractDynamicDataSource dataSource = (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource();
-		display.getListDisplay().getAddButton().disable();
+		//display.getListDisplay().getAddButton().disable();
 		crossSalePresenter.load(selectedRecord, dataSource, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				display.getListDisplay().getAddButton().enable();
+				//display.getListDisplay().getAddButton().enable();
 			}
 		});
 		upSalePresenter.load(selectedRecord, dataSource, null);
