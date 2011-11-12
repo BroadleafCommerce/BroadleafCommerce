@@ -148,10 +148,10 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				}
 			}
 		});
-		display.getListDisplay().getAddButton().disable();
+		//display.getListDisplay().getAddButton().disable();
 		featuredPresenter.load(selectedRecord, dataSource, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				display.getListDisplay().getAddButton().enable();
+				//display.getListDisplay().getAddButton().enable();
 			}
 		});
 		childProductsPresenter.load(selectedRecord, dataSource, null);

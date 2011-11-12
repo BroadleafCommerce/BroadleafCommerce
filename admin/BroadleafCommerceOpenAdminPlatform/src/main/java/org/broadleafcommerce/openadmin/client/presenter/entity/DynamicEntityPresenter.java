@@ -15,10 +15,6 @@
  */
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -55,6 +51,10 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManage
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * 
  * @author jfischer
@@ -73,6 +73,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	protected HandlerRegistration entityTypeChangedHandlerRegistration;
 	protected HandlerRegistration cellSavedHandlerRegistration;
     protected HandlerRegistration fetchDataHandlerRegistration;
+    protected HandlerRegistration saveButtonHandlerRegistration;
 	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 	
 	protected Boolean disabled = false;
@@ -140,6 +141,23 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	
 	public void bind() {
 		formPresenter.bind();
+        formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        saveButtonHandlerRegistration=display.getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if (event.isLeftButtonDown()) {
+					DSRequest requestProperties = new DSRequest();
+					requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+					display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                        @Override
+                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                            getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(lastSelectedRecord));
+                        }
+                    }, requestProperties);
+					display.getDynamicFormDisplay().getSaveButton().disable();
+                    display.getDynamicFormDisplay().getRefreshButton().disable();
+				}
+			}
+        });
 		addClickHandlerRegistration = display.getListDisplay().getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
@@ -157,10 +175,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         fetchDataHandlerRegistration = display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                if (display.getListDisplay().getGrid().getSelectedRecord() == null) {
-                    setStartState();
-                    formPresenter.disable();
-                }
+                setStartState();
+                formPresenter.disable();
             }
         });
 		selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
@@ -311,7 +327,11 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 		return addClickHandlerRegistration;
 	}
 
-	public HandlerRegistration getEntityTypeChangedHandlerRegistration() {
+    public HandlerRegistration getSaveButtonHandlerRegistration() {
+        return saveButtonHandlerRegistration;
+    }
+
+    public HandlerRegistration getEntityTypeChangedHandlerRegistration() {
 		return entityTypeChangedHandlerRegistration;
 	}
 

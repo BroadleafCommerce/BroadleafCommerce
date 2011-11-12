@@ -305,7 +305,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                 }
             }
         });
-        formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        getSaveButtonHandlerRegistration().removeHandler();
         getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
@@ -450,6 +450,12 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                 if (event.isLeftButtonDown()) {
                     initializeDisplay(lastSelectedRecord);
                 }
+            }
+        });
+        getDisplay().getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                initializer.disable();
             }
         });
     }

@@ -74,6 +74,11 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	protected DynamicForm qualifyForAnotherPromoTargetForm;
 	protected DynamicForm fgCombineForm;
 	protected DynamicForm orderItemCombineForm;
+
+    protected VLayout customerLayout;
+    protected VLayout orderSectionLayout;
+    protected SectionView customerSection;
+    protected SectionView orderSection;
 	
 	protected VLayout itemBuilderContainerLayout;
 	protected DynamicFormView dynamicFormDisplay;
@@ -199,7 +204,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         restrictionSectionView.getContentLayout().addMember(restrictLayout);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(restrictionSectionView);
         
-        VLayout customerLayout = new VLayout();
+        customerLayout = new VLayout();
+        customerLayout.setVisible(false);
         customerLayout.setID("offerCustomerLayout");
         customerLayout.setLayoutLeftMargin(10);
         HStack customerObtainHStack = new HStack(10);
@@ -284,13 +290,15 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerLayout.addMember(customerFilterBuilder);
         customerLayout.setLayoutBottomMargin(10);
         
-        SectionView sectionStack = new SectionView(BLCMain.getMessageManager().getString("customerSectionViewTitle"));
-        sectionStack.setID("offerSectionStack");
-        sectionStack.setWidth("98%");
-        sectionStack.getContentLayout().addMember(customerLayout);
-        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(sectionStack);
+        customerSection = new SectionView(BLCMain.getMessageManager().getString("customerSectionViewTitle"));
+        customerSection.setVisible(false);
+        customerSection.setID("offerSectionStack");
+        customerSection.setWidth("98%");
+        customerSection.getContentLayout().addMember(customerLayout);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(customerSection);
         
-        VLayout orderSectionLayout = new VLayout();
+        orderSectionLayout = new VLayout();
+        orderSectionLayout.setVisible(false);
         orderSectionLayout.setID("offerOrderSectionLayout");
         orderSectionLayout.setLayoutLeftMargin(10);
         Label orderLabel = new Label(BLCMain.getMessageManager().getString("orderSectionLabel"));
@@ -354,11 +362,12 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderCombineForm.setFields(orderCombineRuleRadio);
         orderSectionLayout.addMember(orderCombineForm);
         
-        SectionView sectionStack2 = new SectionView(BLCMain.getMessageManager().getString("orderQualificationSectionViewTitle"));
-        sectionStack2.setID("offerSectionStack2");
-        sectionStack2.setWidth("98%");
-        sectionStack2.getContentLayout().addMember(orderSectionLayout);
-        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(sectionStack2);
+        orderSection = new SectionView(BLCMain.getMessageManager().getString("orderQualificationSectionViewTitle"));
+        orderSection.setVisible(false);
+        orderSection.setID("offerSectionStack2");
+        orderSection.setWidth("98%");
+        orderSection.getContentLayout().addMember(orderSectionLayout);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(orderSection);
         
         VStack itemSectionLayout = new VStack();
         itemSectionLayout.setID("offerItemSectionLayout");
@@ -935,5 +944,20 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	public Label getOrderItemCombineLabel() {
 		return orderItemCombineLabel;
 	}
-	
+
+    public VLayout getCustomerLayout() {
+        return customerLayout;
+    }
+
+    public VLayout getOrderSectionLayout() {
+        return orderSectionLayout;
+    }
+
+    public SectionView getCustomerSection() {
+        return customerSection;
+    }
+
+    public SectionView getOrderSection() {
+        return orderSection;
+    }
 }

@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.admin.client.view.promotion;
 
-import java.util.List;
-
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
-
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.ImgButton;
@@ -34,6 +27,12 @@ import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+
+import java.util.List;
 
 /**
  * 
@@ -111,5 +110,9 @@ public interface OfferDisplay extends DynamicEditDisplay {
 	public DynamicForm getOrderItemCombineForm();
 	public RadioGroupItem getOrderItemCombineRuleRadio();
 	public Label getOrderItemCombineLabel();
+    public VLayout getCustomerLayout();
+    public VLayout getOrderSectionLayout();
+    public SectionView getCustomerSection();
+    public SectionView getOrderSection();
 	
 }

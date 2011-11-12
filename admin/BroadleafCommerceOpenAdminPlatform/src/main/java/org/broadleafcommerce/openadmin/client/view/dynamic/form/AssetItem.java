@@ -29,4 +29,8 @@ public class AssetItem extends CanvasItem {
     public void updateState() {
         ((AssetCanvas) getCanvas()).updateImg(getValue().toString());
     }
+
+    public void clearImage() {
+        ((AssetCanvas) getCanvas()).clearImage();
+    }
 }

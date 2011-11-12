@@ -143,6 +143,7 @@ public class OfferPresenterExtractor {
 							presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
+                                    getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord));
 								}
 							});
 						} else {
@@ -156,6 +157,7 @@ public class OfferPresenterExtractor {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
 									builder.setDirty(false);
 									builder.setRecord(temp);
+                                    getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord));
 								}
 							});
 						}
@@ -169,6 +171,7 @@ public class OfferPresenterExtractor {
 				for (final ItemBuilderDisplay builder : displays) {
 					removeItemQualifer(builder);
 				}
+                getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(selectedRecord));
 			}
 		}
 		if (type.equals("ORDER_ITEM")) {

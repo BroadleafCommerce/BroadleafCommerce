@@ -27,6 +27,8 @@ import com.smartgwt.client.data.ResultSet;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
@@ -149,7 +151,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
             FILE_UPLOAD.draw();
             FILE_UPLOAD.hide();
         }
-        formPresenter.getSaveButtonHandlerRegistration().removeHandler();
+        getSaveButtonHandlerRegistration().removeHandler();
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 //save the regular entity form and the page template form
@@ -174,6 +176,13 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                         }
                     }, requestProperties);
                 }
+            }
+        });
+        display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
+            @Override
+            public void onFilterData(FetchDataEvent event) {
+                AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+                assetItem.clearImage();
             }
         });
 	}
