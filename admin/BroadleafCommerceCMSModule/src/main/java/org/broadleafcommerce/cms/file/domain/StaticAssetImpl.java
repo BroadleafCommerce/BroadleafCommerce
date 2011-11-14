@@ -30,6 +30,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,8 +99,9 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(excluded = true)
     protected Site site;
 
-    @Column(name ="FULL_URL", nullable = false)
+    @Column(name ="FULL_URL", nullable = false, unique = true)
     @AdminPresentation(friendlyName="Full URL", order=2, group = "Details")
+    @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
 
     @Column(name = "FILE_SIZE")
@@ -134,18 +136,22 @@ public class StaticAssetImpl implements StaticAsset {
 
     @Column (name = "ARCHIVED_FLAG")
     @AdminPresentation(friendlyName="Archived Flag", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ASST_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag = false;
 
     @Column (name = "DELETED_FLAG")
     @AdminPresentation(friendlyName="Deleted Flag", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ASST_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
     protected Boolean deletedFlag = false;
 
     @Column (name = "LOCKED_FLAG")
     @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ASST_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
     protected Boolean lockedFlag = false;
 
     @Column (name = "ORIG_ASSET_ID")
     @AdminPresentation(friendlyName="Original Asset ID", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ORIG_ASSET_ID_INDX", columnNames={"ORIG_ASSET_ID"})
     protected Long originalAssetId;
 
     public String getFullUrl() {

@@ -75,10 +75,12 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "ORIG_SANDBOX_ID")
+    @Index(name="ORIG_SANDBOX_ID_INDEX", columnNames={"ORIG_SANDBOX_ID"})
 	protected SandBox originalSandBox;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
     @AdminPresentation(friendlyName="Item Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
+    @Index(name="SANDBOX_ITEM_TYPE_INDEX", columnNames={"SANDBOX_ITEM_TYPE"})
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
@@ -96,10 +98,12 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @Column(name = "ORIGINAL_ITEM_ID")
     @AdminPresentation(excluded = true)
+    @Index(name="SB_ORIG_ITEM_ID_INDEX", columnNames={"ORIGINAL_ITEM_ID"})
     protected Long originalItemId;
 
     @Column(name = "ARCHIVED_FLAG")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ARCHIVED_FLAG_INDEX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag = Boolean.FALSE;
 
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)
