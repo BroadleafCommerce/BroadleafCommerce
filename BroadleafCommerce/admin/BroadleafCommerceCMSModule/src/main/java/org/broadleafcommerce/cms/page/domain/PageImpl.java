@@ -98,7 +98,7 @@ public class PageImpl implements Page {
     @AdminPresentation(friendlyName="Description", order=3, group="Basic", prominent=true)
     protected String description;
 
-    @Column (name = "FULL_URL", unique = true)
+    @Column (name = "FULL_URL")
     @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
     @AdminPresentation(friendlyName="Full Url", order=1, group="Basic", prominent=true)
     protected String fullUrl;

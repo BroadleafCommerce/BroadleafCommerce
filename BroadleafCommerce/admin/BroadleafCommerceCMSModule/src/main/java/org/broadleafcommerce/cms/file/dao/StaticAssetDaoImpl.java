@@ -26,8 +26,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -71,30 +69,6 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             return null;
         } else {
             return results.iterator().next();
-        }
-    }
-
-    private void filterStaticAssetsForSandbox(SandBox userSandBox, SandBox productionSandBox, List<StaticAsset> assetList) {
-        if (userSandBox != null) {
-            List<Long> removeIds = new ArrayList<Long>();
-            for (StaticAsset asset : assetList) {
-                if (asset.getOriginalAssetId() != null) {
-                    removeIds.add(asset.getOriginalAssetId());
-                }
-
-                if (asset.getDeletedFlag()) {
-                    removeIds.add(asset.getId());
-                }
-            }
-
-            Iterator<StaticAsset> assetIterator = assetList.iterator();
-
-            while (assetIterator.hasNext()) {
-                StaticAsset asset = assetIterator.next();
-                if (removeIds.contains(asset.getId())) {
-                    assetIterator.remove();
-                }
-            }
         }
     }
 

@@ -99,7 +99,7 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(excluded = true)
     protected Site site;
 
-    @Column(name ="FULL_URL", nullable = false, unique = true)
+    @Column(name ="FULL_URL", nullable = false)
     @AdminPresentation(friendlyName="Full URL", order=2, group = "Details")
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
