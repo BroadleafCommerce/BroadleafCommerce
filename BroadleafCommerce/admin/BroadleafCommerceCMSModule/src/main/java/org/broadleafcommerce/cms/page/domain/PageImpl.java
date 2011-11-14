@@ -98,8 +98,8 @@ public class PageImpl implements Page {
     @AdminPresentation(friendlyName="Description", order=3, group="Basic", prominent=true)
     protected String description;
 
-    @Column (name = "FULL_URL")
-    @Index(name="blPageUrlIndex")
+    @Column (name = "FULL_URL", unique = true)
+    @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
     @AdminPresentation(friendlyName="Full Url", order=1, group="Basic", prominent=true)
     protected String fullUrl;
 
@@ -123,18 +123,22 @@ public class PageImpl implements Page {
 
     @Column (name = "DELETED_FLAG")
     @AdminPresentation(friendlyName="Deleted", order=2, group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="PAGE_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
     protected Boolean deletedFlag = false;
 
     @Column (name = "ARCHIVED_FLAG")
     @AdminPresentation(friendlyName="Archived", order=5, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="PAGE_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag = false;
 
     @Column (name = "LOCKED_FLAG")
     @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="PAGE_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
     protected Boolean lockedFlag = false;
 
     @Column (name = "ORIG_PAGE_ID")
     @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ORIG_PAGE_ID_INDX", columnNames={"ORIG_PAGE_ID"})
     protected Long originalPageId;
 
     /*@ManyToOne(targetEntity = SiteImpl.class)

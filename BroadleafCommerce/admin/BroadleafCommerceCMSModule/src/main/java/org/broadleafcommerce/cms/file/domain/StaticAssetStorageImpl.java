@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,6 +47,7 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     protected Long id;
 
     @Column(name ="STATIC_ASSET_ID", nullable = false)
+    @Index(name="STATIC_ASSET_ID_INDEX", columnNames={"STATIC_ASSET_ID"})
     protected Long staticAssetId;
 
     @Column (name = "FILE_DATA")

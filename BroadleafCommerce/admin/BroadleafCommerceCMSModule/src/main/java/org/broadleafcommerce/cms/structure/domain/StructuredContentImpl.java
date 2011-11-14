@@ -32,6 +32,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -101,6 +102,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Content Name", order=1, groupOrder = 1, group="Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
+    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "SC_TYPE_ID"})
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
@@ -110,6 +112,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Priority", order=3, group="Description")
     @Column(name = "PRIORITY", nullable = false)
+    @Index(name="PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
@@ -127,6 +130,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "ORIG_ITEM_ID")
+    @Index(name="SC_ORIG_ITEM_ID_INDEX", columnNames={"ORIG_ITEM_ID"})
     protected Long originalItemId;
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
@@ -154,18 +158,22 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Deleted", order=2, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "DELETED_FLAG")
+    @Index(name="SC_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
     protected Boolean deletedFlag;
 
     @AdminPresentation(friendlyName="Archived", order=3, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "ARCHIVED_FLAG")
+    @Index(name="SC_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag;
 
     @AdminPresentation(friendlyName="Offline", order=4, group="Description")
     @Column(name = "OFFLINE_FLAG")
+    @Index(name="SC_OFFLN_FLG_INDX", columnNames={"OFFLINE_FLAG"})
     protected Boolean offlineFlag = false;
 
     @Column (name = "LOCKED_FLAG")
     @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="SC_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
     protected Boolean lockedFlag = false;
 
     @Override
