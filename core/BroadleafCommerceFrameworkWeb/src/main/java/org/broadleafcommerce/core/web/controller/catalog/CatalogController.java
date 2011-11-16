@@ -191,6 +191,11 @@ public class CatalogController {
         return categoryError;
     }
 
+    /*
+     * This controller method is for demonstration purposes only. It contains a call to
+     * catalogService.findActiveProductsByCategory, which may return a large list. A
+     * more performant solution would be to utilize data paging techniques.
+     */
     protected boolean validateProductAndAddToModel(Product product, ModelMap model) {
         Category currentCategory = (Category) model.get("currentCategory");
         Category rootCategory = (Category) model.get("rootCategory");
@@ -253,7 +258,11 @@ public class CatalogController {
         return (productPosition !=0);
     }
 
-    @SuppressWarnings("unchecked")
+    /*
+     * This controller method is for demonstration purposes only. It contains a call to
+     * catalogService.findActiveProductsByCategory, which may return a large list. A
+     * more performant solution would be to utilize data paging techniques.
+     */
     protected boolean addProductsToModel(HttpServletRequest request, ModelMap model, CatalogSort catalogSort) {
         boolean productFound = false;
 

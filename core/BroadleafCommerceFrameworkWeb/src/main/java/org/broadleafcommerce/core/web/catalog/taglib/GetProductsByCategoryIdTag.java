@@ -15,10 +15,6 @@
  */
 package org.broadleafcommerce.core.web.catalog.taglib;
 
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,8 +22,13 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 
-/*NOTE:
- * Was referred to as the ProductsTag.  Class name changed to be more descriptive
+import javax.servlet.jsp.JspException;
+import java.util.List;
+
+/**
+ * This class is for demonstration purposes only. It contains a call to
+ * catalogService.findActiveProductsByCategory, which may return a large list. A
+ * more performant solution would be to utilize data paging techniques.
  */
 public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
 

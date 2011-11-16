@@ -180,6 +180,7 @@ public class ProductImpl implements Product {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
     @Deprecated
     protected Map<String, String> productImages = new HashMap<String, String>();
 
