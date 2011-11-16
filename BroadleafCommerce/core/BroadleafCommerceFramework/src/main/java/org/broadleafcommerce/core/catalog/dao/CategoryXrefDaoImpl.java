@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.persistence.EntityConfiguration;
@@ -76,6 +77,11 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
     		categoryXref = readXrefByIds(categoryXref.getCategoryXrefPK().getCategory().getId(), categoryXref.getCategoryXrefPK().getSubCategory().getId());
     	}
         em.remove(categoryXref);     	
+    }
+
+    @Override
+    public CategoryProductXrefImpl save(CategoryProductXrefImpl categoryProductXref){
+    	return em.merge(categoryProductXref);
     }
     
     public String getQueryCacheableKey() {

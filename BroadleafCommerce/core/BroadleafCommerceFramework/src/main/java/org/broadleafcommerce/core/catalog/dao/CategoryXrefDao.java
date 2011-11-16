@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 
@@ -61,7 +62,7 @@ public interface CategoryXrefDao {
     public CategoryXref readXrefByIds(@Nonnull Long categoryId, @Nonnull Long subCategoryId);
 
     /**
-     * Persiste the passed in category relationship to the datastore
+     * Persist the passed in category relationship to the datastore
      *
      * @param categoryXref the relationship between a parent and child category
      * @return the persisted relationship between a parent and child category
@@ -75,4 +76,13 @@ public interface CategoryXrefDao {
      * @param categoryXref the category relationship to remove
      */
     public void delete(@Nonnull CategoryXrefImpl categoryXref);
+
+    /**
+     * Persist the passed in category/product relationship to the datastore
+     *
+     * @param categoryProductXref the relationship between a category and product
+     * @return the persisted relationship between a category and product
+     */
+    @Nonnull
+    public CategoryProductXrefImpl save(CategoryProductXrefImpl categoryProductXref);
 }

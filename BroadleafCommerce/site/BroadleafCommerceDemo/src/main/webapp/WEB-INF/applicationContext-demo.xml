@@ -67,5 +67,17 @@
             </list>
         </property>
     </bean>
-    
+
+    <bean id="blCatalogMultiplier" class="org.broadleafcommerce.core.util.demo.CatalogMultiplierImpl"/>
+
+    <aop:config>
+		<aop:pointcut id="blCatalogMultiplierOperation" expression="execution(* org.broadleafcommerce.core.util.demo.CatalogMultiplier.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogMultiplierOperation"/>
+	</aop:config>
+
+    <bean id="blProductDao" class="org.broadleafcommerce.core.catalog.dao.ProductDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+        <property name="currentDateResolution" value="600000"/>
+	</bean>
+
 </beans>

@@ -83,6 +83,8 @@
 		<property name="deletePhoneSuccessView" value="myAccount/phone/customerPhones"/>
 	</bean>
 
+    <bean id="blCatalogMultiplyController" class="org.broadleafcommerce.core.web.catalog.CatalogMultiplierController"/>
+
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
@@ -110,6 +112,7 @@
 				<prop key="/rating/*">blRatingController</prop>
 				<prop key="/wishlist/*">blWishlistController</prop>
 				<prop key="/preview/**">previewTemplateController</prop>
+                <prop key="/catalogMultiplier/**">blCatalogMultiplyController</prop>
 			</props>
 		</property>
 	</bean>

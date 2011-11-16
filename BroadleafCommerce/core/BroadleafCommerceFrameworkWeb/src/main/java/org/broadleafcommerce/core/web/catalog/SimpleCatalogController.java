@@ -126,6 +126,11 @@ public class SimpleCatalogController extends AbstractController {
         return categoryList;
     }
 
+    /*
+     * This controller method is for demonstration purposes only. It contains a call to
+     * catalogService.findActiveProductsByCategory, which may return a large list. A
+     * more performant solution would be to utilize data paging techniques.
+     */
     protected boolean validateProductAndAddToModel(Product product, Map<String,Object> model) {
         Category currentCategory = (Category) model.get("currentCategory");
         Category rootCategory = (Category) model.get("rootCategory");
@@ -173,6 +178,11 @@ public class SimpleCatalogController extends AbstractController {
         return (productPosition !=0);
     }
 
+    /*
+     * This controller method is for demonstration purposes only. It contains a call to
+     * catalogService.findActiveProductsByCategory, which may return a large list. A
+     * more performant solution would be to utilize data paging techniques.
+     */
     protected boolean addProductsToModel(HttpServletRequest request, Map<String,Object> model ) {
         boolean productFound = false;
 

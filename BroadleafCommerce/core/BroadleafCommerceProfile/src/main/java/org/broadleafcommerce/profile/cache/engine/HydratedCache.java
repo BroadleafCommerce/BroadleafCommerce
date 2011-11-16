@@ -23,6 +23,7 @@ import java.util.Hashtable;
  * @author jfischer
  *
  */
+@Deprecated
 public class HydratedCache extends Hashtable<String, Object> {
 
     private static final long serialVersionUID = 1L;

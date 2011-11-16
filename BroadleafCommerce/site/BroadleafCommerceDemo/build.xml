@@ -71,19 +71,6 @@
 			<arg value="jetty:run"/>
 		</artifact:mvn>
 	</target>
-	
-	<target name="jetty-debug-yourkit" depends="start-db">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:dependencies pathId="agentPathId">
-			<dependency groupId="org.broadleafcommerce" artifactId="broadleaf-instrument" version="1.5.0-M2-SNAPSHOT"/>
-		</artifact:dependencies>
-		<property name="agentJarPath" refid="agentPathId"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001 -javaagent:${agentJarPath}">
-			<arg value="compile"/>
-			<arg value="war:exploded"/>
-			<arg value="jetty:run"/>
-		</artifact:mvn>
-	</target>
 
     <target name="jetty-demo-jrebel">
 		<delete dir="war/WEB-INF/lib"/>
@@ -96,7 +83,7 @@
 	
 	<target name="jetty-demo-yourkit">
 		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx1024M -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
 			<arg value="compile"/>
 			<arg value="war:exploded"/>
 			<arg value="jetty:run"/>
@@ -128,9 +115,9 @@
 		</path>
 			
         <echo message="Starting Data Base..." />  
-        <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
-            <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>
-        	<arg  line="-database.1 file:data/broadleaf_sndbx -dbname.1 broadleaf_sndbx"/>
+        <java fork="true" spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath" jvmargs="-Xmx1024M">
+            <arg line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>
+        	<arg line="-database.1 file:data/broadleaf_sndbx -dbname.1 broadleaf_sndbx"/>
         </java>  
     </target>
 	
