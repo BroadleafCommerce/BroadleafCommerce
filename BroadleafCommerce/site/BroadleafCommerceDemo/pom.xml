@@ -3,7 +3,7 @@
     <parent>
         <artifactId>site</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>1.5.0-RC2-SNAPSHOT</version>
+        <version>1.5.0-RC1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <!-- 'groupId' inherited from parent -->
@@ -25,7 +25,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                          <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+                          <extraJvmArgs>-Xmx768M -Xss1024k</extraJvmArgs>
                         </configuration>
                         <goals>
                             <goal>compile</goal>
