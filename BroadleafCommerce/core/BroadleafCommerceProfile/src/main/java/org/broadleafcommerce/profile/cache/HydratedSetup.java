@@ -67,4 +67,13 @@ public class HydratedSetup {
 		}
 	}
 
+    public static void addCacheItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
+        HydratedCacheManager manager = HydratedCacheEventListenerFactory.getConfiguredManager();
+        manager.addHydratedCacheElementItem(cacheRegion, cacheName, elementKey, elementItemName, elementValue);
+    }
+
+    public static Object getCacheItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
+        HydratedCacheManager manager = HydratedCacheEventListenerFactory.getConfiguredManager();
+        return manager.getHydratedCacheElementItem(cacheRegion, cacheName, elementKey, elementItemName);
+    }
 }

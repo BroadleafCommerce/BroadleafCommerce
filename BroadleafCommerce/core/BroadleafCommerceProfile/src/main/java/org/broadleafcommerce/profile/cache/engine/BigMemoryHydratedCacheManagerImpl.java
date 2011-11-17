@@ -22,13 +22,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.event.CacheEventListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cache.CacheKey;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +38,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class BigMemoryHydratedCacheManagerImpl implements CacheEventListener, HydratedCacheManager, HydratedAnnotationManager {
+public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheManager {
 
     private static final Log LOG = LogFactory.getLog(BigMemoryHydratedCacheManagerImpl.class);
     private static final BigMemoryHydratedCacheManagerImpl MANAGER = new BigMemoryHydratedCacheManagerImpl();
@@ -49,7 +47,6 @@ public class BigMemoryHydratedCacheManagerImpl implements CacheEventListener, Hy
         return MANAGER;
     }
 
-    private Map<String, HydrationDescriptor> hydrationDescriptors = Collections.synchronizedMap(new HashMap(100));
     private Map<String, List<String>> cacheMemberNamesByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
     private List<String> removeKeys = Collections.synchronizedList(new ArrayList<String>(100));
     private Cache offHeap;
@@ -63,41 +60,6 @@ public class BigMemoryHydratedCacheManagerImpl implements CacheEventListener, Hy
             CacheManager.create().addCache(cache);
             offHeap = cache;
         }
-    }
-
-    @Override
-	public HydrationDescriptor getHydrationDescriptor(Object entity) {
-    	if (hydrationDescriptors.containsKey(entity.getClass().getName())) {
-    		return hydrationDescriptors.get(entity.getClass().getName());
-    	}
-    	HydrationDescriptor descriptor = new HydrationDescriptor();
-    	Class<?> topEntityClass = getTopEntityClass(entity);
-    	HydrationScanner scanner = new HydrationScanner(topEntityClass, entity.getClass());
-    	scanner.init();
-    	descriptor.setHydratedMutators(scanner.getCacheMutators());
-    	Map<String, Method[]> mutators = scanner.getIdMutators();
-    	if (mutators.size() != 1) {
-    		throw new RuntimeException("Broadleaf Commerce Hydrated Cache currently only supports entities with a single @Id annotation.");
-    	}
-    	Method[] singleMutators = mutators.values().iterator().next();
-    	descriptor.setIdMutators(singleMutators);
-    	String cacheRegion = scanner.getCacheRegion();
-    	if (cacheRegion == null || "".equals(cacheRegion)) {
-    		cacheRegion = topEntityClass.getName();
-    	}
-    	descriptor.setCacheRegion(cacheRegion);
-    	hydrationDescriptors.put(entity.getClass().getName(), descriptor);
-    	return descriptor;
-    }
-    
-	protected Class<?> getTopEntityClass(Object entity) {
-    	Class<?> myClass = entity.getClass();
-    	Class<?> superClass = entity.getClass().getSuperclass();
-    	while (superClass != null && superClass.getName().startsWith("org.broadleaf")) {
-    		myClass = superClass;
-    		superClass = superClass.getSuperclass();
-    	}
-    	return myClass;
     }
 
     @Override
@@ -130,14 +92,6 @@ public class BigMemoryHydratedCacheManagerImpl implements CacheEventListener, Hy
     		myMembers.add(elementItemName);
     	}
     	offHeap.put(element);
-    }
-
-    @Override
-    public void dispose() {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Disposing of all hydrated cache members");
-        }
-    	hydrationDescriptors.clear();
     }
 
     protected void removeCache(String cacheRegion, Serializable key) {
@@ -190,11 +144,6 @@ public class BigMemoryHydratedCacheManagerImpl implements CacheEventListener, Hy
     @Override
 	public void notifyRemoveAll(Ehcache arg0) {
 		removeAll(arg0.getName());
-	}
-
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return this;
 	}
 
 }

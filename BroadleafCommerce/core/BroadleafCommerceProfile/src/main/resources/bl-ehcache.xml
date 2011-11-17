@@ -26,14 +26,21 @@
         
     <cache
     	name="org.hibernate.cache.StandardQueryCache"
-    	maxElementsInMemory="100000"
+    	maxElementsInMemory="1000"
+    	eternal="false"
+    	overflowToDisk="false"
+    	timeToLiveSeconds="600"/>
+
+    <cache
+    	name="query.Catalog"
+    	maxElementsInMemory="1000"
     	eternal="false"
     	overflowToDisk="false"
     	timeToLiveSeconds="600"/>
     	
    	<cache
     	name="blOrderElements"
-    	maxElementsInMemory="1000000"
+    	maxElementsInMemory="100000"
     	eternal="false"
     	overflowToDisk="true"
     	timeToLiveSeconds="600"/>

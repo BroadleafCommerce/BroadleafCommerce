@@ -15,15 +15,15 @@
  */
 package org.broadleafcommerce.core.inventory.dao;
 
-import java.util.List;
+import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
+import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
-import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blAvailabilityDao")
 public class AvailabilityDaoImpl extends BatchRetrieveDao implements AvailabilityDao {
@@ -31,12 +31,10 @@ public class AvailabilityDaoImpl extends BatchRetrieveDao implements Availabilit
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS");
         if (! realTime) {
-            query.setHint(getQueryCacheableKey(), true);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
         }
         return batchExecuteReadQuery(query, skuIds, "skuIds");
     }
@@ -44,7 +42,7 @@ public class AvailabilityDaoImpl extends BatchRetrieveDao implements Availabilit
     public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS");
         if (! realTime) {
-            query.setHint(getQueryCacheableKey(), true);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
         }
         query.setParameter("locationId", locationId);
         return batchExecuteReadQuery(query, skuIds, "skuIds");
@@ -54,11 +52,4 @@ public class AvailabilityDaoImpl extends BatchRetrieveDao implements Availabilit
         em.merge(skuAvailability);
     }
 
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
-    }
 }

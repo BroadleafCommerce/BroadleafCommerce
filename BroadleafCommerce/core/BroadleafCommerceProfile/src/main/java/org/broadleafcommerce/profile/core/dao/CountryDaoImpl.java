@@ -15,16 +15,16 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Country;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blCountryDao")
 public class CountryDaoImpl implements CountryDao {
@@ -35,8 +35,6 @@ public class CountryDaoImpl implements CountryDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     public Country findCountryByAbbreviation(String abbreviation) {
         return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.Country"), abbreviation);
     }
@@ -44,16 +42,8 @@ public class CountryDaoImpl implements CountryDao {
     @SuppressWarnings("unchecked")
     public List<Country> findCountries() {
         Query query = em.createNamedQuery("BC_FIND_COUNTRIES");
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
-    }
-
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
     }
     
     public Country save(Country country) {

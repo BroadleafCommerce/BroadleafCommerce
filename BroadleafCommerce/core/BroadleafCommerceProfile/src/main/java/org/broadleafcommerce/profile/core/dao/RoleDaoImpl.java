@@ -15,18 +15,17 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.Role;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.List;
 
 @Repository("blRoleDao")
 public class RoleDaoImpl implements RoleDao {
@@ -36,8 +35,6 @@ public class RoleDaoImpl implements RoleDao {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public Address readAddressById(Long id) {
         return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.Address"), id);
@@ -58,13 +55,5 @@ public class RoleDaoImpl implements RoleDao {
 
     public void addRoleToCustomer(CustomerRole customerRole) {
         em.persist(customerRole);
-    }
-
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
     }
 }

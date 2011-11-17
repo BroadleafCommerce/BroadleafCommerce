@@ -17,6 +17,7 @@ package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -39,8 +40,6 @@ public class AdminUserDaoImpl implements AdminUserDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     public void deleteAdminUser(AdminUser user) {
     	if (!em.contains(user)) {
         	user = em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), user.getId());
@@ -58,7 +57,7 @@ public class AdminUserDaoImpl implements AdminUserDao {
 
     public AdminUser readAdminUserByUserName(String userName) {
         TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_USERNAME", AdminUser.class);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setParameter("userName", userName);
         List<AdminUser> users = query.getResultList();
         if (users != null && !users.isEmpty()) {
@@ -69,7 +68,7 @@ public class AdminUserDaoImpl implements AdminUserDao {
 
     public List<AdminUser> readAllAdminUsers() {
         TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS", AdminUser.class);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 }

@@ -38,13 +38,10 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     public IdGeneration findNextId(String idType) throws OptimisticLockException, Exception {
         IdGeneration response;
         Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
         query.setParameter("idType", idType);
-        query.setHint(getQueryCacheableKey(), false);
         try {
             IdGeneration idGeneration =  (IdGeneration) query.getSingleResult();
             response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.IdGeneration");
@@ -114,11 +111,4 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
         this.defaultBatchStart = defaultBatchStart;
     }
 
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
-    }
 }

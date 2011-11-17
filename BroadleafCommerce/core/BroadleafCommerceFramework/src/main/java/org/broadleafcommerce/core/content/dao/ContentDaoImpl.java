@@ -26,6 +26,7 @@ import javax.persistence.Query;
 import org.broadleafcommerce.core.content.domain.Content;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -39,7 +40,6 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
     protected EntityConfiguration entityConfiguration;
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.content.dao.ContentDao#delete(org.broadleafcommerce.core.content.domain.Content)
@@ -59,10 +59,6 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
         for (Content content : contentList) {
             this.delete(content);
         }
-    }
-
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
     }
 
     /* (non-Javadoc)
@@ -95,7 +91,7 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
             query.setParameter("sandbox", sandbox);
         }
 
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         
         return batchExecuteReadQuery(query, ids, "idList");
     }
@@ -112,7 +108,7 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
             query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX");
 
         query.setParameter("sandbox", sandbox);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return (List<Content>) query.getResultList();
     }
@@ -131,7 +127,7 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
     	}
 
         query.setParameter("contentType", contentType);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return (List<Content>) query.getResultList();
     }
@@ -145,7 +141,7 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
         query.setParameter("sandbox", sandbox);
         query.setParameter("contentType", contentType);
         query.setParameter("displayDate", displayDate);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return (List<Content>) query.getResultList();
     }
@@ -166,10 +162,6 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
         }
 
         return contentList;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
     }
 
 	/* (non-Javadoc)

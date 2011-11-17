@@ -202,32 +202,4 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
 	</aop:config>
 
-    <bean id="blCategoryDao" class="org.broadleafcommerce.core.catalog.dao.CategoryDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-    <bean id="blCategoryXrefDao" class="org.broadleafcommerce.core.catalog.dao.CategoryXrefDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blProductDao" class="org.broadleafcommerce.core.catalog.dao.ProductDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blAvailabilityDao" class="org.broadleafcommerce.core.inventory.dao.AvailabilityDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blTargetContentDao" class="org.broadleafcommerce.core.marketing.dao.TargetContentDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blContentDao" class="org.broadleafcommerce.core.content.dao.ContentDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blContentDetailsDao" class="org.broadleafcommerce.core.content.dao.ContentDetailsDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
 </beans>

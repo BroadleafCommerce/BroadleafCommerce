@@ -15,18 +15,17 @@
  */
 package org.broadleafcommerce.core.content.dao;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.core.content.domain.ContentDetails;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.core.content.domain.ContentDetails;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
-import org.springframework.stereotype.Repository;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author btaylor
@@ -40,8 +39,6 @@ public class ContentDetailsDaoImpl extends BatchRetrieveDao implements ContentDe
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.content.dao.ContentDetailsDao#delete(org.broadleafcommerce.core.content.domain.ContentDetails)
@@ -83,11 +80,4 @@ public class ContentDetailsDaoImpl extends BatchRetrieveDao implements ContentDe
 		return em.merge(contentDetails);
 	}
 
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
-    }
 }
