@@ -58,6 +58,7 @@ public class CategoryDaoImpl implements CategoryDao {
         Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
         query.setParameter("categoryName", categoryName);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return (Category)query.getSingleResult();
     }
 
@@ -66,6 +67,7 @@ public class CategoryDaoImpl implements CategoryDao {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME", Category.class);
         query.setParameter("categoryName", categoryName);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return query.getResultList();
     }
 
@@ -73,6 +75,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readAllCategories() {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return query.getResultList();
     }
 
