@@ -45,8 +45,6 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     @Override
     public StaticAsset readStaticAssetById(Long id) {
         return (StaticAsset) em.find(entityConfiguration.lookupEntityClass(StaticAsset.class.getName()), id);

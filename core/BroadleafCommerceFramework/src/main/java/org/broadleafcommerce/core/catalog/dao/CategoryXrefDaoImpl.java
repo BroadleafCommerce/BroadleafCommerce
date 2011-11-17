@@ -29,7 +29,6 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
- * {@inheritDoc}
  *
  * @author Jeff Fischer
  */
@@ -41,8 +40,6 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @Override
     public List<CategoryXrefImpl> readXrefsByCategoryId(Long categoryId){
@@ -83,14 +80,5 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
     public CategoryProductXrefImpl save(CategoryProductXrefImpl categoryProductXref){
     	return em.merge(categoryProductXref);
     }
-    
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
-    }
-    
     
 }

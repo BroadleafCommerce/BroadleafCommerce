@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -41,8 +42,6 @@ public class CategoryDaoImpl implements CategoryDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     @Override
     public Category save(Category category) {
         return em.merge(category);
@@ -58,7 +57,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public Category readCategoryByName(String categoryName) {
         Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
         query.setParameter("categoryName", categoryName);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return (Category)query.getSingleResult();
     }
 
@@ -66,14 +65,14 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readCategoriesByName(String categoryName) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME", Category.class);
         query.setParameter("categoryName", categoryName);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
     @Override
     public List<Category> readAllCategories() {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -88,14 +87,6 @@ public class CategoryDaoImpl implements CategoryDao {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
         query.setParameter("defaultParentCategory", category);
         return query.getResultList();
-    }
-
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
     }
 
     @Override

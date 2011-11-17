@@ -15,16 +15,16 @@
  */
 package org.broadleafcommerce.core.marketing.dao;
 
-import java.util.List;
+import org.broadleafcommerce.core.marketing.domain.TargetContent;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.core.marketing.domain.TargetContent;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blTargetContentDao")
 public class TargetContentDaoImpl implements TargetContentDao {
@@ -34,8 +34,6 @@ public class TargetContentDaoImpl implements TargetContentDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public void delete(Long targetContentId) {
         TargetContent tc = readTargetContentById(targetContentId);
@@ -51,7 +49,7 @@ public class TargetContentDaoImpl implements TargetContentDao {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_NAME_TYPE");
         query.setParameter("name", name);
         query.setParameter("type", type);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -59,7 +57,7 @@ public class TargetContentDaoImpl implements TargetContentDao {
     public List<TargetContent> readCurrentTargetContentsByPriority(int priority) {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_PRIORITY");
         query.setParameter("priority", priority);
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -70,15 +68,7 @@ public class TargetContentDaoImpl implements TargetContentDao {
     @SuppressWarnings("unchecked")
     public List<TargetContent> readTargetContents() {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS");
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
-    }
-
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
     }
 }

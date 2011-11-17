@@ -20,6 +20,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -30,8 +31,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * {@inheritDoc}
- *
  * @author Jeff Fischer
  */
 @Repository("blProductDao")
@@ -43,10 +42,7 @@ public class ProductDaoImpl implements ProductDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-    
     protected Long currentDateResolution = 10000L;
-    
     private Date currentDate = SystemTime.asDate();
 
     @Override
@@ -63,7 +59,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readProductsByName(String searchName) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME", Product.class);
         query.setParameter("name", searchName + '%');
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -82,7 +78,9 @@ public class ProductDaoImpl implements ProductDao {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
         query.setParameter("currentDate", myDate);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
         return query.getResultList();
     }
 
@@ -90,7 +88,9 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readProductsByCategory(Long categoryId) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
         return query.getResultList();
     }
 
@@ -98,7 +98,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readProductsBySku(Long skuId) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU", Product.class);
         query.setParameter("skuId", skuId);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
     
@@ -106,7 +106,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<ProductSku> readProductsBySkuOneToOne(Long skuId) {
         TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
         query.setParameter("skuId", skuId);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
     
@@ -125,7 +125,7 @@ public class ProductDaoImpl implements ProductDao {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU", Product.class);
         query.setParameter("skuId", skuId);
         query.setParameter("currentDate", myDate);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
     
@@ -144,7 +144,7 @@ public class ProductDaoImpl implements ProductDao {
         TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
         query.setParameter("skuId", skuId);
         query.setParameter("currentDate", myDate);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -159,14 +159,6 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product create(ProductType productType) {
         return (Product) entityConfiguration.createEntityInstance(productType.getType());
-    }
-    
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
     }
 
 	public Long getCurrentDateResolution() {

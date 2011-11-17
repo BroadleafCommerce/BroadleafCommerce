@@ -15,16 +15,15 @@
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import java.util.List;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /**
  * 
@@ -39,8 +38,6 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public void deleteAdminRole(AdminRole role) {
     	if (!em.contains(role)) {

@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -50,8 +51,6 @@ public class PageDaoImpl implements PageDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     @Override
     public Page readPageById(Long id) {
         return (Page) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.Page"), id);
@@ -66,7 +65,7 @@ public class PageDaoImpl implements PageDao {
     public Map<String, PageField> readPageFieldsByPage(Page page) {
         Query query = em.createNamedQuery("BC_READ_PAGE_FIELDS_BY_PAGE_ID");
         query.setParameter("page", page);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         List<PageField> pageFields = (List<PageField>) query.getResultList();
         Map<String, PageField> pageFieldMap = new HashMap<String, PageField>();
@@ -113,7 +112,7 @@ public class PageDaoImpl implements PageDao {
             query.setParameter("uri", uri);
         }
 
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         List<Page> results = query.getResultList();
         if (results != null && !results.isEmpty()) {

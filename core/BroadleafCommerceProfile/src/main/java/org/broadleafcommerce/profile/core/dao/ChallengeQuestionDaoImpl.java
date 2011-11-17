@@ -15,14 +15,14 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
+import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blChallengeQuestionDao")
 public class ChallengeQuestionDaoImpl implements ChallengeQuestionDao {
@@ -30,12 +30,10 @@ public class ChallengeQuestionDaoImpl implements ChallengeQuestionDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     @SuppressWarnings("unchecked")
     public List<ChallengeQuestion> readChallengeQuestions() {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTIONS");
-        query.setHint(getQueryCacheableKey(), true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -46,11 +44,4 @@ public class ChallengeQuestionDaoImpl implements ChallengeQuestionDao {
         return challengeQuestions == null || challengeQuestions.isEmpty() ? null : challengeQuestions.get(0);
     }
 
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
-    }
 }

@@ -204,24 +204,4 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blChallengeQuestionServiceOperation"/>
 	</aop:config>
 
-	<bean id="blChallengeQuestionDao" class="org.broadleafcommerce.profile.core.dao.ChallengeQuestionDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blCountryDao" class="org.broadleafcommerce.profile.core.dao.CountryDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blIdGenerationDao" class="org.broadleafcommerce.profile.core.dao.IdGenerationDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blRoleDao" class="org.broadleafcommerce.profile.core.dao.RoleDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
-	<bean id="blStateDao" class="org.broadleafcommerce.profile.core.dao.StateDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
 </beans>

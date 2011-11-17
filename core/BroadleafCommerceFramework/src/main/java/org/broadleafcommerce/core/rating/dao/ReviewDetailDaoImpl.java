@@ -15,14 +15,14 @@
  */
 package org.broadleafcommerce.core.rating.dao;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Repository("blReviewDetailDao")
 public class ReviewDetailDaoImpl implements ReviewDetailDao {
@@ -32,8 +32,6 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
 
     @Resource
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public ReviewDetail readReviewDetailById(Long reviewId) {
         return em.find(ReviewDetail.class, reviewId);

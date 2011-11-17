@@ -19,6 +19,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -40,8 +41,6 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public void deleteAdminPermission(AdminPermission permission) {
     	if (!em.contains(permission)) {
@@ -70,7 +69,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         query.setParameter("adminUser", adminUser);
         query.setParameter("type", permissionType.getType());
         query.setParameter("ceilingEntity", ceilingEntityFullyQualifiedName);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         Long count = (Long) query.getSingleResult();
         return count > 0;
@@ -80,7 +79,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         Query query = em.createNamedQuery("BC_COUNT_PERMISSIONS_BY_TYPE_AND_CEILING_ENTITY");
         query.setParameter("type", permissionType.getType());
         query.setParameter("ceilingEntity", ceilingEntityFullyQualifiedName);
-        query.setHint(queryCacheableKey, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         Long count = (Long) query.getSingleResult();
         return count > 0;

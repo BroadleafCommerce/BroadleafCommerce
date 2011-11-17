@@ -35,13 +35,10 @@ public class SandBoxIdGenerationDaoImpl implements SandBoxIdGenerationDao {
     //@PersistenceContext(unitName = "blSandboxPU")
     protected EntityManager em;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";
-
     public SandBoxIdGeneration findNextId(String idType) throws OptimisticLockException, Exception {
         SandBoxIdGeneration response;
         Query query = em.createNamedQuery("BC_SNDBX_FIND_NEXT_ID");
         query.setParameter("idType", idType);
-        query.setHint(getQueryCacheableKey(), false);
         try {
             SandBoxIdGeneration idGeneration =  (SandBoxIdGeneration) query.getSingleResult();
             response =  new SandBoxIdGenerationImpl();
@@ -111,11 +108,4 @@ public class SandBoxIdGenerationDaoImpl implements SandBoxIdGenerationDao {
         this.defaultBatchStart = defaultBatchStart;
     }
 
-    public String getQueryCacheableKey() {
-        return queryCacheableKey;
-    }
-
-    public void setQueryCacheableKey(String queryCacheableKey) {
-        this.queryCacheableKey = queryCacheableKey;
-    }
 }
