@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/SandBox.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/SandBoxItem.orm.xml</mapping-file>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserPermissionXref</class>
+		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserRoleXref</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SandBoxImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SiteImpl</class>
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <!--property name="hibernate.generate_statistics" value="true" /-->
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+	</persistence-unit>
+	
+	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+	</persistence-unit>
+	
+	<!--<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/SandBoxIdGeneration.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/SandBox.orm.xml</mapping-file>
+		<class>org.broadleafcommerce.openadmin.server.domain.AdditionalForeignKeyImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.EntityImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.ForeignKeyImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.JoinStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.MapStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.OperationTypesImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveItemImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.PropertyImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructureImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxImpl</class>
+		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.domain.SandBoxIdGenerationImpl</class>
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+        </properties>
+	</persistence-unit>-->
+</persistence>

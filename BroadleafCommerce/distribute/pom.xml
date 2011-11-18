@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>BroadleafCommerce</artifactId>
+		<groupId>org.broadleafcommerce</groupId>
+		<version>1.5.0-RC1</version>
+	</parent>
+	<!-- 'groupId' inherited from parent -->
+	<artifactId>distribute</artifactId>
+	<!-- 'version' inherited from parent -->
+	<packaging>pom</packaging>
+	<name>distribute</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-demo</artifactId>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-demo-launcher</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-cybersource</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>integration</artifactId>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+             
+    <!-- 
+    	This persistence xml is an example of using Broadleaf's entity inheritance override feature.
+    	broadleaf.ejb.entities.override_single_table - a white space delimited list of entities whose inheritance strategy should be changed to SINGLE_TABLE
+    	
+    	The following only apply to base entities in whatever entity hierachies are included
+    	broadleaf.ejb.[entity simple name].discriminator.name - the column name of the table discriminator
+    	broadleaf.ejb.[entity simple name].discriminator.type - the type of discriminator (STRING, CHAR, INTEGER)
+    	broadleaf.ejb.[entity simple name].discriminator.length - the length of the discriminator database field
+     -->
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+    	<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<non-jta-data-source>jdbc/web</non-jta-data-source>
+		<class>com.other.domain.OtherProductImpl</class>
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="broadleaf.ejb.entities.override_single_table" value="
+            	org.broadleafcommerce.core.catalog.domain.ProductImpl
+            	org.broadleafcommerce.core.catalog.domain.ProductSkuImpl
+            	com.other.domain.OtherProductImpl
+            	"/>
+            <property name="broadleaf.ejb.ProductImpl.discriminator.name" value="DISC"/>
+            <property name="broadleaf.ejb.ProductImpl.discriminator.type" value="STRING"/>
+            <property name="broadleaf.ejb.ProductImpl.discriminator.length" value="255"/>
+        </properties>
+	</persistence-unit>
+	
+	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+	</persistence-unit>
+</persistence>

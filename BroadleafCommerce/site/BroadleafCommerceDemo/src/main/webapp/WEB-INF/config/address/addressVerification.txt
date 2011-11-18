@@ -1,0 +1,11 @@
+//This is just a place holder file for storing USPS test server addresses. Will remove it once we are
+//done with testing
+
+6406 Ivy Lane
+Greenbelt
+MD
+
+8 Wildwood Drive
+Old Lyme
+CT
+06371
