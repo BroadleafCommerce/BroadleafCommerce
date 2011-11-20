@@ -16,14 +16,14 @@
 	<property name="maven.build.dir" value="${releaseParentDir}/distribute/target" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}" />
 
-	<artifact:pom id="uspsPom" file="${releaseParentDir}/module/BroadleafCommerceUSPS/pom.xml" />
-	<artifact:pom id="cybersourcePom" file="${releaseParentDir}/module/BroadleafCommerceCyberSource/pom.xml" />
-	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/BroadleafCommerceFramework/pom.xml" />
-	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/BroadleafCommerceFrameworkWeb/pom.xml" />
-	<artifact:pom id="demoPom" file="${releaseParentDir}/site/BroadleafCommerceDemo/pom.xml" />
-	<artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/BroadleafCommerceAdminModule/pom.xml" />
-	<artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/pom.xml" />
-	<artifact:pom id="demoLauncherPom" file="${releaseParentDir}/site/BroadleafCommerceDemoLauncher/pom.xml" />
+	<artifact:pom id="uspsPom" file="${releaseParentDir}/module/broadleaf-usps/pom.xml" />
+	<artifact:pom id="cybersourcePom" file="${releaseParentDir}/module/broadleaf-cybersource/pom.xml" />
+	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/broadleaf-framework/pom.xml" />
+	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/broadleaf-framework-web/pom.xml" />
+	<artifact:pom id="demoPom" file="${releaseParentDir}/site/broadleaf-demo/pom.xml" />
+	<artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/broadleaf-admin-module/pom.xml" />
+	<artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/broadleaf-open-admin-platform/pom.xml" />
+	<artifact:pom id="demoLauncherPom" file="${releaseParentDir}/site/broadleaf-demo-launcher/pom.xml" />
 	<artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
 	<artifact:pom id="integrationPom" file="${releaseParentDir}/integration/pom.xml" />
 
@@ -151,37 +151,37 @@
 			<arg value="source:jar" />
 		</artifact:mvn>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/dist">
-			<fileset dir="${releaseParentDir}/admin/BroadleafCommerceAdminModule/target">
+			<fileset dir="${releaseParentDir}/admin/broadleaf-admin-module/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/target">
+			<fileset dir="${releaseParentDir}/admin/broadleaf-open-admin-platform/target">
 				<include name="*sources.jar" />
 			</fileset>
-            <fileset dir="${releaseParentDir}/admin/BroadleafCommerceCMSModule/target">
+            <fileset dir="${releaseParentDir}/admin/broadleaf-contentmanagement-module/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/core/BroadleafCommerceFramework/target">
+			<fileset dir="${releaseParentDir}/core/broadleaf-framework/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/core/BroadleafCommerceFrameworkWeb/target">
+			<fileset dir="${releaseParentDir}/core/broadleaf-framework-web/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/core/BroadleafCommerceProfile/target">
+			<fileset dir="${releaseParentDir}/core/broadleaf-profile/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/core/BroadleafCommerceProfileWeb/target">
+			<fileset dir="${releaseParentDir}/core/broadleaf-profile-web/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/module/BroadleafCommerceUSPS/target">
+			<fileset dir="${releaseParentDir}/module/broadleaf-usps/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/module/BroadleafCommerceUSPSSchemas/target">
+			<fileset dir="${releaseParentDir}/module/broadleaf-usps-schemas/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/module/BroadleafCommerceCyberSource/target">
+			<fileset dir="${releaseParentDir}/module/broadleaf-cybersource/target">
 				<include name="*sources.jar" />
 			</fileset>
-			<fileset dir="${releaseParentDir}/module/BroadleafCommerceCyberSourceAPI/target">
+			<fileset dir="${releaseParentDir}/module/broadleaf-cybersource-api/target">
 				<include name="*sources.jar" />
 			</fileset>
 		</copy>
@@ -455,7 +455,7 @@
 				<fileset refid="distributionDeps" />
 				<rsel:name name="org/broadleafcommerce/broadleaf-demo-launcher*.jar" />
 			</restrict>
-			<fileset dir="${releaseParentDir}/site/BroadleafCommerceDemoLauncher">
+			<fileset dir="${releaseParentDir}/site/broadleaf-demo-launcher">
 				<include name="jetty.xml" />
 			</fileset>
 		</copy>

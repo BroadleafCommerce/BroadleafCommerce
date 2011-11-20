@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>BroadleafCommerce</artifactId>
+		<artifactId>broadleaf</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
 		<version>1.5.0-RC2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<!-- 'groupId' inherited from parent -->
 	<artifactId>integration</artifactId>
-	<name>integration</name>
-	<!-- 'version' inherited from parent -->
+	<name>BroadleafCommerce Integration</name>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
@@ -35,12 +33,12 @@
 						<phase>test</phase>
 						<configuration>
 							<tasks unless="maven.test.skip">
-								<property name="framework" location="../core/BroadleafCommerceFramework" />
-								<property name="frameworkWeb" location="../core/BroadleafCommerceFrameworkWeb" />
-								<property name="profile" location="../core/BroadleafCommerceProfile" />
-								<property name="profileWeb" location="../core/BroadleafCommerceProfileWeb" />
-								<property name="usps" location="../module/BroadleafCommerceUSPS" />
-								<property name="cybersource" location="../module/BroadleafCommerceCyberSource" />
+								<property name="framework" location="../core/broadleaf-framework" />
+								<property name="frameworkWeb" location="../core/broadleaf-framework-web" />
+								<property name="profile" location="../core/broadleaf-profile" />
+								<property name="profileWeb" location="../core/broadleaf-profile-web" />
+								<property name="usps" location="../module/broadleaf-usps" />
+								<property name="cybersource" location="../module/broadleaf-cybersource" />
 								<path id="test.path">
 									<pathelement location="${profile}/target/instrumented" />
 									<pathelement location="${profileWeb}/target/instrumented" />

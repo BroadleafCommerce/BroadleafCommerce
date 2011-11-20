@@ -2,17 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>BroadleafCommerce</artifactId>
+		<artifactId>broadleaf</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
 		<version>1.5.0-RC2-SNAPSHOT</version>
 	</parent>
-	<!-- 'groupId' inherited from parent -->
 	<artifactId>site</artifactId>
-	<!-- 'version' inherited from parent -->
 	<packaging>pom</packaging>
-	<name>site</name>
+	<name>BroadleafCommerce Site</name>
 	<modules>
-		<module>BroadleafCommerceDemo</module>
-		<module>BroadleafCommerceDemoLauncher</module>
+		<module>broadleaf-demo</module>
+		<module>broadleaf-demo-launcher</module>
   </modules>
 </project>
