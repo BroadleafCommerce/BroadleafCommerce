@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
@@ -41,6 +42,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Controller;
@@ -53,7 +55,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller("blCheckoutController")
 @RequestMapping("/checkout")
@@ -78,9 +85,11 @@ public class CheckoutController {
     @Resource(name="blPaymentInfoService")
     protected PaymentInfoService paymentInfoService;
     @Resource(name="blSecurePaymentInfoService")
-    private SecurePaymentInfoService securePaymentInfoService;
+    protected SecurePaymentInfoService securePaymentInfoService;
     @Resource(name="blCheckoutFormValidator")
-    private CheckoutFormValidator checkoutFormValidator;
+    protected CheckoutFormValidator checkoutFormValidator;
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
 
     protected String checkoutView;
     protected String receiptView;
@@ -170,6 +179,19 @@ public class CheckoutController {
         } catch (CheckoutException e) {
             LOG.error("Cannot perform checkout", e);
         }
+
+        //Fill out a few customer values for anonymous customers
+        Customer customer = order.getCustomer();
+        if (StringUtils.isEmpty(customer.getFirstName())) {
+            customer.setFirstName(checkoutForm.getBillingAddress().getFirstName());
+        }
+        if (StringUtils.isEmpty(customer.getLastName())) {
+            customer.setLastName(checkoutForm.getBillingAddress().getLastName());
+        }
+        if (StringUtils.isEmpty(customer.getEmailAddress())) {
+            customer.setEmailAddress(order.getEmailAddress());
+        }
+        customerService.saveCustomer(customer, false);
 
         return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderConfirmation.htm?orderNumber=" + order.getOrderNumber();
     }

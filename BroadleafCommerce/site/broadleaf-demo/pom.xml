@@ -107,31 +107,31 @@
                                 <configuration>
                                     <resources>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/java
+                                            <directory>../../admin/broadleaf-admin-module/src/main/java
                                             </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java
+                                            <directory>../../admin/broadleaf-open-admin-platform/src/main/java
                                             </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/java</directory>
+                                            <directory>../../admin/broadleaf-contentmanagement-module/src/main/java</directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceCMSModule/src/main/resources
+                                            <directory>../../admin/broadleaf-contentmanagement-module/src/main/resources
                                             </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceAdminModule/src/main/resources
+                                            <directory>../../admin/broadleaf-admin-module/src/main/resources
                                             </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
                                         <resource>
-                                            <directory>../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources
+                                            <directory>../../admin/broadleaf-open-admin-platform/src/main/resources
                                             </directory>
                                             <targetPath>./</targetPath>
                                         </resource>
