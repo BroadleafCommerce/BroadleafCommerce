@@ -172,16 +172,6 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
-	<servlet>
-        <servlet-name>default</servlet-name>
-        <servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/org.broadleafcommerce.admin.demoAdmin/*</url-pattern>
-    </servlet-mapping>
     
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
