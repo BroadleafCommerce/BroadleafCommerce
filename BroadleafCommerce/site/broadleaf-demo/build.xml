@@ -89,6 +89,15 @@
 			<arg value="jetty:run"/>
 		</artifact:mvn>
 	</target>
+
+    <target name="jetty-demo-jrebel-yourkit">
+		<delete dir="war/WEB-INF/lib"/>
+		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
+			<arg value="compile"/>
+			<arg value="war:exploded"/>
+			<arg value="jetty:run"/>
+		</artifact:mvn>
+	</target>
 	
 	<target name="jetty-stop">
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">

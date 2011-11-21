@@ -225,6 +225,9 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <keyname>info@broadleafcommerce.org</keyname>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -26,6 +26,7 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -93,58 +94,80 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     protected Thread cleanupThread = new Thread(new Runnable() {
         @Override
         public void run() {
-            while (cleanupThreadEnabled) {
-                try {
-                    List<StaticAssetStorageServiceImpl.CleanupOperation> myList;
-                    synchronized (operations) {
-                        myList = new ArrayList<StaticAssetStorageServiceImpl.CleanupOperation>(operations.size());
-                        myList.addAll(operations);
-                        operations.clear();
-                    }
-                    for (final StaticAssetStorageServiceImpl.CleanupOperation operation : myList) {
-                        File parentDir = operation.cacheFile.getParentFile();
-                        if (parentDir.exists()) {
-                            File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
-                                @Override
-                                public boolean accept(File file, String s) {
-                                    return s.startsWith(operation.assetName + "---") && !operation.getCacheFile().getName().equals(s);
-                                }
-                            });
-                            if (obsoleteFiles != null) {
-                                for (File file : obsoleteFiles) {
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Deleting obsolete asset cache file: " + file.getAbsolutePath());
+            checkState: {
+                while (cleanupThreadEnabled) {
+                    try {
+                        List<StaticAssetStorageServiceImpl.CleanupOperation> myList;
+                        synchronized (operations) {
+                            myList = new ArrayList<StaticAssetStorageServiceImpl.CleanupOperation>(operations.size());
+                            myList.addAll(operations);
+                            operations.clear();
+                        }
+                        for (final StaticAssetStorageServiceImpl.CleanupOperation operation : myList) {
+                            if (!cleanupThreadEnabled) {
+                                break checkState;
+                            }
+                            File parentDir = operation.cacheFile.getParentFile();
+                            if (parentDir.exists()) {
+                                File[] obsoleteFiles = parentDir.listFiles(new FilenameFilter() {
+                                    @Override
+                                    public boolean accept(File file, String s) {
+                                        return s.startsWith(operation.assetName + "---") && !operation.getCacheFile().getName().equals(s);
                                     }
-                                    try {
-                                        if (!file.delete()) {
-                                            LOG.warn("Unable to cleanup obsolete static file: " + file.getAbsolutePath());
+                                });
+                                if (obsoleteFiles != null) {
+                                    for (File file : obsoleteFiles) {
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug("Deleting obsolete asset cache file: " + file.getAbsolutePath());
                                         }
-                                    } catch (Throwable e) {
-                                        //do nothing
+                                        try {
+                                            if (!file.delete()) {
+                                                LOG.warn("Unable to cleanup obsolete static file: " + file.getAbsolutePath());
+                                            }
+                                        } catch (Exception e) {
+                                            //do nothing
+                                        }
                                     }
                                 }
                             }
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+                                //do nothing
+                            }
+                            if (!cleanupThreadEnabled) {
+                                break checkState;
+                            }
                         }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (Throwable e) {
-                            //do nothing
-                        }
+                    } catch (Exception e) {
+                        LOG.error("Cleanup operation failed", e);
                     }
-                } catch (Throwable e) {
-                    LOG.error("Cleanup operation failed", e);
-                }
-                try {
-                    Thread.sleep(10000);
-                } catch (Throwable e) {
-                    //do nothing
+                    try {
+                        Thread.sleep(10000);
+                    } catch (Exception e) {
+                        //do nothing
+                    }
+                    if (!cleanupThreadEnabled) {
+                        break checkState;
+                    }
                 }
             }
+            LOG.debug("Exiting CMS Cleanup Thread.");
         }
     }, "CMSStaticAssetCleanupThread");
 
     public StaticAssetStorageServiceImpl() {
         cleanupThread.start();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        cleanupThreadEnabled = false;
+        try {
+            cleanupThread.interrupt();
+        } catch (Exception e) {
+            LOG.error("Unable to shutdown CMS Cleanup Thread", e);
+        }
     }
 
     public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {

@@ -1,14 +1,13 @@
 package org.broadleafcommerce.email;
 
-import java.io.ByteArrayOutputStream;
-
-import javax.mail.internet.MimeMessage;
-
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
+import javax.annotation.PreDestroy;
+import javax.mail.internet.MimeMessage;
+import java.io.ByteArrayOutputStream;
 
 public class DemoSMTP extends Thread {
 	
@@ -18,6 +17,7 @@ public class DemoSMTP extends Thread {
 	private Integer currentCount = 0;
 	private int port;
 	private String bindAddress;
+    private boolean enabled = true;
 	
 	public DemoSMTP(int port, String bindAddress) {
 		this.port = port;
@@ -27,21 +27,29 @@ public class DemoSMTP extends Thread {
 	}
 	
 	public void init() {
-		greenMail = new GreenMail(
-            new ServerSetup[] {
-                new ServerSetup(port, bindAddress, ServerSetup.PROTOCOL_SMTP)
-            }
-        );
-		currentCount = 0;
-		greenMail.start();
+        if (enabled) {
+            greenMail = new GreenMail(
+                new ServerSetup[] {
+                    new ServerSetup(port, bindAddress, ServerSetup.PROTOCOL_SMTP)
+                }
+            );
+            currentCount = 0;
+            greenMail.start();
+        }
 	}
+
+    @PreDestroy
+    public void quit() {
+        enabled = false;
+        greenMail.stop();
+    }
 	
 	@Override
 	public void run() {
 		super.run();
-        while(true) {
+        while(enabled) {
         	try {
-        		greenMail.waitForIncomingEmail(10000, 1);
+        		greenMail.waitForIncomingEmail(1000, 1);
         		MimeMessage[] messages = greenMail.getReceivedMessages();
             	if (messages != null) {
             		for (int j = currentCount; j < messages.length; j++) {
