@@ -76,7 +76,6 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 				userRolePresenter = new UserRolePresenter(getDisplay().getUserRolesDisplay(), roleSearchView);
 				userRolePresenter.setDataSource((ListGridDataSource) library.get("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.setExpansionDataSource((ListGridDataSource) result , new String[]{"name", "description"}, new Boolean[]{false, false});
-				userRolePresenter.setReadOnly(false);
 				userRolePresenter.bind();
 			}
 		}));

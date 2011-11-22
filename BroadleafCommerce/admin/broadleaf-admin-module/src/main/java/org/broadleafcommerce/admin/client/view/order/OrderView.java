@@ -16,7 +16,13 @@
 
 package org.broadleafcommerce.admin.client.view.order;
 
-import org.broadleafcommerce.admin.client.CustomerCareModule;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
@@ -29,14 +35,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
-
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 
 /**
  * 
@@ -84,7 +82,9 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         detailsTab.setID("orderDetailsTab");
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("orderDetailsTitle"), entityDataSource);
         orderAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderAdjustmentsTitle"), false, false);
-        ((FormOnlyView) ((DynamicFormView) dynamicFormDisplay).getFormOnlyDisplay()).addMember(orderAdjustmentDisplay);
+        orderAdjustmentDisplay.getAddButton().setVisible(false);
+        orderAdjustmentDisplay.getRemoveButton().setVisible(false);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(orderAdjustmentDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
@@ -93,8 +93,12 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         orderItemsDisplay = new OrderItemView(BLCMain.getMessageManager().getString("orderItemsListTitle"), false, false);
         orderItemsTab.setPane(orderItemsDisplay);
         orderItemFeeDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderItemFeeListTitle"), false, false);
+        orderItemFeeDisplay.getAddButton().setVisible(false);
+        orderItemFeeDisplay.getRemoveButton().setVisible(false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemFeeDisplay);
         orderItemAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("orderItemAdjustmentsListTitle"), false, false);
+        orderItemAdjustmentDisplay.getAddButton().setVisible(false);
+        orderItemAdjustmentDisplay.getRemoveButton().setVisible(false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemAdjustmentDisplay);
         topTabSet.addTab(orderItemsTab);
         
@@ -102,7 +106,9 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         fgTab.setID("orderFgTab");
         fulfillmentGroupDisplay = new SubItemView(BLCMain.getMessageManager().getString("fgListTitle"), false, false);
         fulfillmentGroupAdjustmentDisplay = new GridStructureView(BLCMain.getMessageManager().getString("fgAdjustmentsListTitle"), false, false);
-        ((FormOnlyView) ((SubItemView) fulfillmentGroupDisplay).getFormOnlyDisplay()).addMember(fulfillmentGroupAdjustmentDisplay);
+        fulfillmentGroupAdjustmentDisplay.getAddButton().setVisible(false);
+        fulfillmentGroupAdjustmentDisplay.getRemoveButton().setVisible(false);
+        ((FormOnlyView) fulfillmentGroupDisplay.getFormOnlyDisplay()).addMember(fulfillmentGroupAdjustmentDisplay);
         fgTab.setPane(fulfillmentGroupDisplay);
         topTabSet.addTab(fgTab);
         
@@ -110,7 +116,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         paymentInfoTab.setID("orderPaymentInfoTab");
         paymentInfoDisplay = new SubItemView(BLCMain.getMessageManager().getString("paymentInfoListTitle"), false, false);
         additionalAttributesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("additionalAttributesListTitle"), false, false);
-        ((FormOnlyView) ((SubItemView) paymentInfoDisplay).getFormOnlyDisplay()).addMember(additionalAttributesDisplay);
+        ((FormOnlyView) paymentInfoDisplay.getFormOnlyDisplay()).addMember(additionalAttributesDisplay);
         paymentInfoTab.setPane(paymentInfoDisplay);
         topTabSet.addTab(paymentInfoTab);
         

@@ -43,8 +43,6 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
 	protected ToolStrip toolBar;
 	protected ToolStripButton addButton;
 	protected ToolStripButton removeButton;
-	protected ToolStripButton saveButton;
-	protected ToolStripButton refreshButton;
 	protected ListGrid grid;
 	protected ListGrid expansionGrid;
 	protected FormOnlyView orderItemFormDisplay;
@@ -85,18 +83,6 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         removeButton.setDisabled(true);
         toolBar.addButton(removeButton);
         toolBar.addSpacer(6);
-        saveButton = new ToolStripButton();
-        saveButton.setIcon(GWT.getModuleBaseURL() + "admin/images/button/save.png");
-        saveButton.setTitle(BLCMain.getMessageManager().getString("saveTitle"));
-        saveButton.setDisabled(true);
-        toolBar.addButton(saveButton);
-        saveButton.setDisabled(true);
-        refreshButton = new ToolStripButton();
-        refreshButton.setIcon(GWT.getModuleBaseURL()+"admin/images/button/refresh.png");
-        refreshButton.setTitle(BLCMain.getMessageManager().getString("restoreTitle"));
-        refreshButton.setTooltip(BLCMain.getMessageManager().getString("restoreTooltip"));
-        refreshButton.setDisabled(true);
-        toolBar.addButton(refreshButton);
         toolBar.setDisabled(false);
         toolBar.addFill();
         stack.addMember(toolBar);
@@ -184,11 +170,4 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
 		return orderItemFormDisplay;
 	}
 
-	public ToolStripButton getSaveButton() {
-		return saveButton;
-	}
-
-	public ToolStripButton getRefreshButton() {
-		return refreshButton;
-	}
 }
