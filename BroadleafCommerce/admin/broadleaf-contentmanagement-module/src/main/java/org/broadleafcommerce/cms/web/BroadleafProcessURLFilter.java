@@ -90,6 +90,8 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     @Resource(name = "blLocaleService")
     private LocaleService localeService;
 
+    protected Boolean sandBoxPreviewEnabled = true;
+
     /**
      * Parameter/Attribute name for the current language
      */
@@ -290,23 +292,30 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
 
     private SandBox determineSandbox(HttpServletRequest request, Site site) {
         SandBox currentSandbox = null;
-        Long sandboxId = null;
-        if (request.getParameter("blSandboxDateTimeRibbonProduction") == null) {
-            sandboxId = lookupSandboxId(request);
-        } else {
-            request.getSession().removeAttribute(SANDBOX_DATE_TIME_VAR);
-            request.getSession().removeAttribute(SANDBOX_ID_VAR);
-        }
-        if (sandboxId != null) {
-            currentSandbox = sandBoxService.retrieveSandboxById(sandboxId);
-            request.setAttribute(SANDBOX_VAR, currentSandbox);
-            if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
-                setContentTime(request);
+        if (!sandBoxPreviewEnabled) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Sandbox preview disabled. Setting sandbox to production");
             }
-        }
+            request.setAttribute(SANDBOX_VAR, currentSandbox);
+        } else {
+            Long sandboxId = null;
+            if (request.getParameter("blSandboxDateTimeRibbonProduction") == null) {
+                sandboxId = lookupSandboxId(request);
+            } else {
+                request.getSession().removeAttribute(SANDBOX_DATE_TIME_VAR);
+                request.getSession().removeAttribute(SANDBOX_ID_VAR);
+            }
+            if (sandboxId != null) {
+                currentSandbox = sandBoxService.retrieveSandboxById(sandboxId);
+                request.setAttribute(SANDBOX_VAR, currentSandbox);
+                if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
+                    setContentTime(request);
+                }
+            }
 
-        if (currentSandbox == null && site != null) {
-            currentSandbox = site.getProductionSandbox();
+            if (currentSandbox == null && site != null) {
+                currentSandbox = site.getProductionSandbox();
+            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -414,6 +423,9 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
 
     private void setContentTime(HttpServletRequest request) {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
+        if (sandBoxPreviewEnabled) {
+            sandboxDateTimeParam = null;
+        }
         Date overrideTime = null;
 
         try {
@@ -532,5 +544,13 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
 
     public void setUrlProcessorList(List<URLProcessor> urlProcessorList) {
         this.urlProcessorList = urlProcessorList;
+    }
+
+    public Boolean getSandBoxPreviewEnabled() {
+        return sandBoxPreviewEnabled;
+    }
+
+    public void setSandBoxPreviewEnabled(Boolean sandBoxPreviewEnabled) {
+        this.sandBoxPreviewEnabled = sandBoxPreviewEnabled;
     }
 }
