@@ -127,4 +127,34 @@ public interface CategoryDao {
      */
     @Nonnull
     public Category create();
+
+    /**
+     * Retrieve a list of all active child categories of the passed in {@code Category} instance.
+     * This method bases its search on a current time value. To make the retrieval of values more
+     * efficient, the current time is cached for a configurable amount of time. See
+     * {@link #getCurrentDateResolution()}
+     *
+     * @param category the parent category
+     * @return a list of all active child categories
+     */
+    @Nonnull
+    public List<Category> readActiveSubCategoriesByCategory(Category category);
+
+    /**
+     * Retrieve the value in milliseconds for how long the current data/time is cached when performing
+     * an active category query. By caching the current date/time, the same query can be generated
+     * repeatedly, which allows the query cache to be utilized. The default value is 10000 milliseconds.
+     *
+     * @return the value in milliseconds for how long the current date/time is cached
+     */
+    @Nonnull
+    public Long getCurrentDateResolution();
+
+    /**
+     * Set the value in milliseconds for how long the current date/time is cached when performing
+     * an active category query. The default value is 10000 milliseconds.
+     *
+     * @param currentDateResolution the value in milliseconds for how long the current date/time is cached
+     */
+	public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
 }

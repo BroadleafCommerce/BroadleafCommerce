@@ -83,5 +83,9 @@ public interface CatalogService {
     public Sku createSku();
     
     public Product createProduct(ProductType productType);
+
+    public List<Category> findAllSubCategories(Category category);
+
+    public List<Category> findActiveSubCategoriesByCategory(Category category);
     
 }

@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +43,9 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    protected Long currentDateResolution = 10000L;
+    private Date currentDate = SystemTime.asDate();
 
     @Override
     public Category save(Category category) {
@@ -92,6 +97,26 @@ public class CategoryDaoImpl implements CategoryDao {
         return query.getResultList();
     }
 
+    public List<Category> readActiveSubCategoriesByCategory(Category category) {
+        Date myDate;
+        Long myCurrentDateResolution = currentDateResolution;
+    	synchronized(this) {
+	    	if (currentDate.getTime() - currentDate.getTime() > myCurrentDateResolution) {
+	    		currentDate = new Date(currentDate.getTime());
+	    		myDate = currentDate;
+	    	} else {
+	    		myDate = currentDate;
+	    	}
+    	}
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
+        query.setParameter("categoryId", category.getId());
+        query.setParameter("currentDate", myDate);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
     @Override
     public void delete(Category category){
     	if (!em.contains(category)) {
@@ -104,5 +129,13 @@ public class CategoryDaoImpl implements CategoryDao {
     public Category create() {
         return (Category) entityConfiguration.createEntityInstance(Category.class.getName());
     }
+
+    public Long getCurrentDateResolution() {
+		return currentDateResolution;
+	}
+
+	public void setCurrentDateResolution(Long currentDateResolution) {
+		this.currentDateResolution = currentDateResolution;
+	}
     
 }

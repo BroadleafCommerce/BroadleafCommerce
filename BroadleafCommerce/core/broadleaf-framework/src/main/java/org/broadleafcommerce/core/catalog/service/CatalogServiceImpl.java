@@ -83,6 +83,16 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readAllCategories();
     }
 
+    @Override
+    public List<Category> findAllSubCategories(Category category) {
+        return categoryDao.readAllSubCategories(category);
+    }
+
+    @Override
+    public List<Category> findActiveSubCategoriesByCategory(Category category) {
+        return categoryDao.readActiveSubCategoriesByCategory(category);
+    }
+
     public List<Product> findAllProducts() {
         return categoryDao.readAllProducts();
     }
