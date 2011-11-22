@@ -84,8 +84,9 @@ import java.util.TreeMap;
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
-    private static final Map METADATA_CACHE = new LRUMap(1000);
-    private static final Map POLYMORPHIC_ENTITY_CACHE = new LRUMap(1000);
+    protected static final Object LOCK_OBJECT = new Object();
+    protected static final Map METADATA_CACHE = new LRUMap(1000);
+    protected static final Map POLYMORPHIC_ENTITY_CACHE = new LRUMap(1000);
 	
     protected EntityManager standardEntityManager;
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
@@ -143,7 +144,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	 */
 	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
         Class<?>[] cache;
-        synchronized(this) {
+        synchronized(LOCK_OBJECT) {
             cache = (Class<?>[]) POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
             if (cache == null) {
                 List<Class<?>> entities = new ArrayList<Class<?>>();
@@ -691,7 +692,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
             Map<String, FieldMetadata> cacheData;
-            synchronized(this) {
+            synchronized(LOCK_OBJECT) {
                 cacheData = (Map<String, FieldMetadata>) METADATA_CACHE.get(cacheKey);
                 if (cacheData == null) {
                     Map<String, FieldMetadata> props = getPropertiesForEntityClass(
