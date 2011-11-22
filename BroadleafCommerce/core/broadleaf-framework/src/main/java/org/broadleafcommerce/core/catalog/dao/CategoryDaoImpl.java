@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * {@inheritDoc}
  *
  * @author Jeff Fischer
  */
@@ -109,7 +108,7 @@ public class CategoryDaoImpl implements CategoryDao {
 	    	}
     	}
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("categoryId", category.getId());
+        query.setParameter("defaultParentCategory", category);
         query.setParameter("currentDate", myDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
