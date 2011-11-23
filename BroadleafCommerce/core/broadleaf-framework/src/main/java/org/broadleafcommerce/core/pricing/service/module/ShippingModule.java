@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.broadleafcommerce.core.pricing.service.module;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;

@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.workflow;
 
-import java.util.Iterator;
-import java.util.List;
+package org.broadleafcommerce.core.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class SequenceProcessor extends BaseProcessor {
 

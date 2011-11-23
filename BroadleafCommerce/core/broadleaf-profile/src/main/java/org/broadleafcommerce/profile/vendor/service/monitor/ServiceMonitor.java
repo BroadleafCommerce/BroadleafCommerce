@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.vendor.service.monitor;
 
-import java.util.HashMap;
-import java.util.Map;
+package org.broadleafcommerce.profile.vendor.service.monitor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.broadleafcommerce.profile.vendor.service.monitor.handler.LogStatusHandler;
 import org.broadleafcommerce.profile.vendor.service.type.ServiceStatusType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServiceMonitor {
 

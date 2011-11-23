@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.broadleafcommerce.profile.util.sql;
 
 import org.hibernate.tool.hbm2x.Exporter;

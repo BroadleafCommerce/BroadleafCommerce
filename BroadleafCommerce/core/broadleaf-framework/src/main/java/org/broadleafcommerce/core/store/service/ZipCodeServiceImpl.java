@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.core.store.service;
 
-import javax.annotation.Resource;
+package org.broadleafcommerce.core.store.service;
 
 import org.broadleafcommerce.core.store.dao.ZipCodeDao;
 import org.broadleafcommerce.core.store.domain.ZipCode;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service("blZipCodeService")
 public class ZipCodeServiceImpl implements ZipCodeService {

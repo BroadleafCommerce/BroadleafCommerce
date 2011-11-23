@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.other.domain;
 
 import org.broadleafcommerce.core.catalog.domain.ProductSku;

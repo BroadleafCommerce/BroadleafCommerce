@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.broadleafcommerce.profile.vendor.service.type;
+
+import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of service status types.
