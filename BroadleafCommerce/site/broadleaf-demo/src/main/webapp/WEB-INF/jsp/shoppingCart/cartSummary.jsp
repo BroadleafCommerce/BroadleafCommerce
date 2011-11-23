@@ -52,7 +52,7 @@
 			  		  		<td style="text-align:right;">
 				    			<span class="price">
 	           						<c:choose>
-										<c:when test="${item.salePrice.amount != item.retailPrice.amount}">
+										<c:when test="${item.salePrice != null && item.salePrice.amount != item.retailPrice.amount}">
 											<span class="salePrice"><fmt:formatNumber type="currency" value="${item.salePrice.amount}" /></span>
 											<br/><span class="originalPrice">reg&nbsp;<fmt:formatNumber type="currency" value="${item.retailPrice.amount}" /></span>
 										</c:when>

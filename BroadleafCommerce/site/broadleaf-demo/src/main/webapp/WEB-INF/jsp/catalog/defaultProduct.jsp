@@ -39,7 +39,7 @@
 					<c:if test="${!empty currentProduct.model}" >
 						<b>Model:</b> ${currentProduct.model}<br/>
 					</c:if>
-					<b>SKU:</b> ${currentProduct.skus[0].id}<br/>
+					<b>SKU:</b> ${currentProduct.sku.id}<br/>
 					<c:if test="${!empty currentProduct.longDescription}" >
 						<b>Description:</b> ${currentProduct.longDescription}<br/>		
 					</c:if>
@@ -58,18 +58,18 @@
 						<span class="productPrice"> 
 							<b> Our Price: </b>
 							<c:choose>
-								<c:when test="${currentProduct.skus[0].salePrice != currentProduct.skus[0].retailPrice}" >
-									<span class="strikethrough"><c:out value="${currentProduct.skus[0].retailPrice}" /></span>
-									<c:out value="${currentProduct.skus[0].salePrice}" />
+								<c:when test="${currentProduct.sku.salePrice != currentProduct.sku.retailPrice}" >
+									<span class="strikethrough"><c:out value="${currentProduct.sku.retailPrice}" /></span>
+									<c:out value="${currentProduct.sku.salePrice}" />
 								</c:when>			
 								<c:otherwise>
-									<c:out value="${currentProduct.skus[0].retailPrice}" />
+									<c:out value="${currentProduct.sku.retailPrice}" />
 								</c:otherwise>
 							</c:choose>
 						</span>
 						<br/><br/>
 						<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-								<c:param name="skuId" value="${currentProduct.skus[0].id}"/>
+								<c:param name="skuId" value="${currentProduct.sku.id}"/>
 								<c:param name="categoryId" value="${currentProduct.defaultCategory.id}"/>
 								<c:param name="productId" value="${currentProduct.id}"/>
 								<c:param name="quantity" value="1"/>

@@ -40,17 +40,17 @@
 				<div class="span-3 column productResultsRightCol" style="float:right;text-align:right;">
 					<span class="productPrice">
 						<c:choose>
-							<c:when test="${product.skus[0].salePrice != product.skus[0].retailPrice }" >
-								Sale: <span class="salePrice">$<c:out value="${product.skus[0].salePrice}" /></span>
-								<br/><span class="originalPrice">$<c:out value="${product.skus[0].retailPrice}" /></span>
+							<c:when test="${product.sku.salePrice != null && product.sku.salePrice != product.sku.retailPrice }" >
+								Sale: <span class="salePrice">$<c:out value="${product.sku.salePrice}" /></span>
+								<br/><span class="originalPrice">$<c:out value="${product.sku.retailPrice}" /></span>
 							</c:when>			
 							<c:otherwise>
-								<span class="salePrice">$<c:out value="${product.skus[0].retailPrice}" /></span>
+								<span class="salePrice">$<c:out value="${product.sku.retailPrice}" /></span>
 							</c:otherwise>
 						</c:choose>
 					</span> <br/><br/>
 					<a class="addCartBtn" href="<c:url value="/basket/addItem.htm"> 
-						<c:param name="skuId" value="${product.skus[0].id}"/>
+						<c:param name="skuId" value="${product.sku.id}"/>
                         <c:param name="productId" value="${product.id}"/>
 						<c:param name="categoryId" value="${product.defaultCategory.id}"/>
 						<c:param name="quantity" value="1"/> </c:url>">Add to Cart</a>

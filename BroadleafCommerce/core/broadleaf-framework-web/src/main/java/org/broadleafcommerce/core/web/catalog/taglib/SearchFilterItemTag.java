@@ -16,20 +16,19 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.money.Money;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.money.Money;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <p>The SearchFilterItemTag renders form elements designed to help filter a list of products. There
@@ -187,8 +186,13 @@ public class SearchFilterItemTag extends SimpleTagSupport {
 
         for (Product product : products) {
             Money propertyObject = (Money) valueTransformer.transform(product);
-            min = propertyObject.min(min);
-            max = propertyObject.max(max);
+            if (propertyObject == null) {
+                min = new Money(0D);
+                max = new Money(0D);
+            } else {
+                min = propertyObject.min(min);
+                max = propertyObject.max(max);
+            }
         }
 
         String propertyCss = property.replaceAll("[.\\[\\]]", "_");

@@ -16,14 +16,13 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib;
 
-import java.io.IOException;
+import org.broadleafcommerce.core.catalog.domain.Product;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-
-import org.broadleafcommerce.core.catalog.domain.Product;
+import java.io.IOException;
 
 public class ProductLinkTag extends CategoryLinkTag {
 

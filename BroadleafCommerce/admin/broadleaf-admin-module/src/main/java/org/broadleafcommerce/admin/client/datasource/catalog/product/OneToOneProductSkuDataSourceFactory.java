@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.client.datasource.catalog.product;
 
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.module.ProductSkuBasicEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
@@ -38,11 +39,12 @@ import com.smartgwt.client.data.DataSource;
 public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 	
 	public static ListGridDataSource dataSource = null;
+    public static final String defaultCategoryForeignKey = "defaultCategory";
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
+			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(defaultCategoryForeignKey, EntityImplementations.CATEGORY, null)});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new ProductSkuBasicEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

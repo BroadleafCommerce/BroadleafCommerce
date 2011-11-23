@@ -462,7 +462,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.8.0</version>
+                <version>1.8.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1136,7 +1136,7 @@
                 <artifactId>cobertura</artifactId>
                 <version>1.8</version>
                 <type>jar</type>
-                <scope>compile</scope>
+                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>asm</groupId>

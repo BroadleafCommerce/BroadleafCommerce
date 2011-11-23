@@ -281,7 +281,7 @@ public class CatalogController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
-            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "skus[0].salePrice"});
+            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "sku.salePrice"});
 
             if ((catalogSort != null) && (catalogSort.getSort() != null)) {
                 populateProducts(productList, currentCategory);
@@ -317,10 +317,10 @@ public class CatalogController {
     @SuppressWarnings("unchecked")
     private List<Product> sortProducts (CatalogSort catalogSort, List<Product> displayProducts) {
         if (catalogSort.getSort().equals("priceL")) {
-            Collections.sort(displayProducts, new BeanComparator("skus[0].salePrice", new NullComparator()));
+            Collections.sort(displayProducts, new BeanComparator("sku.salePrice", new NullComparator()));
         }
         else if (catalogSort.getSort().equals("priceH")) {
-            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("skus[0].salePrice", new NullComparator())));
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("sku.salePrice", new NullComparator())));
         }
         else if (catalogSort.getSort().equals("manufacturerA")) {
             Collections.sort(displayProducts, new BeanComparator("manufacturer", new NullComparator()));

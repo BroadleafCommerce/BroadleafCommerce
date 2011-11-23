@@ -76,7 +76,7 @@
 	</aop:config>
 
     <bean id="blProductDao" class="org.broadleafcommerce.core.catalog.dao.ProductDaoImpl">
-        <property name="currentDateResolution" value="600000"/>
+        <property name="currentDateResolution" value="1000"/>
 	</bean>
 
 </beans>

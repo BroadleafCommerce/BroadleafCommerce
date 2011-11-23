@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.presentation.RequiredOverride;
 import org.broadleafcommerce.profile.util.DateUtil;
 import org.broadleafcommerce.profile.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.profile.vendor.service.type.ContainerSizeType;
@@ -198,7 +199,7 @@ public class ProductImpl implements Product {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Product Default Category", order=6, group="Product Description", excluded = true)
+    @AdminPresentation(friendlyName="Product Default Category", order=6, group="Product Description", excluded = true, requiredOverride = RequiredOverride.REQUIRED)
     protected Category defaultCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})

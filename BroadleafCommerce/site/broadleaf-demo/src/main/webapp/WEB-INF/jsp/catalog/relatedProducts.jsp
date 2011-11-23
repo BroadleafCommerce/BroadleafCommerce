@@ -19,18 +19,18 @@
 									</p>
 									<p>Our Price: <br/>
 										<c:choose>
-											<c:when test="${item.relatedProduct.skus[0].salePrice != item.relatedProduct.skus[0].retailPrice }" >
-												<span class="strikethrough"><c:out value="${item.relatedProduct.skus[0].retailPrice}" /></span>
-												<c:out value="${item.relatedProduct.skus[0].salePrice}" />
+											<c:when test="${item.relatedProduct.sku.salePrice != item.relatedProduct.sku.retailPrice }" >
+												<span class="strikethrough"><c:out value="${item.relatedProduct.sku.retailPrice}" /></span>
+												<c:out value="${item.relatedProduct.sku.salePrice}" />
 											</c:when>			
 											<c:otherwise>
-												<c:out value="${item.relatedProduct.skus[0].retailPrice}" />
+												<c:out value="${item.relatedProduct.sku.retailPrice}" />
 											</c:otherwise>
 										</c:choose>
 									</p>
 									<p>
 								    	<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-						   					<c:param name="skuId" value="${item.relatedProduct.skus[0].id}"/>
+						   					<c:param name="skuId" value="${item.relatedProduct.sku.id}"/>
 						   					<c:param name="productId" value="${item.relatedProduct.id}"/>
 						   					<c:param name="categoryId" value="${item.relatedProduct.defaultCategory.id}"/>
 											<c:param name="quantity" value="1"/>
@@ -59,16 +59,16 @@
 									</p>
 									<p>Our Price: <br/>
 										<c:choose>
-											<c:when test="${item.relatedProduct.skus[0].salePrice != item.relatedProduct.skus[0].retailPrice }" >
-												<span class="strikethrough">${item.relatedProduct.skus[0].retailPrice}</span>
-												${item.relatedProduct.skus[0].salePrice}
+											<c:when test="${item.relatedProduct.sku.salePrice != item.relatedProduct.sku.retailPrice }" >
+												<span class="strikethrough">${item.relatedProduct.sku.retailPrice}</span>
+												${item.relatedProduct.sku.salePrice}
 											</c:when>			
-											<c:otherwise> ${item.relatedProduct.skus[0].retailPrice} </c:otherwise>
+											<c:otherwise> ${item.relatedProduct.sku.retailPrice} </c:otherwise>
 										</c:choose>
 									</p>
 									<p>
 										<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-											<c:param name="skuId" value="${item.relatedProduct.skus[0].id}"/>
+											<c:param name="skuId" value="${item.relatedProduct.sku.id}"/>
 											<c:param name="productId" value="${item.relatedProduct.id}" />
 											<c:param name="categoryId" value="${item.relatedProduct.defaultCategory.id}"/>
 											<c:param name="quantity" value="1"/>
