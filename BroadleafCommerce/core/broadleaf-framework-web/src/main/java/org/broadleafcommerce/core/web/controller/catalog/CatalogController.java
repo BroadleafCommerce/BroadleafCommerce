@@ -22,6 +22,7 @@ import org.apache.commons.collections.comparators.ReverseComparator;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.CartService;
@@ -253,7 +254,7 @@ public class CatalogController {
         wishlistRequest.setAddCategoryId(currentCategory.getId());
         wishlistRequest.setAddProductId(product.getId());
         wishlistRequest.setQuantity(1);
-        wishlistRequest.setAddSkuId(product.getSkus().get(0).getId());
+        wishlistRequest.setAddSkuId(((ProductSku) product).getSku().getId());
         model.addAttribute("wishlistRequest", wishlistRequest);
 
         return (productPosition !=0);
