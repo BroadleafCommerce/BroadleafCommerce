@@ -117,7 +117,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
         out.println("<ul class='searchFilter-"+propertyCss+"'>");
         for (Object value : countMap.keySet()) {
             Object display = valueDisplayMap.get(value);
-            out.println("<li value='"+ value +"'><input type='checkbox' class='searchFilter-"+propertyCss+"Checkbox' name='"+property+"' value='" + value + "'/> " +
+            out.println("<li value='"+ value +"'><input type=\"checkbox\" class=\"searchFilter-"+propertyCss+"Checkbox\" name=\""+property+"\" value=\"" + value + "\"/> " +
                     "<span class='searchFilter-"+propertyCss+"Display'>"+display+"</span>" + " <span class='searchFilter"+propertyCss+"-count'>(" + countMap.get(value).toString() + ")</span></li>");
         }
         out.println("</ul>");
