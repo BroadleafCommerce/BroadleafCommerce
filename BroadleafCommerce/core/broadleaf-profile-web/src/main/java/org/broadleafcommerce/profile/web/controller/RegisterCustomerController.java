@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.profile.web.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.ChallengeQuestionService;
@@ -28,7 +23,6 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.broadleafcommerce.profile.web.core.service.LoginService;
-import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -37,6 +31,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller("blRegisterCustomerController")
 @RequestMapping("/registerCustomer")
@@ -49,21 +47,21 @@ import org.springframework.web.servlet.ModelAndView;
 public class RegisterCustomerController {
 
     // URLs For success and failure
-    private String displayRegistrationFormView = "/account/registration/registerCustomer";
-    private String registrationErrorView = displayRegistrationFormView;
-    private String registrationSuccessView = "redirect:/registerCustomer/registerCustomerSuccess.htm";
+    protected String displayRegistrationFormView = "/account/registration/registerCustomer";
+    protected String registrationErrorView = displayRegistrationFormView;
+    protected String registrationSuccessView = "redirect:/registerCustomer/registerCustomerSuccess.htm";
 
     @Resource(name="blCustomerService")
-    private CustomerService customerService;
+    protected CustomerService customerService;
 
     @Resource(name="blRegisterCustomerValidator")
-    private RegisterCustomerValidator registerCustomerValidator;
+    protected RegisterCustomerValidator registerCustomerValidator;
     
     @Resource(name="blChallengeQuestionService")
-    private ChallengeQuestionService challengeQuestionService;
+    protected ChallengeQuestionService challengeQuestionService;
     
     @Resource(name="blLoginService")
-    private LoginService loginService;
+    protected LoginService loginService;
 
     @RequestMapping(method = { RequestMethod.GET })
     public String registerCustomer() {
