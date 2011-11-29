@@ -17,6 +17,7 @@
 package com.other.domain;
 
 import org.broadleafcommerce.core.catalog.domain.ProductSkuImpl;
+import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.AdminPresentationOverride;
@@ -41,7 +42,12 @@ import java.util.Date;
 @Table(name = "OTHER_PRODUCT")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "otherProduct")
-@AdminPresentationOverrides(@AdminPresentationOverride(name="description", value=@AdminPresentation(friendlyName="My Company Description", order=2, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)))
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="description", value=@AdminPresentation(friendlyName="My Company Description", order=2, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)),
+        @AdminPresentationOverride(name="dimension.container", value=@AdminPresentation(friendlyName="Product Container Shape", order=15, group="Dimension", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="com.other.domain.OtherContainerShapeType"))
+    }
+)
 public class OtherProductImpl extends ProductSkuImpl implements OtherProduct {
 
 	private static final long serialVersionUID = 1L;

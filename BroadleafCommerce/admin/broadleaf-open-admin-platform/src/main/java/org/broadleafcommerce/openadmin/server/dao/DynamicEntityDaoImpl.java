@@ -477,7 +477,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
     }
 
-    protected void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
+    protected void applyMetadataOverrides(String ceilingEntityFullyQualifiedClassname, String configurationKey, String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
         if (fieldMetadataOverrides != null && configurationKey != null) {
             Map<String, Map<String, FieldMetadata>> configuredOverrides = fieldMetadataOverrides.get(configurationKey);
             if (configuredOverrides != null) {
@@ -547,8 +547,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 if (localMetadata.getPresentationAttributes().getColumnWidth() != null) {
                                     serverMetadata.getPresentationAttributes().setColumnWidth(localMetadata.getPresentationAttributes().getColumnWidth());
                                 }
-                                if (localMetadata.getPresentationAttributes().getBroadleafEnumeration() != null) {
+                                if (!StringUtils.isEmpty(localMetadata.getPresentationAttributes().getBroadleafEnumeration()) && !localMetadata.getPresentationAttributes().getBroadleafEnumeration().equals(serverMetadata.getPresentationAttributes().getBroadleafEnumeration())) {
                                     serverMetadata.getPresentationAttributes().setBroadleafEnumeration(localMetadata.getPresentationAttributes().getBroadleafEnumeration());
+                                    setupBroadleafEnumeration(localMetadata.getPresentationAttributes().getBroadleafEnumeration(), serverMetadata);
                                 }
                                 if (localMetadata.getPresentationAttributes().getReadOnly() != null) {
                                     serverMetadata.getPresentationAttributes().setReadOnly(localMetadata.getPresentationAttributes().getReadOnly());
@@ -573,7 +574,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
     }
 
-    protected void applyAdminPresentationOverrides(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationOverride> presentationOverrides) {
+    protected void applyAdminPresentationOverrides(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationOverride> presentationOverrides) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException {
         for (String propertyName : presentationOverrides.keySet()) {
             AdminPresentation annot = presentationOverrides.get(propertyName).value();
             for (String key : mergedProperties.keySet()) {
@@ -613,7 +614,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     attr.setLargeEntry(annot.largeEntry());
                     attr.setProminent(annot.prominent());
                     attr.setColumnWidth(annot.columnWidth());
-                    attr.setBroadleafEnumeration(annot.broadleafEnumeration());
+                    if (!StringUtils.isEmpty(annot.broadleafEnumeration()) && !annot.broadleafEnumeration().equals(attr.getBroadleafEnumeration())) {
+                        attr.setBroadleafEnumeration(annot.broadleafEnumeration());
+                        setupBroadleafEnumeration(annot.broadleafEnumeration(), metadata);
+                    }
                     attr.setReadOnly(annot.readOnly());
                     attr.setExcluded(isParentExcluded?true:annot.excluded());
                     attr.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
@@ -788,33 +792,37 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		}
 		fieldMetadata.setMergedPropertyType(mergedPropertyType);
 		if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
-			Map<String, String> enumVals = new TreeMap<String, String>();
-			Class<?> broadleafEnumeration = Class.forName(presentationAttribute.getBroadleafEnumeration());
-			Method typeMethod = broadleafEnumeration.getMethod("getType", new Class<?>[]{});
-			Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType", new Class<?>[]{});
-			Field[] fields = broadleafEnumeration.getFields();
-			for (Field field : fields) {
-				boolean isStatic = Modifier.isStatic(field.getModifiers());
-				boolean isNameEqual = field.getType().getName().equals(broadleafEnumeration.getName());
-				if (isStatic && isNameEqual){
-					enumVals.put((String) friendlyTypeMethod.invoke(field.get(null), new Object[]{}), (String) typeMethod.invoke(field.get(null), new Object[]{}));
-				}
-			}
-			String[][] enumerationValues = new String[enumVals.size()][2];
-			int j = 0;
-			for (String key : enumVals.keySet()) {
-				enumerationValues[j][0] = enumVals.get(key);
-				enumerationValues[j][1] = key;
-				j++;
-			}
-			fieldMetadata.setEnumerationValues(enumerationValues);
-			fieldMetadata.setEnumerationClass(presentationAttribute.getBroadleafEnumeration());
+            setupBroadleafEnumeration(presentationAttribute.getBroadleafEnumeration(), fieldMetadata);
 		}
 		
 		return fieldMetadata;
 	}
-	
-	protected Field[] getAllFields(Class<?> targetClass) {
+
+    protected void setupBroadleafEnumeration(String broadleafEnumerationClass, FieldMetadata fieldMetadata) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Map<String, String> enumVals = new TreeMap<String, String>();
+        Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);
+        Method typeMethod = broadleafEnumeration.getMethod("getType", new Class<?>[]{});
+        Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType", new Class<?>[]{});
+        Field[] fields = broadleafEnumeration.getFields();
+        for (Field field : fields) {
+            boolean isStatic = Modifier.isStatic(field.getModifiers());
+            boolean isNameEqual = field.getType().getName().equals(broadleafEnumeration.getName());
+            if (isStatic && isNameEqual){
+                enumVals.put((String) friendlyTypeMethod.invoke(field.get(null), new Object[]{}), (String) typeMethod.invoke(field.get(null), new Object[]{}));
+            }
+        }
+        String[][] enumerationValues = new String[enumVals.size()][2];
+        int j = 0;
+        for (String key : enumVals.keySet()) {
+            enumerationValues[j][0] = enumVals.get(key);
+            enumerationValues[j][1] = key;
+            j++;
+        }
+        fieldMetadata.setEnumerationValues(enumerationValues);
+        fieldMetadata.setEnumerationClass(broadleafEnumerationClass);
+    }
+
+    protected Field[] getAllFields(Class<?> targetClass) {
 		Field[] allFields = new Field[]{};
 		boolean eof = false;
 		Class<?> currentClass = targetClass;
@@ -1291,7 +1299,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             if (testField == null) {
                 Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
                 int count = 0;
-                while (testField == null && count < entities.length) {
+                while (count < entities.length) {
                     testField = getFieldManager().getField(entities[count], testProperty);
                     if (testField != null) {
                         myField = getFieldManager().getField(entities[count], prefix + propertyName);
