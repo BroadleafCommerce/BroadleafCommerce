@@ -4,10 +4,10 @@
       	<%--<blc:productsForCategory var="products" categoryId="${childCategory.id}"/>
       	<c:if test="${fn:length(products) gt 0}">--%>
        	<div class="span-4 <c:if test="${status.index != 0 && (status.index + 1) % 3 == 0}">last</c:if>" align="center">
-			<a href="/broadleafdemo/${childCategory.generatedUrl}">
-				<img border="0" title="${childCategory.name}" alt="${childCategory.name}" src="/broadleafdemo${childCategory.categoryImages.small}" width="100" />
+			<a href="<c:out value="${pageContext.request.contextPath}"/>/${childCategory.generatedUrl}">
+				<img border="0" title="${childCategory.name}" alt="${childCategory.name}" src="<c:choose><c:when test="${!(fn:startsWith(childCategory.categoryMedia.small.url,'http')) && fn:startsWith(childCategory.categoryMedia.small.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${childCategory.categoryMedia.small.url}" width="100" />
 			</a><br />
-			<a class="noTextUnderline" href="/broadleafdemo/${childCategory.generatedUrl}"><b>${childCategory.name}</b></a>
+			<a class="noTextUnderline" href="<c:out value="${pageContext.request.contextPath}"/>/${childCategory.generatedUrl}"><b>${childCategory.name}</b></a>
 		</div>
 		<c:if test="${status.index != 0 && (status.index + 1) % 3 == 0}">
 			<div class="span-13">&nbsp;</div>

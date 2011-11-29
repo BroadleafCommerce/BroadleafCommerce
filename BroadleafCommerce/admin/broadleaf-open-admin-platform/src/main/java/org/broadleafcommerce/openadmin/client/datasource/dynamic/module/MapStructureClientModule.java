@@ -77,19 +77,19 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
-        Entity tempEntity = buildEntity(temp, request);
-        final ListGridRecord record = associatedGrid.getSelectedRecord();
-    	Entity entity = buildEntity(record, request);
-    	for (Property property : tempEntity.getProperties()) {
-    		entity.findProperty(property.getName()).setValue(property.getValue());
-    	}
-        String componentId = request.getComponentId();
-        if (componentId != null) {
-            if (entity.getType() == null) {
-            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	entity.setType(type);
-            }
-        }
+        Entity entity = buildEntity(temp, request);
+        //final ListGridRecord record = associatedGrid.getSelectedRecord();
+    	//Entity entity = buildEntity(record, request);
+    	//for (Property property : tempEntity.getProperties()) {
+    		//entity.findProperty(property.getName()).setValue(property.getValue());
+    	//}
+        //String componentId = request.getComponentId();
+        //if (componentId != null) {
+            //if (entity.getType() == null) {
+            	//String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+            	//entity.setType(type);
+            //}
+        //}
 		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);

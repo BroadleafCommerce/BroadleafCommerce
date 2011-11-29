@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.UrlBuilder;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -27,6 +27,7 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ImageStyle;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Img;
 import com.smartgwt.client.widgets.Window;
@@ -38,6 +39,7 @@ import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -54,13 +56,13 @@ public class EntityEditDialog extends Window {
 	
 	private DynamicForm dynamicForm;
 	private ItemEditedHandler handler;
-    private Img previewImg;
     private VStack pictureStack;
     protected boolean showMedia = false;
     protected String mediaField;
     protected HStack hStack;
     protected VLayout vLayout;
     protected Boolean isHidden = true;
+    protected VStack previewContainer;
 
 	public EntityEditDialog() {
 		this.setIsModal(true);
@@ -83,17 +85,10 @@ public class EntityEditDialog extends Window {
 
         pictureStack = new VStack();
         pictureStack.setLayoutTopMargin(20);
-        VStack previewContainer = new VStack();
+        previewContainer = new VStack();
         previewContainer.setWidth(60);
         previewContainer.setHeight(60);
         previewContainer.setBorder("1px solid #a6abb4");
-        previewImg = new Img();
-        previewImg.setImageType(ImageStyle.CENTER);
-        previewImg.setVisible(true);
-        previewImg.setShowDisabled(false);
-        previewImg.setSrc(GWT.getModuleBaseURL() + "admin/images/blank.gif");
-        previewImg.setShowDown(false);
-        previewContainer.addChild(previewImg);
         pictureStack.addMember(previewContainer);
 
         hStack.addMember(pictureStack);
@@ -182,12 +177,39 @@ public class EntityEditDialog extends Window {
 
     public void updateMedia(String url) {
         pictureStack.setVisible(true);
+
+        Canvas[] children = previewContainer.getChildren();
+        if (children != null && children.length > 0) {
+            children[0].destroy();
+        }
+
+        Img previewImg = new Img();
+        previewImg.setImageType(ImageStyle.CENTER);
+        previewImg.setVisible(true);
+        previewImg.setShowDisabled(false);
+        previewImg.setShowDown(false);
+
         url = url.toLowerCase();
-        if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".gif") || url.endsWith(".png")) {
-            previewImg.setSrc(url + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+        if (url.startsWith("http")) {
+            previewImg.setSrc(url);
+            previewImg.setImageHeight(60);
+            previewImg.setImageWidth(60);
+        } else if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".gif") || url.endsWith(".png")) {
+            String srcPath;
+            if (!url.contains(BLCMain.assetServerUrlPrefix)) {
+                UrlBuilder urlBuilder =  BLCMain.buildStoreFrontBaseUrl(url);
+                srcPath = urlBuilder.buildString();
+                previewImg.setImageHeight(60);
+                previewImg.setImageWidth(60);
+            } else {
+                srcPath = url + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true";
+            }
+            previewImg.setSrc(srcPath);
         } else {
             previewImg.setSrc("[ISOMORPHIC]/../admin/images/Mimetype-binary-icon-64.png");
         }
+
+        previewContainer.addChild(previewImg);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

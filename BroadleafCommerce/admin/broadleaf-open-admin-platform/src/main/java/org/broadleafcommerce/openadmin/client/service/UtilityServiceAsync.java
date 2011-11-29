@@ -27,6 +27,9 @@ public interface UtilityServiceAsync {
     
 	void getWebAppContext(AsyncCallback<String> cb);
 
-    void getStoreFrontWebAppContext(AsyncCallback<String> cb);
+    void getStoreFrontWebAppPrefix(AsyncCallback<String> cb);
 
+    void getAssetServerUrlPrefix(AsyncCallback<String> cb);
+
+    void getConfiguredContextsAndPrefixes(AsyncCallback<String[]> cb);
 }

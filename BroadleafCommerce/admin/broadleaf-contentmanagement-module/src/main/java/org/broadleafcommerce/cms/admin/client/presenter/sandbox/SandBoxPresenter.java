@@ -106,14 +106,8 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
     protected void previewSelection(ListGridRecord[] records) {
-        String prefix = BLCMain.storeFrontWebAppContext;
-        UrlBuilder urlBuilder = new UrlBuilder();
-        if (prefix.startsWith("/")) {
-            urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
-            urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
-            urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
-        }
-        urlBuilder.setPath(prefix);
+        String prefix = BLCMain.storeFrontWebAppPrefix;
+        UrlBuilder urlBuilder =  BLCMain.buildStoreFrontBaseUrl();
         urlBuilder.setParameter("blSandboxId", org.broadleafcommerce.openadmin.client.security.SecurityManager.USER.getCurrentSandBoxId());
         if (records == null || (records != null && records.length > 1)) {
             com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);

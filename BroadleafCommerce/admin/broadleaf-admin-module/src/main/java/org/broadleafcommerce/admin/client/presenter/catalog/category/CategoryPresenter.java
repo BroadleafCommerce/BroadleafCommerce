@@ -36,6 +36,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 import com.smartgwt.client.widgets.tree.events.DataArrivedEvent;
 import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.admin.client.datasource.catalog.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
@@ -45,7 +46,6 @@ import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDa
 import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
-import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
@@ -312,7 +312,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
                         assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
                             @Override
                             public void onSearchItemSelected(TileGridItemSelected event) {
-                                String staticAssetFullUrl = "cms/staticasset" + event.getRecord().getAttribute("fullUrl");
+                                String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
                                 formItem.setValue(staticAssetFullUrl);
                                 getMediaEntityView().updateMedia(staticAssetFullUrl);
                             }

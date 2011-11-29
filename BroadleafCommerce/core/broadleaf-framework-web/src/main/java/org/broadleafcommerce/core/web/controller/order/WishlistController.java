@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.order;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -38,6 +34,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 1) Created the WishlistController as an extension of the CartController
@@ -191,7 +190,7 @@ public class WishlistController extends CartController {
             LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective
         }
-        return "redirect:/basket/currentCart.htm";
+        return "redirect:/basket/viewCart.htm";
     }
 
     // override the retreiveOrder method in CartController to return a name wishlist order

@@ -1,39 +1,39 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
 <!-- Blueprint Framework CSS -->
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/blueprint/screen.css" />
 
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/layout.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/master.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/navigation.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/style.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/pagination.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/thickbox.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/search.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/product.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/category.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/checkout.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/order.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/ui.stars.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/layout.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/master.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/navigation.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/style.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/pagination.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/thickbox.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/search.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/product.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/category.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/checkout.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/order.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/ui.stars.css" />
 
 
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/jquery-smoothness/jquery-ui-1.7.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/jquery-smoothness/jquery-ui-1.7.2.custom.css" />
 
 <!--[if lt IE 8]>
 <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
 <![endif]-->
 
 <!--[if IE]>
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/ieConditional.css" />
+<link rel="stylesheet" type="text/css" href="<c:out value="${pageContext.request.contextPath}"/>/css/ieConditional.css" />
 <![endif]-->
-<script type="text/javascript" src="/broadleafdemo/js/jquery-1.3.2.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/behaviors.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/jquery.pagination.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/ui.core.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/ui.slider.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/thickbox-compressed.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/product.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/checkout.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/ui.stars.js"></script>
-<script type="text/javascript" src="/broadleafdemo/js/catalog.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/jquery-1.3.2.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/behaviors.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/jquery.pagination.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/ui.core.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/ui.slider.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/thickbox-compressed.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/product.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/checkout.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/ui.stars.js"></script>
+<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/js/catalog.js"></script>
 <c:set scope="request" var="contextPath" value="${pageContext.request.contextPath}" />

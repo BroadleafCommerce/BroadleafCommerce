@@ -27,7 +27,7 @@
 	          		<tr class="product">
 	          			<td class="thumbnail">
 							<a href="${itemUrl}">
-								<img border="0" title="${product.name}" width="80" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" />
+								<img border="0" title="${product.name}" width="80" alt="${product.name}" src="<c:choose><c:when test="${!(fn:startsWith(product.productMedia.small.url,'http')) && fn:startsWith(product.productMedia.small.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${product.productMedia.small.url}" />
 							</a>
 						</td>
 				  		<td class="item">

@@ -3,8 +3,8 @@
 		<tiles:putAttribute name="headContentAdditional">
 			<c:choose>
 				<c:when test="${BLC_PAGE eq null}">
-					<script language="javascript" src="/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/tiny_mce_popup.js"></script>
-					<script type="text/javascript" src="/broadleafdemo/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/plugins/preview/jscripts/embed.js"></script>
+					<script language="javascript" src="<c:out value="${pageContext.request.contextPath}"/>/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/tiny_mce_popup.js"></script>
+					<script type="text/javascript" src="<c:out value="${pageContext.request.contextPath}"/>/org.broadleafcommerce.admin.demoAdmin/admin/tinymce/plugins/preview/jscripts/embed.js"></script>
 					<script type="text/javascript">
 					tinyMCEPopup.onInit.add(function(ed) {
 						var dom = tinyMCEPopup.dom;

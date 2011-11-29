@@ -5,7 +5,7 @@ $(document).ready(function(){
 	$("#submitReview").click(function(){
 		$.ajax({
 			type: "GET",
-			url: "/broadleafdemo/rating/saveReview.htm",
+			url: "<c:out value="${pageContext.request.contextPath}"/>/rating/saveReview.htm",
 			data: {
 				productId: ${currentProduct.id},
 				reviewText: $("#reviewText").val(),

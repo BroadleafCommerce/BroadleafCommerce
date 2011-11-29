@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -38,14 +39,15 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     private static final Log LOG = LogFactory.getLog(UtilityRemoteService.class);
 
     private ApplicationContext applicationContext;
-
-    protected String storeFrontWebAppContext;
+    protected String storeFrontWebAppPrefix;
+    protected String assetServerUrlPrefix;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    @Override
     public String getWebAppContext() throws ServiceException {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -56,11 +58,26 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
         }
     }
 
-    public String getStoreFrontWebAppContext() {
-        return storeFrontWebAppContext;
+    @Override
+    public String getStoreFrontWebAppPrefix() {
+        return storeFrontWebAppPrefix;
     }
 
-    public void setStoreFrontWebAppContext(String storeFrontWebAppContext) {
-        this.storeFrontWebAppContext = storeFrontWebAppContext;
+    public void setStoreFrontWebAppPrefix(String storeFrontWebAppPrefix) {
+        this.storeFrontWebAppPrefix = storeFrontWebAppPrefix;
+    }
+
+    @Override
+    public String getAssetServerUrlPrefix() {
+        return assetServerUrlPrefix;
+    }
+
+    public void setAssetServerUrlPrefix(String assetServerUrlPrefix) {
+        this.assetServerUrlPrefix = assetServerUrlPrefix;
+    }
+
+    @Override
+    public String[] getConfiguredContextsAndPrefixes() throws ServiceException, ApplicationSecurityException {
+        return new String[] {getWebAppContext(), storeFrontWebAppPrefix, assetServerUrlPrefix};
     }
 }

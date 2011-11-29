@@ -3,7 +3,7 @@
 	<tiles:putAttribute name="mainContent" type="string">
 <script>
 	function updateSearchFilterResults() {
-		$('#mainContent').prepend("<div class='grayedOut'><img style='margin-top:25px' src='/broadleafdemo/images/ajaxLoading.gif'/></div>");
+		$('#mainContent').prepend("<div class='grayedOut'><img style='margin-top:25px' src='<c:out value="${pageContext.request.contextPath}"/>/images/ajaxLoading.gif'/></div>");
 		var postData = $('#refineSearch').serializeArray();
 		postData.push({name:'ajax',value:'true'});
 		$('#mainContent').load($('#refineSearch').attr('action'), postData);

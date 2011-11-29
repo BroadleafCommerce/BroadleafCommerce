@@ -17,9 +17,9 @@
 		<div class="columns">
 			<div class="column productImage span-5">
 				<c:choose>
-					<c:when test="${!empty currentProduct.productImages.large}">
-						<a href="/broadleafdemo${currentProduct.productImages.large}" class="thickbox">
-							<img src="/broadleafdemo${currentProduct.productImages.large}" width="150" />
+					<c:when test="${!empty currentProduct.productMedia.large}">
+						<a href="<c:choose><c:when test="${!(fn:startsWith(currentProduct.productMedia.large.url,'http')) && fn:startsWith(currentProduct.productMedia.large.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${currentProduct.productMedia.large.url}" class="thickbox">
+							<img src="<c:choose><c:when test="${!(fn:startsWith(currentProduct.productMedia.large.url,'http')) && fn:startsWith(currentProduct.productMedia.large.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${currentProduct.productMedia.large.url}" width="150" />
 							<p>View larger image</p>
 						</a>
 					</c:when>
@@ -31,7 +31,7 @@
 			<div class="column productSummary span-11">
 				<div class="bottomRule">
 					<c:if test="${currentProduct.featuredProduct}">
-						<img class="featuredSmall" src="/broadleafdemo/images/featuredSmallRed.gif" /><br/>
+						<img class="featuredSmall" src="<c:out value="${pageContext.request.contextPath}"/>/images/featuredSmallRed.gif" /><br/>
 					</c:if>
 					<c:if test="${!empty currentProduct.manufacturer}" >
 						<b>Manufacturer:</b> ${currentProduct.manufacturer}<br/>

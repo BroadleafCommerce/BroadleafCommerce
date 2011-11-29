@@ -13,6 +13,10 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+    <bean id="blUtilityRemoteService" class="org.broadleafcommerce.openadmin.server.service.UtilityRemoteService">
+        <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
+    </bean>
+
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>

@@ -9,8 +9,8 @@
 <c:when test="${fn:length(categories) == 1}">
 	<c:forEach var="product" items="${products}" varStatus="status">
 		<div class="searchProduct span-3">
-			<a href="/broadleafdemo/${category.generatedUrl}?productId=${product.id}">
-				<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" width="75"/>
+			<a href="<c:out value="${pageContext.request.contextPath}"/>/${category.generatedUrl}?productId=${product.id}">
+				<img border="0" title="${product.name}" alt="${product.name}" src="<c:choose><c:when test="${!(fn:startsWith(product.productMedia.small.url,'http')) && fn:startsWith(product.productMedia.small.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${product.productMedia.small.url}" width="75"/>
 				<br/>
 			<c:out value="${product.name}"/></a>
 		</div>
@@ -25,8 +25,8 @@
 			<h3 style="color: rgb(86, 111, 50);"><c:out value="${category.name}"/></h3>
 			<c:forEach var="product" items="${categoryGroups[category.id]}" varStatus="status" end="3">
 				<div class="searchProduct span-3">
-					<a href="/broadleafdemo/${category.generatedUrl}?productId=${product.id}">
-						<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" width="75"/>
+					<a href="<c:out value="${pageContext.request.contextPath}"/>/${category.generatedUrl}?productId=${product.id}">
+						<img border="0" title="${product.name}" alt="${product.name}" src="<c:choose><c:when test="${!(fn:startsWith(product.productMedia.small.url,'http')) && fn:startsWith(product.productMedia.small.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${product.productMedia.small.url}" width="75"/>
 						<br/>
 					<c:out value="${product.name}"/></a>
 				</div>

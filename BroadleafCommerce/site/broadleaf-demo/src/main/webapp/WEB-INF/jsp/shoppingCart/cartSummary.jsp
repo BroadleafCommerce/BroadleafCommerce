@@ -30,7 +30,7 @@
 						</c:url>
 		          		<tr class="product">
 		          			<td class="thumbnail"><a href="${itemUrl}">
-									<img border="0" title="${product.name}" width="80" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" />
+									<img border="0" title="${product.name}" width="80" alt="${product.name}" src="<c:choose><c:when test="${!(fn:startsWith(product.productMedia.small.url,'http')) && fn:startsWith(product.productMedia.small.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${product.productMedia.small.url}" />
 								</a></td>
 					  		<td class="item">
 								<p class="description">
@@ -135,7 +135,7 @@
 	                    to shop from our selection of fine coffees and brewing equipment.
 	                    <c:if test="${customer.firstName eq null}">
 		                    <br>&bull; &nbsp; If you are a registered user,
-		                    <a href="/broadleafdemo/registerCustomer/registerCustomer.htm" class="link">sign in</a>
+		                    <a href="<c:out value="${pageContext.request.contextPath}"/>/registerCustomer/registerCustomer.htm" class="link">sign in</a>
 		                    to retrieve any saved items.
 	                    </c:if>
 	                </div>

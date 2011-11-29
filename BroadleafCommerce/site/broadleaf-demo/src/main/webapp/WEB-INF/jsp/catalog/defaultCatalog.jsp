@@ -4,7 +4,7 @@
 
 	<script>
 		function updateSearchFilterResults() {
-			$('#mainContent').prepend("<div class='grayedOut'><img style='margin-top:25px' src='/broadleafdemo/images/ajaxLoading.gif'/></div>");
+			$('#mainContent').prepend("<div class='grayedOut'><img style='margin-top:25px' src='<c:out value="${pageContext.request.contextPath}"/>/images/ajaxLoading.gif'/></div>");
 			var postData = $('#refineSearch').serializeArray();
 			postData.push({name:'ajax',value:'true'});
 			$('#mainContent').load($('#refineSearch').attr('action'), postData);
@@ -33,11 +33,11 @@
 					<h3>Featured </h3>
 					<c:forEach var="product" items="${featuredProducts}" >
 						<div align="center">
-							<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
+							<a href="<c:out value="${pageContext.request.contextPath}"/>/${currentCategory.generatedUrl}?productId=${product.id}">
 								<c:out value="${product.name}"/>
 							</a><br>
-							<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
-								<img border="0" src="/broadleafdemo${product.productImages.small}" width="75"/>
+							<a href="<c:out value="${pageContext.request.contextPath}"/>/${currentCategory.generatedUrl}?productId=${product.id}">
+								<img border="0" src="<c:choose><c:when test="${!(fn:startsWith(product.productMedia.small.url,'http')) && fn:startsWith(product.productMedia.small.url,'/')}"><c:out value="${pageContext.request.contextPath}"/></c:when></c:choose>${product.productMedia.small.url}" width="75"/>
 							</a>
 						</div>	
 						<br/>

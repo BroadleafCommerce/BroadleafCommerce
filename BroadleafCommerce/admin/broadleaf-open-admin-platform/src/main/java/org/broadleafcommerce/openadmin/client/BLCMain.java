@@ -55,7 +55,8 @@ public class BLCMain implements EntryPoint {
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
 
     public static String webAppContext;
-    public static String storeFrontWebAppContext;
+    public static String storeFrontWebAppPrefix;
+    public static String assetServerUrlPrefix;
     public static String adminContext;
 	public static ProgressWindow MODAL_PROGRESS = new ProgressWindow();
 	public static SplashView SPLASH_PROGRESS = new SplashWindow(GWT.getModuleBaseURL()+"admin/images/splash_screen.jpg", "");
@@ -125,59 +126,68 @@ public class BLCMain implements EntryPoint {
             }
         }
     }
+
+    public static UrlBuilder buildStoreFrontBaseUrl() {
+        return buildStoreFrontBaseUrl(null);
+    }
+
+    public static UrlBuilder buildStoreFrontBaseUrl(String path) {
+        String prefix = storeFrontWebAppPrefix;
+        UrlBuilder urlBuilder = new UrlBuilder();
+        if (prefix.startsWith("/")) {
+            urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
+            urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
+            urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
+        }
+        urlBuilder.setPath(prefix + (path==null?"":path));
+
+        return urlBuilder;
+    }
 	
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
         SC.logWarn("Retrieving web app context...");
-        AppServices.UTILITY.getWebAppContext(new AbstractCallback<String>() {
+        AppServices.UTILITY.getConfiguredContextsAndPrefixes(new AbstractCallback<String[]>() {
             @Override
-            public void onSuccess(String result) {
-                webAppContext = result;
-                SC.logWarn("Web app context retrieved (" + result + ")");
-                SC.logWarn("Retrieving storefront web app context...");
-                AppServices.UTILITY.getStoreFrontWebAppContext(new AbstractCallback<String>() {
+            public void onSuccess(String[] result) {
+                webAppContext = result[0];
+                if (result[1] != null) {
+                    storeFrontWebAppPrefix = result[1];
+                } else {
+                    storeFrontWebAppPrefix = webAppContext;
+                }
+                assetServerUrlPrefix = result[2];
+                AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
                     @Override
-                    public void onSuccess(String result) {
-                        if (result != null) {
-                            storeFrontWebAppContext = result;
+                    public void onSuccess(AdminUser result) {
+                        SecurityManager.USER = result;
+                        if (result == null) {
+                            SC.logWarn("Admin user not found. Logging out...");
+                            UrlBuilder builder = Window.Location.createUrlBuilder();
+                            builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+                            builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                            Window.open(builder.buildString(), "_self", null);
                         } else {
-                            storeFrontWebAppContext = webAppContext;
-                        }
-                        SC.logWarn("Web app context retrieved (" + result + ")");
-                        SC.logWarn("Retrieving admin user...");
-                        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
-                            @Override
-                            public void onSuccess(AdminUser result) {
-                                SecurityManager.USER  = result;
-                                if (result == null) {
-                                    SC.logWarn("Admin user not found. Logging out...");
-                                    UrlBuilder builder = Window.Location.createUrlBuilder();
-                                    builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
-                                    builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
-                                    Window.open(builder.buildString(), "_self", null);
-                                } else {
-                                    SC.logWarn("Admin user found. Loading interface...");
-                                    setCurrentModuleKey(requestedModuleKey);
+                            SC.logWarn("Admin user found. Loading interface...");
+                            setCurrentModuleKey(requestedModuleKey);
 
-                                    if (currentModuleKey == null) {
-                                        SC.say("Your login does not have authorization to view any modules.");
-                                        return;
-                                    }
-
-                                    setCurrentPageKey(requestedPageKey);
-
-                                    if (currentPageKey == null) {
-                                        SC.say("Your login does not have authorization to view any pages for the passed in module.");
-                                        return;
-                                    }
-
-                                    modules.get(currentModuleKey).preDraw();
-                                    MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
-                                    MASTERVIEW.draw();
-                                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, true);
-                                    modules.get(currentModuleKey).postDraw();
-                                }
+                            if (currentModuleKey == null) {
+                                SC.say("Your login does not have authorization to view any modules.");
+                                return;
                             }
-                        });
+
+                            setCurrentPageKey(requestedPageKey);
+
+                            if (currentPageKey == null) {
+                                SC.say("Your login does not have authorization to view any pages for the passed in module.");
+                                return;
+                            }
+
+                            modules.get(currentModuleKey).preDraw();
+                            MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
+                            MASTERVIEW.draw();
+                            AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, true);
+                            modules.get(currentModuleKey).postDraw();
+                        }
                     }
                 });
             }

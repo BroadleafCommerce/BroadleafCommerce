@@ -64,7 +64,7 @@
     		</table>
 		</div>
 	</form:form>
-	<form:form method="post" action="/broadleafdemo/login_post.htm">
+	<form:form method="post" action="${pageContext.request.contextPath}/login_post.htm">
 		<div class="orderBorder span-10" style="margin-top:10px;" >
 			<div class="orderTitle" > <b>Login for Existing users</b></div>
 			<table class="formTable">

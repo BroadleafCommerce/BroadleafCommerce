@@ -334,8 +334,14 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             Criteria criteria = dynamicEntityDao.getCriteria(queryCriteria, StaticAsset.class);
             Criteria count = dynamicEntityDao.getCriteria(countCriteria, StaticAsset.class);
 
-            List<StaticAsset> items = staticAssetService.findAssets(getSandBox(), criteria);
-            Long totalRecords = staticAssetService.countAssets(getSandBox(), count);
+            SandBox sandBox;
+            if (persistencePackage.getCustomCriteria().length > 1 && "prodOnly".equals(persistencePackage.getCustomCriteria()[1])) {
+                sandBox = null;
+            } else {
+                sandBox = getSandBox();
+            }
+            List<StaticAsset> items = staticAssetService.findAssets(sandBox, criteria);
+            Long totalRecords = staticAssetService.countAssets(sandBox, count);
 
             List<Serializable> convertedList = new ArrayList<Serializable>(items.size());
             convertedList.addAll(items);

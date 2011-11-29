@@ -50,7 +50,7 @@
 
 		-->
 		
-		<form:form modelAttribute="phoneNameForm" action="/broadleafdemo/myaccount/phone/savePhone.htm">
+		<form:form modelAttribute="phoneNameForm" action="<c:out value="${pageContext.request.contextPath}"/>/myaccount/phone/savePhone.htm">
 		
 			<input type="hidden" name="customerPhoneId" value="${customerPhoneId}">
 			<input type="hidden" name="phoneId" value="${phoneId}">
@@ -107,16 +107,16 @@
 				<tr>
 					
 					<td>
-						<a href="/broadleafdemo/myaccount/phone/viewPhone.htm" class="submitLink" style="margin-right: 12px;">
+						<a href="<c:out value="${pageContext.request.contextPath}"/>/myaccount/phone/viewPhone.htm" class="submitLink" style="margin-right: 12px;">
 							Cancel
 						</a>  
 						
 						<c:if test="${customerPhoneId ne NULL}">
-							<a href="/broadleafdemo/myaccount/phone/deletePhone.htm?customerPhoneId=${customerPhoneId}" class="submitLink" style="margin-right: 12px;">
+							<a href="<c:out value="${pageContext.request.contextPath}"/>/myaccount/phone/deletePhone.htm?customerPhoneId=${customerPhoneId}" class="submitLink" style="margin-right: 12px;">
 								Delete
 							</a>  
 							<c:if test="${phoneNameForm.phone.default eq false}">
-								<a href="/broadleafdemo/myaccount/phone/makePhoneDefault.htm?customerPhoneId=${customerPhoneId}" class="submitLink" style="margin-right: 12px;">
+								<a href="<c:out value="${pageContext.request.contextPath}"/>/myaccount/phone/makePhoneDefault.htm?customerPhoneId=${customerPhoneId}" class="submitLink" style="margin-right: 12px;">
 									Set As Default
 								</a>
 							</c:if>  
