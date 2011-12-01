@@ -148,12 +148,8 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				}
 			}
 		});
-		//display.getListDisplay().getAddButton().disable();
-		featuredPresenter.load(selectedRecord, dataSource, new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				//display.getListDisplay().getAddButton().enable();
-			}
-		});
+        display.getListDisplay().getAddButton().enable();
+		featuredPresenter.load(selectedRecord, dataSource, null);
 		childProductsPresenter.load(selectedRecord, dataSource, null);
 		getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();
 	}
@@ -161,6 +157,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	public void bind() {
 		super.bind();
+        fetchDataHandlerRegistration.removeHandler();
 		featuredPresenter.bind();
 		mediaPresenter.bind();
 		allChildCategoriesPresenter.bind();
