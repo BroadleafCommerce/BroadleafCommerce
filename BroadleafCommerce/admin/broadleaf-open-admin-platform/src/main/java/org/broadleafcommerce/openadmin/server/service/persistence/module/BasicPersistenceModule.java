@@ -487,7 +487,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			StringBuilder property;
             Class clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
             Field field = getFieldManager().getField(clazz, propertyName);
-            Class<?> targetType = field.getType();
+            Class<?> targetType = null;
+            if (field != null) {
+                targetType = field.getType();
+            }
 			if (dotIndex >= 0) {
 				property = new StringBuilder(propertyName.substring(dotIndex + 1, propertyName.length()));
 				String prefix = propertyName.substring(0, dotIndex);
@@ -522,7 +525,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             String convertedProperty = property.toString();
 			switch(mergedProperties.get(propertyName).getFieldType()) {
 			case BOOLEAN :
-                if (targetType.equals(Boolean.class)) {
+                if (targetType == null || targetType.equals(Boolean.class)) {
 				    ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
                 } else {
                     ctoConverter.addCharacterMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
