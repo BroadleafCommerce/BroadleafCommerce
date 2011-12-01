@@ -162,7 +162,7 @@ public class CategoryImpl implements Category {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description", excluded = true)
+    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Category defaultParentCategory;
 
     @ManyToMany(targetEntity = CategoryImpl.class)

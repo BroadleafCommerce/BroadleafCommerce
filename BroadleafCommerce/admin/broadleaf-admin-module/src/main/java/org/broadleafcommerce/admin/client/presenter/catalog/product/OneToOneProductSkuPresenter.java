@@ -88,8 +88,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		upSalePresenter.load(selectedRecord, dataSource, null);
 		mediaPresenter.load(selectedRecord, dataSource, null);
 		productAttributePresenter.load(selectedRecord, dataSource, null);
-		parentCategoriesPresenter.load(selectedRecord, dataSource, null);
+        parentCategoriesPresenter.load(selectedRecord, dataSource, null);
 	}
+
+    @Override
+    protected void itemSaved(DSResponse response, Object rawData, DSRequest request) {
+        super.itemSaved(response, rawData, request);
+        getDisplay().getAllCategoriesDisplay().getGrid().invalidateCache();
+    }
 	
 	@Override
 	public void bind() {

@@ -16,20 +16,19 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.product;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.module.ProductSkuBasicEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
 
 /**
  * 
@@ -38,7 +37,7 @@ import com.smartgwt.client.data.DataSource;
  */
 public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 	
-	public static ListGridDataSource dataSource = null;
+	public static CustomCriteriaListGridDataSource dataSource = null;
     public static final String defaultCategoryForeignKey = "defaultCategory";
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
@@ -48,7 +47,8 @@ public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new ProductSkuBasicEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+			dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, false, true, true, false, false);
+            dataSource.setCustomCriteria(new String[]{"productDirectEdit"});
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

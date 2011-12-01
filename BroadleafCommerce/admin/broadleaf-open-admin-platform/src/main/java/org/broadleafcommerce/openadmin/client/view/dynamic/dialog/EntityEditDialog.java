@@ -68,7 +68,7 @@ public class EntityEditDialog extends Window {
 		this.setIsModal(true);
 		this.setShowModalMask(true);
 		this.setShowMinimizeButton(false);
-		this.setWidth(600);
+		//this.setWidth(600);
 		this.setCanDragResize(true);
 		this.setOverflow(Overflow.VISIBLE);
 
@@ -171,6 +171,13 @@ public class EntityEditDialog extends Window {
         } else {
             setHeight(formHeight);
         }
+        setWidth(20);
+        int formWidth = hStack.getScrollWidth() + 30;
+        if (formWidth > 800) {
+            setWidth(800);
+        } else {
+            setWidth(formWidth);
+        }
         centerInPage();
         isHidden = false;
     }
@@ -244,6 +251,13 @@ public class EntityEditDialog extends Window {
             setHeight(600);
         } else {
             setHeight(formHeight);
+        }
+        setWidth(20);
+        int formWidth = hStack.getScrollWidth() + 30;
+        if (formWidth > 800) {
+            setWidth(800);
+        } else {
+            setWidth(formWidth);
         }
         isHidden = false;
 	}

@@ -44,13 +44,13 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
 		super(10);
 
         this.canEdit = canEdit;
-		setHeight(200);
+		setHeight(300);
         setWidth100();
         setBackgroundColor("#eaeaea");
         setAlign(Alignment.CENTER);
         
         VStack stack = new VStack();
-        stack.setHeight(150);
+        stack.setHeight(250);
         stack.setWidth100();
         stack.setLayoutMargin(12);
 

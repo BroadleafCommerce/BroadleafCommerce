@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -47,8 +48,37 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
 	public Boolean canHandleRemove(PersistencePackage persistencePackage) {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
-		return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("OrphanedCategoryListDataSource");
+		return !ArrayUtils.isEmpty(customCriteria) && "OrphanedCategoryListDataSource".equals(customCriteria[0]);
 	}
+
+    @Override
+    public Boolean canHandleAdd(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        String[] customCriteria = persistencePackage.getCustomCriteria();
+        return !ArrayUtils.isEmpty(customCriteria) && "addNewCategory".equals(customCriteria[0]) && Category.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+    }
+
+    @Override
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity  = persistencePackage.getEntity();
+		try {
+			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+			Category adminInstance = (Category) Class.forName(entity.getType()[0]).newInstance();
+			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+			adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+
+            if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultParentCategory())) {
+                adminInstance.getAllParentCategories().add(adminInstance.getDefaultParentCategory());
+            }
+
+			adminInstance = (Category) dynamicEntityDao.merge(adminInstance);
+
+			return helper.getRecord(adminProperties, adminInstance, null, null);
+		} catch (Exception e) {
+            LOG.error("Unable to add entity for " + entity.getType()[0], e);
+			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+		}
+    }
 
 	public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
@@ -68,20 +98,20 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 				TypedQuery<Category> categoryQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query); 
 				List<Category> categories = categoryQuery.getResultList();
 				if (!categories.isEmpty()) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder(500);
 					sb.append("Cannot delete category (");
 					sb.append(category.getId());
-					sb.append(",");
+					sb.append(',');
 					sb.append(category.getName());
 					sb.append("). There are Categories that reference it as the default parent category. These categories must first be updated to a different default parent category before this category can be deleted. ");
 					sb.append("\nThe categories in question are: ");
 					for (Category myCategory : categories) {
-						sb.append("\n");
-						sb.append("(");
+						sb.append('\n');
+						sb.append('(');
 						sb.append(myCategory.getId());
-						sb.append(",");
+						sb.append(',');
 						sb.append(myCategory.getName());
-						sb.append(")");
+						sb.append(')');
 					}
 					throw new ServiceException(sb.toString());
 				}
@@ -97,20 +127,20 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 				TypedQuery<Product> productQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query); 
 				List<Product> products = productQuery.getResultList();
 				if (!products.isEmpty()) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder(500);
 					sb.append("Cannot delete category (");
 					sb.append(category.getId());
-					sb.append(",");
+					sb.append(',');
 					sb.append(category.getName());
 					sb.append("). There are Products that reference it as the default category. These products must first be updated to a different default category before this category can be deleted. ");
 					sb.append("\nThe products in question are: ");
 					for (Product product : products) {
-						sb.append("\n");
-						sb.append("(");
+						sb.append('\n');
+						sb.append('(');
 						sb.append(product.getId());
-						sb.append(",");
+						sb.append(',');
 						sb.append(product.getName());
-						sb.append(")");
+						sb.append(')');
 					}
 					throw new ServiceException(sb.toString());
 				}
@@ -118,6 +148,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 			
 			dynamicEntityDao.remove(category);
 		} catch (ServiceException e) {
+            LOG.error("Unable to remove entity", e);
 			throw e;
 		} catch (Exception e) {
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
@@ -125,13 +156,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 		
 	}
 
-	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-		throw new RuntimeException("custom update not supported");
-	}
-
 	protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
-		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+		return dynamicEntityDao.getMergedProperties(
 			ceilingEntityFullyQualifiedClass.getName(), 
 			entities, 
 			null, 
@@ -144,7 +171,5 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             configurationKey,
 			""
 		);
-		
-		return mergedProperties;
 	}
 }
