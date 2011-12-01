@@ -485,19 +485,20 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			AssociationPath associationPath;
 			int dotIndex = propertyName.lastIndexOf('.');
 			StringBuilder property;
+            Class clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
+            Field field = getFieldManager().getField(clazz, propertyName);
+            Class<?> targetType = field.getType();
 			if (dotIndex >= 0) {
 				property = new StringBuilder(propertyName.substring(dotIndex + 1, propertyName.length()));
 				String prefix = propertyName.substring(0, dotIndex);
 				StringTokenizer tokens = new StringTokenizer(prefix, ".");
                 List<AssociationPathElement> elementList = new ArrayList<AssociationPathElement>(20);
-                Class clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
                 StringBuilder sb = new StringBuilder(150);
                 StringBuilder pathBuilder = new StringBuilder(150);
                 while(tokens.hasMoreElements()) {
                     String token = tokens.nextToken();
                     sb.append(token);
                     pathBuilder.append(token);
-                    Field field = getFieldManager().getField(clazz, pathBuilder.toString());
                     Embedded embedded = field.getAnnotation(Embedded.class);
                     if (embedded != null) {
                         sb.append('.');
@@ -521,7 +522,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             String convertedProperty = property.toString();
 			switch(mergedProperties.get(propertyName).getFieldType()) {
 			case BOOLEAN :
-				ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                if (targetType.equals(Boolean.class)) {
+				    ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                } else {
+                    ctoConverter.addCharacterMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                }
 				break;
 			case DATE :
 				ctoConverter.addDateMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);

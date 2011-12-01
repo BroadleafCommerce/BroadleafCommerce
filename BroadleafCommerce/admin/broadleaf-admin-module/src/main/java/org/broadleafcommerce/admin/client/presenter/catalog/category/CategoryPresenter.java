@@ -230,7 +230,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categorySearchDS", new CategorySearchDataSourceFactory(), new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.JOINSTRUCTURE, OperationType.ENTITY, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				ListGridDataSource categorySearchDataSource = (ListGridDataSource) result;
-				categorySearchDataSource.resetProminenceOnly(
+				categorySearchDataSource.resetPermanentFieldVisibility(
 					"name",
 					"urlKey",
 					"activeStartDate",
@@ -238,13 +238,6 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				);
 				EntitySearchDialog categorySearchView = new EntitySearchDialog(categorySearchDataSource);
 				library.put("categorySearchView", categorySearchView);
-				getPresenterSequenceSetupManager().getDataSource("categoryTreeDS").
-				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-					"defaultParentCategory",
-					categorySearchView,
-					"Category Search",
-					getDisplay().getDynamicFormDisplay()
-				);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("allChildCategoriesDS", new CategoryListDataSourceFactory(), new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY), new Object[]{}, new AsyncCallbackAdapter() {

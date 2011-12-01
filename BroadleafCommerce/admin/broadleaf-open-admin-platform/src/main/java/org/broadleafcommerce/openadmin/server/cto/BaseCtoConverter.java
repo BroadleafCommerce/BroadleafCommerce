@@ -58,6 +58,17 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
             return new BigDecimal(stringValue);
         }
     };
+
+    public static final FilterValueConverter<Character> CHARACTER = new FilterValueConverter<Character>() {
+        public Character convert(String stringValue) {
+            if ("true".equals(stringValue)) {
+                return 'Y';
+            } else if ("false".equals(stringValue)) {
+                return 'N';
+            }
+            return stringValue.charAt(0);
+        }
+    };
     
     public void addStringLikeMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
@@ -106,6 +117,13 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
         addMapping(mappingGroupName, new FilterAndSortMapping<Boolean>(
                 propertyId, associationPath, targetPropertyName,
                 FilterCriterionProviders.EQ, FilterValueConverters.BOOLEAN));
+    }
+
+    public void addCharacterMapping(String mappingGroupName, String propertyId,
+            AssociationPath associationPath, String targetPropertyName) {
+        addMapping(mappingGroupName, new FilterAndSortMapping<Character>(
+                propertyId, associationPath, targetPropertyName,
+                FilterCriterionProviders.EQ, CHARACTER));
     }
     
     public void addDateMapping(String mappingGroupName, String propertyId,
