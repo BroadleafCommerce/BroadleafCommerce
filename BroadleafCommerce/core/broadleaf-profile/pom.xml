@@ -8,7 +8,44 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>broadleaf-profile</artifactId>
 	<name>BroadleafCommerce Profile</name>
-	<url>http://maven.apache.org</url>
+	<description>BroadleafCommerce Profile</description>
+    <url>http://www.broadleafcommerce.org</url>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>jeff</id>
+            <name>Jeff Fischer</name>
+            <email>jfischer@broadleafcommerce.org</email>
+            <organization>Broadleaf Commerce</organization>
+            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <roles>
+                <role>cto</role>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+        <developer>
+            <id>brian</id>
+            <name>Brian Polster</name>
+            <email>bpolster@broadleafcommerce.org</email>
+            <organization>Broadleaf Commerce</organization>
+            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <roles>
+                <role>president</role>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
 	<build>
 		<plugins>
 			<plugin>

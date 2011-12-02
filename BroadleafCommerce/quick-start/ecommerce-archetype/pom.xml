@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>broadleaf</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-RC2-SNAPSHOT</version>
-	</parent>
-	<artifactId>core</artifactId>
-	<packaging>pom</packaging>
-	<name>BroadleafCommerce Core</name>
-    <description>BroadleafCommerce Core Mid Level Project</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>quick-start</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.5.0-RC2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>ecommerce-archetype</artifactId>
+    <packaging>maven-archetype</packaging>
+    <name>BroadleafCommerce ECommerce Archetype</name>
+    <description>BroadleafCommerce ECommerce Archetype</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -47,11 +49,21 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<modules>
-		<module>broadleaf-profile</module>
-		<module>broadleaf-profile-web</module>
-		<module>broadleaf-framework</module>
-		<module>broadleaf-framework-web</module>
-    	<module>broadleaf-instrument</module>
-  </modules>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+                <version>2.2</version>
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-archetype-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

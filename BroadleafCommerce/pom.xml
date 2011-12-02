@@ -176,6 +176,7 @@
         <module>integration</module>
         <module>site</module>
         <module>admin</module>
+        <module>quick-start</module>
     </modules>
     <dependencies>
     </dependencies>

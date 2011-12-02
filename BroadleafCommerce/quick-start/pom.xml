@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>broadleaf</artifactId>
-		<groupId>org.broadleafcommerce</groupId>
-		<version>1.5.0-RC2-SNAPSHOT</version>
-	</parent>
-	<artifactId>core</artifactId>
-	<packaging>pom</packaging>
-	<name>BroadleafCommerce Core</name>
-    <description>BroadleafCommerce Core Mid Level Project</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>broadleaf</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>1.5.0-RC2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>quick-start</artifactId>
+    <packaging>pom</packaging>
+	<name>BroadleafCommerce Quick Start</name>
+    <description>BroadleafCommerce Quick Start Mid Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
         <license>
@@ -47,11 +49,7 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-	<modules>
-		<module>broadleaf-profile</module>
-		<module>broadleaf-profile-web</module>
-		<module>broadleaf-framework</module>
-		<module>broadleaf-framework-web</module>
-    	<module>broadleaf-instrument</module>
-  </modules>
+    <modules>
+        <module>ecommerce-archetype</module>
+    </modules>
 </project>
