@@ -1,0 +1,145 @@
+/* Global and structural styles */
+.bodyWrapper {
+	width: 990px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.contentWrapper {
+	padding: 0px 8px;
+	background: #e5e5e5;
+}
+
+.container {
+	background: #f2e8ce url("/mycompany/images/containerTop.gif") repeat-x top center;
+	width:880px;
+}
+
+.navGradientBg {
+	background: url("/mycompany/images/navGradient.gif") repeat-x
+		bottom center;
+}
+
+.mainContent {
+	background: #fff;
+	padding: 8px;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+img {
+	border: 0;
+}
+
+.columns:after {
+  content: "\0020"; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+  overflow:hidden; 
+}
+.columns {display: block;}
+
+.blueBorder {
+	border-width: 1px;
+	border-style: solid;
+	border-color: #C9E1F4;
+}
+
+input.helpTextVisible {
+	color: #666;
+}
+
+.strikethrough {
+	text-decoration: line-through;
+}
+
+.breadcrumb {
+	margin: 0 0 10px 9px; 
+}
+
+a, a:visited {
+	color:#992400;
+}
+a:hover {
+	text-decoration:underline;
+	color:#992400;
+}
+
+
+.productResults a {
+	font-size:12px;
+}
+
+.breadcrumb a,
+.breadcrumb a:visited {
+/*	color:#862204;
+	color:#693F2D;*/
+	color:#992400;
+	text-decoration: none;
+}
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
+
+.noTextUnderline {
+	text-decoration: none;
+}
+.displayNone {
+	display: none;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.alignCenter {
+	text-align: center;
+}
+
+.pageTitle {
+	margin-top: 10px;
+	color:#566F32;
+}
+.bottomRule {
+	padding-bottom: 15px;
+	background: url("/mycompany/images/drawnLineHorizontal.gif") repeat-x bottom left;
+	margin-bottom: 10px;
+}
+
+.topRule {
+	padding-top: 10px;
+	background: url("/mycompany/images/drawnLineHorizontal.gif") repeat-x top right;
+	margin-top: 15px;
+}
+
+.rightRule {
+	padding-right: 13px;
+	background: url("/mycompany/images/drawnLineVertical.gif") repeat-y top right;
+}
+.leftRule {
+	padding-left: 10px;
+	background: url("/mycompany/images/drawnLineVertical.gif") repeat-y top left;
+}
+
+button {
+	border:0;
+	background: url("/mycompany/images/greenBtnGradient.gif") repeat-x bottom center;
+	font-weight:bold;
+	font-size:18px;
+	color:#fff;
+	font-family:arial,sans-serif;
+	padding:6px;
+	cursor:pointer;
+	margin-left:18px;
+	border:1px solid #85a300;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px #999;
+	-webkit-box-shadow: 0 1px 3px #999;
+}
+button:hover {
+	background-position:top center;
+}

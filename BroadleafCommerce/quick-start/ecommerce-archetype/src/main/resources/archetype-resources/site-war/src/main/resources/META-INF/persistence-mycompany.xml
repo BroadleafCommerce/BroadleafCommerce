@@ -1,0 +1,40 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+             
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+		<non-jta-data-source>jdbc/web</non-jta-data-source>
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+	</persistence-unit>
+	
+	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+	</persistence-unit>
+
+    <persistence-unit name="blCMSStorage" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<non-jta-data-source>jdbc/cmsStorage</non-jta-data-source>
+		<exclude-unlisted-classes/>
+		<properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+	</persistence-unit>
+</persistence>

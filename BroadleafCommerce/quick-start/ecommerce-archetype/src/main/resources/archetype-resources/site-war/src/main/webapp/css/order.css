@@ -1,0 +1,28 @@
+.orderTitle {
+	margin-bottom:5px;
+	padding:5px 7px;
+}
+
+.orderBorder {
+	border:1px solid #ccc;
+	background: url(/mycompany/images/brownGradient30.gif) repeat-x scroll center top;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-top: 15px;
+	-moz-border-radius-topleft:6px;
+	-moz-border-radius-topright:6px;
+}
+
+.orderTotals {
+	font-weight: bold;
+}
+table.basicTable th {
+	background:0;
+	border-bottom:1px solid #ccc;
+}
+#findAStoreForm table.basicTable th {
+	border-bottom:0;
+}
+table.basicTable td {
+	text-align:left;
+}

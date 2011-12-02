@@ -1,0 +1,46 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+
+    <sec:http auto-config="true" >
+        <sec:intercept-url pattern="/account/**" access="ROLE_USER" />      
+        <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
+        				default-target-url='/welcome.htm'
+        				authentication-failure-url="/registerCustomer/registerCustomer.htm?error=true"
+        				login-processing-url="/login_post.htm"
+        				 />
+   		<sec:logout logout-url="/logout.htm"/>
+   		<sec:remember-me />
+   		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
+    </sec:http>
+    
+    <!--  bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/ -->    
+
+    <!--=============================================================================================== -->
+	<!--  Override the authentication provider to use the JDBC authentication defined below.                                                -->
+    <!--=============================================================================================== -->
+    <sec:authentication-manager alias="blAuthenticationManager">
+		<sec:authentication-provider user-service-ref="blUserDetailsService" >
+			<sec:password-encoder ref="blPasswordEncoder"/>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+
+	<sec:jdbc-user-service 
+			data-source-ref="blDS"
+		    id="blUserDetailsService" 
+	        users-by-username-query="select user_name,password,true from blc_customer where user_name=?"
+	        authorities-by-username-query="select c.user_name,r.role_name from blc_customer c join blc_customer_role cr on c.customer_id = cr.customer_id join blc_role r on cr.role_id = r.role_id where user_name=?"
+	 /> 
+                               
+	<bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.core.security.CustomerStateFilter"/>
+                                                                          
+</beans>

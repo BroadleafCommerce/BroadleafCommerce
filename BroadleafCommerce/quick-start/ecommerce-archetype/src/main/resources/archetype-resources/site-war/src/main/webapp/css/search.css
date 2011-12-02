@@ -1,0 +1,71 @@
+.searchFilterDisabledSelect {
+	color:#AAAAAA;
+}
+
+#searchFilter {
+	color:#222222;
+	background-color: #E5E5E5 ;
+	float:left;
+	width: 260px;
+	margin-right: 20px;
+	padding: 10px;
+	margin-bottom:10px;
+}
+
+#searchResults {
+	float: left;
+	width: 650px;
+}
+
+#searchProduct {
+	float:left;
+	
+}
+
+.searchFilter-defaultCategory_id li,
+.searchFilter-manufacturer li
+{
+	cursor: pointer;
+	list-style-type: none;
+}
+
+.searchFilter-defaultCategory_idCheckbox,
+.searchFilter-manufacturerCheckbox
+{
+	/* display:none; */
+}
+
+.grayedOut {
+	position:absolute;
+	overflow:hidden;
+	width:inherit;
+	height:100%;
+	background-color:#FFFFFF;
+	opacity:0.8;
+	MozOpacity:0.8;
+	zIndex:50;
+	filter:alpha(opacity=80);
+	text-align:center;
+}
+
+.overlay {
+	position:absolute;
+	text-align:center;
+}
+
+#min-skus_0__salePrice, #max-skus_0__salePrice {
+	width:55px;
+}
+#refineSearch {
+	margin-top:4px;
+}
+#refineSearch h3 {
+	color:#566F32;
+	margin:4px 0 8px;
+}
+ul.searchFilter-manufacturer {
+	margin:0 0 0 1px;
+}
+.ui-slider {
+	margin: 0 10px 0 7px;
+}

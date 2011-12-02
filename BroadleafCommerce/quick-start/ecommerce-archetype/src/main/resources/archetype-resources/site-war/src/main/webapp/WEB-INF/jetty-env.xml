@@ -1,0 +1,16 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+
+  <!-- Add an EnvEntry only valid for this webapp               -->
+  <New id="appName" class="org.mortbay.jetty.plus.naming.EnvEntry">
+    <Arg>appName</Arg>
+    <Arg type="java.lang.String">mycompany-site</Arg>
+    <Arg type="boolean">true</Arg>
+  </New>
+
+</Configure>

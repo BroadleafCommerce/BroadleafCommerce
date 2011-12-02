@@ -1,0 +1,184 @@
+/* Header, top navigation and footer */
+#header {
+/*	margin: 10px 0;
+	background: #e20;*/
+	position: relative;
+	height:148px;
+}
+
+#header .logo {
+	position:relative;
+	left:-18px;
+}
+
+#footer {
+	text-align:right;
+	background:#2d401f;
+	padding-bottom:50px;
+	color:#a1aaa9;
+}
+#footer p {
+	margin:0;
+}
+#footer .legal {
+	padding:10px;
+}
+#footer .legal a {
+	color:#c2cccb;
+}
+
+#searchBar {
+	position: absolute;
+	top: 40px;
+	right: 14px;
+}
+
+#searchBar input {
+	vertical-align: middle;
+}
+
+#searchBar .searchField {
+	font-size: 11px;
+	padding: 4px 3px 3px 3px;
+	border:1px solid #64351b;
+	background:#fffbf2;
+}
+
+#searchBar .imageBtn {
+	margin-left: 8px;
+}
+
+a.promoCTA {
+	position:absolute;
+	left:172px;
+	top:11px;
+	color: #FAD889;
+	text-decoration:none;
+	font-size:11px;
+}
+
+a.promoCTA:hover {
+	color: #FAD889;
+	text-decoration:none;
+}
+
+ul#userNav {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	right: 6px;
+	top: 14px;
+	line-height:.8;
+}
+
+ul#userNav li {
+	list-style: none;
+	float: left;
+	border-right: 1px solid #e8c060;
+}
+
+ul#userNav li.last {
+	border-right: 0;
+}
+
+ul#userNav li a {
+	color: #FAD889;
+	padding: 4px 8px;
+	text-decoration:none;
+	font-size:11px;
+}
+ul#userNav li a:hover {
+	text-decoration:underline;
+}
+ul#userNav a.cartLink {
+	background: url("/mycompany/images/cartLinkBean.gif") center right no-repeat;
+	padding-right:20px;
+}
+
+.slogan {
+	position:absolute;
+	right:20px;
+	top:110px;
+}
+
+ul#primaryNav {
+	position:absolute;
+	left:170px;
+	top:70px;
+	margin: 0;
+	padding: 0;
+	font-family: tahoma, sans-serif;
+	font-size: 13px;
+	background: url("/mycompany/images/drawnLine.gif") repeat-x bottom left;
+	width:695px;
+}
+
+ul#primaryNav li {
+	list-style: none;
+	float: left;
+}
+
+ul#primaryNav li a {
+	cursor: pointer;
+	color: #693f2d;
+	text-decoration: none;
+	line-height: 22px;
+	display: block;
+	padding: 6px 0 10px;
+	margin-right:24px;
+	font-family:"trebuchet MS",tahoma,sans-serif;
+	font-size:14px;
+	font-weight:bold;
+}
+
+ul#primaryNav li a:hover {
+	color: #60990f;
+}
+
+ul#primaryNav li a.active {
+	background: url("/mycompany/images/smallBean.png") no-repeat bottom center;
+	color:#4C7317;
+	font-style: italic;
+}
+
+ul#primaryNav li a.active:hover {
+	color: #000;
+}
+.splashContainer {
+	position:relative;
+}
+.dontMiss {
+	background: url("/mycompany/images/dontMissFrame.png") no-repeat top left;
+	padding:35px 13px 14px 44px;
+	position:relative;
+	left:-34px;
+}
+.sidePromoContainer {
+	position:absolute;
+	right:-13px;
+	width:288px;
+	top:25px;
+}
+.sidePromo {
+	background: url("/mycompany/images/sidePromoFrame.png") no-repeat top right;
+	padding:10px 0 14px 11px;
+	margin-bottom:23px;
+}
+.mainContentArea,
+.mainContentAreaFull {
+	background:#fff;
+	border:8px solid #e2d5b3;
+	margin:0 109px 4px 8px;
+	-moz-box-shadow: 2px 2px 3px #986;
+	-webkit-box-shadow: 2px 2px 3px #986;
+}
+.mainContentAreaFull {
+	margin:0 8px 4px;
+}
+.globalCoffeeCup {
+	position:absolute;
+	top:40px;
+	right:-400px;
+	margin-right:31%;
+	z-index:-1;
+}

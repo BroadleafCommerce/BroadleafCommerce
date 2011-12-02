@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="${package}.admin.mycompany" />
+	
+	<extend-property name="locale" values="en_US"/>
+	
+	<entry-point class="org.broadleafcommerce.openadmin.client.BLCLaunch" />
+	<!-- <set-property name="user.agent" value="gecko1_8" /> -->
+</module>
