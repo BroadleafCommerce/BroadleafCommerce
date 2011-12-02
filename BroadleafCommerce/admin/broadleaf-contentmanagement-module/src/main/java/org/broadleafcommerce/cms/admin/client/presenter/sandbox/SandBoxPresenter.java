@@ -17,7 +17,6 @@
 package org.broadleafcommerce.cms.admin.client.presenter.sandbox;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Canvas;
@@ -106,21 +105,18 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
     }
 
     protected void previewSelection(ListGridRecord[] records) {
-        String prefix = BLCMain.storeFrontWebAppPrefix;
-        UrlBuilder urlBuilder =  BLCMain.buildStoreFrontBaseUrl();
-        urlBuilder.setParameter("blSandboxId", org.broadleafcommerce.openadmin.client.security.SecurityManager.USER.getCurrentSandBoxId());
+        String path = BLCMain.buildStoreFrontBaseUrl();
         if (records == null || (records != null && records.length > 1)) {
-            com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
+            path += "?blSandboxId=" + org.broadleafcommerce.openadmin.client.security.SecurityManager.USER.getCurrentSandBoxId();
         } else {
             String specificSandboxId = records[0].getAttribute("sandBox.id");
             String type = records[0].getAttribute("sandBoxItemType");
-            urlBuilder.setParameter("blSandboxId", specificSandboxId);
             if (type.equals("PAGE")) {
-                String newPath = prefix + records[0].getAttribute("description");
-                urlBuilder.setPath(newPath);
+                path += records[0].getAttribute("description");
             }
-            com.google.gwt.user.client.Window.open(urlBuilder.buildString(), "cmsPreview", null);
+            path += "?blSandboxId=" + specificSandboxId;
         }
+        com.google.gwt.user.client.Window.open(path, "cmsPreview", null);
     }
 
     protected void invalidateMyCache() {

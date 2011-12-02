@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import com.google.gwt.http.client.UrlBuilder;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -204,8 +203,7 @@ public class EntityEditDialog extends Window {
         } else if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".gif") || url.endsWith(".png")) {
             String srcPath;
             if (!url.contains(BLCMain.assetServerUrlPrefix)) {
-                UrlBuilder urlBuilder =  BLCMain.buildStoreFrontBaseUrl(url);
-                srcPath = urlBuilder.buildString();
+                srcPath = BLCMain.buildStoreFrontBaseUrl(url);
                 previewImg.setImageHeight(60);
                 previewImg.setImageWidth(60);
             } else {

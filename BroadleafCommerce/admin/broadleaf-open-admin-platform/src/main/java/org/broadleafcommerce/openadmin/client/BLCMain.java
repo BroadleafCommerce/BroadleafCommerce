@@ -127,21 +127,23 @@ public class BLCMain implements EntryPoint {
         }
     }
 
-    public static UrlBuilder buildStoreFrontBaseUrl() {
+    public static String buildStoreFrontBaseUrl() {
         return buildStoreFrontBaseUrl(null);
     }
 
-    public static UrlBuilder buildStoreFrontBaseUrl(String path) {
+    public static String buildStoreFrontBaseUrl(String path) {
         String prefix = storeFrontWebAppPrefix;
-        UrlBuilder urlBuilder = new UrlBuilder();
         if (prefix.startsWith("/")) {
+            UrlBuilder urlBuilder = new UrlBuilder();
             urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
             urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
             urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
-        }
-        urlBuilder.setPath(prefix + (path==null?"":path));
+            urlBuilder.setPath(prefix + (path==null?"":path));
 
-        return urlBuilder;
+            return urlBuilder.buildString();
+        }
+
+        return prefix + (path==null?"":path);
     }
 	
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
