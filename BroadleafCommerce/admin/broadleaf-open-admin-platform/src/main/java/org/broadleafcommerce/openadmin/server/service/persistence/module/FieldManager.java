@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -149,13 +150,22 @@ public class FieldManager {
 					} catch (Exception e) {
 						//Use the most extended type based on the field type
 	            		Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
-	            		Object newEntity = entities[0].newInstance();
-	            		SortableValue val = new SortableValue((Serializable) newEntity, j);
-						middleFields.add(val);
-	            		field.set(value, newEntity);
-	            		componentClass = newEntity.getClass();
-	            		value = newEntity;
-	            		LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the most extended form of this class identified as ("+entities[0].getName()+")");
+                        if (!ArrayUtils.isEmpty(entities)) {
+                            Object newEntity = entities[0].newInstance();
+                            SortableValue val = new SortableValue((Serializable) newEntity, j);
+                            middleFields.add(val);
+                            field.set(value, newEntity);
+                            componentClass = newEntity.getClass();
+                            value = newEntity;
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the most extended form of this class identified as ("+entities[0].getName()+")");
+                        } else {
+                            //Just use the field type
+                            Object newEntity = field.getType().newInstance();
+                            field.set(value, newEntity);
+                            componentClass = newEntity.getClass();
+                            value = newEntity;
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the type of this class.");
+                        }
 					}
 	            }
             }

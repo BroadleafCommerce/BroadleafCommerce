@@ -487,10 +487,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			StringBuilder property;
             Class clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
             Field field = getFieldManager().getField(clazz, propertyName);
-            Class<?> targetType = null;
-            if (field != null) {
-                targetType = field.getType();
-            }
 			if (dotIndex >= 0) {
 				property = new StringBuilder(propertyName.substring(dotIndex + 1, propertyName.length()));
 				String prefix = propertyName.substring(0, dotIndex);
@@ -502,6 +498,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     String token = tokens.nextToken();
                     sb.append(token);
                     pathBuilder.append(token);
+                    field = getFieldManager().getField(clazz, pathBuilder.toString());
                     Embedded embedded = field.getAnnotation(Embedded.class);
                     if (embedded != null) {
                         sb.append('.');
@@ -525,6 +522,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             String convertedProperty = property.toString();
 			switch(mergedProperties.get(propertyName).getFieldType()) {
 			case BOOLEAN :
+                Class<?> targetType = null;
+                if (field != null) {
+                    targetType = field.getType();
+                }
                 if (targetType == null || targetType.equals(Boolean.class)) {
 				    ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
                 } else {
