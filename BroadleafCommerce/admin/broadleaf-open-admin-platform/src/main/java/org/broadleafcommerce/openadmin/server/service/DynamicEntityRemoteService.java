@@ -22,14 +22,23 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
 /**
  * @author jfischer
@@ -37,11 +46,45 @@ import org.springframework.stereotype.Service;
 @Service("blDynamicEntityRemoteService")
 public class DynamicEntityRemoteService implements DynamicEntityService, ApplicationContextAware {
 
+    private static class Handler extends URLStreamHandler {
+        /** The classloader to find resources from. */
+        private final ClassLoader classLoader;
+
+        public Handler() {
+            classLoader = getClass().getClassLoader();
+        }
+
+        public Handler(ClassLoader classLoader) {
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        protected URLConnection openConnection(URL u) throws IOException {
+            URL resourceUrl = classLoader.getResource(u.getPath());
+            return resourceUrl.openConnection();
+        }
+    }
+
+    private static Policy getAntiSamyPolicy(String policyFileLocation) {
+        try {
+            URL url = new URL(null, policyFileLocation, new Handler(ClassLoader.getSystemClassLoader()));
+            return Policy.getInstance(url);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to create URL", e);
+        }
+    }
+
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
+    private static final String DEFAULTANTISAMYPOLICYFILELOCATION = "classpath:antisamy-tinymce-1.4.4.xml";
 
     protected String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
     private ApplicationContext applicationContext;
+    protected String antiSamyPolicyFileLocation = DEFAULTANTISAMYPOLICYFILELOCATION;
+    //this is thread safe
+    private Policy antiSamyPolicy = getAntiSamyPolicy(antiSamyPolicyFileLocation);
+    //this is thread safe for the usage of scan()
+    private AntiSamy as = new AntiSamy();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext)
@@ -82,12 +125,27 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
                     persistenceManager.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Unable to close persistence manager", e);
             }
         }
     }
 
+    protected void cleanEntity(Entity entity) throws ServiceException {
+        try {
+            for (Property property : entity.getProperties()) {
+                if (property.getValue() != null) {
+                    CleanResults results = as.scan(property.getValue(), antiSamyPolicy);
+                    property.setValue(results.getCleanHTML());
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to clean the passed in entity values", e);
+            throw new ServiceException("Unable to clean the passed in entity values", e);
+        }
+    }
+
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+        cleanEntity(persistencePackage.getEntity());
         PersistenceManager persistenceManager = null;
         try {
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -99,12 +157,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
                     persistenceManager.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Unable to close persistence manager", e);
             }
         }
     }
 
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+        cleanEntity(persistencePackage.getEntity());
         PersistenceManager persistenceManager = null;
         try {
             persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -116,7 +175,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
                     persistenceManager.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Unable to close persistence manager", e);
             }
         }
     }
@@ -133,7 +192,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
                     persistenceManager.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Unable to close persistence manager", e);
             }
         }
     }
@@ -146,4 +205,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         this.persistenceManagerRef = persistenceManagerRef;
     }
 
+    public String getAntiSamyPolicyFileLocation() {
+        return antiSamyPolicyFileLocation;
+    }
+
+    public void setAntiSamyPolicyFileLocation(String antiSamyPolicyFileLocation) {
+        this.antiSamyPolicyFileLocation = antiSamyPolicyFileLocation;
+        antiSamyPolicy = getAntiSamyPolicy(antiSamyPolicyFileLocation);
+    }
 }
