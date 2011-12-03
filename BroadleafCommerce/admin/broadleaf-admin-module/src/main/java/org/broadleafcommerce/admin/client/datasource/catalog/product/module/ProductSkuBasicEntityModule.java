@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.client.datasource.catalog.product.module;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -111,7 +112,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
         newProps = newPropList.toArray(newProps);
         entity.setProperties(newProps);
         
-        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) buildRecord(result, false);
@@ -127,7 +128,7 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
 
 	@Override
 	public void buildFields(String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria), new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, Cookies.getCookie(BLCMain.sessionIdKey)), new AbstractCallback<DynamicResultSet>() {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				ClassMetadata metadata = result.getClassMetaData();

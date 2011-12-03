@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.category;
 
+import com.google.gwt.user.client.Cookies;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
@@ -54,7 +56,7 @@ public class OrphanedCategoryListDataSource extends ListGridDataSource {
 	@Override
 	protected void executeFetch(final String requestId, DSRequest request, final DSResponse response) {
 		final DataSourceModule fetchModule = getCompatibleModule(persistencePerspective.getOperationTypes().getFetchType());
-		service.fetch(new PersistencePackage(fetchModule.getCeilingEntityFullyQualifiedClassname(), null, persistencePerspective, null), fetchModule.getCto(request), new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, this) {
+		service.fetch(new PersistencePackage(fetchModule.getCeilingEntityFullyQualifiedClassname(), null, persistencePerspective, null, Cookies.getCookie(BLCMain.sessionIdKey)), fetchModule.getCto(request), new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, this) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = fetchModule.buildRecords(result, new String[]{root});

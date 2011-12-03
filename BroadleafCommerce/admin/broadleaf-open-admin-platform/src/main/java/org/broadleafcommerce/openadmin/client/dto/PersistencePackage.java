@@ -26,12 +26,14 @@ public class PersistencePackage implements Serializable {
 	protected PersistencePerspective persistencePerspective;
 	protected String[] customCriteria;
 	protected Entity entity;
+    protected String sessionToken;
 	
-	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) {
+	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String sessionToken) {
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;
 		this.entity = entity;
 		this.customCriteria = customCriteria;
+        this.sessionToken = sessionToken;
 	}
 	
 	public PersistencePackage() {
@@ -71,5 +73,12 @@ public class PersistencePackage implements Serializable {
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 	}
-	
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
 }

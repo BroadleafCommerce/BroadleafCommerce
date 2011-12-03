@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.gwtincubator.security.client.SecuredAsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -46,7 +47,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
         final String msg = "Service Exception";
         if (exception.getClass().getName().equals("com.google.gwt.user.client.rpc.InvocationException")) {
             SC.logWarn("Retrieving admin user (AbstractCallback.onOtherException)...");
-            AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+            AppServices.SECURITY.getAdminUser(Cookies.getCookie(BLCMain.sessionIdKey), new AbstractCallback<AdminUser>() {
                 @Override
                 public void onSuccess(AdminUser result) {
                     if (result == null) {
@@ -75,7 +76,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
     protected void onSecurityException(final ApplicationSecurityException exception) {
         final String msg = "Security Exception";
         SC.logWarn("Retrieving admin user (AbstractCallback.onSecurityException)...");
-        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
+        AppServices.SECURITY.getAdminUser(Cookies.getCookie(BLCMain.sessionIdKey), new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
                 if (result == null) {

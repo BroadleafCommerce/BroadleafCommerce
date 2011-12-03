@@ -19,9 +19,12 @@ package org.broadleafcommerce.openadmin.server.service.artifact.upload;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.client.service.UploadProgressService;
+import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -31,8 +34,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Service("blUploadRemoteService")
 public class UploadProgressRemoteService implements UploadProgressService {
 
+    @Resource(name="blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
+
     @Override
-    public Double getPercentUploadComplete(String callbackName) throws ServiceException, ApplicationSecurityException {
+    public Double getPercentUploadComplete(String callbackName, String sessionToken) throws ServiceException, ApplicationSecurityException {
+        exploitProtectionService.compareSessionToken(sessionToken);
+
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         UploadProgressListener progressListener = (UploadProgressListener) attributes.getRequest().getSession().getAttribute(callbackName);
 

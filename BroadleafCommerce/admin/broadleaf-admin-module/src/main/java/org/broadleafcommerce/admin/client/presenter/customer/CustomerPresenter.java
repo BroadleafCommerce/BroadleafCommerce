@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
+import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
@@ -83,7 +84,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 			            		entity.setProperties(new Property[]{prop});
 			            		entity.setType(new String[]{"org.broadleafcommerce.profile.core.domain.Customer"});
 			            		
-			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}), new AbstractCallback<Entity>() {
+			            		AppServices.DYNAMIC_ENTITY.update(new PersistencePackage("org.broadleafcommerce.profile.core.domain.Customer", entity, tempPerspective, new String[]{"passwordUpdate"}, Cookies.getCookie(BLCMain.sessionIdKey)), new AbstractCallback<Entity>() {
 									public void onSuccess(Entity arg0) {
 										BLCMain.NON_MODAL_PROGRESS.stopProgress();
 										SC.say(BLCMain.getMessageManager().getString("resetPasswordSuccessful"));

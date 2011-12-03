@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.client.datasource.catalog.category;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -101,7 +102,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
         final DataSourceModule entityModule = getCompatibleModule(OperationType.ENTITY);
     	Entity entity = entityModule.buildEntity(newRecord, request);
     	//Add the new category entity
-		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, new String[]{"addNewCategory"}), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
+		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, new String[]{"addNewCategory"}, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				TreeNode record = (TreeNode) entityModule.buildRecord(result, true);

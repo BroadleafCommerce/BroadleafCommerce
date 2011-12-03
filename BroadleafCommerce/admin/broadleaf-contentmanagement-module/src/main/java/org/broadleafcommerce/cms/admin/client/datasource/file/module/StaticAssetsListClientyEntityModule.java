@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.admin.client.datasource.file.module;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.DSRequest;
@@ -56,7 +57,7 @@ public class StaticAssetsListClientyEntityModule extends BasicClientEntityModule
             	entity.setType(type);
             }
         }
-        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
 

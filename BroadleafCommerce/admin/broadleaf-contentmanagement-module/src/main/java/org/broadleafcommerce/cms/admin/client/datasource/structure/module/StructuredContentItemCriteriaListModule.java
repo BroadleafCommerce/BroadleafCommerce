@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.admin.client.datasource.structure.module;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.DSRequest;
@@ -54,7 +55,7 @@ public class StructuredContentItemCriteriaListModule extends BasicClientEntityMo
         TreeNode record = new TreeNode(data);
         record.setAttribute("_type", new String[]{((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()});
         Entity entity = buildEntity(record, request);
-        service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
 				if (cb != null) {

@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
+import org.broadleafcommerce.openadmin.client.service.ServiceException;
+import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.web.bind.ServletRequestParameterPropertyValues;
@@ -44,6 +46,7 @@ public class UploadAddOrUpdateController extends SimpleFormController {
     private static final Log LOG = LogFactory.getLog(UploadAddOrUpdateController.class);
 
     protected DynamicEntityService dynamicEntityRemoteService;
+    protected ExploitProtectionService exploitProtectionService;
 
     protected Long maximumFileSizeInBytes = 20L * 1000L * 1000L; // 20mb max by default
 
@@ -58,8 +61,13 @@ public class UploadAddOrUpdateController extends SimpleFormController {
                 bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
             }
 
+            //check for XSRF
+            String sessionToken = (String) mpvs.getPropertyValue("sessionToken").getValue();
+            exploitProtectionService.compareSessionToken(sessionToken);
+
             PersistencePackage persistencePackage = new PersistencePackage();
             persistencePackage.setPersistencePerspective(new PersistencePerspective());
+            persistencePackage.setSessionToken(sessionToken);
             String ceilingEntity = (String) mpvs.getPropertyValue("ceilingEntityFullyQualifiedClassname").getValue();
             callbackName = (String) mpvs.getPropertyValue("callbackName").getValue();
             String operation = (String) mpvs.getPropertyValue("operation").getValue();
@@ -136,19 +144,19 @@ public class UploadAddOrUpdateController extends SimpleFormController {
         }
     }
 
-    protected String buildJSON(Entity entity) {
-        StringBuffer sb = new StringBuffer();
+    protected String buildJSON(Entity entity) throws ServiceException {
+        StringBuilder sb = new StringBuilder(200);
         sb.append("{\"type\" : \"");
-        sb.append(entity.getType()[0]);
+        sb.append(exploitProtectionService.cleanString(entity.getType()[0]));
         sb.append("\", \"properties\" : [");
         for (int j=0;j<entity.getProperties().length;j++) {
             sb.append("{\"name\" : \"");
-            sb.append(entity.getProperties()[j].getName());
+            sb.append(exploitProtectionService.cleanString(entity.getProperties()[j].getName()));
             sb.append("\", \"value\" : \"");
-            sb.append(entity.getProperties()[j].getValue());
+            sb.append(exploitProtectionService.cleanString(entity.getProperties()[j].getValue()));
             sb.append("\"}");
             if (j<entity.getProperties().length - 1) {
-                sb.append(",");
+                sb.append(',');
             }
          }
         sb.append("]}");
@@ -156,10 +164,10 @@ public class UploadAddOrUpdateController extends SimpleFormController {
         return sb.toString();
     }
 
-    protected String buildErrorJSON(String errorString) {
-        StringBuffer sb = new StringBuffer();
+    protected String buildErrorJSON(String errorString) throws ServiceException {
+        StringBuilder sb = new StringBuilder(50);
         sb.append("{\"error\" : \"");
-        sb.append(errorString);
+        sb.append(exploitProtectionService.cleanString(errorString));
         sb.append("\"}");
 
         return sb.toString();
@@ -192,5 +200,13 @@ public class UploadAddOrUpdateController extends SimpleFormController {
 
     public void setMaximumFileSizeInBytes(Long maximumFileSizeInBytes) {
         this.maximumFileSizeInBytes = maximumFileSizeInBytes;
+    }
+
+    public ExploitProtectionService getExploitProtectionService() {
+        return exploitProtectionService;
+    }
+
+    public void setExploitProtectionService(ExploitProtectionService exploitProtectionService) {
+        this.exploitProtectionService = exploitProtectionService;
     }
 }

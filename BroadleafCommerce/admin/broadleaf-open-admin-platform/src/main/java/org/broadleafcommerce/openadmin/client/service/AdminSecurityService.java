@@ -25,6 +25,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
  */
 public interface AdminSecurityService extends RemoteService {
 
-	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser();
+	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser(String sessionToken);
 	
 }

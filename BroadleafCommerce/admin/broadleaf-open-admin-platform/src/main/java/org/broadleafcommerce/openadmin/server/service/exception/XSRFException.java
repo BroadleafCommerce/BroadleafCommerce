@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.client.service;
+package org.broadleafcommerce.openadmin.server.service.exception;
 
-
-import org.broadleafcommerce.openadmin.client.security.AdminUser;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.broadleafcommerce.openadmin.client.service.ServiceException;
 
 /**
- * 
  * @author jfischer
- *
  */
-public interface AdminSecurityServiceAsync {
+public class XSRFException extends ServiceException {
 
-	public void getAdminUser(String sessionToken, AsyncCallback<AdminUser> cb);
-	
+    public XSRFException() {
+    }
+
+    public XSRFException(String message) {
+        super(message);
+    }
+
+    public XSRFException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

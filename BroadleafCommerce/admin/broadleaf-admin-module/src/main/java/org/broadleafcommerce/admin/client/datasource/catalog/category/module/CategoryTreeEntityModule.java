@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.client.datasource.catalog.category.module;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.*;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -59,7 +60,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				/*

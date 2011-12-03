@@ -13,6 +13,7 @@
 
     <bean id="blUploadController" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadAddOrUpdateController">
         <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
+        <property name="exploitProtectionService" ref="blExploitProtectionService"/>
     </bean>
 
     <bean id="blUploadCompletedView" class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadCompletedView"/>
