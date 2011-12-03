@@ -26,7 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -47,7 +46,7 @@ public class ProductSkuImpl extends ProductImpl implements ProductSku {
     private static final long serialVersionUID = 1L;
     
     @OneToOne(optional = true, targetEntity = SkuImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_ONE_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
+    @JoinColumn(name = "SKU_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Sku sku;
 
