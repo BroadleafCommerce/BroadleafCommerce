@@ -180,6 +180,35 @@
 		<tag name="dl" action="validate" />
 		<tag name="dt" action="validate" />
 		<tag name="dd" action="validate" />
+
+        <!-- Image & image related tags -->
+
+		<tag name="img" action="validate">
+			<attribute name="src" onInvalid="removeTag">
+				<regexp-list>
+					<regexp name="onsiteURL"/>
+					<regexp name="offsiteURL"/>
+				</regexp-list>
+			</attribute>
+			<attribute name="name"/>
+			<attribute name="alt"/>
+			<attribute name="height"/>
+			<attribute name="width"/>
+			<attribute name="border"/>
+			<attribute name="align"/>
+
+			<attribute name="hspace">
+				<regexp-list>
+					<regexp name="number"/>
+				</regexp-list>
+			</attribute>
+
+			<attribute name="vspace">
+				<regexp-list>
+					<regexp name="number"/>
+				</regexp-list>
+			</attribute>
+		</tag>
 	</tag-rules>
 
 	<css-rules>
