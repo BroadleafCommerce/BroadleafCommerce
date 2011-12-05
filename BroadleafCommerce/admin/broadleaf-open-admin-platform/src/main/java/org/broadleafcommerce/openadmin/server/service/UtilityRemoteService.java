@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -42,13 +43,16 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     protected String storeFrontWebAppPrefix;
     protected String assetServerUrlPrefix;
 
+    @Resource(name="blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public String getWebAppContext(String sessionToken) throws ServiceException {
+    public String getWebAppContext() throws ServiceException {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             return request.getContextPath();
@@ -59,7 +63,7 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     }
 
     @Override
-    public String getStoreFrontWebAppPrefix(String sessionToken) throws ServiceException {
+    public String getStoreFrontWebAppPrefix() throws ServiceException {
         return storeFrontWebAppPrefix;
     }
 
@@ -68,7 +72,7 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     }
 
     @Override
-    public String getAssetServerUrlPrefix(String sessionToken) throws ServiceException {
+    public String getAssetServerUrlPrefix() throws ServiceException {
         return assetServerUrlPrefix;
     }
 
@@ -77,7 +81,8 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     }
 
     @Override
-    public String[] getConfiguredContextsAndPrefixes(String sessionToken) throws ServiceException, ApplicationSecurityException {
-        return new String[] {getWebAppContext(sessionToken), storeFrontWebAppPrefix, assetServerUrlPrefix};
+    public String[] getAllItems() throws ServiceException, ApplicationSecurityException {
+        return new String[] {getWebAppContext(), storeFrontWebAppPrefix, assetServerUrlPrefix, exploitProtectionService.getCSRFToken()};
     }
+
 }

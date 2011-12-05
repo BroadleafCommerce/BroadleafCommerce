@@ -18,7 +18,6 @@ package org.broadleafcommerce.cms.admin.client.datasource.structure.module;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.Criteria;
@@ -73,7 +72,7 @@ public class StructuredContentListClientEntityModule extends BasicClientEntityMo
                 criteria.addCriteria(((StructuredContentListDataSource) dataSource).getPermanentCriteria());
             }
             CriteriaTransferObject cto = getCto(request);
-            service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, Cookies.getCookie(BLCMain.sessionIdKey)), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+            service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
                 public void onSuccess(DynamicResultSet result) {
                     super.onSuccess(result);
                     TreeNode[] recordList = buildRecords(result, null);
@@ -125,7 +124,7 @@ public class StructuredContentListClientEntityModule extends BasicClientEntityMo
             	entity.setType(type);
             }
         }
-        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+        service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
 

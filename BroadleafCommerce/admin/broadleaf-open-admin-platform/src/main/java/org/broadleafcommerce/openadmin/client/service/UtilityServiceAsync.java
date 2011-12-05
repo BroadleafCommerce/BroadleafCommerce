@@ -25,11 +25,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface UtilityServiceAsync {
     
-	void getWebAppContext(String sessionToken, AsyncCallback<String> cb);
+	void getWebAppContext(AsyncCallback<String> cb);
 
-    void getStoreFrontWebAppPrefix(String sessionToken, AsyncCallback<String> cb);
+    void getStoreFrontWebAppPrefix(AsyncCallback<String> cb);
 
-    void getAssetServerUrlPrefix(String sessionToken, AsyncCallback<String> cb);
+    void getAssetServerUrlPrefix(AsyncCallback<String> cb);
 
-    void getConfiguredContextsAndPrefixes(String sessionToken, AsyncCallback<String[]> cb);
+    void getAllItems(AsyncCallback<String[]> cb);
 }

@@ -18,9 +18,12 @@ package org.broadleafcommerce.admin.client.datasource.catalog.category.module;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.*;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -60,7 +63,7 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record, request);
-		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, Cookies.getCookie(BLCMain.sessionIdKey)), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				/*

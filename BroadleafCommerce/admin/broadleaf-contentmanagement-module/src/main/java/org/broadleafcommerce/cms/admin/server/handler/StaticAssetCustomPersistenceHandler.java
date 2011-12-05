@@ -461,7 +461,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         mergedProperties.put("parentFolder", createHiddenField("parentFolder"));
         mergedProperties.put("idHolder", createHiddenField("idHolder"));
         mergedProperties.put("customCriteria", createHiddenField("customCriteria"));
-        mergedProperties.put("sessionToken", createHiddenField("sessionToken"));
+        mergedProperties.put("csrfToken", createHiddenField("csrfToken"));
 	}
 
     @Override

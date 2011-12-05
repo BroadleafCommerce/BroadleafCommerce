@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+import org.broadleafcommerce.openadmin.client.security.AdminUser;
 
 /**
  * 
@@ -25,6 +27,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
  */
 public interface AdminSecurityService extends RemoteService {
 
-	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser(String sessionToken);
+	public AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException;
 	
 }

@@ -26,14 +26,14 @@ public class PersistencePackage implements Serializable {
 	protected PersistencePerspective persistencePerspective;
 	protected String[] customCriteria;
 	protected Entity entity;
-    protected String sessionToken;
+    protected String csrfToken;
 	
-	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String sessionToken) {
+	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;
 		this.entity = entity;
 		this.customCriteria = customCriteria;
-        this.sessionToken = sessionToken;
+        this.csrfToken = csrfToken;
 	}
 	
 	public PersistencePackage() {
@@ -74,11 +74,11 @@ public class PersistencePackage implements Serializable {
 		this.entity = entity;
 	}
 
-    public String getSessionToken() {
-        return sessionToken;
+    public String getCsrfToken() {
+        return csrfToken;
     }
 
-    public void setSessionToken(String sessionToken) {
-        this.sessionToken = sessionToken;
+    public void setCsrfToken(String csrfToken) {
+        this.csrfToken = csrfToken;
     }
 }

@@ -20,7 +20,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -50,9 +49,9 @@ public class AppController implements ValueChangeHandler<String> {
 
 	public static AppController getInstance() {
 		if (controller == null) {
-			AppController.controller = new AppController();
+			controller = new AppController();
 		}
-		return AppController.controller;
+		return controller;
 	}
 
 	private final HandlerManager eventBus = new HandlerManager(null);
@@ -131,7 +130,7 @@ public class AppController implements ValueChangeHandler<String> {
 	}
 
     protected void setupView(final String viewKey, final String presenterKey) {
-        AppServices.SECURITY.getAdminUser(Cookies.getCookie(BLCMain.sessionIdKey), new AbstractCallback<AdminUser>() {
+        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
                 if (result == null) {

@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.client.service;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.gwtincubator.security.client.SecuredAsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -45,23 +44,28 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
     @Override
     protected void onOtherException(final Throwable exception) {
         final String msg = "Service Exception";
-        if (exception.getClass().getName().equals("com.google.gwt.user.client.rpc.InvocationException")) {
+        if (
+            "com.google.gwt.user.client.rpc.InvocationException".equals(exception.getClass().getName()) ||
+            exception.getMessage().contains("XSRF token mismatch")
+        ) {
             SC.logWarn("Retrieving admin user (AbstractCallback.onOtherException)...");
-            AppServices.SECURITY.getAdminUser(Cookies.getCookie(BLCMain.sessionIdKey), new AbstractCallback<AdminUser>() {
+            AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
                 @Override
                 public void onSuccess(AdminUser result) {
                     if (result == null) {
-                        SC.logWarn("Admin user not found. Logging out (AbstractCallback.onOtherException)...");
-                        reportException(msg, exception);
-                        UrlBuilder builder = Window.Location.createUrlBuilder();
-                        builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
-                        builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
-                        Window.open(builder.buildString(), "_self", null);
+                        logout(msg, exception);
                     } else {
-                        SC.logWarn("Admin user found. Reporting calback exception (AbstractCallback.onOtherException)...");
-                        reportException(msg, exception);
-                        String errorMsg = exception.getMessage();
-                        SC.warn(errorMsg);
+                        if (exception.getMessage().contains("XSRF token mismatch")) {
+                            //user must have remember me enabled - just refresh the app in order to update the token
+                            UrlBuilder builder = Window.Location.createUrlBuilder();
+                            builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+                            Window.open(builder.buildString(), "_self", null);
+                        } else {
+                            SC.logWarn("Admin user found. Reporting calback exception (AbstractCallback.onOtherException)...");
+                            reportException(msg, exception);
+                            String errorMsg = exception.getMessage();
+                            SC.warn(errorMsg);
+                        }
                     }
                 }
             });
@@ -76,16 +80,11 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
     protected void onSecurityException(final ApplicationSecurityException exception) {
         final String msg = "Security Exception";
         SC.logWarn("Retrieving admin user (AbstractCallback.onSecurityException)...");
-        AppServices.SECURITY.getAdminUser(Cookies.getCookie(BLCMain.sessionIdKey), new AbstractCallback<AdminUser>() {
+        AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
                 if (result == null) {
-                    SC.logWarn("Admin user not found. Logging out (AbstractCallback.onSecurityException)...");
-                    reportException(msg, exception);
-                    UrlBuilder builder = Window.Location.createUrlBuilder();
-                    builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
-                    builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
-                    Window.open(builder.buildString(), "_self", null);
+                    logout(msg, exception);
                 } else {
                     SC.logWarn("Admin user found. Reporting calback exception (AbstractCallback.onSecurityException)...");
                     reportException(msg, exception);
@@ -93,6 +92,15 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
                 }
             }
         });
+    }
+
+    protected void logout(String msg, Throwable exception) {
+        SC.logWarn("Admin user not found. Logging out (AbstractCallback.onSecurityException)...");
+        reportException(msg, exception);
+        UrlBuilder builder = Window.Location.createUrlBuilder();
+        builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+        builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
+        Window.open(builder.buildString(), "_self", null);
     }
 
     private void reportException(String msg, Throwable exception) {

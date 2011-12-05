@@ -17,7 +17,6 @@
 package org.broadleafcommerce.cms.admin.client.presenter.file;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Cookies;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -103,7 +102,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 	@Override
 	protected void addNewItem(String newItemTitle) {
         initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-        initialValues.put("sessionToken", Cookies.getCookie(BLCMain.sessionIdKey));
+        initialValues.put("csrfToken", BLCMain.csrfToken);
         compileDefaultValuesFromCurrentFilter(initialValues);
         Map<String, String> hints = new HashMap<String, String>();
         hints.put("name", BLCMain.getMessageManager().getString("assetUploadNameHint"));
@@ -134,7 +133,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 }
                 //resetForm();
             }
-        }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria", "sessionToken"}, null);
+        }, null, new String[]{"file", "name", "fullUrl", "callbackName", "operation", "ceilingEntityFullyQualifiedClassname", "parentFolder", "customCriteria", "csrfToken"}, null);
 	}
 
     @Override

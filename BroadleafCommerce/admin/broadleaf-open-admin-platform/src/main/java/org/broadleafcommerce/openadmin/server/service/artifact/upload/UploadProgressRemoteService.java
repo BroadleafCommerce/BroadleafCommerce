@@ -38,8 +38,8 @@ public class UploadProgressRemoteService implements UploadProgressService {
     protected ExploitProtectionService exploitProtectionService;
 
     @Override
-    public Double getPercentUploadComplete(String callbackName, String sessionToken) throws ServiceException, ApplicationSecurityException {
-        exploitProtectionService.compareSessionToken(sessionToken);
+    public Double getPercentUploadComplete(String callbackName, String csrfToken) throws ServiceException, ApplicationSecurityException {
+        exploitProtectionService.compareToken(csrfToken);
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         UploadProgressListener progressListener = (UploadProgressListener) attributes.getRequest().getSession().getAttribute(callbackName);

@@ -56,7 +56,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareSessionToken(persistencePackage.getSessionToken());
+        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
@@ -84,7 +84,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
-        exploitProtectionService.compareSessionToken(persistencePackage.getSessionToken());
+        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         PersistenceManager persistenceManager = null;
         try {
@@ -121,7 +121,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareSessionToken(persistencePackage.getSessionToken());
+        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
         PersistenceManager persistenceManager = null;
@@ -148,7 +148,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareSessionToken(persistencePackage.getSessionToken());
+        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
         PersistenceManager persistenceManager = null;
@@ -175,7 +175,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     }
 
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareSessionToken(persistencePackage.getSessionToken());
+        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         PersistenceManager persistenceManager = null;
         try {

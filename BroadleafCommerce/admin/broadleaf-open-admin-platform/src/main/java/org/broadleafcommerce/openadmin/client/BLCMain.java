@@ -20,7 +20,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.core.KeyIdentifier;
 import com.smartgwt.client.util.KeyCallback;
@@ -54,9 +53,8 @@ public class BLCMain implements EntryPoint {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
-    private static final String DEFAULTSESSIONIDKEY = "JSESSIONID";
 
-    public static String sessionIdKey = DEFAULTSESSIONIDKEY;
+    public static String csrfToken;
     public static String webAppContext;
     public static String storeFrontWebAppPrefix;
     public static String assetServerUrlPrefix;
@@ -151,7 +149,7 @@ public class BLCMain implements EntryPoint {
 	
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
         SC.logWarn("Retrieving web app context...");
-        AppServices.UTILITY.getConfiguredContextsAndPrefixes(Cookies.getCookie(sessionIdKey), new AbstractCallback<String[]>() {
+        AppServices.UTILITY.getAllItems(new AbstractCallback<String[]>() {
             @Override
             public void onSuccess(String[] result) {
                 webAppContext = result[0];
@@ -161,7 +159,8 @@ public class BLCMain implements EntryPoint {
                     storeFrontWebAppPrefix = webAppContext;
                 }
                 assetServerUrlPrefix = result[2];
-                AppServices.SECURITY.getAdminUser(Cookies.getCookie(sessionIdKey), new AbstractCallback<AdminUser>() {
+                csrfToken = result[3];
+                AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
                     @Override
                     public void onSuccess(AdminUser result) {
                         SecurityManager.USER = result;

@@ -26,6 +26,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface UploadProgressServiceAsync {
 
-    public void getPercentUploadComplete(String callbackName, String sessionToken, AsyncCallback<Double> cb);
+    public void getPercentUploadComplete(String callbackName, String csrfToken, AsyncCallback<Double> cb);
 
 }

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form.upload;
 
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.widgets.Progressbar;
@@ -49,7 +48,7 @@ public class UploadStatusProgress extends Progressbar {
         timer = new Timer() {  
             public void run() {
             	//asymptote calculation
-                AppServices.UPLOAD.getPercentUploadComplete(callbackName, Cookies.getCookie(BLCMain.sessionIdKey), new AsyncCallback<Double>() {
+                AppServices.UPLOAD.getPercentUploadComplete(callbackName, BLCMain.csrfToken, new AsyncCallback<Double>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         throw new RuntimeException(caught);

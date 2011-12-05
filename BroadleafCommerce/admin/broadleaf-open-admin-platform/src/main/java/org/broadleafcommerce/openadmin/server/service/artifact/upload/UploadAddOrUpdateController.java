@@ -62,12 +62,12 @@ public class UploadAddOrUpdateController extends SimpleFormController {
             }
 
             //check for XSRF
-            String sessionToken = (String) mpvs.getPropertyValue("sessionToken").getValue();
-            exploitProtectionService.compareSessionToken(sessionToken);
+            String csrfToken = (String) mpvs.getPropertyValue("csrfToken").getValue();
+            exploitProtectionService.compareToken(csrfToken);
 
             PersistencePackage persistencePackage = new PersistencePackage();
             persistencePackage.setPersistencePerspective(new PersistencePerspective());
-            persistencePackage.setSessionToken(sessionToken);
+            persistencePackage.setCsrfToken(csrfToken);
             String ceilingEntity = (String) mpvs.getPropertyValue("ceilingEntityFullyQualifiedClassname").getValue();
             callbackName = (String) mpvs.getPropertyValue("callbackName").getValue();
             String operation = (String) mpvs.getPropertyValue("operation").getValue();

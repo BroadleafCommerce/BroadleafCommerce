@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.remote;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -25,7 +26,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
-import org.broadleafcommerce.openadmin.server.service.exception.XSRFException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,12 +52,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 
     private boolean isEntitySecurityExplicit = false;
 	
-	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser(String sessionToken) {
-        try {
-            exploitProtectionService.compareSessionToken(sessionToken);
-        } catch (XSRFException e) {
-            throw new RuntimeException(e);
-        }
+	public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
         AdminUser persistentAdminUser = getPersistentAdminUser();
         if (persistentAdminUser != null) {
             org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();

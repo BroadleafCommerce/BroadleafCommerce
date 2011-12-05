@@ -78,6 +78,7 @@
                     <bindAddress>0.0.0.0</bindAddress>
                     <debugPort>8001</debugPort>
                     <runTarget>broadleafdemo/admin.html</runTarget>
+                    <noServer>false</noServer>
                 </configuration>
             </plugin>
             <plugin>
