@@ -219,6 +219,7 @@ public class EntityEditDialog extends Window {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
+        pictureStack.setVisible(false);
         if (showMedia && mediaField != null) {
             updateMedia(record.getAttribute(mediaField));
         }

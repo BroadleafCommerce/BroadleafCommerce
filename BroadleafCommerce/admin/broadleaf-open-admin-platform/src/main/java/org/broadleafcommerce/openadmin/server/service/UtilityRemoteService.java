@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -43,9 +42,6 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     protected String storeFrontWebAppPrefix;
     protected String assetServerUrlPrefix;
 
-    @Resource(name="blExploitProtectionService")
-    ExploitProtectionService exploitProtectionService;
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -53,7 +49,6 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     @Override
     public String getWebAppContext(String sessionToken) throws ServiceException {
-        exploitProtectionService.compareSessionToken(sessionToken);
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             return request.getContextPath();
@@ -65,7 +60,6 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     @Override
     public String getStoreFrontWebAppPrefix(String sessionToken) throws ServiceException {
-        exploitProtectionService.compareSessionToken(sessionToken);
         return storeFrontWebAppPrefix;
     }
 
@@ -75,7 +69,6 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     @Override
     public String getAssetServerUrlPrefix(String sessionToken) throws ServiceException {
-        exploitProtectionService.compareSessionToken(sessionToken);
         return assetServerUrlPrefix;
     }
 
@@ -85,7 +78,6 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     @Override
     public String[] getConfiguredContextsAndPrefixes(String sessionToken) throws ServiceException, ApplicationSecurityException {
-        exploitProtectionService.compareSessionToken(sessionToken);
         return new String[] {getWebAppContext(sessionToken), storeFrontWebAppPrefix, assetServerUrlPrefix};
     }
 }

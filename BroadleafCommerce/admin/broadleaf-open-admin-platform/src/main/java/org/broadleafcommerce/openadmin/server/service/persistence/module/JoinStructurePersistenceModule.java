@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -259,7 +260,11 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				Serializable myRecord = records.remove(index);
 				myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
 				Integer newPos = Integer.valueOf(entity.findProperty(joinStructure.getSortField()).getValue());
-				records.add(newPos, myRecord);
+                if (CollectionUtils.isEmpty(records)) {
+                    records.add(myRecord);
+                } else {
+				    records.add(newPos, myRecord);
+                }
 				index = 1;
 				for (Serializable record : records) {
 					fieldManager.setFieldValue(record, joinStructure.getSortField(), Long.valueOf(index));

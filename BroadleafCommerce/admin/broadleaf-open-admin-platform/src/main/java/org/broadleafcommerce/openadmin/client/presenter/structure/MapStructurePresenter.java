@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -47,6 +48,11 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 	protected String entityEditDialogTitle;
 	protected Map<String, Object> initialValues = new HashMap<String, Object>(10);
 	protected String[] gridFields;
+    protected HandlerRegistration dataArrivedHandlerRegistration;
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration removeClickedHandlerRegistration;
+    protected HandlerRegistration addClickedHandlerRegistration;
+    protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 
     public MapStructurePresenter(GridStructureDisplay display, MapStructureEntityEditDialog entityEditDialog, String[] availableToTypes, String entityEditDialogTitle, Map<String, Object> initialValues) {
 		super(display, availableToTypes);
@@ -78,12 +84,12 @@ public class MapStructurePresenter extends AbstractSubPresentable {
 	
 	public void bind() {
         if (display.getCanEdit()) {
-            display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
+            dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
                 public void onDataArrived(DataArrivedEvent event) {
                     display.getRemoveButton().disable();
                 }
             });
-            display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+            selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
                 public void onSelectionChanged(SelectionEvent event) {
                     if (event.getState()) {
                         display.getRemoveButton().enable();
@@ -92,7 +98,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                     }
                 }
             });
-            display.getRemoveButton().addClickHandler(new ClickHandler() {
+            removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     if (event.isLeftButtonDown()) {
                         display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
@@ -103,7 +109,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                     }
                 }
             });
-            display.getAddButton().addClickHandler(new ClickHandler() {
+            addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     if (event.isLeftButtonDown()) {
                         DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
@@ -117,7 +123,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
                     }
                 }
             });
-            display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
+            rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
                 @Override
                 public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
                     entityEditDialog.editRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, gridFields, null);
@@ -126,4 +132,23 @@ public class MapStructurePresenter extends AbstractSubPresentable {
         }
 	}
 
+    public HandlerRegistration getAddClickedHandlerRegistration() {
+        return addClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getDataArrivedHandlerRegistration() {
+        return dataArrivedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRemoveClickedHandlerRegistration() {
+        return removeClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRowDoubleClickedHandlerRegistration() {
+        return rowDoubleClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 }

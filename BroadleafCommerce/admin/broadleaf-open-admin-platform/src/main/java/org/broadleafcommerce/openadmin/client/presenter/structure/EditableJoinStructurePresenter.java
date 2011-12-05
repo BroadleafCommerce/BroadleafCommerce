@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -23,6 +24,8 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
 import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
 import com.smartgwt.client.widgets.grid.events.EditCompleteHandler;
 import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
@@ -53,6 +56,12 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 	protected String searchDialogTitle;
 	protected String joinStructureEditTitle;
 	protected String[] joinStructureFields;
+    protected HandlerRegistration addClickedHandlerRegistration;
+    protected HandlerRegistration editCompletedHandlerRegistration;
+    protected HandlerRegistration recordDropHandlerRegistration;
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration removedClickedHandlerRegistration;
+    protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 	
 	public EditableJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle, String joinStructureEditTitle, String... joinStructureFields) {
 		super(display, availableToTypes);
@@ -67,7 +76,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 	}
 	
 	public void bind() {
-		display.getAddButton().addClickHandler(new ClickHandler() {
+		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
@@ -81,7 +90,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
 			public void onEditComplete(EditCompleteEvent event) {
 				display.getGrid().deselectAllRecords();
 				setStartState();
@@ -91,7 +100,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 		 * TODO add code to check if the JoinStructure has a sort field defined. If not,
 		 * then disable the re-order functionality
 		 */
-		display.getGrid().addRecordDropHandler(new RecordDropHandler() {
+		recordDropHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
 			public void onRecordDrop(RecordDropEvent event) {
 				ListGridRecord record = event.getDropRecords()[0];
 				int originalIndex = ((ListGrid) event.getSource()).getRecordIndex(record);
@@ -104,7 +113,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 				display.getGrid().updateData(record);
 			}
 		});
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					display.getRemoveButton().enable();
@@ -113,7 +122,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
+		removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
@@ -124,6 +133,31 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
+        rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
+                BLCMain.ENTITY_ADD.editRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, joinStructureFields, null);
+            }
+        });
 	}
 
+    public HandlerRegistration getAddClickedHandlerRegistration() {
+        return addClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getEditCompletedHandlerRegistration() {
+        return editCompletedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRecordDropHandlerRegistration() {
+        return recordDropHandlerRegistration;
+    }
+
+    public HandlerRegistration getRemovedClickedHandlerRegistration() {
+        return removedClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 }

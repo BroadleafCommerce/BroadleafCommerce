@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -48,6 +49,11 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 
 	protected EntitySearchDialog searchDialog;
 	protected String searchDialogTitle;
+    protected HandlerRegistration editCompletedHandlerRegistration;
+    protected HandlerRegistration addClickedHandlerRegistration;
+    protected HandlerRegistration recordDroppedHandlerRegistration;
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration removeClickedHandlerRegistration;
 	
 	public SimpleSearchJoinStructurePresenter(GridStructureDisplay display, EntitySearchDialog searchDialog, String[] availableToTypes, String searchDialogTitle) {
 		super(display, availableToTypes);
@@ -66,13 +72,13 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 	}
 	
 	public void bind() {
-		display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
 			public void onEditComplete(EditCompleteEvent event) {
 				display.getGrid().deselectAllRecords();
 				setStartState();
 			}
 		});
-		display.getAddButton().addClickHandler(new ClickHandler() {
+		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
@@ -87,7 +93,7 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 		 * TODO add code to check if the JoinStructure has a sort field defined. If not,
 		 * then disable the re-order functionality
 		 */
-		display.getGrid().addRecordDropHandler(new RecordDropHandler() {
+		recordDroppedHandlerRegistration = display.getGrid().addRecordDropHandler(new RecordDropHandler() {
 			public void onRecordDrop(RecordDropEvent event) {
 				ListGridRecord record = event.getDropRecords()[0];
 				int originalIndex = ((ListGrid) event.getSource()).getRecordIndex(record);
@@ -100,7 +106,7 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 				display.getGrid().updateData(record);
 			}
 		});
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					display.getRemoveButton().enable();
@@ -109,7 +115,7 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
+		removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
@@ -121,4 +127,24 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 			}
 		});
 	}
+
+    public HandlerRegistration getAddClickedHandlerRegistration() {
+        return addClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getEditCompletedHandlerRegistration() {
+        return editCompletedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRecordDroppedHandlerRegistration() {
+        return recordDroppedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRemoveClickedHandlerRegistration() {
+        return removeClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 }

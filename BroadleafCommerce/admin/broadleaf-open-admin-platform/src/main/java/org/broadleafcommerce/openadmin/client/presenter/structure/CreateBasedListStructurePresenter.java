@@ -16,11 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellDoubleClickHandler;
 import com.smartgwt.client.widgets.grid.events.DataArrivedEvent;
 import com.smartgwt.client.widgets.grid.events.DataArrivedHandler;
 import com.smartgwt.client.widgets.grid.events.EditCompleteEvent;
@@ -47,6 +50,13 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 
 	protected String editDialogTitle;
 	protected Map<String, Object> initialValues;
+    protected String[] gridFields = new String[]{};
+    protected HandlerRegistration dataArrivedHandlerRegistration;
+    protected HandlerRegistration editCompletedHandlerRegistration;
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration removedClickedHandlerRegistration;
+    protected HandlerRegistration addClickedHandlerRegistration;
+    protected HandlerRegistration rowDoubleClickedHandlerRegistration;
 
     public CreateBasedListStructurePresenter(GridStructureDisplay display, String editDialogTitle) {
 		this(display, null, editDialogTitle, new HashMap<String, Object>());
@@ -70,21 +80,22 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
+        this.gridFields = gridFields;
     }
 	
 	public void bind() {
-		display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
+		dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
 			public void onDataArrived(DataArrivedEvent event) {
 				display.getRemoveButton().disable();
 			}
 		});
-		display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
 			public void onEditComplete(EditCompleteEvent event) {
 				display.getGrid().deselectAllRecords();
 				setStartState();
 			}
 		});
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					display.getRemoveButton().enable();
@@ -93,7 +104,7 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
+		removedClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
@@ -104,8 +115,7 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		
-		display.getAddButton().addClickHandler(new ClickHandler() {
+		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					DynamicEntityDataSource ds = (DynamicEntityDataSource) display.getGrid().getDataSource();
@@ -117,5 +127,35 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
+        rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
+            @Override
+            public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
+                BLCMain.ENTITY_ADD.editRecord(editDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, gridFields, null);
+            }
+        });
 	}
+
+    public HandlerRegistration getAddClickedHandlerRegistration() {
+        return addClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getDataArrivedHandlerRegistration() {
+        return dataArrivedHandlerRegistration;
+    }
+
+    public HandlerRegistration getEditCompletedHandlerRegistration() {
+        return editCompletedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRemovedClickedHandlerRegistration() {
+        return removedClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRowDoubleClickedHandlerRegistration() {
+        return rowDoubleClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 }

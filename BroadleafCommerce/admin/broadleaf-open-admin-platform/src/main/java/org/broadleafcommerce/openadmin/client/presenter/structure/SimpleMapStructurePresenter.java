@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -44,6 +45,11 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 
 	protected Map<String, Object> initialValues = new LinkedHashMap<String, Object>(10);
 	protected String[] gridFields;
+    protected HandlerRegistration dataArrivedHandlerRegistration;
+    protected HandlerRegistration editCompletedHandlerRegistration;
+    protected HandlerRegistration selectionChangedHandlerRegistration;
+    protected HandlerRegistration removeClickedHandlerRegistration;
+    protected HandlerRegistration addClickedHandlerRegistration;
 	
 	public SimpleMapStructurePresenter(GridStructureDisplay display, String[] availableToTypes, Map<String, Object> initialValues) {
 		super(display, availableToTypes);
@@ -62,18 +68,18 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 	}
 	
 	public void bind() {
-		display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
+		dataArrivedHandlerRegistration = display.getGrid().addDataArrivedHandler(new DataArrivedHandler() {
 			public void onDataArrived(DataArrivedEvent event) {
 				display.getRemoveButton().disable();
 			}
 		});
-		display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
+		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
 			public void onEditComplete(EditCompleteEvent event) {
 				display.getGrid().deselectAllRecords();
 				setStartState();
 			}
 		});
-		display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
+		selectionChangedHandlerRegistration = display.getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
 					display.getRemoveButton().enable();
@@ -82,7 +88,7 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		display.getRemoveButton().addClickHandler(new ClickHandler() {
+		removeClickedHandlerRegistration = display.getRemoveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
@@ -93,7 +99,7 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 				}
 			}
 		});
-		display.getAddButton().addClickHandler(new ClickHandler() {
+		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					DynamicEntityDataSource dataSource = (DynamicEntityDataSource) display.getGrid().getDataSource();
@@ -116,4 +122,23 @@ public class SimpleMapStructurePresenter extends AbstractSubPresentable {
 		});
 	}
 
+    public HandlerRegistration getAddClickedHandlerRegistration() {
+        return addClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getDataArrivedHandlerRegistration() {
+        return dataArrivedHandlerRegistration;
+    }
+
+    public HandlerRegistration getEditCompletedHandlerRegistration() {
+        return editCompletedHandlerRegistration;
+    }
+
+    public HandlerRegistration getRemoveClickedHandlerRegistration() {
+        return removeClickedHandlerRegistration;
+    }
+
+    public HandlerRegistration getSelectionChangedHandlerRegistration() {
+        return selectionChangedHandlerRegistration;
+    }
 }
