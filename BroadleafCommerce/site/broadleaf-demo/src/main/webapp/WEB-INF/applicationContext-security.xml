@@ -40,29 +40,29 @@
 			<sec:filter-chain pattern="/admin/*"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
-                	blAdminLogoutFilter,               	
+                	blAdminLogoutFilter,
                 	blAdminAuthenticationProcessingFilter,
                 	blRequestWrapperFilter,
-                	blAdminRememberMeAuthenticationFilter, 
+                	blAdminRememberMeAuthenticationFilter,
                 	blAdminExceptionTranslationFilter,
                 	blAdminFilterSecurityInterceptor" />
             <sec:filter-chain pattern="/*.service"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
-                	blAdminLogoutFilter,               	
+                	blAdminLogoutFilter,
                 	blAdminAuthenticationProcessingFilter,
                 	blRequestWrapperFilter,
-                	blAdminRememberMeAuthenticationFilter, 
+                	blAdminRememberMeAuthenticationFilter,
                 	blAdminExceptionTranslationFilter,
                 	blAdminFilterSecurityInterceptor" />
 			<sec:filter-chain pattern="/**"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
-                	blLogoutFilter,               	
+                	blLogoutFilter,
                 	blAuthenticationProcessingFilter,
                 	blRequestWrapperFilter,
-                	blRememberMeAuthenticationFilter, 
-                	blCustomerStateFilter, 
+                	blRememberMeAuthenticationFilter,
+                	blCustomerStateFilter,
                 	blExceptionTranslationFilter,
                 	blFilterSecurityInterceptor" />
 		</sec:filter-chain-map>
@@ -149,6 +149,7 @@
 		<property name="authenticationFailureHandler" ref="broadleafAuthenticationFailureHandler" />
 		<property name="authenticationSuccessHandler" ref="springAuthenticationSuccessHandler" />
 		<property name="filterProcessesUrl" value="/login_post.htm" />
+        <property name="rememberMeServices" ref="blRememberMeServices"/>
 	</bean>
 
 	<bean id="blExceptionTranslationFilter"
@@ -188,6 +189,7 @@
 		<property name="authenticationFailureHandler" ref="broadleafAdminAuthenticationFailureHandler" />
 		<property name="authenticationSuccessHandler" ref="springAdminAuthenticationSuccessHandler" />
 		<property name="filterProcessesUrl" value="/admin/login_admin_post" />
+        <property name="rememberMeServices" ref="blAdminRememberMeServices"/>
 	</bean>
 
     <bean id="blAdminLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
