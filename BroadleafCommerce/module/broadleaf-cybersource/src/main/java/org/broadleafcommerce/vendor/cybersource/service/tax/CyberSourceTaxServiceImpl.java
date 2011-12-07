@@ -136,6 +136,7 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 				cachedResponse.getCityRate() == null ||
 				cachedResponse.getCountyRate() == null ||
 				cachedResponse.getDistrictRate() == null ||
+				cachedResponse.getStateRate() == null ||
 				cachedResponse.getTotalRate() == null
 		) {
 			throw new TaxException("The cached response [merchant reference code: " + cachedResponse.getMerchantReferenceCode() + "] is missing one or more tax rates. Cannot use the cached response to calculate tax.");
@@ -147,6 +148,11 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 		taxResponse.setReasonCode(100);
 		taxResponse.setRequestToken("from-cache");
 		taxResponse.setPostalCode(cachedResponse.getPostalCode());
+		taxResponse.setTotalCityTaxAmount(new Money(0D));
+		taxResponse.setTotalCountyTaxAmount(new Money(0D));
+		taxResponse.setTotalDistrictTaxAmount(new Money(0D));
+		taxResponse.setTotalStateTaxAmount(new Money(0D));
+		taxResponse.setTotalTaxAmount(new Money(0D));
 		CyberSourceTaxItemResponse[] itemResponses = new CyberSourceTaxItemResponse[taxRequest.getItemRequests().size()];
 		int counter = 0;
 		for (CyberSourceItemRequest itemRequest : taxRequest.getItemRequests()) {
@@ -155,7 +161,15 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 			itemResponse.setCityTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getCityRate()));
 			itemResponse.setCountyTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getCountyRate()));
 			itemResponse.setDistrictTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getDistrictRate()));
+			itemResponse.setStateTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getStateRate()));
 			itemResponse.setTotalTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getTotalRate()));
+			
+			taxResponse.setTotalCityTaxAmount(taxResponse.getTotalCityTaxAmount().add(itemResponse.getCityTaxAmount()));
+			taxResponse.setTotalCountyTaxAmount(taxResponse.getTotalCountyTaxAmount().add(itemResponse.getCountyTaxAmount()));
+			taxResponse.setTotalDistrictTaxAmount(taxResponse.getTotalDistrictTaxAmount().add(itemResponse.getDistrictTaxAmount()));
+			taxResponse.setTotalStateTaxAmount(taxResponse.getTotalStateTaxAmount().add(itemResponse.getStateTaxAmount()));
+			taxResponse.setTotalTaxAmount(taxResponse.getTotalTaxAmount().add(itemResponse.getTotalTaxAmount()));
+			
 			itemResponses[counter] = itemResponse;
 			counter++;
 		}
