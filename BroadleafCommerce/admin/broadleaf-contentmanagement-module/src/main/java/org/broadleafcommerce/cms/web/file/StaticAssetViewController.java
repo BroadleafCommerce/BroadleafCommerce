@@ -52,7 +52,7 @@ public class StaticAssetViewController {
     @RequestMapping(value = "/**/{fileName}", method = {RequestMethod.GET})
     public ModelAndView viewItem(@PathVariable String fileName, HttpServletRequest request) {
         try {
-            String fullUrl = request.getPathInfo();
+            String fullUrl = "/" + fileName;
             Long sandBoxId = (Long) request.getSession().getAttribute(SANDBOX_ID_VAR);
             if (sandBoxId == null) {
                 sandBoxId = (Long) request.getSession().getAttribute(SANDBOX_ADMIN_ID_VAR);

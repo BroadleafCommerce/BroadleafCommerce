@@ -11,32 +11,6 @@
 		<param-value>blAdmin.root</param-value>
 	</context-param>
 
-    <filter>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-        <init-param>
-            <param-name>modRewriteConf</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>modRewriteConfText</param-name>
-            <param-value>
-                RewriteRule ^.+/cms/staticasset(.+) /cms/staticasset$1
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>statusEnabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
 	<context-param>
 		<param-name>patchConfigLocation</param-name>
 		<param-value>
@@ -57,7 +31,7 @@
 		<param-value>forceFlush</param-value>
 	</context-param>
 
-	<!-- Maintain a single Hibernate session for the duration of an HTTP request. 
+	<!-- Maintain a single Hibernate session for the duration of an HTTP request.
 		Mitigates Hibernate session related exceptions -->
 	<filter>
 		<filter-name>entityManagerInViewFilter</filter-name>
@@ -79,9 +53,9 @@
         <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
     </filter>
 
-     <filter>
-        <filter-name>blProcessURLFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <filter>
+        <filter-name>broadleafApplicationFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
     <filter>
@@ -99,17 +73,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-    <filter-mapping>
-		<filter-name>blProcessURLFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
-    <!-- specify the url pattern that will engage spring mvc -->
-	<filter-mapping>
-		<filter-name>blAdminSandBoxFilter</filter-name>
-		<url-pattern>*.service</url-pattern>
-	</filter-mapping>
-
 	<!--<filter-mapping>
 		<filter-name>changeSetInViewFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -118,6 +81,16 @@
         <filter-name>hiddenHttpMethodFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>broadleafApplicationFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+		<filter-name>blAdminSandBoxFilter</filter-name>
+		<url-pattern>*.service</url-pattern>
+	</filter-mapping>
 
 	<!-- enable configured logging -->
 	<context-param>
@@ -136,71 +109,25 @@
 	<listener>
         <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
-
-	<!-- Initialize spring mvc -->
-	<servlet>
-		<servlet-name>admin</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>
-                classpath:/applicationContext-servlet-admin.xml
-                classpath:/applicationContext-servlet-cms-contentClient.xml
-                classpath:/applicationContext-servlet-cms-contentCreator.xml
-            </param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<!-- specify the url pattern that will engage spring mvc -->
-	<servlet-mapping>
-		<servlet-name>admin</servlet-name>
-		<url-pattern>*.service</url-pattern>
-	</servlet-mapping>
-
-    <servlet-mapping>
-		<servlet-name>admin</servlet-name>
-		<url-pattern>/cms/staticasset/*</url-pattern>
-	</servlet-mapping>
 	
 	<servlet>
         <servlet-name>demo</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/applicationContext-servlet.xml</param-value>
+            <param-value>
+                classpath:/applicationContext-servlet-admin.xml
+                classpath:/applicationContext-servlet-cms-contentClient.xml
+                classpath:/applicationContext-servlet-cms-contentCreator.xml
+                /WEB-INF/applicationContext-servlet.xml
+            </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
-        <url-pattern>*.htm</url-pattern>
-    </servlet-mapping>
-    
-	<servlet-mapping>
-        <servlet-name>demo</servlet-name>
-        <url-pattern>/store/*</url-pattern>
-    </servlet-mapping>
-
-	<servlet-mapping>
-        <servlet-name>demo</servlet-name>
-        <url-pattern>/store/*/*</url-pattern>
-    </servlet-mapping>
-
-	<servlet-mapping>
-        <servlet-name>demo</servlet-name>
-        <url-pattern>/store/*/*/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>demo</servlet-name>
-        <url-pattern>/store</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>demo</servlet-name>
-        <url-pattern>/preview/*</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
 	<env-entry>
@@ -208,6 +135,7 @@
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>broadleafdemo</env-entry-value>
 	</env-entry>
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

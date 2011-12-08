@@ -12,7 +12,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
     <description>Top Level Project</description>
-    
+    <repositories>
+		<repository>
+			<id>public releases</id>
+			<name>public releases</name>
+			<url>http://www.broadleafcommerce.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
 	<build>
 		<pluginManagement>
 			<plugins>

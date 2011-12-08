@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.extensibility.context.MergeApplicationContextXmlConfigResource;
+import org.broadleafcommerce.profile.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.profile.extensibility.context.StandardConfigLocations;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -86,24 +87,25 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
     protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
         String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll(StandardConfigLocations.APPCONTEXTTYPE);
 
-        ArrayList<InputStream> sources = new ArrayList<InputStream>();
+        ArrayList<ResourceInputStream> sources = new ArrayList<ResourceInputStream>(20);
         for (String location : broadleafConfigLocations) {
             InputStream source = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(location);
             if (source != null) {
-            	sources.add(source);
+            	sources.add(new ResourceInputStream(source, location));
             }
         }
-        InputStream[] filteredSources = new InputStream[]{};
+        ResourceInputStream[] filteredSources = new ResourceInputStream[]{};
         filteredSources = sources.toArray(filteredSources);
         String patchLocation = getPatchLocation();
         String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, CONFIG_LOCATION_DELIMITERS);
-        InputStream[] patches = new InputStream[patchLocations.length];
+        ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
         for (int i = 0; i < patchLocations.length; i++) {
             if (patchLocations[i].startsWith("classpath")) {
-                patches[i] = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[i].substring("classpath*:".length(), patchLocations[i].length()));
+                InputStream is = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[i].substring("classpath*:".length(), patchLocations[i].length()));
+                patches[i] = new ResourceInputStream(is, patchLocations[i]);
             } else {
                 Resource resource = getResourceByPath(patchLocations[i]);
-                patches[i] = resource.getInputStream();
+                patches[i] = new ResourceInputStream(resource.getInputStream(), patchLocations[i]);
             }
             if (patches[i] == null || patches[i].available() <= 0) {
             	throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);

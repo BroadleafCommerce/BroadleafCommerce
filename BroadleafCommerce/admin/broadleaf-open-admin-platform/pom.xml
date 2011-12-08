@@ -221,5 +221,13 @@
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
         </dependency>
+        <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+        <dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+		</dependency>
 	</dependencies>
 </project>

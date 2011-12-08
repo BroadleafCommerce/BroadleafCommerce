@@ -14,32 +14,6 @@
 		<param-value>site.root</param-value>
 	</context-param>
 
-    <filter>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-        <init-param>
-            <param-name>modRewriteConf</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>modRewriteConfText</param-name>
-            <param-value>
-                RewriteRule ^.+/cms/staticasset(.+) /cms/staticasset${symbol_dollar}1
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>statusEnabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
 	<context-param>
 		<param-name>patchConfigLocation</param-name>
 		<param-value>
@@ -68,8 +42,8 @@
 	</filter>
 
     <filter>
-        <filter-name>blProcessURLFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <filter-name>broadleafApplicationFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 	
 	<!--<filter>
@@ -92,9 +66,9 @@
 	</filter-mapping>
 
     <filter-mapping>
-		<filter-name>blProcessURLFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+        <filter-name>broadleafApplicationFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 	
 	<!--<filter-mapping>
 		<filter-name>dynamicSkuPricingFilter</filter-name>
@@ -125,8 +99,8 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                /WEB-INF/applicationContext-servlet.xml
                 classpath:/applicationContext-servlet-cms-contentClient.xml
+                /WEB-INF/applicationContext-servlet.xml
             </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
@@ -134,18 +108,8 @@
 
     <servlet-mapping>
         <servlet-name>mycompany</servlet-name>
-        <url-pattern>*.htm</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>mycompany</servlet-name>
-        <url-pattern>/store</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-		<servlet-name>mycompany</servlet-name>
-		<url-pattern>/cms/staticasset/*</url-pattern>
-	</servlet-mapping>
 
 	<env-entry>
 		<env-entry-name>appName</env-entry-name>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.security;
+package org.broadleafcommerce.core.security;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,7 +26,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.broadleafcommerce.profile.web.core.CookieUtils;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 /**

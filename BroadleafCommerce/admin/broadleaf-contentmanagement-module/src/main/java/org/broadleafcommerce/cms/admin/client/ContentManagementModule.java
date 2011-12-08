@@ -101,8 +101,8 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 			approverSandBoxPermissions
 		);
 
-        setHtmlEditorIFramePath("/richTextFullFeatured.html");
-        setBasicHtmlEditorIFramePath("/richTextBasic.html");
+        setHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextFullFeatured.html");
+        setBasicHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextBasic.html");
         registerModule();
     }
 }

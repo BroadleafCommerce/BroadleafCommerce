@@ -42,7 +42,7 @@ import javax.annotation.Resource;
 @Service("blAdminSecurityRemoteService")
 public class AdminSecurityServiceRemote implements AdminSecurityService  {
 	
-	private static final String ANONYMOUS_USER_NAME = "roleAnonymous";
+	private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 	
 	@Resource(name="blAdminSecurityService")
 	protected org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService securityService;

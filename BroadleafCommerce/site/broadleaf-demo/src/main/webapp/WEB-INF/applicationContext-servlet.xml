@@ -14,19 +14,14 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 	
-	<context:component-scan base-package="org.broadleafcommerce.profile.web.controller"/>
-	<context:component-scan base-package="org.broadleafcommerce.core.web.controller"/>
+	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
+	<context:component-scan base-package="org.broadleafcommerce.core.web"/>
 	
 	<aop:config/>
 
-    <!--Make Spring MVC ignore files emitted for the admin-->
-    <mvc:resources mapping="/org.broadleafcommerce.admin.demoAdmin/**" location="/org.broadleafcommerce.admin.demoAdmin/"/>
-	
-	<bean id="resourceBundleExtensionPoint"
-		class="org.broadleafcommerce.profile.core.util.ResourceBundleExtensionPoint" />
+	<bean id="resourceBundleExtensionPoint" class="org.broadleafcommerce.profile.core.util.ResourceBundleExtensionPoint" />
 
-	<bean id="messageSource"
-		class="org.broadleafcommerce.profile.core.util.BLResourceBundleMessageSource">
+	<bean id="messageSource" class="org.broadleafcommerce.profile.core.util.BLResourceBundleMessageSource">
 		<constructor-arg>
 			<list>
 				<value>messages</value>
@@ -36,8 +31,7 @@
 	</bean>
 	
 	<!-- Configures the Tiles layout system -->
-	<bean id="tilesConfigurer"
-		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<property name="definitions">
 			<list>
 				<value>/WEB-INF/tiles-broadleafdemo.xml</value>
@@ -45,12 +39,10 @@
 		</property>
 	</bean>
 
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView"></property>
-		<property name="prefix" value="/WEB-INF/jsp/"></property>
-		<property name="suffix" value=".jsp"></property>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
 	</bean>
 
 	<bean id="store" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
@@ -91,9 +83,8 @@
 
     <bean id="blCatalogMultiplyController" class="org.broadleafcommerce.core.web.catalog.CatalogMultiplierController"/>
 
-	<bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="order" value="0" />
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="1" />
 		<property name="alwaysUseFullPath" value="true" />
 		<!-- dtoProperty name="interceptors">
 			<list>
@@ -126,5 +117,7 @@
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
     <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+
+    <mvc:default-servlet-handler/>
 
 </beans>

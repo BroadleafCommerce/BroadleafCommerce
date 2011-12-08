@@ -16,25 +16,25 @@
 
 package org.broadleafcommerce.profile.extensibility.cache.ehcache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
+import org.broadleafcommerce.profile.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.profile.extensibility.context.merge.MergeXmlConfigResource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.core.io.Resource;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean {
 
     public void setConfigLocations(List<Resource> configLocations) throws BeansException {
         try {
             MergeXmlConfigResource merge = new MergeXmlConfigResource();
-            InputStream[] sources = new InputStream[configLocations.size()];
+            ResourceInputStream[] sources = new ResourceInputStream[configLocations.size()];
             int j=0;
             for (Resource resource : configLocations) {
-                sources[j] = resource.getInputStream();
+                sources[j] = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                 j++;
             }
             setConfigLocation(merge.getMergedConfigResource(sources));

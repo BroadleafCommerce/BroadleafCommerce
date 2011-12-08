@@ -1183,12 +1183,6 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.tuckey</groupId>
-                <artifactId>urlrewritefilter</artifactId>
-                <version>3.2.0</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
                 <version>1.4.5</version>

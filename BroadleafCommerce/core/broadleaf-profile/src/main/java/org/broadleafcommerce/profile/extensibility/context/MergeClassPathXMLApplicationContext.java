@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.profile.extensibility.context;
 
-import java.io.InputStream;
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -79,14 +77,14 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
 	public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
 		super(parent);
 		
-		InputStream[] sources = new InputStream[sourceLocations.length];
+		ResourceInputStream[] sources = new ResourceInputStream[sourceLocations.length];
 		for (int j=0;j<sourceLocations.length;j++){
-			sources[j] = MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(sourceLocations[j]);
+			sources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
 		}
 		
-		InputStream[] patches = new InputStream[patchLocations.length];
+		ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
 		for (int j=0;j<patches.length;j++){
-			patches[j] = MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]);
+			patches[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]), patchLocations[j]);
 		}
 		
 		this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);

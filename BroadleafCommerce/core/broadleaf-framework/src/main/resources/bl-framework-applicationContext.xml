@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
 	<context:component-scan base-package="org.broadleafcommerce.core">
-        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.controller.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/>
     </context:component-scan>
 	
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
@@ -75,5 +75,13 @@
             </list>
         </property>
     </bean>
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+	    <property name="converters">
+	        <list>
+	            <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
+	        </list>
+	    </property>
+	</bean>
 
 </beans>

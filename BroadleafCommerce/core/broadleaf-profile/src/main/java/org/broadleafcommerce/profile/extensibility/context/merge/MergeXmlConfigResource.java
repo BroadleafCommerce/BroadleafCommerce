@@ -16,20 +16,20 @@
 
 package org.broadleafcommerce.profile.extensibility.context.merge;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  *
@@ -40,9 +40,9 @@ public class MergeXmlConfigResource {
 
     private static final Log LOG = LogFactory.getLog(MergeXmlConfigResource.class);
 
-    public Resource getMergedConfigResource(InputStream[] sources) throws BeansException {
+    public Resource getMergedConfigResource(ResourceInputStream[] sources) throws BeansException {
         Resource configResource = null;
-        InputStream merged = null;
+        ResourceInputStream merged = null;
         try {
             merged = merge(sources);
 
@@ -79,24 +79,15 @@ public class MergeXmlConfigResource {
         return configResource;
     }
 
-    protected InputStream merge(InputStream[] sources) throws MergeException, MergeManagerSetupException {
+    protected ResourceInputStream merge(ResourceInputStream[] sources) throws MergeException, MergeManagerSetupException {
         if (sources.length == 1) return sources[0];
 
-        InputStream response = null;
-        InputStream[] pair = new InputStream[2];
+        ResourceInputStream response = null;
+        ResourceInputStream[] pair = new ResourceInputStream[2];
         pair[0] = sources[0];
         for (int j=1;j<sources.length;j++){
             pair[1] = sources[j];
             response = mergeItems(pair);
-            if (LOG.isDebugEnabled()) {
-            	try {
-					byte[] itemArray = buildArrayFromStream(response);
-					//LOG.debug("merged sources - stage["+j+"]" + serialize(new ByteArrayInputStream(itemArray)));
-					response = new ByteArrayInputStream(itemArray);
-				} catch (IOException e) {
-					throw new MergeException(e);
-				}
-            }
             try{
                 pair[0].close();
             } catch (Throwable e) {
@@ -113,8 +104,8 @@ public class MergeXmlConfigResource {
         return response;
     }
 
-    protected InputStream mergeItems(InputStream[] sourceLocations) throws MergeException, MergeManagerSetupException {
-        InputStream response = new MergeManager().merge(sourceLocations[0], sourceLocations[1]);
+    protected ResourceInputStream mergeItems(ResourceInputStream[] sourceLocations) throws MergeException, MergeManagerSetupException {
+        ResourceInputStream response = new MergeManager().merge(sourceLocations[0], sourceLocations[1]);
 
         return response;
     }

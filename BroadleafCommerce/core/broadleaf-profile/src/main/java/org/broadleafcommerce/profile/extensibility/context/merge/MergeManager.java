@@ -18,6 +18,7 @@ package org.broadleafcommerce.profile.extensibility.context.merge;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.broadleafcommerce.profile.extensibility.context.merge.handlers.MergeHandler;
@@ -38,6 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +109,7 @@ public class MergeManager {
      * @return the stream representing the merged document
      * @throws MergeException
      */
-    public InputStream merge(InputStream stream1, InputStream stream2) throws MergeException {
+    public ResourceInputStream merge(ResourceInputStream stream1, ResourceInputStream stream2) throws MergeException {
         try {
             Document doc1 = builder.parse(stream1);
             Document doc2 = builder.parse(stream2);
@@ -141,8 +143,10 @@ public class MergeManager {
             StreamResult result = new StreamResult(writer);
             xmlTransformer.transform(source, result);
 
-            return new ByteArrayInputStream(baos.toByteArray());
-        } catch (Throwable e) {
+            byte[] itemArray = baos.toByteArray();
+
+            return new ResourceInputStream(new ByteArrayInputStream(itemArray), stream2.getName(), stream1.getNames());
+        } catch (Exception e) {
             throw new MergeException(e);
         }
     }
@@ -217,6 +221,34 @@ public class MergeManager {
         }
 
         return props;
+    }
+
+    public String serialize(InputStream in) {
+        InputStreamReader reader = null;
+        int temp;
+        StringBuffer item = new StringBuffer();
+        boolean eof = false;
+        try {
+            reader = new InputStreamReader(in);
+            while (!eof) {
+                temp = reader.read();
+                if (temp == -1) {
+                    eof = true;
+                } else {
+                    item.append((char) temp);
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("Unable to merge source and patch locations", e);
+        } finally {
+            if (reader != null) {
+                try{ reader.close(); } catch (Throwable e) {
+                    LOG.error("Unable to merge source and patch locations", e);
+                }
+            }
+        }
+
+        return item.toString();
     }
 
 }

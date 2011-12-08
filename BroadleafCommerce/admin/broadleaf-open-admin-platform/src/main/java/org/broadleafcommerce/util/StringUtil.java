@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.util;
+package org.broadleafcommerce.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

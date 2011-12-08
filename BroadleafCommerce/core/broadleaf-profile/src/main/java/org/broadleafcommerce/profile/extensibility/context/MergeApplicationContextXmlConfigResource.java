@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.profile.extensibility.context;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.extensibility.context.merge.MergeXmlConfigResource;
@@ -30,6 +25,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  *
@@ -51,21 +49,15 @@ public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigReso
      * @param patches array of input streams for the patch application context files
      * @throws BeansException
      */
-    public Resource[] getConfigResources(InputStream[] sources, InputStream[] patches) throws BeansException {
+    public Resource[] getConfigResources(ResourceInputStream[] sources, ResourceInputStream[] patches) throws BeansException {
         Resource[] configResources = null;
-        InputStream merged = null;
+        ResourceInputStream merged = null;
         try {
             merged = merge(sources);
 
-            byte[] mergedArray = buildArrayFromStream(merged);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Merged Stage1 Sources: \n" + serialize(new ByteArrayInputStream(mergedArray)));
-            }
-
             if (patches != null) {
-                InputStream[] patches2 = new InputStream[patches.length+1];
-                patches2[0] = new ByteArrayInputStream(mergedArray);
+                ResourceInputStream[] patches2 = new ResourceInputStream[patches.length+1];
+                patches2[0] = merged;
                 System.arraycopy(patches, 0, patches2, 1, patches.length);
 
                 merged = merge(patches2);

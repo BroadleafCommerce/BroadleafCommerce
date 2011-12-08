@@ -12,17 +12,9 @@
            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-	
-	<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-	    <property name="converters">
-	        <list>
-	            <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
-	        </list>
-	    </property>
-	</bean>
-	
+
 	<context:component-scan base-package="org.broadleafcommerce.profile">
-        <context:exclude-filter type="regex" expression="org.broadleafcommerce.profile.web.controller.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.profile.web.*"/>
     </context:component-scan>
     
 	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">

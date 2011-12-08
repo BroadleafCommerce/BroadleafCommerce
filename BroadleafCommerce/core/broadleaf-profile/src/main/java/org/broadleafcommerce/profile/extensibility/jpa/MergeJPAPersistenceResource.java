@@ -16,19 +16,9 @@
 
 package org.broadleafcommerce.profile.extensibility.jpa;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.profile.extensibility.context.merge.MergeXmlConfigResource;
 import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeException;
 import org.broadleafcommerce.profile.extensibility.context.merge.exceptions.MergeManagerSetupException;
@@ -43,6 +33,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author jfischer
@@ -53,16 +52,16 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
     private static final Log LOG = LogFactory.getLog(MergeJPAPersistenceResource.class);
     private ErrorHandler handler = new SimpleSaxErrorHandler(LOG);
 
-    public Resource getMergedConfigResource(InputStream[] sources) throws BeansException {
+    public Resource getMergedConfigResource(ResourceInputStream[] sources) throws BeansException {
         Resource configResource = null;
-        InputStream merged = null;
+        ResourceInputStream merged = null;
         try {
-            List<String> mappingFiles = new ArrayList<String>();
-            InputStream[] inMemoryStreams = new InputStream[sources.length];
+            List<String> mappingFiles = new ArrayList<String>(20);
+            ResourceInputStream[] inMemoryStreams = new ResourceInputStream[sources.length];
             for (int j=0;j<sources.length;j++){
                 byte[] sourceArray = buildArrayFromStream(sources[j]);
                 compileMappingFiles(mappingFiles, sourceArray);
-                inMemoryStreams[j] = new ByteArrayInputStream(sourceArray);
+                inMemoryStreams[j] = new ResourceInputStream(new ByteArrayInputStream(sourceArray), sources[j].getName());
             }
 
             merged = merge(inMemoryStreams);

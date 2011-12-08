@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core;
+package org.broadleafcommerce.core.security;
 
 import java.text.DateFormat;
 import java.text.FieldPosition;

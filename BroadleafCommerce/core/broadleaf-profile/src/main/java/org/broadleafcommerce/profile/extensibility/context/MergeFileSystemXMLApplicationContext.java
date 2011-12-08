@@ -16,17 +16,16 @@
 
 package org.broadleafcommerce.profile.extensibility.context;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.core.io.Resource;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Standalone XML application context, taking the locations of one or more
@@ -84,19 +83,19 @@ public class MergeFileSystemXMLApplicationContext extends AbstractXmlApplication
 	public MergeFileSystemXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
 		super(parent);
 		
-		InputStream[] sources;
-		InputStream[] patches;
+		ResourceInputStream[] sources;
+		ResourceInputStream[] patches;
 		try {
-			sources = new InputStream[sourceLocations.length];
+			sources = new ResourceInputStream[sourceLocations.length];
 			for (int j=0;j<sourceLocations.length;j++){
 				File temp = new File(sourceLocations[j]);
-				sources[j] = new BufferedInputStream(new FileInputStream(temp));
+				sources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), sourceLocations[j]);
 			}
 			
-			patches = new InputStream[patchLocations.length];
+			patches = new ResourceInputStream[patchLocations.length];
 			for (int j=0;j<patches.length;j++){
 				File temp = new File(patchLocations[j]);
-				sources[j] = new BufferedInputStream(new FileInputStream(temp));
+				sources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), patchLocations[j]);
 			}
 		} catch (FileNotFoundException e) {
 			throw new FatalBeanException("Unable to merge context files", e);

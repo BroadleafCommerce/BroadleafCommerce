@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core;
+package org.broadleafcommerce.core.security;
+
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Component;
 
 @Component("blCookieUtils")
 public class GenericCookieUtilsImpl implements CookieUtils {

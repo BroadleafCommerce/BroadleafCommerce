@@ -16,18 +16,18 @@
 
 package org.broadleafcommerce.profile.extensibility.context.merge.handlers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This handler is responsible for replacing nodes in the source document
@@ -41,6 +41,30 @@ import org.w3c.dom.NodeList;
 public class NodeReplaceInsert extends BaseHandler {
 	
 	private static final Log LOG = LogFactory.getLog(NodeReplaceInsert.class);
+
+    private static final Comparator<Node> NODE_COMPARATOR = new Comparator<Node>() {
+        public int compare(Node arg0, Node arg1) {
+            int response = -1;
+            if (arg0.isSameNode(arg1)) {
+                response = 0;
+            }
+            //determine if the element is an ancestor
+            if (response != 0) {
+                boolean eof = false;
+                Node parentNode = arg0;
+                while (!eof) {
+                    parentNode = parentNode.getParentNode();
+                    if (parentNode == null) {
+                        eof = true;
+                    } else if (arg1.isSameNode(parentNode)) {
+                        response = 0;
+                        eof = true;
+                    }
+                }
+            }
+            return response;
+        }
+    };
 
     public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
@@ -63,42 +87,26 @@ public class NodeReplaceInsert extends BaseHandler {
         return response;
     }
 
-    private List<Node> matchNodes(List<Node> exhaustedNodes, Node[] primaryNodes, ArrayList<Node> list) {
-        Comparator<Node> hashCompare = new Comparator<Node>() {
-            public int compare(Node arg0, Node arg1) {
-                int response = -1;
-                if (arg0.isSameNode(arg1)) {
-                    response = 0;
-                }
-                //determine if the element is an ancestor
-                if (response != 0) {
-                    boolean eof = false;
-                    Node parentNode = arg0;
-                    while (!eof) {
-                        parentNode = parentNode.getParentNode();
-                        if (parentNode == null) {
-                            eof = true;
-                        } else if (arg1.isSameNode(parentNode)) {
-                            response = 0;
-                            eof = true;
-                        }
-                    }
-                }
-                return response;
+    private boolean exhaustedNodesContains(List<Node> exhaustedNodes, Node node) {
+        boolean contains = false;
+        for (Node exhaustedNode : exhaustedNodes) {
+            if (NODE_COMPARATOR.compare(exhaustedNode, node) == 0) {
+                contains = true;
+                break;
             }
-        };
-        Node[] tempNodes = {};
-        tempNodes = exhaustedNodes.toArray(tempNodes);
-        Arrays.sort(tempNodes, hashCompare);
+        }
 
-        List<Node> usedNodes = new ArrayList<Node>();
+        return contains;
+    }
 
+    private List<Node> matchNodes(List<Node> exhaustedNodes, Node[] primaryNodes, ArrayList<Node> list) {
+        List<Node> usedNodes = new ArrayList<Node>(20);
         Iterator<Node> itr = list.iterator();
         Node parentNode = primaryNodes[0].getParentNode();
         Document ownerDocument = parentNode.getOwnerDocument();
         while(itr.hasNext()) {
             Node node = itr.next();
-            if (Element.class.isAssignableFrom(node.getClass()) && Arrays.binarySearch(tempNodes, node, hashCompare) < 0) {
+            if (Element.class.isAssignableFrom(node.getClass()) && !exhaustedNodesContains(exhaustedNodes, node)) {
             	
             	if(LOG.isDebugEnabled()) {
             		StringBuffer sb = new StringBuffer();

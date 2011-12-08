@@ -14,32 +14,6 @@
 		<param-value>blAdmin.root</param-value>
 	</context-param>
 
-    <filter>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-        <init-param>
-            <param-name>modRewriteConf</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>modRewriteConfText</param-name>
-            <param-value>
-                RewriteRule ^.+/cms/staticasset(.+) /cms/staticasset${symbol_dollar}1
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>statusEnabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
 	<context-param>
 		<param-name>patchConfigLocation</param-name>
 		<param-value>
@@ -49,8 +23,8 @@
             classpath:/bl-cms-contentClient-applicationContext.xml
             classpath:/bl-cms-contentCreator-applicationContext.xml
             classpath:/mycompany-applicationContext.xml
+            /WEB-INF/applicationContext-admin-security.xml
             /WEB-INF/applicationContext-admin.xml
-            /WEB-INF/applicationContext-security.xml
         </param-value>
 	</context-param>
 
@@ -81,13 +55,13 @@
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
+    <filter-mapping>
+		<filter-name>entityManagerInViewFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
-		<filter-name>entityManagerInViewFilter</filter-name>
+		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
@@ -129,6 +103,7 @@
                 classpath:/applicationContext-servlet-admin.xml
                 classpath:/applicationContext-servlet-cms-contentClient.xml
                 classpath:/applicationContext-servlet-cms-contentCreator.xml
+                /WEB-INF/applicationContext-servlet-admin.xml
             </param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
@@ -137,12 +112,7 @@
 	<!-- specify the url pattern that will engage spring mvc -->
 	<servlet-mapping>
 		<servlet-name>admin</servlet-name>
-		<url-pattern>*.service</url-pattern>
-	</servlet-mapping>
-
-    <servlet-mapping>
-		<servlet-name>admin</servlet-name>
-		<url-pattern>/cms/staticasset/*</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
 	<env-entry>

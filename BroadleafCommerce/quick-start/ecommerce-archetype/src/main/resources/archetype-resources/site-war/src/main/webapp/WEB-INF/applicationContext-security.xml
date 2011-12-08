@@ -12,7 +12,10 @@
 
 
     <sec:http auto-config="true" >
-    	<!--<sec:intercept-url pattern="/product.htm" access="ROLE_USER"/>
+        <sec:intercept-url pattern="/css/**" filters="none"/>
+        <sec:intercept-url pattern="/images/**" filters="none"/>
+        <sec:intercept-url pattern="/js/**" filters="none"/>
+    	<!--<sec:intercept-url pattern="/store" access="ROLE_USER"/>
     	<sec:intercept-url pattern="/basket/**" access="ROLE_USER"/>-->
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
         				default-target-url='/product.htm'
