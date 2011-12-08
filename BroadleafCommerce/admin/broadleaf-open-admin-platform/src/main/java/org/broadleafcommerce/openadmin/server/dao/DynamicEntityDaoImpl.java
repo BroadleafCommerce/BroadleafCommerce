@@ -803,11 +803,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);
         Method typeMethod = broadleafEnumeration.getMethod("getType", new Class<?>[]{});
         Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType", new Class<?>[]{});
-        Field[] fields = broadleafEnumeration.getFields();
+        Field[] fields = getAllFields(broadleafEnumeration);
         for (Field field : fields) {
             boolean isStatic = Modifier.isStatic(field.getModifiers());
-            boolean isNameEqual = field.getType().getName().equals(broadleafEnumeration.getName());
-            if (isStatic && isNameEqual){
+            if (isStatic && field.getType().isAssignableFrom(broadleafEnumeration)){
                 enumVals.put((String) friendlyTypeMethod.invoke(field.get(null), new Object[]{}), (String) typeMethod.invoke(field.get(null), new Object[]{}));
             }
         }
