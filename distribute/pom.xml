@@ -53,15 +53,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-demo</artifactId>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-demo-launcher</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-cybersource</artifactId>
 		</dependency>
 		<dependency>

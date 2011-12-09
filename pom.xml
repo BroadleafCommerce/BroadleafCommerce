@@ -174,7 +174,6 @@
         <module>module</module>
         <module>core</module>
         <module>integration</module>
-        <module>site</module>
         <module>admin</module>
         <module>quick-start</module>
     </modules>
@@ -489,13 +488,6 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>1.4</version>
-                <type>jar</type>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>1.2.2</version>
@@ -671,39 +663,6 @@
                 <groupId>jstl</groupId>
                 <artifactId>jstl</artifactId>
                 <version>1.1.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-api</artifactId>
-                <version>2.1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging-api</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-core</artifactId>
-                <version>2.1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>commons-logging-api</artifactId>
-                        <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-jsp</artifactId>
-                <version>2.1.4</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1070,50 +1029,6 @@
                 <artifactId>hsqldb</artifactId>
                 <version>2.2.4</version>
                 <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-
-            <!--Demo Launcher Dependencies -->
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty</artifactId>
-                <version>6.1.22</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-plus</artifactId>
-                <version>6.1.22</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-naming</artifactId>
-                <version>6.1.22</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-management</artifactId>
-                <version>6.1.22</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jsp-2.1-jetty</artifactId>
-                <version>6.1.22</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-annotations</artifactId>
-                <version>6.1.22</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>start</artifactId>
-                <version>6.1.22</version>
                 <scope>compile</scope>
             </dependency>
 
