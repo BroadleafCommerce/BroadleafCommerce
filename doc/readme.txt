@@ -81,19 +81,29 @@ confidential data onto a separate, secure database platform. API methods have be
 inclusion of any PCI compliant encryption scheme. Also, verbose logging is included to track payment 
 interaction history.
 
+Admin Platform -- BroadleafCommerce includes a wholely extendible administrative application based
+on Google Web Toolkit. Developers can continue to leverage the power of the Java programming and the
+standard Object Oriented Programming practices of extension and override that they already enjoy
+in the core BroadleafCommerce platform. The admin application also provides an easy-to-use interface
+for catalog, order and customer functions and provides a robust, rule-driven environment for creating
+and managing discount promotions.
+
+Content Management -- BroadleafCommerce includes a robus content management system for creating and
+managing static pages and content. We also include a powerful content targeting feature that allows
+business users to dynamically drive the most appropriate content to users.
+
 2. RELEASE INFO
 
 Broadleaf Commerce %%version%% requires JDK 1.5 (or above) to build and/or run.
 
-Basic release contents (~3 MB):
+Basic release contents (~7 MB):
 * "dist" contains the Broadleaf Commerce binary jar files
 
-Contents of the "-with-docs" distribution (~9 MB):
+Contents of the "-with-docs" distribution (~18 MB):
 * "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
 * "docs" contains the Broadleaf Commerce API javadocs
 
-Contents of the "-with-dependencies" distribution (~136 MB):
-* "demo" contains the Broadleaf Commerce standalone demonstration, including the demo coffee store and admin applications
+Contents of the "-with-dependencies" distribution (~72 MB):
 * "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
 * "docs" contains the Broadleaf Commerce API javadocs
 * "lib" contains all third-party libraries needed for building the framework and/or running the demo
@@ -143,6 +153,15 @@ The "dist" directory contains the following distinct jar files for use in applic
 * "broadleaf-cybersource-api"
 - Contents: Compiled axis support for CyberSource API
 
+* "broadleaf-open-admin-platform"
+- Contents: The base framework for our administrative application platform - based on GWT
+
+* "broadleaf-admin-module"
+- Contents: The core modules and pages for the administrative application
+
+* "broadleaf-contentmanagement-module"
+- Contents: The modules and pages for the content management portion of the administrative application
+
 4. WHERE TO START?
 
-* Please refer to the Broadleaf Commerce documentation wiki for information on running the demonstration and developing applications on top of Broadleaf Commerce (http://www.broadleafcommerce.org/confluence/display/core/Home).
+* Please refer to the Broadleaf Commerce documentation wiki for information on running the demonstration and developing applications on top of Broadleaf Commerce (http://www.broadleafcommerce.org/confluence/display/BLC15/Home).

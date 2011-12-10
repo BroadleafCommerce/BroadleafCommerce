@@ -189,6 +189,7 @@
                     <aggregate>true</aggregate>
                     <minmemory>128m</minmemory>
                     <maxmemory>1g</maxmemory>
+                    <aggregate>true</aggregate>
                 </configuration>
             </plugin>
         </plugins>

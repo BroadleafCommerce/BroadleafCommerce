@@ -7,12 +7,12 @@
 	<property name="releaseParentDir" location="${basedir}/../" />
 	<echo message="basedir: ${basedir}" />
 	<echo message="releaseParentDir: ${releaseParentDir}" />
-	<path id="maven-ant-tasks.classpath" path="${releaseParentDir}/lib/maven-ant-tasks-2.0.10.jar" />
+	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
 
 	<artifact:pom id="mypom" file="${releaseParentDir}/pom.xml" />
 
-	<property file="${releaseParentDir}/build.properties" />
+	<property file="build.properties" />
 	<property name="maven.build.dir" value="${releaseParentDir}/distribute/target" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}" />
 
@@ -20,19 +20,16 @@
 	<artifact:pom id="cybersourcePom" file="${releaseParentDir}/module/broadleaf-cybersource/pom.xml" />
 	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/broadleaf-framework/pom.xml" />
 	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/broadleaf-framework-web/pom.xml" />
-	<artifact:pom id="demoPom" file="${releaseParentDir}/site/broadleaf-demo/pom.xml" />
 	<artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/broadleaf-admin-module/pom.xml" />
 	<artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/broadleaf-open-admin-platform/pom.xml" />
-	<artifact:pom id="demoLauncherPom" file="${releaseParentDir}/site/broadleaf-demo-launcher/pom.xml" />
 	<artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
 	<artifact:pom id="integrationPom" file="${releaseParentDir}/integration/pom.xml" />
 
-	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-demo-launcher, build-src-jars, build-sql, build-docs, build-dependencies">
+	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-sql, build-docs, build-dependencies">
 		<mkdir dir="${maven.build.dir}/${distributionPom.version}"/>
 		<zip destfile="${maven.build.dir}/${distributionPom.version}/${maven.build.finalName}-with-dependencies.zip">
 			<fileset dir="${maven.build.dir}/${maven.build.finalName}">
 				<include name="dist/**/*.*" />
-				<include name="demo/**/*.*" />
 				<include name="src/**/*.*" />
 				<include name="docs/**/*.*" />
 				<include name="lib/**/*.*" />
@@ -191,7 +188,7 @@
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs/api" />
 		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
-			<arg value="javadoc:javadoc" />
+			<arg value="javadoc:aggregate" />
 		</artifact:mvn>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/docs/api">
 			<fileset dir="${releaseParentDir}/target/site/apidocs">
@@ -205,15 +202,12 @@
 		<artifact:dependencies filesetId="cybersourceDeps" pomRefId="cybersourcePom" useScope="runtime" />
 		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime" />
 		<artifact:dependencies filesetId="frameworkWebDeps" pomRefId="frameworkWebPom" useScope="runtime" />
-		<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="runtime"/>
-		<artifact:dependencies filesetId="demoDeps2" pomRefId="demoPom" useScope="compile"/>
 		<artifact:dependencies filesetId="adminDeps" pomRefId="adminModulePom" useScope="runtime"/>
 		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminModulePom" useScope="compile"/>
 		<artifact:dependencies filesetId="openAdminDeps" pomRefId="openAdminModulePom" useScope="runtime"/>
 		<artifact:dependencies filesetId="openAdminDeps2" pomRefId="openAdminModulePom" useScope="compile"/>
 		<artifact:dependencies filesetId="distributionDeps" pomRefId="distributionPom" versionsId="distributionVersions" />
 		<artifact:dependencies filesetId="integrationDeps" pomRefId="integrationPom" />
-		<artifact:dependencies filesetId="demoLauncherDeps" pomRefId="demoLauncherPom" useScope="compile" />
 		<path id="build.runtime.classpath">
 			<fileset refid="frameworkWebDeps" />
 		</path>
@@ -229,18 +223,11 @@
 		<path id="build.admin.runtime.classpath">
 			<fileset refid="adminDeps"/>
 		</path>
-		<path id="build.demo.runtime.classpath">
-			<fileset refid="demoDeps"/>
-		</path>
-		<path id="build.demo.compile.classpath">
-			<fileset refid="demoDeps2"/>
-		</path>
 	</target>
 
 	<target name="build-dependencies" depends="setup">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/demo" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/usps" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" />
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.profile.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
@@ -255,20 +242,6 @@
 				</rsel:not>
 				<rsel:not>
 					<rsel:name name="**/*cobertura*.jar" />
-				</rsel:not>
-			</restrict>
-		</licenseCopy>
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/demo" licenseDir="${releaseParentDir}/doc/dependency-licenses">
-			<restrict>
-				<difference>
-					<fileset refid="demoDeps" />
-					<intersect>
-						<fileset refid="demoDeps" />
-						<fileset refid="frameworkWebDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
 				</rsel:not>
 			</restrict>
 		</licenseCopy>
@@ -311,7 +284,7 @@
 		<delete dir="${maven.build.dir}/${maven.build.finalName}" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}" />
 		<copy file="${releaseParentDir}/doc/readme.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
-		<copy file="${releaseParentDir}/doc/quickStartGuide.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
+		<copy file="${releaseParentDir}/doc/dependencies.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
 		<copy file="${releaseParentDir}/doc/releaseNotes.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
 		<replace file="${maven.build.dir}/${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}" />
 		
@@ -347,7 +320,7 @@
 		<pathconvert property="prop-service-dependencies" pathsep="${line.separator} * " refid="service-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%service-dependencies%%" value="${prop-service-dependencies}" />
+		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%service-dependencies%%" value="${prop-service-dependencies}" />
 		
 		<path id="web-dependencies">
 			<restrict>
@@ -366,7 +339,7 @@
 		<pathconvert property="prop-web-dependencies" pathsep="${line.separator} * " refid="web-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%web-dependencies%%" value="${prop-web-dependencies}" />
+		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%web-dependencies%%" value="${prop-web-dependencies}" />
 		
 		<path id="usps-dependencies">
 			<restrict>
@@ -385,7 +358,7 @@
 		<pathconvert property="prop-usps-dependencies" pathsep="${line.separator} * " refid="usps-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%usps-dependencies%%" value="${prop-usps-dependencies}" />
+		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%usps-dependencies%%" value="${prop-usps-dependencies}" />
 		
 		<path id="cybersource-dependencies">
 			<restrict>
@@ -404,26 +377,7 @@
 		<pathconvert property="prop-cybersource-dependencies" pathsep="${line.separator} * " refid="cybersource-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%cybersource-dependencies%%" value="${prop-cybersource-dependencies}" />
-		
-		<path id="demo-dependencies">
-			<restrict>
-				<difference>
-					<fileset refid="demoDeps" />
-					<intersect>
-						<fileset refid="demoDeps" />
-						<fileset refid="frameworkWebDeps" />
-					</intersect>
-				</difference>
-				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
-				</rsel:not>
-			</restrict>
-		</path>
-		<pathconvert property="prop-demo-dependencies" pathsep="${line.separator} * " refid="demo-dependencies">
-	        <mapper type="flatten"/>
-	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%demo-dependencies%%" value="${prop-demo-dependencies}" />
+		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%cybersource-dependencies%%" value="${prop-cybersource-dependencies}" />
 		
 		<path id="admin-dependencies">
 			<restrict>
@@ -436,30 +390,7 @@
 		<pathconvert property="prop-admin-dependencies" pathsep="${line.separator} * " refid="admin-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
-		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%admin-dependencies%%" value="${prop-admin-dependencies}" />
-	</target>
-
-	<target name="build-demo-launcher">
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/demo/libs" flatten="true">
-			<fileset refid="demoLauncherDeps" />
-		</copy>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/demo" flatten="true">
-			<restrict>
-				<fileset refid="distributionDeps" />
-				<rsel:name name="org/broadleafcommerce*.war" />
-			</restrict>
-			<mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper" from="${distributionVersions}" to="flatten" />
-		</copy>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/demo" flatten="true">
-			<restrict>
-				<fileset refid="distributionDeps" />
-				<rsel:name name="org/broadleafcommerce/broadleaf-demo-launcher*.jar" />
-			</restrict>
-			<fileset dir="${releaseParentDir}/site/broadleaf-demo-launcher">
-				<include name="jetty.xml" />
-			</fileset>
-		</copy>
-		<move file="${maven.build.dir}/${maven.build.finalName}/demo/broadleaf-demo.war" tofile="${maven.build.dir}/${maven.build.finalName}/demo/broadleafdemo.war" />
+		<replace file="${maven.build.dir}/${maven.build.finalName}/dependencies.txt" token="%%admin-dependencies%%" value="${prop-admin-dependencies}" />
 	</target>
 
 	<target name="clean">
