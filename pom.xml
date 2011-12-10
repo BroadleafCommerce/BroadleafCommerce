@@ -54,9 +54,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <scm>
-        <connection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/trunk/BroadleafCommerce</connection>
-        <developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/trunk/BroadleafCommerce</developerConnection>
-        <url>http://broadleaf.svn.sourceforge.net/viewvc/broadleaf/</url>
+        <connection>scm:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
+        <developerConnection>scm:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
+        <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
     </scm>
     <build>
         <pluginManagement>
