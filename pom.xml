@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -11,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>1.5.0-RC2-SNAPSHOT</version>
+    <version>1.5.0-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -82,7 +81,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -95,7 +94,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -229,49 +228,49 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-instrument</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-usps-schemas</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-usps</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-cybersource-api</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-cybersource</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -279,21 +278,21 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile-web</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -301,7 +300,7 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework-web</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -315,14 +314,14 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-admin-module</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-admin-module</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -330,14 +329,14 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contentmanagement-module</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contentmanagement-module</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -345,14 +344,14 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-open-admin-platform</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-open-admin-platform</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -360,7 +359,7 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>integration</artifactId>
-                <version>1.5.0-RC2-SNAPSHOT</version>
+                <version>1.5.0-GA</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
