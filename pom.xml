@@ -152,6 +152,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.2.1</version>
+                <configuration>
+                    <mavenExecutorId>forked-path</mavenExecutorId>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -175,7 +178,6 @@
                     <aggregate>true</aggregate>
                     <minmemory>128m</minmemory>
                     <maxmemory>1g</maxmemory>
-                    <aggregate>true</aggregate>
                 </configuration>
             </plugin>
         </plugins>
