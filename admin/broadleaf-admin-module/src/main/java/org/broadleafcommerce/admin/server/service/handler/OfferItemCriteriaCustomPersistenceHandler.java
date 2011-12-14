@@ -26,18 +26,18 @@ public class OfferItemCriteriaCustomPersistenceHandler extends CustomPersistence
         return canHandleAdd(persistencePackage);
     }
 
-    protected void removeQuoteEncoding(Entity entity) {
+    protected void removeHtmlEncoding(Entity entity) {
         Property prop = entity.findProperty("orderItemMatchRule");
         if (prop != null && prop.getValue() != null) {
-            //antisamy XSS protection encodes the quote values in the MVEL
+            //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getValue().replaceAll("&quot;", "\""));
+            prop.setValue(prop.getUnHtmlEncodedValue());
         }
     }
 
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
-        removeQuoteEncoding(entity);
+        removeHtmlEncoding(entity);
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             OfferItemCriteria offerItemCriteria = (OfferItemCriteria) Class.forName(entity.getType()[0]).newInstance();
@@ -56,7 +56,7 @@ public class OfferItemCriteriaCustomPersistenceHandler extends CustomPersistence
 
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
-        removeQuoteEncoding(entity);
+        removeHtmlEncoding(entity);
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(OfferItemCriteria.class.getName(), persistencePerspective);

@@ -33,6 +33,7 @@ public class Property implements Serializable {
 	private String displayValue;
 	private FieldMetadata metadata = new FieldMetadata();
 	private Boolean isDirty = false;
+    private String unHtmlEncodedValue;
 
 	public String getName() {
 		return name;
@@ -74,7 +75,15 @@ public class Property implements Serializable {
 		this.isDirty = isDirty;
 	}
 
-	@Override
+    public String getUnHtmlEncodedValue() {
+        return unHtmlEncodedValue;
+    }
+
+    public void setUnHtmlEncodedValue(String unHtmlEncodedValue) {
+        this.unHtmlEncodedValue = unHtmlEncodedValue;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

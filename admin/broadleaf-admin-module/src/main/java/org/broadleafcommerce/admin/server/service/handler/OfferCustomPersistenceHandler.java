@@ -25,6 +25,7 @@ import java.util.Map;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
@@ -186,19 +187,19 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
-    
-    protected void removeQuoteEncoding(Entity entity) {
+
+    protected void removeHTMLEncoding(Entity entity) {
         Property prop = entity.findProperty("targetItemCriteria.orderItemMatchRule");
         if (prop != null && prop.getValue() != null) {
-            //antisamy XSS protection encodes the quote values in the MVEL
+            //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getValue().replaceAll("&quot;", "\""));
+            prop.setValue(prop.getUnHtmlEncodedValue());
         }
     }
 
 	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
-        removeQuoteEncoding(entity);
+        removeHTMLEncoding(entity);
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Offer offerInstance = (Offer) Class.forName(entity.getType()[0]).newInstance();
@@ -263,7 +264,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
-        removeQuoteEncoding(entity);
+        removeHTMLEncoding(entity);
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);

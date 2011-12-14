@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import javax.annotation.Resource;
+
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
@@ -31,8 +34,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -113,6 +114,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         try {
             for (Property property : entity.getProperties()) {
                 property.setValue(exploitProtectionService.cleanString(property.getValue()));
+                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
             }
         } catch (Exception e) {
             LOG.error("Unable to clean the passed in entity values", e);
