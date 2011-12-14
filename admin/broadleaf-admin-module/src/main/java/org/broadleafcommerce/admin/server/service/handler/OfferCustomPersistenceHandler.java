@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
@@ -27,7 +33,16 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
-import org.broadleafcommerce.openadmin.client.dto.*;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -36,12 +51,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.persistence.EntityConfiguration;
 import org.hibernate.tool.hbm2x.StringUtils;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -177,9 +186,19 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
+    
+    protected void removeQuoteEncoding(Entity entity) {
+        Property prop = entity.findProperty("targetItemCriteria.orderItemMatchRule");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the quote values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getValue().replaceAll("&quot;", "\""));
+        }
+    }
 
 	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
+        removeQuoteEncoding(entity);
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Offer offerInstance = (Offer) Class.forName(entity.getType()[0]).newInstance();
@@ -244,6 +263,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
 	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
 		Entity entity = persistencePackage.getEntity();
+        removeQuoteEncoding(entity);
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
