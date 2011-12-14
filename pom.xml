@@ -179,6 +179,12 @@
             </plugin>
         </plugins>
     </reporting>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://www.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <profiles>
         <profile>
             <id>release-sign-artifacts</id>
