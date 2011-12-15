@@ -46,7 +46,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     private CustomerState customerState;
 
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
-        Customer loggedInCustomer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
+        Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
         Customer anonymousCustomer = customerState.getCustomer(request);
         Order cart = cartService.findCartForCustomer(anonymousCustomer);
         MergeCartResponse mergeCartResponse;
