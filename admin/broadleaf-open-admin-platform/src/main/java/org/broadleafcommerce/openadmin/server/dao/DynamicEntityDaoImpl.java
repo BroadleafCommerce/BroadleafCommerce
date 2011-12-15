@@ -1043,9 +1043,38 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		FieldPresentationAttributes presentationAttribute = new FieldPresentationAttributes();
 		presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
 		presentationAttribute.setVisibility(VisibilityEnum.HIDDEN_ALL);
-		if (additionalNonPersistentProperties != null) {
+		if (!ArrayUtils.isEmpty(additionalNonPersistentProperties)) {
+            Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(targetClass);
 			for (String additionalNonPersistentProperty : additionalNonPersistentProperties) {
-				fields.put(additionalNonPersistentProperty, getFieldMetadata(prefix, additionalNonPersistentProperty, propertyList, SupportedFieldType.STRING, null, targetClass, presentationAttribute, mergedPropertyType));
+                if (StringUtils.isEmpty(prefix) || (!StringUtils.isEmpty(prefix) && additionalNonPersistentProperty.startsWith(prefix))) {
+                    String myAdditionalNonPersistentProperty = additionalNonPersistentProperty;
+                    //get final property if this is a dot delimited property
+                    int finalDotPos = additionalNonPersistentProperty.lastIndexOf('.');
+                    if (finalDotPos >= 0) {
+                        myAdditionalNonPersistentProperty = myAdditionalNonPersistentProperty.substring(finalDotPos + 1, myAdditionalNonPersistentProperty.length());
+                    }
+                    //check all the polymorphic types on this target class to see if the end property exists
+                    Field testField = null;
+                    Method testMethod = null;
+                    for (Class<?> clazz : entities) {
+                        try {
+                            testMethod = clazz.getMethod(myAdditionalNonPersistentProperty);
+                            if (testMethod != null) {
+                                break;
+                            }
+                        } catch (NoSuchMethodException e) {
+                            //do nothing - method does not exist
+                        }
+                        testField = getFieldManager().getField(clazz, myAdditionalNonPersistentProperty);
+                        if (testField != null) {
+                            break;
+                        }
+                    }
+                    //if the property exists, add it to the metadata for this class
+                    if (testField != null || testMethod != null) {
+                        fields.put(additionalNonPersistentProperty, getFieldMetadata(prefix, additionalNonPersistentProperty, propertyList, SupportedFieldType.STRING, null, targetClass, presentationAttribute, mergedPropertyType));
+                    }
+                }
 			}
 		}
 		
