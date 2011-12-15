@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -37,9 +40,6 @@ import org.broadleafcommerce.openadmin.client.view.SplashView;
 import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -137,7 +137,10 @@ public class BLCMain implements EntryPoint {
         if (prefix.startsWith("/")) {
             UrlBuilder urlBuilder = new UrlBuilder();
             urlBuilder.setHost(com.google.gwt.user.client.Window.Location.getHost());
-            urlBuilder.setPort(Integer.valueOf(com.google.gwt.user.client.Window.Location.getPort()));
+            String port = com.google.gwt.user.client.Window.Location.getPort();
+            if (port != null && port.length() > 0) {
+                urlBuilder.setPort(Integer.valueOf(port));
+            }
             urlBuilder.setProtocol(com.google.gwt.user.client.Window.Location.getProtocol());
             urlBuilder.setPath(prefix + (path==null?"":path));
 
