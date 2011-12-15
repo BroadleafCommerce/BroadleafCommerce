@@ -16,19 +16,19 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.hibernate.mapping.PersistentClass;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.mapping.PersistentClass;
 
 /**
  * 
@@ -62,24 +62,40 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
+        String[] tokens = fieldName.split("\\.");
         Field field = null;
 
-        while (tokens.hasMoreTokens()) {
-            String propertyName = tokens.nextToken();
+        for (int j=0;j<tokens.length;j++) {
+            String propertyName = tokens[j];
             field = getSingleField(clazz, propertyName);
-            if (field != null && tokens.hasMoreTokens()) {
+            if (field != null && j < tokens.length - 1) {
             	Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
             	if (entities.length > 0) {
-	            	PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(entities[0].getName());
-	            	if (persistentClass != null) {
-		            	Class<?> entityClass;
-						try {
-							entityClass = entityConfiguration.lookupEntityClass(field.getType().getName());
-							clazz = entityClass;
-						} catch (Exception e) {
-		            		clazz = entities[0];
-						}
+                    String peekAheadToken = tokens[j+1];
+                    List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
+                    for (Class<?> entity : entities) {
+                        Field peekAheadField = getSingleField(entity, peekAheadToken);
+                        if (peekAheadField != null) {
+                            matchedClasses.add(entity);
+                        }
+                    }
+                    if (matchedClasses.size() > 1) {
+                        LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
+                    }
+                    if (!matchedClasses.isEmpty()) {
+                        Class<?> matchedClass = matchedClasses.get(0);
+                        PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(matchedClass.getName());
+                        if (persistentClass != null && matchedClasses.size() == 1) {
+                            Class<?> entityClass;
+                            try {
+                                entityClass = entityConfiguration.lookupEntityClass(field.getType().getName());
+                                clazz = entityClass;
+                            } catch (Exception e) {
+                                clazz = matchedClass;
+                            }
+                        } else {
+                            clazz = matchedClass;
+                        }
 	            	} else {
 	            		clazz = field.getType();
 	            	}
