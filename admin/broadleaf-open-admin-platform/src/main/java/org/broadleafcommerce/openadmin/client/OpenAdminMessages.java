@@ -37,6 +37,7 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
 	public String userListTitle();
 	public String userDetailsTitle();
 	public String userRolesTitle();
+    public String userPermissionsTitle();
 	public String newAdminUserTitle();
 	public String clonePromotionHelp();
 	public String orderItemCombineLabel();

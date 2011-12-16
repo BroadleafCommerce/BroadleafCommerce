@@ -17,15 +17,11 @@
 package org.broadleafcommerce.openadmin.client.view.user;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
@@ -59,25 +55,12 @@ public class RoleManagementView extends HLayout implements Instantiable, RoleMan
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("roleListTitle"), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
 
-        TabSet topTabSet = new TabSet();  
-        topTabSet.setID("roleTopTabSet");
-        topTabSet.setTabBarPosition(Side.TOP);  
-        topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
-        topTabSet.setWidth("50%");  
-        topTabSet.setHeight100();
-        topTabSet.setPaneMargin(0);
-        
-        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("roleDetailsTitle"));
-        detailsTab.setID("roleDetailsTab");
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("roleDetailsTitle"), entityDataSource);
         permissionsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("permissionListTitle"), false, false);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(permissionsDisplay);
-
-        detailsTab.setPane(dynamicFormDisplay);
-        topTabSet.addTab(detailsTab);
         
         addMember(leftVerticalLayout);
-        addMember(topTabSet);
+        addMember(dynamicFormDisplay);
 	}
 
 	public Canvas asCanvas() {

@@ -86,6 +86,12 @@ public class AdminPermissionImpl implements AdminPermission {
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles= new HashSet<AdminRole>();
 
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
+    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected Set<AdminUser> allUsers= new HashSet<AdminUser>();
+
     @OneToMany(mappedBy = "adminPermission", targetEntity = AdminPermissionQualifiedEntityImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -140,5 +146,13 @@ public class AdminPermissionImpl implements AdminPermission {
 
     public void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities) {
         this.qualifiedEntities = qualifiedEntities;
+    }
+
+    public Set<AdminUser> getAllUsers() {
+        return allUsers;
+    }
+
+    public void setAllUsers(Set<AdminUser> allUsers) {
+        this.allUsers = allUsers;
     }
 }

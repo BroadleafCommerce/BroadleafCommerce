@@ -20,39 +20,33 @@ import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Visibility;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class UserRoleView extends VLayout implements UserRoleDisplay {
-	
+public class UserPermissionView extends VLayout implements UserPermissionDisplay {
+
 	protected ToolStrip toolBar;
 	protected ToolStripButton addButton;
 	protected ToolStripButton removeButton;
 	protected ListGrid grid;
-	protected ListGrid expansionGrid;
 
-	public UserRoleView(Boolean canReorder, Boolean canEdit) {
+	public UserPermissionView(Boolean canReorder, Boolean canEdit) {
         setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
         setOverflow(Overflow.AUTO);
 		
 		HStack hStack = new HStack(10);
-		hStack.setID("userRoleHStack");
+		hStack.setID("userPermissionHStack");
 		
 		hStack.setHeight("45%");
 		hStack.setWidth100();
@@ -60,7 +54,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
 		hStack.setAlign(Alignment.CENTER);
         
         VLayout stack = new VLayout();
-        stack.setID("userRoleVerticalLayout");
+        stack.setID("userPermissionVerticalLayout");
         stack.setHeight100();
         stack.setWidth100();
         
@@ -83,38 +77,8 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         toolBar.setDisabled(false);
         toolBar.addFill();
         stack.addMember(toolBar);
-        
-        expansionGrid = new ListGrid();
-        expansionGrid.setShowHeader(true);
-        expansionGrid.setShowHeaderContextMenu(false);
-        expansionGrid.setCanReorderRecords(canReorder);
-        expansionGrid.setCanEdit(canEdit);
-        expansionGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
-        expansionGrid.setEditByCell(true);
-        expansionGrid.setAutoSaveEdits(true);
-        expansionGrid.setSaveByCell(true);
-        expansionGrid.setAlternateRecordStyles(true);
-        if (!canEdit) {
-        	expansionGrid.setAlternateBodyStyleName("editRowDisabled");
-        }
-        expansionGrid.setVisibility(Visibility.HIDDEN);
-        expansionGrid.setHeight(100);
-        expansionGrid.setCanGroupBy(false);
-        expansionGrid.draw();
-        
-        grid = new ListGrid() {
-        	@Override  
-            protected Canvas getExpansionComponent(final ListGridRecord record) {
-                VLayout layout = new VLayout(5);
-                layout.setPadding(5);
-                layout.addMember(expansionGrid);
-                expansionGrid.setVisibility(Visibility.INHERIT);
-                String id = ((AbstractDynamicDataSource) grid.getDataSource()).getPrimaryKeyValue(record);
-        		((PresentationLayerAssociatedDataSource) expansionGrid.getDataSource()).loadAssociatedGridBasedOnRelationship(id, null);
-                return layout;
-            }  
-        };
-        
+
+        grid = new ListGrid();
         grid.setAutoFetchData(false);
         grid.setShowHeader(true);
         grid.setShowHeaderContextMenu(false); 
@@ -129,8 +93,6 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         grid.setAutoSaveEdits(true);
         grid.setSaveByCell(true);
         grid.setAlternateRecordStyles(true);
-        grid.setCanExpandMultipleRecords(false);
-        grid.setCanExpandRecords(true);
         grid.setCanGroupBy(false);
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
@@ -157,10 +119,6 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
 
 	public ListGrid getGrid() {
 		return grid;
-	}
-
-	public ListGrid getExpansionGrid() {
-		return expansionGrid;
 	}
 
 }

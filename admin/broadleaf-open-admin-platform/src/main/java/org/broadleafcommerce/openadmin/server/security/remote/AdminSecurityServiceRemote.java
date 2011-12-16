@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.security.remote;
 
+import javax.annotation.Resource;
+
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.service.AdminSecurityService;
@@ -31,8 +33,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * 
@@ -61,6 +61,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
                 for (AdminPermission permission : role.getAllPermissions()) {
                     response.getPermissions().add(permission.getName());
                 }
+            }
+            for (AdminPermission permission : persistentAdminUser.getAllPermissions()) {
+                response.getPermissions().add(permission.getName());
             }
             response.setUserName(persistentAdminUser.getLogin());
             response.setCurrentSandBoxId(String.valueOf(SandBoxContext.getSandBoxContext().getSandBoxId()));

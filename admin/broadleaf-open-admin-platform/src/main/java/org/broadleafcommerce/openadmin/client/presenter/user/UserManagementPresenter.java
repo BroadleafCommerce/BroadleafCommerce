@@ -24,14 +24,14 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminRoleListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminUserListDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.user.AdminUserPermissionListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.user.UserManagementDisplay;
-
-import java.util.HashMap;
 
 /**
  * 
@@ -39,14 +39,16 @@ import java.util.HashMap;
  *
  */
 public class UserManagementPresenter extends DynamicEntityPresenter implements Instantiable {
-	
+
+    protected SubPresentable userPermissionPresenter;
 	protected UserRolePresenter userRolePresenter;
 	protected EntitySearchDialog roleSearchView;
-	protected HashMap<String, Object> library = new HashMap<String, Object>();
+    protected EntitySearchDialog permissionSearchView;
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		userRolePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
+        userPermissionPresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
 	}
 	
 	@Override
@@ -69,17 +71,24 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				roleSearchView = new EntitySearchDialog((ListGridDataSource) result);
-				library.put("adminRoleDS", result);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				userRolePresenter = new UserRolePresenter(getDisplay().getUserRolesDisplay(), roleSearchView);
-				userRolePresenter.setDataSource((ListGridDataSource) library.get("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});
+				userRolePresenter.setDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.setExpansionDataSource((ListGridDataSource) result , new String[]{"name", "description"}, new Boolean[]{false, false});
 				userRolePresenter.bind();
 			}
 		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserPermissionDS", new AdminUserPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                permissionSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                userPermissionPresenter = new UserPermissionPresenter(getDisplay().getUserPermissionDisplay(), permissionSearchView);
+                userPermissionPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "description"}, new Boolean[]{false, false});
+                userPermissionPresenter.bind();
+            }
+        }));
 	}
 
 	@Override

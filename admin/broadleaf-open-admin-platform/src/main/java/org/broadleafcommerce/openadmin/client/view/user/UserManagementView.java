@@ -41,6 +41,7 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 	protected DynamicFormView dynamicFormDisplay;
 	protected DynamicEntityListView listDisplay;
 	protected UserRoleView userRolesDisplay;
+    protected UserPermissionView userPermissionDisplay;
     
 	public UserManagementView() {
 		setHeight100();
@@ -77,6 +78,12 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         userRolesDisplay = new UserRoleView(false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);
+
+        Tab userPermissionsTab = new Tab(BLCMain.getMessageManager().getString("userPermissionsTitle"));
+        userPermissionsTab.setID("userUserPermissionsTab");
+        userPermissionDisplay = new UserPermissionView(false, false);
+        userPermissionsTab.setPane(userPermissionDisplay);
+        topTabSet.addTab(userPermissionsTab);
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
@@ -97,5 +104,9 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 	public UserRoleView getUserRolesDisplay() {
 		return userRolesDisplay;
 	}
-	
+
+    public UserPermissionView getUserPermissionDisplay() {
+        return userPermissionDisplay;
+    }
+
 }

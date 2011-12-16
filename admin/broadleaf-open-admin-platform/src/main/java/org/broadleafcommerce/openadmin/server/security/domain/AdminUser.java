@@ -61,4 +61,7 @@ public interface AdminUser extends Serializable {
      * @param sandbox
      */
     public void setOverrideSandBox(SandBox sandbox);
+
+    public Set<AdminPermission> getAllPermissions();
+    public void setAllPermissions(Set<AdminPermission> allPermissions);
 }

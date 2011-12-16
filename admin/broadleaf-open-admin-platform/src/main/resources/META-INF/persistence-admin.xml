@@ -11,8 +11,6 @@
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
 		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserPermissionXref</class>
-		<class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserRoleXref</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl</class>

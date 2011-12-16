@@ -90,6 +90,12 @@ public class AdminUserImpl implements AdminUser {
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
+    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
+
     @Transient
     protected String unencodedPassword;
     
@@ -160,5 +166,13 @@ public class AdminUserImpl implements AdminUser {
 
     public void setOverrideSandBox(SandBox overrideSandBox) {
         this.overrideSandBox = overrideSandBox;
+    }
+
+    public Set<AdminPermission> getAllPermissions() {
+        return allPermissions;
+    }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
     }
 }

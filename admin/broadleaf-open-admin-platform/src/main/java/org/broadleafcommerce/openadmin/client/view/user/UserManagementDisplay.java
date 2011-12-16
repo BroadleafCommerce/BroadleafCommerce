@@ -32,5 +32,7 @@ public interface UserManagementDisplay extends DynamicEditDisplay {
 	public DynamicEntityListDisplay getListDisplay();
 	
 	public UserRoleDisplay getUserRolesDisplay();
-	
+
+    public UserPermissionView getUserPermissionDisplay();
+
 }

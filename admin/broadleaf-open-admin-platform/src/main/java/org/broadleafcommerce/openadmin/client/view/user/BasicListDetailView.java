@@ -17,14 +17,10 @@
 package org.broadleafcommerce.openadmin.client.view.user;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
-import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
@@ -58,24 +54,10 @@ public abstract class BasicListDetailView extends HLayout implements Instantiabl
         
 		listDisplay = new DynamicEntityListView(getListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
-
-        TabSet topTabSet = new TabSet();  
-        topTabSet.setID(getViewPrefix()+"TopTabSet");
-        topTabSet.setTabBarPosition(Side.TOP);  
-        topTabSet.setPaneContainerOverflow(Overflow.HIDDEN);
-        topTabSet.setWidth("50%");  
-        topTabSet.setHeight100();
-        topTabSet.setPaneMargin(0);
-        
-        Tab detailsTab = new Tab(getFormTitle());
-        detailsTab.setID(getViewPrefix()+"DetailsTab");
         dynamicFormDisplay = new DynamicFormView(getFormTitle(), entityDataSource);
         
-        detailsTab.setPane(dynamicFormDisplay);
-        topTabSet.addTab(detailsTab);
-        
         addMember(leftVerticalLayout);
-        addMember(topTabSet);
+        addMember(dynamicFormDisplay);
 	}
 
 	public Canvas asCanvas() {

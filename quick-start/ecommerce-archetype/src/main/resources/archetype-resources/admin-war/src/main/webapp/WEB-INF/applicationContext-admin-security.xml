@@ -50,11 +50,15 @@
 		    id="userDetailsManager"
 	        users-by-username-query="SELECT login AS username, password, 'true' as enabled FROM BLC_ADMIN_USER WHERE login = ?"
 	        authorities-by-username-query="SELECT
-		DISTINCT au.login AS username, ap.name AS authority FROM BLC_ADMIN_USER au
-		JOIN BLC_ADMIN_USER_ROLE_XREF aurx ON au.admin_user_id = aurx.admin_user_id
-		JOIN BLC_ADMIN_ROLE ar ON aurx.admin_role_id = ar.admin_role_id JOIN BLC_ADMIN_ROLE_PERMISSION_XREF
-		arpx ON ar.admin_role_id = arpx.admin_role_id JOIN BLC_ADMIN_PERMISSION ap
-		ON arpx.admin_permission_id = ap.admin_permission_id WHERE au.login = ?"
+            DISTINCT au.login AS username, ap.name AS authority
+            FROM BLC_ADMIN_USER au
+            LEFT OUTER JOIN BLC_ADMIN_USER_ROLE_XREF aurx ON au.admin_user_id = aurx.admin_user_id
+            LEFT OUTER JOIN BLC_ADMIN_ROLE ar ON aurx.admin_role_id = ar.admin_role_id
+            LEFT OUTER JOIN BLC_ADMIN_ROLE_PERMISSION_XREF arpx ON ar.admin_role_id = arpx.admin_role_id
+            LEFT OUTER JOIN BLC_ADMIN_PERMISSION ap ON arpx.admin_permission_id = ap.admin_permission_id
+            LEFT OUTER JOIN BLC_ADMIN_USER_PERMISSION_XREF aupx ON au.admin_user_id = aupx.admin_user_id
+            LEFT OUTER JOIN BLC_ADMIN_PERMISSION ap ON aupx.admin_permission_id = ap.admin_permission_id
+            WHERE au.login = ?"
 	 />
 
     <bean id="blAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">

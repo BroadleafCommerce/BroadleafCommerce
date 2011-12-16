@@ -20,6 +20,7 @@ import org.broadleafcommerce.openadmin.server.security.service.type.PermissionTy
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -39,4 +40,8 @@ public interface AdminPermission extends Serializable {
     public List<AdminPermissionQualifiedEntity> getQualifiedEntities();
 
     public void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities);
+
+    public Set<AdminUser> getAllUsers();
+
+    public void setAllUsers(Set<AdminUser> allUsers);
 }
