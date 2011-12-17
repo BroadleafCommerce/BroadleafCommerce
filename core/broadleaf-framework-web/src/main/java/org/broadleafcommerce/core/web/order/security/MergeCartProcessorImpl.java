@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.order;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+package org.broadleafcommerce.core.web.order.security;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.CartService;
@@ -27,11 +23,16 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.broadleafcommerce.profile.web.core.MergeCartProcessor;
+import org.broadleafcommerce.profile.web.core.security.MergeCartProcessor;
+import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service("blMergeCartProcessor")
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@Component("blMergeCartProcessor")
 public class MergeCartProcessorImpl implements MergeCartProcessor {
 
     private String mergeCartResponseKey = "bl_merge_cart_response";
@@ -42,13 +43,14 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     @Resource(name="blCartService")
     private CartService cartService;
 
-    @Resource(name="blCustomerState")
-    private CustomerState customerState;
-
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
-        Customer anonymousCustomer = customerState.getCustomer(request);
-        Order cart = cartService.findCartForCustomer(anonymousCustomer);
+        Customer anonymousCustomer = (Customer) request.getSession(true).getAttribute(CustomerStateFilter.ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME);
+        
+        Order cart = null;
+        if (anonymousCustomer != null) {
+            cart = cartService.findCartForCustomer(anonymousCustomer);
+        }
         MergeCartResponse mergeCartResponse;
         try {
             mergeCartResponse = cartService.mergeCart(loggedInCustomer, cart);

@@ -67,7 +67,7 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
     private ApplicationEventPublisher eventPublisher;
 
     private static String customerRequestAttributeName = "customer";
-    private static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME="_blc_anonymousCustomer";
+    public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME="_blc_anonymousCustomer";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME="_blc_lastPublishedEvent";
 
 	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
