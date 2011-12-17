@@ -19,6 +19,7 @@ package org.broadleafcommerce.profile.web.core.service;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.security.MergeCartProcessor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,13 +37,12 @@ public class LoginServiceImpl implements LoginService {
     @Resource(name="blUserDetailsService")
     private UserDetailsService userDetailsService;
 
-    
-    public void loginCustomer(Customer customer) {
+    public Authentication loginCustomer(Customer customer) {
         UserDetails principal = userDetailsService.loadUserByUsername(customer.getUsername());
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, customer.getUnencodedPassword(), principal.getAuthorities());
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        return authentication;
     }
 
 }

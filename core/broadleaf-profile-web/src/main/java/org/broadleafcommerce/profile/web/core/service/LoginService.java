@@ -17,7 +17,8 @@
 package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.security.core.Authentication;
 
 public interface LoginService {
-    public void loginCustomer(Customer customer);
+    public Authentication loginCustomer(Customer customer);
 }

@@ -22,7 +22,9 @@ import org.broadleafcommerce.profile.core.service.ChallengeQuestionService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
+import org.broadleafcommerce.profile.web.core.security.MergeCartProcessor;
 import org.broadleafcommerce.profile.web.core.service.LoginService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -34,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller("blRegisterCustomerController")
@@ -59,6 +62,9 @@ public class RegisterCustomerController {
     
     @Resource(name="blChallengeQuestionService")
     protected ChallengeQuestionService challengeQuestionService;
+
+    @Resource(name="blMergeCartProcessor")
+    protected MergeCartProcessor mergeCartProcessor;
     
     @Resource(name="blLoginService")
     protected LoginService loginService;
@@ -70,11 +76,12 @@ public class RegisterCustomerController {
 
     @RequestMapping(method = { RequestMethod.POST })
     public ModelAndView registerCustomer(@ModelAttribute("registerCustomerForm") RegisterCustomerForm registerCustomerForm,
-            BindingResult errors, HttpServletRequest request) {
+            BindingResult errors, HttpServletRequest request, HttpServletResponse response) {
         registerCustomerValidator.validate(registerCustomerForm, errors);
         if (! errors.hasErrors()) {
             customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
-            loginService.loginCustomer(registerCustomerForm.getCustomer());
+            Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
+            mergeCartProcessor.execute(request, response, auth);
             return new ModelAndView(getRegistrationSuccessView());
         } else {
             return new ModelAndView(getRegistrationErrorView());
