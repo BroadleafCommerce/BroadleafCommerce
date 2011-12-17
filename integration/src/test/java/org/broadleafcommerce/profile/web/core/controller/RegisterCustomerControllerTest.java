@@ -16,8 +16,9 @@
 
 package org.broadleafcommerce.profile.web.core.controller;
 
-import javax.annotation.Resource;
-
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
+import org.apache.struts.mock.MockHttpServletResponse;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.RegisterCustomerController;
@@ -33,8 +34,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
+import javax.annotation.Resource;
 
 public class RegisterCustomerControllerTest extends BaseTest {
 
@@ -67,7 +67,8 @@ public class RegisterCustomerControllerTest extends BaseTest {
     public void createCustomerFromController(RegisterCustomerForm registerCustomer) {
         BindingResult errors = new BeanPropertyBindingResult(registerCustomer, "registerCustomer");
         MockHttpServletRequest request = new MockHttpServletRequest();
-        registerCustomerController.registerCustomer(registerCustomer, errors, request);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        registerCustomerController.registerCustomer(registerCustomer, errors, request, response);
         assert(errors.getErrorCount() == 0);
         Customer customerFromDb = customerService.readCustomerByUsername(registerCustomer.getCustomer().getUsername());
         assert(customerFromDb != null);
