@@ -51,7 +51,7 @@ import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;

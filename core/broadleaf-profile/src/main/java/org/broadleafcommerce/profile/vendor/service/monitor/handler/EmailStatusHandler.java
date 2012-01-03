@@ -18,9 +18,9 @@ package org.broadleafcommerce.profile.vendor.service.monitor.handler;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.profile.email.domain.EmailTarget;
-import org.broadleafcommerce.profile.email.service.EmailService;
-import org.broadleafcommerce.profile.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.email.domain.EmailTarget;
+import org.broadleafcommerce.common.email.service.EmailService;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.profile.vendor.service.monitor.StatusHandler;
 import org.broadleafcommerce.profile.vendor.service.type.ServiceStatusType;
 

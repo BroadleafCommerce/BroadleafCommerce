@@ -16,10 +16,9 @@
 
 package org.broadleafcommerce.profile.web.email;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.common.email.service.EmailTrackingManager;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
@@ -29,10 +28,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.email.service.EmailTrackingManager;
-import org.broadleafcommerce.profile.web.core.CustomerState;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -68,14 +67,26 @@ public class EmailClickTrackingFilter implements Filter {
              */
             Map<String, String> parameterMap = new HashMap<String, String>();
             Enumeration names = request.getParameterNames();
+            
+            String customerId = request.getParameter("customerId");
             while(names.hasMoreElements()) {
                 String name = (String) names.nextElement();
-                parameterMap.put(name, request.getParameter(name));
+                if (! "customerId".equals(name)) {
+                    parameterMap.put(name, request.getParameter(name));    
+                }                                
             }
-            Customer customer = customerState.getCustomer((HttpServletRequest)  request);
+ 
+            if (customerId == null) {
+                // Attempt to get customerId from current cookied customer
+                Customer customer = customerState.getCustomer((HttpServletRequest)  request);
+                if (customer != null && customer.getId() != null) {
+                    customerId = customer.getId().toString();
+                }
+                    
+            }
             Map<String, String> extraValues = new HashMap<String, String>();
             extraValues.put("requestUri", ((HttpServletRequest) request).getRequestURI());
-            emailTrackingManager.recordClick( Long.valueOf(emailId) , parameterMap, customer, extraValues);
+            emailTrackingManager.recordClick( Long.valueOf(emailId) , parameterMap, customerId, extraValues);
         }
         chain.doFilter(request, response);
     }

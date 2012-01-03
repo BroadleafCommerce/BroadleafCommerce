@@ -25,7 +25,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.core.content.domain.Content;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;

@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

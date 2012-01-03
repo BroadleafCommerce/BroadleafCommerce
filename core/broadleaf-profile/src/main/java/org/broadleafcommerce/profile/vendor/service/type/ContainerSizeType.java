@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.profile.vendor.service.type;
 
-import org.broadleafcommerce.presentation.BroadleafEnumerationType;
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
 import java.util.HashMap;

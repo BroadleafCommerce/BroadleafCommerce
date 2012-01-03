@@ -50,7 +50,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.tool.hbm2x.StringUtils;
 
 /**

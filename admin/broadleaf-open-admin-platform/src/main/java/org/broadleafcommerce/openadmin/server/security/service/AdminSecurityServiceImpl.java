@@ -16,12 +16,22 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.email.service.EmailService;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.security.util.PasswordUtils;
+import org.broadleafcommerce.common.service.GenericResponse;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminPermissionDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminRoleDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
+import org.broadleafcommerce.openadmin.server.security.dao.ForgotPasswordSecurityTokenDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
+import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,27 +41,46 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 @Service("blAdminSecurityService")
 public class AdminSecurityServiceImpl implements AdminSecurityService {
 
+    private static final Log LOG = LogFactory.getLog(AdminSecurityServiceImpl.class);
+
+    private static int PASSWORD_TOKEN_LENGTH = 12;
+
 	@Resource(name = "blAdminRoleDao")
-    AdminRoleDao adminRoleDao;
+    protected AdminRoleDao adminRoleDao;
 
     @Resource(name = "blAdminUserDao")
-    AdminUserDao adminUserDao;
+    protected AdminUserDao adminUserDao;
+    
+    @Resource(name = "blForgotPasswordSecurityTokenDao")
+    protected ForgotPasswordSecurityTokenDao forgotPasswordSecurityTokenDao;
 
     @Resource(name = "blAdminPermissionDao")
     AdminPermissionDao adminPermissionDao;
-    
+
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
+
+    @Resource(name="blEmailService")
+    protected EmailService emailService;
+
+    // Variables to set via external configuration.
+    protected int tokenExpiredMinutes = 30;
+    protected EmailInfo resetPasswordEmailInfo;
+    protected EmailInfo sendUsernameEmailInfo;
+    protected String resetPasswordURL;
 
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
@@ -91,7 +120,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
         return adminUserDao.saveAdminUser(user);
     }
-    
+
     public AdminUser changePassword(PasswordChange passwordChange) {
     	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -125,5 +154,172 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     public List<AdminPermission> readAllAdminPermissions() {
         return adminPermissionDao.readAllAdminPermissions();
+    }
+
+    public GenericResponse sendForgotUsernameNotification(String emailAddress) {
+        GenericResponse response = new GenericResponse();
+        List<AdminUser> users = null;
+        if (emailAddress != null) {
+            users = adminUserDao.readAdminUserByEmail(emailAddress);
+        }
+        if (users == null || users.isEmpty()) {
+            response.addErrorCode("notFound");
+        } else {
+            List<String> activeUsernames = new ArrayList<String>();
+            for (AdminUser user : users) {
+                if (user.getActiveStatusFlag()) {
+                    activeUsernames.add(user.getLogin());
+                }
+            }
+
+            if (activeUsernames.size() > 0) {
+                HashMap<String, Object> vars = new HashMap<String, Object>();
+                vars.put("accountNames", activeUsernames);
+                emailService.sendTemplateEmail(emailAddress, getSendUsernameEmailInfo(), vars);
+            } else {
+                // send inactive username found email.
+                response.addErrorCode("inactiveUser");
+            }
+        }
+        return response;
+    }
+
+    public GenericResponse sendResetPasswordNotification(String username) {
+        GenericResponse response = new GenericResponse();
+        AdminUser user = null;
+        
+        if (username != null) {
+            user = adminUserDao.readAdminUserByUserName(username);
+        }
+        
+        checkUser(user,response);
+        
+        if (! response.getHasErrors()) {        
+            String token = PasswordUtils.generateTemporaryPassword(PASSWORD_TOKEN_LENGTH);
+            token = token.toLowerCase();
+
+            ForgotPasswordSecurityToken fpst = new ForgotPasswordSecurityTokenImpl();
+            fpst.setAdminUserId(user.getId());
+            fpst.setToken(passwordEncoder.encodePassword(token,null));
+            fpst.setCreateDate(SystemTime.asDate());
+            forgotPasswordSecurityTokenDao.saveToken(fpst);
+            
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("token", token);
+            String resetPasswordUrl = getResetPasswordURL();
+            if (resetPasswordUrl != null) {
+                if (resetPasswordUrl.contains("?")) {
+                    resetPasswordUrl=resetPasswordUrl+"&token="+token;
+                } else {
+                    resetPasswordUrl=resetPasswordUrl+"?token="+token;
+                }
+            }
+            vars.put("resetPasswordUrl", resetPasswordUrl);
+            emailService.sendTemplateEmail(user.getEmail(), getResetPasswordEmailInfo(), vars);
+            
+        }
+        return response;
+    }
+    
+    private void checkUser(AdminUser user, GenericResponse response) {
+        if (user == null) {
+            response.addErrorCode("invalidUser");
+        } else if (user.getEmail() == null || "".equals(user.getEmail())) {
+            response.addErrorCode("emailNotFound");
+        } else if (user.getActiveStatusFlag() == null || ! user.getActiveStatusFlag()) {
+            response.addErrorCode("inactiveUser");
+        }
+    }
+    
+    private void checkPassword(String password, String confirmPassword, GenericResponse response) {
+        if (password == null || confirmPassword == null || "".equals(password) || "".equals(confirmPassword)) {
+            response.addErrorCode("invalidPassword");
+        } else if (! password.equals(confirmPassword)) {
+            response.addErrorCode("passwordMismatch");
+        }
+    }
+
+    private boolean isTokenExpired(ForgotPasswordSecurityToken fpst) {
+        Date now = SystemTime.asDate();
+        long currentTimeInMillis = now.getTime();
+        long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
+        long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
+        return minutesSinceSave > tokenExpiredMinutes;
+    }
+    
+    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {        
+        GenericResponse response = new GenericResponse();
+        AdminUser user = null;
+        if (username != null) {
+            user = adminUserDao.readAdminUserByUserName(username);
+        }
+        checkUser(user, response);
+        checkPassword(password, confirmPassword, response);
+        if (token == null || "".equals(token)) {
+            response.addErrorCode("invalidToken");
+        }
+        
+        ForgotPasswordSecurityToken fpst = null;
+        if (! response.getHasErrors()) {
+            token = token.toLowerCase();
+            fpst = forgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token,null));
+            if (fpst == null) {
+                response.addErrorCode("invalidToken");
+            } else if (fpst.isTokenUsedFlag()) {
+                response.addErrorCode("tokenUsed");
+            } else if (isTokenExpired(fpst)) {
+                response.addErrorCode("tokenExpired");
+            }
+        }
+        
+        if (! response.getHasErrors()) {
+            user.setUnencodedPassword(password);            
+            saveAdminUser(user);
+            fpst.setTokenUsedFlag(true);
+        }
+        
+        forgotPasswordSecurityTokenDao.saveToken(fpst);
+        
+        return response;
+    }
+
+    public int getTokenExpiredMinutes() {
+        return tokenExpiredMinutes;
+    }
+
+    public void setTokenExpiredMinutes(int tokenExpiredMinutes) {
+        this.tokenExpiredMinutes = tokenExpiredMinutes;
+    }
+
+    public static int getPASSWORD_TOKEN_LENGTH() {
+        return PASSWORD_TOKEN_LENGTH;
+    }
+
+    public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
+        AdminSecurityServiceImpl.PASSWORD_TOKEN_LENGTH = PASSWORD_TOKEN_LENGTH;
+    }
+
+    public String getResetPasswordURL() {
+        return resetPasswordURL;
+    }
+
+    public void setResetPasswordURL(String resetPasswordURL) {
+        this.resetPasswordURL = resetPasswordURL;
+    }
+
+    public EmailInfo getSendUsernameEmailInfo() {
+        return sendUsernameEmailInfo;
+    }
+
+    public void setSendUsernameEmailInfo(EmailInfo sendUsernameEmailInfo) {
+        this.sendUsernameEmailInfo = sendUsernameEmailInfo;
+    }
+
+    public EmailInfo getResetPasswordEmailInfo() {
+        return resetPasswordEmailInfo;
+    }
+
+    public void setResetPasswordEmailInfo(EmailInfo resetPasswordEmailInfo) {
+        this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
 }

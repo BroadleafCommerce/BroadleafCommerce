@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+
+import java.util.List;
 
 /**
  * 
@@ -26,9 +26,10 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
  *
  */
 public interface AdminUserDao {
-    public List<AdminUser> readAllAdminUsers();
-    public AdminUser readAdminUserById(Long id);
-    public AdminUser readAdminUserByUserName(String userName);
-    public AdminUser saveAdminUser(AdminUser user);
-    public void deleteAdminUser(AdminUser user);
+    List<AdminUser> readAllAdminUsers();
+    AdminUser readAdminUserById(Long id);
+    AdminUser readAdminUserByUserName(String userName);
+    AdminUser saveAdminUser(AdminUser user);
+    void deleteAdminUser(AdminUser user);
+    List<AdminUser> readAdminUserByEmail(String emailAddress);
 }

@@ -36,9 +36,4 @@
 	<bean id="org.broadleafcommerce.profile.core.domain.Role" class="org.broadleafcommerce.profile.core.domain.RoleImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.core.domain.State" class="org.broadleafcommerce.profile.core.domain.StateImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.core.domain.User" class="org.broadleafcommerce.profile.core.domain.UserImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.email.domain.EmailTracking" class="org.broadleafcommerce.profile.email.domain.EmailTrackingImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.profile.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.profile.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.email.domain.EmailTarget" class="org.broadleafcommerce.profile.email.domain.EmailTargetImpl" scope="prototype"/>
-	
 </beans>

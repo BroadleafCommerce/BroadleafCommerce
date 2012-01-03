@@ -21,7 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferAuditDao")

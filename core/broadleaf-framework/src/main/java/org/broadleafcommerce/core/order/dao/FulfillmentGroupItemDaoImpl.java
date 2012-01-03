@@ -25,7 +25,7 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blFulfillmentGroupItemDao")

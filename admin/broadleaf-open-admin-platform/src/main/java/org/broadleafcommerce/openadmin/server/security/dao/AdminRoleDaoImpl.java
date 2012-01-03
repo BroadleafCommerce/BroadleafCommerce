@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

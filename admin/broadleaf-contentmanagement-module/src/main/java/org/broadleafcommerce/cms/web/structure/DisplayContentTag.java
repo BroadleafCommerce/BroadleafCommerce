@@ -24,8 +24,8 @@ import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -66,7 +66,7 @@ public class DisplayContentTag extends BodyTagSupport {
      * @return
      */
     private Map<String,Object> buildMvelParameters(HttpServletRequest request) {
-        TimeDTO timeDto = SystemTime.asTimeDTO();
+        TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
         RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
 
         Map<String, Object> mvelParameters = new HashMap<String, Object>();

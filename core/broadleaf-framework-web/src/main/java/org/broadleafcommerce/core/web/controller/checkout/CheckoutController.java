@@ -35,7 +35,7 @@ import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.web.checkout.model.CheckoutForm;
 import org.broadleafcommerce.core.web.checkout.validator.CheckoutFormValidator;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;

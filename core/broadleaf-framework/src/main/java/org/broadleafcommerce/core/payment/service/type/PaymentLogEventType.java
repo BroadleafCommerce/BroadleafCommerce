@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.presentation.BroadleafEnumerationType;
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of payment log types.

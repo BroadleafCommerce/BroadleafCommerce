@@ -47,7 +47,7 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
     @GeneratedValue(generator= "SCRuleId")
     @GenericGenerator(
         name="SCRuleId",
-        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
             @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
             @Parameter(name="segment_column_name", value="ID_NAME"),

@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

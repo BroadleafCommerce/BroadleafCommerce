@@ -138,6 +138,10 @@
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-usps-schemas</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+        	<artifactId>common</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-framework</artifactId>

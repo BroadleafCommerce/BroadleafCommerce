@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.presentation.BroadleafEnumerationType;
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of offer item restriction types. Determines how items in the order can be used across multiple promotions

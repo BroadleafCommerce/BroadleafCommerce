@@ -23,7 +23,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

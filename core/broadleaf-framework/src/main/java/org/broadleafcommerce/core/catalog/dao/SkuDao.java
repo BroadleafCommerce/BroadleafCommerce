@@ -81,7 +81,7 @@ public interface SkuDao {
      * extension of {@code Sku} by default, include an entity configuration bean in your application context xml similar to:
      * <p>
      * {@code
-     *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
+     *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
 	 *	        <property name="entityContexts">
 	 *		        <list>
 	 *			        <value>classpath:myCompany-applicationContext-entity.xml</value>

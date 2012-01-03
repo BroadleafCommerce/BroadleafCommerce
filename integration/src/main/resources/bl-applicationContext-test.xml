@@ -86,7 +86,7 @@
     </bean>
 
     <bean id="serviceStatusEmail"
-          class="org.broadleafcommerce.profile.email.service.info.EmailInfo"
+          class="org.broadleafcommerce.common.email.service.info.EmailInfo"
           parent="baseEmailInfo">
     </bean>
     
@@ -162,7 +162,7 @@
 	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.EmailStatusHandler">
 	    			<property name="emailInfo" ref="serviceStatusEmail"/>
 	    			<property name="emailTarget">
-	    				<bean class="org.broadleafcommerce.profile.email.domain.EmailTargetImpl">
+	    				<bean class="org.broadleafcommerce.common.email.domain.EmailTargetImpl">
 	    					<property name="emailAddress" value="test@broadleafcommerce.org"/>
 	    				</bean>
 	    			</property>

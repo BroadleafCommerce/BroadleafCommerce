@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOrderItemDao")

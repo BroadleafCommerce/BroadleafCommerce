@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.web.catalog;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 

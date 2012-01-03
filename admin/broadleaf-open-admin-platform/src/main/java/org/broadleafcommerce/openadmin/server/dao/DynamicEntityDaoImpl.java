@@ -54,7 +54,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
 import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.AdminPresentationClass;
 import org.broadleafcommerce.presentation.AdminPresentationOverride;

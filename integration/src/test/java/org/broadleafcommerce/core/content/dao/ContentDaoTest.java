@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.core.content.ContentDaoDataProvider;
 import org.broadleafcommerce.core.content.domain.Content;
 import org.broadleafcommerce.core.content.domain.ContentDetails;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;

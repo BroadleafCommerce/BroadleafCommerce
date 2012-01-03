@@ -23,7 +23,7 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;

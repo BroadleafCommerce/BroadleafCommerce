@@ -20,8 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.email.service.EmailService;
-import org.broadleafcommerce.profile.email.service.info.EmailInfo;
+import org.broadleafcommerce.common.email.service.EmailService;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
 
 import javax.annotation.Resource;
 import java.util.HashMap;

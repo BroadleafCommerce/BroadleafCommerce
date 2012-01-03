@@ -18,8 +18,8 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.openadmin.time.SystemTime;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 

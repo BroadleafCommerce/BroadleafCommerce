@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.hibernate.ejb.QueryHints;

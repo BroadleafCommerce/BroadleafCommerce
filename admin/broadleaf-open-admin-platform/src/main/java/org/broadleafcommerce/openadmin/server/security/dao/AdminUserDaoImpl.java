@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +70,13 @@ public class AdminUserDaoImpl implements AdminUserDao {
     public List<AdminUser> readAllAdminUsers() {
         TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS", AdminUser.class);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<AdminUser> readAdminUserByEmail(String emailAddress) {
+        TypedQuery<AdminUser> query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_EMAIL", AdminUser.class);
+        query.setParameter("email", emailAddress);
         return query.getResultList();
     }
 }

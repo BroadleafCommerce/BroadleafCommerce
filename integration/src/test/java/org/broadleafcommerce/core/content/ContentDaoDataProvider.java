@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.content.domain.Content;
 import org.broadleafcommerce.core.content.domain.ContentDetails;
 import org.broadleafcommerce.core.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.core.content.domain.ContentImpl;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.testng.annotations.DataProvider;
 
 /**

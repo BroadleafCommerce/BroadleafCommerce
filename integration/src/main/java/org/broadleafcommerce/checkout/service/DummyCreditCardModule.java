@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.module.AbstractModule;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 
 /**
  * @author jfischer

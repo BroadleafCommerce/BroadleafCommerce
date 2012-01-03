@@ -24,7 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.core.util.domain.CodeType;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 

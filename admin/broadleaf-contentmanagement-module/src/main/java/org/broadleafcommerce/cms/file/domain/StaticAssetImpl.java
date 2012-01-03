@@ -70,11 +70,15 @@ import java.util.Map;
             @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.phoneNumber", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.activeStatusFlag", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.phoneNumber", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.updatedBy.activeStatusFlag", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandbox", value=@AdminPresentation(excluded = true))
         }
 )

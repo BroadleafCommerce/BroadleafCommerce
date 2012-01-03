@@ -23,7 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.springframework.stereotype.Repository;
 

@@ -53,7 +53,7 @@ import org.broadleafcommerce.core.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.core.content.domain.ContentImpl;
 import org.broadleafcommerce.core.content.domain.ContentPageInfo;
 import org.broadleafcommerce.core.content.domain.ContentXmlData;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.compass.core.util.reader.StringReader;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;

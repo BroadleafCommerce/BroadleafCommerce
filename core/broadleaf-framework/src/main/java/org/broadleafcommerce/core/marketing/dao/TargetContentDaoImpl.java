@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.marketing.dao;
 
 import org.broadleafcommerce.core.marketing.domain.TargetContent;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 

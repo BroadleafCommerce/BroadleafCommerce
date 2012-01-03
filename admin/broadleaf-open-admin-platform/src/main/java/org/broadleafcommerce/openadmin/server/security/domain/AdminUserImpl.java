@@ -81,7 +81,15 @@ public class AdminUserImpl implements AdminUser {
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
     @AdminPresentation(friendlyName="Admin Email Address", order=4, group="User")
-    protected String email; 
+    protected String email;
+
+    @Column(name = "PHONE_NUMBER")
+    @AdminPresentation(friendlyName="Phone Number", order=5, group="User")
+    protected String phoneNumber;
+
+    @Column(name = "ACTIVE_STATUS_FLAG")
+    @AdminPresentation(friendlyName="Active Status", order=6, group="User")
+    protected Boolean activeStatusFlag = Boolean.TRUE;
 
     /** All roles that this user has */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
@@ -150,6 +158,22 @@ public class AdminUserImpl implements AdminUser {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Boolean getActiveStatusFlag() {
+        return activeStatusFlag;
+    }
+
+    public void setActiveStatusFlag(Boolean activeStatusFlag) {
+        this.activeStatusFlag = activeStatusFlag;
     }
 
     public Set<AdminRole> getAllRoles() {

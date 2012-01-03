@@ -13,6 +13,12 @@
 		<query>SELECT adminUser FROM org.broadleafcommerce.openadmin.server.security.domain.AdminUser adminUser</query>
 	</named-query>
 
+    <named-query name="BC_READ_ADMIN_USER_BY_EMAIL">
+   		<query>SELECT adminUser FROM org.broadleafcommerce.openadmin.server.security.domain.AdminUser adminUser
+               WHERE  adminUser.email = :email
+        </query>
+   	</named-query>
+
 	<named-query name="BC_READ_ALL_ADMIN_PERMISSIONS">
 		<query>SELECT adminPermission FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission</query>
 	</named-query>

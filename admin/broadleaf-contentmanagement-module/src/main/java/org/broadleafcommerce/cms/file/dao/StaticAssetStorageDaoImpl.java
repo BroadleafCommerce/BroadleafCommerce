@@ -17,7 +17,7 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;

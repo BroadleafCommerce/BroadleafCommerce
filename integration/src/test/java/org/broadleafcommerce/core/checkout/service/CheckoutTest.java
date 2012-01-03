@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.*;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.encryption.EncryptionModule;

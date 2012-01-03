@@ -25,7 +25,7 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;

@@ -22,6 +22,16 @@
 		<aop:pointcut id="blAdminSecurityServiceDeleteOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.delete*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceDeleteOperation"/>
 	</aop:config>
+
+    <aop:config>
+        <aop:pointcut id="blAdminSecurityServiceSendOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.send*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceSendOperation"/>
+    </aop:config>
+
+    <aop:config>
+        <aop:pointcut id="blAdminSecurityServiceResetOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.reset*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceResetOperation"/>
+    </aop:config>
 	
 	<aop:config>
 		<aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.inspect(..))"/>
@@ -120,6 +130,24 @@
 	<bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>  
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
+    </bean>
+    
+    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="noreply@mysite.com"/>
+        <property name="emailTemplate" value="org/broadleafcommerce/openadmin/server/email/template/adminSendUsername.vm"/>
+        <property name="subject" value="[Broadleaf Admin] Username requested"/>
+    </bean>
+    
+    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="noreply@mysite.com"/>
+        <property name="emailTemplate" value="org/broadleafcommerce/openadmin/server/email/template/adminResetPassword.vm"/>
+        <property name="subject" value="[Broadleaf Admin] Reset password requested"/>
+    </bean>
+
+    <bean id="blAdminSecurityService" class="org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServiceImpl">
+        <property name="sendUsernameEmailInfo" ref="blSendAdminUsernameEmailInfo"/>
+        <property name="resetPasswordEmailInfo" ref="blSendAdminResetPasswordEmail"/>
+        <property name="tokenExpiredMinutes" value="30"/>
     </bean>
 			        
 	<!--<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">

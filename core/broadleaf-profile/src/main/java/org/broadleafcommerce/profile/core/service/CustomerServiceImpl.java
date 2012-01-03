@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
 import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
@@ -26,7 +27,6 @@ import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
-import org.broadleafcommerce.profile.core.util.PasswordUtils;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

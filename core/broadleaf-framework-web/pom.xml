@@ -164,6 +164,10 @@
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-profile-web</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+        	<artifactId>common</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>

@@ -26,7 +26,7 @@ import java.io.Serializable;
  * <br>
  * The rule is represented as a valid MVEL string.    The Content Management System by default
  * is able to process rules based on the current customer, product,
- * {@link org.broadleafcommerce.common.TimeDTO time}, or {@link org.broadleafcommerce.common.RequestDTO request}
+ * {@link org.broadleafcommerce.common.time.TimeDTO time}, or {@link org.broadleafcommerce.common.time.RequestDTO request}
  *
  * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
  * @see org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl#evaluateAndPriortizeContent(java.util.List, int, java.util.Map)

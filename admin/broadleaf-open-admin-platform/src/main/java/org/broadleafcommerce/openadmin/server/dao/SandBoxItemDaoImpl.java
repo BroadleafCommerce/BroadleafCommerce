@@ -26,7 +26,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 

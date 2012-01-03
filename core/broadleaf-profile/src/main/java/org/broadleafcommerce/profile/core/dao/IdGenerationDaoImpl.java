@@ -18,7 +18,7 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.IdGeneration;
 import org.springframework.stereotype.Repository;
 

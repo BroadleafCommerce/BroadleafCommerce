@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.profile.core.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.broadleafcommerce.presentation.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of locale types.

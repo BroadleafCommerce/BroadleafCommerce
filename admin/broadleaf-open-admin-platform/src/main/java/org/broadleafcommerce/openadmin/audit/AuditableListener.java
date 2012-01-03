@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.audit;
 
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

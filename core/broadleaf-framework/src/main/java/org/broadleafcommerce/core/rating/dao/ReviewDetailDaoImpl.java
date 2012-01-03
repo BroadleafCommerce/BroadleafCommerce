@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.rating.dao;
 
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

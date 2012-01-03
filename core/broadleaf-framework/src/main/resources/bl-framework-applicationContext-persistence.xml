@@ -16,7 +16,7 @@
            http://www.springframework.org/schema/util
            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
+	<bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
 		<property name="entityContexts">
 			<list>
 				<value>classpath:bl-framework-applicationContext-entity.xml</value>

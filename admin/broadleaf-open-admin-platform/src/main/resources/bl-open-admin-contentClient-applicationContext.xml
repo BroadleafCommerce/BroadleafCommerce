@@ -16,12 +16,12 @@
     	   http://www.springframework.org/schema/util
     	   http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.persistence"/>
+    <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
     
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
     
-    <bean id="blEntityConfiguration" class="org.broadleafcommerce.persistence.EntityConfiguration">
+    <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
 		<property name="entityContexts">
 			<list>
 				<value>classpath:bl-open-admin-applicationContext-entity.xml</value>

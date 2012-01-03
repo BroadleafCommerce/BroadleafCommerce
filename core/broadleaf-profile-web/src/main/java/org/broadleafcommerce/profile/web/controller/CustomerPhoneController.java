@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;

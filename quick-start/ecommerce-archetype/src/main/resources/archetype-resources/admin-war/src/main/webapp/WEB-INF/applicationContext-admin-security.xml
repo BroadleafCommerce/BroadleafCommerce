@@ -48,7 +48,7 @@
     <sec:jdbc-user-service
 			data-source-ref="webDS"
 		    id="userDetailsManager"
-	        users-by-username-query="SELECT login AS username, password, 'true' as enabled FROM BLC_ADMIN_USER WHERE login = ?"
+	        users-by-username-query="SELECT login AS username, password, active_status_flag as enabled FROM BLC_ADMIN_USER WHERE login = ?"
 	        authorities-by-username-query="SELECT
             DISTINCT au.login AS username, ap.name AS authority
             FROM BLC_ADMIN_USER au

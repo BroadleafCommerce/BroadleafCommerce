@@ -138,6 +138,10 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+        	<artifactId>common</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-profile</artifactId>

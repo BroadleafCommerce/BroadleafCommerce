@@ -42,6 +42,34 @@ public interface AdminUser extends Serializable {
     public void setUnencodedPassword(String unencodedPassword);
 
     /**
+     * Stores the user's phone number.
+     * @param phone
+     */
+    public void setPhoneNumber(String phone);
+
+    /**
+     * Returns the users phone number.
+     * @return
+     */
+    public String getPhoneNumber();
+
+    /**
+     * Sets the users active status.   A user whose active status is set to false
+     * will not be able to login.
+     *
+     * @param activeStatus
+     */
+    public void setActiveStatusFlag(Boolean activeStatus);
+
+    /**
+     * Returns the users active status.    A user whose active status is set to
+     * false will not be able to login.
+     *
+     * @return
+     */
+    public Boolean getActiveStatusFlag();
+
+    /**
      * The current sandbox associated with this user.
      * This is primarily intended to be used by the BLC-CMS workflow
      * processes.

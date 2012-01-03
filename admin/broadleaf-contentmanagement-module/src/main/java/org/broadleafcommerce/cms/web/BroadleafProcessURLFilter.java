@@ -29,8 +29,8 @@ import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
-import org.broadleafcommerce.openadmin.time.FixedTimeSource;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.FixedTimeSource;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 

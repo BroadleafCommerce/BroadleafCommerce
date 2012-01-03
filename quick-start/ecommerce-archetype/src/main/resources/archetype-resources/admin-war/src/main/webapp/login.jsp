@@ -47,6 +47,9 @@
  					<c:if test="${symbol_dollar}{not empty param.login_error}">
     					<p style="font-family:'Arial', Arial, sans-serif; font-style: normal; font-size: 12px; color: red"><c:out value="${symbol_dollar}{SPRING_SECURITY_LAST_EXCEPTION.message}"/></p>
 					</c:if>
+                    <c:if test="${symbol_dollar}{not empty param.login_error}">
+                        <p style="font-family:'Arial', Arial, sans-serif; font-style: normal; font-size: 12px; color: red"><c:out value="${symbol_dollar}{SPRING_SECURITY_LAST_EXCEPTION.message}"/></p>
+                 	</c:if>
  					<table style="font-family:'Arial', Arial, sans-serif; font-style: normal; font-size: 12px">
  					<tr><td><label for="j_username">Username:</label></td><td><input type="text" name="j_username" id="j_username" style="width: 120px"></td></tr>
  					<tr><td><label for="j_password">Password:</label></td><td><input type="password" name="j_password" id="j_password" style="width: 120px"></td></tr>

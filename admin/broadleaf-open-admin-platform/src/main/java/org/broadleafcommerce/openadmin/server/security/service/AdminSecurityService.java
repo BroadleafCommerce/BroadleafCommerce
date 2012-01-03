@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -31,24 +32,54 @@ import java.util.List;
  */
 public interface AdminSecurityService {
 
-    public List<AdminUser> readAllAdminUsers();
-    public AdminUser readAdminUserById(Long id);
-    public AdminUser readAdminUserByUserName(String userName);
-    public AdminUser saveAdminUser(AdminUser user);
-    public void deleteAdminUser(AdminUser user);
+    List<AdminUser> readAllAdminUsers();
+    AdminUser readAdminUserById(Long id);
+    AdminUser readAdminUserByUserName(String userName);
+    AdminUser saveAdminUser(AdminUser user);
+    void deleteAdminUser(AdminUser user);
 
-    public List<AdminRole> readAllAdminRoles();
-    public AdminRole readAdminRoleById(Long id);
-    public AdminRole saveAdminRole(AdminRole role);
-    public void deleteAdminRole(AdminRole role);
+    List<AdminRole> readAllAdminRoles();
+    AdminRole readAdminRoleById(Long id);
+    AdminRole saveAdminRole(AdminRole role);
+    void deleteAdminRole(AdminRole role);
 
-    public List<AdminPermission> readAllAdminPermissions();
-    public AdminPermission readAdminPermissionById(Long id);
-    public AdminPermission saveAdminPermission(AdminPermission permission);
-    public void deleteAdminPermission(AdminPermission permission);
-    public AdminUser changePassword(PasswordChange passwordChange);
+    List<AdminPermission> readAllAdminPermissions();
+    AdminPermission readAdminPermissionById(Long id);
+    AdminPermission saveAdminPermission(AdminPermission permission);
+    void deleteAdminPermission(AdminPermission permission);
+    AdminUser changePassword(PasswordChange passwordChange);
 
-    public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);
-    public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName);
+    boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);
+    boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName);
 
+    /**
+     * Looks up the corresponding AdminUser and emails the address on file with
+     * the associated username.
+     *
+     * @param emailAddress
+     * @return Response can contain errors including (notFound)
+     *
+     */
+    GenericResponse sendForgotUsernameNotification(String emailAddress);
+
+    /**
+     * Generates an access token and then emails the user.
+     *
+     * @param userName
+     * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
+     * 
+     */
+    GenericResponse sendResetPasswordNotification(String userName);
+    
+    /**
+     * Updates the password for the passed in user only if the passed
+     * in token is valid for that user.
+     *
+     * @param username Name of the user
+     * @param token Valid reset token
+     * @param password new password
+     *
+     * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired, passwordMismatch)
+     */
+    GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
 }

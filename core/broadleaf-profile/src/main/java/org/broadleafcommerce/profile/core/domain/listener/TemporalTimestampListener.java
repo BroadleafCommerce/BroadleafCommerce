@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.profile.core.domain.listener;
 
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.annotation.AutoPopulate;
 
 import javax.persistence.*;

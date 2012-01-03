@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.tool.hbm2x.StringUtils;
 import org.mvel2.MVEL;

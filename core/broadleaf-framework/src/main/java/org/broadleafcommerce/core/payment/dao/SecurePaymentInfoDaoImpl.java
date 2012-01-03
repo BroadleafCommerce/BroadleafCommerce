@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.encryption.EncryptionModule;
 import org.springframework.stereotype.Repository;
 

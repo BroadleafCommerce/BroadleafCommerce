@@ -36,7 +36,7 @@ import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.core.rating.service.type.RatingSortType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 

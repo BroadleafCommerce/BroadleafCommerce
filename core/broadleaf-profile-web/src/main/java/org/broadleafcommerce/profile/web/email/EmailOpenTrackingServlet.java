@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.email.service.EmailTrackingManager;
+import org.broadleafcommerce.common.email.service.EmailTrackingManager;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

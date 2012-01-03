@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.audit;
 
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
-import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.common.time.SystemTime;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
