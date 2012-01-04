@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -74,7 +74,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     
     @Lob
     @Column(name = "ORDER_ITEM_MATCH_RULE")
-    @AdminPresentation(friendlyName="Order Item Match Rule", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="Order Item Match Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = OfferImpl.class)

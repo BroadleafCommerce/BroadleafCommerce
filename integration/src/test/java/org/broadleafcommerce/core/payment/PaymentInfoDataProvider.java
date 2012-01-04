@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.testng.annotations.DataProvider;
 
 public class PaymentInfoDataProvider {

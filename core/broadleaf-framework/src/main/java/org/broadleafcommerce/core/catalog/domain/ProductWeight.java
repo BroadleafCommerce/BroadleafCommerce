@@ -16,15 +16,14 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 
 /**
  * 
@@ -41,7 +40,7 @@ public class ProductWeight implements Serializable {
     protected BigDecimal weight;
 
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName="Product Weight Units", order=18, group="Weight", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.util.WeightUnitOfMeasureType")
+    @AdminPresentation(friendlyName="Product Weight Units", order=18, group="Weight", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
     protected String weightUnitOfMeasure;
 
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {

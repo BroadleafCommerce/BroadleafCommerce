@@ -19,7 +19,7 @@ package org.broadleafcommerce.vendor.cybersource.service.payment;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceService;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentResponse;
-import org.broadleafcommerce.profile.vendor.service.exception.PaymentException;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
 /**
  * 

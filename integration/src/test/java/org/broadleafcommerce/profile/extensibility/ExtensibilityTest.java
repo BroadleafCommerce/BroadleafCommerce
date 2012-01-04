@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.profile.extensibility;
 
-import org.broadleafcommerce.profile.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.test.BaseTest;
 import org.testng.annotations.Test;
 

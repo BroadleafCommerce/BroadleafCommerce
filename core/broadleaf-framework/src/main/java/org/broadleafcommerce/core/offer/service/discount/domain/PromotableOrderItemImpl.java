@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

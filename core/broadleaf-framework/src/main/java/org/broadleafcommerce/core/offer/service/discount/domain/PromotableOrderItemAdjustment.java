@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public interface PromotableOrderItemAdjustment {
 

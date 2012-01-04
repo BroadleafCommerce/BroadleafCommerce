@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.cms.web;
 
-import org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer;
+import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import javax.annotation.Resource;

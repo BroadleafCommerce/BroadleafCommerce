@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 /**
  * 

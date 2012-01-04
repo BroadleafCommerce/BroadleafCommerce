@@ -33,7 +33,7 @@ import noNamespace.ResponsePackageV2Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlException;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
 import org.broadleafcommerce.vendor.usps.service.message.USPSLocation;
 import org.broadleafcommerce.vendor.usps.service.message.USPSPostage;

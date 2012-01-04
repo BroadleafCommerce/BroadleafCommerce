@@ -21,7 +21,7 @@ import java.util.Map;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public class CombinedPaymentContextSeed {
 

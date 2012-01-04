@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.profile.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.profile.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description

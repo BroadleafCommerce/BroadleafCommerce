@@ -24,10 +24,10 @@
 	<aop:config/>
 	
 	<bean id="resourceBundleExtensionPoint"
-		class="org.broadleafcommerce.profile.core.util.ResourceBundleExtensionPoint" />
+		class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
 
 	<bean id="messageSource"
-		class="org.broadleafcommerce.profile.core.util.BLResourceBundleMessageSource">
+		class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
 		<constructor-arg>
 			<list>
 				<value>messages</value>

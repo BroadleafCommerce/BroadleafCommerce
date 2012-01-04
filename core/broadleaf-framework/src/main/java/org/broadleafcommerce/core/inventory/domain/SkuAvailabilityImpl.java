@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.inventory.domain;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
-import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -93,7 +93,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     /** The description. */
     @Column(name = "AVAILABILITY_STATUS")
     @Index(name="SKUAVAIL_STATUS_INDEX", columnNames={"AVAILABILITY_STATUS"})
-    @AdminPresentation(friendlyName="Availability Status", group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType")
+    @AdminPresentation(friendlyName="Availability Status", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType")
     protected String availabilityStatus;
 
     /** The date this product will be available. */

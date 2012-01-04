@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 
 public interface ShippingService {
 	

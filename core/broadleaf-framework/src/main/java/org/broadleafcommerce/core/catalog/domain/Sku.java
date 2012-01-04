@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 import java.io.Serializable;
 import java.util.Date;

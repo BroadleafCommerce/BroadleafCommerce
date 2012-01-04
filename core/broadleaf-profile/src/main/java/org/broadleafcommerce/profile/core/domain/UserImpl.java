@@ -34,7 +34,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.broadleafcommerce.profile.core.domain.listener.TemporalTimestampListener;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 

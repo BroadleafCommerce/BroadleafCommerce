@@ -9,7 +9,7 @@
     	eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="1">
-    	<cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.engine.HydratedCacheEventListenerFactory"/>
+    	<cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
     
    	<cache

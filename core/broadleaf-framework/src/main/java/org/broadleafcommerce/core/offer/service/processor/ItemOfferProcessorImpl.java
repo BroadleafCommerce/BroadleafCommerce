@@ -36,7 +36,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 

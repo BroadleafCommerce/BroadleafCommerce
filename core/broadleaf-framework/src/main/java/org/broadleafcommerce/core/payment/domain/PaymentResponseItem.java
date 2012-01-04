@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface PaymentResponseItem extends Serializable {

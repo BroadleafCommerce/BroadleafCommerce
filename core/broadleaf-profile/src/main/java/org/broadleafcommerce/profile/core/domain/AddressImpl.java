@@ -30,8 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.core.domain.listener.TemporalTimestampListener;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;

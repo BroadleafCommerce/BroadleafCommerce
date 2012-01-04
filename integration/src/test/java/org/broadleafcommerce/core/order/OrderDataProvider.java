@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.testng.annotations.DataProvider;
 
 public class OrderDataProvider {

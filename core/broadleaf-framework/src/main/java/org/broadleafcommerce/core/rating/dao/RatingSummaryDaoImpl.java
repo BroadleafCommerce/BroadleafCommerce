@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.rating.dao;
 
+import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.broadleafcommerce.core.rating.domain.RatingDetail;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

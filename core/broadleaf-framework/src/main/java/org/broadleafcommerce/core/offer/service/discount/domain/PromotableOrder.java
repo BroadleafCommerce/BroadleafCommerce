@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface PromotableOrder {

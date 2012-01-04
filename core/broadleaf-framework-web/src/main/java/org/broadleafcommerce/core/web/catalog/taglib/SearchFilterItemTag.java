@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;

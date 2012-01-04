@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.payment.service.PaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 import java.util.HashMap;
 import java.util.Iterator;

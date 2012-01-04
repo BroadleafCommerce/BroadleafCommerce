@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.money.Money;
 import org.springframework.stereotype.Service;
 
 @Service("blOrderItemService")

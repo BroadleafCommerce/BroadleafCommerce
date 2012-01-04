@@ -244,7 +244,7 @@ public interface Category extends Serializable {
      * cache region settings for this entity, resulting in this map being evicted from its cache
      * when this entity is removed from the Hibernate level 2 cache.
      *
-     * @see org.broadleafcommerce.profile.cache.HydratedSetup
+     * @see org.broadleafcommerce.common.cache.HydratedSetup
      * @return the child category url map
      */
     @Nonnull
@@ -253,7 +253,7 @@ public interface Category extends Serializable {
     /**
      * Included to support the {@code HydratedCacheJPAListener}
      *
-     * @see org.broadleafcommerce.profile.cache.HydratedSetup
+     * @see org.broadleafcommerce.common.cache.HydratedSetup
      * @param childCategoryURLMap
      */
     public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);

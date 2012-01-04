@@ -34,7 +34,7 @@ import com.smartgwt.client.util.EnumUtil;
 import com.smartgwt.client.util.JSOHelper;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.form.fields.RelativeDateItem;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 /**
  * 

@@ -28,7 +28,7 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.order.service.type.USPSServiceMethod;
-import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;

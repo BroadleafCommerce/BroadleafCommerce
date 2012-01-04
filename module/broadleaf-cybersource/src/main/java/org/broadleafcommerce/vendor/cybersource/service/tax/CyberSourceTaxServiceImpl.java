@@ -28,10 +28,10 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.profile.vendor.service.cache.ServiceResponseCacheable;
-import org.broadleafcommerce.profile.vendor.service.exception.TaxException;
-import org.broadleafcommerce.profile.vendor.service.exception.TaxHostException;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.vendor.service.cache.ServiceResponseCacheable;
+import org.broadleafcommerce.common.vendor.service.exception.TaxException;
+import org.broadleafcommerce.common.vendor.service.exception.TaxHostException;
 import org.broadleafcommerce.vendor.cybersource.service.AbstractCyberSourceService;
 import org.broadleafcommerce.vendor.cybersource.service.api.BillTo;
 import org.broadleafcommerce.vendor.cybersource.service.api.Item;

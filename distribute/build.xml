@@ -80,10 +80,10 @@
 		<path id="combined.path">
 			<union id="union"><path refid="build.admin.compile.classpath"/><path refid="build.admin.runtime.classpath"/></union>
 		</path>
-		<taskdef name="hibernatetool" classname="org.broadleafcommerce.profile.util.sql.HibernateToolTask" classpathref="combined.path" />
+		<taskdef name="hibernatetool" classname="org.broadleafcommerce.common.util.sql.HibernateToolTask" classpathref="combined.path" />
 		<hibernatetool destDir="${maven.build.dir}/${maven.build.finalName}/sql" combinePersistenceUnits="false" refineFileNames="true">
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.broadleafcommerce.profile.util.sql.MySQLInnoDBDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.broadleafcommerce.common.util.sql.MySQLInnoDBDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.OracleDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SybaseDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SQLServerDialect" />
@@ -95,7 +95,7 @@
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.FirebirdDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.DB2Dialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.broadleafcommerce.profile.util.sql.MySQLInnoDBDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.broadleafcommerce.common.util.sql.MySQLInnoDBDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.OracleDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SybaseDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SQLServerDialect" />
@@ -230,7 +230,7 @@
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/usps" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" />
-		<taskdef name="licenseCopy" classname="org.broadleafcommerce.profile.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
+		<taskdef name="licenseCopy" classname="org.broadleafcommerce.common.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
 		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" licenseDir="${releaseParentDir}/doc/dependency-licenses">
 			<restrict>
 				<union>

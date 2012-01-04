@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.profile.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
+import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;

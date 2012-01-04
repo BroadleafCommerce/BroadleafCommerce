@@ -86,7 +86,7 @@
 	</listener>
 
 	<listener>
-		<listener-class>org.broadleafcommerce.profile.web.extensibility.MergeContextLoaderListener</listener-class>
+		<listener-class>org.broadleafcommerce.common.web.extensibility.MergeContextLoaderListener</listener-class>
 	</listener>
 	
 	<listener>

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public interface DiscreteOrderItem extends OrderItem {
 

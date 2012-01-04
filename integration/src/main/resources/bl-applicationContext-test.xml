@@ -2,22 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.0.xsd
            http://www.springframework.org/schema/tx
-           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-           http://www.springframework.org/schema/aop
-           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
 	<context:component-scan base-package="org.broadleafcommerce.core.web"/>
 	
 	<bean id="blCacheManager"
-          class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+          class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
         <property name="configLocations">
             <list>
@@ -26,7 +23,7 @@
         </property>
     </bean>
     
-    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
 				<value>classpath*:/META-INF/persistence-test.xml</value>
@@ -60,7 +57,7 @@
 		</property>
 	</bean>
 
-	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+	<bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">
 			<set>
 				<value>classpath:config/bc/</value>
@@ -110,19 +107,19 @@
 		<property name="uspsRequestValidator">
 			<bean class="org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator">
 				<constructor-arg>
-					<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
+					<bean class="org.broadleafcommerce.common.util.EnvironmentFactoryBean">
 						<constructor-arg value="${usps.rate.request.validator}"/>
 					</bean>
 				</constructor-arg>
 			</bean>
 		</property>
 		<property name="uspsRequestBuilder">
-			<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
+			<bean class="org.broadleafcommerce.common.util.EnvironmentFactoryBean">
 				<constructor-arg value="${usps.rate.request.builder}"/>
 			</bean>
 		</property>
 		<property name="uspsResponseBuilder">
-			<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
+			<bean class="org.broadleafcommerce.common.util.EnvironmentFactoryBean">
 				<constructor-arg value="${usps.rate.response.builder}"/>
 			</bean>
 		</property>
@@ -155,11 +152,11 @@
 		<property name="transactionKey" value="${cybersource.transaction.key}"/>
 	</bean>
     
-    <bean id="compositeStatusHandler" class="org.broadleafcommerce.profile.vendor.service.monitor.handler.CompositeStatusHandler">
+    <bean id="compositeStatusHandler" class="org.broadleafcommerce.common.vendor.service.monitor.handler.CompositeStatusHandler">
     	<property name="handlers">
 	    	<list>
-	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.LogStatusHandler"/>
-	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.EmailStatusHandler">
+	    		<bean class="org.broadleafcommerce.common.vendor.service.monitor.handler.LogStatusHandler"/>
+	    		<bean class="org.broadleafcommerce.common.vendor.service.monitor.handler.EmailStatusHandler">
 	    			<property name="emailInfo" ref="serviceStatusEmail"/>
 	    			<property name="emailTarget">
 	    				<bean class="org.broadleafcommerce.common.email.domain.EmailTargetImpl">
@@ -171,7 +168,7 @@
 	   	</property>
     </bean>
     
-    <bean id="blServiceMonitor" class="org.broadleafcommerce.profile.vendor.service.monitor.ServiceMonitor" init-method="init">
+    <bean id="blServiceMonitor" class="org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor" init-method="init">
     	<property name="defaultHandler" ref="compositeStatusHandler"/>
     	<property name="serviceHandlers">
     		<map>

@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.testng.annotations.DataProvider;
 
 public class OrderItemDataProvider {

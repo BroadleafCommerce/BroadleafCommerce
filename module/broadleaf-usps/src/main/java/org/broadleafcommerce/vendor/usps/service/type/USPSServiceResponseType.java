@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
-import org.broadleafcommerce.util.StringUtil;
+import org.broadleafcommerce.common.util.StringUtil;
 
 /**
  * An extendible enumeration of usps shipping method types.

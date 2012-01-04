@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.service.module.CyberSourceModule;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
@@ -64,7 +64,7 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		CyberSourceTaxResponse response;
 		try {
 			response = callService(taxRequest);
-		} catch (org.broadleafcommerce.profile.vendor.service.exception.TaxException e) {
+		} catch (org.broadleafcommerce.common.vendor.service.exception.TaxException e) {
 			throw new TaxException(e);
 		}
 		calculateTaxes(order, requestLibrary, response);
@@ -181,7 +181,7 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		return taxRequest;
 	}
     
-    private CyberSourceTaxResponse callService(CyberSourceTaxRequest taxRequest) throws org.broadleafcommerce.profile.vendor.service.exception.TaxException {
+    private CyberSourceTaxResponse callService(CyberSourceTaxRequest taxRequest) throws org.broadleafcommerce.common.vendor.service.exception.TaxException {
 		CyberSourceTaxService service = (CyberSourceTaxService) serviceManager.getValidService(taxRequest);
         CyberSourceTaxResponse response = (CyberSourceTaxResponse) service.process(taxRequest);		
 		return response;

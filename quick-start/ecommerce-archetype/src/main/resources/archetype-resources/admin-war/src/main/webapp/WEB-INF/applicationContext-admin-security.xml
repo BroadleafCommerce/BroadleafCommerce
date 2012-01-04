@@ -28,7 +28,7 @@
    		<sec:remember-me services-ref="blRememberMeServices"/>
     </sec:http>
 
-    <bean id="blRememberMeServices" class="org.broadleafcommerce.core.security.EnhancedTokenBasedRememberMeServices">
+    <bean id="blRememberMeServices" class="org.broadleafcommerce.common.security.EnhancedTokenBasedRememberMeServices">
 		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
 	</bean>
 
@@ -75,7 +75,7 @@
 
     <bean id="blAdminLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
 		<constructor-arg>
-			<bean class="org.broadleafcommerce.core.security.BroadleafAdminLogoutSuccessHandler">
+			<bean class="org.broadleafcommerce.common.security.BroadleafAdminLogoutSuccessHandler">
 				<property name="defaultTargetUrl" value="/admin.html"/>
 			</bean>
 		</constructor-arg>

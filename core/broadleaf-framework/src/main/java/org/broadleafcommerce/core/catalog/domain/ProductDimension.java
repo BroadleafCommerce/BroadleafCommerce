@@ -16,17 +16,16 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.profile.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.profile.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 
 @Embeddable
 public class ProductDimension implements Serializable {
@@ -58,7 +57,7 @@ public class ProductDimension implements Serializable {
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName="Product Dimension Units", order=16, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.util.DimensionUnitOfMeasureType")
+    @AdminPresentation(friendlyName="Product Dimension Units", order=16, group="Dimension", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.DimensionUnitOfMeasureType")
     protected String dimensionUnitOfMeasure;
 
     public BigDecimal getWidth() {

@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public interface FulfillmentGroupAdjustment extends Adjustment {
 

@@ -18,7 +18,7 @@
 	
 	<context:component-scan base-package="${package}"/>
 	
-	<bean id="blEntityConfiguration" class="org.broadleafcommerce.config.EntityConfiguration">
+	<bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
 		<property name="entityContexts">
 			<list>
 				<value>classpath:mycompany-${artifactId}-applicationContext-entity.xml</value>
@@ -26,7 +26,7 @@
 		</property>
 	</bean>
 
-    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
 				<value>classpath*:/META-INF/mycompany_persistence.xml</value>

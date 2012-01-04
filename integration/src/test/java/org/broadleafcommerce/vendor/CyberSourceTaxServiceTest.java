@@ -21,8 +21,8 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.profile.vendor.service.cache.ServiceResponseCacheable;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.vendor.service.cache.ServiceResponseCacheable;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;

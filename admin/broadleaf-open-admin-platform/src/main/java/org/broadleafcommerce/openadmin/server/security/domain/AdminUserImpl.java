@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.AdminPresentationClass;
-import org.broadleafcommerce.presentation.ConfigurationItem;
-import org.broadleafcommerce.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -68,7 +68,7 @@ public class AdminUserImpl implements AdminUser {
 		friendlyName="Admin Password",
 		order=3, 
 		group="User", 
-		fieldType=SupportedFieldType.PASSWORD, 
+		fieldType= SupportedFieldType.PASSWORD,
 		validationConfigurations={
 			@ValidationConfiguration(
 				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",

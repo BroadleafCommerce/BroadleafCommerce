@@ -28,7 +28,6 @@
         <class>org.broadleafcommerce.profile.core.domain.StateImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.UserImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.UserRoleImpl</class>
-        <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="true"/>

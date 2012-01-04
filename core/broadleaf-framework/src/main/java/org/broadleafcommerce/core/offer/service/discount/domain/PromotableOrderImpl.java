@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitConta
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitorAdapter;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.math.BigDecimal;

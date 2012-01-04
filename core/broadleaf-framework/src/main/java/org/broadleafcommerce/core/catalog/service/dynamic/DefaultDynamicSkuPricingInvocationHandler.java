@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHandler {
 

@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.broadleafcommerce.profile.encryption.EncryptionModule;
+import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.hibernate.annotations.Index;
 
 @Entity

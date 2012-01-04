@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.module.PaymentModule;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.service.module.CyberSourceModule;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
@@ -169,7 +169,7 @@ public class CyberSourceCreditCardModule extends CyberSourceModule implements Pa
         CyberSourceCardResponse response;
 		try {
 			response = (CyberSourceCardResponse) service.process(cardRequest);
-		} catch (org.broadleafcommerce.profile.vendor.service.exception.PaymentException e) {
+		} catch (org.broadleafcommerce.common.vendor.service.exception.PaymentException e) {
 			throw new PaymentException(e);
 		}
 		

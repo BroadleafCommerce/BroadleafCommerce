@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.content.dao;
 
+import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.broadleafcommerce.core.content.domain.ContentDetails;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

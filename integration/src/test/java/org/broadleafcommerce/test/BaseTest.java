@@ -19,8 +19,8 @@ package org.broadleafcommerce.test;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.broadleafcommerce.profile.extensibility.context.MergeClassPathXMLApplicationContext;
-import org.broadleafcommerce.profile.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;

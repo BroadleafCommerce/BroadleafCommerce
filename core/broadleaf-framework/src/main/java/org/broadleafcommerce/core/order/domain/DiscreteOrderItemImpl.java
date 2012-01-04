@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -66,7 +66,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     protected BigDecimal baseRetailPrice;
     
     @Column(name="BASE_SALE_PRICE")
-    @AdminPresentation(friendlyName="Base Sale Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Base Sale Price", order=2, group="Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)

@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.vendor.usps.service;
 
-import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
-import org.broadleafcommerce.profile.vendor.service.type.ServiceStatusType;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.usps.service.message.USPSRequestBuilder;
 import org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;

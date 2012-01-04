@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.domain;
 
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.io.Serializable;
 

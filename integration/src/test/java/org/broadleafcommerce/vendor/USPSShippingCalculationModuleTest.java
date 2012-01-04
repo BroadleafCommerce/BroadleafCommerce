@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.common.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductWeight;
@@ -30,13 +32,11 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.order.service.type.USPSServiceMethod;
 import org.broadleafcommerce.pricing.service.module.USPSShippingCalculationModule;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.util.UnitOfMeasureUtil;
-import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;

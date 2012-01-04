@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.audit;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 
 import javax.persistence.*;
 import java.io.Serializable;

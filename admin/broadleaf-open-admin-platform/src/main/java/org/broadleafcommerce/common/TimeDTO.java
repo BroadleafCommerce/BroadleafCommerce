@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.common;
 
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-
 import java.util.Calendar;
 import java.util.Date;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.time.SystemTime;
 
 /**
  * Created by bpolster.

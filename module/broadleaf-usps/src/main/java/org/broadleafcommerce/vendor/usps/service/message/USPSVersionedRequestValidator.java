@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.vendor.usps.service.message;
 
-import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 
 public interface USPSVersionedRequestValidator {
 

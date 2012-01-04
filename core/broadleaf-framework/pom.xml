@@ -165,10 +165,6 @@
 			<groupId>org.mvel</groupId>
 			<artifactId>mvel2</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-        	<artifactId>common</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-profile</artifactId>

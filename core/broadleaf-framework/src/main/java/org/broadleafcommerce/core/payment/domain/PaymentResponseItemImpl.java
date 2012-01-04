@@ -38,7 +38,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.CollectionOfElements;

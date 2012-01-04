@@ -18,16 +18,16 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.profile.util.DateUtil;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
@@ -99,7 +99,7 @@ public class SkuImpl implements Sku {
 
     /** The retail price. */
     @Column(name = "RETAIL_PRICE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName="Sku Retail Price", order=10, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
+    @AdminPresentation(friendlyName="Sku Retail Price", order=10, group="Price", prominent=true, fieldType= SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal retailPrice;
 
     /** The name. */

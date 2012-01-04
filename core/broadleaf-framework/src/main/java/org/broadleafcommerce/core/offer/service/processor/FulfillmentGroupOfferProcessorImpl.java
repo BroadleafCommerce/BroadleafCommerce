@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems
 import org.broadleafcommerce.core.offer.service.discount.FulfillmentGroupOfferPotential;
 import org.broadleafcommerce.core.offer.service.discount.domain.*;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

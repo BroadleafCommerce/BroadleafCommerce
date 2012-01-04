@@ -22,7 +22,7 @@
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <bean id="blPersistenceUnitManager"
-          class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
+          class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceXmlLocations">
             <list>
                 <value>classpath*:/META-INF/persistence-mycompany-admin.xml</value>

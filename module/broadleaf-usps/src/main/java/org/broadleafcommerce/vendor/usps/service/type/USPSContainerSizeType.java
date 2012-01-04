@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.vendor.usps.service.type;
 
-import org.broadleafcommerce.profile.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 
 /**
  * An extendible enumeration of container size types.

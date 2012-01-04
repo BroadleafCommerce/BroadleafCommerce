@@ -23,7 +23,7 @@ import javax.persistence.Query;
 
 import junit.framework.TestCase;
 
-import org.broadleafcommerce.profile.util.dao.BatchRetrieveDao;
+import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.easymock.classextension.EasyMock;
 
 /**

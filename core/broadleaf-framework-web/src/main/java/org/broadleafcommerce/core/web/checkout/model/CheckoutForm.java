@@ -19,11 +19,11 @@ package org.broadleafcommerce.core.web.checkout.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.broadleafcommerce.common.payment.CreditCardType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
-import org.broadleafcommerce.profile.payment.CreditCardType;
 
 public class CheckoutForm {
     private String emailAddress;

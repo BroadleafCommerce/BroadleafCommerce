@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 /**
  * 

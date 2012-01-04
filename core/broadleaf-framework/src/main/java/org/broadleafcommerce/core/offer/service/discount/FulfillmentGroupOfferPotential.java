@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 /**
  * 

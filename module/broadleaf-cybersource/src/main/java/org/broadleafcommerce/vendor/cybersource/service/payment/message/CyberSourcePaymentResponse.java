@@ -19,7 +19,7 @@ package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceResponse;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
-import org.broadleafcommerce.profile.vendor.service.message.PaymentResponse;
+import org.broadleafcommerce.common.vendor.service.message.PaymentResponse;
 
 /**
  * 

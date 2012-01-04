@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public interface BundleOrderItemFeePrice {
 

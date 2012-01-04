@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 import java.util.List;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 public interface PromotableFulfillmentGroup {
 

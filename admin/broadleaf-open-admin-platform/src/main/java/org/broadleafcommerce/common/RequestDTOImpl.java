@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 
 /**
  * Created by bpolster.

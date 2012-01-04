@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.offer.service.discount;
 import java.util.Comparator;
 
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 
 /**
  * 

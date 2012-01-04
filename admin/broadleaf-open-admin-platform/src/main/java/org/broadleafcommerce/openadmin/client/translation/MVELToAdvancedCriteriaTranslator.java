@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.translation.grouping.Group;
 import org.broadleafcommerce.openadmin.client.translation.grouping.GroupingTranslator;
 import org.broadleafcommerce.openadmin.client.translation.statement.Expression;
 import org.broadleafcommerce.openadmin.client.translation.statement.PhraseTranslator;
-import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
