@@ -276,9 +276,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             user.setUnencodedPassword(password);            
             saveAdminUser(user);
             fpst.setTokenUsedFlag(true);
+            forgotPasswordSecurityTokenDao.saveToken(fpst);
         }
-        
-        forgotPasswordSecurityTokenDao.saveToken(fpst);
         
         return response;
     }
