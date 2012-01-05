@@ -25,16 +25,6 @@
         <property name="order" value="1"/>
     </bean>
 
-    <bean id="blUploadUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="order" value="0"/>
-        <property name="alwaysUseFullPath" value="true"></property>
-        <property name="mappings">
-            <map>
-                <entry key="/**/cms.upload.service" value-ref="blUploadController"/>
-            </map>
-        </property>
-    </bean>
-
     <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
