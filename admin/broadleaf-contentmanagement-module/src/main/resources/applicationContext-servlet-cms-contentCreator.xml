@@ -11,7 +11,7 @@
 
     <aop:config/>
 
-    <bean id="blUploadUrlMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
+    <bean id="blStaticAssetURLHandlerMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
         <property name="order" value="0"/>
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
