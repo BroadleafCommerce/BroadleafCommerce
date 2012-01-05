@@ -60,5 +60,14 @@
 			<artifactId>broadleaf-contentmanagement-module</artifactId>
             <classifier>sources</classifier>
 		</dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>common</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
 	</dependencies>
 </project>

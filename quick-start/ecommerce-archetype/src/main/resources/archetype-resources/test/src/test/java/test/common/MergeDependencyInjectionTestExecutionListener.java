@@ -3,7 +3,7 @@
 #set( $symbol_escape = '\' )
 package ${package}.${artifactId}.common;
 
-import org.broadleafcommerce.profile.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.${artifactId}.context.TestContext;
 import org.springframework.${artifactId}.context.support.DependencyInjectionTestExecutionListener;

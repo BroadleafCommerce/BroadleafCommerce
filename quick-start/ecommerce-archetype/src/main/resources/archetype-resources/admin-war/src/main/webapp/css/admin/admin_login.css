@@ -1,0 +1,176 @@
+/*
+	Original
+*/
+
+
+
+#bg {
+	background: #fff;
+	margin:0;
+	position:relative;
+}
+
+div#content {
+    margin: 0 auto;
+	background:transparent url(images/login_background.png) no-repeat scroll left top;
+	position: relative;
+	top: 79px;
+	width: 359px;
+	padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+*div#content { /* IE7 */
+	padding-bottom: 0px;
+}
+
+#logo {
+	background: url(images/broadleaf_logo.png) no-repeat;
+	height: 51px;
+	width: 125px;
+    position: relative;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+table.login {
+	font-family:Arial,Verdana,sans-serif;
+	margin-left:80px;
+}
+
+ label {
+	font-size: 12px;
+	color: #4c4c4c;
+    text-align: right;
+    padding-right: 5px;
+    padding-top: 3px;
+    float: left;
+    display: block;
+    width:92px;
+    margin-top:5px;
+}
+
+ input {
+	padding: 2px;
+	width: 134px;
+	font-size: 11px;
+	border: 1px solid #CCC;
+	height: 22px;
+     margin-top:5px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+
+table.login input:focus {
+	box-shadow: 0px 0px 6px #3591CF;
+	 -moz-box-shadow: 0px 0px 6px #3591CF;
+	 -webkit-box-shadow: 0px 0px 6px #3591CF;
+	outline: none;
+}
+
+table.login input.loginbtn:focus, table.login input.loginbtn:active {
+	box-shadow: none;
+	 -moz-box-shadow: none;
+	 -webkit-box-shadow: none;
+	outline: none;
+	-moz-outline-style: none;
+}
+
+input::-moz-focus-inner {border:0;}
+
+table.login input.loginbtn:hover {
+	cursor: pointer;
+}
+
+#submitButton {
+	color:  #4C4C4C;
+	float:right;
+	font-family:Arial,Verdana,sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right : 10px;
+    padding-left:   10px;
+    top: 5px;
+	position:relative;
+    width : auto;
+    height : auto;
+}
+
+#submitButton:hover {
+    cursor: pointer;
+     border: 1px solid #808080;
+}
+
+
+
+#foot {
+    position: relative;
+    margin:0 auto;
+	background:transparent url(images/login-foot.png) no-repeat scroll center top;
+	color:#909090;
+    width: 359px;
+    padding-top: 20px;
+    padding-right: 5px;
+    padding-left: 5px;
+   	top: 73px;
+    text-align : center;
+    
+}
+
+.forgot {
+    text-align: "left";
+}
+
+.forgot a {
+	font-family:Arial, Verdana, sans-serif;
+    font-size: 14px;
+    color: #79A22F;
+    text-decoration: none;
+}
+
+.forgot a:hover {
+    text-decoration: underline;
+}
+
+
+
+/*
+	Error Div
+*/
+
+#login-error {
+	background:white none repeat scroll 0 0;
+	border:2px solid red;
+    margin:0 auto;
+	font-size:14px;
+	min-height:32px;
+    width: 340px;
+	padding-top:5px;
+    padding-left:5px;
+	position:relative;
+	top:50px;
+	font-size:12px;
+	font-family:Arial,Verdana,sans-serif;
+    color : red;
+}
+
+
+#login-message {
+	background:white none repeat scroll 0 0;
+	border:2px solid green;
+    margin:0 auto;
+	font-size:14px;
+	min-height:32px;
+    width: 350px;
+	padding-top:5px;
+    padding-left:5px;
+	position:relative;
+	top:50px;
+	font-size:12px;
+	font-family:Arial,Verdana,sans-serif;
+    color : green;
+}
+

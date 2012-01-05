@@ -84,6 +84,19 @@
                         <include>*.xml</include>
                     </includes>
                 </fileSet>
+                <fileSet encoding="UTF-8">
+                    <directory>src/main/webapp</directory>
+                    <includes>
+                        <include>**/*.jpg</include>
+                        <include>**/*.MF</include>
+                        <include>**/*.png</include>
+                        <include>**/*.tag</include>
+                        <include>**/*.js</include>
+                        <include>**/*.tld</include>
+                        <include>**/*.gif</include>
+                        <include>**/*.css</include>
+                    </includes>
+                </fileSet>
             </fileSets>
         </module>
         <module id="core" dir="core" name="core">

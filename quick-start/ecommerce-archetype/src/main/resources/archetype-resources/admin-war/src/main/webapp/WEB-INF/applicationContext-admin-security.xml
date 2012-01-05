@@ -23,7 +23,7 @@
         <sec:intercept-url pattern="/admin*" access="PERMISSION_OTHER_DEFAULT" />
         <sec:intercept-url pattern="/admin/*" access="PERMISSION_OTHER_DEFAULT" />
         <sec:intercept-url pattern="/*.service" access="PERMISSION_OTHER_DEFAULT" />
-        <sec:form-login login-page='/login.jsp' default-target-url='/admin.html' authentication-failure-url="/login.jsp?login_error=true" login-processing-url="/admin/login_admin_post"/>
+        <sec:form-login login-page='/blcadmin/login' default-target-url='/admin.html' authentication-failure-url="/blcadmin/login?login_error=true" login-processing-url="/admin/login_admin_post"/>
    		<sec:custom-filter ref="blAdminLogoutFilter" position="LOGOUT_FILTER" />
    		<sec:remember-me services-ref="blRememberMeServices"/>
     </sec:http>

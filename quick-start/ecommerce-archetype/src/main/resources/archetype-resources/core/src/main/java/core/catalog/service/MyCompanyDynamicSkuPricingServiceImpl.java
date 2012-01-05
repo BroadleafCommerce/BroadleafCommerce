@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
@@ -8,7 +10,7 @@ import java.util.HashMap;
 import org.broadleafcommerce.${artifactId}.catalog.domain.Sku;
 import org.broadleafcommerce.${artifactId}.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.${artifactId}.catalog.service.dynamic.DynamicSkuPricingService;
-import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.common.money.Money;
 import org.springframework.stereotype.Service;
 
 @Service("myCompanyDynamicSkuPricingService")

@@ -6,8 +6,8 @@ package ${package}.${artifactId}.common;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.broadleafcommerce.profile.extensibility.context.MergeClassPathXMLApplicationContext;
-import org.broadleafcommerce.profile.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.springframework.${artifactId}.context.TestExecutionListeners;
 import org.springframework.${artifactId}.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.${artifactId}.context.${artifactId}ng.AbstractTestNGSpringContextTests;

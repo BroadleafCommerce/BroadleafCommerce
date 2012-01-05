@@ -112,6 +112,15 @@
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-usps</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
+            <artifactId>common</artifactId>
+            <classifier>sources</classifier>
+        </dependency>
 		<dependency>
 			<groupId>${groupId}</groupId>
 			<artifactId>admin</artifactId>
@@ -145,6 +154,14 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
         </dependency>
 	</dependencies>
 </project>

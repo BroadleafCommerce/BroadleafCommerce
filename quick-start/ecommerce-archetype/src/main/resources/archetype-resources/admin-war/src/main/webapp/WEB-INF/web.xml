@@ -25,6 +25,7 @@
             classpath:/mycompany-applicationContext.xml
             /WEB-INF/applicationContext-admin-security.xml
             /WEB-INF/applicationContext-admin.xml
+            /WEB-INF/applicationContext-admin-email.xml
         </param-value>
 	</context-param>
 

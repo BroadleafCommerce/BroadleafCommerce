@@ -2,12 +2,12 @@
 -- import.sql in the root of the classpath whenever the hibernate.hbm2ddl.auto property is set to create or create-drop.
 
 --start of security configuration
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (1,'admin@yourdomain.com','admin','Administrator','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (2,'merchandise@yourdomain.com','merchandise','Merchandise Manager','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (3,'promo@yourdomain.com','promo','Promotion Manager','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (4,'csr@yourdomain.com','csr','CSR','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (5,'cms_edit@yourdomain.com','cmsEditor','CMS Editor','admin');
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD) VALUES (6,'cms_approver@yourdomain.com','cmsApprover','CMS Approver','admin');
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (1,'admin@yourdomain.com','admin','Administrator','admin', true);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (2,'merchandise@yourdomain.com','merchandise','Merchandise Manager','admin', true);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (3,'promo@yourdomain.com','promo','Promotion Manager','admin', true);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (4,'csr@yourdomain.com','csr','CSR','admin', true);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (5,'cms_edit@yourdomain.com','cmsEditor','CMS Editor','admin', true);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (6,'cms_approver@yourdomain.com','cmsApprover','CMS Approver','admin', true);
 
 INSERT INTO BLC_ADMIN_ROLE (ADMIN_ROLE_ID, DESCRIPTION, NAME) VALUES (1,'Admin Master Access','ROLE_ADMIN');
 INSERT INTO BLC_ADMIN_ROLE (ADMIN_ROLE_ID, DESCRIPTION, NAME) VALUES (2,'Merchandiser','ROLE_MERCHANDISE_MANAGER');
