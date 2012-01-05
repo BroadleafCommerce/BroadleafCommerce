@@ -10,24 +10,6 @@
 	<context:component-scan base-package="org.broadleafcommerce.profile">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.profile.web.*"/>
     </context:component-scan>
-    
-	<bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
-		<property name="propertyLocations">
-			<set>
-				<value>classpath:config/bc/</value>
-			</set>
-		</property>
-		<property name="environments">
-			<set>
-				<value>production</value>
-				<value>staging</value>
-				<value>integration</value>
-				<value>development</value>
-			</set>
-		</property>
-		<property name="defaultEnvironment" value="development"/>
-		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-	</bean>
 
 	<bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
 	<bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
