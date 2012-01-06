@@ -27,6 +27,7 @@ import com.google.gwt.user.client.History;
 public class BLCLaunch implements EntryPoint {
     private static String PAGE_FRAGMENT = "pageKey=";
     private static String MODULE_FRAGMENT = "moduleKey=";
+    private static String ITEM_FRAGMENT = "itemId=";
 
 
 	public void onModuleLoad() {
@@ -37,36 +38,36 @@ public class BLCLaunch implements EntryPoint {
         String currentModulePage = History.getToken();
         BLCMain.drawCurrentState(getSelectedModule(currentModulePage), getSelectedPage(currentModulePage));
 	}
-
-    public static String getSelectedModule(String currentModulePage) {
-        String moduleParam = null;
+    
+    private static String getSelectedString(String currentModulePage, String fragment) {
+        String returnParam = null;
         if (currentModulePage != null) {
-            int moduleStart = currentModulePage.indexOf(MODULE_FRAGMENT);
-            int ampLocation = currentModulePage.indexOf("&");
+            int start = currentModulePage.indexOf(fragment);
+            int ampLocation = currentModulePage.indexOf("&", start);
 
-            if (moduleStart >= 0) {
-                moduleStart = moduleStart + MODULE_FRAGMENT.length();
-                int moduleEnd = currentModulePage.length();
-                if (ampLocation > 0 && ampLocation > moduleStart) {
-                    moduleEnd = ampLocation;
+            if (start >= 0) {
+                start = start + fragment.length();
+                int end = currentModulePage.length();
+                if (ampLocation > 0 && ampLocation > start) {
+                    end = ampLocation;
                 }
 
-                moduleParam = currentModulePage.substring(moduleStart,moduleEnd);
+                returnParam = currentModulePage.substring(start,end);
             }
         }
-        return moduleParam;
+        return returnParam;
+    }
+
+    public static String getSelectedModule(String currentModulePage) {
+        return getSelectedString(currentModulePage, MODULE_FRAGMENT);
     }
 
     public static String getSelectedPage(String currentModulePage) {
-        String pageParam = null;
-        if (currentModulePage != null) {
-            int pageStart = currentModulePage.indexOf(PAGE_FRAGMENT);
+        return getSelectedString(currentModulePage, PAGE_FRAGMENT);
+    }
 
-            if (pageStart >= 0) {
-                pageParam = currentModulePage.substring(pageStart + PAGE_FRAGMENT.length());
-            }
-        }
-        return pageParam;
+    public static String getDefaultItem(String url) {
+        return getSelectedString(url, ITEM_FRAGMENT);
     }
 
 }

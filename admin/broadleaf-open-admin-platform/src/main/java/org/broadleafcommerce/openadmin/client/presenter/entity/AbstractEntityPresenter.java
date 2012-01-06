@@ -25,8 +25,10 @@ import com.google.gwt.event.shared.HandlerManager;
  *
  */
 public abstract class AbstractEntityPresenter implements EntityPresenter {
-
+    
 	protected HandlerManager eventBus;
+    
+    protected String defaultItemId;
 	
 	public HandlerManager getEventBus() {
 		return eventBus;
@@ -35,5 +37,12 @@ public abstract class AbstractEntityPresenter implements EntityPresenter {
 	public void setEventBus(HandlerManager eventBus) {
 		this.eventBus = eventBus;
 	}
-	
+
+    public String getDefaultItemId() {
+        return defaultItemId;
+    }
+
+    public void setDefaultItemId(String defaultItemId) {
+        this.defaultItemId = defaultItemId;
+    }
 }

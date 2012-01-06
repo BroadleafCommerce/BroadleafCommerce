@@ -66,6 +66,15 @@ public class AppController implements ValueChangeHandler<String> {
 	private void bind() {
 		History.addValueChangeHandler(this);
 	}
+    
+    private void buildHistoryNewItem(String pageKey) {
+        String token = History.getToken();
+        String destinationPage = "moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey;
+        if (BLCLaunch.getDefaultItem(token) != null) {
+            destinationPage = destinationPage + "&itemId="+BLCLaunch.getDefaultItem(token);
+        }
+        History.newItem(destinationPage);
+    }
 
 	public void go(final Canvas container, HashMap<String, String[]> pages, String pageKey, boolean firstTime) {
 		this.pages = pages;
@@ -74,23 +83,24 @@ public class AppController implements ValueChangeHandler<String> {
         if (firstTime) {
             String token = History.getToken();
             if (pageKey.equals(BLCLaunch.getSelectedPage(token)) && MasterView.moduleKey.equals(BLCLaunch.getSelectedModule(token))) {
-                showView(pages.get(pageKey)[0], pages.get(pageKey)[1]);
+                String itemId = BLCLaunch.getDefaultItem(token);
+                showView(pages.get(pageKey)[0], pages.get(pageKey)[1], itemId);
             } else {
-                History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey);
+                buildHistoryNewItem(pageKey);
             }
             return;
         }
 
         if (pageKey != null && pages.get(pageKey) != null) {
             if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(pageKey)[0])) {
-                History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey);
+                buildHistoryNewItem(pageKey);
                 return;
             }
         }
 
         for (String sectionTitle : pages.keySet()){
 	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
-			    History.newItem("moduleKey="+ MasterView.moduleKey+"&pageKey="+sectionTitle);
+                buildHistoryNewItem(pageKey);
 			    break;
 	    	}
 		}
@@ -105,31 +115,32 @@ public class AppController implements ValueChangeHandler<String> {
 
         if (token != null) {
             String page = BLCLaunch.getSelectedPage(token);
+            String itemId = BLCLaunch.getDefaultItem(token);
 
             if (page != null) {
-                if (!uiFactory.equalsCurrentView(page)) {
+                if (!uiFactory.equalsCurrentView(page) || itemId != null) {
                     String[] vals = pages.get(page);
                     if (vals != null) {
-                        showView(vals[0], vals[1]);
+                        showView(vals[0], vals[1], itemId);
                     }
                 }
             }
         }
 	}
 
-	protected void showView(final String viewKey, final String presenterKey) {
+	protected void showView(final String viewKey, final String presenterKey, final String itemId) {
         if (!BLCMain.ISNEW) {
             BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
                 public void run() {
-                    setupView(viewKey, presenterKey);
+                    setupView(viewKey, presenterKey, itemId);
                 }
             });
         } else {
-            setupView(viewKey, presenterKey);
+            setupView(viewKey, presenterKey, itemId);
         }
 	}
 
-    protected void setupView(final String viewKey, final String presenterKey) {
+    protected void setupView(final String viewKey, final String presenterKey, final String itemId) {
         AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
@@ -149,6 +160,7 @@ public class AppController implements ValueChangeHandler<String> {
                                     @Override
                                     public void onSuccess(Object instance) {
                                         EntityPresenter presenter = (EntityPresenter) instance;
+                                        presenter.setDefaultItemId(itemId);
                                         presenter.setDisplay(view);
                                         presenter.setEventBus(eventBus);
                                         BLCMain.currentViewKey = viewKey;

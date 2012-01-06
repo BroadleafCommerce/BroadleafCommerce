@@ -38,6 +38,7 @@ import com.smartgwt.client.widgets.menu.IMenuButton;
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import org.broadleafcommerce.openadmin.client.BLCLaunch;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.Module;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
@@ -307,7 +308,7 @@ public class MasterView extends VLayout {
                         lbl.setBaseStyle("secondaryMenuText-selected");
                         selectedSecondaryMenuOption = lbl;
                         BLCMain.setCurrentPageKey(lbl.getTitle());
-                        History.newItem("moduleKey="+moduleKey+"&pageKey="+lbl.getTitle());
+                        buildHistoryNewItem(lbl.getTitle());
                     }
                 }
             }
@@ -315,6 +316,15 @@ public class MasterView extends VLayout {
 
 
         return tmp;
+    }
+    
+    private void buildHistoryNewItem(String pageKey) {
+        String token = History.getToken();
+        String destinationPage = "moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey;
+        if (BLCLaunch.getDefaultItem(token) != null) {
+            destinationPage = destinationPage + "&itemId="+BLCLaunch.getDefaultItem(token);
+        }
+        History.newItem(destinationPage);
     }
 
 
