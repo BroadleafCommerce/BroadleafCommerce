@@ -68,7 +68,7 @@ public class ResourceInputStream extends InputStream {
 
     @Override
     public int available() throws IOException {
-        return is.available();
+        return (is==null)?-1:is.available();
     }
 
     @Override

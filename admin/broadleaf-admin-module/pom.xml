@@ -62,7 +62,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<relativePath>../../</relativePath>
+					<relativePath>../../../</relativePath>
 					<rootPath>$${rebel.root}</rootPath>
 				</configuration>
 			</plugin>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.security;
+package org.broadleafcommerce.common.security;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

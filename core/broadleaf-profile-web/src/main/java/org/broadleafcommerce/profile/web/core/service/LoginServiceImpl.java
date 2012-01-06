@@ -19,7 +19,6 @@ package org.broadleafcommerce.profile.web.core.service;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.security.MergeCartProcessor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

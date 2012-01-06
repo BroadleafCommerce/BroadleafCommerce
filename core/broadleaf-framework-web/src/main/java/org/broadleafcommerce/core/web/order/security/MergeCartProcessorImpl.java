@@ -16,14 +16,13 @@
 
 package org.broadleafcommerce.core.web.order.security;
 
+import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.broadleafcommerce.profile.web.core.security.MergeCartProcessor;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
