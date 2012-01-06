@@ -229,12 +229,36 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             container.addChild(display.asCanvas());
             loaded = true;
         }
+
+        if (getDefaultItemId() != null) {
+            loadInitialItem();
+        }
+
         if (BLCMain.MODAL_PROGRESS.isActive()) {
             BLCMain.MODAL_PROGRESS.stopProgress();
         }
         if (BLCMain.SPLASH_PROGRESS.isActive()) {
             BLCMain.SPLASH_PROGRESS.stopProgress();
         }
+    }
+    
+    protected void loadInitialItem() {
+        DataSource ds = getDisplay().getListDisplay().getGrid().getDataSource();
+        if (ds instanceof DynamicEntityDataSource) {
+            Criteria criteria = new Criteria();
+            criteria.addCriteria(ds.getPrimaryKeyFieldName(), getDefaultItemId());
+            ds.fetchData(criteria, new DSCallback() {
+                  @Override
+                  public void execute(DSResponse response, Object rawData, DSRequest request) {
+                      if (response != null && response.getData() != null && response.getData().length > 0) {
+                        getDisplay().getListDisplay().getGrid().setData(response.getData());
+                        getDisplay().getListDisplay().getGrid().selectRecord(0);
+                      }
+                  }
+              });                    
+        }
+                
+
     }
 
     protected Boolean containsDisplay(Canvas container) {
@@ -298,13 +322,14 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 }
                 if (!foundRecord) {
                     ((AbstractDynamicDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).setAddedRecord(event.getRecord());
-                    getDisplay().getListDisplay().getGrid().getDataSource().fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
-                        @Override
-                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            getDisplay().getListDisplay().getGrid().setData(response.getData());
-                            getDisplay().getListDisplay().getGrid().selectRecord(0);
-                        }
-                    });
+                    getDisplay().getListDisplay().getGrid().getDataSource().
+                            fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
+                                @Override
+                                public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                    getDisplay().getListDisplay().getGrid().setData(response.getData());
+                                    getDisplay().getListDisplay().getGrid().selectRecord(0);
+                                }
+                            });
                 }
             }
         }, null, null);

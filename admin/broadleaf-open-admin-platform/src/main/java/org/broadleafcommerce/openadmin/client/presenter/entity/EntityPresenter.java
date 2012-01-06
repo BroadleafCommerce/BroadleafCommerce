@@ -44,5 +44,21 @@ public interface EntityPresenter {
 	public PresenterSequenceSetupManager getPresenterSequenceSetupManager();
 	
 	public Boolean getLoaded();
+
+    /**
+     * For Entity presenters that support loading a default item, setting this value prior
+     * to calling setup will result in the passed in item being displayed.
+     *
+     * Supported by DynamicEntityPresenter and the OOB admin configuration with the
+     * parameter #itemId=xx
+     * @return
+     */
+    public void setDefaultItemId(String itemId);
+
+    /**
+     * Returns the default item that this presenter should attempt to show on initial load.
+     * @return
+     */
+    public String getDefaultItemId();
 	
 }

@@ -38,6 +38,7 @@ public class PassthroughEntityPresenter implements EntityPresenter, Instantiable
     private DataSource ds;
     private Display display;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
+    private String defaultItemId;
 
     @Override
     public void setup() {
@@ -97,6 +98,30 @@ public class PassthroughEntityPresenter implements EntityPresenter, Instantiable
     @Override
     public Boolean getLoaded() {
         return loaded;
+    }
+
+    /**
+     * For Entity presenters that support loading a default item, setting this value prior
+     * to calling setup will result in the passed in item being displayed.
+     * <p/>
+     * Supported by DynamicEntityPresenter and the OOB admin configuration with the
+     * parameter #itemId=xx
+     *
+     * @return
+     */
+    @Override
+    public void setDefaultItemId(String itemId) {
+        this.defaultItemId=itemId;
+    }
+
+    /**
+     * Returns the default item that this presenter should attempt to show on initial load.
+     *
+     * @return
+     */
+    @Override
+    public String getDefaultItemId() {
+        return defaultItemId;
     }
 
     public DataSource getDs() {
