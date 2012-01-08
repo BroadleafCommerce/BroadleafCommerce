@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.client.view;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -56,8 +58,10 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -65,25 +69,23 @@ import java.util.LinkedHashMap;
  * @author jfischer
  *
  */
-public class MasterView extends VLayout {
+public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	
 	protected Canvas canvas;
 	protected ToolStrip bottomBar;
 	protected Label status;
-
-    protected Label selectedPrimaryMenuOption;
-    protected Label selectedSecondaryMenuOption;
+    
+    protected Map<String,Label> moduleLabelMap = new HashMap<String, Label>();
 
     protected HLayout secondaryMenu = new HLayout();
+    protected Label selectedSecondaryMenuOption;
 
     public static String moduleKey;
-    protected String pageKey;
     protected LinkedHashMap<String, Module> modules;
 
 
     public MasterView(String moduleKey, String pageKey, LinkedHashMap<String, Module> modules) {
         MasterView.moduleKey = moduleKey;
-        this.pageKey = pageKey;
         this.modules = modules;
 
         setWidth100();
@@ -101,9 +103,43 @@ public class MasterView extends VLayout {
         addMember(canvas);
 
         buildFooter();
+        bind();
     }
 
+    private void bind() {
+        History.addValueChangeHandler(this);
+    }
 
+    public void onValueChange(ValueChangeEvent<String> event) {
+    	String token = event.getValue();
+        if (token != null) {
+            String page = BLCLaunch.getSelectedPage(token);
+            String moduleName = BLCLaunch.getSelectedModule(token);
+
+            // TODO: Verify they can view that section
+            // SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)
+
+            if (moduleName != null && ! moduleName.equals(BLCMain.currentModuleKey)) {
+                BLCMain.setCurrentModuleKey(moduleName);
+            
+                selectPrimaryMenu(moduleName);
+
+                buildSecondaryMenu(page);
+            }
+    	}
+    }
+    
+    private void selectPrimaryMenu(String selectedModule) {
+        // Set selected primary menu option.
+        for (String moduleKey : moduleLabelMap.keySet()) {
+            Label primaryMenuLabel = moduleLabelMap.get(moduleKey);
+            if (moduleKey.equals(selectedModule)) {
+                primaryMenuLabel.setBaseStyle("primaryMenuText-selected");
+            } else {
+                primaryMenuLabel.setBaseStyle("primaryMenuText");
+            }
+        }
+    }
 
     private Layout buildHeader() {
         HLayout header = new HLayout();
@@ -144,10 +180,13 @@ public class MasterView extends VLayout {
            moduleKey = allowedModules.iterator().next().getModuleKey();
        }
 
+
        for (Module module : allowedModules) {
            boolean selected = module.getModuleKey().equals(moduleKey);
-           menuHolder.addMember(buildPrimaryMenuOption(module, selected));
+           Label primaryMenuLabel = buildPrimaryMenuOption(module, selected);
+           menuHolder.addMember(primaryMenuLabel);
            menuHolder.addMember(buildMenuSpacer());
+           moduleLabelMap.put(module.getModuleKey(), primaryMenuLabel);
        }
     }
 
@@ -181,7 +220,6 @@ public class MasterView extends VLayout {
     }
 
     private Layout buildSecondaryMenu(String selectedPage) {
-        Module currentModule = modules.get(moduleKey);
         secondaryMenu.removeMembers(secondaryMenu.getMembers());
 
         LayoutSpacer sp2 = new LayoutSpacer();
@@ -258,8 +296,7 @@ public class MasterView extends VLayout {
 
         final String style;
         if (selected) {
-            style = "primaryMenuText-selected";
-            selectedPrimaryMenuOption = tmp;
+            style = "primaryMenuText-selected";            
         } else {
             style = "primaryMenuText";
         }
@@ -272,12 +309,11 @@ public class MasterView extends VLayout {
                 Object o = event.getSource();
                 if (o instanceof Label) {
                     final Label lbl = (Label) o;
-                    if (! lbl.getTitle().equals(selectedPrimaryMenuOption.getTitle())) {
-                        selectedPrimaryMenuOption.setBaseStyle("primaryMenuText");
+                    if (! "primaryMenuText-selected".equals(lbl.getBaseStyle())) {
+                        selectPrimaryMenu(module.getModuleKey());
                         lbl.setBaseStyle("primaryMenuText-selected");
-                        selectedPrimaryMenuOption = lbl;
+                        BLCMain.setCurrentModuleKey(module.getModuleKey());
                         moduleKey = module.getModuleKey();
-                        BLCMain.setCurrentModuleKey(moduleKey);
                         buildSecondaryMenu(null);
                         AppController.getInstance().go(canvas, module.getPages(), null, false);
 	                 }
@@ -325,20 +361,14 @@ public class MasterView extends VLayout {
             }
         });
 
-
         return tmp;
     }
     
     private void buildHistoryNewItem(String pageKey, String itemId) {
-        String token = History.getToken();
         String destinationPage = "moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey;
 
         if (itemId != null) {
             destinationPage = destinationPage + "&itemId="+itemId;
-        } else {
-            if (BLCLaunch.getDefaultItem(token) != null) {
-                destinationPage = destinationPage + "&itemId="+BLCLaunch.getDefaultItem(token);
-            }
         }
         History.newItem(destinationPage);
     }
@@ -480,6 +510,7 @@ public class MasterView extends VLayout {
             public void onClick(MenuItemClickEvent event) {
                 UrlBuilder builder = Window.Location.createUrlBuilder();
                 builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
+                builder.setHash(null);
                 builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
                 Window.open(builder.buildString(), "_self", null);
             }
@@ -532,4 +563,8 @@ public class MasterView extends VLayout {
 	public void clearStatus() {
 		status.setContents("");
 	}
+    
+    public Module lookupModule(String key) {
+        return modules.get(key);
+    }
 }
