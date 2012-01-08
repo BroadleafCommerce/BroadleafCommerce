@@ -29,7 +29,6 @@ import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -73,7 +72,6 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 								
 								PersistencePerspective tempPerspective = new PersistencePerspective();
 			            		OperationTypes opTypes = new OperationTypes();
-			            		opTypes.setUpdateType(OperationType.ENTITY);
 			            		tempPerspective.setOperationTypes(opTypes);
 			            		
 								final Entity entity = new Entity();
