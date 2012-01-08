@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.client.callback;
 
 import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.data.Record;
 
 /**
  * 
@@ -26,15 +26,15 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  */
 public class ItemEdited {
 
-	private ListGridRecord record;
+	private Record record;
 	private DataSource dataSource;
 
-	public ItemEdited(ListGridRecord record, DataSource dataSource) {
+	public ItemEdited(Record record, DataSource dataSource) {
 		this.record = record;
 		this.dataSource = dataSource;
 	}
 
-	public ListGridRecord getRecord() {
+	public Record getRecord() {
 		return record;
 	}
 	

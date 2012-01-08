@@ -308,7 +308,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         compileDefaultValuesFromCurrentFilter(initialValues);
         BLCMain.ENTITY_ADD.editNewRecord(newItemTitle, (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
             public void onItemEdited(ItemEdited event) {
-                ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
+                ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
                 getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
