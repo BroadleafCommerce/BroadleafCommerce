@@ -64,7 +64,7 @@
     					</execution>
     				</executions>
     				<configuration>
-    					<relativePath>../</relativePath>
+    					<relativePath>../../</relativePath>
     					<rootPath>$${rebel.root}</rootPath>
     				</configuration>
     			</plugin>
@@ -233,14 +233,6 @@
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-user</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-dev</artifactId>
             </dependency>
     	</dependencies>
 </project>

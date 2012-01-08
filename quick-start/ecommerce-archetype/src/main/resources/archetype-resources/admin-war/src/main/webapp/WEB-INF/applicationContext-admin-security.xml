@@ -57,7 +57,7 @@
             LEFT OUTER JOIN BLC_ADMIN_ROLE_PERMISSION_XREF arpx ON ar.admin_role_id = arpx.admin_role_id
             LEFT OUTER JOIN BLC_ADMIN_PERMISSION ap ON arpx.admin_permission_id = ap.admin_permission_id
             LEFT OUTER JOIN BLC_ADMIN_USER_PERMISSION_XREF aupx ON au.admin_user_id = aupx.admin_user_id
-            LEFT OUTER JOIN BLC_ADMIN_PERMISSION ap ON aupx.admin_permission_id = ap.admin_permission_id
+            LEFT OUTER JOIN BLC_ADMIN_PERMISSION ap2 ON aupx.admin_permission_id = ap2.admin_permission_id
             WHERE au.login = ?"
 	 />
 

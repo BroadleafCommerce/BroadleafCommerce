@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.security;
-
-import org.springframework.security.core.Authentication;
+package org.broadleafcommerce.common.security;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.Authentication;
 
 public interface MergeCartProcessor {
 
