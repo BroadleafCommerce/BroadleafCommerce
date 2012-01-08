@@ -100,7 +100,7 @@ public class AppController implements ValueChangeHandler<String> {
 
         for (String sectionTitle : pages.keySet()){
 	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
-                buildHistoryNewItem(pageKey);
+                buildHistoryNewItem(sectionTitle);
 			    break;
 	    	}
 		}
