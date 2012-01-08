@@ -20,6 +20,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.BkgndRepeat;
 import com.smartgwt.client.types.Cursor;
@@ -37,12 +39,21 @@ import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.menu.IMenuButton;
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.menu.MenuItem;
+import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import org.broadleafcommerce.openadmin.client.BLCLaunch;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.Module;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
+import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -308,7 +319,7 @@ public class MasterView extends VLayout {
                         lbl.setBaseStyle("secondaryMenuText-selected");
                         selectedSecondaryMenuOption = lbl;
                         BLCMain.setCurrentPageKey(lbl.getTitle());
-                        buildHistoryNewItem(lbl.getTitle());
+                        buildHistoryNewItem(lbl.getTitle(), null);
                     }
                 }
             }
@@ -318,11 +329,16 @@ public class MasterView extends VLayout {
         return tmp;
     }
     
-    private void buildHistoryNewItem(String pageKey) {
+    private void buildHistoryNewItem(String pageKey, String itemId) {
         String token = History.getToken();
         String destinationPage = "moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey;
-        if (BLCLaunch.getDefaultItem(token) != null) {
-            destinationPage = destinationPage + "&itemId="+BLCLaunch.getDefaultItem(token);
+
+        if (itemId != null) {
+            destinationPage = destinationPage + "&itemId="+itemId;
+        } else {
+            if (BLCLaunch.getDefaultItem(token) != null) {
+                destinationPage = destinationPage + "&itemId="+BLCLaunch.getDefaultItem(token);
+            }
         }
         History.newItem(destinationPage);
     }
@@ -372,24 +388,96 @@ public class MasterView extends VLayout {
         HLayout userFields = new HLayout();
         userFields.setAlign(Alignment.RIGHT);
         userFields.addMember(buildUserImage());
+        LayoutSpacer sp1 = new LayoutSpacer();
+        sp1.setWidth(8);
+        userFields.addMember(sp1);
 
-        Label userLabel = new Label(SecurityManager.USER.getUserName());
-        userLabel.setBaseStyle("userText");
-        userLabel.setWidth(1);
-        userLabel.setOverflow(Overflow.VISIBLE);
+        //Label userLabel = new Label(SecurityManager.USER.getUserName());
+      //  userLabel.setBaseStyle("userText");
+      //  userLabel.setWidth(1);
+     //   userLabel.setOverflow(Overflow.VISIBLE);
+     //   userFields.addMember(userLabel);
 
-        userFields.addMember(userLabel);
+       //  userFields.addMember(buildLogoutImage());
+        
+        
+        Menu menu = new Menu();  
+        menu.setShowShadow(true);  
+        menu.setShadowDepth(10);  
+        menu.setShowIcons(false);
+        
+        MenuItem logout = new MenuItem("Logout");
+        MenuItem edit = new MenuItem("Edit ...");        
+        MenuItem changePassword = new MenuItem("Change Password ...");
+        
+        menu.setItems(edit, changePassword, logout);
 
-        userFields.addMember(buildLogoutImage());
-        Label logoutLink = new Label("LOGOUT");
-        logoutLink.setCursor(Cursor.POINTER);
-        logoutLink.setShowRollOver(true);
-        logoutLink.setBaseStyle("userLogout");
+        
+        changePassword.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
+                    @Override
+                    public void onClick(MenuItemClickEvent event) {
+                        final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
+                        userDS.buildFields(null, false, new AsyncCallbackAdapter() {
+                            public void onSetupSuccess(DataSource ds) {
+                                AdminUser currentUser = SecurityManager.USER;
+                                Record userRecord = new Record();
+                                userRecord.setAttribute("id", currentUser.getId());                                
+                                userRecord.setAttribute("login", currentUser.getUserName());
+                                userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
+        
+                                EntityEditDialog ed = new EntityEditDialog();
+        
+                                ed.editRecord("Change Password", userDS, userRecord, new ItemEditedHandler() {
+                                    public void onItemEdited(ItemEdited event) {
+                                        String currentPage = BLCLaunch.getSelectedPage(History.getToken());
+                                        if ("User Management".equals(currentPage)) {
+                                            buildHistoryNewItem(currentPage, event.getRecord().getAttribute("id"));
+                                        }
+                                    }
+                                }, new String[]{"password"}, new String[]{});
+                            }
+                        });
+        
+                    }
+                });
 
-
-	    logoutLink.addClickHandler(new ClickHandler() {
+        edit.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(MenuItemClickEvent event) {
+                final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
+                userDS.buildFields(null, false, new AsyncCallbackAdapter() {
+                    public void onSetupSuccess(DataSource ds) {
+                        AdminUser currentUser = SecurityManager.USER;
+                        Record userRecord = new Record();
+                        userRecord.setAttribute("id", currentUser.getId());
+                        userRecord.setAttribute("name", currentUser.getName());
+                        userRecord.setAttribute("email", currentUser.getEmail());
+                        userRecord.setAttribute("phoneNumber", currentUser.getPhoneNumber());
+                        userRecord.setAttribute("login", currentUser.getUserName());
+                        userRecord.setAttribute("_type", new String[]{EntityImplementations.ADMIN_USER});
+
+                        EntityEditDialog ed = new EntityEditDialog();
+
+                        ed.editRecord("Edit User Information", userDS, userRecord, new ItemEditedHandler() {
+                            public void onItemEdited(ItemEdited event) {
+                                SecurityManager.USER.setPhoneNumber(event.getRecord().getAttribute("phoneNumber"));
+                                SecurityManager.USER.setName(event.getRecord().getAttribute("name"));
+                                SecurityManager.USER.setEmail(event.getRecord().getAttribute("email"));
+                                String currentPage = BLCLaunch.getSelectedPage(History.getToken());
+                                if ("User Management".equals(currentPage)) {
+                                    buildHistoryNewItem(currentPage, event.getRecord().getAttribute("id"));
+                                }
+                            }
+                        }, null, new String[]{"login", "activeStatusFlag", "password"});
+                    }
+                });
+
+            }
+        });
+
+	    logout.addClickHandler(new com.smartgwt.client.widgets.menu.events.ClickHandler() {
+            @Override
+            public void onClick(MenuItemClickEvent event) {
                 UrlBuilder builder = Window.Location.createUrlBuilder();
                 builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
                 builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
@@ -397,7 +485,16 @@ public class MasterView extends VLayout {
             }
         } );
 
-        userFields.addMember(logoutLink);
+        
+        IMenuButton menuButton = new IMenuButton(SecurityManager.USER.getUserName(), menu);          
+        menuButton.setPadding(5);
+        menuButton.setChildrenSnapResizeToGrid(true);
+        menuButton.setOverflow(Overflow.VISIBLE);
+        userFields.addMember(menuButton);
+        
+        LayoutSpacer sp2 = new LayoutSpacer();
+        sp2.setWidth(200);
+        userFields.addMember(sp2);
 
         return userFields;
     }
