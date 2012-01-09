@@ -33,7 +33,7 @@ public class Auditable implements Serializable {
 
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName="Date Created", group="Audit", readOnly=true)
+    @AdminPresentation(friendlyName="Date Created", group="Audit", groupOrder=1000, readOnly=true)
     protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
