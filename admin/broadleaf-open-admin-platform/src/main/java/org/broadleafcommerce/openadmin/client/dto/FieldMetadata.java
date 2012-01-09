@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.io.Serializable;
@@ -26,7 +27,7 @@ import java.util.Arrays;
  * @author jfischer
  *
  */
-public class FieldMetadata implements Serializable {
+public class FieldMetadata implements IsSerializable, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

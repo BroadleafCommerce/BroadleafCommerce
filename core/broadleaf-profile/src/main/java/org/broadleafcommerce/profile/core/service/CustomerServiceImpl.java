@@ -16,9 +16,14 @@
 
 package org.broadleafcommerce.profile.core.service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.broadleafcommerce.common.security.util.PasswordChange;
+import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
-import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
-import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -29,11 +34,6 @@ import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {

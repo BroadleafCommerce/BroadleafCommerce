@@ -85,7 +85,7 @@
 		</dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>broadleaf-common</artifactId>
         </dependency>
 		<dependency>
             <groupId>org.hsqldb</groupId>

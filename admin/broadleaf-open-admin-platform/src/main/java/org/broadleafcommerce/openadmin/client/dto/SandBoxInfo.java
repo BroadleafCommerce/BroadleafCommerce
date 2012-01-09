@@ -18,7 +18,9 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
-public class SandBoxInfo implements Serializable {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class SandBoxInfo implements IsSerializable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
@@ -28,7 +29,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class FieldPresentationAttributes implements Serializable {
+public class FieldPresentationAttributes implements IsSerializable, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

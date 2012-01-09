@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.audit.Auditable;
-
 import java.io.Serializable;
+
+import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.locale.domain.Locale;
 
 public interface Customer extends Serializable {
 

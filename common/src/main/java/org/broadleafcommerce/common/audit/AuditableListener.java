@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.audit;
+package org.broadleafcommerce.common.audit;
 
 import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.security.core.Authentication;

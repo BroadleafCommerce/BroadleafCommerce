@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
 
 import java.util.List;
 

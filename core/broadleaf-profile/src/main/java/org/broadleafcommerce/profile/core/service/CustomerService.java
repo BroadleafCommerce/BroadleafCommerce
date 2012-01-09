@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
-import org.broadleafcommerce.openadmin.server.security.util.PasswordReset;
+import java.util.List;
+
+import org.broadleafcommerce.common.security.util.PasswordChange;
+import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
-
-import java.util.List;
 
 public interface CustomerService {
 

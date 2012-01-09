@@ -16,11 +16,10 @@
 
 package org.broadleafcommerce.profile.core.service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.openadmin.server.security.util.PasswordChange;
+import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.profile.core.dao.UserDao;
 import org.broadleafcommerce.profile.core.domain.User;
 import org.broadleafcommerce.profile.core.domain.UserRole;

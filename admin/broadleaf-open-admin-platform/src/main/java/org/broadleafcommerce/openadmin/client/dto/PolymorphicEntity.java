@@ -18,12 +18,14 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class PolymorphicEntity implements Serializable {
+public class PolymorphicEntity implements IsSerializable, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

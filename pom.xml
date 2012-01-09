@@ -361,14 +361,14 @@
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
-                <artifactId>common</artifactId>
+                <artifactId>broadleaf-common</artifactId>
                 <version>1.6.0-SNAPSHOT</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
-                <artifactId>common</artifactId>
+                <artifactId>broadleaf-common</artifactId>
                 <version>1.6.0-SNAPSHOT</version>
                 <type>jar</type>
                 <scope>compile</scope>

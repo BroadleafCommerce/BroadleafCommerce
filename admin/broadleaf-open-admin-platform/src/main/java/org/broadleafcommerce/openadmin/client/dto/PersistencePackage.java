@@ -25,18 +25,24 @@ public class PersistencePackage implements IsSerializable, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	protected String ceilingEntityFullyQualifiedClassname;
+    protected String fetchTypeFullyQualifiedClassname;
 	protected PersistencePerspective persistencePerspective;
 	protected String[] customCriteria;
 	protected Entity entity;
     protected String csrfToken;
 	
 	public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
-		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
-		this.persistencePerspective = persistencePerspective;
-		this.entity = entity;
-		this.customCriteria = customCriteria;
-        this.csrfToken = csrfToken;
+		this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
 	}
+    
+    public PersistencePackage(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
+        this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
+        this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
+        this.persistencePerspective = persistencePerspective;
+        this.entity = entity;
+        this.customCriteria = customCriteria;
+        this.csrfToken = csrfToken;
+    }
 	
 	public PersistencePackage() {
 		//do nothing
@@ -82,5 +88,13 @@ public class PersistencePackage implements IsSerializable, Serializable {
 
     public void setCsrfToken(String csrfToken) {
         this.csrfToken = csrfToken;
+    }
+
+    public String getFetchTypeFullyQualifiedClassname() {
+        return fetchTypeFullyQualifiedClassname;
+    }
+
+    public void setFetchTypeFullyQualifiedClassname(String fetchTypeFullyQualifiedClassname) {
+        this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
     }
 }

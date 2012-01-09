@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.security.util;
+package org.broadleafcommerce.common.security.util;
 
 
 /**

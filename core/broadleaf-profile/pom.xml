@@ -159,7 +159,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-open-admin-platform</artifactId>
+			<artifactId>broadleaf-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>

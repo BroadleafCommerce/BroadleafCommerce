@@ -16,12 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public enum PersistencePerspectiveItemType {
+public enum PersistencePerspectiveItemType implements IsSerializable {
 	FOREIGNKEY,
 	JOINSTRUCTURE,
 	MAPSTRUCTURE

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.presentation.client;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jfischer
@@ -23,7 +25,7 @@ package org.broadleafcommerce.common.presentation.client;
  * Time: 1:26 PM
  * To change this template use File | Settings | File Templates.
  */
-public enum VisibilityEnum {
+public enum VisibilityEnum implements IsSerializable {
     HIDDEN_ALL,
     VISIBLE_ALL,
     FORM_HIDDEN,
