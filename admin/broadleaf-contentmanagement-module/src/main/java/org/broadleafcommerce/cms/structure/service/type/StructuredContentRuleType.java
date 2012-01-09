@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * An extendible enumeration of offer rule types.<BR>
  * REQUEST - indicates a rule based on the incoming http request.<BR>
- * TIME - indicates a rule based on {@link org.broadleafcommerce.common.time.TimeDTO time}<br>
+ * TIME - indicates a rule based on {@link org.broadleafcommerce.common.TimeDTO time}<br>
  * PRODUCT - indicates a rule based on {@link org.broadleafcommerce.core.catalog.domain.Product product}
  * CUSTOMER - indicates a rule based on {@link org.broadleafcommerce.profile.core.domain}
  */

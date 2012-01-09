@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.common;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by bpolster.
@@ -31,19 +31,19 @@ public class TimeDTO {
     @AdminPresentation(excluded = true)
     private Calendar cal;
 
-    @AdminPresentation(friendlyName = "Hour Of Day", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.HourOfDayType")
+    @AdminPresentation(friendlyName = "Hour Of Day", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.time.HourOfDayType")
     private Integer hour;
 
-    @AdminPresentation(friendlyName = "Day Of Week", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.DayOfWeekType")
+    @AdminPresentation(friendlyName = "Day Of Week", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.time.DayOfWeekType")
     private Integer dayOfWeek;
 
-    @AdminPresentation(friendlyName = "Month", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.MonthType")
+    @AdminPresentation(friendlyName = "Month", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.time.MonthType")
     private Integer month;
 
-    @AdminPresentation(friendlyName = "Day Of Month", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.DayOfMonthType")
+    @AdminPresentation(friendlyName = "Day Of Month", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.time.DayOfMonthType")
     private Integer dayOfMonth;
 
-    @AdminPresentation(friendlyName = "Minute", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.MinuteType")
+    @AdminPresentation(friendlyName = "Minute", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.common.time.MinuteType")
     private Integer minute;
 
     @AdminPresentation(friendlyName = "Date")
