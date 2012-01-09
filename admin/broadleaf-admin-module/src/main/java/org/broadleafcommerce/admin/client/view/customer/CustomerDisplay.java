@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisp
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 
@@ -34,5 +35,7 @@ public interface CustomerDisplay extends DynamicEditDisplay {
 	public DynamicEntityListDisplay getListDisplay();
 	
 	public ToolStripButton getUpdateLoginButton();
+
+    public GridStructureView getCustomerAddressDisplay();
 	
 }

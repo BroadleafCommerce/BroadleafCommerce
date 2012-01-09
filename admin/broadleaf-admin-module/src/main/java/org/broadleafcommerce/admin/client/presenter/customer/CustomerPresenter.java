@@ -16,17 +16,24 @@
 
 package org.broadleafcommerce.admin.client.presenter.customer;
 
+import java.util.HashMap;
+
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.customer.CustomerAddressDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.customer.LocaleListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.order.CountryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.order.StateListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.customer.CustomerDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
@@ -35,6 +42,8 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
@@ -48,10 +57,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDi
  *
  */
 public class CustomerPresenter extends DynamicEntityPresenter implements Instantiable {
-	
+
+    protected SubPresentable customerAddressPresenter;
+    protected HashMap<String, Object> library = new HashMap<String, Object>(10);
+
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		getDisplay().getUpdateLoginButton().enable();
+        customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerAddressDS"));
 	}
 	
 	@Override
@@ -63,6 +76,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	public void bind() {
 		super.bind();
+        customerAddressPresenter.bind();
 		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
@@ -130,6 +144,47 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                 );
 			}
 		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ((ListGridDataSource) result).resetPermanentFieldVisibility(
+                    "abbreviation",
+                    "name"
+                );
+                EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result);
+                library.put("countrySearchView", countrySearchView);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ((ListGridDataSource) result).resetPermanentFieldVisibility(
+                    "abbreviation",
+                    "name"
+                );
+                EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                library.put("stateSearchView", stateSearchView);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerAddressDS", new CustomerAddressDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                customerAddressPresenter = new CreateBasedListStructurePresenter(getDisplay().getCustomerAddressDisplay(), new String[] {EntityImplementations.CUSTOMER}, BLCMain.getMessageManager().getString("newCustomerAddressTitle"));
+                customerAddressPresenter.setDataSource((ListGridDataSource) result, new String[]{"addressName", "address.addressLine1", "address.city", "address.state.name", "address.postalCode"}, new Boolean[]{true, true, true, true, true});
+
+                ((DynamicEntityDataSource) result).
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "address.country",
+                    (EntitySearchDialog) library.get("countrySearchView"),
+                    BLCMain.getMessageManager().getString("countrySearchPrompt"),
+                    display.getDynamicFormDisplay()
+                );
+                ((DynamicEntityDataSource) result).
+                getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+                    "address.state",
+                    (EntitySearchDialog) library.get("stateSearchView"),
+                    BLCMain.getMessageManager().getString("stateSearchPrompt"),
+                    display.getDynamicFormDisplay()
+                );
+            }
+        }));
 	}
 
 	@Override

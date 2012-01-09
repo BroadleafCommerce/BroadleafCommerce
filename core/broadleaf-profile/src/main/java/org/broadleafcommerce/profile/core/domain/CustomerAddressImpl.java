@@ -31,6 +31,14 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Index;
 
@@ -38,6 +46,15 @@ import org.hibernate.annotations.Index;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
+@AdminPresentationOverrides(
+    {
+        @AdminPresentationOverride(name="address.state.name", value=@AdminPresentation(friendlyName="State", visibility = VisibilityEnum.FORM_HIDDEN, order=9, group="Address", readOnly = true)),
+        @AdminPresentationOverride(name="address.country.name", value=@AdminPresentation(friendlyName="Country", visibility = VisibilityEnum.FORM_HIDDEN, order=12, group="Address", readOnly = true)),
+        @AdminPresentationOverride(name="address.firstName", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="address.lastName", value=@AdminPresentation(excluded = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerAddressImpl implements CustomerAddress {
 
     private static final long serialVersionUID = 1L;
@@ -49,10 +66,12 @@ public class CustomerAddressImpl implements CustomerAddress {
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
+    @AdminPresentation(friendlyName="Address Name", order=1, group = "Identification", groupOrder = 1, requiredOverride = RequiredOverride.REQUIRED, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.core.service.type.CustomerAddressType")
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class, optional=false)

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.admin.client.presenter.order;
 
+import java.util.Arrays;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -32,8 +34,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicFormPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-
-import java.util.Arrays;
 
 /**
  * 
@@ -104,6 +104,12 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		}
 	}
 
+    @Override
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource) {
+        return load(associatedRecord, associatedDataSource, null);
+    }
+
+    @Override
     public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
