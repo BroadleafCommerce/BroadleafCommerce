@@ -82,8 +82,8 @@
             <map>
                 <entry key="customer" value="org.broadleafcommerce.profile.core.domain.Customer" />
                 <entry key="product" value="org.broadleafcommerce.core.catalog.domain.Product" />
-                <entry key="time" value="org.broadleafcommerce.common.time.TimeDTO" />
-                <entry key="request" value="org.broadleafcommerce.common.time.RequestDTO" />
+                <entry key="time" value="org.broadleafcommerce.common.TimeDTO" />
+                <entry key="request" value="org.broadleafcommerce.common.RequestDTO" />
             </map>
 	    </property>
     </bean>
