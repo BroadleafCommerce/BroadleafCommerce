@@ -45,6 +45,7 @@ public class EntityImplementations {
 	public static final String OFFER = "org.broadleafcommerce.core.offer.domain.OfferImpl";
     public static final String DISCRETEORDERITEMFEEPRICE = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl";
     public static final String DISCRETEORDERITEM = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl";
-    public static final String LOCALEIMPL = "org.broadleafcommerce.common.locale.domain.LocaleImpl";
+    public static final String LOCALE = "org.broadleafcommerce.common.locale.domain.LocaleImpl";
+    public static final String CUSTOMER = "org.broadleafcommerce.profile.core.domain.CustomerImpl";
 
 }

@@ -22,13 +22,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 
 /**
  * 
  * @author jfischer
  *
  */
-public class PersistencePerspective implements Serializable {
+public class PersistencePerspective implements IsSerializable, Serializable {
 	 
 	private static final long serialVersionUID = 1L;
 	

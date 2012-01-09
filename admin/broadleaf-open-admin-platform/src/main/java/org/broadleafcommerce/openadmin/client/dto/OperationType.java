@@ -16,12 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public enum OperationType {
+public enum OperationType implements IsSerializable {
 	FOREIGNKEY,
 	ENTITY,
 	JOINSTRUCTURE,

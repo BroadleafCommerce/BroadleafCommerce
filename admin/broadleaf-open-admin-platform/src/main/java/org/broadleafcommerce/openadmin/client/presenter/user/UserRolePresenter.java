@@ -103,8 +103,14 @@ public class UserRolePresenter implements SubPresentable {
 			enable();
 		}
 	}
-	
-	public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+
+    @Override
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource) {
+        return load(associatedRecord, associatedDataSource, null);
+    }
+
+    @Override
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();

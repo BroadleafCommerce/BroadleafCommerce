@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import java.util.Arrays;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -30,8 +32,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
-
-import java.util.Arrays;
 
 /**
  * 
@@ -118,8 +118,14 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 			enable();
 		}
 	}
-	
-	public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+
+    @Override
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource) {
+        return load(associatedRecord, associatedDataSource, null);
+    }
+
+    @Override
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();

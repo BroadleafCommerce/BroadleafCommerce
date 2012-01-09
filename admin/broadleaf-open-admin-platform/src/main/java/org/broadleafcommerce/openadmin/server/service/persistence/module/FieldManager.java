@@ -122,12 +122,16 @@ public class FieldManager {
 
         while (tokens.hasMoreTokens()) {
             field = getSingleField(componentClass, tokens.nextToken());
-            field.setAccessible(true);
-            value = field.get(value);
-            if (value != null) {
-                componentClass = value.getClass();
+            if (field != null) {
+                field.setAccessible(true);
+                value = field.get(value);
+                if (value != null) {
+                    componentClass = value.getClass();
+                } else {
+                    break;
+                }
             } else {
-            	break;
+                break;
             }
         }
 

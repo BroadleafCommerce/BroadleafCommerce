@@ -18,10 +18,12 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * @author jfischer
  */
-public class ClassTree implements Serializable {
+public class ClassTree implements IsSerializable, Serializable {
 
     protected String fullyQualifiedClassname;
     protected String name;

@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
 
 /**
@@ -24,7 +27,7 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspective
  * @author jfischer
  *
  */
-public interface PersistencePerspectiveItem {
+public interface PersistencePerspectiveItem extends IsSerializable, Serializable {
 
 	public void accept(PersistencePerspectiveItemVisitor visitor);
 	
