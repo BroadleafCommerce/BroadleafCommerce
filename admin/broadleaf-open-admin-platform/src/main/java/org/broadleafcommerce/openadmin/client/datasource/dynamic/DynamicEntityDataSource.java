@@ -38,8 +38,23 @@ import java.util.Map;
  *
  */
 public class DynamicEntityDataSource extends AbstractDynamicDataSource {
+
+    /**
+     * Creates a datasource capable of all CRUD operations on the passed in Entity.
+     * This constructor handles the simplest needs for an Entity Datasource which is
+     * what is called for most of the time.    For more advanced needs involving
+     * Foreign Keys, Lists, and Maps, the more advanced constructor is required.
+     *
+     * @param ceilingEntityClassName - The fully qualified name of the ceilingEntity.
+     */
+    public DynamicEntityDataSource(String ceilingEntityClassName) {
+         super(ceilingEntityClassName);
+    }
 	
 	/**
+     * Note that the name parameter on this constructor is not meaningful to the internal representation
+     * of DynamicEntityDataSource.    It is required by superclasses but unused.
+     *
 	 * @param name
 	 * @param persistencePerspective
 	 * @param service

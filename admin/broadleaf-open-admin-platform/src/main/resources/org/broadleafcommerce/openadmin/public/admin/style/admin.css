@@ -61,8 +61,7 @@
     padding-left: 5px;
 }
 
-.primaryMenuText,
-.primaryMenuText-selected {
+.primaryMenuText {
     font-family:helvetica, sans-serif;
     font-size:14px;
     color:white;
@@ -71,26 +70,38 @@
 }
 
 .primaryMenuTextOver {
-    font-size: 14px;
+    font-family:helvetica, sans-serif;
+    font-size:14px;
+    text-align:center;
+    padding: 8px 10px;
     color: #94b12c;
 }
-.primaryMenuText-selectedOver  {
-    font-size: 14px;
-    color:white;
-    background-color: #78A22F;
-}
 
-.primaryMenuText-selected {
-    background-color: #78A22F;
+.primaryMenuText-selected,
+.primaryMenuText-selectedOver
+{
+    font-family:helvetica, sans-serif;
+    font-size:14px;
     color:white;
+    text-align:center;
+    padding: 8px 10px;
+    background-color: #78A22F;
 }
 
 .secondaryMenuText,
-.secondaryMenuText-selected {
+.secondaryMenuText-selected,
+.secondaryMenuTextOver,
+.secondaryMenuText-selectedOver {
     font-family:helvetica, sans-serif;
     font-size:12px;
     color:#454545;
     text-align:center;
+}
+
+.secondaryMenuTextOver,
+.secondaryMenuText-selected,
+.secondaryMenuText-selectedOver {
+    color:white;
 }
 
 .headerItem, .headerItemDisabled {
@@ -105,16 +116,6 @@
     font-size: 14px;
     font-weight: bold;
     padding-bottom: 5px;
-}
-
-.secondaryMenuTextOver,
-.secondaryMenuText-selectedOver {
-    font-size: 12px;
-    color:white;
-}
-
-.secondaryMenuText-selected {
-    color:white;
 }
 
 .adminModalMask {

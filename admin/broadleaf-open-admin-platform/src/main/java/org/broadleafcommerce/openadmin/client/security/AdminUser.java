@@ -35,6 +35,10 @@ public class AdminUser implements IsSerializable, Serializable {
 	protected List<String> roles = new ArrayList<String>();
 	protected List<String> permissions = new ArrayList<String>();
     protected String currentSandBoxId;
+    protected Long id;
+    protected String email;
+    protected String phoneNumber;
+    protected String name;
 	
 	public List<String> getRoles() {
 		return roles;
@@ -66,5 +70,37 @@ public class AdminUser implements IsSerializable, Serializable {
 
     public void setCurrentSandBoxId(String currentSandBoxId) {
         this.currentSandBoxId = currentSandBoxId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

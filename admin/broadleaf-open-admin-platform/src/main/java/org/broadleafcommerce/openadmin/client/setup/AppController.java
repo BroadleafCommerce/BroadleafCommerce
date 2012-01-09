@@ -26,6 +26,7 @@ import com.google.gwt.user.client.Window;
 import com.smartgwt.client.widgets.Canvas;
 import org.broadleafcommerce.openadmin.client.BLCLaunch;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.Module;
 import org.broadleafcommerce.openadmin.client.presenter.entity.EntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.AsyncClient;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
@@ -100,7 +101,7 @@ public class AppController implements ValueChangeHandler<String> {
 
         for (String sectionTitle : pages.keySet()){
 	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
-                buildHistoryNewItem(pageKey);
+                buildHistoryNewItem(sectionTitle);
 			    break;
 	    	}
 		}
@@ -115,11 +116,13 @@ public class AppController implements ValueChangeHandler<String> {
 
         if (token != null) {
             String page = BLCLaunch.getSelectedPage(token);
+            String moduleName = BLCLaunch.getSelectedModule(token);
             String itemId = BLCLaunch.getDefaultItem(token);
 
-            if (page != null) {
+            if (page != null && moduleName != null) {
                 if (!uiFactory.equalsCurrentView(page) || itemId != null) {
-                    String[] vals = pages.get(page);
+                    Module module = BLCMain.getModule(moduleName);                    
+                    String[] vals = module.getPages().get(page);
                     if (vals != null) {
                         showView(vals[0], vals[1], itemId);
                     }

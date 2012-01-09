@@ -20,10 +20,12 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.CriteriaPolicy;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.GwtRpcDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallbackHandlerManager;
+import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.LinkedHashMap;
@@ -47,6 +49,37 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
     //TODO change this flag to come from an annotation on the entity that defines the commit status from the server side
 	//protected boolean commitImmediately = true;
     protected Record addedRecord;
+
+
+    /**
+     * Sets the criteria policy and max age to use for this datasource.
+     */
+    private void setDefaults() {
+        setCriteriaPolicy(CriteriaPolicy.DROPONCHANGE);
+        setCacheMaxAge(0);
+    }
+
+    /**
+     * Typical constructor used to initialize a Broadleaf Entity Backed Datasource.
+     *
+      * Creates a datasource capable of all CRUD operations on the passed in Entity.
+      * This constructor handles the simplest needs for an Entity Datasource which is
+      * what is called for 70% of the time.    For more advanced needs involving
+      * Foreign Keys, Lists, and Maps, the more advanced constructor is required.
+      *
+      * @param ceilingEntityClassName - The fully qualified name of the ceilingEntity.
+      */
+    public AbstractDynamicDataSource(String ceilingEntityClassName) {
+        // Note that the name field while it is required for GwtRpcParent class, it is not actually used
+        super("nameNotSet");
+        this.persistencePerspective = new PersistencePerspective();
+        this.service = AppServices.DYNAMIC_ENTITY;
+
+        // Setup default entity module.   Good for most simple list/form based entities.
+        modules = new DataSourceModule[1];
+        modules[0] = new BasicClientEntityModule(ceilingEntityClassName, this.persistencePerspective, this.service);
+        modules[0].setDataSource(this);
+    }   
 	
 	/**
 	 * @param name

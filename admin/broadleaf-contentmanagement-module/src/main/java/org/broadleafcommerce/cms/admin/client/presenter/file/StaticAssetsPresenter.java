@@ -109,7 +109,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         hints.put("fullUrl", BLCMain.getMessageManager().getString("assetUploadFullUrlHint"));
 		FILE_UPLOAD.editNewRecord("Upload Artifact", getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS"), initialValues, hints, new ItemEditedHandler() {
             public void onItemEdited(ItemEdited event) {
-                ListGridRecord[] recordList = new ListGridRecord[]{event.getRecord()};
+                ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
                 getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
