@@ -69,7 +69,7 @@
 						<id>testng</id>
 						<phase>test</phase>
 						<configuration>
-							<tasks unless="maven.test.skip">
+							<tasks unless="skipTests">
 								<property name="framework" location="../core/broadleaf-framework" />
 								<property name="frameworkWeb" location="../core/broadleaf-framework-web" />
 								<property name="profile" location="../core/broadleaf-profile" />
