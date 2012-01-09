@@ -36,6 +36,8 @@ public interface SubPresentable {
 	public void disable();
 	
 	public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource, final DSCallback cb);
+
+    public boolean load(Record associatedRecord, AbstractDynamicDataSource associatedDataSource);
 	
 	public void bind();
 

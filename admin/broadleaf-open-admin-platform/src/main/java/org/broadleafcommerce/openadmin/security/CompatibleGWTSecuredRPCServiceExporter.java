@@ -16,22 +16,20 @@
 
 package org.broadleafcommerce.openadmin.security;
 
+import javax.servlet.ServletContext;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
+import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.server.rpc.RPC;
+import com.google.gwt.user.server.rpc.RPCRequest;
+import com.google.gwt.user.server.rpc.UnexpectedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gwtwidgets.server.spring.GWTRPCServiceExporter;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.transaction.TransactionSystemException;
-
-import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RPC;
-import com.google.gwt.user.server.rpc.RPCRequest;
-import com.google.gwt.user.server.rpc.UnexpectedException;
 
 /**
  * Inspired by GWTRPCSecuredServiceExporter by David Martin http://code.google.com/p/gwt-incubator-lib/
@@ -96,7 +94,13 @@ public class CompatibleGWTSecuredRPCServiceExporter extends GWTRPCServiceExporte
 		String response = null;
 		// reported as not working with GWT.1.6.4 : Issue 2
 //		final RPCRequest rpcRequest = RPC.decodeRequest(payload);
-		final RPCRequest rpcRequest = RPC.decodeRequest(payload, null, this);
+        final RPCRequest rpcRequest;
+        try {
+            rpcRequest = RPC.decodeRequest(payload, null, this);
+        } catch (RuntimeException e) {
+            LOGGER.error("Could not decode the request", e);
+            throw e;
+        }
 		try {
 			response = super.processCall(payload);
 		} catch (final Throwable e) { // Security Exceptions (preciousException here) are wrapped into an UnexpectedException (cause1), which is wrapped into a RuntimeException (e)...

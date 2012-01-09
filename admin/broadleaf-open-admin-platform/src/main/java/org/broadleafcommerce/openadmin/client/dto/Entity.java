@@ -20,12 +20,14 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class Entity implements Serializable {
+public class Entity implements IsSerializable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 

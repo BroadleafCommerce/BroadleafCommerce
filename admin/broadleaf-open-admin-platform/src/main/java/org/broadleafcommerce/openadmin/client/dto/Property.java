@@ -18,13 +18,15 @@ package org.broadleafcommerce.openadmin.client.dto;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 
 /**
  * 
  * @author jfischer
  *
  */
-public class Property implements Serializable {
+public class Property implements IsSerializable, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

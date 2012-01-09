@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
 
 import java.io.Serializable;
@@ -26,7 +27,7 @@ import java.io.Serializable;
  * @author jfischer
  *
  */
-public class ForeignKey implements Serializable, PersistencePerspectiveItem {
+public class ForeignKey implements IsSerializable, Serializable, PersistencePerspectiveItem {
 
 	private static final long serialVersionUID = 1L;
 	

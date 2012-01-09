@@ -20,12 +20,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class AdminUser implements Serializable {
+public class AdminUser implements IsSerializable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 

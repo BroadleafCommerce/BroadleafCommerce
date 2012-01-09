@@ -16,13 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.service;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Asynchronous version of {@link EntityService}.
