@@ -742,7 +742,6 @@ public class BasicClientEntityModule implements DataSourceModule {
 						field.setPrimaryKey(true);
 					}
 					field.setCanEdit(false);
-					hidden = true;
 					field.setRequired(required);
 					//field.setValidOperators(getBasicIdOperators());
 					break;
@@ -854,8 +853,8 @@ public class BasicClientEntityModule implements DataSourceModule {
 					field.setValidators(ValidationFactoryManager.getInstance().createValidators(property.getMetadata().getPresentationAttributes().getValidationConfigurations(), propertyName));
 				}
 				if (fieldType.equals(SupportedFieldType.ID.toString())) {
-					field.setHidden(true);
-					field.setAttribute("permanentlyHidden", true);
+					field.setHidden(hidden);
+					field.setAttribute("permanentlyHidden", hidden);
                     formHidden = FormHiddenEnum.VISIBLE;
 				} else if (hidden != null) {
 					field.setHidden(hidden);
