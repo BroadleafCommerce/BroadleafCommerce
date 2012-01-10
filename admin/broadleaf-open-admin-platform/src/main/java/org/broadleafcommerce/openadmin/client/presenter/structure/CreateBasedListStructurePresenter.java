@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.structure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -37,9 +40,6 @@ import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -130,7 +130,7 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
-                BLCMain.ENTITY_ADD.editRecord(editDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, gridFields, null);
+                BLCMain.ENTITY_ADD.editRecord(editDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, null);
             }
         });
 	}
