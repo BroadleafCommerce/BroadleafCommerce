@@ -63,7 +63,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
 		getDisplay().getUpdateLoginButton().enable();
-        customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerAddressDS"));
+        customerAddressPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("customerDS"));
 	}
 	
 	@Override
