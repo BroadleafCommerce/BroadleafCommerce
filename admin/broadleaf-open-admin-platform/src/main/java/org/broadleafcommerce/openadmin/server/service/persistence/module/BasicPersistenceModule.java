@@ -16,6 +16,29 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import javax.persistence.Embedded;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.AssociationPathElement;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
@@ -48,29 +71,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.w3c.dom.DOMException;
-
-import javax.persistence.Embedded;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * 
@@ -605,10 +605,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		}
 		return ctoConverter;
 	}
+    
+    public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
+        return getTotalRecords(ceilingEntityFullyQualifiedClassname, null, cto, ctoConverter);
+    }
 	
-	public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
+	public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
 		PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), ceilingEntityFullyQualifiedClassname);
-        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
+        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(fetchTypeFullyQualifiedClassname)?ceilingEntityFullyQualifiedClassname:fetchTypeFullyQualifiedClassname));
 	}
 	
 	public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
@@ -770,6 +774,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		Entity[] payload;
 		int totalRecords;
 		String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        if (StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname())) {
+            persistencePackage.setFetchTypeFullyQualifiedClassname(ceilingEntityFullyQualifiedClassname);
+        }
 		PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 		try {
 			Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
@@ -789,10 +796,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			
 			BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
-			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(ceilingEntityFullyQualifiedClassname));
+			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
 			
 			payload = getRecords(mergedProperties, records, null, null);
-			totalRecords = getTotalRecords(ceilingEntityFullyQualifiedClassname, cto, ctoConverter);
+			totalRecords = getTotalRecords(ceilingEntityFullyQualifiedClassname, persistencePackage.getFetchTypeFullyQualifiedClassname(), cto, ctoConverter);
 		} catch (Exception e) {
 			LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
 			throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
