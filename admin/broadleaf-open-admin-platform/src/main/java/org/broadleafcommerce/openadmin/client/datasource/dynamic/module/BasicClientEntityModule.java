@@ -98,14 +98,20 @@ public class BasicClientEntityModule implements DataSourceModule {
 	protected String linkedValue;
 	protected DynamicEntityServiceAsync service;
 	protected final String ceilingEntityFullyQualifiedClassname;
+    protected final String fetchTypeFullyQualifiedClassname;
 	protected PersistencePerspective persistencePerspective;
 	protected Long loadLevelCount = 0L;
 	
 	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
-		this.service = service;
-		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
-		this.persistencePerspective = persistencePerspective;
+		this(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, service);
 	}
+
+    public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+        this.service = service;
+        this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
+        this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
+        this.persistencePerspective = persistencePerspective;
+    }
 	
 	/**
      * Transforms the given <tt>request</tt> into
@@ -248,7 +254,7 @@ public class BasicClientEntityModule implements DataSourceModule {
             }
         } else {
             CriteriaTransferObject cto = getCto(request);
-            service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+            service.fetch(new PersistencePackage(ceilingEntityFullyQualifiedClassname, fetchTypeFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), cto, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
                 public void onSuccess(DynamicResultSet result) {
                     super.onSuccess(result);
                     TreeNode[] recordList = buildRecords(result, null);
