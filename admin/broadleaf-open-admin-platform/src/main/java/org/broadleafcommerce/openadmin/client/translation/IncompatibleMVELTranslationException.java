@@ -16,12 +16,14 @@
 
 package org.broadleafcommerce.openadmin.client.translation;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class IncompatibleMVELTranslationException extends Exception {
+public class IncompatibleMVELTranslationException extends Exception implements IsSerializable {
 
 	private static final long serialVersionUID = 1L;
 
