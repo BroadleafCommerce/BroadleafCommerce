@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import java.util.Map;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -43,8 +45,6 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-
-import java.util.Map;
 
 /**
  * 
@@ -163,6 +163,7 @@ public class EntityEditDialog extends Window {
 		buildFields(dataSource, dynamicForm);
         dynamicForm.editNewRecord(initialValues);
 		show();
+        redraw();
         setHeight(20);
         int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
         if (formHeight > 600) {
@@ -174,6 +175,8 @@ public class EntityEditDialog extends Window {
         int formWidth = hStack.getScrollWidth() + 30;
         if (formWidth > 800) {
             setWidth(800);
+        } else if (formWidth < 400) {
+            setWidth(400);
         } else {
             setWidth(formWidth);
         }
@@ -244,6 +247,7 @@ public class EntityEditDialog extends Window {
         centerInPage();
 		setTop(70);
 		show();
+        redraw();
         setHeight(20);
         int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
         if (formHeight > 600) {
@@ -255,6 +259,8 @@ public class EntityEditDialog extends Window {
         int formWidth = hStack.getScrollWidth() + 30;
         if (formWidth > 800) {
             setWidth(800);
+        } else if (formWidth < 400) {
+            setWidth(400);
         } else {
             setWidth(formWidth);
         }
