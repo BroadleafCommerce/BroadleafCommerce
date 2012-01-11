@@ -148,7 +148,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                     "abbreviation",
                     "name"
                 );
-                EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result);
+                EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 library.put("countrySearchView", countrySearchView);
             }
         }));
@@ -158,7 +158,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
                     "abbreviation",
                     "name"
                 );
-                EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 library.put("stateSearchView", stateSearchView);
             }
         }));

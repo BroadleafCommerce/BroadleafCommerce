@@ -40,7 +40,11 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
 	protected ListGrid grid;
     protected Boolean canEdit;
 
-	public GridStructureView(String title, Boolean canReorder, Boolean canEdit) {
+    public GridStructureView(String title, Boolean canReorder, Boolean canEdit) {
+        this(title, canReorder, canEdit, false);
+    }
+
+	public GridStructureView(String title, Boolean canReorder, Boolean canEdit, Boolean autoFetchData) {
 		super(10);
 
         this.canEdit = canEdit;
@@ -80,7 +84,7 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         toolBar.addFill();
         stack.addMember(toolBar);
         grid = new ListGrid();
-        grid.setAutoFetchData(false);
+        grid.setAutoFetchData(autoFetchData);
         grid.setShowHeader(true);
         grid.setShowHeaderContextMenu(false); 
         grid.setPreventDuplicates(true);
