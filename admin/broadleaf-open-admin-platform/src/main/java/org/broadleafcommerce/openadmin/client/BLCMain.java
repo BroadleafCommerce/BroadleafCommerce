@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -40,6 +37,9 @@ import org.broadleafcommerce.openadmin.client.view.SplashView;
 import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -192,7 +192,7 @@ public class BLCMain implements EntryPoint {
                             modules.get(currentModuleKey).preDraw();
                             MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
                             MASTERVIEW.draw();
-                            AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, true);
+                            AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
                             modules.get(currentModuleKey).postDraw();
                         }
                     }

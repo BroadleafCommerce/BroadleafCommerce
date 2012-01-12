@@ -80,20 +80,19 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
     protected HLayout secondaryMenu = new HLayout();
     protected Label selectedSecondaryMenuOption;
 
-    public static String moduleKey;
     protected LinkedHashMap<String, Module> modules;
 
 
     public MasterView(String moduleKey, String pageKey, LinkedHashMap<String, Module> modules) {
-        MasterView.moduleKey = moduleKey;
+
         this.modules = modules;
 
         setWidth100();
         setHeight100();
 
         addMember(buildHeader());
-        addMember(buildPrimaryMenu());
-        addMember(buildSecondaryMenu(pageKey));
+        addMember(buildPrimaryMenu(moduleKey));
+        addMember(buildSecondaryMenu(pageKey, moduleKey));
 
 
         canvas = new HLayout();
@@ -111,23 +110,27 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
     }
 
     public void onValueChange(ValueChangeEvent<String> event) {
-    	String token = event.getValue();
-        if (token != null) {
-            String page = BLCLaunch.getSelectedPage(token);
-            String moduleName = BLCLaunch.getSelectedModule(token);
+        	String token = event.getValue();
+            if (token != null) {
+                String page = BLCLaunch.getSelectedPage(token);
+                String moduleName = BLCLaunch.getSelectedModule(token);
 
-            // TODO: Verify they can view that section
-            // SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)
+                LinkedHashMap<String, String[]> pages = modules.get(moduleName).getPages();
+                if (SecurityManager.getInstance().isUserAuthorizedToViewModule(moduleName) &&
+                        SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])) {
 
-            if (moduleName != null && ! moduleName.equals(BLCMain.currentModuleKey)) {
-                BLCMain.setCurrentModuleKey(moduleName);
-            
-                selectPrimaryMenu(moduleName);
-
-                buildSecondaryMenu(page);
-            }
-    	}
-    }
+                    if (moduleName != null && ! moduleName.equals(BLCMain.currentModuleKey)) {
+                        BLCMain.setCurrentModuleKey(moduleName);            
+                        selectPrimaryMenu(moduleName);
+                        buildSecondaryMenu(page, moduleName);
+                        AppController.getInstance().clearCurrentView();
+                    } else {
+                        AppController.getInstance().clearCurrentView();
+                        buildSecondaryMenu(page, moduleName);
+                    }
+                }
+        	}
+        }
     
     private void selectPrimaryMenu(String selectedModule) {
         // Set selected primary menu option.
@@ -162,7 +165,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return header;
     }
 
-    private void addAuthorizedModulesToMenu(Layout menuHolder) {
+    private void addAuthorizedModulesToMenu(Layout menuHolder, String moduleKey) {
         Collection<Module> allowedModules = modules.values();
         for (Iterator<Module> iterator = allowedModules.iterator(); iterator.hasNext(); ) {
             Module testModule =  iterator.next();
@@ -190,7 +193,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
        }
     }
 
-    private Layout buildPrimaryMenu() {
+    private Layout buildPrimaryMenu(String currentModule) {
 
         HLayout moduleLayout = new HLayout();
         moduleLayout.setWidth100();
@@ -214,12 +217,12 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         LayoutSpacer sp = new LayoutSpacer();
         sp.setWidth(20);
         primaryMenuOptionsHolder.addMember(sp);
-        addAuthorizedModulesToMenu(primaryMenuOptionsHolder);
+        addAuthorizedModulesToMenu(primaryMenuOptionsHolder, currentModule);
         moduleLayout.addMember(primaryMenuOptionsHolder);
         return moduleLayout;
     }
 
-    private Layout buildSecondaryMenu(String selectedPage) {
+    private Layout buildSecondaryMenu(String selectedPage, String moduleKey) {
         secondaryMenu.removeMembers(secondaryMenu.getMembers());
 
         LayoutSpacer sp2 = new LayoutSpacer();
@@ -312,10 +315,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                     if (! "primaryMenuText-selected".equals(lbl.getBaseStyle())) {
                         selectPrimaryMenu(module.getModuleKey());
                         lbl.setBaseStyle("primaryMenuText-selected");
-                        BLCMain.setCurrentModuleKey(module.getModuleKey());
-                        moduleKey = module.getModuleKey();
-                        buildSecondaryMenu(null);
-                        AppController.getInstance().go(canvas, module.getPages(), null, false);
+                        BLCMain.setCurrentModuleKey(module.getModuleKey());                     
+                        buildSecondaryMenu(null, module.getModuleKey());
+                        AppController.getInstance().go(canvas, module.getPages(), null, module.getModuleKey(), false);
 	                 }
                 }
 	        }
@@ -355,7 +357,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                         lbl.setBaseStyle("secondaryMenuText-selected");
                         selectedSecondaryMenuOption = lbl;
                         BLCMain.setCurrentPageKey(lbl.getTitle());
-                        buildHistoryNewItem(lbl.getTitle(), null);
+                        buildHistoryNewItem(lbl.getTitle(), BLCLaunch.getSelectedModule(History.getToken()), null);
                     }
                 }
             }
@@ -364,8 +366,8 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         return tmp;
     }
     
-    private void buildHistoryNewItem(String pageKey, String itemId) {
-        String destinationPage = "moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey;
+    private void buildHistoryNewItem(String pageKey, String moduleKey, String itemId) {
+        String destinationPage = "moduleKey=" + moduleKey +"&pageKey="+pageKey;
 
         if (itemId != null) {
             destinationPage = destinationPage + "&itemId="+itemId;
@@ -461,7 +463,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                                     public void onItemEdited(ItemEdited event) {
                                         String currentPage = BLCLaunch.getSelectedPage(History.getToken());
                                         if ("User Management".equals(currentPage)) {
-                                            buildHistoryNewItem(currentPage, event.getRecord().getAttribute("id"));
+                                            buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
                                         }
                                     }
                                 }, new String[]{"password"}, new String[]{});
@@ -494,8 +496,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                                 SecurityManager.USER.setName(event.getRecord().getAttribute("name"));
                                 SecurityManager.USER.setEmail(event.getRecord().getAttribute("email"));
                                 String currentPage = BLCLaunch.getSelectedPage(History.getToken());
+                                // If we are on the user module, reload the page with the specifically edited item.
                                 if ("User Management".equals(currentPage)) {
-                                    buildHistoryNewItem(currentPage, event.getRecord().getAttribute("id"));
+                                    buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
                                 }
                             }
                         }, null, new String[]{"login", "activeStatusFlag", "password"});
