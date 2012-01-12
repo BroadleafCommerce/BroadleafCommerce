@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.web;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,5 +80,17 @@ public class BroadleafRequestContext {
 
     public void setRequestURIWithoutContext(String requestURIWithoutContext) {
         this.requestURIWithoutContext = requestURIWithoutContext;
+    }
+    
+    public boolean isSecure() {
+        boolean secure = false;
+        if (request != null) {
+             secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
+        }
+        return secure;
+    }
+    
+    public boolean isProductionSandbox() {
+        return (sandbox == null || SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType()));
     }
 }

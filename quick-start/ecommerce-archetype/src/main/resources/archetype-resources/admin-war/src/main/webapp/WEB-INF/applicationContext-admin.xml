@@ -53,7 +53,7 @@
 	</bean>
 
     <bean id="blUtilityRemoteService" class="org.broadleafcommerce.openadmin.server.service.UtilityRemoteService">
-        <property name="assetServerUrlPrefix" value="${symbol_dollar}{asset.server.url.prefix}"/>
+        <property name="assetServerUrlPrefix" value="${symbol_dollar}{asset.server.url.prefix.internal}"/>
         <property name="storeFrontWebAppPrefix" value="http://localhost:8080/mycompany"/>
     </bean>
 

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.cms.field.domain.FieldValueHolder;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import javax.annotation.Nonnull;
@@ -34,7 +35,7 @@ import java.io.Serializable;
  * @author bpolster
  *
  */
-public interface StructuredContentField extends Serializable {
+public interface StructuredContentField extends Serializable, FieldValueHolder {
 
     /**
      * Gets the primary key.
@@ -127,4 +128,5 @@ public interface StructuredContentField extends Serializable {
      * @param auditable
      */
     public void setAuditable(@Nullable AdminAuditable auditable);
+
 }

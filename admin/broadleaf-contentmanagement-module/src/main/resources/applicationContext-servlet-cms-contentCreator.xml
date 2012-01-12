@@ -17,7 +17,7 @@
         <property name="mappings">
             <map>
                 <entry key="/**/cms.upload.service" value-ref="blUploadController"/>
-                <entry key="/**/${asset.server.url.prefix}/**" value-ref="blStaticAssetViewController"/>
+                <entry key="/**/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
             </map>
         </property>
     </bean>

@@ -96,5 +96,73 @@ public interface StaticAssetService extends SandBoxItemListener {
 
     public List<StaticAsset> findAssets(SandBox sandbox, Criteria criteria);
 
+    /**
+     * Returns the value configured to mark an item as a static URL.
+     *
+     * OOB BLC maintains this value in common.properties.
+     *
+     * @return
+     */
+    public String getStaticAssetUrlPrefix();
+
+    public void setStaticAssetUrlPrefix(String prefix);
+
+    /**
+     * Returns the value configured for the current environment
+     * for the static asset url prefix.   If this is different than
+     * the common value, then the URLs will get rewritten by the
+     * FieldMapWrapper when called from the DisplayContentTag or
+     * ProcessURLFilter.
+     *
+     * @return
+     */
+    public String getStaticAssetEnvironmentUrlPrefix();
+
+    /**
+     * Sets the environment url prefix.
+     * @param prefix
+     */
+    public void setStaticAssetEnvironmentUrlPrefix(String prefix);
+
+    /**
+     * Returns the value configured for the current environment
+     * for the static asset url prefix for secure requests.
+     *
+     * If this is different than the common value, then the URLs will
+     * get rewritten by the
+     * FieldMapWrapper when called from the DisplayContentTag or
+     * ProcessURLFilter.
+     *
+     * @return
+     */
+    public String getStaticAssetEnvironmentSecureUrlPrefix();
+
+    /**
+     * Sets the environment URL prefix.
+     */
+    public void setStaticAssetEnvironmentSecureUrlPrefix(String prefix);
+
+    /**
+     * If set to true, then this service will not use the SandBox concept
+     * and will instead automatically promote images to production
+     * as they are entered into the system.
+     *
+     * This is recommended for the best workflow within the BLC-CMS and has
+     * been set as the default behavior.
+     *
+     */
+    public boolean getAutomaticallyApproveAndPromoteStaticAssets();
+
+    /**
+     * If set to true, then this service will not use the SandBox concept
+     * and will instead automatically promote images to production
+     * as they are entered into the system.
+     *
+     * This is recommended for the best workflow within the BLC-CMS and has
+     * been set as the default behavior.
+     *
+     */
+    public void setAutomaticallyApproveAndPromoteStaticAssets(boolean setting);
+
 
 }
