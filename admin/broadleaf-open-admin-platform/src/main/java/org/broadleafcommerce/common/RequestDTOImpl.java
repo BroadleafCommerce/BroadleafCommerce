@@ -16,11 +16,10 @@
 
 package org.broadleafcommerce.common;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * Created by bpolster.
@@ -45,7 +44,7 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     public RequestDTOImpl(HttpServletRequest request) {
         requestURI = request.getRequestURI();
         fullUrlWithQueryString = request.getRequestURL().toString();
-        secure = "HTTPS".equalsIgnoreCase(request.getScheme());
+        secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
     }
 
     /**
