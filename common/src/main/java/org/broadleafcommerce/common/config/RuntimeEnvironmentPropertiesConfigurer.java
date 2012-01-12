@@ -94,29 +94,34 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         Resource[] propertiesLocation = createPropertiesResource(environment);
         Resource[] commonLocation = createCommonResource();
         ArrayList<Resource> allLocations = new ArrayList<Resource>();
-        for (Resource resource : propertiesLocation) {
-            if (resource.exists()) {
-                allLocations.add(resource);
-            }
-        }
+
+        // Process common configuration first.   This allows the environment configuration to
+        // override the common values if needed.
         for (Resource resource : commonLocation) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
+
+        for (Resource resource : propertiesLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
+
         setLocations(allLocations.toArray(new Resource[] {}));
 
         validateProperties();
     }
 
-    protected boolean compareProperties(Properties props1, Properties props2) throws IOException {
+    protected boolean compareProperties(Properties props1, Properties props2, String envInner) throws IOException {
         Set<Object> outerKeys = props1.keySet();
         boolean missingKeys = false;
         for (Object keyObj : outerKeys) {
             String key = (String) keyObj;
             if (!props2.containsKey(key)) {
                 missingKeys = true;
-                LOG.error("Property file mismatch: " + key + " missing");
+                LOG.info("Property file mismatch: " + key + " missing from environment " + envInner + ".   Make sure that the a property placeholder (at least) is defined in each environment (e.g. myproperty=?).");
             }
         }
 
@@ -164,14 +169,16 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
                     Properties resource2 = mergeProperties(createPropertiesResource(envInner));
 
-                    missingKeys |= compareProperties(resource1, resource2);
+                    missingKeys |= compareProperties(resource1, resource2, envInner);
                 }
             }
         }
 
-        if (missingKeys) {
+        // BP:  Removing exception.   Having "fake" properties is no better than having none.
+        // Info messages will provide information on what properties are different by environment.
+        /*if (missingKeys) {
             throw new AssertionError("Missing runtime properties keys (log entries above have details)");
-        }
+        }*/
     }
 
     protected Properties mergeProperties(Resource[] locations) throws IOException {

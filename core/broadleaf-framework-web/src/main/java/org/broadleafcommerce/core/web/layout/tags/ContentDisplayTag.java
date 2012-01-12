@@ -16,18 +16,23 @@
 
 package org.broadleafcommerce.core.web.layout.tags;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
 import org.broadleafcommerce.core.marketing.domain.TargetContent;
 import org.broadleafcommerce.core.marketing.service.TargetContentService;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import java.util.List;
+
+/**
+ * This tag is no longer used.   
+ * Broadleaf 1.5 introduced the CMS system and uses a similar but functionally very 
+ * different tag {@link org.broadleafcommerce.cms.web.structure.DisplayContentTag}
+ *
+ * @deprecated  This class could be removed in a future version of the framework.
+ */
+@Deprecated
 public class ContentDisplayTag extends BodyTagSupport {
     private static final long serialVersionUID = 1L;
 

@@ -19,6 +19,11 @@ package org.broadleafcommerce.core.marketing.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ *
+ * @deprecated  No longer used as of Broadleaf 1.5
+ */
+@Deprecated
 public interface TargetContent extends Serializable {
 
 

@@ -45,6 +45,12 @@ import java.util.List;
 public class StaticAssetServiceImpl implements StaticAssetService {
 
     private static final Log LOG = LogFactory.getLog(StaticAssetServiceImpl.class);
+    
+    protected String staticAssetUrlPrefix;
+    protected String staticAssetEnvironmentUrlPrefix;
+    protected String staticAssetEnvironmentSecureUrlPrefix;
+
+    protected boolean automaticallyApproveAndPromoteStaticAssets=true;
 
     @Resource(name="blStaticAssetDao")
     protected StaticAssetDao staticAssetDao;
@@ -67,10 +73,21 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Override
     public StaticAsset addStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
+        
+        if (automaticallyApproveAndPromoteStaticAssets) {           
+            if (destinationSandbox != null && destinationSandbox.getSite() != null) {
+                destinationSandbox = destinationSandbox.getSite().getProductionSandbox();
+            } else {
+                // Null means production for single-site installations.
+                destinationSandbox = null;
+            }            
+        }
+        
         staticAsset.setSandbox(destinationSandbox);
-        staticAsset.setArchivedFlag(false);
         staticAsset.setDeletedFlag(false);
+        staticAsset.setArchivedFlag(false);
         StaticAsset newAsset = staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
+        
         if (! isProductionSandBox(destinationSandbox)) {
             sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
         }
@@ -82,16 +99,25 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         if (staticAsset.getLockedFlag()) {
             throw new IllegalArgumentException("Unable to update a locked record");
         }
+        
+        if (automaticallyApproveAndPromoteStaticAssets) {           
+            if (destSandbox != null && destSandbox.getSite() != null) {
+                destSandbox = destSandbox.getSite().getProductionSandbox();
+            } else {
+                // Null means production for single-site installations.
+                destSandbox = null;
+            }
+        }
 
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {
             if (staticAsset.getDeletedFlag()) {
                 SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(staticAsset.getSandbox(), SandBoxItemType.STATIC_ASSET, staticAsset.getId());
-                if (staticAsset.getOriginalAssetId() == null) {
-                    // This page was added in this sandbox and now needs to be deleted.
+                if (staticAsset.getOriginalAssetId() == null && item != null) {
+                    // This item was added in this sandbox and now needs to be deleted.
                     staticAsset.setArchivedFlag(true);
                     item.setArchivedFlag(true);
-                } else {
-                    // This page was being updated but now is being deleted - so change the
+                } else if (item != null) {
+                    // This item was being updated but now is being deleted - so change the
                     // sandbox operation type to deleted
                     item.setSandBoxOperationType(SandBoxOperationType.DELETE);
                     sandBoxItemDao.updateSandBoxItem(item);
@@ -321,5 +347,64 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             originalAsset.setLockedFlag(false);
             staticAssetDao.addOrUpdateStaticAsset(originalAsset, false);
         }
+    }
+
+
+    public String getStaticAssetUrlPrefix() {
+        return staticAssetUrlPrefix;
+    }
+
+    public void setStaticAssetUrlPrefix(String staticAssetUrlPrefix) {
+        this.staticAssetUrlPrefix = staticAssetUrlPrefix;
+    }
+
+    public String getStaticAssetEnvironmentUrlPrefix() {
+        return fixEnvironmentUrlPrefix(staticAssetEnvironmentUrlPrefix);
+    }
+
+    public void setStaticAssetEnvironmentUrlPrefix(String staticAssetEnvironmentUrlPrefix) {
+        this.staticAssetEnvironmentUrlPrefix = staticAssetEnvironmentUrlPrefix;
+    }
+
+    public String getStaticAssetEnvironmentSecureUrlPrefix() {
+        if (staticAssetEnvironmentSecureUrlPrefix == null) {
+            if (staticAssetEnvironmentUrlPrefix != null && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
+                staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentUrlPrefix.replace("http:", "https:");
+            }
+        }
+        return fixEnvironmentUrlPrefix(staticAssetEnvironmentSecureUrlPrefix);
+    }
+
+    public void setStaticAssetEnvironmentSecureUrlPrefix(String staticAssetEnvironmentSecureUrlPrefix) {        
+        this.staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentSecureUrlPrefix;
+    }
+
+    public boolean getAutomaticallyApproveAndPromoteStaticAssets() {
+        return automaticallyApproveAndPromoteStaticAssets;
+    }
+
+    public void setAutomaticallyApproveAndPromoteStaticAssets(boolean automaticallyApproveAndPromoteStaticAssets) {
+        this.automaticallyApproveAndPromoteStaticAssets = automaticallyApproveAndPromoteStaticAssets;
+    }
+
+    /**
+     * Trims whitespace.   If the value is the same as the internal url prefix, then return
+     * null.
+     *
+     * @param urlPrefix
+     * @return
+     */
+    private String fixEnvironmentUrlPrefix(String urlPrefix) {
+        if (urlPrefix != null) {
+            urlPrefix = urlPrefix.trim();
+            if ("".equals(urlPrefix)) {
+                // The value was not set.
+                urlPrefix = null;
+            } else if (urlPrefix.equals(staticAssetUrlPrefix)) {
+                // The value is the same as the default, so no processing needed.
+                urlPrefix = null;
+            }
+        }
+        return urlPrefix;
     }
 }

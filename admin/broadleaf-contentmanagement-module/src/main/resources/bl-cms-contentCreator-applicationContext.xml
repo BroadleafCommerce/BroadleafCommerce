@@ -5,7 +5,7 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="blUtilityRemoteService" class="org.broadleafcommerce.openadmin.server.service.UtilityRemoteService">
-        <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
+        <property name="assetServerUrlPrefix" value="${asset.server.url.prefix.internal}"/>
     </bean>
 
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
@@ -14,7 +14,7 @@
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler">
-                    <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
+                    <property name="assetServerUrlPrefix" value="${asset.server.url.prefix.internal}"/>
                 </bean>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler"/>

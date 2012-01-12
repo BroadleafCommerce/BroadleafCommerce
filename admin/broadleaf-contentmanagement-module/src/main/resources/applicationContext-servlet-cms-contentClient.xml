@@ -38,7 +38,7 @@
     <bean id="blStaticAssetView" class="org.broadleafcommerce.cms.web.file.StaticAssetView"/>
 
     <bean id="blStaticAssetViewController" class="org.broadleafcommerce.cms.web.file.StaticAssetViewController">
-        <property name="assetServerUrlPrefix" value="${asset.server.url.prefix}"/>
+        <property name="assetServerUrlPrefix" value="${asset.server.url.prefix.internal}"/>
         <property name="viewResolverName" value="blStaticAssetView"/>
     </bean>
 
@@ -47,7 +47,7 @@
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
             <map>
-                <entry key="/**/${asset.server.url.prefix}/**" value-ref="blStaticAssetViewController"/>
+                <entry key="/**/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
             </map>
         </property>
     </bean>

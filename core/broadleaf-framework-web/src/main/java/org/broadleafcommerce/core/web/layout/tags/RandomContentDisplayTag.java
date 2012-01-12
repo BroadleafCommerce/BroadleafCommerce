@@ -16,15 +16,19 @@
 
 package org.broadleafcommerce.core.web.layout.tags;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.broadleafcommerce.core.marketing.domain.TargetContent;
+
+import javax.servlet.jsp.JspException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import javax.servlet.jsp.JspException;
-
-import org.apache.commons.beanutils.BeanComparator;
-import org.broadleafcommerce.core.marketing.domain.TargetContent;
-
+/**
+ *
+ * @deprecated  No longer used as of Broadleaf 1.5
+ */
+@Deprecated
 public class RandomContentDisplayTag extends ContentDisplayTag {
     private static final long serialVersionUID = 1L;
 

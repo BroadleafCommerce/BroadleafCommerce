@@ -16,10 +16,15 @@
 
 package org.broadleafcommerce.core.marketing.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.marketing.domain.TargetContent;
 
+import java.util.List;
+
+/**
+ *
+ * @deprecated  No longer used as of Broadleaf 1.5
+ */
+@Deprecated
 public interface TargetContentService {
     public TargetContent findTargetContentById(Long targetContentId);
 

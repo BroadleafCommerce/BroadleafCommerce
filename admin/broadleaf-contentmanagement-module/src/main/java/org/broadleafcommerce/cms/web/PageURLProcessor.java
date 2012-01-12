@@ -18,8 +18,10 @@ package org.broadleafcommerce.cms.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -45,8 +47,13 @@ public class PageURLProcessor implements URLProcessor {
 
     @Resource(name = "blPageService")
     private PageService pageService;
+
+    @Resource(name = "blStaticAssetService")
+    private StaticAssetService staticAssetService;
+
     private String blcPageTemplateDirectory ="/WEB-INF/jsp/templates";
     private static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
+    private static final String PAGE_DATA_ATTRIBUTE_NAME = "BLC_PAGE_DATA";
 
     /**
      * Implementors of this interface will return true if they are able to process the
@@ -92,6 +99,10 @@ public class PageURLProcessor implements URLProcessor {
                 LOG.debug("Forwarding to page: " + templateJSPPath);
             }
             context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, p);
+            
+            FieldMapWrapper fm = new FieldMapWrapper(p.getPageFields(), staticAssetService, context.isSecure(), context.isProductionSandbox());
+            context.getRequest().setAttribute(PAGE_DATA_ATTRIBUTE_NAME, fm);
+
             RequestDispatcher rd = context.getRequest().getRequestDispatcher(templateJSPPath);
             rd.forward(context.getRequest(), context.getResponse());
         }
