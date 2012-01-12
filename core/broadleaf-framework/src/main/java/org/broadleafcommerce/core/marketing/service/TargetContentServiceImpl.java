@@ -16,15 +16,19 @@
 
 package org.broadleafcommerce.core.marketing.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.marketing.dao.TargetContentDao;
 import org.broadleafcommerce.core.marketing.domain.TargetContent;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 @Service("blTargetContentService")
+/**
+ *
+ * @deprecated  No longer used as of Broadleaf 1.5
+ */
+@Deprecated
 public class TargetContentServiceImpl implements TargetContentService {
 
     @Resource(name="blTargetContentDao")

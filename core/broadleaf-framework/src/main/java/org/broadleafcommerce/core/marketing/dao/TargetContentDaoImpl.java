@@ -28,6 +28,11 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository("blTargetContentDao")
+/**
+ *
+ * @deprecated  No longer used as of Broadleaf 1.5
+ */
+@Deprecated
 public class TargetContentDaoImpl implements TargetContentDao {
 
     @PersistenceContext(unitName = "blPU")
