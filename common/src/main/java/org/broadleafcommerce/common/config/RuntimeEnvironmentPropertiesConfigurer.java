@@ -94,16 +94,21 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         Resource[] propertiesLocation = createPropertiesResource(environment);
         Resource[] commonLocation = createCommonResource();
         ArrayList<Resource> allLocations = new ArrayList<Resource>();
-        for (Resource resource : propertiesLocation) {
-            if (resource.exists()) {
-                allLocations.add(resource);
-            }
-        }
+
+        // Process common configuration first.   This allows the environment configuration to
+        // override the common values if needed.
         for (Resource resource : commonLocation) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
+
+        for (Resource resource : propertiesLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
+
         setLocations(allLocations.toArray(new Resource[] {}));
 
         validateProperties();
