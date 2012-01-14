@@ -34,7 +34,6 @@ import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.view.Display;
-import org.broadleafcommerce.openadmin.client.view.MasterView;
 import org.broadleafcommerce.openadmin.client.view.UIFactory;
 
 import java.util.HashMap;
@@ -68,40 +67,44 @@ public class AppController implements ValueChangeHandler<String> {
 		History.addValueChangeHandler(this);
 	}
     
-    private void buildHistoryNewItem(String pageKey) {
+    private void buildHistoryNewItem(String pageKey, String moduleKey) {
         String token = History.getToken();
-        String destinationPage = "moduleKey="+ MasterView.moduleKey+"&pageKey="+pageKey;
+        String destinationPage = "moduleKey="+ moduleKey+"&pageKey="+pageKey;
         if (BLCLaunch.getDefaultItem(token) != null) {
             destinationPage = destinationPage + "&itemId="+BLCLaunch.getDefaultItem(token);
         }
         History.newItem(destinationPage);
     }
 
-	public void go(final Canvas container, HashMap<String, String[]> pages, String pageKey, boolean firstTime) {
+    public void clearCurrentView() {
+        uiFactory.clearCurrentView();
+    }
+
+	public void go(final Canvas container, HashMap<String, String[]> pages, String pageKey, String moduleKey, boolean firstTime) {
 		this.pages = pages;
 		this.container = container;
 
         if (firstTime) {
             String token = History.getToken();
-            if (pageKey.equals(BLCLaunch.getSelectedPage(token)) && MasterView.moduleKey.equals(BLCLaunch.getSelectedModule(token))) {
+            if (pageKey.equals(BLCLaunch.getSelectedPage(token)) && moduleKey.equals(BLCLaunch.getSelectedModule(token))) {
                 String itemId = BLCLaunch.getDefaultItem(token);
                 showView(pages.get(pageKey)[0], pages.get(pageKey)[1], itemId);
             } else {
-                buildHistoryNewItem(pageKey);
+                buildHistoryNewItem(pageKey, moduleKey);
             }
             return;
         }
 
         if (pageKey != null && pages.get(pageKey) != null) {
             if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(pageKey)[0])) {
-                buildHistoryNewItem(pageKey);
+                buildHistoryNewItem(pageKey, moduleKey);
                 return;
             }
         }
 
         for (String sectionTitle : pages.keySet()){
 	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
-                buildHistoryNewItem(sectionTitle);
+                buildHistoryNewItem(sectionTitle, moduleKey);
 			    break;
 	    	}
 		}
