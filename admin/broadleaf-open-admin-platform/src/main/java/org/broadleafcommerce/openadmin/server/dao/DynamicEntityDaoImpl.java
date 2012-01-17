@@ -531,6 +531,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 }
                                 if (localMetadata.getPresentationAttributes().getExplicitFieldType() != null) {
                                     serverMetadata.getPresentationAttributes().setExplicitFieldType(localMetadata.getPresentationAttributes().getExplicitFieldType());
+                                    serverMetadata.setFieldType(localMetadata.getPresentationAttributes().getExplicitFieldType());
                                 }
                                 if (localMetadata.getPresentationAttributes().getGroup() != null) {
                                     serverMetadata.getPresentationAttributes().setGroup(localMetadata.getPresentationAttributes().getGroup());
@@ -611,6 +612,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     attr.setVisibility(annot.visibility());
                     attr.setOrder(annot.order());
                     attr.setExplicitFieldType(annot.fieldType());
+                    if (annot.fieldType() != SupportedFieldType.UNKNOWN) {
+                        metadata.setFieldType(annot.fieldType());
+                    }
                     attr.setGroup(annot.group());
                     attr.setGroupCollapsed(annot.groupCollapsed());
                     attr.setGroupOrder(annot.groupOrder());
