@@ -37,7 +37,7 @@ public final class FilterCriterionProviders {
     
     public static final FilterCriterionProvider LIKE = new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-            return Restrictions.ilike(targetPropertyName, (String) directValues[0], MatchMode.ANYWHERE);
+            return Restrictions.ilike(targetPropertyName, (String) directValues[0], MatchMode.START);
         }
     };
     
