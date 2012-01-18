@@ -161,7 +161,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                     if (filterValue != null) {
                         filterString = filterValue.toString();
                     }
-                    SupportedFieldType fieldType = SupportedFieldType.valueOf(dataSource.getField(fieldName).getAttribute("fieldType"));
+                    String fieldTypeVal = dataSource.getField(fieldName).getAttribute("fieldType");
+                    SupportedFieldType fieldType = SupportedFieldType.valueOf(fieldTypeVal==null?SupportedFieldType.STRING.name():fieldTypeVal);
                     if (fieldType != null) {
                         switch (fieldType) {
                             case DECIMAL:
@@ -249,7 +250,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                         } else {
                             newItems[j] = value.isObject().get("value").isString().stringValue();
                         }
-                        SupportedFieldType fieldType = SupportedFieldType.valueOf(dataSource.getField(val.isString().stringValue()).getAttribute("fieldType"));
+                        String fieldTypeVal = dataSource.getField(val.isString().stringValue()).getAttribute("fieldType");
+                        SupportedFieldType fieldType = SupportedFieldType.valueOf(fieldTypeVal==null?SupportedFieldType.STRING.name():fieldTypeVal);
                         if (fieldType != null) {
                             switch (fieldType) {
                                 case DECIMAL:
