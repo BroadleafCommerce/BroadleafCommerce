@@ -1,9 +1,28 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.broadleafcommerce.common.extensibility.jpa.convert.jaxb;
 
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
+import javassist.bytecode.MethodInfo;
 import javassist.bytecode.annotation.Annotation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
@@ -30,6 +49,7 @@ import java.util.*;
  */
 public class JAXBPropertyOmittingClassTransformer implements BroadleafClassTransformer {
 
+    private static final Log LOG = LogFactory.getLog(JAXBPropertyOmittingClassTransformer.class);
     private static final String KEY_PREFIX = "broadleaf.ejb.entities.jaxb.omit_properties.";
 
     protected Map<String,HashSet<String>> classInfo = new HashMap<String, HashSet<String>>();
@@ -52,7 +72,28 @@ public class JAXBPropertyOmittingClassTransformer implements BroadleafClassTrans
                 Annotation transientAnnotation = new Annotation(XmlTransient.class.getName(), constantPool);
                 annotationsAttribute.addAnnotation(transientAnnotation);
                 for (String methodName : methodNames) {
-                    List<?> methodAttributes = classFile.getMethod(methodName).getAttributes();
+                    MethodInfo methodInfo = classFile.getMethod(methodName);
+                    if (methodInfo == null) {
+                        methodName = Character.toUpperCase(methodName.charAt(0)) + methodName.substring(1);
+                        String tmpMethodName = "get" + methodName;
+
+                        methodInfo = classFile.getMethod(tmpMethodName);
+
+                        if (methodInfo == null) {
+                            tmpMethodName = "is" + methodName;
+                            methodInfo = classFile.getMethod(tmpMethodName);
+
+                            if (methodInfo == null){
+                                //We still haven't found a method.
+                                //Log it an continue on.
+                                LOG.error("Error finding property of method associated with name "
+                                        + methodName + " in class " + convertedClassName + ". Ignoring.");
+                                continue;
+                            }
+                        }
+                    }
+
+                    List<?> methodAttributes = methodInfo.getAttributes();
                     Iterator<?> itr = methodAttributes.iterator();
                     while(itr.hasNext()) {
                         Object object = itr.next();
@@ -68,7 +109,7 @@ public class JAXBPropertyOmittingClassTransformer implements BroadleafClassTrans
                             itr.remove();
                         }
                     }
-                    classFile.getMethod(methodName).getAttributes().add(annotationsAttribute);
+                    methodInfo.getAttributes().add(annotationsAttribute);
 
                 }
 
