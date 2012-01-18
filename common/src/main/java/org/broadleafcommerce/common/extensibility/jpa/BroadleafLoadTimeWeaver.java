@@ -23,6 +23,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.broadleafcommerce.common.extensibility.InstrumentationRuntimeFactory;
 import org.broadleafcommerce.instrument.BroadleafInstrumentationSavingAgent;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.instrument.classloading.SimpleThrowawayClassLoader;
@@ -129,7 +130,7 @@ public class BroadleafLoadTimeWeaver implements LoadTimeWeaver {
 			return InstrumentationAccessor.getInstrumentation();
 		}
 		else {
-			return null;
+			return InstrumentationRuntimeFactory.getInstrumentation();
 		}
 	}
 
