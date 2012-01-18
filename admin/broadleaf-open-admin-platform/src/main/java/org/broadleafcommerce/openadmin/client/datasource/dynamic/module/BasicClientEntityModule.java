@@ -161,8 +161,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                     if (filterValue != null) {
                         filterString = filterValue.toString();
                     }
-                    String fieldTypeVal = dataSource.getField(fieldName).getAttribute("fieldType");
-                    SupportedFieldType fieldType = SupportedFieldType.valueOf(fieldTypeVal==null?SupportedFieldType.STRING.name():fieldTypeVal);
+                    String fieldTypeVal = null;
+                    DataSourceField field = dataSource.getField(fieldName);
+                    if (field != null) {
+                        fieldTypeVal = field.getAttribute("fieldType");
+                    }
+                    SupportedFieldType fieldType = fieldTypeVal==null?SupportedFieldType.STRING:SupportedFieldType.valueOf(fieldTypeVal);
                     if (fieldType != null) {
                         switch (fieldType) {
                             case DECIMAL:
@@ -250,8 +254,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                         } else {
                             newItems[j] = value.isObject().get("value").isString().stringValue();
                         }
-                        String fieldTypeVal = dataSource.getField(val.isString().stringValue()).getAttribute("fieldType");
-                        SupportedFieldType fieldType = SupportedFieldType.valueOf(fieldTypeVal==null?SupportedFieldType.STRING.name():fieldTypeVal);
+                        String fieldTypeVal = null;
+                        DataSourceField field = dataSource.getField(val.isString().stringValue());
+                        if (field != null) {
+                            fieldTypeVal = field.getAttribute("fieldType");
+                        }
+                        SupportedFieldType fieldType = fieldTypeVal==null?SupportedFieldType.STRING:SupportedFieldType.valueOf(fieldTypeVal);
                         if (fieldType != null) {
                             switch (fieldType) {
                                 case DECIMAL:
