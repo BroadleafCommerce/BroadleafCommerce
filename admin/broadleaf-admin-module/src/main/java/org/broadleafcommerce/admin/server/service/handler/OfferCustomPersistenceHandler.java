@@ -194,6 +194,24 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             //reverse this behavior
             prop.setValue(prop.getUnHtmlEncodedValue());
         }
+        prop = entity.findProperty("appliesToCustomerRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToOrderRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToFulfillmentGroupRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
     }
 
 	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
