@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,7 +75,6 @@ public class JAXBPropertyClassTransformer implements BroadleafClassTransformer {
             if ((omitMethodNames == null || omitMethodNames.isEmpty()) && (addMethodNames == null || addMethodNames.isEmpty())) {
                 return null;
             }
-
 
             ClassFile classFile = new ClassFile(new DataInputStream(new ByteArrayInputStream(classfileBuffer)));
             ConstPool constantPool = classFile.getConstPool();
@@ -141,10 +141,9 @@ public class JAXBPropertyClassTransformer implements BroadleafClassTransformer {
                                     //This is a JAXB annotation. But what kind?
                                     //If it's XMLTransient, then we don't want to add it
                                     if (!typeName.equals(XmlTransient.class.getName())){
-                                        if (typeName.equals(XmlElement.class.getName()) || typeName.equals(XmlAttribute.class.getName())){
-                                            //If we find an XMLElement or XMLAttribute annotation, keep track of it so we don't additionally add it.
-                                            foundXmlDescriptors = true;
-                                        }
+                                        //We found a JAXB annotation that is not the XmlTransient annotation.
+                                        //Assume it is already dealing with serialization
+                                        foundXmlDescriptors = true;
                                         annotationsAttribute.addAnnotation(annotation);
                                     }
                                 } else {
@@ -155,7 +154,12 @@ public class JAXBPropertyClassTransformer implements BroadleafClassTransformer {
                             itr.remove();
 
                             if (!foundXmlDescriptors) {
-                                //We didn't find an XMLAttribute or XMLElement annotation, so add one.
+                                //We didn't find a JAXB annotation, so add one.
+                                if(aClass.getMethod(methodName).getReturnType().isAssignableFrom(Collection.class)) {
+                                    Annotation elementAnnotation = new Annotation(XmlElementWrapper.class.getName(), constantPool);
+                                    annotationsAttribute.addAnnotation(elementAnnotation);    
+                                }
+
                                 Annotation elementAnnotation = new Annotation(XmlElement.class.getName(), constantPool);
                                 annotationsAttribute.addAnnotation(elementAnnotation);
                             }
