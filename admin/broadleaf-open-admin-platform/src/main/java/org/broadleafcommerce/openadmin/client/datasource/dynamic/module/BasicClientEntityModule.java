@@ -161,7 +161,30 @@ public class BasicClientEntityModule implements DataSourceModule {
                     if (filterValue != null) {
                         filterString = filterValue.toString();
                     }
-                    filterCriteria.setFilterValue(dataSource.stripDuplicateAllowSpecialCharacters(filterString));
+                    String fieldTypeVal = null;
+                    DataSourceField field = dataSource.getField(fieldName);
+                    if (field != null) {
+                        fieldTypeVal = field.getAttribute("fieldType");
+                    }
+                    SupportedFieldType fieldType = fieldTypeVal==null?SupportedFieldType.STRING:SupportedFieldType.valueOf(fieldTypeVal);
+                    if (fieldType != null) {
+                        switch (fieldType) {
+                            case DECIMAL:
+                                processFilterValueClause(filterCriteria, filterString);
+                                break;
+                            case INTEGER:
+                                processFilterValueClause(filterCriteria, filterString);
+                                break;
+                            case MONEY:
+                                processFilterValueClause(filterCriteria, filterString);
+                                break;
+                            default:
+                                filterCriteria.setFilterValue(dataSource.stripDuplicateAllowSpecialCharacters(filterString));
+                                break;
+                        }
+                    } else {
+                        filterCriteria.setFilterValue(dataSource.stripDuplicateAllowSpecialCharacters(filterString));
+                    }
         		} else {
         			JSONValue value = JSONParser.parse(jsObj);
         			JSONObject criteriaObj = value.isObject();
@@ -177,7 +200,19 @@ public class BasicClientEntityModule implements DataSourceModule {
         
         return cto;
     }
-    
+
+    protected void processFilterValueClause(FilterAndSortCriteria filterCriteria, String filterString) {
+        String filterVal = dataSource.stripDuplicateAllowSpecialCharacters(filterString);
+        int pos = filterVal.indexOf("-");
+        if (pos > 0) {
+            String filterValue1 = filterVal.substring(0, pos).trim();
+            String filterValue2 = filterVal.substring(pos + 1, filterVal.length()).trim();
+            filterCriteria.setFilterValues(filterValue1, filterValue2);
+        } else {
+            filterCriteria.setFilterValue(filterVal);
+        }
+    }
+
     public ForeignKey getCurrentForeignKey() {
 		return currentForeignKey;
 	}
@@ -204,27 +239,45 @@ public class BasicClientEntityModule implements DataSourceModule {
 						JSONArray array = itemObj.get("criteria").isArray();
 						buildCriteria(array, cto);
 					} else {
-						FilterAndSortCriteria filterCriteria = cto.get(val.isString().stringValue());
-						String[] items = filterCriteria.getFilterValues();
-						String[] newItems = new String[items.length + 1];
-						int j = 0;
-						for (String item : items) {
-							newItems[j] = item;
-							j++;
-						}
-						JSONValue value = itemObj.get("value");
-						JSONString strVal = value.isString();
-						if (strVal != null) {
-							newItems[j] = strVal.stringValue();
-						} else {
-							newItems[j] = value.isObject().get("value").isString().stringValue();
-							/*
-							 * TODO need to add special parsing for relative dates. Convert this relative
-							 * value to an actual date string.
-							 */
-						}
-						
-						filterCriteria.setFilterValues(newItems);
+                        FilterAndSortCriteria filterCriteria = cto.get(val.isString().stringValue());
+                        String[] items = filterCriteria.getFilterValues();
+                        String[] newItems = new String[items.length + 1];
+                        int j = 0;
+                        for (String item : items) {
+                            newItems[j] = item;
+                            j++;
+                        }
+                        JSONValue value = itemObj.get("value");
+                        JSONString strVal = value.isString();
+                        if (strVal != null) {
+                            newItems[j] = strVal.stringValue();
+                        } else {
+                            newItems[j] = value.isObject().get("value").isString().stringValue();
+                        }
+                        String fieldTypeVal = null;
+                        DataSourceField field = dataSource.getField(val.isString().stringValue());
+                        if (field != null) {
+                            fieldTypeVal = field.getAttribute("fieldType");
+                        }
+                        SupportedFieldType fieldType = fieldTypeVal==null?SupportedFieldType.STRING:SupportedFieldType.valueOf(fieldTypeVal);
+                        if (fieldType != null) {
+                            switch (fieldType) {
+                                case DECIMAL:
+                                    processFilterValueClause(filterCriteria, newItems[j]);
+                                    break;
+                                case INTEGER:
+                                    processFilterValueClause(filterCriteria, newItems[j]);
+                                    break;
+                                case MONEY:
+                                    processFilterValueClause(filterCriteria, newItems[j]);
+                                    break;
+                                default:
+                                    filterCriteria.setFilterValues(newItems);
+                                    break;
+                            }
+                        } else {
+                            filterCriteria.setFilterValues(newItems);
+                        }
 					}
 				}
 			}

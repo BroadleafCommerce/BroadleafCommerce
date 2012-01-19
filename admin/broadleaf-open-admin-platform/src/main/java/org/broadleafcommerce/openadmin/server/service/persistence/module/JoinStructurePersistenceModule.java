@@ -16,10 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -37,12 +44,6 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.springframework.util.CollectionUtils;
-
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -71,7 +72,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	}
 	
 	protected Serializable createPopulatedJoinStructureInstance(JoinStructure joinStructure, Entity entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, NumberFormatException, InvocationTargetException, NoSuchMethodException {
-		Serializable instance = (Serializable) Class.forName(joinStructure.getJoinStructureEntityClassname()).newInstance();
+		Serializable instance = (Serializable) Class.forName(StringUtils.isEmpty(joinStructure.getJoinStructureEntityPolymorphicType())?joinStructure.getJoinStructureEntityClassname():joinStructure.getJoinStructureEntityPolymorphicType()).newInstance();
 		String targetPath = joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty();
 		String linkedPath = joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty();
 		getFieldManager().setFieldValue(instance, linkedPath, Long.valueOf(entity.findProperty(linkedPath).getValue()));
@@ -87,9 +88,10 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 			if (joinStructure != null) {
+                Class<?>[] entities = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
 				Map<String, FieldMetadata> joinMergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 					joinStructure.getJoinStructureEntityClassname(), 
-					new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
+                    entities,
 					null, 
 					new String[]{}, 
 					new ForeignKey[]{},
@@ -144,9 +146,10 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                 persistencePerspective.getConfigurationKey(),
 				""
 			);
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
+                entities2,
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
@@ -229,9 +232,10 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 				sortCriteria.setSortAscending(joinStructure.getSortAscending());
 			}
 
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
+                entities2,
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
@@ -312,9 +316,10 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		Entity entity = persistencePackage.getEntity();
 		try {
 			JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+            Class<?>[] entities = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
+                entities,
 				null, 
 				new String[]{}, 
 				new ForeignKey[]{},
@@ -363,10 +368,11 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
                 persistencePerspective.getConfigurationKey(),
 				""
 			);
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
 			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
 				joinStructure.getJoinStructureEntityClassname(), 
-				new Class[]{Class.forName(joinStructure.getJoinStructureEntityClassname())},
-				null, 
+                entities2,
+				null,
 				new String[]{}, 
 				new ForeignKey[]{},
 				MergedPropertyType.JOINSTRUCTURE,

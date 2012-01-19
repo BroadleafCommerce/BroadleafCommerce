@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspectiveItemVisitor;
 
 /**
@@ -25,7 +23,7 @@ import org.broadleafcommerce.openadmin.client.dto.visitor.PersistencePerspective
  * @author jfischer
  *
  */
-public class JoinStructure implements Serializable, PersistencePerspectiveItem {
+public class JoinStructure implements PersistencePerspectiveItem {
 
 	private static final long serialVersionUID = 1L;
 
@@ -33,6 +31,7 @@ public class JoinStructure implements Serializable, PersistencePerspectiveItem {
 	private String linkedObjectPath;
 	private String targetObjectPath;
 	private String joinStructureEntityClassname;
+    private String joinStructureEntityPolymorphicType;
 	private String sortField;
 	private Boolean sortAscending;
 	private String linkedIdProperty;
@@ -46,12 +45,21 @@ public class JoinStructure implements Serializable, PersistencePerspectiveItem {
 	public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname) {
 		this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, null, null);
 	}
+    
+    public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String joinStructureEntityPolymorphicType) {
+        this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, joinStructureEntityPolymorphicType, null, null);
+    }
+
+    public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String sortField, Boolean sortAscending) {
+        this(name, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, joinStructureEntityClassname, null, sortField, sortAscending);
+    }
 	
-	public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String sortField, Boolean sortAscending) {
+	public JoinStructure(String name, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String joinStructureEntityClassname, String joinStructureEntityPolymorphicType, String sortField, Boolean sortAscending) {
 		this.name = name;
 		this.linkedObjectPath = linkedObjectPath;
 		this.targetObjectPath = targetObjectPath;
 		this.joinStructureEntityClassname = joinStructureEntityClassname;
+        this.joinStructureEntityPolymorphicType = joinStructureEntityPolymorphicType;
 		this.sortField = sortField;
 		this.sortAscending = sortAscending;
 		this.linkedIdProperty = linkedIdProperty;
@@ -132,5 +140,13 @@ public class JoinStructure implements Serializable, PersistencePerspectiveItem {
 	
 	public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public String getJoinStructureEntityPolymorphicType() {
+        return joinStructureEntityPolymorphicType;
+    }
+
+    public void setJoinStructureEntityPolymorphicType(String joinStructureEntityPolymorphicType) {
+        this.joinStructureEntityPolymorphicType = joinStructureEntityPolymorphicType;
     }
 }
