@@ -18,19 +18,17 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
@@ -64,7 +62,6 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
         {
@@ -123,13 +120,11 @@ public class StructuredContentImpl implements StructuredContent {
     @JoinTable(name = "BLC_SC_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "ID"), inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @AdminPresentation(friendlyName="Original Item Id", order=1, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
@@ -156,7 +151,6 @@ public class StructuredContentImpl implements StructuredContent {
     @JoinTable(name = "BLC_SC_FLD_MAP", joinColumns = @JoinColumn(name = "SC_ID", referencedColumnName = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_FLD_ID", referencedColumnName = "SC_FLD_ID"))
     @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 

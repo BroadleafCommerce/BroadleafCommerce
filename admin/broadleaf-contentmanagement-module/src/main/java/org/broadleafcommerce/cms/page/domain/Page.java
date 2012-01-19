@@ -16,12 +16,11 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.Site;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -60,10 +59,6 @@ public interface Page extends Serializable {
 
     public void setSandbox(SandBox sandbox);
 
-    public Site getSite();
-
-    public void setSite(Site site);
-
     public Boolean getLockedFlag();
 
     public void setLockedFlag(Boolean lockedFlag);
@@ -81,5 +76,4 @@ public interface Page extends Serializable {
     public void setAuditable(AdminAuditable auditable);
 
     public Page cloneEntity();
-
 }

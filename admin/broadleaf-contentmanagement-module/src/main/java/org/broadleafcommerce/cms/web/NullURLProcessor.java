@@ -47,7 +47,7 @@ public class NullURLProcessor implements URLProcessor {
     }
 
     /**
-     *  The processURL method should not be called or the NullURLProcessor.   This class provides a cacheable
+     *  The processURL method should not be called on the NullURLProcessor.   This class provides a cacheable
      *  instance of URLProcessor that indicates to the controlling program (@see BroadleafProcessURLFilter)
      *  that the current URL cannot be processed.
      *
@@ -55,7 +55,7 @@ public class NullURLProcessor implements URLProcessor {
      * @return true if the processor was able to process the passed in URL.
      * @throws UnsupportedOperationException
      */
-    public void processURL(String requestURI) {
+    public boolean processURL(String requestURI) {
         throw new UnsupportedOperationException();
     }
 }

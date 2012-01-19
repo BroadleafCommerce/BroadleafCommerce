@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,11 +28,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 /**
  * 
  * @author jfischer
@@ -38,7 +36,6 @@ import org.hibernate.annotations.Parameter;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_RULE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
 public class StructuredContentRuleImpl implements StructuredContentRule {
 
 	private static final long serialVersionUID = 1L;

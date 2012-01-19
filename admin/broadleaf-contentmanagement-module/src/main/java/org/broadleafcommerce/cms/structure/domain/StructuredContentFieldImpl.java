@@ -45,7 +45,6 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 public class StructuredContentFieldImpl implements StructuredContentField {
 

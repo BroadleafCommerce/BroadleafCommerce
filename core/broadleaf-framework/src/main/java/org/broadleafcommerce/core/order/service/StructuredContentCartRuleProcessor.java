@@ -16,15 +16,18 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.*;
-
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
+import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
+import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.AbstractStructuredContentRuleProcessor;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -41,24 +44,22 @@ public class StructuredContentCartRuleProcessor extends AbstractStructuredConten
      * @return
      */
     @Override
-    public boolean checkForMatch(StructuredContent sc, Map<String, Object> valueMap) {
-        if (sc != null && sc.getStructuredContentMatchRules() != null) {
-            Set<StructuredContentItemCriteria> itemCriteriaSet = sc.getQualifyingItemCriteria();
+    public boolean checkForMatch(StructuredContentDTO sc, Map<String, Object> valueMap) {
+        List<ItemCriteriaDTO> itemCriterias = sc.getItemCriteriaDTOList();
 
-            if (itemCriteriaSet != null && itemCriteriaSet.size() > 0) {
-                Order order = lookupOrderForCustomer((Customer) valueMap.get("customer"));
+        if (itemCriterias != null && itemCriterias.size() > 0) {
 
-                if (order == null || order.getOrderItems() == null || order.getOrderItems().size() < 1) {
+            Order order = lookupOrderForCustomer((Customer) valueMap.get("customer"));
+
+            if (order == null || order.getOrderItems() == null || order.getOrderItems().size() < 1) {
+                return false;
+            }
+
+            for(ItemCriteriaDTO itemCriteria : itemCriterias) {
+                if (! checkItemCriteria(itemCriteria, order.getOrderItems())) {
+                    // Item criteria check failed.
                     return false;
                 }
-
-                for(StructuredContentItemCriteria itemCriteria : itemCriteriaSet) {
-                    if (! checkItemCriteria(itemCriteria, order.getOrderItems())) {
-                        // Item criteria check failed.
-                        return false;
-                    }
-                }
-
             }
         }
 
@@ -75,20 +76,20 @@ public class StructuredContentCartRuleProcessor extends AbstractStructuredConten
         return o;
     }
 
-    private boolean checkItemCriteria(StructuredContentItemCriteria itemCriteria, List<OrderItem> orderItems) {
+    private boolean checkItemCriteria(ItemCriteriaDTO itemCriteria, List<OrderItem> orderItems) {
         Map<String,Object> vars = new HashMap<String, Object>();
         int foundCount = 0;
         Iterator<OrderItem> items = orderItems.iterator();
-        while (foundCount < itemCriteria.getQuantity() && items.hasNext()) {
+        while (foundCount < itemCriteria.getQty() && items.hasNext()) {
             OrderItem currentItem = items.next();
             vars.put("discreteOrderItem", currentItem);
-            boolean match = executeExpression(itemCriteria.getOrderItemMatchRule(), vars);
+            boolean match = executeExpression(itemCriteria.getMatchRule(), vars);
 
             if (match) {
                 foundCount = foundCount + currentItem.getQuantity();
             }
         }
-        return (foundCount >= itemCriteria.getQuantity().intValue());
+        return (foundCount >= itemCriteria.getQty().intValue());
     }
 
     public void setOrderDao(OrderDao orderDao) {

@@ -19,9 +19,9 @@ package org.broadleafcommerce.cms.web.structure;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.cms.web.BroadleafProcessURLFilter;
-import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -126,34 +126,15 @@ public class DisplayContentTag extends BodyTagSupport {
             staticAssetService = (StaticAssetService) applicationContext.getBean("blStaticAssetService");
         }
     }
-
-    // The following FieldMapWrapper allows for JSP syntax to be item.body
-    // instead of item.body.value
-    private List<Map> wrapFieldMaps(List<StructuredContent> contentItems, HttpServletRequest request, boolean isProduction) {
-        boolean secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
-        if (contentItems != null) {
-            List<Map> contentFieldList = new ArrayList<Map>();
- 
-            //new FieldMapWrapper(
-            for (StructuredContent item : contentItems) {
-
-                contentFieldList.add(new FieldMapWrapper(item.getStructuredContentFields(), staticAssetService, secure, isProduction));
-            }
-            return contentFieldList;
-
-        } else {
-            return null;
+    
+    public boolean isSecure(HttpServletRequest request) {
+        boolean secure = false;
+        if (request != null) {
+             secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
         }
+        return secure;
     }
     
-    private boolean isProductionSandBox(SandBox dest) {
-        if (dest == null) {
-            return true;
-        } else {
-            return SandBoxType.PRODUCTION.equals(dest.getSandBoxType());
-        }
-    }
-
 
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -161,7 +142,7 @@ public class DisplayContentTag extends BodyTagSupport {
         SandBox currentSandbox = (SandBox) request.getAttribute(BroadleafProcessURLFilter.SANDBOX_VAR);
         initServices();
 
-        List<StructuredContent> contentItems;
+        List<StructuredContentDTO> contentItems;
         StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
 
         if (locale == null) {
@@ -171,20 +152,19 @@ public class DisplayContentTag extends BodyTagSupport {
         int cnt = (count == null) ? Integer.MAX_VALUE : count;
 
         if (contentName == null || "".equals(contentName)) {
-            contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, cnt, mvelParameters);
+            contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, cnt, mvelParameters, isSecure(request));
         } else {
-            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, cnt, mvelParameters);
+            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, cnt, mvelParameters, isSecure(request));
         }
 
         pageContext.setAttribute(getNumResultsVar(), contentItems.size());
         if (contentItems.size() > 0) {
-            List<Map> returnFields = wrapFieldMaps(contentItems, request, isProductionSandBox(currentSandbox));
-            pageContext.setAttribute(contentItemVar, returnFields.get(0));
-            pageContext.setAttribute(contentListVar, returnFields);
+            pageContext.setAttribute(contentItemVar, contentItems.get(0));
+            pageContext.setAttribute(contentListVar, contentItems);
             pageContext.setAttribute("structuredContentList", contentItems);
             pageContext.setAttribute(numResultsVar, contentItems.size());
         } else {
-            pageContext.setAttribute(contentItemVar, contentItems);
+            pageContext.setAttribute(contentItemVar, null);
             pageContext.setAttribute(contentListVar, null);
             pageContext.setAttribute("structuredContentList", null);
             pageContext.setAttribute(numResultsVar, 0);

@@ -19,9 +19,8 @@ package org.broadleafcommerce.cms.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
-import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.service.PageService;
-import org.broadleafcommerce.cms.web.utility.FieldMapWrapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -53,7 +52,6 @@ public class PageURLProcessor implements URLProcessor {
 
     private String blcPageTemplateDirectory ="/WEB-INF/jsp/templates";
     private static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
-    private static final String PAGE_DATA_ATTRIBUTE_NAME = "BLC_PAGE_DATA";
 
     /**
      * Implementors of this interface will return true if they are able to process the
@@ -70,7 +68,7 @@ public class PageURLProcessor implements URLProcessor {
     @Override
     public boolean canProcessURL(String key) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Page p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key);
+        PageDTO p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key, context.isSecure());
         context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, p);
         return (p != null);
     }
@@ -83,29 +81,30 @@ public class PageURLProcessor implements URLProcessor {
      *
      * @param key The URI to process
      *
+     * @return false if the url could not be processed
+     *
      * @throws java.io.IOException
      * @throws javax.servlet.ServletException
      */
-    public void processURL(String key) throws IOException, ServletException {
+    public boolean processURL(String key) throws IOException, ServletException {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        Page p = (Page) context.getRequest().getAttribute(PAGE_ATTRIBUTE_NAME);
+        PageDTO p = (PageDTO) context.getRequest().getAttribute(PAGE_ATTRIBUTE_NAME);
         if (p == null) {
-            p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key);
+            p = pageService.findPageByURI(context.getSandbox(), context.getLocale(), key, context.isSecure());
         }
 
         if (p != null) {
-            String templateJSPPath = new StringBuilder(blcPageTemplateDirectory).append(p.getPageTemplate().getTemplatePath()).append(".jsp").toString();
+            String templateJSPPath = new StringBuilder(blcPageTemplateDirectory).append(p.getTemplatePath()).append(".jsp").toString();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Forwarding to page: " + templateJSPPath);
             }
             context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, p);
-            
-            FieldMapWrapper fm = new FieldMapWrapper(p.getPageFields(), staticAssetService, context.isSecure(), context.isProductionSandbox());
-            context.getRequest().setAttribute(PAGE_DATA_ATTRIBUTE_NAME, fm);
 
             RequestDispatcher rd = context.getRequest().getRequestDispatcher(templateJSPPath);
             rd.forward(context.getRequest(), context.getResponse());
+            return true;
         }
+        return false;
     }
 
     /**

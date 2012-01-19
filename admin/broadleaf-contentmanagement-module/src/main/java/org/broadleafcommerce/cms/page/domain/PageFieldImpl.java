@@ -16,11 +16,9 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
@@ -45,7 +43,6 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_FLD")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 public class PageFieldImpl implements PageField {
 
@@ -110,10 +107,14 @@ public class PageFieldImpl implements PageField {
 
     @Override
     public String getValue() {
-        if (lobValue != null && lobValue.length() > 0) {
-            return lobValue;
+        if (processedValue != null) {
+            return processedValue;
         } else {
-            return stringValue;
+            if (stringValue != null && stringValue.length() > 0) {
+                return stringValue;
+            } else {
+                return lobValue;
+            }
         }
     }
 

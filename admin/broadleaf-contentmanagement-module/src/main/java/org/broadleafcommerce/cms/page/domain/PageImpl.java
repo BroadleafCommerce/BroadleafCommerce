@@ -16,20 +16,17 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
@@ -59,7 +56,6 @@ import java.util.Map;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
     {
@@ -112,7 +108,6 @@ public class PageImpl implements Page {
     @JoinTable(name = "BLC_PAGE_FLD_MAP", joinColumns = @JoinColumn(name = "PAGE_ID", referencedColumnName = "PAGE_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_FLD_ID", referencedColumnName = "PAGE_FLD_ID"))
     @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
 
@@ -145,12 +140,6 @@ public class PageImpl implements Page {
     @AdminPresentation(friendlyName="Original Page ID", order=6, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ORIG_PAGE_ID_INDX", columnNames={"ORIG_PAGE_ID"})
     protected Long originalPageId;
-
-    /*@ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")*/
-    @Transient
-    @AdminPresentation(excluded = true)
-    protected Site site;
 
     @Embedded
     protected AdminAuditable auditable = new AdminAuditable();
@@ -223,15 +212,6 @@ public class PageImpl implements Page {
         this.sandbox = sandbox;
     }
 
-     @Override
-    public Site getSite() {
-        return site;
-    }
-
-    @Override
-    public void setSite(Site site) {
-        this.site = site;
-    }
 
     @Override
     public Long getOriginalPageId() {
@@ -292,7 +272,6 @@ public class PageImpl implements Page {
     @Override
     public Page cloneEntity() {
         PageImpl newPage = new PageImpl();
-        newPage.site=site;
 
         newPage.archivedFlag = archivedFlag;
         newPage.deletedFlag = deletedFlag;

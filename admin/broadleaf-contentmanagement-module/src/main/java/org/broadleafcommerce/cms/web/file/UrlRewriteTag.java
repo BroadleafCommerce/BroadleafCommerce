@@ -81,11 +81,10 @@ public class UrlRewriteTag extends TagSupport {
         
         
         String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
-        String envPrefix = null;
-        if (isRequestSecure()) {
-            envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
-        } else {
-            envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
+        String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
+
+        if (envPrefix != null && isRequestSecure()) {
+            envPrefix = envPrefix.replace("http:", "https:");
         }
 
         if (envPrefix != null && ! envPrefix.equals(cmsPrefix) && value.contains(cmsPrefix)) {

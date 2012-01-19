@@ -124,23 +124,6 @@ public interface StaticAssetService extends SandBoxItemListener {
      */
     public void setStaticAssetEnvironmentUrlPrefix(String prefix);
 
-    /**
-     * Returns the value configured for the current environment
-     * for the static asset url prefix for secure requests.
-     *
-     * If this is different than the common value, then the URLs will
-     * get rewritten by the
-     * FieldMapWrapper when called from the DisplayContentTag or
-     * ProcessURLFilter.
-     *
-     * @return
-     */
-    public String getStaticAssetEnvironmentSecureUrlPrefix();
-
-    /**
-     * Sets the environment URL prefix.
-     */
-    public void setStaticAssetEnvironmentSecureUrlPrefix(String prefix);
 
     /**
      * If set to true, then this service will not use the SandBox concept

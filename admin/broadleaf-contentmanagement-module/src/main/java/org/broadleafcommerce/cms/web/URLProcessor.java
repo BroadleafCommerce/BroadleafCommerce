@@ -60,5 +60,5 @@ public interface URLProcessor {
      * @throws IOException
      * @throws ServletException
      */
-    void processURL(String key) throws IOException, ServletException;
+    boolean processURL(String key) throws IOException, ServletException;
 }
