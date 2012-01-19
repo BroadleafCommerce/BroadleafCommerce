@@ -112,8 +112,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         c.add(Restrictions.eq("archivedFlag", false));
 
         if (sandbox == null) {
-            // Query is hitting the production sandbox.
+            // Query is hitting the production sandbox for a single site
             c.add(Restrictions.isNull("sandbox"));
+            return c.list();
+        } if (SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
+            // Query is hitting the production sandbox for a multi-site
+            c.add(Restrictions.eq("sandbox", sandbox));
             return c.list();
         } else {
             Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
@@ -141,7 +145,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                 returnItems.put(content.getId(), content);
             }
 
-            // Iterate to remove items from the final list
+            // Need to remove all items in my current sandbox from the result list.
             for (StructuredContent content : resultList) {
                 if (content.getOriginalItemId() != null) {
                     returnItems.remove(content.getOriginalItemId());
@@ -164,6 +168,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (sandbox == null) {
             // Query is hitting the production sandbox.
             c.add(Restrictions.isNull("sandbox"));
+            return (Long) c.uniqueResult();
+        } else if (SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
+             // Query is hitting the production sandbox for a multi-site
+            c.add(Restrictions.eq("sandbox", sandbox));
             return (Long) c.uniqueResult();
         } else {
             Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);

@@ -17,7 +17,6 @@
 package org.broadleafcommerce.cms.web.structure;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
@@ -27,7 +26,6 @@ import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -156,11 +154,15 @@ public class DisplayContentTag extends BodyTagSupport {
         } else {
             contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, cnt, mvelParameters, isSecure(request));
         }
-
+                
         pageContext.setAttribute(getNumResultsVar(), contentItems.size());
         if (contentItems.size() > 0) {
-            pageContext.setAttribute(contentItemVar, contentItems.get(0));
-            pageContext.setAttribute(contentListVar, contentItems);
+            List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();
+            for(StructuredContentDTO item : contentItems) {
+                contentItemFields.add(item.getValues());
+            }
+            pageContext.setAttribute(contentItemVar, contentItemFields.get(0));
+            pageContext.setAttribute(contentListVar, contentItemFields);
             pageContext.setAttribute("structuredContentList", contentItems);
             pageContext.setAttribute(numResultsVar, contentItems.size());
         } else {

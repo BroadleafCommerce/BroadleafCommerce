@@ -6,7 +6,7 @@
 <div class="mainContentAreaFull" style="padding:8px;">
 <div id="cmsContent">
     <c:if test="${symbol_dollar}{BLC_PAGE ne null}">
-        ${symbol_dollar}{BLC_PAGE.values.body}
+        ${symbol_dollar}{BLC_PAGE.pageFields.body}
     </c:if>
 </div>
 </div>

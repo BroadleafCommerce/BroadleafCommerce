@@ -276,9 +276,9 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
             String originalValue = pf.getValue();
             if (envPrefix != null && pf.getValue() != null && originalValue.contains(cmsPrefix)) {
                 String fldValue = originalValue.replace(cmsPrefix, envPrefix);
-                pageDTO.getValues().put(fieldKey, fldValue);
+                pageDTO.getPageFields().put(fieldKey, fldValue);
             } else {
-                pageDTO.getValues().put(fieldKey, originalValue);
+                pageDTO.getPageFields().put(fieldKey, originalValue);
             }
         }
         return pageDTO;
