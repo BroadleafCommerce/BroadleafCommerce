@@ -25,12 +25,13 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.time.FixedTimeSource;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
-import org.broadleafcommerce.common.time.FixedTimeSource;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -85,6 +86,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private int maxCacheConcurrency = 3;
     private Cache<String, URLProcessor> urlCache;
 
+
     @Resource(name = "blSandBoxService")
     private SandBoxService sandBoxService;
 
@@ -114,7 +116,8 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     public static String SANDBOX_VAR = "blSandbox";
 
     // Properties to manage URLs that will not be processed by this filter.
-    private static final String BLC_ADMIN = "org.broadleafcommerce.admin";
+    private static final String BLC_ADMIN_GWT = "org.broadleafcommerce.admin";
+    private static final String BLC_ADMIN_PREFIX = "blcadmin";
     private static final String BLC_ADMIN_SERVICE = ".service";
     private HashSet<String> ignoreSuffixes;
 
@@ -195,11 +198,18 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("URL not being processed by a Broadleaf URLProcessor " + requestURIWithoutContext);
                 }
-                filterChain.doFilter(request, response);
+                StatusExposingServletResponse sesResponse = new StatusExposingServletResponse(response);
+                filterChain.doFilter(request, sesResponse);
+                if (sesResponse.getStatus() == sesResponse.SC_NOT_FOUND) {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Page not found.  Unable to render " + requestURIWithoutContext);
+                    }
+                    urlCache.invalidate(requestURIWithoutContext);
+                }
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("URL about to be processed by a Broadleaf URLProcessor " + requestURIWithoutContext);
-                }
+                }                
                 urlProcessor.processURL(requestURIWithoutContext);
             }
         } finally {
@@ -245,7 +255,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     }
 
     private URLProcessor determineURLProcessor(String requestURI) {
-        for (URLProcessor processor: getUrlProcessorList()) {
+         for (URLProcessor processor: getUrlProcessorList()) {
             if (processor.canProcessURL(requestURI)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("URLProcessor found for URI " + requestURI + " - " + processor.getClass().getName());
@@ -270,9 +280,11 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      * @return true if the {@code HttpServletRequest} should be processed
      */
     protected boolean shouldProcessURL(HttpServletRequest request, String requestURI) {
-        if (requestURI.contains(BLC_ADMIN) || requestURI.endsWith(BLC_ADMIN_SERVICE)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("BroadleafProcessURLFilter ignoring admin request URI " + requestURI);
+        if (requestURI.contains(BLC_ADMIN_GWT) || 
+            requestURI.endsWith(BLC_ADMIN_SERVICE) ||
+            requestURI.contains(BLC_ADMIN_PREFIX)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("BroadleafProcessURLFilter ignoring admin request URI " + requestURI);
             }
             return false;
         } else {
@@ -280,8 +292,8 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
             if (pos > 0) {
                 String suffix = requestURI.substring(pos);
                 if (getIgnoreSuffixes().contains(suffix.toLowerCase())) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("BroadleafProcessURLFilter ignoring request due to suffix " + requestURI);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("BroadleafProcessURLFilter ignoring request due to suffix " + requestURI);
                     }
                     return false;
                 }
@@ -396,11 +408,11 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
         if (sandboxIdStr != null) {
             try {
                 sandboxId = Long.valueOf(sandboxIdStr);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("SandboxId found on request " + sandboxId);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("SandboxId found on request " + sandboxId);
                 }
             } catch (NumberFormatException nfe) {
-                LOG.debug("blcSandboxId parameter could not be converted into a Long", nfe);
+                LOG.warn("blcSandboxId parameter could not be converted into a Long", nfe);
             }
         }
 
@@ -409,9 +421,9 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
             HttpSession session = request.getSession(false);
             if (session != null) {
                 sandboxId = (Long) session.getAttribute(SANDBOX_ID_VAR);
-                if (LOG.isDebugEnabled()) {
+                if (LOG.isTraceEnabled()) {
                     if (sandboxId != null) {
-                        LOG.debug("SandboxId found in session " + sandboxId);
+                        LOG.trace("SandboxId found in session " + sandboxId);
                     }
                 }
             }
@@ -509,7 +521,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      */
     protected Set getIgnoreSuffixes() {
         if (ignoreSuffixes == null || ignoreSuffixes.isEmpty()) {
-            String[] ignoreSuffixList = {".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".doc", ".eps", ".gif", ".hqx", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip"};
+            String[] ignoreSuffixList = {".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".css", ".doc", ".eps", ".gif", ".hqx", ".js", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip"};
             ignoreSuffixes = new HashSet<String>(Arrays.asList(ignoreSuffixList));
         }
         return ignoreSuffixes;

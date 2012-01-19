@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.cms.structure.service;
 
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 
 import java.util.Map;
 
@@ -50,5 +50,5 @@ public interface StructuredContentRuleProcessor {
      * @param sc
      * @return
      */
-    public boolean checkForMatch(StructuredContent sc, Map<String,Object> valueMap);
+    public boolean checkForMatch(StructuredContentDTO sc, Map<String,Object> valueMap);
 }

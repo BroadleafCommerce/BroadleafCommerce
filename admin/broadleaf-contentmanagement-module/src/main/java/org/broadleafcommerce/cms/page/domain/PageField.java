@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.cms.field.domain.FieldValueHolder;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
@@ -24,7 +23,7 @@ import java.io.Serializable;
 /**
  * Created by bpolster.
  */
-public interface PageField extends Serializable, FieldValueHolder {
+public interface PageField extends Serializable {
 
     public Long getId();
 

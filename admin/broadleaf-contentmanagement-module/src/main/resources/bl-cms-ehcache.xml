@@ -24,12 +24,42 @@
     	overflowToDisk="true"
     	timeToLiveSeconds="60"/>
 
-    <!-- 12 hour cache -->
+    <!-- 1 hour cache -->
     <cache
     	name="blCMSElements"
-    	maxElementsInMemory="100000"
+    	maxElementsInMemory="10000"
     	eternal="false"
         overflowToDisk="true"
-        timeToLiveSeconds="43200"/>
-    	
+        timeToLiveSeconds="3600"/>
+
+    <!-- Page Cache - 1 hour cache -->
+    <cache name="cmsPageCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
+
+    <!-- Structured Content Cache - 1 hour cache -->
+    <cache name="cmsStructuredContentCache"
+        maxElementsInMemory="5000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
+
+    <!-- If using message based cache-eviction, then the cmsPageCache can be set to eternal. -->
+    <!--
+        <cache name="cmsPageCache"
+            maxElementsInMemory="1000"
+            eternal="true"
+            overflowToDisk="true"/>
+        />
+
+        <cache name="cmsStructuredContentCache"
+            maxElementsInMemory="5000"
+            eternal="true"
+            overflowToDisk="true"/>
+        />
+
+      -->
+
 </ehcache>

@@ -16,13 +16,10 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -45,7 +42,6 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @EntityListeners(value = { AdminAuditableListener.class })
 public class StructuredContentFieldImpl implements StructuredContentField {
 
@@ -110,10 +106,10 @@ public class StructuredContentFieldImpl implements StructuredContentField {
 
     @Override
     public String getValue() {
-        if (lobValue != null && lobValue.length() > 0) {
-            return lobValue;
-        } else {
+        if (stringValue != null && stringValue.length() > 0) {
             return stringValue;
+        } else {
+            return lobValue;
         }
     }
 
@@ -152,36 +148,5 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
-
-    /**
-     * The value within an SCField may require processing.   To allow for efficient caching within the client,
-     * the post-processed value can be stored on the item itself.
-     *
-     * @return the processed value or null if no processed value exists for this item
-     */
-    @Override
-    public String getProcessedValue() {
-        return processedValue;
-    }
-
-    /**
-     * The value within an SCField may require processing.   To allow for efficient caching within the client,
-     * the post-processed value can be stored on the item itself.
-     *
-     * @param value              The post-processed value to be stored on the item.
-     * @param clearExistingValue If set to true will null out the underlying value.   This makes since for most
-     *                           implementations of this class because this data is read-only in most contexts and
-     *                           clearing the existing value will allow it to be garbage collected.    Since SC items
-     *                           can hold CLOB values this is an important memory concern.
-     */
-    @Override
-    public void setProcessedValue(@Nonnull String value, boolean clearExistingValue) {
-        this.processedValue = value;
-        if (clearExistingValue) {
-            setValue(null);
-        }
-    }
-
-
 }
 

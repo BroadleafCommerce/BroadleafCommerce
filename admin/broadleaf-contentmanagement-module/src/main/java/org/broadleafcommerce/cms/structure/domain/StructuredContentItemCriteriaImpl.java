@@ -16,11 +16,9 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -44,7 +42,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BLC_SC_ITEM_CRITERIA")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(friendlyName = "baseStructuredContentItemCriteria")
 public class StructuredContentItemCriteriaImpl implements StructuredContentItemCriteria {
 	

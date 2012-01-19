@@ -49,7 +49,7 @@
                         WHERE (sandboxItem.originalSandBox = :sandbox OR sandboxItem.sandBox = :sandbox) AND
                                sandboxItem.archivedFlag = false AND
                                sandboxItem.temporaryItemId = structuredContent.id)
-               ORDER BY priority
+               ORDER BY structuredContent.priority
 		</query>
 	</named-query>
 
