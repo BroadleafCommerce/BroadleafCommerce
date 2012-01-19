@@ -39,6 +39,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 
     protected Record associatedRecord;
 	protected AbstractDynamicDataSource abstractDynamicDataSource;
+    protected boolean readOnly = false;
 
     public AbstractSubPresentable(GridStructureDisplay display, String[] availableToTypes) {
         this.display = display;
@@ -125,6 +126,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 		} else {
 			enable();
 		}
+        this.readOnly = readOnly;
 	}
 
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {

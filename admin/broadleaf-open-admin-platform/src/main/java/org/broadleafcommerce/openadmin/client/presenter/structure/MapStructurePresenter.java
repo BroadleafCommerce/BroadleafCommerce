@@ -126,7 +126,7 @@ public class MapStructurePresenter extends AbstractSubPresentable {
             rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
                 @Override
                 public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
-                    entityEditDialog.editRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, gridFields, null);
+                    entityEditDialog.editRecord(entityEditDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, gridFields, null, readOnly);
                 }
             });
         }

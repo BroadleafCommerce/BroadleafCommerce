@@ -54,6 +54,8 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 	protected GridStructureView orderItemAdjustmentDisplay;
 	protected GridStructureView orderItemFeeDisplay;
 	protected GridStructureView fulfillmentGroupAdjustmentDisplay;
+    protected GridStructureView paymentResponseDisplay;
+    protected GridStructureView paymentLogDisplay;
     
 	public OrderView() {
 		setHeight100();
@@ -115,8 +117,16 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         Tab paymentInfoTab = new Tab(BLCMain.getMessageManager().getString("paymentInfoTabTitle"));
         paymentInfoTab.setID("orderPaymentInfoTab");
         paymentInfoDisplay = new SubItemView(BLCMain.getMessageManager().getString("paymentInfoListTitle"), false, false);
+
         additionalAttributesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("additionalAttributesListTitle"), false, false);
         ((FormOnlyView) paymentInfoDisplay.getFormOnlyDisplay()).addMember(additionalAttributesDisplay);
+
+        paymentResponseDisplay = new GridStructureView(BLCMain.getMessageManager().getString("paymentResponseListTitle"), false, false);
+        ((FormOnlyView) paymentInfoDisplay.getFormOnlyDisplay()).addMember(paymentResponseDisplay);
+
+        paymentLogDisplay = new GridStructureView(BLCMain.getMessageManager().getString("paymentLogListTitle"), false, false);
+        ((FormOnlyView) paymentInfoDisplay.getFormOnlyDisplay()).addMember(paymentLogDisplay);
+
         paymentInfoTab.setPane(paymentInfoDisplay);
         topTabSet.addTab(paymentInfoTab);
         
@@ -177,4 +187,12 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 	public GridStructureView getOrderItemFeeDisplay() {
 		return orderItemFeeDisplay;
 	}
+
+    public GridStructureView getPaymentLogDisplay() {
+        return paymentLogDisplay;
+    }
+
+    public GridStructureView getPaymentResponseDisplay() {
+        return paymentResponseDisplay;
+    }
 }

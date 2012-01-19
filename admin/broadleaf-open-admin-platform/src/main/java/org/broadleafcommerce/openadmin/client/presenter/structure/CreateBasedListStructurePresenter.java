@@ -130,7 +130,7 @@ public class CreateBasedListStructurePresenter extends AbstractSubPresentable {
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
-                BLCMain.ENTITY_ADD.editRecord(editDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, null);
+                BLCMain.ENTITY_ADD.editRecord(editDialogTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, null, null, readOnly);
             }
         });
 	}

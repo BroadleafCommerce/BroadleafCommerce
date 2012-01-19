@@ -136,7 +136,7 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
-                BLCMain.ENTITY_ADD.editRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, joinStructureFields, null);
+                BLCMain.ENTITY_ADD.editRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), null, joinStructureFields, null, readOnly);
             }
         });
 	}

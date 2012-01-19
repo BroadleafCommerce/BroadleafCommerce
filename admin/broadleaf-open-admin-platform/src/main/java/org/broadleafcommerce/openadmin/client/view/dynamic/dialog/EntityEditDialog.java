@@ -62,6 +62,7 @@ public class EntityEditDialog extends Window {
     protected VLayout vLayout;
     protected Boolean isHidden = true;
     protected VStack previewContainer;
+    protected IButton saveButton;
 
 	public EntityEditDialog() {
 		this.setIsModal(true);
@@ -94,7 +95,7 @@ public class EntityEditDialog extends Window {
 
         addItem(hStack);
 
-        IButton saveButton = new IButton("Save");
+        saveButton = new IButton("Save");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	if (dynamicForm.validate()) {
@@ -164,6 +165,7 @@ public class EntityEditDialog extends Window {
         dynamicForm.editNewRecord(initialValues);
 		show();
         redraw();
+        saveButton.setVisible(true);
         setHeight(20);
         int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
         if (formHeight > 600) {
@@ -221,7 +223,7 @@ public class EntityEditDialog extends Window {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
+	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields, boolean readOnly) {
         pictureStack.setVisible(false);
         if (showMedia && mediaField != null) {
             updateMedia(record.getAttribute(mediaField));
@@ -248,6 +250,7 @@ public class EntityEditDialog extends Window {
 		setTop(70);
 		show();
         redraw();
+        saveButton.setVisible(!readOnly);
         setHeight(20);
         int formHeight = hStack.getScrollHeight() + vLayout.getScrollHeight() + 30;
         if (formHeight > 600) {

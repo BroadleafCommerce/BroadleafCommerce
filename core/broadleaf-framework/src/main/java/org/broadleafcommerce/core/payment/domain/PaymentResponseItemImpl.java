@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,9 +31,14 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.CollectionOfElements;
@@ -59,57 +59,73 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
+    @AdminPresentation(friendlyName = "User Name", order = 1, group = "Payment Response", readOnly = true)
     protected String userName;
 
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "Amount", order = 2, group = "Payment Response", readOnly = true)
     protected BigDecimal amountPaid;
 
     @Column(name = "AUTHORIZATION_CODE")
+    @AdminPresentation(friendlyName = "Authorization Code", order = 3, group = "Payment Response", readOnly = true)
     protected String authorizationCode;
 
     @Column(name = "MIDDLEWARE_RESPONSE_CODE")
+    @AdminPresentation(friendlyName = "Middleware Response Code", order = 4, group = "Payment Response", readOnly = true)
     protected String middlewareResponseCode;
 
     @Column(name = "MIDDLEWARE_RESPONSE_TEXT")
+    @AdminPresentation(friendlyName = "Middleware Response Text", order = 5, group = "Payment Response", readOnly = true)
     protected String middlewareResponseText;
 
     @Column(name = "PROCESSOR_RESPONSE_CODE")
+    @AdminPresentation(friendlyName = "Processor Response Code", order = 6, group = "Payment Response", readOnly = true)
     protected String processorResponseCode;
 
     @Column(name = "PROCESSOR_RESPONSE_TEXT")
+    @AdminPresentation(friendlyName = "Processor Response Text", order = 7, group = "Payment Response", readOnly = true)
     protected String processorResponseText;
 
     @Column(name = "IMPLEMENTOR_RESPONSE_CODE")
+    @AdminPresentation(friendlyName = "Implementer Response Code", order = 8, group = "Payment Response", readOnly = true)
     protected String implementorResponseCode;
 
     @Column(name = "IMPLEMENTOR_RESPONSE_TEXT")
+    @AdminPresentation(friendlyName = "Implementer Response Text", order = 9, group = "Payment Response", readOnly = true)
     protected String implementorResponseText;
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
+    @AdminPresentation(friendlyName = "Response Ref Number", order = 10, group = "Payment Response", readOnly = true)
     protected String referenceNumber;
 
     @Column(name = "TRANSACTION_SUCCESS")
+    @AdminPresentation(friendlyName = "Transaction Successful", order = 11, group = "Payment Response", readOnly = true)
     protected Boolean transactionSuccess;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
+    @AdminPresentation(friendlyName = "Transaction Time", order = 12, group = "Payment Response", readOnly = true)
     protected Date transactionTimestamp;
 
     @Column(name = "TRANSACTION_ID")
+    @AdminPresentation(friendlyName = "Transaction Id", order = 13, group = "Payment Response", readOnly = true)
     protected String transactionId;
 
     @Column(name = "AVS_CODE")
+    @AdminPresentation(friendlyName = "AVS Code", order = 14, group = "Payment Response", readOnly = true)
     protected String avsCode;
 
     @Transient
     protected String cvvCode;
 
     @Column(name = "REMAINING_BALANCE", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "Remaining Balance", order = 15, group = "Payment Response", readOnly = true)
     protected BigDecimal remainingBalance;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
     @Index(name="PAYRESPONSE_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
+    @AdminPresentation(friendlyName = "Transaction Type", order = 16, group = "Payment Response", readOnly = true)
     protected String transactionType;
 
     @CollectionOfElements
@@ -120,6 +136,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Column(name = "ORDER_PAYMENT_ID")
     @Index(name="PAYRESPONSE_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
+    @AdminPresentation(excluded = true, readOnly = true)
     protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
@@ -129,6 +146,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
     @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
+    @AdminPresentation(friendlyName = "Payment Ref Number", order = 17, group = "Payment Response", readOnly = true)
     protected String paymentInfoReferenceNumber;
 
     public String getAuthorizationCode() {
@@ -244,11 +262,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     public Money getRemainingBalance() {
-        return new Money(remainingBalance);
+        return remainingBalance==null?null:new Money(remainingBalance);
     }
 
     public void setRemainingBalance(Money remainingBalance) {
-        this.remainingBalance = Money.toAmount(remainingBalance);
+        this.remainingBalance = remainingBalance==null?null:Money.toAmount(remainingBalance);
     }
 
     public TransactionType getTransactionType() {

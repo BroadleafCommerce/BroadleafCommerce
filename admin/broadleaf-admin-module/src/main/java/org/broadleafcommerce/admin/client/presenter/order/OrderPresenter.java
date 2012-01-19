@@ -19,6 +19,7 @@ package org.broadleafcommerce.admin.client.presenter.order;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.SortDirection;
@@ -38,6 +39,8 @@ import org.broadleafcommerce.admin.client.datasource.order.OrderItemListDataSour
 import org.broadleafcommerce.admin.client.datasource.order.OrderListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.PaymentAdditionalAttributesDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.PaymentInfoListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.order.PaymentLogListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.order.PaymentResponseItemListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.order.StateListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.order.OrderDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -70,6 +73,8 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	protected SubPresentable orderItemAdjustmentPresenter;
 	protected SubPresentable fulfillmentGroupAdjustmentPresenter;
 	protected SubPresentable feesPresenter;
+    protected SubPresentable paymentResponsePresenter;
+    protected SubPresentable paymentLogPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 	
 	@Override
@@ -93,6 +98,8 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		orderItemAdjustmentPresenter.bind();
 		fulfillmentGroupAdjustmentPresenter.bind();
 		feesPresenter.bind();
+        paymentResponsePresenter.bind();
+        paymentLogPresenter.bind();
 		selectionChangedHandlerRegistration.removeHandler();
 		display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
@@ -120,6 +127,10 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				ListGridRecord selectedRecord = event.getSelectedRecord();
 				if (event.getState()) {
 					additionalPaymentAttributesPresenter.load(selectedRecord, getPresenterSequenceSetupManager().getDataSource("paymentInfoDS"), null);
+                    
+                    String id = getPresenterSequenceSetupManager().getDataSource("paymentInfoDS").getPrimaryKeyValue(selectedRecord);
+                    getDisplay().getPaymentResponseDisplay().getGrid().fetchData(new Criteria("paymentInfoId", id));
+                    getDisplay().getPaymentLogDisplay().getGrid().fetchData(new Criteria("paymentInfoId", id));
 				}
 			}
 		});
@@ -273,6 +284,20 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				feesPresenter.setReadOnly(true);
 			}
 		}));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentResponseItemDS", new PaymentResponseItemListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                paymentResponsePresenter = new CreateBasedListStructurePresenter(getDisplay().getPaymentResponseDisplay(), null, BLCMain.getMessageManager().getString("paymentResponseListTitle"));
+                paymentResponsePresenter.setDataSource((ListGridDataSource) result, new String[]{"transactionTimestamp", "amountPaid", "transactionSuccess", "transactionType"}, new Boolean[]{false, false, false, false});
+                paymentResponsePresenter.setReadOnly(true);
+            }
+        }));
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentLogDS", new PaymentLogListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                paymentLogPresenter = new CreateBasedListStructurePresenter(getDisplay().getPaymentLogDisplay(), null, BLCMain.getMessageManager().getString("paymentLogListTitle"));
+                paymentLogPresenter.setDataSource((ListGridDataSource) result, new String[]{"transactionTimestamp", "amountPaid", "transactionType", "transactionSuccess", "logType"}, new Boolean[]{false, false, false, false, false});
+                paymentLogPresenter.setReadOnly(true);
+            }
+        }));
 	}
 	
 }

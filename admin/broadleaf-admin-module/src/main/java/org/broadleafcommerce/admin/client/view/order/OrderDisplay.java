@@ -51,5 +51,9 @@ public interface OrderDisplay extends DynamicEditDisplay {
 	public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay();
 	
 	public GridStructureView getOrderItemFeeDisplay();
+
+    public GridStructureView getPaymentLogDisplay();
+
+    public GridStructureView getPaymentResponseDisplay();
 	
 }

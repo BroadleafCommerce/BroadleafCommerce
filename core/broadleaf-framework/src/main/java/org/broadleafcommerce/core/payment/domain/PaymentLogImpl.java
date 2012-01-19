@@ -33,6 +33,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.common.money.Money;
@@ -55,14 +56,17 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "USER_NAME", nullable=false)
     @Index(name="PAYMENTLOG_USER_INDEX", columnNames={"USER_NAME"})
+    @AdminPresentation(friendlyName = "User Name", order = 1, group = "Payment Log", readOnly = true)
     protected String userName;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
+    @AdminPresentation(friendlyName = "Transaction Time", order = 3, group = "Payment Log", readOnly = true)
     protected Date transactionTimestamp;
 
     @Column(name = "ORDER_PAYMENT_ID")
     @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
+    @AdminPresentation(excluded = true, readOnly = true)
     protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
@@ -72,23 +76,29 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
     @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
+    @AdminPresentation(friendlyName = "Payment Ref Number", order = 4, group = "Payment Log", readOnly = true)
     protected String paymentInfoReferenceNumber;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
     @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
+    @AdminPresentation(friendlyName = "Transaction Type", order = 5, group = "Payment Log", readOnly = true)
     protected String transactionType;
 
     @Column(name = "TRANSACTION_SUCCESS")
+    @AdminPresentation(friendlyName = "Transaction Successfule", order = 6, group = "Payment Log", readOnly = true)
     protected Boolean transactionSuccess;
 
     @Column(name = "EXCEPTION_MESSAGE")
+    @AdminPresentation(friendlyName = "Exception Message", order = 7, group = "Payment Log", readOnly = true)
     protected String exceptionMessage;
 
     @Column(name = "LOG_TYPE", nullable=false)
     @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnNames={"LOG_TYPE"})
+    @AdminPresentation(friendlyName = "Type", order = 8, group = "Payment Log", readOnly = true)
     protected String logType;
 
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "Amount", order = 2, group = "Payment Log", readOnly = true)
     protected BigDecimal amountPaid;
 
     public Long getId() {

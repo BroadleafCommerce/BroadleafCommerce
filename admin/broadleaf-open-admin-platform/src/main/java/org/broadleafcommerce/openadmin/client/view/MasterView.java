@@ -466,7 +466,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                                             buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
                                         }
                                     }
-                                }, new String[]{"password"}, new String[]{});
+                                }, new String[]{"password"}, new String[]{}, false);
                             }
                         });
         
@@ -501,7 +501,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                                     buildHistoryNewItem(currentPage, BLCLaunch.getSelectedModule(History.getToken()), event.getRecord().getAttribute("id"));
                                 }
                             }
-                        }, null, new String[]{"login", "activeStatusFlag", "password"});
+                        }, null, new String[]{"login", "activeStatusFlag", "password"}, false);
                     }
                 });
 
