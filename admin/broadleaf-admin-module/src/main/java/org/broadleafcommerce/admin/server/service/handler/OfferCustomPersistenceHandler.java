@@ -25,7 +25,6 @@ import java.util.Map;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
@@ -190,6 +189,24 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     protected void removeHTMLEncoding(Entity entity) {
         Property prop = entity.findProperty("targetItemCriteria.orderItemMatchRule");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToCustomerRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToOrderRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToFulfillmentGroupRules");
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
