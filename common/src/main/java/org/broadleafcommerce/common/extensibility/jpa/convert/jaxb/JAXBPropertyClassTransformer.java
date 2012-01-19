@@ -42,7 +42,9 @@ import java.util.*;
 /**
  * This class allows us to remove JAXB entity and attribute annotations at runtime, and replace them
  * with javax.xml.bind.annotation.XmlTransient to suppress those properties from being serialized
- * in the case where entities are being serialized / deserialized for web services or using JAXB.
+ * in the case where entities are being serialized / deserialized for web services or using JAXB. It also
+ * allows us to add XmlElement and XmlElementWrapper to classes in the situation where they are
+ * transient by default.
  * <p/>
  * We are putting this logic inside a JPA class transformer for 2 reasons.  First, we are manipulating
  * Broadleaf entity classes, which also have JAXB mappings.  Second, JPA already provides a very
