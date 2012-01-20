@@ -45,23 +45,13 @@ public class UrlRewriteTag extends TagSupport {
     private String value;
     private String var;
 
-    private StaticAssetService staticAssetService;
+    private static StaticAssetService staticAssetService;
 
     protected void initServices() {
         if (staticAssetService == null) {
             WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());          
             staticAssetService = (StaticAssetService) applicationContext.getBean("blStaticAssetService");
         }
-    }
-
-
-    /**
-     * Returns false if the url does not start with http:
-     * @param url
-     * @return
-     */
-    protected boolean isRelativePath(String url) {
-        return (! url.toLowerCase().startsWith("http:"));
     }
         
 
@@ -75,36 +65,10 @@ public class UrlRewriteTag extends TagSupport {
     } 
 
     public int doStartTag() throws JspException {
-        String returnValue = value;
         initServices();
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         
-        
-        String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
-        String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
-
-        if (envPrefix != null && isRequestSecure()) {
-            envPrefix = envPrefix.replace("http:", "https:");
-        }
-
-        if (envPrefix != null && ! envPrefix.equals(cmsPrefix) && value.contains(cmsPrefix)) {
-            returnValue = returnValue.replace(cmsPrefix, envPrefix);
-        } else {
-            if (isRelativePath(value)) {
-                if (! value.startsWith("/")) {
-                    returnValue = "/" + value;
-                } 
-                String contextPath = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
-                if (contextPath != null && contextPath.length() > 1) {
-                    returnValue = contextPath + returnValue;
-                }
-            } else {
-                if (isRequestSecure()) { 
-                    // convert fully qualified urls to https if needed
-                    returnValue = returnValue.replace("http:", "https:");
-                }
-            }
-        }
+        String returnValue = staticAssetService.convertAssetPath(value, request.getContextPath(), isRequestSecure());
 
         if (var != null) {
             pageContext.setAttribute(var, returnValue);

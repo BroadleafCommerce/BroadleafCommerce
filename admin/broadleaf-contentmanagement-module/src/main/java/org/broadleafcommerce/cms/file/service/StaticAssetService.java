@@ -148,4 +148,18 @@ public interface StaticAssetService extends SandBoxItemListener {
     public void setAutomaticallyApproveAndPromoteStaticAssets(boolean setting);
 
 
+    /**
+     * This method will take in an assetPath (think image url) and convert it if
+     * the value contains the asseturlprefix.
+     * @see StaticAssetService#getStaticAssetUrlPrefix()
+     * @see StaticAssetService#getStaticAssetEnvironmentUrlPrefix()
+     * 
+     * @param assetPath - The path to rewrite if it is a cms managed asset
+     * @param contextPath - The context path of the web application (if applicable)
+     * @param secureRequest - True if the request is being served over https
+     * @return
+     */
+    public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest);
+
+
 }

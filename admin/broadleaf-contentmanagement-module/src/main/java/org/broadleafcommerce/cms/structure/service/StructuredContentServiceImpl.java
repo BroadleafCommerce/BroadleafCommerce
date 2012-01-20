@@ -22,10 +22,12 @@ import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.common.AbstractContentService;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
@@ -42,8 +44,11 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -58,7 +63,7 @@ import java.util.Map;
  * @author bpolster
  */
 @Service("blStructuredContentService")
-public class StructuredContentServiceImpl implements StructuredContentService {
+public class StructuredContentServiceImpl extends AbstractContentService implements StructuredContentService {
     private static final Log LOG = LogFactory.getLog(StructuredContentServiceImpl.class);
 
     private static String AND = " && ";
@@ -109,100 +114,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Override
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria c) {
-        c.add(Restrictions.eq("archivedFlag", false));
-
-        if (sandbox == null) {
-            // Query is hitting the production sandbox for a single site
-            c.add(Restrictions.isNull("sandbox"));
-            return c.list();
-        } if (SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
-            // Query is hitting the production sandbox for a multi-site
-            c.add(Restrictions.eq("sandbox", sandbox));
-            return c.list();
-        } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
-            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
-            Criterion productionSandboxExpression = null;
-            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-                productionSandboxExpression = Restrictions.isNull("sandbox");
-            } else {
-                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
-                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-                }
-            }
-
-            if (productionSandboxExpression != null) {
-                c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
-            } else {
-                c.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
-            }
-
-            List<StructuredContent> resultList = (List<StructuredContent>) c.list();
-
-            // Iterate once to build the map
-            LinkedHashMap returnItems = new LinkedHashMap<Long,StructuredContent>();
-            for (StructuredContent content : resultList) {
-                returnItems.put(content.getId(), content);
-            }
-
-            // Need to remove all items in my current sandbox from the result list.
-            for (StructuredContent content : resultList) {
-                if (content.getOriginalItemId() != null) {
-                    returnItems.remove(content.getOriginalItemId());
-                }
-
-                if (content.getDeletedFlag()) {
-                    returnItems.remove(content.getId());
-                }
-            }
-            return new ArrayList<StructuredContent>(returnItems.values());
-        }
-
+        return (List<StructuredContent>) findItems(sandbox, c, StructuredContent.class, StructuredContentImpl.class, "originalItemId");
     }
 
     @Override
     public Long countContentItems(SandBox sandbox, Criteria c) {
-        c.add(Restrictions.eq("archivedFlag", false));
-        c.setProjection(Projections.rowCount());
-
-        if (sandbox == null) {
-            // Query is hitting the production sandbox.
-            c.add(Restrictions.isNull("sandbox"));
-            return (Long) c.uniqueResult();
-        } else if (SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
-             // Query is hitting the production sandbox for a multi-site
-            c.add(Restrictions.eq("sandbox", sandbox));
-            return (Long) c.uniqueResult();
-        } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
-            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
-            Criterion productionSandboxExpression;
-            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-                productionSandboxExpression = Restrictions.isNull("sandbox");
-            } else {
-                // Query is hitting the production sandbox.
-                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
-                    return (Long) c.uniqueResult();
-                }
-                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-            }
-
-            c.add(Restrictions.or(Restrictions.or(currentSandboxExpression,productionSandboxExpression), originalSandboxExpression));
-
-            Long resultCount = (Long) c.list().get(0);
-            Long updatedCount = 0L;
-            Long deletedCount = 0L;
-
-            // count updated items
-            c.add(Restrictions.and(Restrictions.isNotNull("originalItemId"),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
-            updatedCount = (Long) c.list().get(0);
-
-            // count deleted items
-            c.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression,originalSandboxExpression)));
-            deletedCount = (Long) c.list().get(0);
-
-            return resultCount - updatedCount - deletedCount;
-        }
+       return countItems(sandbox, c, StructuredContentImpl.class, "originalItemId");
     }
 
     @Override
@@ -442,7 +359,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             if (processContentRules(structuredContentList.get(0), ruleDTOs)) {
                 return structuredContentList;
             } else {
-                return new ArrayList();
+                return new ArrayList<StructuredContentDTO>();
             }
         }
 

@@ -21,13 +21,15 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.common.AbstractContentService;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageImpl;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
@@ -39,14 +41,9 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +51,7 @@ import java.util.Map;
  * Created by bpolster.
  */
 @Service("blPageService")
-public class PageServiceImpl implements PageService, SandBoxItemListener {
+public class PageServiceImpl extends AbstractContentService implements PageService, SandBoxItemListener {
     private static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
 
     @Resource(name="blPageDao")
@@ -355,92 +352,13 @@ public class PageServiceImpl implements PageService, SandBoxItemListener {
     }
 
     @Override
-    public Long countPages(SandBox sandbox, Criteria criteria) {
-        criteria.add(Restrictions.eq("archivedFlag", false));
-        criteria.setProjection(Projections.rowCount());
-
-        if (sandbox == null) {
-            // Query is hitting the production sandbox.
-            criteria.add(Restrictions.isNull("sandbox"));
-            return (Long) criteria.uniqueResult();
-        } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
-            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
-            Criterion productionSandboxExpression;
-            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-                productionSandboxExpression = Restrictions.isNull("sandbox");
-            } else {
-                // Query is hitting the production sandbox.
-                if (sandbox.getId().equals(sandbox.getSite().getProductionSandbox().getId())) {
-                    return (Long) criteria.uniqueResult();
-                }
-                productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-            }
-
-            criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression, productionSandboxExpression), originalSandboxExpression));
-
-            Long resultCount = (Long) criteria.list().get(0);
-            Long updatedCount = 0L;
-            Long deletedCount = 0L;
-
-            // count updated items
-            criteria.add(Restrictions.and(Restrictions.isNotNull("originalPageId"),Restrictions.or(currentSandboxExpression, originalSandboxExpression)));
-            updatedCount = (Long) criteria.list().get(0);
-
-            // count deleted items
-            criteria.add(Restrictions.and(Restrictions.eq("deletedFlag", true),Restrictions.or(currentSandboxExpression, originalSandboxExpression)));
-            deletedCount = (Long) criteria.list().get(0);
-
-            return resultCount - updatedCount - deletedCount;
-        }
+    public List<Page> findPages(SandBox sandbox, Criteria c) {
+        return (List<Page>) findItems(sandbox, c, Page.class, PageImpl.class, "originalPageId");
     }
 
     @Override
-    public List<Page> findPages(SandBox sandbox, Criteria criteria) {
-        criteria.add(Restrictions.eq("archivedFlag", false));
-
-        if (sandbox == null) {
-            // Query is hitting the production sandbox.
-            criteria.add(Restrictions.isNull("sandbox"));
-            return (List<Page>) criteria.list();
-        } else {
-            Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
-            Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
-            Criterion productionSandboxExpression = null;
-            if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-                productionSandboxExpression = Restrictions.isNull("sandbox");
-            } else {
-                if (!SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType())) {
-                    productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-                }
-            }
-
-            if (productionSandboxExpression != null) {
-                criteria.add(Restrictions.or(Restrictions.or(currentSandboxExpression, productionSandboxExpression), originalSandboxExpression));
-            } else {
-                criteria.add(Restrictions.or(currentSandboxExpression, originalSandboxExpression));
-            }
-
-            List<Page> resultList = (List<Page>) criteria.list();
-
-            // Iterate once to build the map
-            LinkedHashMap returnItems = new LinkedHashMap<Long,Page>();
-            for (Page page : resultList) {
-                returnItems.put(page.getId(), page);
-            }
-
-            // Iterate to remove items from the final list
-            for (Page page : resultList) {
-                if (page.getOriginalPageId() != null) {
-                    returnItems.remove(page.getOriginalPageId());
-                }
-
-                if (page.getDeletedFlag()) {
-                    returnItems.remove(page.getId());
-                }
-            }
-            return new ArrayList<Page>(returnItems.values());
-        }
+    public Long countPages(SandBox sandbox, Criteria c) {
+       return countItems(sandbox, c, PageImpl.class, "originalPageId");
     }
     
     protected void productionItemArchived(Page page) {
