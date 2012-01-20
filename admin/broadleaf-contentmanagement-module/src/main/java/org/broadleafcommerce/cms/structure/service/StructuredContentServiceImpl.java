@@ -252,21 +252,24 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     
     private void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
         String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
-            if (envPrefix != null && secure) {
-                envPrefix = envPrefix.replace("http:", "https:");
-            }
-            String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
-    
-            for (String fieldKey : sc.getStructuredContentFields().keySet()) {
-                StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
-                String originalValue = scf.getValue();
-                if (envPrefix != null && scf.getValue() != null && originalValue.contains(cmsPrefix)) {
-                    String fldValue = originalValue.replace(cmsPrefix, envPrefix);
-                    scDTO.getValues().put(fieldKey, fldValue);
-                } else {
-                    scDTO.getValues().put(fieldKey, originalValue);
+        if (envPrefix != null && secure) {
+            envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
+        }
+        String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
+
+        for (String fieldKey : sc.getStructuredContentFields().keySet()) {
+            StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
+            String originalValue = scf.getValue();
+            if (envPrefix != null && originalValue != null && originalValue.contains(cmsPrefix)) {
+                if (originalValue.startsWith("/")) {
+                    originalValue = originalValue.substring(1);
                 }
-            }      
+                String fldValue = originalValue.replaceAll(cmsPrefix, envPrefix+cmsPrefix);
+                scDTO.getValues().put(fieldKey, fldValue);
+            } else {
+                scDTO.getValues().put(fieldKey, originalValue);
+            }
+        }
     }
 
     /**

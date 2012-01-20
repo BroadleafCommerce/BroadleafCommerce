@@ -119,6 +119,13 @@ public interface StaticAssetService extends SandBoxItemListener {
     public String getStaticAssetEnvironmentUrlPrefix();
 
     /**
+     * Returns the secure value of the environment url prefix (e.g. prefixed with https if needed).
+     *
+     * @return
+     */
+    public String getStaticAssetEnvironmentSecureUrlPrefix();
+
+    /**
      * Sets the environment url prefix.
      * @param prefix
      */

@@ -264,15 +264,16 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
 
         String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
         if (envPrefix != null && secure) {
-            envPrefix = envPrefix.replace("http:", "https:");
+            envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
         }
+
         String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
 
         for (String fieldKey : page.getPageFields().keySet()) {
             PageField pf = page.getPageFields().get(fieldKey);
             String originalValue = pf.getValue();
-            if (envPrefix != null && pf.getValue() != null && originalValue.contains(cmsPrefix)) {
-                String fldValue = originalValue.replace(cmsPrefix, envPrefix);
+            if (envPrefix != null && originalValue != null && originalValue.contains(cmsPrefix)) {
+                String fldValue = originalValue.replaceAll(cmsPrefix, envPrefix+cmsPrefix);
                 pageDTO.getPageFields().put(fieldKey, fldValue);
             } else {
                 pageDTO.getPageFields().put(fieldKey, originalValue);

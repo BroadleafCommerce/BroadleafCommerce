@@ -326,12 +326,16 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
                 urlPrefix = null;
             }
         }
+
+        if (urlPrefix != null && !urlPrefix.endsWith("/")) {
+            urlPrefix = urlPrefix + "/";
+        }
         return urlPrefix;
     }
 
     /**
-     * This method will take in an assetPath (think image url) and convert it if
-     * the value contains the asseturlprefix.
+     * This method will take in an assetPath (think image url) and prepend the
+     * staticAssetUrlPrefix if one exists.
      * 
      * Will append any contextPath onto the request.
      *
@@ -345,37 +349,45 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     @Override
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest) {
         String returnValue = assetPath;
+
         
         if (assetPath != null && staticAssetUrlPrefix != null) {
-            if (assetPath.contains(staticAssetUrlPrefix)) {
-                final String envPrefix;
-                if (secureRequest) {
-                    envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
-                } else {
-                    envPrefix = getStaticAssetEnvironmentUrlPrefix();
-                }
-                if (envPrefix != null && ! envPrefix.equals(staticAssetUrlPrefix)) {
-                    returnValue = returnValue.replace(staticAssetUrlPrefix, envPrefix);            
-                }
+            final String envPrefix;
+            if (secureRequest) {
+                envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
+            } else {
+                envPrefix = getStaticAssetEnvironmentUrlPrefix();
             }
-        }
+            if (envPrefix != null) {
+                // remove the starting "/" if it exists.
+                if (returnValue.startsWith("/")) {
+                    returnValue = returnValue.substring(1);
+                }
+                returnValue = envPrefix + returnValue;
+            }
+        } else {
+            if (returnValue != null && ! ImportSupport.isAbsoluteUrl(returnValue)) {
+                if (! returnValue.startsWith("/")) {
+                    returnValue = "/" + returnValue;
+                }
 
-        if (! ImportSupport.isAbsoluteUrl(returnValue)) {
-            if (! returnValue.startsWith("/")) {
-                returnValue = "/" + returnValue;
-            }
-            
-            // Add context path
-            if (contextPath != null && ! contextPath.equals("")) {
-                if (! contextPath.equals("/")) {
-                    if (! contextPath.startsWith("/")) {
-                        returnValue = contextPath + returnValue;  // normal case
-                    } else {
-                        returnValue = "/" + contextPath + returnValue;
+                // Add context path
+                if (contextPath != null && ! contextPath.equals("")) {
+                    if (! contextPath.equals("/")) {
+                        // Shouldn't be the case, but let's handle it anyway
+                        if (contextPath.endsWith("/")) {
+                            returnValue = returnValue.substring(1);
+                        }
+                        if (contextPath.startsWith("/")) {
+                            returnValue = contextPath + returnValue;  // normal case
+                        } else {
+                            returnValue = "/" + contextPath + returnValue;
+                        }
                     }
                 }
             }
         }
+
         return returnValue;
     }
 }
