@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -135,9 +136,23 @@ public class StructuredContentPresenterExtractor {
                                         getDisplay().getStructuredContentRefreshButton().disable();
                                         if (!presenter.currentStructuredContentId.equals(newId)) {
                                             Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentStructuredContentId);
-                                            myRecord.setAttribute("id", newId);
-                                            presenter.currentStructuredContentRecord = myRecord;
-                                            presenter.currentStructuredContentId = newId;
+                                            if (myRecord != null) {
+                                                myRecord.setAttribute("id", newId);
+                                                presenter.currentStructuredContentRecord = myRecord;
+                                                presenter.currentStructuredContentId = newId;
+                                            }  else {
+                                                String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+                                                getDisplay().getListDisplay().getGrid().getDataSource().
+                                                    fetchData(new Criteria(primaryKey, newId), new DSCallback() {
+                                                        @Override
+                                                        public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                                            getDisplay().getListDisplay().getGrid().clearCriteria();
+                                                            getDisplay().getListDisplay().getGrid().setData(response.getData());
+                                                            getDisplay().getListDisplay().getGrid().selectRecord(0);
+                                                        }
+                                                    });
+                                                SC.say("Current item no longer matches the search criteria.  Clearing filter criteria.");
+                                            }
                                         }
                                         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentStructuredContentRecord));
                                     } catch (IncompatibleMVELTranslationException e) {
