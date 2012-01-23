@@ -351,7 +351,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         String returnValue = assetPath;
 
         
-        if (assetPath != null && staticAssetUrlPrefix != null) {
+        if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null && ! "".equals(getStaticAssetEnvironmentUrlPrefix())) {
             final String envPrefix;
             if (secureRequest) {
                 envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
