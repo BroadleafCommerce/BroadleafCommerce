@@ -73,8 +73,13 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 
 	protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
 		FieldManager fieldManager = getFieldManager();
-		Map map = (Map) fieldManager.getFieldValue(record, mapStructure.getMapProperty());
-		Entity[] entities = new Entity[map.size()];
+        Map map = null;
+        try {
+            map = (Map) fieldManager.getFieldValue(record, mapStructure.getMapProperty());
+        } catch (FieldNotAvailableException e) {
+            throw new IllegalArgumentException(e);
+        }
+        Entity[] entities = new Entity[map.size()];
 		int j=0;
 		for (Object key : map.keySet()) {
 			Entity entityItem = new Entity();

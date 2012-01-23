@@ -114,14 +114,15 @@ public class FieldManager {
         return field;
 	}
 	
-	public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException {
+	public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
 		StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
-        Field field = null;
+        Field field;
         Object value = bean;
 
         while (tokens.hasMoreTokens()) {
-            field = getSingleField(componentClass, tokens.nextToken());
+            String token = tokens.nextToken();
+            field = getSingleField(componentClass, token);
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
@@ -131,7 +132,7 @@ public class FieldManager {
                     break;
                 }
             } else {
-                break;
+                throw new FieldNotAvailableException("Unable to find field (" + token + ") on the class (" + componentClass + ")");
             }
         }
 

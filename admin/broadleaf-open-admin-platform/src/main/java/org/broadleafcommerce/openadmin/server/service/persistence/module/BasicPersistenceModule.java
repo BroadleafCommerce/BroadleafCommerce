@@ -171,7 +171,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
 
                             if (Collection.class.isAssignableFrom(returnType)) {
-                                Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                                Collection collection = null;
+                                try {
+                                    collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                                } catch (FieldNotAvailableException e) {
+                                    throw new IllegalArgumentException(e);
+                                }
                                 if (!collection.contains(foreignInstance)){
                                     collection.add(foreignInstance);
                                 }
@@ -195,7 +200,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
 
                             if (Collection.class.isAssignableFrom(returnType)) {
-                                Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                                Collection collection = null;
+                                try {
+                                    collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                                } catch (FieldNotAvailableException e) {
+                                    throw new IllegalArgumentException(e);
+                                }
                                 if (!collection.contains(foreignInstance)){
                                     collection.add(foreignInstance);
                                 }
@@ -220,8 +230,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             break;
                         }
                     } else {
-                        if (fieldManager.getFieldValue(instance, property.getName()) != null && (mergedProperties.get(property.getName()).getFieldType() != SupportedFieldType.ID || setId)) {
-                            fieldManager.setFieldValue(instance, property.getName(), null);
+                        try {
+                            if (fieldManager.getFieldValue(instance, property.getName()) != null && (mergedProperties.get(property.getName()).getFieldType() != SupportedFieldType.ID || setId)) {
+                                fieldManager.setFieldValue(instance, property.getName(), null);
+                            }
+                        } catch (FieldNotAvailableException e) {
+                            throw new IllegalArgumentException(e);
                         }
                     }
                 }
@@ -262,8 +276,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 		for (Serializable recordEntity : records) {
 			Serializable entity;
 			if (pathToTargetObject != null) {
-				entity = (Serializable) getFieldManager().getFieldValue(recordEntity, pathToTargetObject);
-			} else {
+                try {
+                    entity = (Serializable) getFieldManager().getFieldValue(recordEntity, pathToTargetObject);
+                } catch (FieldNotAvailableException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            } else {
 				entity = recordEntity;
 			}
 			Entity entityItem = new Entity();
@@ -297,8 +315,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 					while(tokens.hasMoreTokens()) {
 						String token = tokens.nextToken();
 						if (tokens.hasMoreTokens()) {
-							testObject = fieldManager.getFieldValue(testObject, token);
-							if (testObject == null) {
+                            try {
+                                testObject = fieldManager.getFieldValue(testObject, token);
+                            } catch (FieldNotAvailableException e) {
+                                throw new IllegalArgumentException(e);
+                            }
+                            if (testObject == null) {
 								Property propertyItem = new Property();
 								propertyItem.setName(property);
 								if (props.contains(propertyItem)) {
@@ -321,7 +343,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 				Object value = null;
 				try {
 					value = fieldManager.getFieldValue(entity, property);
-				} catch (Exception e1) {
+				} catch (FieldNotAvailableException e) {
 					isFieldAccessible = false;
 				}
                 String strVal;
@@ -349,11 +371,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
                                 strVal = decimalFormat.format(((BigDecimal) value).doubleValue());
                             } else if (metadata.getForeignKeyClass() != null) {
-                                strVal = fieldManager.getFieldValue(value, metadata.getForeignKeyProperty()).toString();
-                                //see if there's a name property and use it for the display value
-                                Object temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
-                                if (temp != null) {
-                                    displayVal = temp.toString();
+                                try {
+                                    strVal = fieldManager.getFieldValue(value, metadata.getForeignKeyProperty()).toString();
+                                    //see if there's a name property and use it for the display value
+                                    Object temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
+                                    if (temp != null) {
+                                        displayVal = temp.toString();
+                                    }
+                                } catch (FieldNotAvailableException e) {
+                                    throw new IllegalArgumentException(e);
                                 }
                             } else {
                                 strVal = value.toString();
