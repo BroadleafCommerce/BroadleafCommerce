@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import java.util.Map;
+
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -47,8 +49,6 @@ import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadProgressWindow;
-
-import java.util.Map;
 
 /**
  * 
@@ -213,6 +213,6 @@ public class FileUploadDialog extends Window {
 	}
 	
 	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
-		FormBuilder.buildForm(dataSource, dynamicForm, false);
+		FormBuilder.buildForm(dataSource, dynamicForm, false, null);
 	}
 }

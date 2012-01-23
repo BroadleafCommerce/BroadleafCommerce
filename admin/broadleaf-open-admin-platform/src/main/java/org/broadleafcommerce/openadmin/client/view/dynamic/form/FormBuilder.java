@@ -16,6 +16,15 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
@@ -47,15 +56,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDa
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-
 /**
  * 
  * @author jfischer
@@ -63,11 +63,15 @@ import java.util.MissingResourceException;
  */
 public class FormBuilder {
 	
-	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showId) {
-		buildForm(dataSource, form, null, null, showId);
+	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showId, Record currentRecord) {
+		buildForm(dataSource, form, null, null, showId, currentRecord);
 	}
 	
-	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
+	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showDisabledState, Boolean canEdit, Boolean showId, Record currentRecord) {
+        String[] recordAttributes = currentRecord == null?null:currentRecord.getAttributes();
+        if (recordAttributes != null) {
+            Arrays.sort(recordAttributes);
+        }
 		form.setDataSource(dataSource);
         form.setCellPadding(8);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
@@ -83,7 +87,24 @@ public class FormBuilder {
         	String name = field.getName();
         	String fieldType = field.getAttribute("fieldType");
             FormHiddenEnum enumVal = (FormHiddenEnum) field.getAttributeAsObject("formHidden");
-        	if (fieldType != null && (!field.getHidden() || enumVal == FormHiddenEnum.VISIBLE) && enumVal != FormHiddenEnum.HIDDEN) {
+            /*
+                Check to make sure this field exists for this record. This could be a polymorphic type
+                for this record that does not have this field. This is normally taken care of during inspection
+                for a datasource ceiling entity. However, occasion can arise where there is a ManyToOne
+                relationship on an entity to another entity with a polymorphic type (e.g. an OrderItem
+                with a relationship to polymorphic product). In this instance, fields exposed for this
+                related entity should be hidden or shown appropriately in the form based on the the
+                type of this related entity. This only comes into play when the populateToOne property of
+                the @AdminPresentationClass annotation has been set to true.
+             */
+            boolean isFieldAvailableForRecord = false;
+            if (currentRecord != null) {
+                int pos = Arrays.binarySearch(recordAttributes, name);
+                isFieldAvailableForRecord = pos >= 0;
+            } else {
+                isFieldAvailableForRecord = true;
+            }
+        	if (fieldType != null && (!field.getHidden() || enumVal == FormHiddenEnum.VISIBLE) && enumVal != FormHiddenEnum.HIDDEN && isFieldAvailableForRecord) {
 	    		String group = field.getAttribute("formGroup");
 	    		String temp = field.getAttribute("formGroupOrder");
                 if (field.getAttributeAsBoolean("formGroupCollapsed") != null) {
@@ -122,17 +143,21 @@ public class FormBuilder {
         groupFields(form, sections, sectionNames, sectionCollapsed);
 	}
 
-    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, DataSource optionDataSource, String displayField, String valueField, Boolean showId) {
-        buildMapForm(dataSource, form, mapStructure, null, optionDataSource, displayField, valueField, showId);
+    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, DataSource optionDataSource, String displayField, String valueField, Boolean showId, Record currentRecord) {
+        buildMapForm(dataSource, form, mapStructure, null, optionDataSource, displayField, valueField, showId, currentRecord);
     }
 
-    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
-        buildMapForm(dataSource, form, mapStructure, mapKeys, null, null, null, showId);
+    public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId, Record currentRecord) {
+        buildMapForm(dataSource, form, mapStructure, mapKeys, null, null, null, showId, currentRecord);
     }
 	
-	private static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, DataSource optionDataSource, String displayField, String valueField, Boolean showId) {
+	private static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, DataSource optionDataSource, String displayField, String valueField, Boolean showId, Record currentRecord) {
 		if (mapKeys == null && optionDataSource == null) {
             throw new RuntimeException("Must provide either map keys or and option datasource to control the values for the key field.");
+        }
+        String[] recordAttributes = currentRecord == null?null:currentRecord.getAttributes();
+        if (recordAttributes != null) {
+            Arrays.sort(recordAttributes);
         }
         form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
@@ -160,18 +185,33 @@ public class FormBuilder {
 	        	if (mapStructure != null && mapStructure.getKeyPropertyName().equals(fieldName)) {
 	        		formItem = new ComboBoxItem();
                     if (mapKeys != null) {
-	        		    ((ComboBoxItem) formItem).setValueMap(mapKeys);
+	        		    formItem.setValueMap(mapKeys);
                     } else {
-                        ((ComboBoxItem) formItem).setOptionDataSource(optionDataSource);
-                        ((ComboBoxItem) formItem).setDisplayField(displayField);
-                        ((ComboBoxItem) formItem).setValueField(valueField);
-                        //((ComboBoxItem) formItem).fetchData();
+                        formItem.setOptionDataSource(optionDataSource);
+                        formItem.setDisplayField(displayField);
+                        formItem.setValueField(valueField);
                     }
-	        		//((ComboBoxItem) formItem).setMultiple(false);
 	        		((ComboBoxItem) formItem).setDefaultToFirstOption(true);
 	        		setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        	} else {
-	        		if (!fieldType.equals(SupportedFieldType.ID.toString()) || (fieldType.equals(SupportedFieldType.ID.toString()) && showId)) {
+                    /*
+                        Check to make sure this field exists for this record. This could be a polymorphic type
+                        for this record that does not have this field. This is normally taken care of during inspection
+                        for a datasource ceiling entity. However, occasion can arise where there is a ManyToOne
+                        relationship on an entity to another entity with a polymorphic type (e.g. an OrderItem
+                        with a relationship to polymorphic product). In this instance, fields exposed for this
+                        related entity should be hidden or shown appropriately in the form based on the the
+                        type of this related entity. This only comes into play when the populateToOne property of
+                        the @AdminPresentationClass annotation has been set to true.
+                     */
+                    boolean isFieldAvailableForRecord = false;
+                    if (currentRecord != null) {
+                        int pos = Arrays.binarySearch(recordAttributes, field.getName());
+                        isFieldAvailableForRecord = pos >= 0;
+                    } else {
+                        isFieldAvailableForRecord = true;
+                    }
+	        		if (isFieldAvailableForRecord && (!fieldType.equals(SupportedFieldType.ID.toString()) || (fieldType.equals(SupportedFieldType.ID.toString()) && showId))) {
 			        	Boolean largeEntry = field.getAttributeAsBoolean("largeEntry");
 			        	if (largeEntry == null) {
 			        		largeEntry = false;

@@ -277,7 +277,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                         values.remove(key);
                     }
                 }
-                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("offerDS"), true, true, false);
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getPresenterSequenceSetupManager().getDataSource("offerDS"), true, true, false, lastSelectedRecord);
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(lastSelectedRecord);
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().setValues(values);
                 rebindFormItems(lastSelectedRecord);
@@ -296,7 +296,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                         } else {
                             formPresenter.setStartState();
                             getPresenterSequenceSetupManager().getDataSource("offerDS").resetVisibilityOnly("name", "description", "type", "discountType", "value", "priority", "startDate", "endDate");
-                            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getDisplay().getListDisplay().getGrid().getDataSource(), true, true, false);
+                            getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().buildFields(getDisplay().getListDisplay().getGrid().getDataSource(), true, true, false, selectedRecord);
                             getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
                             getDisplay().getListDisplay().getRemoveButton().enable();
                         }

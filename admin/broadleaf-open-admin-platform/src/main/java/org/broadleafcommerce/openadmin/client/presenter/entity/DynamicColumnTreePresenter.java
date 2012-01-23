@@ -138,7 +138,7 @@ public abstract class DynamicColumnTreePresenter extends AbstractEntityPresenter
                     } else {
                         formPresenter.setStartState();
                         ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
-                        display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), true, true, false);
+                        display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), true, true, false, selectedRecord);
                         display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
                         display.getListDisplay().getRemoveButton().enable();
                     }

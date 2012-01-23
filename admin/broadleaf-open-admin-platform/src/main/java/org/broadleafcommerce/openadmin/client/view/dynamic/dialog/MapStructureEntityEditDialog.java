@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 import java.util.LinkedHashMap;
 
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
@@ -58,11 +59,11 @@ public class MapStructureEntityEditDialog extends EntityEditDialog {
 	}
 
 	@Override
-	protected void buildFields(DataSource dataSource, DynamicForm form) {
+	protected void buildFields(DataSource dataSource, DynamicForm form, Record record) {
         if (mapKeys != null) {
-		    FormBuilder.buildMapForm(dataSource, form, mapStructure, mapKeys, false);
+		    FormBuilder.buildMapForm(dataSource, form, mapStructure, mapKeys, false, record);
         } else {
-            FormBuilder.buildMapForm(dataSource, form, mapStructure, optionDataSource, displayField, valueField, false);
+            FormBuilder.buildMapForm(dataSource, form, mapStructure, optionDataSource, displayField, valueField, false, record);
         }
 	}
 	

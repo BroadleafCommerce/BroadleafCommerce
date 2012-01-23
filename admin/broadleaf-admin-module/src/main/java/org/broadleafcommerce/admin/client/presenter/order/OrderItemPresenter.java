@@ -59,7 +59,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
-		display.getFormOnlyDisplay().buildFields(dataSource, true, false, false);
+		display.getFormOnlyDisplay().buildFields(dataSource, true, false, false, null);
 	}
 	
 	public void setExpansionDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
@@ -158,7 +158,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				if (event.getState()) {
 					display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, false);
+					display.getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, false, event.getRecord());
 					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
 					display.getFormOnlyDisplay().getForm().enable();
 				} else {
@@ -171,7 +171,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				if (event.getState()) {
 					//display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getExpansionGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					display.getFormOnlyDisplay().buildFields(display.getExpansionGrid().getDataSource(),false, false, false);
+					display.getFormOnlyDisplay().buildFields(display.getExpansionGrid().getDataSource(),false, false, false, event.getRecord());
 					display.getFormOnlyDisplay().getForm().editRecord(event.getRecord());
 					display.getFormOnlyDisplay().getForm().enable();
 				} else {

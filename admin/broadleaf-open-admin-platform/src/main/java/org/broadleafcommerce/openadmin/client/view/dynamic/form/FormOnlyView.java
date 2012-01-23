@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -50,14 +51,14 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.disable();
         form.setBackgroundColor("#eaeaea");
         if (dataSource != null) {
-        	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId);
+        	buildFields(dataSource, showDisabedState==null?true:showDisabedState, canEdit==null?false:canEdit, showId==null?false:showId, null);
         }
         addMember(form);
         setOverflow(Overflow.AUTO);
 	}
 	
-	public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId) {
-		FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId);
+	public void buildFields(final DataSource dataSource, Boolean showDisabedState, Boolean canEdit, Boolean showId, Record currentRecord) {
+		FormBuilder.buildForm(dataSource, form, showDisabedState, canEdit, showId, currentRecord);
 	}
 
 	public DynamicForm getForm() {

@@ -161,7 +161,7 @@ public class EntityEditDialog extends Window {
 		} else {
 			this.setTitle("Add new entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
 		}
-		buildFields(dataSource, dynamicForm);
+		buildFields(dataSource, dynamicForm, null);
         dynamicForm.editNewRecord(initialValues);
 		show();
         redraw();
@@ -244,7 +244,7 @@ public class EntityEditDialog extends Window {
 		} else {
 			this.setTitle("Edit entity: " + dataSource.getPolymorphicEntities().get(dataSource.getDefaultNewEntityFullyQualifiedClassname()));
 		}
-		buildFields(dataSource, dynamicForm);
+		buildFields(dataSource, dynamicForm, record);
         dynamicForm.editRecord(record);
         centerInPage();
 		setTop(70);
@@ -270,8 +270,8 @@ public class EntityEditDialog extends Window {
         isHidden = false;
 	}
 	
-	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm) {
-		FormBuilder.buildForm(dataSource, dynamicForm, false);
+	protected void buildFields(DataSource dataSource, DynamicForm dynamicForm, Record record) {
+		FormBuilder.buildForm(dataSource, dynamicForm, false, record);
 	}
 
     public boolean isShowMedia() {
