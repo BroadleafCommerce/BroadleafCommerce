@@ -159,19 +159,44 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                  * Sort entities with the most derived appearing first
                  */
                 Class<?>[] sortedEntities = new Class<?>[entities.size()];
-                sortedEntities = entities.toArray(sortedEntities);
-                Arrays.sort(sortedEntities, new Comparator<Class<?>>() {
-
-                    public int compare(Class<?> o1, Class<?> o2) {
-                        if (o1.equals(o2)) {
-                            return 0;
-                        } else if (o1.isAssignableFrom(o2)) {
-                            return 1;
+                List<Class<?>> stageItems = new ArrayList<Class<?>>();
+                stageItems.add(ceilingClass);
+                int j = 0;
+                while (j < sortedEntities.length) {
+                    List<Class<?>> newStageItems = new ArrayList<Class<?>>();
+                    boolean topLevelClassFound = false;
+                    for (Class<?> stageItem : stageItems) {
+                        Iterator<Class<?>> itr = entities.iterator();
+                        while(itr.hasNext()) {
+                            Class<?> entity = itr.next();
+                            checkitem: {
+                                if (ArrayUtils.contains(entity.getInterfaces(), stageItem) || entity.equals(stageItem)) {
+                                    topLevelClassFound = true;
+                                    break checkitem;
+                                }
+                                
+                                if (topLevelClassFound) {
+                                    continue;
+                                }
+                                
+                                if (entity.getSuperclass().equals(stageItem)) {
+                                    break checkitem;
+                                }
+                                
+                                continue;
+                            }
+                            sortedEntities[j] = entity;
+                            itr.remove();
+                            j++;
+                            newStageItems.add(entity);
                         }
-                        return -1;
                     }
-
-                });
+                    if (newStageItems.isEmpty()) {
+                        throw new RuntimeException("There was a gap in the inheritance hierarchy for (" + ceilingClass.getName() + ")");
+                    }
+                    stageItems = newStageItems;
+                }
+                ArrayUtils.reverse(sortedEntities);
                 cache = sortedEntities;
                 POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, sortedEntities);
             }
