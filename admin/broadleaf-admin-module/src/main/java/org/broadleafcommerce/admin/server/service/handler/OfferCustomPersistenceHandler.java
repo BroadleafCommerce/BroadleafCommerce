@@ -251,6 +251,10 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				temp.setProperties(new Property[] {offerCodeEntity.findProperty("offerCode"), offerCodeEntity.findProperty("id")});
 				offerEntity.mergeProperties("offerCode", temp);
 			}
+            Property fgProperty = entity.findProperty("appliesToFulfillmentGroupRules");
+            if (fgProperty != null) {
+                offerEntity.addProperty(fgProperty);
+            }
 			
 			return offerEntity;
 		} catch (Exception e) {
@@ -332,6 +336,10 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				temp.setProperties(new Property[] {offerCodeEntity.findProperty("offerCode"), offerCodeEntity.findProperty("id")});
 				offerEntity.mergeProperties("offerCode", temp);
 			}
+            Property fgProperty = entity.findProperty("appliesToFulfillmentGroupRules");
+            if (fgProperty != null) {
+                offerEntity.addProperty(fgProperty);
+            }
 			
 			return offerEntity;
 		} catch (Exception e) {
