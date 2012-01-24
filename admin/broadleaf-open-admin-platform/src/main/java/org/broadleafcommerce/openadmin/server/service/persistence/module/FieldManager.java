@@ -74,7 +74,12 @@ public class FieldManager {
                     String peekAheadToken = tokens[j+1];
                     List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
                     for (Class<?> entity : entities) {
-                        Field peekAheadField = getSingleField(entity, peekAheadToken);
+                        Field peekAheadField = null;
+                        try {
+                            peekAheadField = entity.getDeclaredField(peekAheadToken);
+                        } catch (NoSuchFieldException nsf) {
+                            //do nothing
+                        }
                         if (peekAheadField != null) {
                             matchedClasses.add(entity);
                         }
