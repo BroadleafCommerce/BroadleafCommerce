@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -51,10 +55,6 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * @author jfischer
@@ -167,6 +167,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             public void onFilterData(FetchDataEvent event) {
                 setStartState();
                 formPresenter.disable();
+                display.getListDisplay().getGrid().deselectAllRecords();
+                lastSelectedRecord = null;
             }
         });
         selectionChangedHandlerRegistration = display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
