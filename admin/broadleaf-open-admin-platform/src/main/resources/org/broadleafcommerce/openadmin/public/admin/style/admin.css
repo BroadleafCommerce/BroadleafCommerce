@@ -141,3 +141,7 @@
     font-family:Arial,Verdana,sans-serif;
 }
 
+textarea {
+    resize: none;
+}
+
