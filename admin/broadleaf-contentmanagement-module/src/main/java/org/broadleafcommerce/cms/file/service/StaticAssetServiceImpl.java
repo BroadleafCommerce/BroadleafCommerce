@@ -121,6 +121,8 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
                     // sandbox operation type to deleted
                     item.setSandBoxOperationType(SandBoxOperationType.DELETE);
                     sandBoxItemDao.updateSandBoxItem(item);
+                } else if (automaticallyApproveAndPromoteStaticAssets) {
+                    staticAsset.setArchivedFlag(true);
                 }
             }
             return staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
@@ -190,7 +192,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
 
     @Override
     public List<StaticAsset> findAssets(SandBox sandbox, Criteria c) {
-        return (List<StaticAsset>) findItems(sandbox, c, StaticAsset.class, StaticAssetImpl.class, "originalAssetId");
+        return findItems(sandbox, c, StaticAsset.class, StaticAssetImpl.class, "originalAssetId");
     }
 
     @Override

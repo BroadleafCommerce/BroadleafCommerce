@@ -29,6 +29,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.ResultSet;
+import com.smartgwt.client.types.DSOperationType;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
@@ -44,6 +45,7 @@ import com.smartgwt.client.widgets.grid.events.CellSavedEvent;
 import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.smartgwt.client.widgets.tree.TreeGrid;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
@@ -158,7 +160,13 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         removeClickHandlerRegistration = display.getListDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    removeClicked();
+                    SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
+                        public void execute(Boolean value) {
+                            if (value) {
+                                removeClicked();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -313,7 +321,9 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
-                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
+                DSRequest updateRequest = new DSRequest();
+                updateRequest.setOperationType(DSOperationType.UPDATE);
+                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse, updateRequest);
                 getDisplay().getListDisplay().getGrid().deselectAllRecords();
                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
                 String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
@@ -338,15 +348,19 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     }
 
     protected void removeClicked() {
-        SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
-            public void execute(Boolean value) {
-                if (value) {
-                    display.getListDisplay().getGrid().removeSelectedData();
-                    formPresenter.disable();
-                    display.getListDisplay().getRemoveButton().disable();
+        Record selectedRecord = display.getListDisplay().getGrid().getSelectedRecord();
+        final String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+        final String id = selectedRecord.getAttribute(primaryKey);
+        display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+            @Override
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                if (!(getDisplay().getListDisplay().getGrid() instanceof TreeGrid) && getDisplay().getListDisplay().getGrid().getResultSet() == null) {
+                    getDisplay().getListDisplay().getGrid().setData(new Record[]{});
                 }
             }
-        });
+        }, null);
+        formPresenter.disable();
+        display.getListDisplay().getRemoveButton().disable();
     }
 
     public HandlerRegistration getSelectionChangedHandlerRegistration() {

@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.file;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -25,6 +28,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.ResultSet;
 import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.types.DSOperationType;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -53,9 +57,6 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.FileUploadDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.AssetItem;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -113,7 +114,9 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                 ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
                 DSResponse updateResponse = new DSResponse();
                 updateResponse.setData(recordList);
-                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse);
+                DSRequest updateRequest = new DSRequest();
+                updateRequest.setOperationType(DSOperationType.UPDATE);
+                getDisplay().getListDisplay().getGrid().getDataSource().updateCaches(updateResponse, updateRequest);
                 getDisplay().getListDisplay().getGrid().deselectAllRecords();
                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(event.getRecord()));
                 String primaryKey = getDisplay().getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
@@ -138,17 +141,15 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
 	}
 
     @Override
+    protected void removeClicked() {
+        super.removeClicked();
+        clearAssetPreviewImage();
+    }
+
+    @Override
 	public void bind() {
 		super.bind();
         staticAssetDescriptionPresenter.bind();
-        /*getDisplay().getListLeafDisplay().getRemoveButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (event.isLeftButtonDown()) {
-					resetForm();
-				}
-            }
-        });*/
         if (!FILE_UPLOAD.isDrawn()) {
             FILE_UPLOAD.draw();
             FILE_UPLOAD.hide();
@@ -197,11 +198,15 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
         display.getListDisplay().getGrid().addFetchDataHandler(new FetchDataHandler() {
             @Override
             public void onFilterData(FetchDataEvent event) {
-                AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
-                assetItem.clearImage();
+                clearAssetPreviewImage();
             }
         });
 	}
+
+    protected void clearAssetPreviewImage() {
+        AssetItem assetItem = (AssetItem) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("pictureLarge");
+        assetItem.clearImage();
+    }
 
     public void resetForm() {
         getPresenterSequenceSetupManager().getDataSource("staticAssetTreeDS").resetPermanentFieldVisibilityBasedOnType(new String[]{EntityImplementations.STATICASSETIMPL});

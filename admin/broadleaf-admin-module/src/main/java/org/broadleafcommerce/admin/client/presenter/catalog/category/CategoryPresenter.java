@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.category;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -71,10 +75,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDia
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * 
  * @author jfischer
@@ -115,13 +115,17 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 
 	@Override
 	protected void removeClicked() {
-		display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				getDisplay().getOrphanedCategoryGrid().invalidateCache();
-				getDisplay().getRemoveOrphanedButton().disable();
-				getDisplay().getInsertOrphanButton().disable();
-			}
-		}, null);
+        Record selectedRecord = display.getListDisplay().getGrid().getSelectedRecord();
+        final String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+        final String id = selectedRecord.getAttribute(primaryKey);
+        display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+            @Override
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                getDisplay().getOrphanedCategoryGrid().invalidateCache();
+                getDisplay().getRemoveOrphanedButton().disable();
+                getDisplay().getInsertOrphanButton().disable();
+            }
+        }, null);
 		formPresenter.disable();
 		display.getListDisplay().getRemoveButton().disable();
 		allChildCategoriesPresenter.disable();

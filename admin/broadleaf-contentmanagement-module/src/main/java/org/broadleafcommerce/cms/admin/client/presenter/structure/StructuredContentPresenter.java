@@ -80,12 +80,18 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
 	@Override
 	protected void removeClicked() {
-		display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+        Record selectedRecord = display.getListDisplay().getGrid().getSelectedRecord();
+        final String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+        final String id = selectedRecord.getAttribute(primaryKey);
+        display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
+                if (getDisplay().getListDisplay().getGrid().getResultSet() == null) {
+                    getDisplay().getListDisplay().getGrid().setData(new Record[]{});
+                }
                 destroyContentTypeForm();
                 formPresenter.disable();
-		        display.getListDisplay().getRemoveButton().disable();
+                display.getListDisplay().getRemoveButton().disable();
             }
         }, null);
 	}

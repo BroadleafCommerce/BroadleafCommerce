@@ -70,20 +70,20 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 
 	@Override
 	protected void removeClicked() {
-        SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
-            public void execute(Boolean value) {
-                if (value) {
-                    display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
-                        @Override
-                        public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            destroyTemplateForm();
-                            formPresenter.disable();
-                            display.getListDisplay().getRemoveButton().disable();
-                        }
-                    }, null);
+        Record selectedRecord = display.getListDisplay().getGrid().getSelectedRecord();
+        final String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
+        final String id = selectedRecord.getAttribute(primaryKey);
+        display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
+            @Override
+            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                if (getDisplay().getListDisplay().getGrid().getResultSet() == null) {
+                    getDisplay().getListDisplay().getGrid().setData(new Record[]{});
                 }
+                destroyTemplateForm();
+                formPresenter.disable();
+                display.getListDisplay().getRemoveButton().disable();
             }
-        });
+        }, null);
 	}
 
     protected void destroyTemplateForm() {
