@@ -20,6 +20,7 @@ import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.cto.server.FilterAndSortMapping;
 import com.anasoft.os.daofusion.cto.server.FilterValueConverter;
 import com.anasoft.os.daofusion.cto.server.NestedPropertyCriteriaBasedConverter;
+import com.anasoft.os.daofusion.cto.server.NestedPropertyMapping;
 import com.anasoft.os.daofusion.util.FilterValueConverters;
 
 import java.math.BigDecimal;
@@ -110,6 +111,10 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
                 FilterCriterionProviders.ISNULL, NULL_AWARE_LONG));
+    }
+
+    public void addEmptyMapping(String mappingGroupName, String propertyId) {
+        addMapping(mappingGroupName, new EmptyNestedPropertyMapping(propertyId));
     }
     
     public void addBooleanMapping(String mappingGroupName, String propertyId,
