@@ -16,6 +16,17 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Blob;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
@@ -24,6 +35,7 @@ import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.domain.ImageStaticAsset;
@@ -60,17 +72,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.Criteria;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jfischer
@@ -127,6 +128,24 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return canHandleInspect(persistencePackage);
     }
+    
+    protected String getFileName(String fullPathName) {
+        int pos = fullPathName.lastIndexOf("/");
+        checkPath: {
+            //try a unix based path
+            if (pos >= 0) {
+                break checkPath;
+            }
+            pos = fullPathName.lastIndexOf("\\");
+            //try windows path
+            if (pos >= 0) {
+                break checkPath;
+            }
+            //just take the full path name
+            return fullPathName;
+        }
+        return fullPathName.substring(pos + 1, fullPathName.length());
+    }
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
@@ -148,6 +167,14 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             }
             Map<String, FieldMetadata> entityProperties = getMergedProperties();
 			adminInstance = (StaticAsset) helper.createPopulatedInstance(adminInstance, entity, entityProperties, false);
+
+            String fileName = getFileName(upload.getOriginalFilename());
+            if (StringUtils.isEmpty(adminInstance.getName())) {
+                adminInstance.setName(fileName);
+            }
+            if (StringUtils.isEmpty(adminInstance.getFullUrl())) {
+                adminInstance.setFullUrl("/" + fileName);
+            }
 
             adminInstance.setFileSize(upload.getSize());
             Collection mimeTypes = MimeUtil.getMimeTypes(upload.getOriginalFilename());

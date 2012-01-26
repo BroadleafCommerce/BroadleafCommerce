@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
@@ -86,7 +87,7 @@ public class StaticAssetImpl implements StaticAsset {
     protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName="Item Name", order=1, group = "Details")
+    @AdminPresentation(friendlyName="Item Name", order=1, group = "Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
     protected String name;
 
     /*@ManyToOne(targetEntity = SiteImpl.class)
@@ -96,7 +97,7 @@ public class StaticAssetImpl implements StaticAsset {
     protected Site site;
 
     @Column(name ="FULL_URL", nullable = false)
-    @AdminPresentation(friendlyName="Full URL", order=2, group = "Details")
+    @AdminPresentation(friendlyName="Full URL", order=2, group = "Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
 
