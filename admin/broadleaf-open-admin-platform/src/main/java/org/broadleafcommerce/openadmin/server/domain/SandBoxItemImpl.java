@@ -35,18 +35,10 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @AdminPresentationOverrides(
         {
-            @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.createdBy.password", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.createdBy.email", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.createdBy.currentSandBox", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.createdBy.phoneNumber", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.createdBy.activeStatusFlag", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.login", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.password", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.email", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.currentSandBox", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.phoneNumber", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="auditable.updatedBy.activeStatusFlag", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName="Date Created", group="Audit", readOnly = true)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName="Date Updated", group="Audit", readOnly = true)),
             @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.author", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.site", value=@AdminPresentation(excluded = true)),
@@ -71,6 +63,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     protected Long id;
 
     @Embedded
+    @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
     @ManyToOne(targetEntity = SandBoxImpl.class)

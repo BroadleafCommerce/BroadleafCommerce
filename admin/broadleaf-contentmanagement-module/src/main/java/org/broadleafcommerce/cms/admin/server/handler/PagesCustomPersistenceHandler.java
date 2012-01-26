@@ -62,11 +62,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.hibernate.Criteria;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/23/11
- * Time: 1:56 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
