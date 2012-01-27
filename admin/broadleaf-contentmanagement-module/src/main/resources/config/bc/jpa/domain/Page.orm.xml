@@ -55,7 +55,7 @@
                     (SELECT sandboxItem.temporaryItemId
                      FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
                      WHERE (sandboxItem.originalSandBox = :sandbox OR sandboxItem.sandBox = :sandbox) AND
-                           sandboxItem.archivedFlag = false AND
+                           sandboxItem.archivedFlag = 'N' AND
                            sandboxItem.temporaryItemId = page.id)
 		</query>
 	</named-query>

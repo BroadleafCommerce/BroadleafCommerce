@@ -101,7 +101,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     @Column(name = "ARCHIVED_FLAG")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ARCHIVED_FLAG_INDEX", columnNames={"ARCHIVED_FLAG"})
-    protected Boolean archivedFlag = Boolean.FALSE;
+    protected Character archivedFlag = 'N';
 
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)
     @JoinTable(
@@ -204,12 +204,20 @@ public class SandBoxItemImpl implements SandBoxItem {
 
     @Override
     public Boolean getArchivedFlag() {
-        return archivedFlag;
-    }
+        if (archivedFlag == null) {
+            return null;
+        } else {
+            return archivedFlag == 'Y' ? Boolean.TRUE : Boolean.FALSE;
+        }
+    }                             
 
     @Override
     public void setArchivedFlag(Boolean archivedFlag) {
-        this.archivedFlag = archivedFlag;
+        if (archivedFlag == null) {
+            this.archivedFlag = null;
+        } else {
+            this.archivedFlag = archivedFlag ? 'Y' : 'N';
+        }
     }
 
     @Override
