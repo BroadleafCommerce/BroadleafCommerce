@@ -98,8 +98,17 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             getSuperclass().
                             getDeclaredMethod("readPersistenceUnitInfos");
             readPersistenceUnitInfos.setAccessible(true);
+            
+            //In Spring 3.0 this returns an array
+            //In Spring 3.1 this returns a List
+            Object pInfosObject = readPersistenceUnitInfos.invoke(this);
+            Object[] puis;
+            if (pInfosObject.getClass().isArray()) {
+                puis = (Object[])pInfosObject;
+            } else {
+                puis = ((Collection)pInfosObject).toArray();
+            }
 
-            Object[] puis = (Object[])readPersistenceUnitInfos.invoke(this);
             for (Object pui : puis) {
                 MutablePersistenceUnitInfo mPui = (MutablePersistenceUnitInfo)pui;
                 if (mPui.getPersistenceUnitRootUrl() == null) {
