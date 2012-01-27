@@ -21,6 +21,7 @@
             classpath:/bl-cms-contentClient-applicationContext.xml
             /WEB-INF/applicationContext-security.xml
             /WEB-INF/applicationContext.xml
+            classpath:/mycompany-applicationContext.xml
         </param-value>
 	</context-param>
 

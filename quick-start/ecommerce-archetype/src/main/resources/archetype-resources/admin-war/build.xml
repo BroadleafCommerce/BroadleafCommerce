@@ -10,7 +10,7 @@
 	<property name="project.root" location="../"/>
 	
 	<property file="../build.properties"/>
-	
+
 	<!-- start the integrated gwt development server inplace with the current codebase -->
 	<target name="gwt-run">
 		<delete dir="war/WEB-INF/lib"/>
@@ -54,7 +54,8 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="jetty-demo" depends="start-db">
+    <!-- Requires full maven install. -->
+	<target name="jetty-demo">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
 			<arg value="compile"/>
@@ -63,7 +64,8 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="jetty-debug" depends="start-db">
+
+	<target name="jetty-debug">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001">
 			<arg value="compile"/>
@@ -114,39 +116,4 @@
 			<arg value="install"/>
 		</artifact:mvn>
 	</target>
-	
-	<target name="start-db">  
-		<!-- retrieve the web project pom file and import its jar dependencies -->
-		<artifact:pom id="warPom" file="pom.xml"/>
-		<artifact:dependencies filesetId="warDeps" pomRefId="warPom" useScope="test" />
-		<path id="build.runtime.classpath">
-			<fileset refid="warDeps"/>
-		</path>
-			
-        <echo message="Starting Data Base..." />  
-        <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
-            <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>  
-        </java>  
-    </target>
-	
-	<target name="stop-db">  
-        <echo message="Execute SQL on new Data Base..." />  
-		<artifact:pom id="warPom" file="pom.xml"/>
-		<artifact:dependencies filesetId="warDeps" pomRefId="warPom" useScope="test" />
-		<path id="build.runtime.classpath">
-			<fileset refid="warDeps"/>
-		</path>
-        <sql  
-            autocommit="true"  
-            print="true"  
-            classpathref="build.runtime.classpath"  
-            driver="org.hsqldb.jdbcDriver"  
-            url="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true"  
-            userid="sa"  
-            password="">
-            <transaction>SHUTDOWN</transaction>  
-        </sql>  
-        <echo message="SQL Executed on data base..." />  
-    </target>
-
 </project>

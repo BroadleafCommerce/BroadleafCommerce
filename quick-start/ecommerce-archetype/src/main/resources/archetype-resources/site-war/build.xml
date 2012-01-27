@@ -10,51 +10,8 @@
 	<property name="project.root" location="../"/>
 	
 	<property file="../build.properties"/>
-	
-	<!-- start the integrated gwt development server inplace with the current codebase -->
-	<target name="gwt-run">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="false">
-            <arg value="-o"/>
-            <arg value="-Pgwt"/>
-			<arg value="gwt:run"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
-		</artifact:mvn>
-	</target>
 
-	<!-- start the integrated gwt development server in debug mode inplace with the current codebase -->
-	<target name="gwt-debug">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-            <arg value="-o"/>
-            <arg value="-Pgwt"/>
-			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15"/>
-		</artifact:mvn>
-	</target>
-
-	<!-- start the integrated gwt development server in debug mode inplace with the current codebase - add jrebel instrumentation -->
-	<target name="gwt-debug-jrebel">
-		<delete dir="target/broadleafdemo/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-			<arg value="-Pgwt"/>
-            <arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -noverify -javaagent:${jrebel.path}"/>
-		</artifact:mvn>
-	</target>
-
-	<!-- start the integrated gwt development server in debug mode inplace with the current codebase - add yourkit profiling -->
-	<target name="gwt-debug-yourkit">
-		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-            <arg value="-o"/>
-            <arg value="-Pgwt"/>
-			<arg value="gwt:debug"/>
-			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=256M -Xmx512M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.openadmin.workaround.JDTCompiler15 -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
-		</artifact:mvn>
-	</target>
-
-	<target name="jetty-demo">
+	<target name="jetty-demo" depends="start-db">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M">
 			<arg value="compile"/>
@@ -63,7 +20,7 @@
 		</artifact:mvn>
 	</target>
 
-	<target name="jetty-debug">
+	<target name="jetty-debug" depends="start-db">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=256M -Xmx512M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000">
 			<arg value="compile"/>
@@ -72,7 +29,7 @@
 		</artifact:mvn>
 	</target>
 
-    <target name="jetty-demo-jrebel">
+    <target name="jetty-demo-jrebel" depends="start-db">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=256M -Xmx512M -Drebel.root=${project.root} -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}">
 			<arg value="compile"/>
@@ -114,5 +71,39 @@
 			<arg value="install"/>
 		</artifact:mvn>
 	</target>
+
+    <target name="start-db">
+        <!-- retrieve the web project pom file and import its jar dependencies -->
+        <artifact:pom id="warPom" file="pom.xml"/>
+        <artifact:dependencies filesetId="warDeps" pomRefId="warPom" useScope="test" />
+        <path id="build.runtime.classpath">
+            <fileset refid="warDeps"/>
+        </path>
+
+        <echo message="Starting Data Base..." />
+        <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">
+            <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>
+        </java>
+    </target>
+
+    <target name="stop-db">
+        <echo message="Execute SQL on new Data Base..." />
+        <artifact:pom id="warPom" file="pom.xml"/>
+        <artifact:dependencies filesetId="warDeps" pomRefId="warPom" useScope="test" />
+        <path id="build.runtime.classpath">
+            <fileset refid="warDeps"/>
+        </path>
+        <sql
+            autocommit="true"
+            print="true"
+            classpathref="build.runtime.classpath"
+            driver="org.hsqldb.jdbcDriver"
+            url="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true"
+            userid="sa"
+            password="">
+            <transaction>SHUTDOWN</transaction>
+        </sql>
+        <echo message="SQL Executed on data base..." />
+    </target>
 
 </project>

@@ -11,9 +11,19 @@
 		<non-jta-data-source>jdbc/web</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <property name="hibernate.hbm2ddl.import_files" value="/sql/load_admin_security.sql,
+                                                                   /sql/load_admin_users.sql,
+                                                                   /sql/load_code_tables.sql,
+                                                                   /sql/load_table_sequences.sql,
+                                                                   /sql/load_catalog_data.sql,
+                                                                   /sql/load_content_structure.sql,
+                                                                   /sql/load_content_data.sql"/>
+
         </properties>
 	</persistence-unit>
 	
@@ -32,9 +42,10 @@
 		<non-jta-data-source>jdbc/cmsStorage</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.hbm2ddl.import_files" value="/sql/import_storage.sql"/>
         </properties>
 	</persistence-unit>
 </persistence>

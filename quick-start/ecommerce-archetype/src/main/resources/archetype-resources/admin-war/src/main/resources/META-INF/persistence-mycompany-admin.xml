@@ -11,7 +11,7 @@
 		<non-jta-data-source>jdbc/web</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
         </properties>
@@ -32,10 +32,9 @@
 		<non-jta-data-source>jdbc/cmsStorage</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.hbm2ddl.import_files" value="/import_storage.sql"/>
         </properties>
 	</persistence-unit>
 </persistence>

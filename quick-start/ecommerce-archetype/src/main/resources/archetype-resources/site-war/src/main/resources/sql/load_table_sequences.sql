@@ -1,6 +1,17 @@
--- This file is used to auto-populate the embedded database for the demo. Hibernate will look for a file called
--- import.sql in the root of the classpath whenever the hibernate.hbm2ddl.auto property is set to create or create-drop.
+--
+-- The Archetype is configured with "hibernate.hbm2ddl.auto" value="create-drop" in "persistence-mycompany.xml".
+--
+-- This will cause hibernate to populate the database when the application is started by processing the files that
+-- were configured in the hibernate.hbm2ddl.import_files property.
+--
+-- This file is responsible for initializing table sequences.   The numbers here need
+-- to be greater than the ids that are inserted as part of load_catalog_data.sql (or other load files)
+-- to prevent duplicate key exceptions.
+--
 
+--
+-- Initialize SEQUENCE_GENERATOR values
+--
 INSERT INTO SEQUENCE_GENERATOR VALUES ('CustomerId',1);
 INSERT INTO SEQUENCE_GENERATOR VALUES ('OrderId',2);
 INSERT INTO SEQUENCE_GENERATOR VALUES ('OrderItemId',9);
