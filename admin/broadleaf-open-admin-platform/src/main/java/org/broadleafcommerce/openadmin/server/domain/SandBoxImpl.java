@@ -71,7 +71,7 @@ public class SandBoxImpl implements SandBox {
     
     @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Where(clause = "ARCHIVED_FLAG = 0")
+    @Where(clause = "ARCHIVED_FLAG = 'N'")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
     @BatchSize(size = 50)
     protected Set<SandBoxItem> sandBoxItems = new HashSet<SandBoxItem>();
