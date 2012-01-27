@@ -16,25 +16,23 @@
 
 package org.broadleafcommerce.core.content.domain;
 
-import java.util.Date;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-
-import org.hibernate.annotations.Index;
+import java.util.Date;
 
 /**
 * Basic content item for the BLC CMS support
@@ -68,6 +66,7 @@ public class ContentImpl implements Content {
     @Column(name = "DEPLOYED")
     protected Boolean deployed;
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "DESCRIPTION")
     protected String description;
     @Id

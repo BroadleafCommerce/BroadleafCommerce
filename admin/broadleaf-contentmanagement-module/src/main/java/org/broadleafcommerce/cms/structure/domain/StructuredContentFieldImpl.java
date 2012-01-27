@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -71,6 +72,7 @@ public class StructuredContentFieldImpl implements StructuredContentField {
 
     @Column (name = "LOB_VALUE")
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;
 
     @Override

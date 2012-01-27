@@ -108,6 +108,7 @@ public class ProductImpl implements Product {
 
     /** The long description. */
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
     @SearchableProperty(name="productDescription")
     @AdminPresentation(friendlyName="Product Long Description", order=3, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)
