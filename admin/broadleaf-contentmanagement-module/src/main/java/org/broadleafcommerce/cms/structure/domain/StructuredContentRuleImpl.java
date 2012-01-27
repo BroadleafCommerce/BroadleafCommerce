@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
 
 /**
  * 
@@ -44,7 +46,7 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
     @GeneratedValue(generator= "SCRuleId")
     @GenericGenerator(
         name="SCRuleId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        strategy="org.broadleafcommerce.persistence.IdOverrideTableGenerator",
         parameters = {
             @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
             @Parameter(name="segment_column_name", value="ID_NAME"),
@@ -58,6 +60,7 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
     protected Long id;
     
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "MATCH_RULE")
     protected String matchRule;
 

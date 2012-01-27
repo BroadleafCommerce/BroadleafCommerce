@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.page.domain;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -68,6 +69,7 @@ public class PageFieldImpl implements PageField {
 
     @Column (name = "LOB_VALUE")
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;
 
     @Override

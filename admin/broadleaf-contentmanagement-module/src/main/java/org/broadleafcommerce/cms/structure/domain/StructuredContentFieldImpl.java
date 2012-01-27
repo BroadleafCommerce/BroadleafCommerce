@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.structure.domain;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -34,7 +35,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 /**
  * Created by bpolster.
@@ -69,10 +69,8 @@ public class StructuredContentFieldImpl implements StructuredContentField {
 
     @Column (name = "LOB_VALUE")
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;
-    
-    @Transient
-    protected String processedValue;
 
     @Override
     public Long getId() {

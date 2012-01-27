@@ -38,6 +38,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -155,6 +156,7 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
 
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
     @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
     protected String longDescription;

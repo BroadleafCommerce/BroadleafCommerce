@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.content.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 
 /**
  * @author btaylor
@@ -45,6 +46,7 @@ public class ContentDetailsImpl extends ContentImpl implements ContentDetails {
     protected String contentHash;
     
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
 	@Column(name = "XML_CONTENT")
 	protected String xmlContent;
 
