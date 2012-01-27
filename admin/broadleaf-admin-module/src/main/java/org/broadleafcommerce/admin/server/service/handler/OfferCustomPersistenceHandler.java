@@ -25,7 +25,6 @@ import java.util.Map;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
@@ -184,12 +183,31 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			
 			return response;
 		} catch (Exception e) {
+            LOG.error("Unable to perform fetch for entity" + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
 			throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
 
     protected void removeHTMLEncoding(Entity entity) {
         Property prop = entity.findProperty("targetItemCriteria.orderItemMatchRule");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToCustomerRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToOrderRules");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+        prop = entity.findProperty("appliesToFulfillmentGroupRules");
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
@@ -234,9 +252,14 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				temp.setProperties(new Property[] {offerCodeEntity.findProperty("offerCode"), offerCodeEntity.findProperty("id")});
 				offerEntity.mergeProperties("offerCode", temp);
 			}
+            Property fgProperty = entity.findProperty("appliesToFulfillmentGroupRules");
+            if (fgProperty != null) {
+                offerEntity.addProperty(fgProperty);
+            }
 			
 			return offerEntity;
 		} catch (Exception e) {
+            LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
 	}
@@ -258,6 +281,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			Offer offerInstance = (Offer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			dynamicEntityDao.remove(offerInstance);
 		} catch (Exception e) {
+            LOG.error("Unable to remove entity for " + entity.getType()[0] + ". It is likely this offer is currently associated with one or more orders. Only unused offers may be deleted.", e);
 			throw new ServiceException("Unable to remove entity for " + entity.getType()[0] + ". It is likely this offer is currently associated with one or more orders. Only unused offers may be deleted.", e);
 		}
 	}
@@ -276,7 +300,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			updateRule(entity, offerInstance, "appliesToCustomerRules", OfferRuleType.CUSTOMER);
 			updateRule(entity, offerInstance, "appliesToFulfillmentGroupRules", OfferRuleType.FULFILLMENT_GROUP);
 			
-			if (!entity.findProperty("type").getValue().equals("ORDER_ITEM") && offerInstance.getTargetItemCriteria() != null) {
+			if (entity.findProperty("type") != null && !entity.findProperty("type").getValue().equals("ORDER_ITEM") && offerInstance.getTargetItemCriteria() != null) {
 				offerInstance.getTargetItemCriteria().setOffer(null);
 				offerInstance.setTargetItemCriteria(null);
 			}
@@ -285,7 +309,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 			
 			Property offerCodeId = entity.findProperty("offerCode.id");
 			OfferCode offerCode = null;
-			if (entity.findProperty("deliveryType").getValue().equals("CODE")) {
+			if (entity.findProperty("deliveryType") != null && entity.findProperty("deliveryType").getValue().equals("CODE")) {
 				if (offerCodeId == null) {
 					offerCode = (OfferCode) entityConfiguration.createEntityInstance(OfferCode.class.getName());
 				} else {
@@ -315,9 +339,14 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				temp.setProperties(new Property[] {offerCodeEntity.findProperty("offerCode"), offerCodeEntity.findProperty("id")});
 				offerEntity.mergeProperties("offerCode", temp);
 			}
+            Property fgProperty = entity.findProperty("appliesToFulfillmentGroupRules");
+            if (fgProperty != null) {
+                offerEntity.addProperty(fgProperty);
+            }
 			
 			return offerEntity;
 		} catch (Exception e) {
+            LOG.error("Unable to update entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
 	}

@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.openadmin.client.validation;
 
+import java.util.Map;
+import java.util.MissingResourceException;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.form.validator.RegExpValidator;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Factory;
 import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
-
-import java.util.Map;
-import java.util.MissingResourceException;
 
 /**
  * 
@@ -56,10 +56,10 @@ public class BroadleafDefaultValidationFactory implements ValidationFactory {
                 //do nothing
             }
 			if (message != null) {
-				((RegExpValidator) valid).setErrorMessage(message);
+				valid.setErrorMessage(message);
 			}
 		} else if (configurationItems.containsKey("errorMessage")) {
-			((RegExpValidator) valid).setErrorMessage(configurationItems.get("errorMessage"));
+			valid.setErrorMessage(configurationItems.get("errorMessage"));
 		}
 		return valid;
 	}
