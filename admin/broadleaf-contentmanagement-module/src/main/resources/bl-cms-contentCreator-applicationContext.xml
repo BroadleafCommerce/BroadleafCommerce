@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="blUtilityRemoteService" class="org.broadleafcommerce.openadmin.server.service.UtilityRemoteService">
         <property name="assetServerUrlPrefix" value="${asset.server.url.prefix.internal}"/>

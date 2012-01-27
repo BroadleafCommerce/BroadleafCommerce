@@ -58,13 +58,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.findCustomerRolesByCustomerId(customer.getId()));
         if (pwChangeRequired) {
             if (forcePasswordChange) {
-                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities.toArray(new GrantedAuthority[0]));
+                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
             } else {
                 grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED"));
-                returnUser = new User(username, customer.getPassword(), true, true, true, true, grantedAuthorities.toArray(new GrantedAuthority[0]));
+                returnUser = new User(username, customer.getPassword(), true, true, true, true, grantedAuthorities);
             }
         } else {
-            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities.toArray(new GrantedAuthority[0]));
+            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
         }
         return returnUser;
     }
