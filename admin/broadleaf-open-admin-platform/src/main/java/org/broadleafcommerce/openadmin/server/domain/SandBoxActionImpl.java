@@ -48,7 +48,7 @@ public class SandBoxActionImpl implements SandBoxAction {
     @Column(name = "ACTION_TYPE")
     protected String sandBoxActionType;
 
-    @Column(name = "COMMENT")
+    @Column(name = "ACTION_COMMENT")
     protected String comment;
 
     @ManyToMany(targetEntity = SandBoxItemImpl.class, cascade = CascadeType.ALL)
