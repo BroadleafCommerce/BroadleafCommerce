@@ -13,12 +13,12 @@
 --
 -- Sample admin users
 --
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_FLAG) VALUES (1,'admin@yourdomain.com','admin','Administrator','admin', TRUE);
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_FLAG) VALUES (2,'merchandise@yourdomain.com','merchandise','Merchandise Manager','admin', TRUE);
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_FLAG) VALUES (3,'promo@yourdomain.com','promo','Promotion Manager','admin', TRUE);
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_FLAG) VALUES (4,'csr@yourdomain.com','csr','CSR','admin', TRUE);
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_FLAG) VALUES (5,'cms_edit@yourdomain.com','cmsEditor','CMS Editor','admin', TRUE);
-INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_FLAG) VALUES (6,'cms_approver@yourdomain.com','cmsApprover','CMS Approver','admin', TRUE);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (1,'admin@yourdomain.com','admin','Administrator','admin', TRUE);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (2,'merchandise@yourdomain.com','merchandise','Merchandise Manager','admin', TRUE);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (3,'promo@yourdomain.com','promo','Promotion Manager','admin', TRUE);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (4,'csr@yourdomain.com','csr','CSR','admin', TRUE);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (5,'cms_edit@yourdomain.com','cmsEditor','CMS Editor','admin', TRUE);
+INSERT INTO BLC_ADMIN_USER (ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD, ACTIVE_STATUS_FLAG) VALUES (6,'cms_approver@yourdomain.com','cmsApprover','CMS Approver','admin', TRUE);
 
 --
 -- Roles for sample admin users.
