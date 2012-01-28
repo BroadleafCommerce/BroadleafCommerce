@@ -61,7 +61,6 @@ public class CustomerImpl implements Customer {
 
     @Column(name = "USER_NAME")
     @AdminPresentation(friendlyName="UserName", order=1, group="Customer", prominent=true)
-    @Index(name="CUSTOMER_USRNM_INDEX", columnNames={"USER_NAME"})
     protected String username;
 
     @Column(name = "PASSWORD")
