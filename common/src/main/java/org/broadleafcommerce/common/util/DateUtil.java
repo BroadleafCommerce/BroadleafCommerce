@@ -24,9 +24,6 @@ public class DateUtil {
 
     public static boolean isActive(Date startDate, Date endDate, boolean includeTime) {
         Long date = SystemTime.asMillis(includeTime);
-        if (startDate == null || startDate.getTime() > date || (endDate != null && endDate.getTime() < date)) {
-            return false;
-        }
-        return true;
+        return !(startDate == null || startDate.getTime() > date || (endDate != null && endDate.getTime() < date));
     }
 }
