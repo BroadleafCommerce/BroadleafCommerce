@@ -462,6 +462,9 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     protected void addRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
 		Property ruleProperty = entity.findProperty(propertyName);
 		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            ruleProperty.setValue(ruleProperty.getUnHtmlEncodedValue());
 			StructuredContentRule rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
 			rule.setMatchRule(ruleProperty.getValue());
 			structuredContentInstance.getStructuredContentMatchRules().put(type.getType(), rule);
@@ -471,6 +474,9 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 	protected void updateRule(Entity entity, StructuredContent structuredContentInstance, String propertyName, StructuredContentRuleType type) {
 		Property ruleProperty = entity.findProperty(propertyName);
 		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            ruleProperty.setValue(ruleProperty.getUnHtmlEncodedValue());
 			StructuredContentRule rule = structuredContentInstance.getStructuredContentMatchRules().get(type.getType());
 			if (rule == null) {
 				rule = (StructuredContentRule) entityConfiguration.createEntityInstance(StructuredContentRule.class.getName());
