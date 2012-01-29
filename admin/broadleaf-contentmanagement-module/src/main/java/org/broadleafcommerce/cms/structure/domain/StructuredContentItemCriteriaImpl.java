@@ -36,6 +36,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * 
@@ -80,7 +81,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = StructuredContentImpl.class)
-    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "SC_ID"))
     protected StructuredContent structuredContent;
 
 	/* (non-Javadoc)

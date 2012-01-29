@@ -16,6 +16,31 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -32,18 +57,16 @@ import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 import org.compass.annotations.SupportUnmarshall;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
-
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.*;
+import org.hibernate.annotations.Type;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -327,11 +350,11 @@ public class ProductImpl implements Product {
      */
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("product, " + id + ", inactive due to date");
             }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
     
     public String getModel() {

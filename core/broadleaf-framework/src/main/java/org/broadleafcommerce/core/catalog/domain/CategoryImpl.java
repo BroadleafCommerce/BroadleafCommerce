@@ -16,6 +16,27 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -39,27 +60,6 @@ import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author bTaylor
@@ -302,11 +302,11 @@ public class CategoryImpl implements Category {
     @Override
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(activeStartDate, activeEndDate, false)) {
+            if (!DateUtil.isActive(activeStartDate, activeEndDate, true)) {
                 LOG.debug("category, " + id + ", inactive due to date");
             }
         }
-        return DateUtil.isActive(activeStartDate, activeEndDate, false);
+        return DateUtil.isActive(activeStartDate, activeEndDate, true);
     }
 
     @Override

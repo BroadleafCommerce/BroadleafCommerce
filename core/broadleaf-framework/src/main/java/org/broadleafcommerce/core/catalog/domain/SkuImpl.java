@@ -458,16 +458,16 @@ public class SkuImpl implements Sku {
      */
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("sku, " + id + ", inactive due to date");
             }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
     public boolean isActive(Product product, Category category) {
         if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("sku, " + id + ", inactive due to date");
             } else if (!product.isActive()) {
                 LOG.debug("sku, " + id + ", inactive due to product being inactive");
