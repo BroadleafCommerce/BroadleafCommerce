@@ -271,6 +271,29 @@ public class BasicClientEntityModule implements DataSourceModule {
                                 case MONEY:
                                     processFilterValueClause(filterCriteria, newItems[j]);
                                     break;
+                                case DATE:
+                                    if (newItems.length > 1) {
+                                        for (int x=0;x<newItems.length;x++) {
+                                            newItems[x] = updateMinutesFromDateFilter(newItems[x], x);
+                                        }
+                                        filterCriteria.setFilterValues(newItems);
+                                    } else {
+                                        String[] dateItems = new String[2];
+                                        JSONValue operator = itemObj.get("operator");
+                                        String op = operator.isString().stringValue();
+                                        if (op.startsWith("greater")) {
+                                            dateItems[0] = newItems[0];
+                                            dateItems[1] = null;
+                                        } else {
+                                            dateItems[0] = null;
+                                            dateItems[1] = newItems[0];
+                                        }
+                                        for (int x=0;x<dateItems.length;x++) {
+                                            dateItems[x] = updateMinutesFromDateFilter(dateItems[x], x);
+                                        }
+                                        filterCriteria.setFilterValues(dateItems);
+                                    }
+                                    break;
                                 default:
                                     filterCriteria.setFilterValues(newItems);
                                     break;
@@ -282,6 +305,25 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
 			}
 		}
+    }
+    
+    protected String updateMinutesFromDateFilter(String originalDateString, int position) {
+        if (originalDateString != null) {
+            int pos = originalDateString.indexOf("T06:00:00");
+            switch (position) {
+                case 0: 
+                    if (pos >= 0) {
+                        return originalDateString.substring(0, pos) + "T00:00:00";
+                    }
+                    break;
+                default:
+                    if (pos >= 0) {
+                        return originalDateString.substring(0, pos) + "T23:59:00";
+                    }
+                    break;
+            }
+        }
+        return originalDateString;
     }
     
     public boolean isCompatible(OperationType operationType) {
