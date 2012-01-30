@@ -302,11 +302,11 @@ public class CategoryImpl implements Category {
     @Override
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(activeStartDate, activeEndDate, false)) {
+            if (!DateUtil.isActive(activeStartDate, activeEndDate, true)) {
                 LOG.debug("category, " + id + ", inactive due to date");
             }
         }
-        return DateUtil.isActive(activeStartDate, activeEndDate, false);
+        return DateUtil.isActive(activeStartDate, activeEndDate, true);
     }
 
     @Override

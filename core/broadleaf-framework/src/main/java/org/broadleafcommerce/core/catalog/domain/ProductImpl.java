@@ -327,11 +327,11 @@ public class ProductImpl implements Product {
      */
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
-            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("product, " + id + ", inactive due to date");
             }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
     
     public String getModel() {

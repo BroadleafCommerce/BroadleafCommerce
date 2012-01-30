@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
@@ -57,9 +58,19 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
         return canHandleAdd(persistencePackage);
     }
 
+    protected void removeHtmlEncoding(Entity entity) {
+        Property prop = entity.findProperty("orderItemMatchRule");
+        if (prop != null && prop.getValue() != null) {
+            //antisamy XSS protection encodes the values in the MVEL
+            //reverse this behavior
+            prop.setValue(prop.getUnHtmlEncodedValue());
+        }
+    }
+
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
+        removeHtmlEncoding(entity);
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) Class.forName(entity.getType()[0]).newInstance();
@@ -81,6 +92,7 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
+        removeHtmlEncoding(entity);
 		try {
 			PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
