@@ -49,10 +49,15 @@
 	</aop:config>
 
     <aop:config>
-		<aop:pointcut id="blSandBoxServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl.retrieveUserSandBox(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceOperation"/>
+		<aop:pointcut id="blSandBoxServiceRetrieveUserOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl.retrieveUserSandBox(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceRetrieveUserOperation"/>
 	</aop:config>
-	
+
+    <aop:config>
+        <aop:pointcut id="blSandBoxServiceRetrieveApprovalOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl.retrieveApprovalSandBox(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceRetrieveApprovalOperation"/>
+    </aop:config>
+
 	<!--<aop:config>
 		<aop:pointcut id="blSandBoxServiceSaveOperation" expression="execution(* saveEntitySandBoxItemsandBoxItems(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSandBox" pointcut-ref="blSandBoxServiceSaveOperation"/>

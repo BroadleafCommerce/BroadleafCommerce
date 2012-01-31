@@ -30,4 +30,6 @@ public interface SandBoxDao {
 
     public SandBox persist(SandBox entity);
 
+    public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType);
+
 }

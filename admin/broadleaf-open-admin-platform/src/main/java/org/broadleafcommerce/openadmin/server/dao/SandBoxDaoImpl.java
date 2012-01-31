@@ -16,23 +16,31 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.springframework.stereotype.Repository;
-
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.openadmin.server.domain.Site;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 @Repository("blSandBoxDao")
 public class SandBoxDaoImpl implements SandBoxDao {
 
 	@PersistenceContext(unitName = "blPU")
 	protected EntityManager sandBoxEntityManager;
+
+    @Resource(name = "blTransactionManager")
+    JpaTransactionManager transactionManager;
 
 	@Override
 	public SandBox retrieve(Long id) {
@@ -74,4 +82,28 @@ public class SandBoxDaoImpl implements SandBoxDao {
 		sandBoxEntityManager.flush();
 		return entity;
     }
+
+    public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("createSandBox");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+        TransactionStatus status = transactionManager.getTransaction(def);
+        try {
+            SandBox approvalSandbox = retrieveNamedSandBox(site, sandBoxType, sandBoxName);
+            if (approvalSandbox == null) {
+                approvalSandbox = new SandBoxImpl();
+                approvalSandbox.setSite(site);
+                approvalSandbox.setName(sandBoxName);
+                approvalSandbox.setSandBoxType(sandBoxType);
+                approvalSandbox = persist(approvalSandbox);
+            }
+            transactionManager.commit(status);
+            return approvalSandbox;
+        } catch (Exception ex) {
+            transactionManager.rollback(status);
+            throw new RuntimeException(ex);
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
@@ -59,5 +60,9 @@ public interface SandBoxService {
     //public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
 
     public SandBox retrieveApprovalSandBox(SandBox sandBox);
+
+    public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) throws Exception;
+
+    public SandBox retrieveSandBox(Site site, String sandBoxName, SandBoxType sandBoxType);
 
 }
