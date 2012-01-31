@@ -16,12 +16,18 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxAction;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionType;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
@@ -30,13 +36,10 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 @Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
+    
+    private static final Log LOG = LogFactory.getLog(SandBoxServiceImpl.class);
 
     protected List<SandBoxItemListener> sandboxItemListeners = new ArrayList<SandBoxItemListener>();
 
@@ -45,8 +48,6 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
-
-    private static String CREATE_SANDBOX_LOCK_TOKEN = "CreateSandBoxLockToken";
 
     /*@Override
     public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId) {
@@ -448,22 +449,9 @@ public class SandBoxServiceImpl implements SandBoxService {
         if (adminUser.getOverrideSandBox() != null) {
             userSandbox = adminUser.getOverrideSandBox();
         } else {
-            userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
-
+            userSandbox = retrieveSandBox(site, adminUser.getLogin(), SandBoxType.USER);
             if (userSandbox == null) {
-
-                synchronized (CREATE_SANDBOX_LOCK_TOKEN) {
-                    userSandbox = sandBoxDao.retrieveNamedSandBox(site, SandBoxType.USER, adminUser.getLogin());
-
-                    if (userSandbox == null) {
-                        SandBox sandBox = new SandBoxImpl();
-                        sandBox.setSite(site);
-                        sandBox.setName(adminUser.getLogin());
-                        sandBox.setSandBoxType(SandBoxType.USER);
-                        sandBox.setAuthor(adminUser.getId());
-                        userSandbox = sandBoxDao.persist(sandBox);
-                    }
-                }
+                userSandbox = createSandBox(site, adminUser.getLogin(), SandBoxType.USER);
             }
         }
 
@@ -606,24 +594,21 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     public SandBox retrieveApprovalSandBox(SandBox sandBox) {
         final String APPROVAL_SANDBOX_NAME = "Approval";
-        SandBox approvalSandbox = sandBoxDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
+        SandBox approvalSandbox = retrieveSandBox(sandBox.getSite(), APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
 
         // If the approval sandbox doesn't exist, create it.
         if (approvalSandbox == null) {
-
-            synchronized (CREATE_SANDBOX_LOCK_TOKEN) {
-                // try again before creating
-                approvalSandbox = sandBoxDao.retrieveNamedSandBox(sandBox.getSite(), SandBoxType.APPROVAL, APPROVAL_SANDBOX_NAME);
-
-                if (approvalSandbox == null) {
-                    approvalSandbox = new SandBoxImpl();
-                    approvalSandbox.setSite(sandBox.getSite());
-                    approvalSandbox.setName(APPROVAL_SANDBOX_NAME);
-                    approvalSandbox.setSandBoxType(SandBoxType.APPROVAL);
-                    approvalSandbox = sandBoxDao.persist(approvalSandbox);
-                }
-            }
+            approvalSandbox = createSandBox(sandBox.getSite(), APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
         }
+        
         return approvalSandbox;
+    }
+
+    public synchronized SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
+        return sandBoxDao.createSandBox(site, sandBoxName, sandBoxType);
+    }
+
+    public SandBox retrieveSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
+        return sandBoxDao.retrieveNamedSandBox(site, sandBoxType, sandBoxName);
     }
 }
