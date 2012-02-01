@@ -217,6 +217,15 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>milestone-release</id>
+            <distributionManagement>
+                <repository>
+                    <id>releases</id>
+                    <url>http://www.broadleafcommerce.org/nexus/content/repositories/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
     </profiles>
     <dependencyManagement>
         <dependencies>
