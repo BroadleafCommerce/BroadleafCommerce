@@ -61,15 +61,25 @@ public final class FilterCriterionProviders {
     
     public static final FilterCriterionProvider BETWEEN = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-        	if (directValues.length > 2) {
+            if (directValues.length > 1) {
+                return Restrictions.between(targetPropertyName, directValues[0], directValues[1]);
+            } else {
+                return Restrictions.eq(targetPropertyName, directValues[0]);
+            }
+        }
+    };
+
+    public static final FilterCriterionProvider BETWEEN_DATE = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
+        public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+            if (directValues.length > 2) {
                 return Restrictions.between(targetPropertyName, directValues[0], directValues[2]);
             } else if (directValues[0]==null) {
                 return Restrictions.lt(targetPropertyName, directValues[1]);
             } else if (directValues[1]==null) {
                 return Restrictions.ge(targetPropertyName, directValues[0]);
             } else {
-        		return Restrictions.eq(targetPropertyName, directValues[0]);
-        	}
+                return Restrictions.eq(targetPropertyName, directValues[0]);
+            }
         }
     };
     

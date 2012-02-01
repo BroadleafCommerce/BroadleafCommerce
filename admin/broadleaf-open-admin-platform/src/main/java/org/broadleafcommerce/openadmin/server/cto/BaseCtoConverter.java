@@ -177,7 +177,7 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Date>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.BETWEEN, new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss")));
+                FilterCriterionProviders.BETWEEN_DATE, new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss")));
     }
     
     public void addCollectionSizeEqMapping(String mappingGroupName, String propertyId,
