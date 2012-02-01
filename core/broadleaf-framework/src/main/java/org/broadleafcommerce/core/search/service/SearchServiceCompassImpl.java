@@ -16,10 +16,9 @@
 
 package org.broadleafcommerce.core.search.service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -64,7 +63,10 @@ public class SearchServiceCompassImpl implements SearchService {
         List<Product> results = new ArrayList<Product>(hits.length());
         for (int i = 0; i < hits.length(); i++) {
             Product resourceProduct = (Product) hits.data(i);
-            results.add(catalogService.findProductById(resourceProduct.getId()));
+            Product ormProduct = catalogService.findProductById(resourceProduct.getId());
+            if (ormProduct != null && ormProduct.isActive()) {
+                results.add(catalogService.findProductById(resourceProduct.getId()));
+            }
         }
         return results;
     }
