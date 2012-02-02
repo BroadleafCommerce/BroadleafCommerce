@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -27,9 +30,6 @@ import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -107,18 +107,20 @@ public class OfferPresenterExtractor {
 			
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
-			
-			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(selectedRecord, new DSCallback() {
-				public void execute(DSResponse response, Object rawData, DSRequest request) {
-					try {
-						extractQualifierData(selectedRecord, type, false, dirtyValues);
-						getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
-					} catch (IncompatibleMVELTranslationException e) {
-						SC.warn(e.getMessage());
-					}
-				}
-			}, requestProperties);
+
+            if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate()) {
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(selectedRecord, new DSCallback() {
+                    public void execute(DSResponse response, Object rawData, DSRequest request) {
+                        try {
+                            extractQualifierData(selectedRecord, type, false, dirtyValues);
+                            getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                            getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+                        } catch (IncompatibleMVELTranslationException e) {
+                            SC.warn(e.getMessage());
+                        }
+                    }
+                }, requestProperties);
+            }
 		} catch (IncompatibleMVELTranslationException e) {
 			SC.warn(e.getMessage());
 		}
