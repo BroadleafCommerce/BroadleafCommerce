@@ -373,7 +373,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 try {
                                     strVal = fieldManager.getFieldValue(value, metadata.getForeignKeyProperty()).toString();
                                     //see if there's a name property and use it for the display value
-                                    Object temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
+                                    Object temp = null;
+                                    try {
+                                        temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
+                                    } catch (FieldNotAvailableException e) {
+                                        //do nothing
+                                    }
                                     if (temp != null) {
                                         displayVal = temp.toString();
                                     }
