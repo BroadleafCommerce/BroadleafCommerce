@@ -16,11 +16,26 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.datasource;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
-
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.pool.impl.GenericObjectPool;
+import org.springframework.util.Assert;
 
 public class SandBoxConnection implements Connection {
 	
@@ -33,11 +48,16 @@ public class SandBoxConnection implements Connection {
 	}
 
 	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return delegate.unwrap(iface);
+        Assert.notNull(iface, "Interface argument must not be null");
+        if (!Connection.class.equals(iface)) {
+            throw new SQLException("Connection of type [" + getClass().getName() +
+                    "] can only be unwrapped as [java.sql.Connection], not as [" + iface.getName());
+        }
+        return (T) delegate;
 	}
 
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return delegate.isWrapperFor(iface);
+		return Connection.class.equals(iface);
 	}
 
 	public Statement createStatement() throws SQLException {
