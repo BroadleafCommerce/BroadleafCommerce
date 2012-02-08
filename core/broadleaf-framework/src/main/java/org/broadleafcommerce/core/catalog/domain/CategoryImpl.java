@@ -405,7 +405,9 @@ public class CategoryImpl implements Category {
 
     @Override
 	public Map<String, List<Long>> getChildCategoryURLMap() {
-        HydratedSetup.populateFromCache(this);
+        if (childCategoryURLMap == null) {
+            HydratedSetup.populateFromCache(this);
+        }
         return childCategoryURLMap;
     }
 
