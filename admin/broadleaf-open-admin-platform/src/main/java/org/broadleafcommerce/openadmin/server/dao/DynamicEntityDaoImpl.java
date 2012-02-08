@@ -1171,7 +1171,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                             type,
                             returnedClass,
                             parentClasses,
-                            amIExcluded
+                            amIExcluded,
+                            prefix
                         );
                         break checkProp;
                     }
@@ -1490,7 +1491,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		Type type, 
 		Class<?> returnedClass,
         List<Class<?>> parentClasses,
-        Boolean isParentExcluded
+        Boolean isParentExcluded,
+        String prefix
 	) throws MappingException, HibernateException, ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String[] componentProperties = ((ComponentType) type).getPropertyNames();
 		List<String> componentPropertyNames = Arrays.asList(componentProperties);
@@ -1503,15 +1505,21 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             }
         }
 		PersistentClass persistentClass = getPersistentClass(targetClass.getName());
-		@SuppressWarnings("unchecked")
-		Iterator<Property> componentPropertyIterator = ((Component) persistentClass.getProperty(propertyName).getValue()).getPropertyIterator();
+        Property property;
+        try {
+            property = persistentClass.getProperty(propertyName);
+        } catch (MappingException e) {
+            property = persistentClass.getProperty(prefix + propertyName);
+        }
+        @SuppressWarnings("unchecked")
+		Iterator<Property> componentPropertyIterator = ((Component) property.getValue()).getPropertyIterator();
         List<Property> componentPropertyList = new ArrayList<Property>();
         while(componentPropertyIterator.hasNext()) {
             componentPropertyList.add(componentPropertyIterator.next());
         }
 		Map<String, FieldMetadata> newFields = new HashMap<String, FieldMetadata>();
 		buildProperties(
-			targetClass, 
+            targetClass,
 			foreignField, 
 			additionalForeignFields, 
 			additionalNonPersistentProperties,
