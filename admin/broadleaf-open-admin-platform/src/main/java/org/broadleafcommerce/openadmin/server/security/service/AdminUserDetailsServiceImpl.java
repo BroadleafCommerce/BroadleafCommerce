@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 /**
  * @author Jeff Fischer
  */
-@Service("blAdminUserDetailsService")
 public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource(name="blAdminSecurityService")
