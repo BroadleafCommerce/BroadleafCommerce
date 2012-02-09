@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.client.presenter.user;
 import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionListDataSourceFactory;
+import org.broadleafcommerce.openadmin.client.datasource.user.AdminCreatePermissionListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -42,7 +42,7 @@ public class PermissionManagementPresenter extends DynamicEntityPresenter implem
     }
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminCreatePermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"name","description"}, new Boolean[]{true, true});

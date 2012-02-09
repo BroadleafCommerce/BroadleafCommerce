@@ -70,7 +70,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
-				roleSearchView = new EntitySearchDialog((ListGridDataSource) result);
+				roleSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
 			}
 		}));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
@@ -83,7 +83,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 		}));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserPermissionDS", new AdminUserPermissionListDataSourceFactory(), new AsyncCallbackAdapter() {
             public void onSetupSuccess(DataSource result) {
-                permissionSearchView = new EntitySearchDialog((ListGridDataSource) result);
+                permissionSearchView = new EntitySearchDialog((ListGridDataSource) result, true);
                 userPermissionPresenter = new UserPermissionPresenter(getDisplay().getUserPermissionDisplay(), permissionSearchView);
                 userPermissionPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "description"}, new Boolean[]{false, false});
                 userPermissionPresenter.bind();
