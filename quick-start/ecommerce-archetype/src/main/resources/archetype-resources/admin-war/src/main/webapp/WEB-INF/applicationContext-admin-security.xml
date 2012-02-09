@@ -45,17 +45,9 @@
         <sec:authentication-provider ref="blRememberMeAuthenticationProvider"/>
 	</sec:authentication-manager>
 
-    <sec:jdbc-user-service
-			data-source-ref="webDS"
-		    id="userDetailsManager"
-	        users-by-username-query="SELECT login AS username, password, 1 as enabled FROM BLC_ADMIN_USER WHERE login = ?"
-	        authorities-by-username-query="SELECT
-		DISTINCT au.login AS username, ap.name AS authority FROM BLC_ADMIN_USER au
-		JOIN BLC_ADMIN_USER_ROLE_XREF aurx ON au.admin_user_id = aurx.admin_user_id
-		JOIN BLC_ADMIN_ROLE ar ON aurx.admin_role_id = ar.admin_role_id JOIN BLC_ADMIN_ROLE_PERMISSION_XREF
-		arpx ON ar.admin_role_id = arpx.admin_role_id JOIN BLC_ADMIN_PERMISSION ap
-		ON arpx.admin_permission_id = ap.admin_permission_id WHERE au.login = ?"
-	 />
+    <bean id="blAdminUserDetailsService" class="org.broadleafcommerce.openadmin.server.security.service.AdminUserDetailsServiceImpl"/>
+
+    <alias name="blAdminUserDetailsService" alias="userDetailsManager"/>
 
     <bean id="blAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
 		<property name="decisionVoters">

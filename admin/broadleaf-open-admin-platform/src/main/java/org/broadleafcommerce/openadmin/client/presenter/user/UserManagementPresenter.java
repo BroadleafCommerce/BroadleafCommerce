@@ -39,7 +39,7 @@ import java.util.HashMap;
  *
  */
 public class UserManagementPresenter extends DynamicEntityPresenter implements Instantiable {
-	
+
 	protected UserRolePresenter userRolePresenter;
 	protected EntitySearchDialog roleSearchView;
 	protected HashMap<String, Object> library = new HashMap<String, Object>();
