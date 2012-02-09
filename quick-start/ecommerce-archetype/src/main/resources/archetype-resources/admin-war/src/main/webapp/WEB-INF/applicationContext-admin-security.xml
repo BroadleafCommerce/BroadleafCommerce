@@ -45,6 +45,8 @@
         <sec:authentication-provider ref="blRememberMeAuthenticationProvider"/>
 	</sec:authentication-manager>
 
+    <bean id="blAdminUserDetailsService" class="org.broadleafcommerce.openadmin.server.security.service.AdminUserDetailsServiceImpl"/>
+
     <alias name="blAdminUserDetailsService" alias="userDetailsManager"/>
 
     <bean id="blAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
