@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.handler;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -41,7 +42,8 @@ public class AdminRoleCustomPersistenceHandler extends CustomPersistenceHandlerA
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return AdminRole.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        String[] criteria = persistencePackage.getCustomCriteria();
+        return !ArrayUtils.isEmpty(criteria) && criteria[0].equals("createNewRole") && AdminRole.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
