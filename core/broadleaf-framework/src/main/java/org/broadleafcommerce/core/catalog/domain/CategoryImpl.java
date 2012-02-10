@@ -82,7 +82,7 @@ public class CategoryImpl implements Category {
             if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
                 if (linkBuffer.length() == 0) {
                     linkBuffer.append(myCategory.getUrlKey());
-                } else {
+                } else if(myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())){
                     linkBuffer.insert(0, myCategory.getUrlKey() + '/');
                 }
             }
@@ -97,7 +97,12 @@ public class CategoryImpl implements Category {
         if (urlKey == null) {
         	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
-    	String currentPath = startingPath + '/' + category.getUrlKey();
+
+        String currentPath = "";
+        if (! "/".equals(category.getUrlKey())) {
+            currentPath = startingPath + "/" + category.getUrlKey();
+        }
+
         List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
         newCategoryList.add(category.getId());
 
@@ -243,7 +248,18 @@ public class CategoryImpl implements Category {
 
     @Override
     public String getUrl() {
-        return url;
+        // TODO: if null return
+        // if blank return
+        // if startswith "/" return
+        // if contains a ":" and no "?" or (contains a ":" before a "?") return
+        // else "add a /" at the beginning
+        if(url == null || url.equals("") || url.startsWith("/")) {
+            return url;       
+        } else if ((url.contains(":") && !url.contains("?")) || url.indexOf('?', url.indexOf(':')) != -1) {
+            return url;
+        } else {
+            return "/" + url;
+        }
     }
 
     @Override

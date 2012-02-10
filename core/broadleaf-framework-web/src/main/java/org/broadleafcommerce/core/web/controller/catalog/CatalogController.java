@@ -74,9 +74,25 @@ public class CatalogController {
     public String viewCatalog(ModelMap model, HttpServletRequest request) {
         return showCatalog(model, request, null);
     }
+    
+    private boolean shouldRedirectToUrl(Category currentCategory, Category rootCategory, HttpServletRequest request) {
+        if (currentCategory.getUrl() == null || "".equals(currentCategory.getUrl())) {
+            return false;
+        }
+        
+        if (currentCategory.getUrl().startsWith("/"+rootCategory.getUrlKey())) {
+            return false;
+        }
+        
+        String requestURL = request.getRequestURL().toString().trim();
+        String currentCategoryURL = currentCategory.getUrl();
+
+        return (! requestURL.equals(currentCategoryURL));
+    }
 
     private String showCatalog (ModelMap model, HttpServletRequest request, CatalogSort catalogSort) {
-        addCategoryToModel(request, model);
+        Category rootCategory = findRootCategory();
+        addCategoryToModel(request, model, rootCategory);
         boolean productFound = addProductsToModel(request, model, catalogSort);
 
         String view = defaultCategoryView;
@@ -85,7 +101,10 @@ public class CatalogController {
             view = defaultProductView;
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
-            if (currentCategory.getUrl() != null && !"".equals(currentCategory.getUrl())) {
+
+
+            // TODO: add (&& ! currentCategory.getUrl().startsWith("/"+ rootCategory.getUrlKey())
+            if (shouldRedirectToUrl(currentCategory, rootCategory, request)) {
                 return "redirect:"+currentCategory.getUrl();
             } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getUrl())) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
@@ -113,18 +132,7 @@ public class CatalogController {
         return showCatalog(model, request, catalogSort);
     }
 
-    protected void addCategoryToModel(HttpServletRequest request, ModelMap model ) {
-        Category rootCategory = null;
-        if (getRootCategoryId() != null) {
-            rootCategory = catalogService.findCategoryById(getRootCategoryId());
-        } else if (getRootCategoryName() != null) {
-            rootCategory = catalogService.findCategoryByName(getRootCategoryName());
-        }
-
-        if (rootCategory == null) {
-            throw new IllegalStateException("Catalog Controller configured incorrectly - rootId category not found: " + rootCategoryId);
-        }
-        
+    protected void addCategoryToModel(HttpServletRequest request, ModelMap model, Category rootCategory) {
         String url = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
         String categoryId = request.getParameter("categoryId");
         if (categoryId != null) {
@@ -145,6 +153,20 @@ public class CatalogController {
 
         addCategoryListToModel(categoryList, rootCategory, url, model);
         model.addAttribute("rootCategory", rootCategory);
+    }
+
+    private Category findRootCategory() {
+        Category rootCategory = null;
+        if (getRootCategoryId() != null) {
+            rootCategory = catalogService.findCategoryById(getRootCategoryId());
+        } else if (getRootCategoryName() != null) {
+            rootCategory = catalogService.findCategoryByName(getRootCategoryName());
+        }
+
+        if (rootCategory == null) {
+            throw new IllegalStateException("Catalog Controller configured incorrectly - rootId category not found: " + rootCategoryId);
+        }
+        return rootCategory;
     }
 
     protected int findProductPositionInList(Product product, List<Product> products) {
