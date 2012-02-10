@@ -22,8 +22,8 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.user.AdminCreateRoleListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.user.AdminPermissionRelatedToUserListDataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.user.AdminRoleListDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
@@ -60,7 +60,7 @@ public class RoleManagementPresenter extends DynamicEntityPresenter implements I
 	}
 
     public void setup() {
-		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminCreateRoleListDataSourceFactory(), new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
                 setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"description"}, new Boolean[]{true});
