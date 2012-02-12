@@ -72,6 +72,22 @@
 		</attribute>
     </tag>
 
+    <tag>
+        <name>categoryLookup</name>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryLookupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>categoryName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
 	<tag>
         <name>productLink</name>
         <tag-class>org.broadleafcommerce.core.web.catalog.taglib.ProductLinkTag</tag-class>
