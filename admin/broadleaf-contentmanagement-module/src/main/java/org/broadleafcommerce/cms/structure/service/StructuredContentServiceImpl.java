@@ -497,17 +497,6 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         }
     }
 
-    protected void productionItemArchived(StructuredContent sc) {
-        // Immediately remove the content from this VM.
-        removeStructuredContentFromCache(sc);
-
-        if (archivedStructuredContentListeners != null) {
-            for (ArchivedStructuredContentPublisher listener : archivedStructuredContentListeners) {                
-                listener.processStructuredContentArchive(sc, buildTypeKey(sc), buildNameKey(sc));
-            }
-        }
-    }
-
     @Override
     public void itemPromoted(SandBoxItem sandBoxItem, SandBox destinationSandBox) {
         if (! SandBoxItemType.STRUCTURED_CONTENT.equals(sandBoxItem.getSandBoxItemType())) {
@@ -530,17 +519,16 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Structured content promoted to production.  " + sc.getId() + ".  Archiving original item " + sc.getOriginalItemId());
                 }
-                StructuredContent originalSC = structuredContentDao.findStructuredContentById(sc.getOriginalItemId());
+                StructuredContent originalSC = structuredContentDao.findStructuredContentById(sandBoxItem.getOriginalItemId());
                 originalSC.setArchivedFlag(Boolean.TRUE);
                 structuredContentDao.addOrUpdateContentItem(originalSC);
-                productionItemArchived(originalSC);
 
                 if (sc.getDeletedFlag()) {
-                    // if this deleted content is being pushed to production, set it as archived.
+                    // if this deleted page is being pushed to production, set it as archived.
                     sc.setArchivedFlag(true);
                 }
 
-                // We are archiving the old content and making this the new "production page content", so
+                // We are archiving the old page and making this the new "production page", so
                 // null out the original page id before saving.
                 sc.setOriginalItemId(null);
             }
