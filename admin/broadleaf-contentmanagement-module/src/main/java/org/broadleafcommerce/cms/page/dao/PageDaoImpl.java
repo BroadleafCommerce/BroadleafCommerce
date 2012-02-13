@@ -113,8 +113,6 @@ public class PageDaoImpl implements PageDao {
             query.setParameter("uri", uri);
         }
 
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
         List<Page> results = query.getResultList();
         if (results != null && !results.isEmpty()) {
             return results.get(0);
