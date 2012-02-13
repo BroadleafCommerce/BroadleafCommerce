@@ -16,17 +16,6 @@
 
 package org.broadleafcommerce.cms.page.dao;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,6 +23,17 @@ import javax.persistence.Query;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 /**
  * Created by bpolster.
@@ -112,8 +112,6 @@ public class PageDaoImpl implements PageDao {
             query.setParameter("locale", locale);
             query.setParameter("uri", uri);
         }
-
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         List<Page> results = query.getResultList();
         if (results != null && !results.isEmpty()) {
