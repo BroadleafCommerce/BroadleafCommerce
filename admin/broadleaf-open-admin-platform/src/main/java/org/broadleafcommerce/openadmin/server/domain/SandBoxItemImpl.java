@@ -35,8 +35,8 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @AdminPresentationOverrides(
         {
-            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName="Date Created", group="Audit", readOnly = true)),
             @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName="Date Updated", group="Audit", readOnly = true)),
             @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
