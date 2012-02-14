@@ -157,7 +157,6 @@
     </build>
     <modules>
         <module>common</module>
-        <module>distribute</module>
         <module>module</module>
         <module>core</module>
         <module>integration</module>
