@@ -157,7 +157,6 @@
     </build>
     <modules>
         <module>common</module>
-        <module>module</module>
         <module>core</module>
         <module>integration</module>
         <module>admin</module>
@@ -239,28 +238,28 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-usps-schemas</artifactId>
-                <version>1.6.0-M2-SNAPSHOT</version>
+                <version>1.6.0-SNAPSHOT</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-usps</artifactId>
-                <version>1.6.0-M2-SNAPSHOT</version>
+                <version>1.6.0-SNAPSHOT</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-cybersource-api</artifactId>
-                <version>1.6.0-M2-SNAPSHOT</version>
+                <version>1.6.0-SNAPSHOT</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-cybersource</artifactId>
-                <version>1.6.0-M2-SNAPSHOT</version>
+                <version>1.6.0-SNAPSHOT</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -459,13 +458,6 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>commons-discovery</groupId>
-                <artifactId>commons-discovery</artifactId>
-                <version>0.2</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>1.1</version>
@@ -560,55 +552,6 @@
                 <version>1.0</version>
                 <type>jar</type>
                 <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.axis</groupId>
-                <artifactId>axis</artifactId>
-                <version>1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>wss4j</groupId>
-                <artifactId>wss4j</artifactId>
-                <version>1.5.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>xml-security</groupId>
-                <artifactId>xmlsec</artifactId>
-                <version>1.3.0</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>axis</groupId>
-                <artifactId>axis-jaxrpc</artifactId>
-                <version>1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>axis</groupId>
-                <artifactId>axis-saaj</artifactId>
-                <version>1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>axis</groupId>
-                <artifactId>axis-wsdl4j</artifactId>
-                <version>1.5.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>axis</groupId>
-                <artifactId>axis-ant</artifactId>
-                <version>1.4</version>
-                <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
