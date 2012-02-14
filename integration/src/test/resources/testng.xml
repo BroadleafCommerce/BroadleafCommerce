@@ -19,7 +19,6 @@
         	<package name="org.broadleafcommerce.security.service"></package>
         	<package name="org.broadleafcommerce.taglib"></package>
         	<package name="org.broadleafcommerce.test"></package>
-        	<package name="org.broadleafcommerce.vendor"></package>
         	<package name="org.broadleafcommerce.common.time.time"></package>
         </packages>
     </test>

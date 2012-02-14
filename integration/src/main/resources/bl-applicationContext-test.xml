@@ -61,7 +61,6 @@
 		<property name="propertyLocations">
 			<set>
 				<value>classpath:config/bc/</value>
-				<value>classpath:config/bc/test/</value>
 			</set>
 		</property>
 		<property name="environments">
@@ -86,71 +85,8 @@
           class="org.broadleafcommerce.common.email.service.info.EmailInfo"
           parent="baseEmailInfo">
     </bean>
-    
+
     <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.service.DummyCreditCardModule"/>
-    
-    <bean id="blUSPSShippingModule" class="org.broadleafcommerce.pricing.service.module.USPSSingleItemPerPackageShippingCalculationModule">
-		<property name="defaultModule" value="true"/>
-		<property name="originationPostalCode" value="10022"/>
-	</bean>
-	
-    <bean id="blShippingCalculationService" class="org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationServiceImpl">
-		<property name="uspsCharSet" value="${usps.charset}"/>
-		<property name="uspsPassword" value="${usps.password}"/>
-		<property name="uspsServerName" value="${usps.server.name}"/>
-		<property name="uspsServiceAPI" value="${usps.service.api}"/>
-		<property name="uspsUserName" value="${usps.user.name}"/>
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="httpProtocol" value="${usps.http.protocol}"/>
-		<property name="uspsShippingAPI" value="${usps.shipping.api}"/>
-		<property name="rateRequestElement" value="${usps.rate.request.tag}"/>
-		<property name="uspsRequestValidator">
-			<bean class="org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator">
-				<constructor-arg>
-					<bean class="org.broadleafcommerce.common.util.EnvironmentFactoryBean">
-						<constructor-arg value="${usps.rate.request.validator}"/>
-					</bean>
-				</constructor-arg>
-			</bean>
-		</property>
-		<property name="uspsRequestBuilder">
-			<bean class="org.broadleafcommerce.common.util.EnvironmentFactoryBean">
-				<constructor-arg value="${usps.rate.request.builder}"/>
-			</bean>
-		</property>
-		<property name="uspsResponseBuilder">
-			<bean class="org.broadleafcommerce.common.util.EnvironmentFactoryBean">
-				<constructor-arg value="${usps.rate.response.builder}"/>
-			</bean>
-		</property>
-	</bean>
-	
-	<bean id="blCyberSourceCreditCardPaymentService" class="org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourceCreditCardPaymentServiceImpl">
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="idGenerationService" ref="blIdGenerationService"/>
-	</bean>
-	
-	<bean id="blCyberSourceTaxService" class="org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServiceImpl">
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="idGenerationService" ref="blIdGenerationService"/>
-		<property name="isCacheEnabled" value="true"/>
-	</bean>
-	
-	<bean id="blCyberSourceServiceManager" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManagerImpl">
-		<property name="merchantId" value="${cybersource.merchant.id}"/>
-		<property name="serverUrl" value="${cybersource.server.url}"/>
-		<property name="libVersion" value="${cybersource.lib.version}"/>
-		<property name="registeredServices">
-			<list>
-				<ref bean="blCyberSourceCreditCardPaymentService"/>
-				<ref bean="blCyberSourceTaxService"/>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="cyberSourcePasswordCallback" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePasswordCallback">
-		<property name="transactionKey" value="${cybersource.transaction.key}"/>
-	</bean>
     
     <bean id="compositeStatusHandler" class="org.broadleafcommerce.common.vendor.service.monitor.handler.CompositeStatusHandler">
     	<property name="handlers">
@@ -166,16 +102,6 @@
 	    		</bean>
 	    	</list>
 	   	</property>
-    </bean>
-    
-    <bean id="blServiceMonitor" class="org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor" init-method="init">
-    	<property name="defaultHandler" ref="compositeStatusHandler"/>
-    	<property name="serviceHandlers">
-    		<map>
-                <entry key-ref="blShippingCalculationService" value-ref="compositeStatusHandler"/>
-                <entry key-ref="blCyberSourceCreditCardPaymentService" value-ref="compositeStatusHandler"/>
-            </map>
-    	</property>
     </bean>
     
     <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
