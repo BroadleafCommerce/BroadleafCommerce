@@ -65,12 +65,12 @@ import java.util.Set;
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationOverrides(
         {
-            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.createdBy.name", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.updatedBy.name", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="locale.id", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="locale.localeCode", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="locale.friendlyName", value=@AdminPresentation(excluded = true)),
