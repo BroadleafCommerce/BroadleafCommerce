@@ -165,7 +165,6 @@
         <module>core</module>
         <module>integration</module>
         <module>admin</module>
-        <module>quick-start</module>
     </modules>
     <dependencies>
     </dependencies>
