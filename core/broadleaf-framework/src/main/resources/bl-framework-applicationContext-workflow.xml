@@ -124,7 +124,6 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PricingServiceActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
 			</list>
