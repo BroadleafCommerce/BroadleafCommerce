@@ -29,6 +29,7 @@ import java.util.Map;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.w3c.dom.DOMException;
@@ -63,5 +64,7 @@ public interface RecordHelper {
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 	
 	public FieldManager getFieldManager();
+
+    public PersistenceModule getCompatibleModule(OperationType operationType);
 	
 }
