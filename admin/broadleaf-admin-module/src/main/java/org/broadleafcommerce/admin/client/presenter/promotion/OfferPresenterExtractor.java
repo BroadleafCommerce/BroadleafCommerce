@@ -81,35 +81,43 @@ public class OfferPresenterExtractor {
 	
 	public void applyData(final Record selectedRecord) {
 		try {
+            Record tempRecord = new Record();
+            for (String attribute : selectedRecord.getAttributes()) {
+                if (attribute.equals("_type")) {
+                    tempRecord.setAttribute(attribute, selectedRecord.getAttributeAsStringArray(attribute));
+                } else {
+                    tempRecord.setAttribute(attribute, selectedRecord.getAttribute(attribute));
+                }
+            }
 			final Map<String, Object> dirtyValues = new HashMap<String, Object>();
 			
-			setData(selectedRecord, "totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"), dirtyValues);
-			setData(selectedRecord, "deliveryType",getDisplay().getDeliveryTypeRadio().getValue(), dirtyValues);
+			setData(tempRecord, "totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"), dirtyValues);
+			setData(tempRecord, "deliveryType",getDisplay().getDeliveryTypeRadio().getValue(), dirtyValues);
 			if (getDisplay().getDeliveryTypeRadio().getValue().equals("CODE")) {
-				setData(selectedRecord, "offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim(), dirtyValues);
+				setData(tempRecord, "offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim(), dirtyValues);
 			}
 			
 			final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
 			
-			extractCustomerData(selectedRecord, dirtyValues);
-			extractOrderData(selectedRecord, type, dirtyValues);
+			extractCustomerData(tempRecord, dirtyValues);
+			extractOrderData(tempRecord, type, dirtyValues);
 			
-			extractQualifierRuleType(selectedRecord, dirtyValues);
-			extractTargetItemData(selectedRecord, type, dirtyValues);
-			extractTargetRuleType(selectedRecord, dirtyValues);
-			extractFulfillmentGroupData(selectedRecord, type, dirtyValues);
+			extractQualifierRuleType(tempRecord, dirtyValues);
+			extractTargetItemData(tempRecord, type, dirtyValues);
+			extractTargetRuleType(tempRecord, dirtyValues);
+			extractFulfillmentGroupData(tempRecord, type, dirtyValues);
 			
 			for (FormItem formItem : getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getFields()) {
-				setData(selectedRecord, formItem.getName(), formItem.getValue(), dirtyValues);
+				setData(tempRecord, formItem.getName(), formItem.getValue(), dirtyValues);
 			}
 			
-			extractQualifierData(selectedRecord, type, true, dirtyValues);
+			extractQualifierData(tempRecord, type, true, dirtyValues);
 			
 			DSRequest requestProperties = new DSRequest();
 			requestProperties.setAttribute("dirtyValues", dirtyValues);
 
             if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate()) {
-                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(selectedRecord, new DSCallback() {
+                getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(tempRecord, new DSCallback() {
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         try {
                             extractQualifierData(selectedRecord, type, false, dirtyValues);
