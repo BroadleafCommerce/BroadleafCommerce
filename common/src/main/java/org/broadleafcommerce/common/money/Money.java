@@ -25,13 +25,15 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Locale;
 
-public final class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
+public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
 	
     private static final long serialVersionUID = 1L;
 
     private BigDecimal amount;
 
     private final Currency currency;
+    
+    public static final Money ZERO = new NonModifiableMoney(BigDecimal.ZERO);
 
     public Money() {
         this(BankersRounding.zeroAmount(), defaultCurrency());
