@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,6 +39,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 @Entity
@@ -112,6 +113,17 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @AdminPresentation(friendlyName="Item Adjustment Value", order=2, group="Description")
     protected BigDecimal value;
 
+    @Column(name = "APPLIED_TO_SALE_PRICE")
+    @AdminPresentation(friendlyName="Apply To Sale Price", order=3, group="Description")
+    protected boolean appliedToSalePrice;
+    
+    @Transient
+    protected Money retailValue;
+
+    @Transient
+    protected Money salesValue;
+
+
     public void init(OrderItem orderItem, Offer offer, String reason){
         this.orderItem = orderItem;
         this.offer = offer;
@@ -156,6 +168,36 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     
     public void setValue(Money value) {
     	this.value = value.getAmount();
+    }
+
+    public boolean isAppliedToSalePrice() {
+        return appliedToSalePrice;
+    }
+
+    public void setAppliedToSalePrice(boolean appliedToSalePrice) {
+        this.appliedToSalePrice = appliedToSalePrice;
+    }
+
+    public Money getRetailPriceValue() {
+        if (salesValue == null) {
+            return Money.ZERO;
+        }
+        return this.retailValue;
+    }
+
+    public void setRetailPriceValue(Money retailPriceValue) {
+        this.retailValue = retailPriceValue;
+    }
+
+    public Money getSalesPriceValue() {
+        if (salesValue == null) {
+            return Money.ZERO;
+        }
+        return salesValue;
+    }
+
+    public void setSalesPriceValue(Money salesPriceValue) {
+        this.salesValue = salesPriceValue;
     }
 
     @Override

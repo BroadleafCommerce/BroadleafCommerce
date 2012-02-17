@@ -16,12 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -53,10 +49,13 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 

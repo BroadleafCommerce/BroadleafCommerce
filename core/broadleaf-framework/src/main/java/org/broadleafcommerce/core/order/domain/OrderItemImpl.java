@@ -287,11 +287,19 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     public boolean getIsOnSale() {
-        return !getSalePrice().equals(getRetailPrice());
+        if (getSalePrice() != null) {
+            return !getSalePrice().equals(getRetailPrice());
+        } else {
+            return false;
+        }
     }
 
     public boolean getIsDiscounted() {
-        return !getPrice().equals(getRetailPrice());
+        if (getPrice() != null) {
+            return !getPrice().equals(getRetailPrice());
+        } else {
+            return false;
+        }
     }
 
 	public boolean updatePrices() {
@@ -354,6 +362,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         assignFinalPrice();
         return removedAdjustmentCount;
     }
+
 	
 	public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
 		Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
