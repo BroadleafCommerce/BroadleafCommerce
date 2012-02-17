@@ -15,7 +15,21 @@
 
 	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
 	<context:component-scan base-package="org.broadleafcommerce.core.web"/>
-	
+
+    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PricingServiceActivity"/>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
+                <bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
 	<bean id="blCacheManager"
           class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
