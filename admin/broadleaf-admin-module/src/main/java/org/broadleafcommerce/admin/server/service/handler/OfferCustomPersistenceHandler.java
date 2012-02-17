@@ -238,7 +238,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				offerCode.setMaxUses(offerInstance.getMaxUses());
 				offerCode.setOffer(offerInstance);
 				offerCode.setStartDate(offerInstance.getStartDate());
-				dynamicEntityDao.merge(offerCode);
+				offerCode = (OfferCode) dynamicEntityDao.merge(offerCode);
 			}
 			
 			Entity offerEntity = helper.getRecord(offerProperties, offerInstance, null, null);
@@ -320,7 +320,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				offerCode.setMaxUses(offerInstance.getMaxUses());
 				offerCode.setOffer(offerInstance);
 				offerCode.setStartDate(offerInstance.getStartDate());
-				dynamicEntityDao.merge(offerCode);
+				offerCode = (OfferCode) dynamicEntityDao.merge(offerCode);
 			} else if (offerCodeId != null){
 				offerCode = (OfferCode) dynamicEntityDao.retrieve(OfferCodeImpl.class, Long.valueOf(entity.findProperty("offerCode.id").getValue()));
 				offerCode.setOffer(null);
