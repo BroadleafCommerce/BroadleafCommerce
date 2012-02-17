@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -27,6 +28,8 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+
+
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
@@ -107,7 +110,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected Order order;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Item Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Item Retail Price", order=2, group="Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
@@ -115,7 +118,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected BigDecimal salePrice;
 
     @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Item Price", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Item Price", order=4, group="Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable=false)
@@ -287,11 +290,19 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
 
     public boolean getIsOnSale() {
-        return !getSalePrice().equals(getRetailPrice());
+        if (getSalePrice() != null) {
+            return !getSalePrice().equals(getRetailPrice());
+        } else {
+            return false;
+        }
     }
 
     public boolean getIsDiscounted() {
-        return !getPrice().equals(getRetailPrice());
+        if (getPrice() != null) {
+            return !getPrice().equals(getRetailPrice());
+        } else {
+            return false;
+        }
     }
 
 	public boolean updatePrices() {
@@ -354,6 +365,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         assignFinalPrice();
         return removedAdjustmentCount;
     }
+
 	
 	public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
 		Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});

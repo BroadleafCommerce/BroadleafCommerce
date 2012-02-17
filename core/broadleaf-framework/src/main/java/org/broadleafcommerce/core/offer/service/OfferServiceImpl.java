@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -42,6 +36,11 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.openadmin.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class OfferServiceImpl.
@@ -89,7 +88,7 @@ public class OfferServiceImpl implements OfferService {
      * entered during checkout, or has a delivery type of automatic are added to the list.  The same offer
      * cannot appear more than once in the list.
      *
-     * @param delegate
+     * @param code
      * @return a List of offers that may apply to this order
      */
     public Offer lookupOfferByCode(String code) {
@@ -167,7 +166,7 @@ public class OfferServiceImpl implements OfferService {
      * without a end date will be processed.  The start and end dates on the offer will
      * still need to be evaluated.
      *
-     * @param offers
+     * @param offerCodes
      * @return a List of non-expired offers
      */
     protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
@@ -234,6 +233,10 @@ public class OfferServiceImpl implements OfferService {
             if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
                 orderOfferProcessor.compileOrderTotal(promotableOrder);
             } else {
+                // At this point, we should have a PromotableOrder that contains PromotableItems each of which
+                // has a list of candidatePromotions that might be applied.
+
+                // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
                 itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
                 itemOfferProcessor.gatherCart(promotableOrder);
             }

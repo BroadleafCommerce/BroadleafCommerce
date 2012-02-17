@@ -35,12 +35,13 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 
 	private static final long serialVersionUID = 1L;
 	
-	protected BigDecimal adjustmentPrice; // retailPrice with adjustments
+	protected BigDecimal retailAdjustmentPrice; 
+    protected BigDecimal saleAdjustmentPrice;
     protected List<PromotionDiscount> promotionDiscounts = new ArrayList<PromotionDiscount>();
     protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
     protected DiscreteOrderItem delegate;
     protected PromotableOrder order;
-    protected PromotableItemFactory itemFactory;
+    protected PromotableItemFactory itemFactory;    
     
     public PromotableOrderItemImpl(DiscreteOrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
     	this.delegate = (DiscreteOrderItem) orderItem;
@@ -63,27 +64,51 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     public Money getCurrentPrice() {
         delegate.updatePrices();
         Money currentPrice = null;
-        if (adjustmentPrice != null) {
-            currentPrice = new Money(adjustmentPrice);
-        } else if (delegate.getSalePrice() != null) {
+        
+        if (delegate.getIsOnSale()) {
             currentPrice = delegate.getSalePrice();
         } else {
             currentPrice = delegate.getRetailPrice();
         }
+        
+        if (getRetailAdjustmentPrice() != null && getRetailAdjustmentPrice().lessThan(currentPrice)) {
+            currentPrice = getRetailAdjustmentPrice();
+        }
+        
+        if (getSaleAdjustmentPrice() != null && getSaleAdjustmentPrice().lessThan(currentPrice)) {
+            currentPrice = getSaleAdjustmentPrice();
+        }
+
         return currentPrice;
     }
     
     public void computeAdjustmentPrice() {
     	delegate.updatePrices();
-    	Money temp = delegate.getRetailPrice();
+
+    	Money tempDiscountedRetailPrice = delegate.getRetailPrice();
+        Money tempDiscountedSalePrice = delegate.getSalePrice();
+        
     	for (OrderItemAdjustment adjustment : delegate.getOrderItemAdjustments()) {
-    		temp = temp.subtract(adjustment.getValue());
+            Money salesValue = adjustment.getSalesPriceValue();
+            Money retailValue = adjustment.getRetailPriceValue();
+
+            if (adjustment.getOffer().getApplyDiscountToSalePrice()) {
+                if (adjustment.getOrderItem().getIsOnSale()) {
+                    tempDiscountedSalePrice = tempDiscountedSalePrice.subtract(salesValue);
+                }
+            }
+            tempDiscountedRetailPrice = tempDiscountedRetailPrice.subtract(retailValue);
     	}
-    	adjustmentPrice = temp.lessThan(delegate.getRetailPrice())?temp.getAmount():delegate.getRetailPrice().getAmount();
+
+        if (tempDiscountedSalePrice != null) {
+            saleAdjustmentPrice = tempDiscountedSalePrice.getAmount();
+        }
+        retailAdjustmentPrice = tempDiscountedRetailPrice.getAmount();
+                            	
     }
     
     public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment) {
-    	((PromotableOrderItemAdjustment) orderItemAdjustment).computeAdjustmentValue();
+    	((PromotableOrderItemAdjustment) orderItemAdjustment).computeAdjustmentValues();
         delegate.getOrderItemAdjustments().add(((PromotableOrderItemAdjustment) orderItemAdjustment).getDelegate());
         order.resetTotalitarianOfferApplied();
         computeAdjustmentPrice();
@@ -91,10 +116,10 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 
     public int removeAllAdjustments() {
     	int removedAdjustmentCount = delegate.removeAllAdjustments();
-        adjustmentPrice = null;
-        //if (getOrder() != null) {
-        	order.resetTotalitarianOfferApplied();
-        //}
+        retailAdjustmentPrice = null;
+        saleAdjustmentPrice = null;
+        order.resetTotalitarianOfferApplied();
+        
         if (promotionDiscounts != null) {
         	promotionDiscounts.clear();
         }
@@ -104,15 +129,23 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
         assignFinalPrice();
         return removedAdjustmentCount;
     }
-    
-    public Money getAdjustmentPrice() {
-        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
+
+    public Money getRetailAdjustmentPrice() {
+        return retailAdjustmentPrice == null ? null : new Money(retailAdjustmentPrice);
     }
 
-    public void setAdjustmentPrice(Money adjustmentPrice) {
-        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
+    public void setRetailAdjustmentPrice(Money retailAdjustmentPrice) {
+        this.retailAdjustmentPrice = Money.toAmount(retailAdjustmentPrice);        
     }
-    
+
+    public Money getSaleAdjustmentPrice() {
+        return saleAdjustmentPrice == null ? null : new Money(saleAdjustmentPrice);
+    }
+
+    public void setSaleAdjustmentPrice(Money saleAdjustmentPrice) {
+        this.saleAdjustmentPrice = Money.toAmount(saleAdjustmentPrice);
+    }
+
     public boolean isNotCombinableOfferApplied() {
     	for (OrderItemAdjustment orderItemAdjustment : delegate.getOrderItemAdjustments()) {
     		boolean notCombineableApplied = !orderItemAdjustment.getOffer().isCombinableWithOtherOffers() || (orderItemAdjustment.getOffer().isTotalitarianOffer() != null && orderItemAdjustment.getOffer().isTotalitarianOffer());
@@ -403,9 +436,49 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 	
 	public PromotableOrderItem clone() {
 		PromotableOrderItem copy = itemFactory.createPromotableOrderItem((DiscreteOrderItem) delegate.clone(), order);
-		copy.setAdjustmentPrice(getAdjustmentPrice());
+        copy.setRetailAdjustmentPrice(getRetailAdjustmentPrice());
+        copy.setSaleAdjustmentPrice(getSaleAdjustmentPrice());
 		
 		return copy;
 	}
+
+    /**
+     * Removes all zero based adjustments and sets the adjusted price on the delegate.
+     *
+     * For remaining adjustments sets the value to the retail or sale price.
+     *
+     * @param useSaleAdjustments
+     * @return
+     */
+    @Override
+    public int fixAdjustments(boolean useSaleAdjustments) {
+        
+        Iterator<OrderItemAdjustment> adjustmentsIterator = delegate.getOrderItemAdjustments().iterator();
+        int removeCount = 0;
+        
+        while (adjustmentsIterator.hasNext()) {
+            OrderItemAdjustment currentAdjustment = adjustmentsIterator.next();
+            if (useSaleAdjustments) {
+                if (currentAdjustment.getSalesPriceValue().lessThanOrEqual(BigDecimal.ZERO)) {
+                    currentAdjustment.setOrderItem(null);
+                    adjustmentsIterator.remove();
+                    removeCount++;
+                } else {
+                    currentAdjustment.setAppliedToSalePrice(true);
+                    currentAdjustment.setValue(currentAdjustment.getSalesPriceValue());
+                }
+            } else {
+                if (currentAdjustment.getRetailPriceValue().lessThanOrEqual(BigDecimal.ZERO)) {
+                    currentAdjustment.setOrderItem(null);
+                    adjustmentsIterator.remove();
+                    removeCount++;
+                } else {
+                    currentAdjustment.setAppliedToSalePrice(false);
+                    currentAdjustment.setValue(currentAdjustment.getRetailPriceValue());
+                }
+            }
+        }
+        return removeCount;
+    }
 
 }

@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -25,6 +23,8 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.money.Money;
+
+import java.util.List;
 
 public interface PromotableOrderItem {
 	 
@@ -34,11 +34,28 @@ public interface PromotableOrderItem {
      * @param orderItemAdjustment
      */
     public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment);
-    
-    public Money getAdjustmentPrice();
-    
-    public void setAdjustmentPrice(Money adjustmentPrice);
-    
+
+    /**
+     * The price after discounts if all applicable discounts are applied
+     * to the retail price.
+     *
+     * @return
+     */
+    public Money getRetailAdjustmentPrice();
+
+
+    public void setRetailAdjustmentPrice(Money adjustmentPrice);
+
+    /**
+     * The price after discounts if all applicable discounts are applied
+     * to the sale price.
+     *
+     */
+    public Money getSaleAdjustmentPrice();
+
+    public void setSaleAdjustmentPrice(Money adjustmentPrice);
+
+
     public boolean isNotCombinableOfferApplied();
     
     public boolean isHasOrderItemAdjustments();
@@ -106,4 +123,12 @@ public interface PromotableOrderItem {
 	public void addCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer);
 	
 	public PromotableOrderItem clone();
+
+    /**
+     * Removes all zero based adjustments and sets the adjusted price on the delegate.
+     *
+     * @param useSaleAdjustments
+     * @return
+     */
+    int fixAdjustments(boolean useSaleAdjustments);
 }
