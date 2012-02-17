@@ -856,4 +856,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         this.persistenceManager = persistenceManager;
     }
 
+    @Override
+    public PersistenceModule getCompatibleModule(OperationType operationType) {
+        return ((InspectHelper) persistenceManager).getCompatibleModule(operationType);
+    }
 }

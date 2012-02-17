@@ -16,6 +16,15 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import javax.persistence.EntityManager;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,15 +49,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import javax.persistence.EntityManager;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
@@ -389,7 +389,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		myModule.remove(persistencePackage);
 	}
 
-	protected PersistenceModule getCompatibleModule(OperationType operationType) {
+	public PersistenceModule getCompatibleModule(OperationType operationType) {
 		PersistenceModule myModule = null;
 		for (PersistenceModule module : modules) {
 			if (module.isCompatible(operationType)) {
