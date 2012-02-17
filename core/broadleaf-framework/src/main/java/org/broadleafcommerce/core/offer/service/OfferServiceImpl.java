@@ -233,6 +233,10 @@ public class OfferServiceImpl implements OfferService {
             if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
                 orderOfferProcessor.compileOrderTotal(promotableOrder);
             } else {
+                // At this point, we should have a PromotableOrder that contains PromotableItems each of which
+                // has a list of candidatePromotions that might be applied.
+
+                // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
                 itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
                 itemOfferProcessor.gatherCart(promotableOrder);
             }

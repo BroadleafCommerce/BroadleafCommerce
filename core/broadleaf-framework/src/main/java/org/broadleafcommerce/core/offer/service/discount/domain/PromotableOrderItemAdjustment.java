@@ -28,8 +28,10 @@ public interface PromotableOrderItemAdjustment {
 	/*
 	 * Calculates the value of the adjustment
 	 */
-	public void computeAdjustmentValue();
+	public void computeAdjustmentValues();
 
-	public Money getValue();
-	
+    public Money getRetailPriceValue();
+
+    public Money getSalesPriceValue();
+
 }

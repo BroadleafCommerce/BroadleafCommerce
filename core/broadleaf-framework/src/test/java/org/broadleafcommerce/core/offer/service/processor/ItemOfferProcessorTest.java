@@ -16,11 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
@@ -44,9 +41,11 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
-import org.broadleafcommerce.common.money.Money;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -261,10 +260,12 @@ public class ItemOfferProcessorTest extends TestCase {
 		order = dataProvider.createBasicOrder();
 		
 		qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
+        offer1.setApplyDiscountToSalePrice(false);
+        order.getDiscreteOrderItems().get(0).getDelegate().setSalePrice(new Money(1D));
+        order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(1D));
 		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
 		
-		order.getDiscreteOrderItems().get(0).getDelegate().setSalePrice(new Money(1D));
-		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(1D));
+
 		
 		applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order);
 		
@@ -277,7 +278,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		Answer answer = new Answer();
 		Answer2 answer2 = new Answer2();
 		EasyMock.expect(offerDaoMock.createCandidateItemOffer()).andAnswer(answer).times(2);
-		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(8);
+		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(7);
 		
 		replay();
 		
@@ -326,6 +327,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		order.removeAllAdjustments();
 		
 		offer1.setCombinableWithOtherOffers(false);
+        offer1.setApplyDiscountToSalePrice(false);
 		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(10D));
 		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		
@@ -333,7 +335,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		assertTrue(appliedCount == 0);
 		
 		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
-		
+
 		//since the non-combinable offer was removed, the second offer is now available to be applied
 		assertTrue(appliedCount == 1);
 		
