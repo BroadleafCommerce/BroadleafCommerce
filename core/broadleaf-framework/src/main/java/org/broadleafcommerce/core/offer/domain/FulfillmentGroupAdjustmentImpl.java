@@ -110,7 +110,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
     @AdminPresentation(friendlyName="FG Adjustment Value", order=2, group="Description")
-    protected BigDecimal value;
+    protected BigDecimal value = Money.ZERO.getAmount();
 
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
         this.fulfillmentGroup = fulfillmentGroup;

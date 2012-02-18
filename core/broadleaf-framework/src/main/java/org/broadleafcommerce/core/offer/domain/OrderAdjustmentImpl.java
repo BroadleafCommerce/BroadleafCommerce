@@ -110,7 +110,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
     @AdminPresentation(friendlyName="Order Adjustment Value", order=2, group="Description")
-    protected BigDecimal value;
+    protected BigDecimal value = Money.ZERO.getAmount();
 
     public void init(Order order, Offer offer, String reason){
         this.order = order;
