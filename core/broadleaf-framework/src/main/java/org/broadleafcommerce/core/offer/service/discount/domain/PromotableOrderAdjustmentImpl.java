@@ -67,7 +67,7 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     }
     
     public Money getValue() {
-		if (delegate.getValue() == null) {
+		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
 			computeAdjustmentValue();
 		}
 		return delegate.getValue();

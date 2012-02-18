@@ -35,7 +35,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.core.offer.service.processor.OrderItemAdjustmentListener;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
