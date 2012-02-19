@@ -34,6 +34,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.broadleafcommerce.common.extensibility.context.MergeFileSystemAndClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.extensibility.jpa.ConfigurationOnlyState;
 import org.hibernate.MappingNotFoundException;
 import org.hibernate.tool.ant.ConfigurationTask;
 import org.hibernate.util.StringHelper;
@@ -118,6 +119,10 @@ public class HibernateToolTask extends Task {
 		AntClassLoader loader;
         MergeFileSystemAndClassPathXMLApplicationContext mergeContext;
 		try {
+            ConfigurationOnlyState state = new ConfigurationOnlyState();
+            state.setConfigurationOnly(true);
+            ConfigurationOnlyState.setState(state);
+
 			loader = getProject().createClassLoader(classPath);
 			ClassLoader classLoader = this.getClass().getClassLoader();
 			loader.setParent(classLoader); // if this is not set, classes from the taskdef cannot be found - which is crucial for e.g. annotations.
@@ -137,7 +142,9 @@ public class HibernateToolTask extends Task {
 			mergeContext = new MergeFileSystemAndClassPathXMLApplicationContext(contexts, fileSystemItems);
 		} catch (Exception e) {
 			throw new BuildException(e, getLocation());
-		}
+		} finally {
+            ConfigurationOnlyState.setState(null);
+        }
 		int count = 1;
 		ExporterTask generatorTask = null;
 		try {

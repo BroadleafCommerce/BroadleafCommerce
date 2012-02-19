@@ -119,7 +119,8 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                     determineDefaultPersistenceUnitRootUrl.setAccessible(true);
                     mPui.setPersistenceUnitRootUrl((URL)determineDefaultPersistenceUnitRootUrl.invoke(this));
                 }
-                if (mPui.getNonJtaDataSource() == null) {
+                ConfigurationOnlyState state = ConfigurationOnlyState.getState();
+                if ((state == null || !state.isConfigurationOnly()) && mPui.getNonJtaDataSource() == null) {
                     mPui.setNonJtaDataSource(getDefaultDataSource());
                 }
                 if (super.getLoadTimeWeaver() != null) {
@@ -205,6 +206,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Override
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
         super.postProcessPersistenceUnitInfo(newPU);
+        ConfigurationOnlyState state = ConfigurationOnlyState.getState();
         newPU.addJarFileUrl(newPU.getPersistenceUnitRootUrl());
         String persistenceUnitName = newPU.getPersistenceUnitName();
         MutablePersistenceUnitInfo temp;
@@ -238,8 +240,6 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 temp.addJarFileUrl(url);
             }
         }
-        temp.setJtaDataSource(newPU.getJtaDataSource());
-        temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
         if (temp.getProperties() == null) {
             temp.setProperties(newPU.getProperties());
         } else {
@@ -256,6 +256,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                     }
                 }
             }
+        }
+        if (state == null || !state.isConfigurationOnly()) {
+            temp.setJtaDataSource(newPU.getJtaDataSource());
+            temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
+        } else {
+            temp.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
+            temp.getProperties().setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
         }
         temp.setTransactionType(newPU.getTransactionType());
         if (newPU.getPersistenceProviderClassName() != null) {
