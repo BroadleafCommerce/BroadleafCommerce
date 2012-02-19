@@ -25,6 +25,7 @@ import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tools.ant.BuildException;
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.common.extensibility.context.MergeFileSystemAndClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
@@ -48,7 +49,7 @@ public class JPAConfigurationTask extends ConfigurationTask {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected Configuration createConfiguration(MergeClassPathXMLApplicationContext mergeContext) {
+	protected Configuration createConfiguration(MergeFileSystemAndClassPathXMLApplicationContext mergeContext) {
 		try {
 			PersistenceUnitInfo unitInfo = (PersistenceUnitInfo) ((MergePersistenceUnitManager) mergeContext.getBean("blPersistenceUnitManager")).obtainPersistenceUnitInfo(persistenceUnit);
 			

@@ -26,12 +26,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
-import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.common.extensibility.context.MergeFileSystemAndClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.hibernate.MappingNotFoundException;
 import org.hibernate.tool.ant.ConfigurationTask;
@@ -53,6 +54,8 @@ public class HibernateToolTask extends Task {
 	private File destDir;
 	@SuppressWarnings("rawtypes")
 	private List generators = new ArrayList();
+    private List<ClassPathApplicationContextTask> classPathApplicationContexts = new ArrayList<ClassPathApplicationContextTask>();
+    private List<FileSystemApplicationContextTask> fileSystemApplicationContexts = new ArrayList<FileSystemApplicationContextTask>();
 	private Path classPath;
 	private boolean combinePersistenceUnits = true;
 	private boolean refineFileNames = true;
@@ -62,6 +65,18 @@ public class HibernateToolTask extends Task {
 		addGenerator( generator );
 		return generator;
 	}
+    
+    public ClassPathApplicationContextTask createClassPathApplicationContext() {
+        ClassPathApplicationContextTask task = new ClassPathApplicationContextTask();
+        classPathApplicationContexts.add(task);
+        return task;
+    }
+    
+    public FileSystemApplicationContextTask createFileSystemApplicationContext() {
+        FileSystemApplicationContextTask task = new FileSystemApplicationContextTask();
+        fileSystemApplicationContexts.add(task);
+        return task;
+    }
 	
 	public JPAConfigurationTask createJPAConfiguration() {
 		JPAConfigurationTask task = new JPAConfigurationTask();
@@ -101,7 +116,7 @@ public class HibernateToolTask extends Task {
 
 	public void execute() {
 		AntClassLoader loader;
-		MergeClassPathXMLApplicationContext mergeContext;
+        MergeFileSystemAndClassPathXMLApplicationContext mergeContext;
 		try {
 			loader = getProject().createClassLoader(classPath);
 			ClassLoader classLoader = this.getClass().getClassLoader();
@@ -109,7 +124,17 @@ public class HibernateToolTask extends Task {
 			loader.setThreadContextLoader();
 			// launch the service merge application context to get the entity configuration for the entire framework
 			String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-			mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
+            String[] otherContexts = new String[classPathApplicationContexts.size()];
+            for (int j=0;j<otherContexts.length;j++) {
+                otherContexts[j] = classPathApplicationContexts.get(j).getPath();
+            }
+            contexts = (String[]) ArrayUtils.addAll(contexts, otherContexts);
+            
+            String[] fileSystemItems = new String[fileSystemApplicationContexts.size()];
+            for (int j=0;j<fileSystemItems.length;j++) {
+                fileSystemItems[j] = fileSystemApplicationContexts.get(j).getPath();
+            }
+			mergeContext = new MergeFileSystemAndClassPathXMLApplicationContext(contexts, fileSystemItems);
 		} catch (Exception e) {
 			throw new BuildException(e, getLocation());
 		}
