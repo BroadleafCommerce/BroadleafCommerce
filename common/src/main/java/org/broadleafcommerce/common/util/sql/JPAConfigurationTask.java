@@ -16,15 +16,13 @@
 
 package org.broadleafcommerce.common.util.sql;
 
+import javax.persistence.spi.PersistenceUnitInfo;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.persistence.spi.PersistenceUnitInfo;
-
 import org.apache.tools.ant.BuildException;
-import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.MergeFileSystemAndClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager;
 import org.hibernate.HibernateException;
@@ -51,7 +49,7 @@ public class JPAConfigurationTask extends ConfigurationTask {
 	@SuppressWarnings("unchecked")
 	protected Configuration createConfiguration(MergeFileSystemAndClassPathXMLApplicationContext mergeContext) {
 		try {
-			PersistenceUnitInfo unitInfo = (PersistenceUnitInfo) ((MergePersistenceUnitManager) mergeContext.getBean("blPersistenceUnitManager")).obtainPersistenceUnitInfo(persistenceUnit);
+			PersistenceUnitInfo unitInfo = ((MergePersistenceUnitManager) mergeContext.getBean("blPersistenceUnitManager")).obtainPersistenceUnitInfo(persistenceUnit);
 			
 			Map overrides = new HashMap();
 			Properties p = getProperties();
