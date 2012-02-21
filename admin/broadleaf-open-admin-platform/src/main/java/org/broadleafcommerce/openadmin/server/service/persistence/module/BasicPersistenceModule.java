@@ -16,6 +16,29 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import javax.persistence.Embedded;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.AssociationPathElement;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
@@ -48,29 +71,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.w3c.dom.DOMException;
-
-import javax.persistence.Embedded;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * 
@@ -449,19 +449,21 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
 	public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties) throws RuntimeException {
 		Object primaryKey = null;
-		String idProperty = null;
+		String idPropertyName = null;
+        FieldMetadata metaData = null;
 		for (String property : mergedProperties.keySet()) {
 			if (mergedProperties.get(property).getFieldType() == SupportedFieldType.ID && !property.contains(".")) {
-				idProperty = property;
+                idPropertyName = property;
+                metaData = mergedProperties.get(property);
 				break;
 			}
 		}
-		if (idProperty == null) {
+		if (idPropertyName == null) {
 			throw new RuntimeException("Could not find a primary key property in the passed entity with type: " + entity.getType()[0]);
 		}
 		for (Property property : entity.getProperties()) {
-			if (property.getName().equals(idProperty)) {
-				switch(property.getMetadata().getSecondaryType()) {
+			if (property.getName().equals(idPropertyName)) {
+				switch(metaData.getSecondaryType()) {
 				case INTEGER:
 					primaryKey = Long.valueOf(property.getValue());
 					break;
@@ -473,7 +475,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 			}
 		}
 		if (primaryKey == null) {
-			throw new RuntimeException("Could not find the primary key property (" + idProperty + ") in the passed entity with type: " + entity.getType()[0]);
+			throw new RuntimeException("Could not find the primary key property (" + idPropertyName + ") in the passed entity with type: " + entity.getType()[0]);
 		}
 		return primaryKey;
 	}
