@@ -88,7 +88,9 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
                 } else {
                     SC.logWarn("Admin user found. Reporting calback exception (AbstractCallback.onSecurityException)...");
                     reportException(msg, exception);
-                    SC.warn("Your Profile doesn't have the Capability necessary to perform this task.");
+                    //SC.warn("Your Profile doesn't have the Capability necessary to perform this task.");
+                    String errorMsg = exception.getMessage();
+                    SC.warn(errorMsg);
                 }
             }
         });
