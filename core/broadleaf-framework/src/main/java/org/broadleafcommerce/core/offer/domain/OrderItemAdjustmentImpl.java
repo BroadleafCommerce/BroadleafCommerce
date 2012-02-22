@@ -111,7 +111,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
     @AdminPresentation(friendlyName="Item Adjustment Value", order=2, group="Description")
-    protected BigDecimal value;
+    protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
     @AdminPresentation(friendlyName="Apply To Sale Price", order=3, group="Description")
