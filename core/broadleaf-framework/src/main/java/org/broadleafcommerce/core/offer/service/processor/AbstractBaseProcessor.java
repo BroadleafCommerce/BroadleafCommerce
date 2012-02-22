@@ -60,11 +60,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     		}
     	}
     	
-    	if (offer.getType().equals(OfferType.ORDER_ITEM)) {
-	    	//if (offer.getTargetItemCriteria() == null) {
-	    		//throw new RuntimeException("Invalid promotion data : Order Item promotions must specify a target criteria. This promotion does not appear to have a target criteria.");
-	    	//}
-    		checkForItemRequirements(candidates, offer.getTargetItemCriteria(), promotableOrderItems, false);
+    	if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
+	    	checkForItemRequirements(candidates, offer.getTargetItemCriteria(), promotableOrderItems, false);
     	}
     	
     	return candidates;
