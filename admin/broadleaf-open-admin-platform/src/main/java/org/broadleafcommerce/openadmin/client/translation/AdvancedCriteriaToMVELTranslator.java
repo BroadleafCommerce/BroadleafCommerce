@@ -481,7 +481,7 @@ public class AdvancedCriteriaToMVELTranslator {
 					response.append(value[j]);
 					break;
 				case DATE:
-					DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a");
+					DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a Z");
 					String formattedDate = formatter.format((Date) value[0]);
 					response.append("java.text.DateFormat.getDateTimeInstance(3,3).parse(\"");
 					response.append(formattedDate);

@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,7 +92,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
  */
 public class BasicClientEntityModule implements DataSourceModule {
 
-	protected final DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss");
+	protected final DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss Z");
 	
 	protected ForeignKey currentForeignKey;
 	protected AbstractDynamicDataSource dataSource;
@@ -308,22 +309,23 @@ public class BasicClientEntityModule implements DataSourceModule {
     }
     
     protected String updateMinutesFromDateFilter(String originalDateString, int position) {
+        String timezone = DateTimeFormat.getFormat("Z").format(new Date());
         if (originalDateString != null) {
             int pos = originalDateString.indexOf("T06:00:00");
             switch (position) {
                 case 0: 
                     if (pos >= 0) {
-                        return originalDateString.substring(0, pos) + "T00:00:00";
+                        return originalDateString.substring(0, pos) + "T00:00:00" + " " + timezone;
                     }
                     break;
                 default:
                     if (pos >= 0) {
-                        return originalDateString.substring(0, pos) + "T23:59:00";
+                        return originalDateString.substring(0, pos) + "T23:59:00" + " " + timezone;
                     }
                     break;
             }
         }
-        return originalDateString;
+        return originalDateString == null?null : originalDateString + " " + timezone;
     }
     
     public boolean isCompatible(OperationType operationType) {
