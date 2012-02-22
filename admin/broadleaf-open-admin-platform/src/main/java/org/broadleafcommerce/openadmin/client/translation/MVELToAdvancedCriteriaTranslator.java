@@ -108,7 +108,7 @@ public class MVELToAdvancedCriteriaTranslator {
 		AdvancedCriteria criteria;
 		switch(type) {
 		case DATE:
-			DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a");
+			DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a Z");
 			Date parsedDate = formatter.parse(expression.getValue());
 			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), parsedDate);
 			break;

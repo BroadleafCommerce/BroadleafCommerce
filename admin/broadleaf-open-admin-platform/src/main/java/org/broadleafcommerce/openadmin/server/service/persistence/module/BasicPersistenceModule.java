@@ -79,7 +79,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
     protected DecimalFormat decimalFormat = new DecimalFormat("0.########");
     protected ApplicationContext applicationContext;
     protected PersistenceManager persistenceManager;
