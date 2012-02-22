@@ -479,31 +479,33 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties) throws RuntimeException {
         Object primaryKey = null;
-        String idProperty = null;
+        String idPropertyName = null;
+        FieldMetadata metaData = null;
         for (String property : mergedProperties.keySet()) {
             if (mergedProperties.get(property).getFieldType() == SupportedFieldType.ID && !property.contains(".")) {
-                idProperty = property;
+                idPropertyName = property;
+                metaData = mergedProperties.get(property);
                 break;
             }
         }
-        if (idProperty == null) {
+        if (idPropertyName == null) {
             throw new RuntimeException("Could not find a primary key property in the passed entity with type: " + entity.getType()[0]);
         }
         for (Property property : entity.getProperties()) {
-            if (property.getName().equals(idProperty)) {
-                switch (property.getMetadata().getSecondaryType()) {
-                    case INTEGER:
-                        primaryKey = Long.valueOf(property.getValue());
-                        break;
-                    case STRING:
-                        primaryKey = property.getValue();
-                        break;
+            if (property.getName().equals(idPropertyName)) {
+                switch(metaData.getSecondaryType()) {
+                case INTEGER:
+                    primaryKey = Long.valueOf(property.getValue());
+                    break;
+                case STRING:
+                    primaryKey = property.getValue();
+                    break;
                 }
                 break;
             }
         }
         if (primaryKey == null) {
-            throw new RuntimeException("Could not find the primary key property (" + idProperty + ") in the passed entity with type: " + entity.getType()[0]);
+            throw new RuntimeException("Could not find the primary key property (" + idPropertyName + ") in the passed entity with type: " + entity.getType()[0]);
         }
         return primaryKey;
     }
