@@ -54,10 +54,29 @@ public class Calendar implements Serializable {
 			break;
 		}
 		case Calendar.YEAR: {
-			calendar = new Date(millis + (amount * 1000 * 60 * 60 * 24 * 365));
+			calendar = new Date(millis);
+            calendar.setYear(calendar.getYear() + amount);
 			break;
 		}
-		//TODO add support for adding month
+        case Calendar.MONTH: {
+            int modulus = amount % 12;
+            int yearAmount = amount/12;
+            calendar = new Date(millis);
+            calendar.setYear(calendar.getYear() + yearAmount);
+            int month = calendar.getMonth();
+            int year = calendar.getYear();
+            int result = month + modulus;
+            if (result > 11) {
+                calendar.setMonth(result - 12);
+                calendar.setYear(year + 1);
+            } else if (result < 0) {
+                calendar.setMonth(12 + result);
+                calendar.setYear(year - 1);
+            } else {
+                calendar.setMonth(result);
+            }
+            break;
+        }
 		default: {
 			throw new RuntimeException("Type not supported: " + field);
 		}
@@ -65,11 +84,23 @@ public class Calendar implements Serializable {
 	}
 
 	public boolean after(Object when) {
-		return calendar.getTime() > ((Date) when).getTime();
+        Date test;
+        if (when.getClass().getName().equals(Date.class.getName())) {
+            test = (Date) when;
+        } else {
+            test = ((Calendar) when).getTime();
+        }
+		return calendar.getTime() > test.getTime();
 	}
 
 	public boolean before(Object when) {
-		return calendar.getTime() < ((Date) when).getTime();
+        Date test;
+        if (when.getClass().getName().equals(Date.class.getName())) {
+            test = (Date) when;
+        } else {
+            test = ((Calendar) when).getTime();
+        }
+		return calendar.getTime() < test.getTime();
 	}
 
 	public final void clear() {
@@ -264,11 +295,11 @@ public class Calendar implements Serializable {
 	}
 
 	public final void setTime(Date date) {
-		throw new RuntimeException("Not Supported");
+		calendar = date;
 	}
 
 	public void setTimeInMillis(long millis) {
-		throw new RuntimeException("Not Supported");
+		calendar = new Date(millis);
 	}
 
 	public void setTimeZone(TimeZone value) {
