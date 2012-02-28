@@ -106,7 +106,7 @@ public class CatalogController {
             // TODO: add (&& ! currentCategory.getUrl().startsWith("/"+ rootCategory.getUrlKey())
             if (shouldRedirectToUrl(currentCategory, rootCategory, request)) {
                 return "redirect:"+currentCategory.getUrl();
-            } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getUrl())) {
+            } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getDisplayTemplate())) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
             } else {
                 if ("true".equals(request.getParameter("ajax"))) {
