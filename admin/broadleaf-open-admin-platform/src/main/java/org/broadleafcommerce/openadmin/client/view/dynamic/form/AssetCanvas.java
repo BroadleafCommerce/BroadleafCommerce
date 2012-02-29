@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.IButton;
@@ -56,6 +57,10 @@ public class AssetCanvas extends VStack {
     }
 
     public void updateImg(String src) {
+        String key = "[ISOMORPHIC]/../";
+        if (src.contains(key)) {
+            src = GWT.getModuleBaseURL() + src.substring(key.length(), src.length());
+        }
         previewContainer.setContents("<table width='99' height='99'><tr><td align='center' valign='middle'><img src='" + src + "' align='middle'/></td></tr></table>");
     }
 
