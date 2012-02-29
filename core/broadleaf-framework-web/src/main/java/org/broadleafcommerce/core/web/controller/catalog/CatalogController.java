@@ -87,7 +87,7 @@ public class CatalogController {
             Category currentCategory = (Category) model.get("currentCategory");
             if (currentCategory.getUrl() != null && !"".equals(currentCategory.getUrl())) {
                 return "redirect:"+currentCategory.getUrl();
-            } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getUrl())) {
+            } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getDisplayTemplate())) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
             } else {
                 if ("true".equals(request.getParameter("ajax"))) {
