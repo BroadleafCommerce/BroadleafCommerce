@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.presenter.entity.AbstractSubPresentable;
@@ -83,6 +84,11 @@ public class SimpleSearchJoinStructurePresenter extends AbstractSubPresentable {
 				if (event.isLeftButtonDown()) {
 					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
 						public void onSearchItemSelected(SearchItemSelected event) {
+                            DynamicEntityDataSource ds = (DynamicEntityDataSource) display.getGrid().getDataSource();
+                            ForeignKey foreignKey = (ForeignKey) ds.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+                            if (foreignKey != null) {
+                                event.getRecord().setAttribute(foreignKey.getManyToField(), abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord));
+                            }
 							display.getGrid().addData(event.getRecord());
 						}
 					});
