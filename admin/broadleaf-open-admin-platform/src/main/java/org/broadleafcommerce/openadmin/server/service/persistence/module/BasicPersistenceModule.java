@@ -570,7 +570,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (field != null) {
                     targetType = field.getType();
                 }
-                if (targetType == null || targetType.equals(Boolean.class)) {
+                if (targetType == null || targetType.equals(Boolean.class) || targetType.equals(boolean.class)) {
                     ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
                 } else {
                     ctoConverter.addCharacterMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
