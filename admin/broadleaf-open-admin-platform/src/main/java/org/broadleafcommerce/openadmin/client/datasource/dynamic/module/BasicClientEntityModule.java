@@ -249,12 +249,8 @@ public class BasicClientEntityModule implements DataSourceModule {
                             j++;
                         }
                         JSONValue value = itemObj.get("value");
-                        JSONString strVal = value.isString();
-                        if (strVal != null) {
-                            newItems[j] = strVal.stringValue();
-                        } else {
-                            newItems[j] = value.isObject().get("value").isString().stringValue();
-                        }
+                        newItems[j] = value.toString();
+                        
                         String fieldTypeVal = null;
                         DataSourceField field = dataSource.getField(val.isString().stringValue());
                         if (field != null) {
