@@ -22,9 +22,6 @@ public class MyCompanyProductView extends OneToOneProductSkuView implements MyCo
 		((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(shippingCountryDisplay);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ganz.${artifactId}.client.view.product.GanzProductDisplay${symbol_pound}getAdditionalAttributesDisplay()
-	 */
 	@Override
 	public GridStructureDisplay getShippingCountryDisplay() {
 		return shippingCountryDisplay;
