@@ -50,5 +50,9 @@ public interface AmountItem {
 	public abstract PaymentInfo getPaymentInfo();
 
 	public abstract void setPaymentInfo(PaymentInfo paymentInfo);
+
+    public abstract String getSystemId();
+
+    public abstract void setSystemId(String systemId);
 	
 }

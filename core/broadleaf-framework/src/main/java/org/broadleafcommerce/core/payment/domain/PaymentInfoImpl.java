@@ -31,6 +31,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +100,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     protected String type;
     
     @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})
-    protected List<AmountItem> amountItems;
+    protected List<AmountItem> amountItems = new ArrayList<AmountItem>();
     
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
     @AdminPresentation(friendlyName="Payment IP Address", order=4, group="Description")
@@ -223,5 +224,15 @@ public class PaymentInfoImpl implements PaymentInfo {
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
+    }
+
+    public Referenced createEmptyReferenced() {
+        if (getReferenceNumber() == null) {
+            throw new RuntimeException("referenceNumber must be already set");
+        }
+        EmptyReferenced emptyReferenced = new EmptyReferenced();
+        emptyReferenced.setReferenceNumber(getReferenceNumber());
+
+        return emptyReferenced;
     }
 }

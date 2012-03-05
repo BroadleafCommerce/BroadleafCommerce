@@ -33,15 +33,21 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.payment.domain.AmountItem;
+import org.broadleafcommerce.core.payment.domain.AmountItemImpl;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.EmptyReferenced;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.broadleafcommerce.core.payment.domain.TotalledPaymentInfoImpl;
+import org.broadleafcommerce.core.payment.service.CompositePaymentService;
 import org.broadleafcommerce.core.payment.service.PaymentInfoService;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.web.checkout.model.CheckoutForm;
 import org.broadleafcommerce.core.web.checkout.validator.CheckoutFormValidator;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
@@ -91,6 +97,9 @@ public class CheckoutController {
     protected CheckoutFormValidator checkoutFormValidator;
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
+    
+    @Resource(name="blCompositePaymentService")
+    protected CompositePaymentService compositePaymentService;
 
     protected String checkoutView;
     protected String receiptView;
@@ -222,7 +231,7 @@ public class CheckoutController {
         return checkoutView;
     }
 
-    //checkout for paypal
+    //TODO move this paypal specific controller into the demo project and leave the old-school version of the checkout controller here
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/paypalCheckout.htm", method = {RequestMethod.GET})
     public String paypalCheckout(@ModelAttribute CheckoutForm checkoutForm,
@@ -231,22 +240,47 @@ public class CheckoutController {
                            HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
         try {
+            final Order order = retrieveCartOrder(request, model);
+            Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
 
-            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-            Order order = retrieveCartOrder(request, model);
-            String resp = setHttpClient(order, "checkout", nvps);
+            TotalledPaymentInfoImpl paymentInfo = new TotalledPaymentInfoImpl();
+            paymentInfo.setOrder(order);
+            paymentInfo.setType(PaymentInfoType.PAYPAL);
+            paymentInfo.getAdditionalFields().put("PAYPALMETHODTYPE", "CHECKOUT");
+            paymentInfo.setReferenceNumber(String.valueOf(order.getId()));
+            paymentInfo.setAmount(order.getTotal());
+            paymentInfo.setSubTotal(order.getSubTotal());
+            paymentInfo.setTotalShipping(order.getTotalShipping());
+            paymentInfo.setTotalTax(order.getTotalTax());
+            paymentInfo.setShippingDiscount(order.getFulfillmentGroupAdjustmentsValue());
+            for (OrderItem orderItem : order.getOrderItems()) {
+                AmountItem amountItem = new AmountItemImpl();
+                if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
+                    amountItem.setDescription(((DiscreteOrderItem)orderItem).getSku().getDescription());
+                    amountItem.setSystemId(String.valueOf(((DiscreteOrderItem) orderItem).getSku().getId()));
+                }
+                amountItem.setShortDescription(orderItem.getName());
+                amountItem.setPaymentInfo(paymentInfo);
+                amountItem.setQuantity((long) orderItem.getQuantity());
+                amountItem.setUnitPrice(orderItem.getPrice().getAmount());
+                paymentInfo.getAmountItems().add(amountItem);
+            }
+            payments.put(paymentInfo, paymentInfo.createEmptyReferenced());
+            List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+            paymentInfos.add(paymentInfo);
+            order.setPaymentInfos(paymentInfos);
+            
+            CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(order, payments);
+            PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
 
-            if(resp.contains("ACK=Success") || resp.contains("ACK=SuccessWithWarning")) {
-                String token = getResponseValue(resp, "TOKEN");
-
+            if(responseItem.getTransactionSuccess()) {
                 order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
                 model.addAttribute("order", retrieveCartOrder(request, model));
-
-                String url =  "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=" + token;
-                response.sendRedirect(url);
-                return "";
+                return "redirect:" + responseItem.getAdditionalFields().get("REDIRECTURL");
             } else {
-                return resp.substring(resp.indexOf("ERRORCODE"));
+                //TODO this needs some work
+                //return resp.substring(resp.indexOf("ERRORCODE"));
+                return "";
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -254,6 +288,7 @@ public class CheckoutController {
         }
     }
 
+    //TODO this code is no longer needed with the paypal module
     private String setHttpClient(Order order, String method, List<NameValuePair> nvps) throws IOException {
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod("https://api-3t.sandbox.paypal.com/nvp");
@@ -269,12 +304,14 @@ public class CheckoutController {
         return postMethod.getResponseBodyAsString();
     }
 
+    //TODO this code is no longer needed with the paypal module
     private String getResponseValue(String resp, String valueName) {
         int tokenBegin = resp.indexOf(valueName) + valueName.length() + 1;
         int tokenEnd = resp.indexOf('&', tokenBegin);
         return resp.substring(tokenBegin, tokenEnd);
     }
 
+    //TODO this code is no longer needed with the paypal module
     private void setNvpsForCheckout(List<NameValuePair> nvps, Order order) {
 
         nvps.add(new NameValuePair("USER", "mercha_1328542046_biz_api1.gmail.com"));
@@ -295,6 +332,7 @@ public class CheckoutController {
         nvps.add(new NameValuePair("METHOD", "SetExpressCheckout"));
     }
 
+    //TODO this code is no longer needed with the paypal module
     /*private void setCallbackNvps(List<NameValuePair> nvps, Order order) {
         nvps.add(new NameValuePair("CALLBACK", "http://localhost:8080/broadleafdemo/basket/viewCart.htm"));
         nvps.add(new NameValuePair("CALLBACKTIMEOUT", "4"));
@@ -307,6 +345,7 @@ public class CheckoutController {
         nvps.add(new NameValuePair("MAXAMT", "" + (order.getTotal().doubleValue() + 10)));
     }*/
 
+    //TODO this code is no longer needed with the paypal module
     private void setCostNvps(List<NameValuePair> nvps, Order order) {
         List<OrderItem> items = order.getOrderItems();
         for(int i = 0; i < items.size(); i++) {
@@ -326,6 +365,7 @@ public class CheckoutController {
         nvps.add(new NameValuePair("PAYMENTREQUEST_0_AMT", order.getTotal().toString()));
     }
 
+    //TODO migrate to the paypal module
     @RequestMapping(value="/paypalDetails.htm", method = {RequestMethod.GET})
     public String paypalDetails(ModelMap model,
                                 @RequestParam String token,
@@ -376,6 +416,7 @@ public class CheckoutController {
         }
     }
 
+    //TODO migrate to the paypal module
     private void setNvpsForDetails(List<NameValuePair> nvps) {
 
         nvps.add(new NameValuePair("USER", "mercha_1328542046_biz_api1.gmail.com"));
@@ -386,7 +427,7 @@ public class CheckoutController {
         nvps.add(new NameValuePair("METHOD", "GetExpressCheckoutDetails"));
     }
 
-
+    //TODO migrate to the paypal module
     private void fillCheckoutForm(CheckoutForm checkoutForm, String resp) {
         String shipToStreet = getResponseValue(resp, "PAYMENTREQUEST_0_SHIPTOSTREET").replaceAll("%20", " ");
         String shipToCity = getResponseValue(resp, "PAYMENTREQUEST_0_SHIPTOCITY");
@@ -401,6 +442,7 @@ public class CheckoutController {
         checkoutForm.getShippingAddress().setPostalCode(shipToZip);
     }
 
+    //TODO migrate to the paypal module
     @RequestMapping(value="/paypalProcess.htm", method = {RequestMethod.POST})
     public String paypalProcess(ModelMap model,
                                 @RequestParam String token,
@@ -450,6 +492,7 @@ public class CheckoutController {
         }
     }
 
+    //TODO see how this is done in the checkout method
     private void paypalPayment(CheckoutForm checkoutForm, Order order, Map<PaymentInfo, Referenced> payments) {
         PaymentInfo paymentInfo = paymentInfoService.create();
         paymentInfo.setAddress(checkoutForm.getShippingAddress());
@@ -466,6 +509,7 @@ public class CheckoutController {
         order.setSubmitDate(Calendar.getInstance().getTime());
     }
 
+    //TODO migrate to the paypal module
     private void setNvpsForProcess(List<NameValuePair> nvps, Order order) {
 
         nvps.add(new NameValuePair("USER", "mercha_1328542046_biz_api1.gmail.com"));
