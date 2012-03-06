@@ -72,7 +72,10 @@ public class AdminUserImpl implements AdminUser {
 		validationConfigurations={
 			@ValidationConfiguration(
 				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",
-				configurationItems={@ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError")}
+				configurationItems={
+                        @ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError"),
+                        @ConfigurationItem(itemName="fieldType", itemValue="password")
+                }
 			)
 		}
     )
