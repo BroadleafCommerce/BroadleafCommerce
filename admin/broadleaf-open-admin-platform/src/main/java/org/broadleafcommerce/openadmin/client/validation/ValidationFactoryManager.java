@@ -55,6 +55,7 @@ public class ValidationFactoryManager extends ArrayList<ValidationFactory> {
 		if (manager == null) {
 			ValidationFactoryManager.manager = new ValidationFactoryManager();
 			ValidationFactoryManager.manager.add(new PasswordMatchValidationFactory());
+            ValidationFactoryManager.manager.add(new FieldMatchValidationFactory());
 		}
 		return ValidationFactoryManager.manager;
 	}

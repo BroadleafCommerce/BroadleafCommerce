@@ -16,6 +16,25 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
@@ -28,10 +47,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 
@@ -72,7 +87,10 @@ public class AdminUserImpl implements AdminUser {
 		validationConfigurations={
 			@ValidationConfiguration(
 				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",
-				configurationItems={@ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError")}
+				configurationItems={
+                        @ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError"),
+                        @ConfigurationItem(itemName="fieldType", itemValue="password")
+                }
 			)
 		}
     )

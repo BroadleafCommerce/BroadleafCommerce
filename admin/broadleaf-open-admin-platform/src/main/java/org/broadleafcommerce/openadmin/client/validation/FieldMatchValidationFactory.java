@@ -31,13 +31,12 @@ import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
  * @author jfischer
  *
  */
-public class PasswordMatchValidationFactory implements ValidationFactory {
+public class FieldMatchValidationFactory implements ValidationFactory {
 
 	private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
 	
 	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
-        String fieldType = configurationItems.get("fieldType");
-		return validatorClassname.equals(MatchesFieldValidator.class.getName()) && fieldType != null && fieldType.equals("password");
+		return validatorClassname.equals(MatchesFieldValidator.class.getName());
 	}
 
 	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
@@ -59,7 +58,10 @@ public class PasswordMatchValidationFactory implements ValidationFactory {
 		} else if (configurationItems.containsKey("errorMessage")) {
 			valid.setErrorMessage(configurationItems.get("errorMessage"));
 		}
-		valid.setOtherField(fieldName + "Repeat_blc");
+        if (configurationItems.get("otherField") == null) {
+            throw new RuntimeException("Usage of MatchesFieldValidator requires a configurationItem be set for 'otherField'");
+        }
+		valid.setOtherField(configurationItems.get("otherField"));
 
 		return valid;
 	}
