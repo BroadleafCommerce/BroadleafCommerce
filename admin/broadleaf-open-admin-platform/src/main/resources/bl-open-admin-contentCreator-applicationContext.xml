@@ -103,10 +103,18 @@
     <bean id="blPersistenceManager" class="org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerImpl" scope="prototype">
 		<constructor-arg ref="blPersistenceModules"/>
         <property name="customPersistenceHandlers" ref="blCustomPersistenceHandlers"/>
+        <property name="customPersistenceHandlerFilters" ref="blCustomPersistenceHandlerFilters"/>
 		<property name="targetEntityManagers" ref="blTargetEntityManagers"/>
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao"/>
         <property name="adminRemoteSecurityService" ref="blAdminSecurityRemoteService"/>
 	</bean>
+
+    <bean id="blCustomPersistenceHandlerFilters" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blDynamicEntityDao" class="org.broadleafcommerce.openadmin.server.dao.DynamicEntityDaoImpl" scope="prototype">
         <property name="ejb3ConfigurationDao" ref="blEJB3ConfigurationDao"/>

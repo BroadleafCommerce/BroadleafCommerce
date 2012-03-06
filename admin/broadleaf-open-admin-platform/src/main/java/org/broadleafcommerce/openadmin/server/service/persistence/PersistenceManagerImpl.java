@@ -16,6 +16,16 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import javax.persistence.EntityManager;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +43,7 @@ import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerFilter;
 import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
@@ -41,15 +52,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.persistence.EntityManager;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
 	private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
@@ -57,6 +59,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	protected SandBoxService sandBoxService;
 	protected DynamicEntityDao dynamicEntityDao;
 	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
+    protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
 	protected PersistenceModule[] modules;
 	protected Map<TargetModeType, String> targetEntityManagers = new HashMap<TargetModeType, String>();
 	protected TargetModeType targetMode;
@@ -195,7 +198,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	@Override
 	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
 		// check to see if there is a custom handler registered
-		for (CustomPersistenceHandler handler : customPersistenceHandlers) {
+		for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
 			if (handler.canHandleInspect(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.INSPECT);
@@ -389,7 +392,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		myModule.remove(persistencePackage);
 	}
 
-	protected PersistenceModule getCompatibleModule(OperationType operationType) {
+	public PersistenceModule getCompatibleModule(OperationType operationType) {
 		PersistenceModule myModule = null;
 		for (PersistenceModule module : modules) {
 			if (module.isCompatible(operationType)) {
@@ -518,7 +521,20 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	 */
 	@Override
 	public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
-		return customPersistenceHandlers;
+        List<CustomPersistenceHandler> cloned = new ArrayList<CustomPersistenceHandler>();
+        cloned.addAll(customPersistenceHandlers);
+        if (getCustomPersistenceHandlerFilters() != null) {
+            for (CustomPersistenceHandlerFilter filter : getCustomPersistenceHandlerFilters()) {
+                Iterator<CustomPersistenceHandler> itr = cloned.iterator();
+                while (itr.hasNext()) {
+                    CustomPersistenceHandler handler = itr.next();
+                    if (!filter.shouldUseHandler(handler.getClass().getName())) {
+                        itr.remove();
+                    }
+                }
+            }
+        }
+		return cloned;
 	}
 
 	/*
@@ -539,5 +555,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     public void setAdminRemoteSecurityService(AdminSecurityServiceRemote adminRemoteSecurityService) {
         this.adminRemoteSecurityService = adminRemoteSecurityService;
+    }
+
+    public List<CustomPersistenceHandlerFilter> getCustomPersistenceHandlerFilters() {
+        return customPersistenceHandlerFilters;
+    }
+
+    public void setCustomPersistenceHandlerFilters(List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters) {
+        this.customPersistenceHandlerFilters = customPersistenceHandlerFilters;
     }
 }
