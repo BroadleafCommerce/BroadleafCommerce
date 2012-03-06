@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.openadmin.time.SystemTime;
-import org.broadleafcommerce.persistence.EntityConfiguration;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,6 +23,13 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
+
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.openadmin.time.SystemTime;
+import org.broadleafcommerce.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 /**
  *
@@ -100,14 +100,15 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
-	    	if (currentDate.getTime() - currentDate.getTime() > myCurrentDateResolution) {
-	    		currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = currentDate;
-	    	}
-    	}
+        synchronized(this) {
+            Date now = SystemTime.asDate();
+            if (now.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                currentDate = new Date(now.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = currentDate;
+            }
+        }
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategory", category);
         query.setParameter("currentDate", myDate);
