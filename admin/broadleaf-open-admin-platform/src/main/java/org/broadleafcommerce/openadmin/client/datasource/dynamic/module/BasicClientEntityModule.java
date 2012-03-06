@@ -33,7 +33,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -250,6 +249,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                         }
                         JSONValue value = itemObj.get("value");
                         newItems[j] = value.toString();
+                        newItems[j] = newItems[j].replaceAll("\"", "");
                         
                         String fieldTypeVal = null;
                         DataSourceField field = dataSource.getField(val.isString().stringValue());
