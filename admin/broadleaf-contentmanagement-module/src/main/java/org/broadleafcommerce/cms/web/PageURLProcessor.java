@@ -50,7 +50,6 @@ public class PageURLProcessor implements URLProcessor {
     @Resource(name = "blStaticAssetService")
     private StaticAssetService staticAssetService;
 
-    private String blcPageTemplateDirectory ="/WEB-INF/jsp/templates";
     private static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
 
     /**
@@ -94,7 +93,7 @@ public class PageURLProcessor implements URLProcessor {
         }
 
         if (p != null) {
-            String templateJSPPath = new StringBuilder(blcPageTemplateDirectory).append(p.getTemplatePath()).append(".jsp").toString();
+            String templateJSPPath = p.getTemplatePath();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Forwarding to page: " + templateJSPPath);
             }
@@ -105,21 +104,5 @@ public class PageURLProcessor implements URLProcessor {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Defaults to /WEB-INF/jsp/templates but can be overridden via Spring configuration.
-     * @return
-     */
-    public String getBlcPageTemplateDirectory() {
-        return blcPageTemplateDirectory;
-    }
-
-    /**
-     * Sets the directory where JSP page templates are stored.   If this method is
-     * not called, the default value of "/WEB-INF/jsp/templates" is used.
-     */
-    public void setBlcPageTemplateDirectory(String blcPageTemplateDirectory) {
-        this.blcPageTemplateDirectory = blcPageTemplateDirectory;
     }
 }
