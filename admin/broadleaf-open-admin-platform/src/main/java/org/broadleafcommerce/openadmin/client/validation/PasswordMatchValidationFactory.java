@@ -33,6 +33,8 @@ import org.broadleafcommerce.openadmin.client.reflection.ReflectiveFactory;
  */
 public class PasswordMatchValidationFactory implements ValidationFactory {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
 	
 	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
