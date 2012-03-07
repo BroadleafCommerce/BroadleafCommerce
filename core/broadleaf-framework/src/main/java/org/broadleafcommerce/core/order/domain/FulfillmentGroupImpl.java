@@ -180,7 +180,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "STATUS")
     @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
-    @AdminPresentation(friendlyName="FG Status", order=6, group="Description")
+    @AdminPresentation(friendlyName="FG Status", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType")
     protected String status;
     
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
