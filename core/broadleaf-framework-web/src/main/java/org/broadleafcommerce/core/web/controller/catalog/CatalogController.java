@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.core.web.catalog.CatalogSort;
+import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.broadleafcommerce.core.web.order.model.WishlistRequest;
 import org.broadleafcommerce.core.web.search.SearchFilterUtil;
 import org.broadleafcommerce.common.time.SystemTime;
@@ -73,6 +74,11 @@ public class CatalogController {
     @RequestMapping(method =  {RequestMethod.GET})
     public String viewCatalog(ModelMap model, HttpServletRequest request) {
         return showCatalog(model, request, null);
+    }
+
+    @ModelAttribute("addToCartItem")
+    public AddToCartItem initAddToCartItem() {
+        return new AddToCartItem();
     }
     
     private boolean shouldRedirectToUrl(Category currentCategory, Category rootCategory, HttpServletRequest request) {

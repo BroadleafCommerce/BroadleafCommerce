@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -40,6 +33,12 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service("blCartService")
 /*
@@ -78,10 +77,13 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
         for (int i = 0; i < items.size(); i++) {
 			OrderItem orderItem = items.get(i);
+
+            // only run pricing routines on the last item.
+            boolean shouldPriceOrder = (priceOrder && (i == items.size() -1));
 			if (moveNamedOrderItems) {
-				moveItemToOrder(namedOrder, cartOrder, orderItem, priceOrder);
+				moveItemToOrder(namedOrder, cartOrder, orderItem, shouldPriceOrder);
 			} else {
-				addOrderItemToOrder(cartOrder, orderItem, priceOrder);
+				addOrderItemToOrder(cartOrder, orderItem, shouldPriceOrder);
 			}
 			
 		}

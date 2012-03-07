@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface OrderItem extends Serializable {
 
@@ -116,5 +117,17 @@ public interface OrderItem extends Serializable {
     public int removeAllAdjustments();
     
     public void accept(OrderItemVisitor visitor) throws PricingException;
+
+    /**
+     * A list of arbitrary attributes added to this item.
+     */
+    public Map<String,OrderItemAttribute> getOrderItemAttributes();
+
+    /**
+     * Sets the map of order item attributes.
+     *
+     * @param orderItemAttributes
+     */
+    public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes);
     
 }

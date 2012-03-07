@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.web.order.model;
 
+import java.util.Map;
+
 public class AddToCartItem {
 
     private long productId;
@@ -23,6 +25,7 @@ public class AddToCartItem {
     private long skuId;
     private Long orderId;
     private int quantity;
+    private Map additionalAttributes;
 
     public long getSkuId() {
         return skuId;
@@ -53,5 +56,11 @@ public class AddToCartItem {
     }
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+    public Map getAdditionalAttributes() {
+        return additionalAttributes;
+    }
+    public void setAdditionalAttributes(Map additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
     }
 }

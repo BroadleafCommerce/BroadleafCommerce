@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DiscreteOrderItemRequest {
 
@@ -35,6 +35,7 @@ public class DiscreteOrderItemRequest {
     private int quantity;
     private PersonalMessage personalMessage;
     private List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
+    private Map<String,String> itemAttributes = new HashMap<String,String>();
 
     public Sku getSku() {
         return sku;
@@ -77,7 +78,15 @@ public class DiscreteOrderItemRequest {
 		this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
 	}
 
-	@Override
+    public Map<String, String> getItemAttributes() {
+        return itemAttributes;
+    }
+
+    public void setItemAttributes(Map<String, String> itemAttributes) {
+        this.itemAttributes = itemAttributes;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DiscreteOrderItemRequest)) return false;

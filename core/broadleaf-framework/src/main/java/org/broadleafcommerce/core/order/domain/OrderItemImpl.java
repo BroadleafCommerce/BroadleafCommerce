@@ -18,6 +18,12 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -29,12 +35,6 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -52,6 +52,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -59,6 +60,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Entity
@@ -148,11 +150,17 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>(); 
-
+    
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     @AdminPresentation(excluded = true)
     protected String orderItemType;
+
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @MapKey(name="value")
+    protected Map<String,OrderItemAttribute> orderItemAttributeMap;
 
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
@@ -362,6 +370,22 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         assignFinalPrice();
         return removedAdjustmentCount;
     }
+    
+    /**
+     * A list of arbitrary attributes added to this item.
+     */
+    public Map<String,OrderItemAttribute> getOrderItemAttributes() {
+        return orderItemAttributeMap;
+    }
+
+    /**
+     * Sets the map of order item attributes.
+     *
+     * @param orderItemAttributes
+     */
+    public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes) {
+        this.orderItemAttributeMap = orderItemAttributes;
+    }
 
 	
 	public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
@@ -389,6 +413,15 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 					orderItem.getCandidateItemOffers().add(clone);
 				}
 			}
+            
+            if (getOrderItemAttributes() != null) {
+                for (OrderItemAttribute attribute : getOrderItemAttributes().values()) {
+                    OrderItemAttribute clone = attribute.clone();
+                    clone.setOrderItem(orderItem);
+                    orderItem.getOrderItemAttributes().put(clone.getName(), clone);
+                }
+            }
+            
 			orderItem.setCategory(getCategory());
 			orderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
 			orderItem.setName(getName());

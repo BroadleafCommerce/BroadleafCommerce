@@ -192,4 +192,17 @@ public interface Order extends Serializable {
 	
 	@Deprecated
 	public void addAddedOfferCode(OfferCode offerCode);
+
+    /**
+     * A list of arbitrary attributes added to this order.
+     */
+    public Map<String,OrderAttribute> getOrderAttributes();
+
+    /**
+     * Sets the map of order attributes.
+     *
+     * @param orderAttributes
+     */
+    public void setOrderAttributes(Map<String,OrderAttribute> orderAttributes);
+
 }

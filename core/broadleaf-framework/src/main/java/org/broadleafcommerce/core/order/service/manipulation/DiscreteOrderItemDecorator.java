@@ -16,9 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.manipulation;
 
-import java.util.List;
-import java.util.Map;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -30,10 +28,13 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.common.money.Money;
+
+import java.util.List;
+import java.util.Map;
 
 public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 	
@@ -264,5 +265,23 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 	public void accept(OrderItemVisitor visitor) throws PricingException {
 		discreteOrderItem.accept(visitor);
 	}
+
+    /**
+     * A list of arbitrary attributes added to this item.
+     */
+    @Override
+    public Map<String, OrderItemAttribute> getOrderItemAttributes() {
+        return discreteOrderItem.getOrderItemAttributes();
+    }
+
+    /**
+     * Sets the map of order item attributes.
+     *
+     * @param orderItemAttributes
+     */
+    @Override
+    public void setOrderItemAttributes(Map<String, OrderItemAttribute> orderItemAttributes) {
+        discreteOrderItem.setOrderItemAttributes(orderItemAttributes);
+    }
 
 }

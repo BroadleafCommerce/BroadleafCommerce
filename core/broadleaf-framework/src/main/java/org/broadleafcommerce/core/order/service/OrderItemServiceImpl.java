@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.HashMap;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
@@ -28,12 +24,18 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
@@ -51,16 +53,35 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItem saveOrderItem(final OrderItem orderItem) {
         return orderItemDao.saveOrderItem(orderItem);
     }
-
-    public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
-        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
+    
+    protected void populateDiscreteOrderItem(DiscreteOrderItem item, DiscreteOrderItemRequest itemRequest) {
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
+        
+        if (itemRequest.getItemAttributes() != null && itemRequest.getItemAttributes().size() > 0) {
+            Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
+            item.setOrderItemAttributes(orderItemAttributes);
+            
+            for (String key : itemRequest.getItemAttributes().keySet()) {
+                String value = itemRequest.getItemAttributes().get(key);
+                OrderItemAttribute attribute = new OrderItemAttributeImpl();
+                attribute.setName(key);
+                attribute.setValue(value);
+                attribute.setOrderItem(item);
+                orderItemAttributes.put(key, attribute);
+            }
+        }
+    }
+
+    public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
+        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
+        populateDiscreteOrderItem(item, itemRequest);
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
+
         item.updatePrices();
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
@@ -70,10 +91,8 @@ public class OrderItemServiceImpl implements OrderItemService {
     
     public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
-        item.setSku(itemRequest.getSku());
-        item.setQuantity(itemRequest.getQuantity());
-        item.setCategory(itemRequest.getCategory());
-        item.setProduct(itemRequest.getProduct());
+        populateDiscreteOrderItem(item, itemRequest);
+
         DynamicSkuPrices prices = dynamicSkuPricingService.getSkuPrices(itemRequest.getSku(), skuPricingConsiderations);
         item.setBaseRetailPrice(prices.getRetailPrice());
         item.setBaseSalePrice(prices.getSalePrice());
@@ -84,6 +103,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         	item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
         	item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
+
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 

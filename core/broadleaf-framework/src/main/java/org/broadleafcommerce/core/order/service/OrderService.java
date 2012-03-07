@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -37,6 +34,10 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
@@ -122,7 +123,11 @@ public interface OrderService {
 
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
     
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> orderItemAttributes) throws PricingException;
+    
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException;
+    
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> orderItemAttributes) throws PricingException;
 
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
     
@@ -149,5 +154,36 @@ public interface OrderService {
     public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
     
     public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
+
+    /**
+     * Adds the passed in name/value pair to the order-item.    If the
+     * attribute already exists, then it is updated with the new value.   
+     * 
+     * If the value passed in is null or empty string and the attribute exists, it is removed
+     * from the order item.
+     *
+     * @param order
+     * @param item
+     * @param attributeValues
+     * @param priceOrder
+     * @return
+     */
+    public Order addOrUpdateOrderItemAttributes(Order order, OrderItem item, Map<String,String> attributeValues, boolean priceOrder) throws ItemNotFoundException, PricingException;
     
+    /**
+     * Adds the passed in name/value pair to the order-item.    If the
+     * attribute already exists, then it is updated with the new value.   
+     * 
+     * If the value passed in is null and the attribute exists, it is removed
+     * from the order item.
+     *
+     * @param order
+     * @param item
+     * @param attributeName
+     * @param priceOrder
+     * @return
+     */
+    public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException;
+    
+
 }

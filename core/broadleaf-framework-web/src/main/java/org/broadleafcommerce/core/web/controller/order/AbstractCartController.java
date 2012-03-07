@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.order;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -51,6 +45,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractCartController {
 
@@ -167,7 +166,7 @@ public abstract class AbstractCartController {
      */
     @RequestMapping(value = "/addItem.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public String addItem(@RequestParam(required=false) Boolean ajax,
-            @ModelAttribute AddToCartItem addToCartItem,
+            @ModelAttribute("addToCartItem") AddToCartItem addToCartItem,
             BindingResult errors,
             ModelMap model,
             HttpServletRequest request) {
@@ -189,10 +188,10 @@ public abstract class AbstractCartController {
             try {
                 OrderItem orderItem;
                 if (addToCartItem.getOrderId() != null) {
-                    orderItem = cartService.addSkuToOrder(addToCartItem.getOrderId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
+                    orderItem = cartService.addSkuToOrder(addToCartItem.getOrderId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity(), addToCartItem.getAdditionalAttributes());
                 }
                 else {
-                    orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
+                    orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity(), addToCartItem.getAdditionalAttributes());
                 }
                 orderItemsAdded.add(orderItem);
             } catch (PricingException e) {
@@ -225,7 +224,7 @@ public abstract class AbstractCartController {
 
     @RequestMapping(value = "/beginCheckout.htm", method = RequestMethod.GET)
     public String beginCheckout(@ModelAttribute CartSummary cartSummary, BindingResult errors, @RequestParam (required = false) Boolean isStorePickup, ModelMap model, HttpServletRequest request) {
-        String view = "error"; //updateItemQuantity(orderItemList, errors, model, request);
+        String view = "error";
         if (!view.equals("error")) {
             model.addAttribute("isStorePickup", isStorePickup);
             if (SecurityContextHolder.getContext().getAuthentication() == null || !SecurityContextHolder.getContext().getAuthentication().isAuthenticated()){
@@ -282,6 +281,57 @@ public abstract class AbstractCartController {
             }
         }
         
+        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
+        model.addAttribute("cartSummary", cartSummary);
+        return cartView;
+    }
+
+    @RequestMapping(value = "/viewCart.htm", params="updateItemAttributes", method = RequestMethod.POST)
+    public String updateItemAttributes(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
+        if (errors.hasErrors()) {
+            model.addAttribute("cartSummary", cartSummary);
+            return cartView;
+        }
+        Order currentCartOrder = retrieveCartOrder(request, model);
+        List<OrderItem> orderItems = currentCartOrder.getOrderItems();
+        List<CartOrderItem> items = new ArrayList<CartOrderItem>(cartSummary.getRows());
+        for (CartOrderItem cartOrderItem : items) {
+            OrderItem orderItem = (OrderItem)CollectionUtils.find(orderItems,
+                    new BeanPropertyValueEqualsPredicate("id", cartOrderItem.getOrderItem().getId()));
+            //in case the item was removed from the cart from another browser tab
+            if (orderItem != null) {
+                if (cartOrderItem.getQuantity() > 0) {
+                    orderItem.setQuantity(cartOrderItem.getQuantity());
+                    try {
+                        cartService.updateItemQuantity(currentCartOrder, orderItem);
+                    } catch (ItemNotFoundException e) {
+                        LOG.error("Item not found in order: ("+orderItem.getId()+")", e);
+                    } catch (PricingException e) {
+                        LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
+                    }
+                } else {
+                    try {
+                        cartService.removeItemFromOrder(currentCartOrder, orderItem);
+                        cartSummary.getRows().remove(cartOrderItem);
+                    } catch (Exception e) {
+                        // TODO: handle exception gracefully
+                        LOG.error("Unable to remove item from the order: ("+currentCartOrder.getId()+")");
+                    }
+                }
+            }
+        }
+
+        //re-add cart items in case there were item splits resulting from promotions
+        if (currentCartOrder.getOrderItems() != null ) {
+        	cartSummary.getRows().clear();
+            for (OrderItem orderItem : currentCartOrder.getOrderItems()) {
+                CartOrderItem cartOrderItem = new CartOrderItem();
+                cartOrderItem.setOrderItem(orderItem);
+                cartOrderItem.setQuantity(orderItem.getQuantity());
+                cartSummary.getRows().add(cartOrderItem);
+            }
+        }
+
         cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
         model.addAttribute("cartSummary", cartSummary);
         return cartView;

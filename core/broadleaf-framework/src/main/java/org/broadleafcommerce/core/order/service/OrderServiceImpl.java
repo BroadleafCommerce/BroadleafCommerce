@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +37,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
@@ -64,6 +58,14 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class OrderServiceImpl implements OrderService {
 
@@ -164,16 +166,25 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
-    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true);
+    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, null);
+    }
+    
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> itemAttributes) throws PricingException {
+    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, itemAttributes);
+    }
+    
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
+        return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, priceOrder, null);
     }
 
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> itemAttributes) throws PricingException {
         if (orderId == null || skuId == null || quantity == null) {
             return null;
         }
 
         Order order = findOrderById(orderId);
         DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(skuId, productId, categoryId, quantity);
+        itemRequest.setItemAttributes(itemAttributes);
 
         return addDiscreteItemToOrder(order, itemRequest, priceOrder);
     }
@@ -404,17 +415,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException {
-        // This isn't quite right. It will need to be changed later to reflect
-        // the exact requirements we want.
-        // item.setQuantity(quantity);
-        // item.setOrder(order);
         if (!order.getOrderItems().contains(item)) {
             throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
         }
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
         itemFromOrder.setQuantity(item.getQuantity());
-
         order = updateOrder(order, priceOrder);
+
     }
 
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
@@ -499,7 +506,6 @@ public class OrderServiceImpl implements OrderService {
         return order.getOrderItems().get(orderItemIndex);
     }
     
-    //TODO add testing
     public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
     	int bundleIndex = order.getOrderItems().indexOf(bundle);
         List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
@@ -515,7 +521,6 @@ public class OrderServiceImpl implements OrderService {
         return ((BundleOrderItem) order.getOrderItems().get(bundleIndex)).getDiscreteOrderItems().get(orderItemIndex);
     }
     
-    //TODO add testing
     public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
         DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
         orderItemService.delete(itemFromBundle);
@@ -523,6 +528,83 @@ public class OrderServiceImpl implements OrderService {
         order = updateOrder(order, priceOrder);
         
         return order;
+    }
+
+    /**
+     * Adds the passed in name/value pair to the order-item.    If the
+     * attribute already exists, then it is updated with the new value.
+     * <p/>
+     * If the value passed in is null and the attribute exists, it is removed
+     * from the order item.
+     *
+     * @param order
+     * @param item
+     * @param attributeValues
+     * @param priceOrder
+     * @return
+     */
+    @Override
+    public Order addOrUpdateOrderItemAttributes(Order order, OrderItem item, Map<String,String> attributeValues, boolean priceOrder) throws ItemNotFoundException, PricingException {
+        if (!order.getOrderItems().contains(item)) {
+            throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
+        }
+        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
+        
+        Map<String,OrderItemAttribute> orderItemAttributes = itemFromOrder.getOrderItemAttributes();
+        if (orderItemAttributes == null) {
+            orderItemAttributes = new HashMap<String,OrderItemAttribute>();
+            itemFromOrder.setOrderItemAttributes(orderItemAttributes);
+        }
+        
+        boolean changeMade = false;
+        for (String attributeName : attributeValues.keySet()) {
+            String attributeValue = attributeValues.get(attributeName);
+            OrderItemAttribute attribute = orderItemAttributes.get(attributeName);
+            if (attribute != null && attribute.getValue().equals(attributeValue)) {
+                // no change made.
+                continue;
+            } else {
+                changeMade = true;
+                if (attribute == null) {
+                    attribute = new OrderItemAttributeImpl();
+                    attribute.setOrderItem(itemFromOrder);
+                    attribute.setName(attributeName);
+                    attribute.setValue(attributeValue);
+                } else if (attributeValue == null) {
+                    orderItemAttributes.remove(attributeValue);
+                } else {
+                    attribute.setValue(attributeValue);
+                }
+            }
+        }
+
+        if (changeMade) {
+            return updateOrder(order, priceOrder);
+        } else {
+            return order;
+        }
+    }
+
+    public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException {
+        if (!order.getOrderItems().contains(item)) {
+            throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
+        }
+        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
+
+        boolean changeMade = false;
+        Map<String,OrderItemAttribute> orderItemAttributes = itemFromOrder.getOrderItemAttributes();
+        if (orderItemAttributes != null) {
+            if (orderItemAttributes.containsKey(attributeName)) {
+                changeMade = true;
+                orderItemAttributes.remove(attributeName);
+            }
+        }
+
+        if (changeMade) {
+            return updateOrder(order, priceOrder);
+        } else {
+            return order;
+        }
     }
 
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {

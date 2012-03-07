@@ -29,5 +29,4 @@ public class CartController extends AbstractCartController {
 	public CartController() {
 		super();
 	}
-    
 }
