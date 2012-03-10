@@ -23,10 +23,6 @@ import org.broadleafcommerce.common.money.Money;
  */
 public interface TotalledPaymentInfo extends PaymentInfo {
 
-    Money getShippingDiscount();
-
-    void setShippingDiscount(Money shippingDiscount);
-
     Money getSubTotal();
 
     void setSubTotal(Money subTotal);

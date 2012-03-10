@@ -40,30 +40,16 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 public class TotalledPaymentInfoImpl extends PaymentInfoImpl implements TotalledPaymentInfo {
 
     @Column(name = "SUBTOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Payment Amount", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="SubTotal", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
     protected BigDecimal subTotal;
 
     @Column(name = "TOTALTAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Payment Amount", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Total Tax", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTALSHIPPING", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Payment Amount", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Total Shipping", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
     protected BigDecimal totalShipping;
-
-    @Column(name = "SHIPPINGDISCOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Payment Amount", order=3, group="Description", prominent=true, fieldType= SupportedFieldType.MONEY)
-    protected BigDecimal shippingDiscount;
-
-    @Override
-    public Money getShippingDiscount() {
-        return shippingDiscount == null ? null : new Money(shippingDiscount);
-    }
-
-    @Override
-    public void setShippingDiscount(Money shippingDiscount) {
-        this.shippingDiscount = Money.toAmount(shippingDiscount);
-    }
 
     @Override
     public Money getSubTotal() {
