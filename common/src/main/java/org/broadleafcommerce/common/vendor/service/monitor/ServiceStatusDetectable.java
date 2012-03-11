@@ -16,12 +16,16 @@
 
 package org.broadleafcommerce.common.vendor.service.monitor;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 
-public interface ServiceStatusDetectable {
+public interface ServiceStatusDetectable<T extends Serializable> {
 
     public ServiceStatusType getServiceStatus();
 
     public String getServiceName();
+    
+    public Object process(T arg) throws Exception;
 
 }

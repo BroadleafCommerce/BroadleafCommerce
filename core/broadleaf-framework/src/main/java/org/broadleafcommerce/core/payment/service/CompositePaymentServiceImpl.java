@@ -16,9 +16,8 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
+import java.util.Map;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -75,4 +74,11 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
         return executePayment(order, null);
     }
 
+    public SequenceProcessor getPaymentWorkflow() {
+        return paymentWorkflow;
+    }
+
+    public void setPaymentWorkflow(SequenceProcessor paymentWorkflow) {
+        this.paymentWorkflow = paymentWorkflow;
+    }
 }

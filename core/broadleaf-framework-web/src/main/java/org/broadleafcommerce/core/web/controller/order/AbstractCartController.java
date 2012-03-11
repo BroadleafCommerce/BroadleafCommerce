@@ -280,7 +280,7 @@ public abstract class AbstractCartController {
                 cartSummary.getRows().add(cartOrderItem);
             }
         }
-        
+
         cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
         model.addAttribute("cartSummary", cartSummary);
         return cartView;
@@ -342,6 +342,22 @@ public abstract class AbstractCartController {
         Order currentCartOrder = retrieveCartOrder(request, model);
         updateFulfillmentGroups(cartSummary, currentCartOrder);
         return "redirect:/checkout/checkout.htm";
+    }
+
+    @RequestMapping(params="paypalCheckout", method = RequestMethod.POST)
+    public String paypalCheckout(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
+        Order currentCartOrder = retrieveCartOrder(request, model);
+        updateFulfillmentGroups(cartSummary, currentCartOrder);
+        return "redirect:/checkout/paypalCheckout.htm";
+    }
+
+    @RequestMapping(params="paypalProcess", method = RequestMethod.POST)
+    public String paypalProcess(@ModelAttribute(value="cartSummary") CartSummary cartSummary,
+                                @ModelAttribute String token, @ModelAttribute String payerID,
+                                Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
+        Order currentCartOrder = retrieveCartOrder(request, model);
+        updateFulfillmentGroups(cartSummary, currentCartOrder);
+        return "redirect:/checkout/paypalProcess.htm?token=" + token + "&PayerID=" + payerID;
     }
 
     @RequestMapping(params="updateShipping=performUpdate", method = RequestMethod.POST)

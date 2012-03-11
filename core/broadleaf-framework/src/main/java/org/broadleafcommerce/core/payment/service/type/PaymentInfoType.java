@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.payment.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
     public static final PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD", "Gift Card");
     public static final PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD", "Credit Card");
     public static final PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT", "Bank Account");
+    public static final PaymentInfoType PAYPAL = new PaymentInfoType("PAYPAL", "PayPal");
 
     public static PaymentInfoType getInstance(final String type) {
         return TYPES.get(type);
