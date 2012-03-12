@@ -36,7 +36,8 @@ public class FieldMatchValidationFactory implements ValidationFactory {
 	private Factory factory = (Factory) GWT.create(ReflectiveFactory.class);
 	
 	public boolean isValidFactory(String validatorClassname, Map<String, String> configurationItems) {
-		return validatorClassname.equals(MatchesFieldValidator.class.getName());
+		String fieldType = configurationItems.get("fieldType");
+		return validatorClassname.equals(MatchesFieldValidator.class.getName()) && (fieldType == null || !fieldType.equals("password"));
 	}
 
 	public Validator createValidator(String validatorClassname, Map<String, String> configurationItems, String fieldName) {
