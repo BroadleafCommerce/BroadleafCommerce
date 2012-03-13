@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.money.BankersRounding;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     }
 
     public Money getRetailAdjustmentPrice() {
-        return retailAdjustmentPrice == null ? null : new Money(retailAdjustmentPrice);
+        return retailAdjustmentPrice == null ? null : new Money(retailAdjustmentPrice, delegate.getRetailPrice().getCurrency(), retailAdjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:retailAdjustmentPrice.scale());
     }
 
     public void setRetailAdjustmentPrice(Money retailAdjustmentPrice) {
@@ -139,7 +140,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     }
 
     public Money getSaleAdjustmentPrice() {
-        return saleAdjustmentPrice == null ? null : new Money(saleAdjustmentPrice);
+        return saleAdjustmentPrice == null ? null : new Money(saleAdjustmentPrice, delegate.getRetailPrice().getCurrency(), saleAdjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:saleAdjustmentPrice.scale());
     }
 
     public void setSaleAdjustmentPrice(Money saleAdjustmentPrice) {
