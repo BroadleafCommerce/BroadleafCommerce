@@ -22,6 +22,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -124,11 +125,11 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money add(Money other) {
-        return new Money(amount.add(other.amount), currency);
+        return new Money(amount.add(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
     public Money subtract(Money other) {
-        return new Money(amount.subtract(other.amount), currency);
+        return new Money(amount.subtract(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
     public Money multiply(double amount) {
@@ -140,7 +141,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money multiply(BigDecimal multiplier) {
-        return new Money(amount.multiply(multiplier), currency);
+        return new Money(amount.multiply(multiplier), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
     public Money divide(double amount) {
@@ -152,7 +153,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money divide(BigDecimal divisor) {
-        return new Money(amount.divide(divisor), currency);
+        return new Money(amount.divide(divisor, amount.precision(), RoundingMode.HALF_EVEN), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
     public Money abs() {
