@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
@@ -81,7 +82,7 @@ public class PageImpl implements Page {
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
-    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN, requiredOverride = RequiredOverride.REQUIRED)
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
