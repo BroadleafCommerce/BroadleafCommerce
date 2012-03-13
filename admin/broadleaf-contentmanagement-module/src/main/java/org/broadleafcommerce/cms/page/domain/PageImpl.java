@@ -16,23 +16,6 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.AdminPresentationClass;
-import org.broadleafcommerce.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -52,6 +35,24 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.broadleafcommerce.openadmin.client.dto.VisibilityEnum;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.server.domain.Site;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.AdminPresentationClass;
+import org.broadleafcommerce.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.presentation.RequiredOverride;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 /**
  * Created by bpolster.
@@ -92,7 +93,7 @@ public class PageImpl implements Page {
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
-    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName="Page Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN, requiredOverride = RequiredOverride.REQUIRED)
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
