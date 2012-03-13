@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
@@ -176,7 +177,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
     
     public Money getAdjustmentPrice() {
-        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
+        return adjustmentPrice == null ? null : new Money(adjustmentPrice, delegate.getSubTotal().getCurrency(), adjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:adjustmentPrice.scale());
     }
 
     public void setAdjustmentPrice(Money adjustmentPrice) {
