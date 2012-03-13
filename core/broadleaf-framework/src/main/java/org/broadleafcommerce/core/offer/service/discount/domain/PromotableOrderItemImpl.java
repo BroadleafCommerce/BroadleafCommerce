@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.broadleafcommerce.common.money.BankersRounding;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -24,12 +31,6 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.common.money.Money;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -131,7 +132,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     }
 
     public Money getRetailAdjustmentPrice() {
-        return retailAdjustmentPrice == null ? null : new Money(retailAdjustmentPrice);
+        return retailAdjustmentPrice == null ? null : new Money(retailAdjustmentPrice, delegate.getRetailPrice().getCurrency(), retailAdjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:retailAdjustmentPrice.scale());
     }
 
     public void setRetailAdjustmentPrice(Money retailAdjustmentPrice) {
@@ -139,7 +140,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     }
 
     public Money getSaleAdjustmentPrice() {
-        return saleAdjustmentPrice == null ? null : new Money(saleAdjustmentPrice);
+        return saleAdjustmentPrice == null ? null : new Money(saleAdjustmentPrice, delegate.getRetailPrice().getCurrency(), saleAdjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:saleAdjustmentPrice.scale());
     }
 
     public void setSaleAdjustmentPrice(Money saleAdjustmentPrice) {
