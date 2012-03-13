@@ -271,10 +271,30 @@ public class FormBuilder {
 			formItem.setShowDisabled(showDisabledState);
 		}
 		if (canEdit != null) {
-			formItem.setDisabled(!canEdit);
+            String className = formItem.getClass().getName();
+            if (
+                className.equals(FloatItem.class.getName()) ||
+                className.equals(TextItem.class.getName()) ||
+                className.equals(IntegerItem.class.getName()) ||
+                className.equals(TextAreaItem.class.getName())
+            ) {
+                formItem.setAttribute("readOnly",!canEdit);
+            } else {
+                formItem.setDisabled(!canEdit);
+            }
 		}
 		if (!field.getCanEdit()) {
-			formItem.setDisabled(true);
+            String className = formItem.getClass().getName();
+            if (
+                className.equals(FloatItem.class.getName()) ||
+                className.equals(TextItem.class.getName()) ||
+                className.equals(IntegerItem.class.getName()) ||
+                className.equals(TextAreaItem.class.getName())
+            ) {
+                formItem.setAttribute("readOnly",true);
+            } else {
+                formItem.setDisabled(true);
+            };
 		}
 		temp.add(formItem);
 		if (displayFormItem != null) {
