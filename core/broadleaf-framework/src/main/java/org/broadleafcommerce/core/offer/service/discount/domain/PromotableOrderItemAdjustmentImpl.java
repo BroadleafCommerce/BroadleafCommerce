@@ -62,7 +62,7 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             
             // The value of an AMOUNT_OFF type order is the amount specified on the offer.
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) { 
-                Money amountOff = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), retailAdjustmentPrice.getAmount().scale());
+                Money amountOff = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), 5);
                 
                 // compute value for on sale price
                 if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
@@ -88,11 +88,11 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             
             // The value of FIX_PRICE depends on whether the item was on sale or not. 
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                Money fixPriceAmount = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), retailAdjustmentPrice.getAmount().scale());
+                Money fixPriceAmount = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), 5);
                 
                 if (fixPriceAmount.lessThan(retailAdjustmentPrice)) {
                     BigDecimal offerValue = retailAdjustmentPrice.getAmount().subtract(fixPriceAmount.getAmount());
-                    delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), retailAdjustmentPrice.getAmount().scale()));
+                    delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), 5));
                 } else {
                     delegate.setRetailPriceValue(Money.ZERO);
                 }
@@ -111,13 +111,13 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
             // would be slightly different. 
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
-                    BigDecimal offerValue = salesAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), salesAdjustmentPrice.getAmount().scale(), RoundingMode.HALF_EVEN));
+                    BigDecimal offerValue = salesAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
                     delegate.setSalesPriceValue(new Money(offerValue, salesAdjustmentPrice.getCurrency(), 5));
                 } else {
                     delegate.setSalesPriceValue(Money.ZERO);
                 }
                 
-                BigDecimal offerValue = retailAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), retailAdjustmentPrice.getAmount().scale(), RoundingMode.HALF_EVEN));
+                BigDecimal offerValue = retailAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
             	delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), 5));
             }
 
