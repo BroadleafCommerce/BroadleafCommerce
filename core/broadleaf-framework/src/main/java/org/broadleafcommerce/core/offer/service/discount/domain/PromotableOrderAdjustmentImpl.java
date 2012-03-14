@@ -53,14 +53,14 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
                 adjustmentPrice = order.getSubTotal();
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            	delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), adjustmentPrice.getAmount().scale()));
+            	delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                 BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
             	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), adjustmentPrice.getAmount().scale(), RoundingMode.HALF_EVEN));
+                BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
             	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(delegate.getValue())) {
