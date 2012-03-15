@@ -79,6 +79,8 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blBaseCtoConverter" class="org.broadleafcommerce.openadmin.server.cto.BaseCtoConverterImpl" scope="prototype"/>
 
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
 	    <property name="converters">
