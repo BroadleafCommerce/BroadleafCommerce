@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.upload;
 
-import org.apache.commons.fileupload.ProgressListener;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
+
+import org.apache.commons.fileupload.ProgressListener;
 
 /**
  * Created by jfischer
  */
-public class UploadProgressListener implements ProgressListener {
+public class UploadProgressListener implements ProgressListener, Serializable {
 
     private double percentDone;
 
