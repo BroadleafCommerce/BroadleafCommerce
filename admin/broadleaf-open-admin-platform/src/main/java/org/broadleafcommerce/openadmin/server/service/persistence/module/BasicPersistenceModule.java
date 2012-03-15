@@ -511,7 +511,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties) throws ClassNotFoundException {
-        BaseCtoConverter ctoConverter = new BaseCtoConverter();
+        BaseCtoConverter ctoConverter = (BaseCtoConverter) applicationContext.getBean("blBaseCtoConverter");
         for (String propertyId : cto.getPropertyIdSet()) {
             if (mergedProperties.containsKey(propertyId)) {
                 buildProperty(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter, propertyId);
