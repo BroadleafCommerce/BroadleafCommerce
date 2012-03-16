@@ -59,17 +59,18 @@ public class PagesListClientyEntityModule extends BasicClientEntityModule {
         service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
+                if (processResult(result, requestId, response, dataSource)) {
+                    TreeNode record = (TreeNode) buildRecord(result, false);
+                    response.setAttribute("newId", record.getAttribute("id"));
+                    record.setAttribute("id", originalRecord.getAttribute("id"));
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
 
-                TreeNode record = (TreeNode) buildRecord(result, false);
-                response.setAttribute("newId", record.getAttribute("id"));
-                record.setAttribute("id", originalRecord.getAttribute("id"));
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
-
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 
 			@Override

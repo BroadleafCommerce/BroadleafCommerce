@@ -111,19 +111,21 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				ListGridRecord myRecord = (ListGridRecord) updateRecord(result, (Record) temp, false);
-				ListGridRecord[] recordList = new ListGridRecord[]{myRecord};
-				response.setData(recordList);
-				response.setTotalRows(1);
-				/*
-				 * An update can result in the removal of a value, which would make the cache out-of-sync
-				 * with the database. Refresh the cache to make sure the display values are accurate.
-				 */
-				response.setInvalidateCache(true);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
+                if (processResult(result, requestId, response, dataSource)) {
+                    ListGridRecord myRecord = (ListGridRecord) updateRecord(result, (Record) temp, false);
+                    ListGridRecord[] recordList = new ListGridRecord[]{myRecord};
+                    response.setData(recordList);
+                    response.setTotalRows(1);
+                    /*
+                     * An update can result in the removal of a value, which would make the cache out-of-sync
+                     * with the database. Refresh the cache to make sure the display values are accurate.
+                     */
+                    response.setInvalidateCache(true);
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 			
 			@Override
@@ -255,20 +257,22 @@ public class MapStructureClientModule extends BasicClientEntityModule {
         service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				TreeNode record = (TreeNode) buildRecord(result, false);
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
-				/*
-				 * If the key is a duplicate, it can result in the deletion of the old value
-				 * and the creation of a new value, which can result in a new id for the retured
-				 * value. Therefore, we need to invalidate the cache to make sure the displayed
-				 * values are correct.
-				 */
-				response.setInvalidateCache(true);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
+                if (processResult(result, requestId, response, dataSource)) {
+                    TreeNode record = (TreeNode) buildRecord(result, false);
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
+                    /*
+                     * If the key is a duplicate, it can result in the deletion of the old value
+                     * and the creation of a new value, which can result in a new id for the retured
+                     * value. Therefore, we need to invalidate the cache to make sure the displayed
+                     * values are correct.
+                     */
+                    response.setInvalidateCache(true);
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 			
 			@Override
