@@ -109,9 +109,12 @@ public class EntityEditDialog extends Window {
                                 if (handler != null) {
                                     handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
                                 }
+                            }
+                            if (response.getStatus() != RPCResponse.STATUS_VALIDATION_ERROR) {
                                 hide();
                                 isHidden = true;
                             }
+                            cancelButton.enable();
 						}
             		});
             	}
