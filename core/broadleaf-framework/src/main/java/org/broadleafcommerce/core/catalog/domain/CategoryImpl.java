@@ -136,7 +136,7 @@ public class CategoryImpl implements Category {
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
+    @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description", readOnly = true)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
