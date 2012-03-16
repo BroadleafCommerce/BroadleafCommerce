@@ -16,13 +16,21 @@
 
 package org.broadleafcommerce.openadmin.client.service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.MissingResourceException;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.Window;
 import com.gwtincubator.security.client.SecuredAsyncCallback;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
 
 /**
@@ -38,7 +46,29 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
         }
         if (BLCMain.NON_MODAL_PROGRESS.isActive()) {
         	BLCMain.NON_MODAL_PROGRESS.stopProgress();
+        }     
+    }
+    
+    protected boolean processResult(Entity result, String requestId, DSResponse response, DataSource dataSource) {
+        if (result.isValidationFailure()) {
+            Map<String, String> errors = new HashMap<String, String>();
+            if (result.getValidationErrors() != null) {
+                for (String[] error : result.getValidationErrors()) {
+                    String message = null;
+                    try {
+                        message = BLCMain.getMessageManager().getString(error[1]);
+                    } catch (MissingResourceException e) {
+                        //do nothing
+                    }
+                    errors.put(error[0], message==null?error[1]:message);
+                }
+            }
+            response.setErrors(errors);
+            response.setStatus(RPCResponse.STATUS_VALIDATION_ERROR);
+            dataSource.processResponse(requestId, response);
         }
+
+        return !result.isValidationFailure();
     }
 
     @Override

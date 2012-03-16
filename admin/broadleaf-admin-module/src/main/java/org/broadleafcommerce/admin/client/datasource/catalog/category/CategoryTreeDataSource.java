@@ -104,10 +104,12 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
 		service.add(new PersistencePackage(entityModule.getCeilingEntityFullyQualifiedClassname(), entity, persistencePerspective, new String[]{"addNewCategory"}, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, this) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				TreeNode record = (TreeNode) entityModule.buildRecord(result, true);
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
-				processResponse(requestId, response);
+                if (processResult(result, requestId, response, CategoryTreeDataSource.this)) {
+                    TreeNode record = (TreeNode) entityModule.buildRecord(result, true);
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
+                    processResponse(requestId, response);
+                }
 			}
 		});
 	}
