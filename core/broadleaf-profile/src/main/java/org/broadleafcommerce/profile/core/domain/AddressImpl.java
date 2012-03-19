@@ -32,6 +32,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -82,9 +83,12 @@ public class AddressImpl implements Address {
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
     @AdminPresentation(friendlyName="Country", order=12, group="Address", excluded = true)
     protected Country country;
-
+    
+    /**
+     * This is intented to be used for address verification integrations and should not be modifiable in the admin
+     */
     @Column(name = "TOKENIZED_ADDRESS")
-    @AdminPresentation(friendlyName="Tokenized Address", order=15, group="Address")
+    @AdminPresentation(friendlyName="Tokenized Address", order=15, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String tokenizedAddress;
 
     @Column(name = "STANDARDIZED")
@@ -126,9 +130,12 @@ public class AddressImpl implements Address {
     @Column(name = "IS_BUSINESS")
     @AdminPresentation(friendlyName="Business Address", order=20, group="Address")
     protected boolean isBusiness = false;
-
+    
+    /**
+     * This is intented to be used for address verification integrations and should not be modifiable in the admin
+     */
     @Column(name = "VERIFICATION_LEVEL")
-    @AdminPresentation(friendlyName="Verification Level", order=21, group="Address")
+    @AdminPresentation(friendlyName="Verification Level", order=21, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String verificationLevel;
 
     public Long getId() {
