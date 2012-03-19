@@ -23,6 +23,7 @@
                 <bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.admin.server.service.handler.ChildCategoriesCustomPersistenceHandler"/>
             </list>
         </property>
     </bean>

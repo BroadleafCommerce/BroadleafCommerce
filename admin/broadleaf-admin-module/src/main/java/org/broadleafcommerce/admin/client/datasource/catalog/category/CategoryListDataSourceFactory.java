@@ -16,10 +16,12 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.category;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.smartgwt.client.data.DataSource;
 import org.broadleafcommerce.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.openadmin.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.JoinStructureClientModule;
@@ -30,9 +32,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.smartgwt.client.data.DataSource;
-
 /**
  * 
  * @author jfischer
@@ -40,6 +39,7 @@ import com.smartgwt.client.data.DataSource;
  */
 public class CategoryListDataSourceFactory implements DataSourceFactory {
 
+    public static final String customCriteria = "blcAllParentCategories";
 	public static final String symbolName = "allParentCategories";
 	public static final String linkedObjectPath = "categoryXrefPK.category";
 	public static final String linkedIdProperty = "id";
@@ -54,7 +54,8 @@ public class CategoryListDataSourceFactory implements DataSourceFactory {
             new BasicClientEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY),
             new JoinStructureClientModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
         };
-        ListGridDataSource dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+        CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, false, false, true, false, false);
+        dataSource.setCustomCriteria(new String[]{customCriteria});
         dataSource.buildFields(null, false, cb);
 	}
 
