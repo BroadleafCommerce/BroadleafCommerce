@@ -71,7 +71,7 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName="County", order=11, group="Address")
     protected String county;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class, optional = false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
     @AdminPresentation(friendlyName="State", order=9, group="Address", excluded = true)
