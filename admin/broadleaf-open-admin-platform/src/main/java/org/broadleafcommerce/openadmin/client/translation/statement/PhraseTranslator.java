@@ -47,13 +47,23 @@ public class PhraseTranslator {
 		String field = components[0];
 		String operator = components[1];
 		String value = components[2];
-		
+
+        boolean isNegation = false;
+        if (field.startsWith("!")) {
+            isNegation = true;
+        }
+
 		boolean isIgnoreCase = false;
 		String caseInsensitivityKey = "MVEL.eval(\"toUpperCase()\",";
 		if (field.startsWith(caseInsensitivityKey)) {
 			isIgnoreCase = true;
 			field = field.substring(caseInsensitivityKey.length(), field.length()-1);
 		}
+        //check for NOT operator
+        if (field.startsWith("!" + caseInsensitivityKey)) {
+            isIgnoreCase = true;
+            field = field.substring(("!" + caseInsensitivityKey).length(), field.length()-1);
+        }
 		while(value.contains(caseInsensitivityKey)) {
 			value = value.substring(0, value.indexOf(caseInsensitivityKey)) + value.substring(value.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), value.length());
 			value = value.substring(0, value.indexOf(")")) + value.substring(value.indexOf(")")+1, value.length());
@@ -95,10 +105,6 @@ public class PhraseTranslator {
 		} else if (value.startsWith(entityKey + ".")){
 			isFieldComparison = true;
 			value = value.substring(entityKey.length() + 1, value.length());
-		}
-		boolean isNegation = false;
-		if (field.startsWith("!")) {
-			isNegation = true;
 		}
 		field = field.substring(entityKeyIndex + 1, field.length());
 		//check to see if there's a method call on this field
