@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
+import com.smartgwt.client.widgets.DataBoundComponent;
 import com.smartgwt.client.widgets.grid.CellFormatter;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
@@ -55,8 +56,14 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         }
         setupGridFields(fieldNames, canEdit);
     }
-	
-	public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
+
+    @Override
+    public void setAssociatedGrid(DataBoundComponent associatedGrid) {
+        super.setAssociatedGrid(associatedGrid);
+        ((ListGrid) this.associatedGrid).setCanAutoFitFields(false);
+    }
+
+    public void setupGridFields(final String[] fieldNames, final Boolean[] canEdit) {
         if (fieldNames.length != canEdit.length) {
             throw new IllegalArgumentException("The fieldNames and canEdit array parameters must be of equal length");
         }
