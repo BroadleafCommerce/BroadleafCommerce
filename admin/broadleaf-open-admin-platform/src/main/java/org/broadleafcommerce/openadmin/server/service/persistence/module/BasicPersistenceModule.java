@@ -76,7 +76,7 @@ import org.w3c.dom.DOMException;
  * @author jfischer
  */
 public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware {
-
+    
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
@@ -94,6 +94,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     public FieldManager getFieldManager() {
         return persistenceManager.getDynamicEntityDao().getFieldManager();
+    }
+    
+    protected Date parseDate(String value) throws ParseException {
+        return dateFormat.parse(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -121,7 +125,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 }
                                 break;
                             case DATE:
-                                fieldManager.setFieldValue(instance, property.getName(), dateFormat.parse(value));
+                                fieldManager.setFieldValue(instance, property.getName(), parseDate(value));
                                 break;
                             case DECIMAL:
                                 if (BigDecimal.class.isAssignableFrom(returnType)) {
@@ -169,7 +173,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 }
 
                                 if (Collection.class.isAssignableFrom(returnType)) {
-                                    Collection collection = null;
+                                    Collection collection;
                                     try {
                                         collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
                                     } catch (FieldNotAvailableException e) {
