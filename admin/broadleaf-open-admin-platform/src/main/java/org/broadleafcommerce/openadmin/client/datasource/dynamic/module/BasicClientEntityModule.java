@@ -394,13 +394,15 @@ public class BasicClientEntityModule implements DataSourceModule {
         service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				TreeNode record = (TreeNode) buildRecord(result, false);
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
+                if (processResult(result, requestId, response, dataSource)) {
+                    TreeNode record = (TreeNode) buildRecord(result, false);
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 			
 			@Override
@@ -444,15 +446,16 @@ public class BasicClientEntityModule implements DataSourceModule {
         service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
+                if (processResult(result, requestId, response, dataSource)) {
+                    TreeNode record = (TreeNode) buildRecord(result, false);
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
 
-                TreeNode record = (TreeNode) buildRecord(result, false);
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
-
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 			
 			@Override

@@ -63,6 +63,7 @@ public class EntityEditDialog extends Window {
     protected Boolean isHidden = true;
     protected VStack previewContainer;
     protected IButton saveButton;
+    protected IButton cancelButton;
 
 	public EntityEditDialog() {
 		this.setIsModal(true);
@@ -99,23 +100,28 @@ public class EntityEditDialog extends Window {
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	if (dynamicForm.validate()) {
+                    saveButton.disable();
+                    cancelButton.disable();
             		dynamicForm.saveData(new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-                            if (response.getStatus()!= RPCResponse.STATUS_FAILURE) {
+                            if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
                                 TreeNode record = new TreeNode(request.getData());
                                 if (handler != null) {
                                     handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
                                 }
                             }
+                            if (response.getStatus() != RPCResponse.STATUS_VALIDATION_ERROR) {
+                                hide();
+                                isHidden = true;
+                            }
+                            cancelButton.enable();
 						}
             		});
-            		hide();
-                    isHidden = true;
             	}
             }
         });
 
-        IButton cancelButton = new IButton("Cancel");
+        cancelButton = new IButton("Cancel");
         cancelButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	hide();
@@ -144,6 +150,8 @@ public class EntityEditDialog extends Window {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void editNewRecord(String title, DynamicEntityDataSource dataSource, Map initialValues, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields) {
         pictureStack.setVisible(false);
+        saveButton.enable();
+        cancelButton.enable();
 		initialValues.put(dataSource.getPrimaryKeyFieldName(), "");
 		this.handler = handler;
 		if (fieldNames != null && fieldNames.length > 0) {
@@ -224,6 +232,8 @@ public class EntityEditDialog extends Window {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public void editRecord(String title, DynamicEntityDataSource dataSource, Record record, ItemEditedHandler handler, String[] fieldNames, String[] ignoreFields, boolean readOnly) {
+        saveButton.enable();
+        cancelButton.enable();
         pictureStack.setVisible(false);
         if (showMedia && mediaField != null) {
             updateMedia(record.getAttribute(mediaField));

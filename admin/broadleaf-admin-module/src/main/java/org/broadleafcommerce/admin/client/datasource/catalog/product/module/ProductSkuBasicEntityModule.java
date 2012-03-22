@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.product.module;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -38,10 +42,6 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 
@@ -120,13 +120,16 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
         service.add(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				TreeNode record = (TreeNode) buildRecord(result, false);
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
-				if (cb != null) {
-					cb.onSuccess(dataSource);
-				}
-				dataSource.processResponse(requestId, response);
+                if (processResult(result, requestId, response, dataSource)) {
+                    TreeNode record = (TreeNode) buildRecord(result, false);
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
+                    if (cb != null) {
+                        cb.onSuccess(dataSource);
+                    }
+
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 		});
 	}

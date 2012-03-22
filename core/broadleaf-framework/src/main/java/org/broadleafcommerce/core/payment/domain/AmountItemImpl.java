@@ -53,7 +53,7 @@ public class AmountItemImpl implements AmountItem {
     @Index(name="SHORT_DESCRIPTION_INDEX", columnNames={"SHORT_DESCRIPTION"})
 	protected String shortDescription;
 	
-	@Column(name = "DESCRIPTION", nullable=false)
+	@Column(name = "DESCRIPTION")
 	protected String description;
 	
 	@Column(name = "UNIT_PRICE", nullable=false)
@@ -61,6 +61,9 @@ public class AmountItemImpl implements AmountItem {
 	
 	@Column(name = "QUANTITY", nullable=false)
 	protected Long quantity;
+    
+    @Column(name = "SYSTEM_ID")
+    protected String systemId;
 	
 	@ManyToOne(targetEntity = PaymentInfoImpl.class, optional = true)
     @JoinColumn(name = "PAYMENT_ID")
@@ -145,7 +148,15 @@ public class AmountItemImpl implements AmountItem {
 		this.paymentInfo = paymentInfo;
 	}
 
-	@Override
+    public String getSystemId() {
+        return systemId;
+    }
+
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -154,6 +165,7 @@ public class AmountItemImpl implements AmountItem {
 		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
 		result = prime * result + ((shortDescription == null) ? 0 : shortDescription.hashCode());
 		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
+        result = prime * result + ((systemId == null) ? 0 : systemId.hashCode());
 		return result;
 	}
 
@@ -191,6 +203,11 @@ public class AmountItemImpl implements AmountItem {
 				return false;
 		} else if (!unitPrice.equals(other.unitPrice))
 			return false;
+        if (systemId == null) {
+            if (other.systemId != null)
+                return false;
+        } else if (!systemId.equals(other.systemId))
+            return false;
 		return true;
 	}
 	

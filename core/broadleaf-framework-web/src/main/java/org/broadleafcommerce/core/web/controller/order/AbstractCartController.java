@@ -280,7 +280,7 @@ public abstract class AbstractCartController {
                 cartSummary.getRows().add(cartOrderItem);
             }
         }
-        
+
         cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
         model.addAttribute("cartSummary", cartSummary);
         return cartView;

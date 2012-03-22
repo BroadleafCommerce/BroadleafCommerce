@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.common.vendor.service.message;
 
-public interface TaxResponse {
+import java.io.Serializable;
+
+public interface TaxResponse extends Serializable {
 
     public boolean isErrorDetected();
 

@@ -66,31 +66,33 @@ public class CategoryTreeEntityModule extends BasicClientEntityModule {
 		service.update(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, BLCMain.csrfToken), new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				/*
-				 * Since we've hacked the tree to be able to display duplicate entries, we must iterate
-				 * through the currently loaded records to see if there are any other instances of our
-				 * entity and update them as well.
-				 */
-				String realStartingId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(record));
-                String embellishedStartingId = dataSource.getPrimaryKeyValue(record);
-				RecordList resultSet = ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid().getRecordList();
-				if (resultSet != null) {
-					Record[] myRecords = resultSet.toArray();
-					int count = 1;
-					for (Record myRecord : myRecords) {
-						String realMyId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(myRecord));
-                        String embellishedMyId = dataSource.getPrimaryKeyValue(myRecord);
-						if (realStartingId.equals(realMyId) && !embellishedStartingId.equals(embellishedMyId)) {
-							updateRecord(result, (TreeNode) myRecord, false);
-							((ListGrid) ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid()).refreshRow(count);
-						}
-						count++;
-					}
-				}
-				TreeNode[] recordList = new TreeNode[]{record};
-				response.setData(recordList);
+                if (processResult(result, requestId, response, dataSource)) {
+                    /*
+                     * Since we've hacked the tree to be able to display duplicate entries, we must iterate
+                     * through the currently loaded records to see if there are any other instances of our
+                     * entity and update them as well.
+                     */
+                    String realStartingId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(record));
+                    String embellishedStartingId = dataSource.getPrimaryKeyValue(record);
+                    RecordList resultSet = ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid().getRecordList();
+                    if (resultSet != null) {
+                        Record[] myRecords = resultSet.toArray();
+                        int count = 1;
+                        for (Record myRecord : myRecords) {
+                            String realMyId = dataSource.stripDuplicateAllowSpecialCharacters(dataSource.getPrimaryKeyValue(myRecord));
+                            String embellishedMyId = dataSource.getPrimaryKeyValue(myRecord);
+                            if (realStartingId.equals(realMyId) && !embellishedStartingId.equals(embellishedMyId)) {
+                                updateRecord(result, (TreeNode) myRecord, false);
+                                ((ListGrid) ((PresentationLayerAssociatedDataSource) dataSource).getAssociatedGrid()).refreshRow(count);
+                            }
+                            count++;
+                        }
+                    }
+                    TreeNode[] recordList = new TreeNode[]{record};
+                    response.setData(recordList);
 
-				dataSource.processResponse(requestId, response);
+                    dataSource.processResponse(requestId, response);
+                }
 			}
 		});
 	}

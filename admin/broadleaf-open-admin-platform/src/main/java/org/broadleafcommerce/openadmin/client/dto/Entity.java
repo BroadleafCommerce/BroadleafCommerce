@@ -35,6 +35,8 @@ public class Entity implements IsSerializable, Serializable {
 	private Property[] properties;
     private boolean isDirty = false;
     private boolean multiPartAvailableOnThread = false;
+    private boolean isValidationFailure;
+    private String[][] validationErrors;
 	
 	public String[] getType() {
 		return type;
@@ -72,10 +74,10 @@ public class Entity implements IsSerializable, Serializable {
 	
 	public Property findProperty(String name) {
 		Arrays.sort(properties, new Comparator<Property>() {
-			public int compare(Property o1, Property o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+            public int compare(Property o1, Property o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 		Property searchProperty = new Property();
 		searchProperty.setName(name);
 		int index = Arrays.binarySearch(properties, searchProperty, new Comparator<Property>() {
@@ -98,6 +100,21 @@ public class Entity implements IsSerializable, Serializable {
 		newProps[newProps.length - 1] = property;
 		setProperties(newProps);
 	}
+    
+    public void addValidationError(String fieldName, String errorOrErrorKey) {
+        if (getValidationErrors() == null) {
+            setValidationErrors(new String[0][2]);
+        }
+        String[][] allErrors = getValidationErrors();
+        String[][] newErrors = new String[allErrors.length + 1][2];
+        for (int j=0;j<allErrors.length;j++) {
+            newErrors[j][0] = allErrors[j][0];
+            newErrors[j][1] = allErrors[j][1];
+        }
+        newErrors[newErrors.length - 1][0] = fieldName;
+        newErrors[newErrors.length - 1][1] = errorOrErrorKey;
+        setValidationErrors(newErrors);
+    }
 
     public boolean isDirty() {
         return isDirty;
@@ -113,5 +130,21 @@ public class Entity implements IsSerializable, Serializable {
 
     public void setMultiPartAvailableOnThread(boolean multiPartAvailableOnThread) {
         this.multiPartAvailableOnThread = multiPartAvailableOnThread;
+    }
+
+    public boolean isValidationFailure() {
+        return isValidationFailure;
+    }
+
+    public void setValidationFailure(boolean validationFailure) {
+        isValidationFailure = validationFailure;
+    }
+
+    public String[][] getValidationErrors() {
+        return validationErrors;
+    }
+
+    public void setValidationErrors(String[][] validationErrors) {
+        this.validationErrors = validationErrors;
     }
 }

@@ -20,9 +20,9 @@ import java.math.BigDecimal;
 
 public final class BankersRounding {
 
-    private static final int DEFAULT_SCALE = 2;
+    public static final int DEFAULT_SCALE = 2;
 
-    private static final BigDecimal ZERO = setScale(0);
+    public static final BigDecimal ZERO = setScale(0);
 
     public static BigDecimal setScale(int scale, BigDecimal amount) {
         return amount.setScale(scale, BigDecimal.ROUND_HALF_EVEN);

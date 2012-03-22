@@ -273,14 +273,14 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
         iconMetadata.setPresentationAttributes(iconAttributes);
         iconAttributes.setName("picture");
-        iconAttributes.setFriendlyName(" ");
+        iconAttributes.setFriendlyName("Lock");
         iconAttributes.setGroup("Locked Details");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
         iconAttributes.setReadOnly(false);
         iconAttributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
-        iconAttributes.setColumnWidth("25");
+        iconAttributes.setColumnWidth("30");
         iconAttributes.setOrder(0);
         iconAttributes.setRequiredOverride(true);
 
