@@ -29,12 +29,12 @@ import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tile.TileGrid;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedHandler;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.TileGrid;
 
 /**
  * 
@@ -58,7 +58,7 @@ public class AssetSearchDialog extends Window {
 		setVisible(true);
 
 		tileGrid = new TileGrid();
-        tileGrid.setTileWidth(80);
+        tileGrid.setTileWidth(120);
         tileGrid.setTileHeight(120);
         tileGrid.setAutoFetchData(true);
         tileGrid.setSelectionType(SelectionStyle.SINGLE);
