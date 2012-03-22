@@ -82,48 +82,19 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
 	}
 	
 	public void bind() {
-		addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
-						@SuppressWarnings({ "rawtypes", "unchecked" })
-						public void onSearchItemSelected(SearchItemSelected event) {
-							Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
-							initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
-							BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, new ItemEditedHandler() {
-                                public void onItemEdited(ItemEdited event) {
-                                    ListGridRecord[] recordList = new ListGridRecord[]{(ListGridRecord) event.getRecord()};
-                                    DSResponse updateResponse = new DSResponse();
-                                    updateResponse.setData(recordList);
-                                    DSRequest updateRequest = new DSRequest();
-                                    updateRequest.setOperationType(DSOperationType.UPDATE);
-                                    display.getGrid().getDataSource().updateCaches(updateResponse, updateRequest);
-                                    display.getGrid().deselectAllRecords();
-                                    display.getGrid().selectRecord(display.getGrid().getRecordIndex(event.getRecord()));
-                                    String primaryKey = display.getGrid().getDataSource().getPrimaryKeyFieldName();
-                                    ResultSet results = display.getGrid().getResultSet();
-                                    boolean foundRecord = false;
-                                    if (results != null) {
-                                        foundRecord = display.getGrid().getResultSet().find(primaryKey, event.getRecord().getAttribute(primaryKey)) != null;
-                                    }
-                                    if (!foundRecord) {
-                                        ((AbstractDynamicDataSource) display.getGrid().getDataSource()).setAddedRecord(event.getRecord());
-                                        display.getGrid().getDataSource().
-                                            fetchData(new Criteria("blc.fetch.from.cache", event.getRecord().getAttribute(primaryKey)), new DSCallback() {
-                                                @Override
-                                                public void execute(DSResponse response, Object rawData, DSRequest request) {
-                                                    display.getGrid().setData(response.getData());
-                                                    display.getGrid().selectRecord(0);
-                                                }
-                                            });
-                                    }
-                                }
-                            }, joinStructureFields, null);
-						}
-					});
-				}
-			}
-		});
+        addClickedHandlerRegistration = display.getAddButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    searchDialog.search(searchDialogTitle, new SearchItemSelectedHandler() {
+                        public void onSearchItemSelected(SearchItemSelected event) {
+                            Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
+                            initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
+                            BLCMain.ENTITY_ADD.editNewRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, joinStructureFields, null);
+                        }
+                    });
+                }
+            }
+        });
 		editCompletedHandlerRegistration = display.getGrid().addEditCompleteHandler(new EditCompleteHandler() {
 			public void onEditComplete(EditCompleteEvent event) {
 				display.getGrid().deselectAllRecords();
