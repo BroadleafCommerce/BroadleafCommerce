@@ -339,7 +339,9 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
      * This method will take in an assetPath (think image url) and prepend the
      * staticAssetUrlPrefix if one exists.
      * 
-     * Will append any contextPath onto the request.
+     * Will append any contextPath onto the request.    If the incoming assetPath contains
+     * the internalStaticAssetPrefix and the image is being prepended, the prepend will be
+     * removed.
      *
      * @param assetPath     - The path to rewrite if it is a cms managed asset
      * @param contextPath   - The context path of the web application (if applicable)
@@ -365,6 +367,16 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
                 if (returnValue.startsWith("/")) {
                     returnValue = returnValue.substring(1);
                 }
+
+                // Also, remove the "cmsstatic" from the URL before prepending the staticAssetUrlPrefix.
+                if (returnValue.startsWith(getStaticAssetUrlPrefix())) {
+                    returnValue = returnValue.substring(getStaticAssetUrlPrefix().trim().length());
+
+                    // remove the starting "/" if it exists.
+                    if (returnValue.startsWith("/")) {
+                        returnValue = returnValue.substring(1);
+                    }
+                }                
                 returnValue = envPrefix + returnValue;
             }
         } else {
