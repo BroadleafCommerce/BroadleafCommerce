@@ -564,6 +564,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 						}
 					} else if (cto.get(propertyName).getFilterValues()[0] == null || "null".equals(cto.get(propertyName).getFilterValues()[0])){
 						ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
+                    } else if (mergedProperties.get(propertyName).getSecondaryType() == SupportedFieldType.STRING) {
+                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
+                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
 					} else {
 						AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
 						ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
@@ -587,6 +590,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 						}
 					} else if (cto.get(propertyName).getFilterValues()[0] == null || "null".equals(cto.get(propertyName).getFilterValues()[0])){
 						ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
+                    } else if (mergedProperties.get(propertyName).getSecondaryType() == SupportedFieldType.STRING) {
+                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
+                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
 					} else {
 						AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
 						ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, mergedProperties.get(propertyName).getForeignKeyProperty());
