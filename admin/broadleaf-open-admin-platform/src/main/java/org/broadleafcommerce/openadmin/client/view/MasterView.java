@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.view;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -56,12 +62,6 @@ import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 
 /**
@@ -272,6 +272,15 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         logo.setShowRollOver(false);
         logo.setShowDownIcon(false);
         logo.setShowDown(false);
+        logo.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    BLCMain.SPLASH_PROGRESS.explicitShow();
+                }
+            }
+        });
+
         return logo;
     }
 

@@ -16,11 +16,17 @@
 
 package org.broadleafcommerce.openadmin.client.view;
 
+import com.smartgwt.client.core.KeyIdentifier;
 import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.KeyNames;
+import com.smartgwt.client.util.KeyCallback;
+import com.smartgwt.client.util.Page;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 
 /**
  * 
@@ -37,7 +43,7 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
 		setShowEdges(false);
     	setWidth(447);  
     	setHeight(257);  
-    	setShowMinimizeButton(false); 
+    	setShowMinimizeButton(false);
     	setShowTitle(false);
     	setShowHeader(false);
     	setIsModal(true);   
@@ -45,7 +51,7 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
     	setShowCloseButton(false);
     	VLayout layout = new VLayout();
     	VLayout spacer = new VLayout();
-    	spacer.setHeight(95);
+    	spacer.setHeight(90);
     	layout.addMember(spacer);
     	HLayout versionLayout = new HLayout();
     	versionLayout.setAlign(Alignment.LEFT);
@@ -53,11 +59,18 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
     	HLayout spacer3 = new HLayout();
     	spacer3.setWidth(25);
     	versionLayout.addMember(spacer3);
-    	Label versionLabel = new Label("&nbsp;");
+        VLayout temp = new VLayout(5);
+    	Label versionLabel = new Label("Open Admin Version: " + BLCMain.getMessageManager().getString("openAdminVersion"));
     	versionLabel.setWrap(false);
     	versionLabel.setStyleName("versionStyle");
     	versionLabel.setHeight(15);
-    	versionLayout.addMember(versionLabel);
+        temp.addMember(versionLabel);
+        Label buildDateLabel = new Label("Build Date: " + BLCMain.getMessageManager().getString("buildDate"));
+        buildDateLabel.setWrap(false);
+        buildDateLabel.setStyleName("versionStyle");
+        buildDateLabel.setHeight(15);
+        temp.addMember(buildDateLabel);
+        versionLayout.addMember(temp);
     	layout.addMember(versionLayout);
     	VLayout spacer2 = new VLayout();
     	spacer2.setHeight(10);
@@ -70,9 +83,23 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
     	layout.addMember(progressLayout);
     	setBorder("1px solid #3b4726");
     	addItem(layout);
+
+        KeyIdentifier escapeKey = new KeyIdentifier();
+        escapeKey.setKeyName(KeyNames.ESC);
+        Page.registerKey(escapeKey, new KeyCallback() {
+            public void execute(String keyName) {
+                SplashWindow.this.hide();
+            }
+        });
 	}
 
+    public void explicitShow() {
+        simpleProgress.setVisible(false);
+        show();
+    }
+
 	public void startProgress() {
+        simpleProgress.setVisible(true);
 		show();
 		simpleProgress.startProgress();
 	}

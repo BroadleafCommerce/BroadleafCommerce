@@ -63,7 +63,30 @@
 		          </execution>
 		        </executions>
 		    </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>openAdminBuildDate</name>
+                            <pattern>yyyy-MM-dd HH:mm:ss</pattern>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 	    </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 	</build>
     <profiles>
         <profile>
