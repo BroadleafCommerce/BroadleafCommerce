@@ -24,5 +24,7 @@ public interface SplashView {
 	public void stopProgress();
 	
 	public Boolean isActive();
+
+    public void explicitShow();
 	
 }
