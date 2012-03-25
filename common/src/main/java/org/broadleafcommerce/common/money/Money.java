@@ -332,11 +332,14 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         ) {
             return Currency.getInstance(CurrencyConsiderationContext.getCurrencyDeterminationService().getCurrencyCode(CurrencyConsiderationContext.getCurrencyConsiderationContext()));
         }
+        if (System.getProperty("currency.default") != null) {
+            return Currency.getInstance(System.getProperty("currency.default"));
+        }
         Locale locale = Locale.getDefault();
         if (locale.getCountry() != null && locale.getCountry().length() == 2) {
             return Currency.getInstance(locale);
         }
-        return Currency.getInstance(System.getProperty("currency.default", "USD"));
+        return Currency.getInstance("USD");
     }
 
     public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
