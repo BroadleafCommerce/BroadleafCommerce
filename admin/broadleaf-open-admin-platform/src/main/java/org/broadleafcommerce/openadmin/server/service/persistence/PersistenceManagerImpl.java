@@ -29,6 +29,7 @@ import java.util.Map;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
@@ -182,6 +183,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 			}
 		});
 		classMetadata.setProperties(properties);
+        classMetadata.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
 
 		return classMetadata;
 	}

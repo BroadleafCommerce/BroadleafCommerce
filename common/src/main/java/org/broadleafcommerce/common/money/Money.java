@@ -325,6 +325,13 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
      * @return The default currency to use when none is specified
      */
     public static Currency defaultCurrency() {
+        if (
+            CurrencyConsiderationContext.getCurrencyConsiderationContext() != null &&
+            CurrencyConsiderationContext.getCurrencyConsiderationContext().size() > 0 &&
+            CurrencyConsiderationContext.getCurrencyDeterminationService() != null
+        ) {
+            return Currency.getInstance(CurrencyConsiderationContext.getCurrencyDeterminationService().getCurrencyCode(CurrencyConsiderationContext.getCurrencyConsiderationContext()));
+        }
         Locale locale = Locale.getDefault();
         if (locale.getCountry() != null && locale.getCountry().length() == 2) {
             return Currency.getInstance(locale);

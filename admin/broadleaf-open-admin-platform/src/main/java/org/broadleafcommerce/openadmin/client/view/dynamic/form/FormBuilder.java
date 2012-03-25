@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
@@ -62,7 +61,7 @@ import org.broadleafcommerce.openadmin.client.security.SecurityManager;
  *
  */
 public class FormBuilder {
-	
+
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showId, Record currentRecord) {
 		buildForm(dataSource, form, null, null, showId, currentRecord);
 	}
@@ -438,6 +437,7 @@ public class FormBuilder {
 			break;
 		case DECIMAL:
 			formItem = new FloatItem();
+            formItem.setAttribute("type", "localDecimal");
 			break;
 		case EMAIL:
 			formItem = new TextItem();
@@ -448,11 +448,7 @@ public class FormBuilder {
 			break;
 		case MONEY:
 			formItem = new FloatItem();
-			formItem.setEditorValueFormatter(new FormItemValueFormatter() {
-				public String formatValue(Object value, Record record, DynamicForm form, FormItem item) {
-					return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
-				}
-			});
+            formItem.setAttribute("type", "localMoneyDecimal");
 			break;
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();

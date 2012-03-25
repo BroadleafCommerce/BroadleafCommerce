@@ -30,6 +30,7 @@ import java.util.Set;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -204,11 +205,25 @@ public class BasicClientEntityModule implements DataSourceModule {
     protected void processFilterValueClause(FilterAndSortCriteria filterCriteria, String filterString) {
         String filterVal = dataSource.stripDuplicateAllowSpecialCharacters(filterString);
         int pos = filterVal.indexOf("-");
+        String decimalSeparator = LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator();
         if (pos > 0) {
+            //TODO this method does not deal well with negative values that may be entered into the filter field.
             String filterValue1 = filterVal.substring(0, pos).trim();
+            int decimalPos = filterValue1.indexOf(decimalSeparator);
+            if (decimalPos >= 0) {
+                filterValue1 = filterValue1.substring(0, decimalPos) + "." + filterValue1.substring(decimalPos + 1, filterValue1.length());
+            }
             String filterValue2 = filterVal.substring(pos + 1, filterVal.length()).trim();
+            decimalPos = filterValue2.indexOf(decimalSeparator);
+            if (decimalPos >= 0) {
+                filterValue2 = filterValue2.substring(0, decimalPos) + "." + filterValue2.substring(decimalPos + 1, filterValue2.length());
+            }
             filterCriteria.setFilterValues(filterValue1, filterValue2);
         } else {
+            int decimalPos = filterVal.indexOf(decimalSeparator);
+            if (decimalPos >= 0) {
+                filterVal = filterVal.substring(0, decimalPos) + "." + filterVal.substring(decimalPos + 1, filterVal.length());
+            }
             filterCriteria.setFilterValue(filterVal);
         }
     }
@@ -584,6 +599,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                     property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
                 ) {
                     record.setAttribute(attributeName, linkedValue);
+                } else if (
+                    property.getValue() != null &&
+                    dataSource.getField(attributeName).getType().equals(FieldType.FLOAT)
+                ) {
+                    String propertyValue = property.getValue();
+                    record.setAttribute(attributeName, propertyValue==null?null:Double.parseDouble(String.valueOf(propertyValue)));
                 } else {
                     String propertyValue;
                     if (property.getName().equals(dataSource.getPrimaryKeyFieldName())) {
@@ -634,7 +655,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				Property property = new Property();
 				if (record.getAttribute(attribute) != null && dataSource.getField(attribute) != null && dataSource.getField(attribute).getType().equals(FieldType.DATETIME)) {
 					property.setValue(formatter.format(record.getAttributeAsDate(attribute)));
-				} else if (linkedValue != null && dataSource.getField(attribute).getAttribute("fieldType") != null && SupportedFieldType.valueOf(dataSource.getField(attribute).getAttribute("fieldType")).equals(SupportedFieldType.FOREIGN_KEY)) {
+                } else if (linkedValue != null && dataSource.getField(attribute).getAttribute("fieldType") != null && SupportedFieldType.valueOf(dataSource.getField(attribute).getAttribute("fieldType")).equals(SupportedFieldType.FOREIGN_KEY)) {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(linkedValue));
 				} else {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
@@ -1014,6 +1035,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				dataSource.addField(field);
 			}
 		}
+        dataSource.setAttribute("blcCurrencyCode", metadata.getCurrencyCode(), true);
 	}
 
 	public void setDataSource(AbstractDynamicDataSource dataSource) {

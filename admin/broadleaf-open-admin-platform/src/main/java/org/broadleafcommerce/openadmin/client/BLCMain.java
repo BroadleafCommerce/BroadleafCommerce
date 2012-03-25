@@ -20,11 +20,13 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.smartgwt.client.core.KeyIdentifier;
 import com.smartgwt.client.util.KeyCallback;
 import com.smartgwt.client.util.Page;
 import com.smartgwt.client.util.SC;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
@@ -37,6 +39,7 @@ import org.broadleafcommerce.openadmin.client.view.SplashView;
 import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -213,6 +216,9 @@ public class BLCMain implements EntryPoint {
 		        }
 		    });
 		}
+        NumericTypeFactory.registerNumericSimpleType("localDecimal", NumberFormat.getDecimalFormat(), SupportedFieldType.DECIMAL);
+        NumericTypeFactory.registerNumericSimpleType("localMoneyDecimal", NumberFormat.getDecimalFormat(), SupportedFieldType.MONEY);
+        NumericTypeFactory.registerNumericSimpleType("localCurrency", NumberFormat.getCurrencyFormat(), SupportedFieldType.MONEY);
 	}
 
     public static MessageManager getMessageManager() {

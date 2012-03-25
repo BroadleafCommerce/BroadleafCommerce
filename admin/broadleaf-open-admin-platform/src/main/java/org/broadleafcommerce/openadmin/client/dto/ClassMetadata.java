@@ -33,6 +33,7 @@ public class ClassMetadata implements IsSerializable, Serializable {
 	private String ceilingType;
 	private ClassTree polymorphicEntities;
 	private Property[] properties;
+    private String currencyCode = "USD";
 	
 	public String getCeilingType() {
 		return ceilingType;
@@ -57,5 +58,12 @@ public class ClassMetadata implements IsSerializable, Serializable {
 	public void setProperties(Property[] property) {
 		this.properties = property;
 	}
-	
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 }
