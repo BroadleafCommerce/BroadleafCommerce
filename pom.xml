@@ -114,6 +114,14 @@
                     <groupId>org.zeroturnaround</groupId>
                     <artifactId>javarebel-maven-plugin</artifactId>
                     <version>1.0.5</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-utils</artifactId>
+                            <version>1.4.1</version>
+                            <scope>runtime</scope>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
