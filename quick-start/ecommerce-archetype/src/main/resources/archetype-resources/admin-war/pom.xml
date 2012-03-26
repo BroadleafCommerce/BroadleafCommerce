@@ -96,17 +96,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-module</artifactId>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-framework-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-profile</artifactId>
-			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
@@ -115,11 +105,6 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-common</artifactId>
-            <classifier>sources</classifier>
         </dependency>
 		<dependency>
 			<groupId>${groupId}</groupId>
@@ -133,11 +118,6 @@
 		<dependency>
 			<groupId>${groupId}</groupId>
 			<artifactId>core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-open-admin-platform</artifactId>
-			<classifier>sources</classifier>
 		</dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
