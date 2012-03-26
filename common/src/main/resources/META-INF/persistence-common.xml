@@ -4,10 +4,13 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
 	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/SandBox.orm.xml</mapping-file>
 		<class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
 		<class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
 		<class>org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl</class>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
+        <class>org.broadleafcommerce.common.sandbox.domain.SandBoxImpl</class>
+        <class>org.broadleafcommerce.common.site.domain.SiteImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="true"/>

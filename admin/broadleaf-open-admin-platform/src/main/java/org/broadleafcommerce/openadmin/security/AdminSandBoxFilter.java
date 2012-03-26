@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.security;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.SandBoxContext;

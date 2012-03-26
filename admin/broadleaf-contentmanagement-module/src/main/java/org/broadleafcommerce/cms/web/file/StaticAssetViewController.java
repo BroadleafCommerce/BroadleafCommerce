@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.domain;
+package org.broadleafcommerce.common.sandbox.domain;
+
+import org.broadleafcommerce.common.site.domain.Site;
 
 import java.io.Serializable;
-import java.util.Set;
 
 public interface SandBox extends Serializable {
 
@@ -35,10 +36,6 @@ public interface SandBox extends Serializable {
 	public String getName();
 
 	public void setName(String name);
-
-	public Set<SandBoxItem> getSandBoxItems();
-
-	public void setSandBoxItems(Set<SandBoxItem> sandBoxItems);
 
     public SandBoxType getSandBoxType();
 

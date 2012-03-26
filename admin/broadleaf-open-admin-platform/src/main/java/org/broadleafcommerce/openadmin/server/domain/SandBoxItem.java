@@ -27,13 +27,13 @@ public interface SandBoxItem extends Serializable {
 
 	public void setId(Long id);
 
-    public SandBox getSandBox();
+    public Long getSandBoxId();
 
-	public void setSandBox(SandBox sandBox);
+	public void setSandBoxId(Long sandBoxId);
 
-    public SandBox getOriginalSandBox();
+    public Long getOriginalSandBoxId();
 
-	public void setOriginalSandBox(SandBox sandBox);
+	public void setOriginalSandBoxId(Long sandBox);
 
     public SandBoxItemType getSandBoxItemType();
 

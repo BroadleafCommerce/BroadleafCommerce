@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.dao;
+package org.broadleafcommerce.common.sandbox.dao;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.openadmin.server.domain.Site;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
 
 public interface SandBoxDao {
 

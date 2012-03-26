@@ -20,9 +20,9 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -110,7 +110,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentType", type);
         query.setParameter("locale", locale);
         if (sandBox != null)  {
-            query.setParameter("sandbox", sandBox);
+            query.setParameter("sandboxId", sandBox.getId());
         }
 
         return query.getResultList();
@@ -120,21 +120,21 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale) {
 
         String queryName = null;
+        final Query query; 
         if (sandBox == null) {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME";
+            query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME");
         } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_PRODUCTION_SANDBOX";
+            query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_PRODUCTION_SANDBOX");
+            query.setParameter("sandbox", sandBox);
         } else {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_USER_SANDBOX";
+            query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_USER_SANDBOX");
+            query.setParameter("sandboxId", sandBox.getId());
         }
 
-        Query query = em.createNamedQuery(queryName);
+        
         query.setParameter("contentType", type);
         query.setParameter("contentName", name);
         query.setParameter("locale", locale);
-        if (sandBox != null) {
-            query.setParameter("sandbox", sandBox);
-        }
         return query.getResultList();
     }
 

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.Site;
 
 import java.io.Serializable;
 import java.util.Map;

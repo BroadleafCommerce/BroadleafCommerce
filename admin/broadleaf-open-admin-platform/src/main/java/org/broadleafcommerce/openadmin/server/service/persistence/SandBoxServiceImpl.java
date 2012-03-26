@@ -16,25 +16,26 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxAction;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
@@ -45,6 +46,9 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Resource
     protected SandBoxDao sandBoxDao;
+
+    @Resource
+    protected SandBoxItemDao sandBoxItemDao;
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
@@ -460,7 +464,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
-        promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(fromSandBox.getSandBoxItems()));
+        promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(sandBoxItemDao.retrieveSandBoxItemsForSandbox(fromSandBox)));
     }
 
     @Override
@@ -474,9 +478,13 @@ public class SandBoxServiceImpl implements SandBoxService {
             if (destinationSandBox == null || SandBoxType.PRODUCTION.equals(destinationSandBox)) {
                 sandBoxItem.setArchivedFlag(true);
             }
-            sandBoxItem.setSandBox(destinationSandBox);
-            if (sandBoxItem.getOriginalSandBox() == null) {
-                sandBoxItem.setOriginalSandBox(fromSandBox);
+            if (destinationSandBox != null) {
+                sandBoxItem.setSandBoxId(destinationSandBox.getId());
+            } else {
+                sandBoxItem.setSandBoxId(null);
+            }
+            if (sandBoxItem.getOriginalSandBoxId() == null) {
+                sandBoxItem.setOriginalSandBoxId(fromSandBox.getId());
             }
             sandBoxItem.addSandBoxAction(action);
 
@@ -489,8 +497,9 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Override
     public void revertAllSandBoxItems(SandBox originalSandBox, SandBox sandBox) {
          List<SandBoxItem> items = new ArrayList<SandBoxItem>();
-         for (SandBoxItem item : sandBox.getSandBoxItems()) {
-             if (originalSandBox.equals(sandBox) || (item.getOriginalSandBox() != null && item.getOriginalSandBox().equals(originalSandBox))) {
+         List<SandBoxItem> sandBoxItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox);
+         for (SandBoxItem item : sandBoxItems) {             
+             if (originalSandBox.equals(sandBox) || (item.getOriginalSandBoxId() != null && originalSandBox != null && item.getOriginalSandBoxId().equals(originalSandBox.getId()))) {
                  items.add(item);
              }
          }
@@ -520,35 +529,48 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment) {
-         List<SandBoxItem> items = new ArrayList<SandBoxItem>();
-         for (SandBoxItem item : sandBox.getSandBoxItems()) {
-             if (item.getOriginalSandBox().equals(originalSandBox)) {
-                 items.add(item);
-             }
-         }
-         rejectSelectedSandBoxItems(sandBox, comment, items);
+    public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment) {        
+        List<SandBoxItem> items = new ArrayList<SandBoxItem>();
+        List<SandBoxItem> currentItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox);
+        for (SandBoxItem item : currentItems) {
+            if (item.getOriginalSandBoxId().equals(originalSandBox.getId())) {
+                items.add(item);
+            }
+        }
+        rejectSelectedSandBoxItems(sandBox, comment, items);
     }
 
     @Override
     public void rejectSelectedSandBoxItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         for (SandBoxItem item : sandBoxItems) {
-            if (item.getOriginalSandBox() == null) {
+            if (item.getOriginalSandBoxId() == null) {
                 throw new IllegalArgumentException("Cannot reject a SandBoxItem whose originalSandBox member is null");
             }
         }
 
         SandBoxAction action = createSandBoxAction(SandBoxActionType.REJECT, comment);
 
+        SandBox originalSandBox = null;
         for(SandBoxItem sandBoxItem : sandBoxItems) {
             action.addSandBoxItem(sandBoxItem);
-            for (SandBoxItemListener listener : sandboxItemListeners) {
-                listener.itemRejected(sandBoxItem, sandBoxItem.getOriginalSandBox());
+
+            if (sandBoxItem.getOriginalSandBoxId() != null) {
+                if (originalSandBox != null && ! originalSandBox.getId().equals(sandBoxItem.getOriginalItemId())) {
+                    originalSandBox = sandBoxDao.retrieve(sandBoxItem.getOriginalItemId());
+                }
+            } else {
+                originalSandBox = null;
+            }
+            
+            for (SandBoxItemListener listener : sandboxItemListeners) {                
+                listener.itemRejected(sandBoxItem, originalSandBox);
             }
 
             sandBoxItem.addSandBoxAction(action);
-            sandBoxItem.setSandBox(sandBoxItem.getOriginalSandBox());
-            sandBoxItem.setOriginalSandBox(null);
+            sandBoxItem.setSandBoxId(sandBoxItem.getOriginalSandBoxId());
+            sandBoxItem.setOriginalSandBoxId(null);
+            
+            
         }
     }
 

@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.*;
 
 public interface SandBoxEntityDao {

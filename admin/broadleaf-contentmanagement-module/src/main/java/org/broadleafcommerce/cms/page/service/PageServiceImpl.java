@@ -32,14 +32,14 @@ import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
-import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
+import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Service;
 

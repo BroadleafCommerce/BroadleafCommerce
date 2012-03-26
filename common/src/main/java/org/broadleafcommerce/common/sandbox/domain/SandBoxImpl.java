@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.domain;
+package org.broadleafcommerce.common.sandbox.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,11 +35,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -68,17 +63,9 @@ public class SandBoxImpl implements SandBox {
     @ManyToOne(targetEntity = SiteImpl.class)
     @JoinTable(name = "BLC_SITE_SANDBOX", joinColumns = @JoinColumn(name = "SANDBOX_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
     protected Site site;
-    
-    @OneToMany(mappedBy = "sandBox", targetEntity = SandBoxItemImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Where(clause = "ARCHIVED_FLAG = 'N'")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
-    @BatchSize(size = 50)
-    protected Set<SandBoxItem> sandBoxItems = new HashSet<SandBoxItem>();
-
 
     @Column(name = "SANDBOX_TYPE")
-    @AdminPresentation(friendlyName="SandBox Type", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxType")
+    @AdminPresentation(friendlyName="SandBox Type", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.sandbox.domain.SandBoxType")
     protected String sandboxType;
 
 	/* (non-Javadoc)
@@ -112,23 +99,6 @@ public class SandBoxImpl implements SandBox {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBox#getSandBoxItems()
-	 */
-	@Override
-	public Set<SandBoxItem> getSandBoxItems() {
-		return sandBoxItems;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.domain.SandBox#setSandBoxItems(java.util.List)
-	 */
-	@Override
-	public void setSandBoxItems(Set<SandBoxItem> sandBoxItems) {
-		this.sandBoxItems = sandBoxItems;
-	}
-
 
     @Override
     public SandBoxType getSandBoxType() {

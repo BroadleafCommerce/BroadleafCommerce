@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.openadmin.server.domain.Site;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
 import java.util.Calendar;

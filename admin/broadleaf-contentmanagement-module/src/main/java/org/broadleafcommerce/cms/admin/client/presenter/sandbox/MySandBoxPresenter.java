@@ -82,8 +82,8 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
         getMySandBoxDisplay().getReclaimSelectionButton().disable();
         getMySandBoxDisplay().getReleaseAllButton().disable();
         getMySandBoxDisplay().getReleaseSelectionButton().disable();
-        getMySandBoxDisplay().getPendingPreviewButton().disable();
         getMySandBoxDisplay().getPendingRefreshButton().enable();
+        getMySandBoxDisplay().getPendingPreviewButton().enable();
     }
 
 	public void pendingEnable() {
@@ -91,7 +91,6 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
         getMySandBoxDisplay().getReclaimSelectionButton().disable();
         getMySandBoxDisplay().getReleaseAllButton().enable();
         getMySandBoxDisplay().getReleaseSelectionButton().disable();
-        getMySandBoxDisplay().getPendingPreviewButton().disable();
 	}
 
     protected String getPendingSelectedRecords() {

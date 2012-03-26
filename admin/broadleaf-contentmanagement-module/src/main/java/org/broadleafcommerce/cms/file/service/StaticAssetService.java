@@ -17,7 +17,7 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.hibernate.Criteria;
 

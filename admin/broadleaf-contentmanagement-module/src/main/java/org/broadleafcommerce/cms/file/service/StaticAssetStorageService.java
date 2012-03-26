@@ -17,7 +17,7 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

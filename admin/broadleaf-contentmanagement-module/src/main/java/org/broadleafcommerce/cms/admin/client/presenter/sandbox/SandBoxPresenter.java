@@ -73,7 +73,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         display.getRevertRejectAllButton().disable();
         display.getRevertRejectSelectionButton().disable();
         display.getRefreshButton().enable();
-        display.getPreviewButton().disable();
+        display.getPreviewButton().enable();
 	}
 
 	public void enable() {
@@ -82,7 +82,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
         display.getPromoteSelectionButton().disable();
         display.getRevertRejectAllButton().enable();
         display.getRevertRejectSelectionButton().disable();
-        display.getPreviewButton().disable();
+        display.getPreviewButton().enable();
 	}
 
 	public void disable() {
@@ -106,10 +106,10 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
 
     protected void previewSelection(ListGridRecord[] records) {
         String path = BLCMain.buildStoreFrontBaseUrl();
-        if (records == null || (records != null && records.length > 1)) {
+        if (records == null || (records != null && records.length != 1)) {
             path += "?blSandboxId=" + org.broadleafcommerce.openadmin.client.security.SecurityManager.USER.getCurrentSandBoxId();
         } else {
-            String specificSandboxId = records[0].getAttribute("sandBox.id");
+            String specificSandboxId = records[0].getAttribute("sandBoxId");
             String type = records[0].getAttribute("sandBoxItemType");
             if (type.equals("PAGE")) {
                 path += records[0].getAttribute("description");

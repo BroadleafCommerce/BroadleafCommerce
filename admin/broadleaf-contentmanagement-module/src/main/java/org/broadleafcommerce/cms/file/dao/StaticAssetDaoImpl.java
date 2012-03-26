@@ -17,8 +17,8 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;

@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 import java.io.Serializable;
 import java.util.Set;

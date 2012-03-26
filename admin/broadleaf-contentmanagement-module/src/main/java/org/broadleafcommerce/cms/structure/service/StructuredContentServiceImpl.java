@@ -35,20 +35,14 @@ import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.message.ArchivedStructuredContentPublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.server.dao.SandBoxDao;
+import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -75,7 +69,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     protected SandBoxItemDao sandBoxItemDao;
 
     @Resource(name="blSandBoxDao")
-    protected SandBoxDao sandBoxDao; 
+    protected SandBoxDao sandBoxDao;
     
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;

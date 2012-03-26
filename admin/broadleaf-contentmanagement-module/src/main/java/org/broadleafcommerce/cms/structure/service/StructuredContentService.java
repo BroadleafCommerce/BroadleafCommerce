@@ -21,7 +21,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.hibernate.Criteria;
 
@@ -102,7 +102,7 @@ public interface StructuredContentService extends SandBoxItemListener {
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria criteria);
 
     /**
-     * Follows the same rules as {@link #findContentItems(org.broadleafcommerce.openadmin.server.domain.SandBox, org.hibernate.Criteria) findContentItems}.
+     * Follows the same rules as {@link #findContentItems(org.broadleafcommerce.common.sandbox.domain.SandBox, org.hibernate.Criteria) findContentItems}.
      *
      * @return the count of items in this sandbox that match the passed in Criteria
      */

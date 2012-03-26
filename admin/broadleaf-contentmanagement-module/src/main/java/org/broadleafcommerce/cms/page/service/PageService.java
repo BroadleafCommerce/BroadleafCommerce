@@ -22,7 +22,7 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.hibernate.Criteria;
 
 import java.util.List;

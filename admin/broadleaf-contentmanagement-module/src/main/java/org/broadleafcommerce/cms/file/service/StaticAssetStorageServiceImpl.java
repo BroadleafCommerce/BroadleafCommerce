@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.stereotype.Service;

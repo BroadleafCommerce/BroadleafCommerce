@@ -17,7 +17,7 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 /**
  * Created by bpolster.

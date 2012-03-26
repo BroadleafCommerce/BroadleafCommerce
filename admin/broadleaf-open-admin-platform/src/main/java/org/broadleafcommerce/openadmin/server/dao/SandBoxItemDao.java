@@ -16,21 +16,23 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 
+import java.util.List;
+
 public interface SandBoxItemDao {
 
 	public SandBoxItem retrieveById(Long id);
-
-    public SandBoxItem retrieveBySandboxAndOriginalItemId(SandBox sandBox, SandBoxItemType type, Long originalItemId);
 
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(SandBox sandBox, SandBoxItemType type, Long tempItemId);
 
     public void addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId);
 
     public SandBoxItem updateSandBoxItem(SandBoxItem sandBoxItem);
+
+    public List<SandBoxItem> retrieveSandBoxItemsForSandbox(SandBox sandBox);
 
 }

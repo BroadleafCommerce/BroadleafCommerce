@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.domain;
 
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+
 /**
  * Created by bpolster.
  */

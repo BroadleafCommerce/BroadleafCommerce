@@ -24,8 +24,8 @@ import org.broadleafcommerce.cms.web.BroadleafProcessURLFilter;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

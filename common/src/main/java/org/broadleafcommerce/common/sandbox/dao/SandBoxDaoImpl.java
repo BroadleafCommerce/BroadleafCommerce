@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.dao;
+package org.broadleafcommerce.common.sandbox.dao;
+
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -22,16 +32,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxImpl;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
-import org.broadleafcommerce.openadmin.server.domain.Site;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Repository("blSandBoxDao")
 public class SandBoxDaoImpl implements SandBoxDao {

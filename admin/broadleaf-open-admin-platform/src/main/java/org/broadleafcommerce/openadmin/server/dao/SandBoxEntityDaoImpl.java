@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.*;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 //@Repository("blSandBoxEntityDao")
@@ -31,7 +32,7 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 	protected EntityManager sandBoxEntityManager;
 	
 	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao#persist(org.broadleafcommerce.openadmin.server.domain.SandBox)
+	 * @see org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao#persist(org.broadleafcommerce.common.sandbox.domain.SandBox)
 	 */
 	@Override
 	public SandBox persist(SandBox entity) {
@@ -41,7 +42,7 @@ public class SandBoxEntityDaoImpl implements SandBoxEntityDao {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao#merge(org.broadleafcommerce.openadmin.server.domain.SandBox)
+	 * @see org.broadleafcommerce.openadmin.server.dao.SandBoxEntityDao#merge(org.broadleafcommerce.common.sandbox.domain.SandBox)
 	 */
 	@Override
 	public SandBox merge(SandBox entity) {

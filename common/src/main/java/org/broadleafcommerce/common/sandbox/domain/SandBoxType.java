@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.domain;
+package org.broadleafcommerce.common.sandbox.domain;
 
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;

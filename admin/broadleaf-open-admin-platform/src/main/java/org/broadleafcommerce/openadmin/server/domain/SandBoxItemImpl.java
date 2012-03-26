@@ -66,14 +66,13 @@ public class SandBoxItemImpl implements SandBoxItem {
     @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "SANDBOX_ID")
-	protected SandBox sandBox;
+    @Column(name = "SANDBOX_ID")
+    @Index(name="SANDBOX_ID_INDEX", columnNames={"SANDBOX_ID"})
+	protected Long sandBoxId;
 
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIG_SANDBOX_ID")
+    @Column(name = "ORIG_SANDBOX_ID")
     @Index(name="ORIG_SANDBOX_ID_INDEX", columnNames={"ORIG_SANDBOX_ID"})
-	protected SandBox originalSandBox;
+	protected Long originalSandBoxId;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
     @AdminPresentation(friendlyName="Item Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
@@ -122,23 +121,23 @@ public class SandBoxItemImpl implements SandBoxItem {
 	}
 
     @Override
-	public SandBox getSandBox() {
-		return sandBox;
+	public Long getSandBoxId() {
+		return sandBoxId;
 	}
 
     @Override
-	public void setSandBox(SandBox sandBox) {
-		this.sandBox = sandBox;
+	public void setSandBoxId(Long sandBoxId) {
+		this.sandBoxId = sandBoxId;
 	}
 
     @Override
-	public SandBox getOriginalSandBox() {
-		return originalSandBox;
+	public Long getOriginalSandBoxId() {
+		return originalSandBoxId;
 	}
 
     @Override
-	public void setOriginalSandBox(SandBox originalSandBox) {
-		this.originalSandBox = originalSandBox;
+	public void setOriginalSandBoxId(Long originalSandBoxId) {
+		this.originalSandBoxId = originalSandBoxId;
 	}
 
     @Override

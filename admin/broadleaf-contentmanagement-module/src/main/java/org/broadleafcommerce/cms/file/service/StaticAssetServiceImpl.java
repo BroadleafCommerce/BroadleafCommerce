@@ -23,19 +23,16 @@ import org.broadleafcommerce.cms.common.AbstractContentService;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
-import org.broadleafcommerce.openadmin.server.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspTagException;
-import java.io.IOException;
 import java.util.List;
 
 /**

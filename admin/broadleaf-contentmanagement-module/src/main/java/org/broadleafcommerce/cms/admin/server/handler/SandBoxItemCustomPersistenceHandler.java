@@ -23,11 +23,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.client.dto.*;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
@@ -102,7 +102,7 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
         }
         Criteria criteria = dynamicEntityDao.createCriteria(SandBoxItem.class);
         criteria.add(Restrictions.in("id", ids));
-        criteria.add(Restrictions.or(Restrictions.eq("originalSandBox", mySandBox), Restrictions.eq("sandBox", mySandBox)));
+        criteria.add(Restrictions.or(Restrictions.eq("originalSandBoxId", mySandBox.getId()), Restrictions.eq("sandBoxId", mySandBox.getId())));
         return criteria.list();
     }
 
@@ -193,7 +193,7 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective);
-            cto.get("sandBox").setFilterValue(currentSandBox.getId().toString());
+            cto.get("sandBoxId").setFilterValue(currentSandBox.getId().toString());
             cto.get("archivedFlag").setFilterValue(Boolean.FALSE.toString());
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());

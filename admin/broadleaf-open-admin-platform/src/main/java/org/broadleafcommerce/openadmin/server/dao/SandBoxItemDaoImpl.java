@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxAction;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxActionType;
@@ -54,20 +54,11 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
        return em.find(SandBoxItemImpl.class, id);
     }
 
-    @Override
-    public SandBoxItem retrieveBySandboxAndOriginalItemId(SandBox sandBox, SandBoxItemType type, Long originalItemId) {
-        Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_ORIG_ITEM_ID");
-        query.setParameter("sandbox", sandBox);
-        query.setParameter("itemType", type);
-        query.setParameter("originalItemId", originalItemId);
-        List<SandBoxItem> items = query.getResultList();
-        return items == null || items.isEmpty() ? null : items.get(0);
-    }
 
     @Override
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(SandBox sandBox, SandBoxItemType type, Long tempItemId) {
         Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID");
-        query.setParameter("sandbox", sandBox);
+        query.setParameter("sandboxId", sandBox.getId());
         query.setParameter("itemType", type.getType());
         query.setParameter("temporaryItemId", tempItemId);
         List<SandBoxItem> items = query.getResultList();
@@ -81,7 +72,7 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         }
         SandBoxItemImpl sandBoxItem = new SandBoxItemImpl();
         sandBoxItem.setSandBoxOperationType(operationType);
-        sandBoxItem.setSandBox(sbox);
+        sandBoxItem.setSandBoxId(sbox.getId());
         sandBoxItem.setArchivedFlag(false);
         sandBoxItem.setDescription(description);
         sandBoxItem.setOriginalItemId(originalId);
@@ -94,14 +85,18 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         sandBoxItem.addSandBoxAction(action);
         action.addSandBoxItem(sandBoxItem);
 
-        sbox.getSandBoxItems().add(sandBoxItem);
-
-        em.merge(sbox);
+        em.merge(sandBoxItem);
     }
 
     @Override
     public SandBoxItem updateSandBoxItem(SandBoxItem sandBoxItem) {
         //sandBoxItem.setLastUpdateDate(SystemTime.asDate());
         return em.merge(sandBoxItem);
+    }
+
+    public List<SandBoxItem> retrieveSandBoxItemsForSandbox(SandBox sandBox) {
+        Query query = em.createNamedQuery("BC_READ_ALL_SANDBOX_ITEMS");
+        query.setParameter("sandboxId", sandBox.getId());
+        return query.getResultList();
     }
 }

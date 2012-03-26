@@ -17,8 +17,8 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -158,7 +158,7 @@ public interface StructuredContent extends Serializable {
     /**
      * Gets the "deleted" indicator.    Deleted means that the item has been
      * marked for deletion.   If this method returns true, the item will not be returned
-     * as part {@link org.broadleafcommerce.cms.structure.service.StructuredContentService#lookupStructuredContentItemsByType(org.broadleafcommerce.openadmin.server.domain.SandBox, StructuredContentType, org.broadleafcommerce.common.locale.domain.Locale, Integer, java.util.Map)}'s}.
+     * as part {@link org.broadleafcommerce.cms.structure.service.StructuredContentService#lookupStructuredContentItemsByType(org.broadleafcommerce.common.sandbox.domain.SandBox, StructuredContentType, org.broadleafcommerce.common.locale.domain.Locale, Integer, java.util.Map)}'s}.
      *
      * In a "production sandbox", an item that returns true for <code>getDeletedFlag</code>
      * should also return true for <code>getArchivedFlag</code>
