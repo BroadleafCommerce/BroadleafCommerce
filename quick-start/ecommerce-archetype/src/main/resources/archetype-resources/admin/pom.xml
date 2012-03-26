@@ -41,33 +41,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-module</artifactId>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-open-admin-platform</artifactId>
-			<classifier>sources</classifier>
-		</dependency>
         <dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-contentmanagement-module</artifactId>
 		</dependency>
         <dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-contentmanagement-module</artifactId>
-            <classifier>sources</classifier>
-		</dependency>
-        <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-common</artifactId>
-            <classifier>sources</classifier>
         </dependency>
 	</dependencies>
 </project>

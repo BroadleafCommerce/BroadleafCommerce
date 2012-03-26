@@ -112,11 +112,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${groupId}</groupId>
-			<artifactId>admin</artifactId>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>${groupId}</groupId>
 			<artifactId>core</artifactId>
 		</dependency>
         <dependency>

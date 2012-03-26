@@ -119,14 +119,6 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
-			<dependency>
-				<groupId>${groupId}</groupId>
-				<artifactId>admin</artifactId>
-				<version>${version}</version>
-				<type>jar</type>
-				<scope>compile</scope>
-				<classifier>sources</classifier>
-			</dependency>
 
             <!--Broadleaf libraries -->
             <dependency>
