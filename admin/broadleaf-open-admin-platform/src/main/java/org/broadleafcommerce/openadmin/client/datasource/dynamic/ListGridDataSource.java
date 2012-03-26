@@ -105,14 +105,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         	if (pos >= 0) {
         		gridFields[j].setCanEdit(canEdit[pos]);
         	}
-        	String fieldType = field.getAttribute("fieldType");
-        	if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
-        		gridFields[j].setCellFormatter(new CellFormatter() {
-					public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-						return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
-					}
-        		});
-        	}
+            setupDecimalFormatters(gridFields[j], field);
         	j++;
         	availableSlots--;
         }
@@ -144,14 +137,7 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 	            	}
 	        		availableSlots--;
 	        	}
-        		String fieldType = field.getAttribute("fieldType");
-            	if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
-            		gridFields[j].setCellFormatter(new CellFormatter() {
-    					public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-    						return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse((String) value));
-    					}
-            		});
-            	}
+                setupDecimalFormatters(gridFields[j], field);
         		j++;
         	}
         }
@@ -173,5 +159,24 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
         }
         getAssociatedGrid().setHilites(hilites);
 	}
-	
+
+    protected void setupDecimalFormatters(ListGridField gridField, DataSourceField field) {
+        String fieldType = field.getAttribute("fieldType");
+        if (fieldType != null && SupportedFieldType.MONEY.toString().equals(fieldType)) {
+            gridField.setCellFormatter(new CellFormatter() {
+                public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                    try {
+                        return value == null ? "" : NumberFormat.getCurrencyFormat(getAttribute("blcCurrencyCode")).format((Number) value);
+                    } catch (Exception e) {
+                        return String.valueOf(value);
+                    }
+                }
+            });
+            gridField.setAttribute("type", "localMoneyDecimal");
+        }
+        if (fieldType != null && SupportedFieldType.DECIMAL.toString().equals(fieldType)) {
+            gridField.setAttribute("type", "localDecimal");
+        }
+    }
+
 }

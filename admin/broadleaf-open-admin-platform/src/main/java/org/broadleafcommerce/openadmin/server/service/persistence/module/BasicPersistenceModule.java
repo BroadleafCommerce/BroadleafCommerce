@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -80,9 +82,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
-    protected DecimalFormat decimalFormat = new DecimalFormat("0.########");
+    protected DecimalFormat decimalFormat;
     protected ApplicationContext applicationContext;
     protected PersistenceManager persistenceManager;
+
+    public BasicPersistenceModule() {
+        decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+        decimalFormat.applyPattern("0.########");
+    }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

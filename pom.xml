@@ -114,6 +114,14 @@
                     <groupId>org.zeroturnaround</groupId>
                     <artifactId>javarebel-maven-plugin</artifactId>
                     <version>1.0.5</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-utils</artifactId>
+                            <version>1.4.1</version>
+                            <scope>runtime</scope>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -248,14 +256,6 @@
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-profile</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <classifier>sources</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile-web</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
@@ -267,14 +267,6 @@
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-framework</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <classifier>sources</classifier>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
@@ -292,30 +284,7 @@
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-admin-module</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <classifier>sources</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contentmanagement-module</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-contentmanagement-module</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <classifier>sources</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-open-admin-platform</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
@@ -326,7 +295,6 @@
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
-                <classifier>sources</classifier>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
@@ -341,14 +309,6 @@
                 <version>${project.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.broadleafcommerce</groupId>
-                <artifactId>broadleaf-common</artifactId>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <classifier>sources</classifier>
             </dependency>
 
             <!-- Hibernate Libraries -->
