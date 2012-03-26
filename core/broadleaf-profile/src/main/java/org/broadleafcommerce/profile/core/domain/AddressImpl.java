@@ -90,9 +90,12 @@ public class AddressImpl implements Address {
     @Column(name = "TOKENIZED_ADDRESS")
     @AdminPresentation(friendlyName="Tokenized Address", order=15, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String tokenizedAddress;
-
+    
+    /**
+     * This is intented to be used for address verification integrations and should not be modifiable in the admin
+     */
     @Column(name = "STANDARDIZED")
-    @AdminPresentation(friendlyName="Standardized", order=16, group="Address")
+    @AdminPresentation(friendlyName="Standardized", order=16, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected Boolean standardized = Boolean.FALSE;
 
     @Column(name = "ZIP_FOUR")
