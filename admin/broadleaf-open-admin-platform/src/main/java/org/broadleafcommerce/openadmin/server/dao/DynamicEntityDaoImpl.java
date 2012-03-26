@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,12 +37,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
@@ -54,15 +64,6 @@ import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -594,6 +595,18 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 }
                                 if (localMetadata.getPresentationAttributes().getValidationConfigurations() != null) {
                                     serverMetadata.getPresentationAttributes().setValidationConfigurations(localMetadata.getPresentationAttributes().getValidationConfigurations());
+                                }
+                                if (localMetadata.getLength() != null) {
+                                	serverMetadata.setLength(localMetadata.getLength());
+                                }
+                                if (localMetadata.getUnique() != null) {
+                                	serverMetadata.setUnique(localMetadata.getUnique());
+                                }
+                                if (localMetadata.getScale() != null) {
+                                	serverMetadata.setScale(localMetadata.getScale());
+                                }
+                                if (localMetadata.getPrecision() != null) {
+                                	serverMetadata.setPrecision(localMetadata.getPrecision());
                                 }
                             }
                         }
