@@ -114,6 +114,7 @@ public class EntityEditDialog extends Window {
                                 hide();
                                 isHidden = true;
                             }
+                            saveButton.enable();
                             cancelButton.enable();
 						}
             		});
