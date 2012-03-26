@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 public class SplashWindow extends Window implements SplashView, Stoppable {
 	
 	private SimpleProgress simpleProgress;
+    private Label buildDateLabel;
 	
 	public SplashWindow(String backgroundImage, String version) {
 		setShowShadow(true);
@@ -60,15 +61,17 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
     	spacer3.setWidth(25);
     	versionLayout.addMember(spacer3);
         VLayout temp = new VLayout(5);
-    	Label versionLabel = new Label("Open Admin Version: " + BLCMain.getMessageManager().getString("openAdminVersion"));
+    	Label versionLabel = new Label("Core Version: " + BLCMain.getMessageManager().getString("openAdminVersion") + "/" + BLCMain.getMessageManager().getString("buildDate"));
     	versionLabel.setWrap(false);
     	versionLabel.setStyleName("versionStyle");
     	versionLabel.setHeight(15);
         temp.addMember(versionLabel);
-        Label buildDateLabel = new Label("Build Date: " + BLCMain.getMessageManager().getString("buildDate"));
+        
+        buildDateLabel = new Label("&nbsp;");
         buildDateLabel.setWrap(false);
         buildDateLabel.setStyleName("versionStyle");
         buildDateLabel.setHeight(15);
+        
         temp.addMember(buildDateLabel);
         versionLayout.addMember(temp);
     	layout.addMember(versionLayout);
@@ -92,13 +95,22 @@ public class SplashWindow extends Window implements SplashView, Stoppable {
             }
         });
 	}
+    
+    protected void showClientBuildDate() {
+        String clientBuildDate = BLCMain.getMessageManager().getString("clientBuildDate");
+        if (!clientBuildDate.equals("${clientBuildDate}")) {
+            buildDateLabel.setContents("Build Date: " + clientBuildDate);
+        }
+    }
 
     public void explicitShow() {
+        showClientBuildDate();
         simpleProgress.setVisible(false);
         show();
     }
 
 	public void startProgress() {
+        showClientBuildDate();
         simpleProgress.setVisible(true);
 		show();
 		simpleProgress.startProgress();

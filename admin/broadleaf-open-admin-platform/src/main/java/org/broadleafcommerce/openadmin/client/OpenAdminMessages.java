@@ -63,6 +63,7 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String searchForPermission();
     public String openAdminVersion();
     public String buildDate();
+    public String clientBuildDate();
     
     // Toolbar operations
     public String addTitle();
