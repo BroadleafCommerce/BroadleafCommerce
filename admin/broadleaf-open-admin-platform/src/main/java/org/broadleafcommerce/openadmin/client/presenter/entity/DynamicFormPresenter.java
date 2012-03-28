@@ -66,9 +66,11 @@ public class DynamicFormPresenter {
 				if (event.isLeftButtonDown()) {
 					DSRequest requestProperties = new DSRequest();
 					requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
-					display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
-					display.getSaveButton().disable();
-                    display.getRefreshButton().disable();
+					if (display.getFormOnlyDisplay().getForm().validate()) {
+						display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
+						display.getSaveButton().disable();
+	                    display.getRefreshButton().disable();
+					}
 				}
 			}
         });
