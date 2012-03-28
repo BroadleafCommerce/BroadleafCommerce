@@ -18,20 +18,31 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class GoogleAnalyticsTag extends SimpleTagSupport {
-
-    private static final long serialVersionUID = 1L;
+    
+    private static final Log LOG = LogFactory.getLog(GoogleAnalyticsTag.class);
+	
+    @Value("${googleAnalytics.webPropertyId}")
     private String webPropertyId;
+    
     private Order order;
 
     public void setOrder(Order order) {
@@ -45,6 +56,17 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
+        
+        if (webPropertyId == null) {
+	        ServletContext sc = ((PageContext) getJspContext()).getServletContext();
+	        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
+	        context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
+        }
+        
+        if (webPropertyId.equals("UA-XXXXXXX-X")) {
+        	LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
+        }
+        
         out.println(analytics(webPropertyId, order));
         super.doTag();
     }
@@ -103,4 +125,5 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
 
         return sb.toString();
     }
+    
 }
