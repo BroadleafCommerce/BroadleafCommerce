@@ -128,6 +128,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
         }, null);
 		formPresenter.disable();
 		display.getListDisplay().getRemoveButton().disable();
+		display.getListDisplay().getAddButton().disable();
 		allChildCategoriesPresenter.disable();
 	}
 
