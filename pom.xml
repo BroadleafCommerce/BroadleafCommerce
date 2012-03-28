@@ -10,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>1.6.0-M2-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -680,35 +680,35 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-taglibs</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -721,21 +721,21 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-instrument</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -749,42 +749,56 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>3.1.0.RELEASE</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jms</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-oxm</artifactId>
-                <version>3.0.5.RELEASE</version>
+                <version>3.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>runtime</scope>
             </dependency>
