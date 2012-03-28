@@ -30,7 +30,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Jeff Fischer
@@ -43,7 +42,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         AdminUser adminUser = adminSecurityService.readAdminUserByUserName(username);
-        if (adminUser == null) {
+        if (adminUser == null || adminUser.getActiveStatusFlag() == null || !adminUser.getActiveStatusFlag()) {
             throw new UsernameNotFoundException("The user was not found");
         }
 
