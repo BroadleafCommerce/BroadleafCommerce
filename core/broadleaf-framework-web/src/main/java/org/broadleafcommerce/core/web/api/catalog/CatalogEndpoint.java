@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.web.api.catalog;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -54,6 +55,13 @@ public class CatalogEndpoint {
     @Path("product/name/{name}")
     public List<Product> findProductByName(@PathParam("name") String name) {
         return catalogService.findProductsByName(name);
+    }
+
+    @GET
+    @Path("product/{id}/skus")
+    public List<Sku> findSkusByProductById(@PathParam("id") Long productId) {
+        Product product = catalogService.findProductById(productId);
+        return product.getAllSkus();
     }
 
     @GET
