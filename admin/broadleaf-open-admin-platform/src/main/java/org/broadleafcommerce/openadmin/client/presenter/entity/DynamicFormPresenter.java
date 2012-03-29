@@ -17,7 +17,10 @@
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
@@ -67,9 +70,14 @@ public class DynamicFormPresenter {
 					DSRequest requestProperties = new DSRequest();
 					requestProperties.setAttribute("dirtyValues", display.getFormOnlyDisplay().getForm().getChangedValues());
 					if (display.getFormOnlyDisplay().getForm().validate()) {
-						display.getFormOnlyDisplay().getForm().saveData(null, requestProperties);
-						display.getSaveButton().disable();
-	                    display.getRefreshButton().disable();
+						display.getFormOnlyDisplay().getForm().saveData(new DSCallback() {
+                            public void execute(DSResponse response, Object rawData, DSRequest request) {
+                                if (response.getStatus() != RPCResponse.STATUS_VALIDATION_ERROR) {
+                                    display.getSaveButton().disable();
+                                    display.getRefreshButton().disable();
+                                }
+                            }
+                        }, requestProperties);
 					}
 				}
 			}
