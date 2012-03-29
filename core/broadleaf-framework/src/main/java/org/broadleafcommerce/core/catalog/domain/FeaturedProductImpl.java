@@ -25,6 +25,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.*;
@@ -33,6 +36,7 @@ import org.hibernate.annotations.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_FEATURED")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@XmlRootElement(name = "featuredProduct")
 public class FeaturedProductImpl implements FeaturedProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -71,7 +75,8 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product = new ProductImpl();
-    
+
+    @XmlAttribute
     public Long getId() {
         return id;
     }
@@ -83,11 +88,13 @@ public class FeaturedProductImpl implements FeaturedProduct {
     public void setSequence(Long sequence) {
         this.sequence = sequence;
     }
-    
+
+    @XmlAttribute
     public Long getSequence() {
     	return this.sequence;
     }
 
+    @XmlAttribute
     public String getPromotionMessage() {
         return promotionMessage;
     }
@@ -96,6 +103,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.promotionMessage = promotionMessage;
     }
 
+    @XmlElement
     public Category getCategory() {
         return category;
     }
@@ -104,6 +112,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.category = category;
     }
 
+    @XmlElement
     public Product getProduct() {
         return product;
     }

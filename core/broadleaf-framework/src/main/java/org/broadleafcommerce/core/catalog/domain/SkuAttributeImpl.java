@@ -27,6 +27,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.*;
 
@@ -51,6 +54,7 @@ import org.hibernate.annotations.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@XmlRootElement(name = "skuAttribute")
 public class SkuAttributeImpl implements SkuAttribute {
 
     /** The Constant serialVersionUID. */
@@ -96,6 +100,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
      */
+    @XmlAttribute
     public Long getId() {
         return id;
     }
@@ -110,6 +115,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getValue()
      */
+    @XmlAttribute
     public String getValue() {
         return value;
     }
@@ -124,6 +130,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
      */
+    @XmlAttribute
     public Boolean getSearchable() {
         return searchable;
     }
@@ -138,6 +145,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
      */
+    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -160,6 +168,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
      */
+    @XmlElement
     public Sku getSku() {
         return sku;
     }

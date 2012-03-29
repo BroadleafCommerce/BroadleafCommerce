@@ -16,6 +16,7 @@
 
 package java.util;
 
+import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
 
 /**
@@ -36,6 +37,7 @@ public class Currency implements Serializable {
 	
 	private String currencyCode;
 
+    @XmlValue
 	public String getCurrencyCode() {
 		return currencyCode;
 	}

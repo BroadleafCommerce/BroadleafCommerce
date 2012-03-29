@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.money;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -116,10 +117,12 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         this.amount = BankersRounding.setScale(amount, scale);
     }
 
+    @XmlAttribute
     public BigDecimal getAmount() {
         return amount;
     }
 
+    @XmlAttribute
     public Currency getCurrency() {
         return currency;
     }

@@ -25,6 +25,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.*;
@@ -33,6 +36,7 @@ import org.hibernate.annotations.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_PRODUCT_UP_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@XmlRootElement(name = "upSaleProduct")
 public class UpSaleProductImpl implements RelatedProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -70,7 +74,8 @@ public class UpSaleProductImpl implements RelatedProduct {
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     @Index(name="UPSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct = new ProductImpl();
-    
+
+    @XmlAttribute
     public Long getId() {
         return id;
     } 
@@ -78,7 +83,8 @@ public class UpSaleProductImpl implements RelatedProduct {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    @XmlAttribute
     public String getPromotionMessage() {
         return promotionMessage;
     }
@@ -86,7 +92,8 @@ public class UpSaleProductImpl implements RelatedProduct {
     public void setPromotionMessage(String promotionMessage) {
         this.promotionMessage = promotionMessage;
     }
-    
+
+    @XmlAttribute
     public Long getSequence() {
         return sequence;
     }
@@ -95,10 +102,12 @@ public class UpSaleProductImpl implements RelatedProduct {
         this.sequence = sequence;
     }
 
+    @XmlElement
     public Product getProduct() {
         return product;
     }
 
+    @XmlElement
     public Product getRelatedProduct() {
         return relatedSaleProduct;
     }   

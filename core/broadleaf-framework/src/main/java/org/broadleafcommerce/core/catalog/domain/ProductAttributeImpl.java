@@ -33,6 +33,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class ProductAttributeImpl.
@@ -42,6 +45,7 @@ import javax.persistence.Table;
 @Table(name="BLC_PRODUCT_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseProductAttribute")
+@XmlRootElement(name = "productAttribute")
 public class ProductAttributeImpl implements ProductAttribute {
 
 	/** The Constant serialVersionUID. */
@@ -90,6 +94,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getId()
      */
+    @XmlAttribute
     public Long getId() {
         return id;
     }
@@ -104,6 +109,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getValue()
      */
+    @XmlAttribute
     public String getValue() {
         return value;
     }
@@ -118,6 +124,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getSearchable()
      */
+    @XmlAttribute
     public Boolean getSearchable() {
         return searchable;
     }
@@ -132,6 +139,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getName()
      */
+    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -152,6 +160,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getProduct()
      */
+    @XmlElement
     public Product getProduct() {
         return product;
     }
