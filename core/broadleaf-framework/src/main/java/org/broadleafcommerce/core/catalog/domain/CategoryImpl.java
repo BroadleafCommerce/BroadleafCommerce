@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,10 +71,11 @@ import org.hibernate.annotations.Type;
 @Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseCategory")
+@XmlRootElement(name = "category")
 public class CategoryImpl implements Category {
-	
-	private static final long serialVersionUID = 1L;
-	private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
+
+    private static final long serialVersionUID = 1L;
+    private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
 
     private static String buildLink(Category category, boolean ignoreTopLevel) {
         Category myCategory = category;
@@ -227,6 +229,7 @@ public class CategoryImpl implements Category {
     protected List<Category> childCategories = new ArrayList<Category>(50);
 
     @Override
+    @XmlAttribute
     public Long getId() {
         return id;
     }
@@ -237,6 +240,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -247,6 +251,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public String getUrl() {
         // TODO: if null return
         // if blank return
@@ -268,6 +273,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public String getUrlKey() {
         if ((urlKey == null || "".equals(urlKey.trim())) && name != null) {
             return UrlUtil.generateUrlKey(name);
@@ -276,6 +282,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public String getGeneratedUrl() {
         return buildLink(this, false);
     }
@@ -286,6 +293,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlElement
     public String getDescription() {
         return description;
     }
@@ -296,6 +304,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public Date getActiveStartDate() {
         return activeStartDate;
     }
@@ -306,6 +315,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public Date getActiveEndDate() {
         return activeEndDate;
     }
@@ -316,6 +326,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(activeStartDate, activeEndDate, true)) {
@@ -326,6 +337,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public String getDisplayTemplate() {
         return displayTemplate;
     }
@@ -336,6 +348,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlElement
     public String getLongDescription() {
         return longDescription;
     }
@@ -346,6 +359,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlElement
     public Category getDefaultParentCategory() {
         return defaultParentCategory;
     }
@@ -356,11 +370,13 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlTransient
     public List<Category> getAllChildCategories(){
     	return allChildCategories;
     }
 
     @Override
+    @XmlAttribute
     public boolean hasAllChildCategories(){
     	return !allChildCategories.isEmpty();
     }
@@ -374,6 +390,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlTransient
     public List<Category> getChildCategories() {
     	if (childCategories.isEmpty()) {
             for (Category category : allChildCategories) {
@@ -386,6 +403,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlAttribute
     public boolean hasChildCategories() {
         return !getChildCategories().isEmpty();
     }
@@ -400,12 +418,14 @@ public class CategoryImpl implements Category {
 
     @Override
     @Deprecated
+    @XmlTransient
     public Map<String, String> getCategoryImages() {
         return categoryImages;
     }
 
     @Override
     @Deprecated
+    @XmlTransient
     public String getCategoryImage(String imageKey) {
         return categoryImages.get(imageKey);
     }
@@ -420,6 +440,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlTransient
 	public Map<String, List<Long>> getChildCategoryURLMap() {
         if (childCategoryURLMap == null) {
             HydratedSetup.populateFromCache(this);
@@ -442,6 +463,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlTransient
     public List<Category> getAllParentCategories() {
         return allParentCategories;
     }
@@ -455,6 +477,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlTransient
     public List<FeaturedProduct> getFeaturedProducts() {
         return featuredProducts;
     }
@@ -468,6 +491,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
+    @XmlTransient
     public List<Product> getAllProducts() {
 		return allProducts;
 	}
@@ -481,6 +505,7 @@ public class CategoryImpl implements Category {
 	}
 
     @Override
+    @XmlTransient
     public Map<String, Media> getCategoryMedia() {
         return categoryMedia;
     }

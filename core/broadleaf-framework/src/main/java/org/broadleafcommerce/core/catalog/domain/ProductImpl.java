@@ -42,6 +42,10 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -68,6 +72,7 @@ import java.util.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
+@XmlRootElement(name = "product")
 public class ProductImpl implements Product {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
@@ -220,6 +225,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getId()
      */
+    @XmlAttribute
     public Long getId() {
         return id;
     }
@@ -236,6 +242,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
      */
+    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -253,6 +260,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getDescription()
      */
+    @XmlElement
     public String getDescription() {
         return description;
     }
@@ -271,6 +279,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getLongDescription()
      */
+    @XmlElement
     public String getLongDescription() {
         return longDescription;
     }
@@ -289,6 +298,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveStartDate()
      */
+    @XmlAttribute
     public Date getActiveStartDate() {
         return activeStartDate;
     }
@@ -307,6 +317,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveEndDate()
      */
+    @XmlAttribute
     public Date getActiveEndDate() {
         return activeEndDate;
     }
@@ -325,6 +336,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#isActive()
      */
+    @XmlAttribute
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
@@ -333,7 +345,8 @@ public class ProductImpl implements Product {
         }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
-    
+
+    @XmlAttribute
     public String getModel() {
         return model;
     }
@@ -342,6 +355,7 @@ public class ProductImpl implements Product {
         this.model = model;
     }
 
+    @XmlAttribute
     public String getManufacturer() {
         return manufacturer;
     }
@@ -350,6 +364,7 @@ public class ProductImpl implements Product {
         this.manufacturer = manufacturer;
     }
 
+    @XmlElement
     public ProductDimension getDimension() {
         return dimension;
     }
@@ -358,6 +373,7 @@ public class ProductImpl implements Product {
     	this.dimension = dimension;
     }
 
+    @XmlAttribute
     public BigDecimal getWidth() {
         return dimension==null?null:dimension.getWidth();
     }
@@ -366,6 +382,7 @@ public class ProductImpl implements Product {
         dimension.setWidth(width);
     }
 
+    @XmlAttribute
     public BigDecimal getHeight() {
         return dimension==null?null:dimension.getHeight();
     }
@@ -374,6 +391,7 @@ public class ProductImpl implements Product {
         dimension.setHeight(height);
     }
 
+    @XmlAttribute
     public BigDecimal getDepth() {
         return dimension==null?null:dimension.getDepth();
     }
@@ -386,10 +404,12 @@ public class ProductImpl implements Product {
         dimension.setGirth(girth);
     }
 
+    @XmlAttribute
     public BigDecimal getGirth() {
         return dimension==null?null:dimension.getGirth();
     }
 
+    @XmlElement
     public ContainerSizeType getSize() {
         return dimension==null?null:dimension.getSize();
     }
@@ -398,6 +418,7 @@ public class ProductImpl implements Product {
         dimension.setSize(size);
     }
 
+    @XmlElement
     public ContainerShapeType getContainer() {
         return dimension==null?null:dimension.getContainer();
     }
@@ -410,10 +431,12 @@ public class ProductImpl implements Product {
      * Returns the product dimensions as a String (assumes measurements are in inches)
      * @return a String value of the product dimensions
      */
+    @XmlAttribute
     public String getDimensionString() {
         return dimension==null?null:dimension.getDimensionString();
     }
-    
+
+    @XmlAttribute
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
@@ -422,6 +445,7 @@ public class ProductImpl implements Product {
         this.isFeaturedProduct = isFeaturedProduct;
     }
 
+    @XmlAttribute
     public boolean isMachineSortable() {
         return isMachineSortable;
     }
@@ -430,6 +454,7 @@ public class ProductImpl implements Product {
         this.isMachineSortable = isMachineSortable;
     }
 
+    @XmlElement
     public ProductWeight getWeight() {
         return weight;
     }
@@ -441,6 +466,7 @@ public class ProductImpl implements Product {
 	/**
 	 * @return the promoMessage
 	 */
+    @XmlAttribute
 	public String getPromoMessage() {
 		return promoMessage;
 	}
@@ -456,6 +482,7 @@ public class ProductImpl implements Product {
      * Gets the all skus.
      * @return the all skus
      */
+    @XmlTransient
     public List<Sku> getAllSkus() {
         return allSkus;
     }
@@ -464,6 +491,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getSkus()
      */
+    @XmlTransient
     public List<Sku> getSkus() {
         if (skus.size() == 0) {
             List<Sku> allSkus = getAllSkus();
@@ -494,6 +522,7 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getProductImages()
      */
     @Deprecated
+    @XmlTransient
     public Map<String, String> getProductImages() {
         return productImages;
     }
@@ -505,6 +534,7 @@ public class ProductImpl implements Product {
      * .String)
      */
     @Deprecated
+    @XmlTransient
     public String getProductImage(String imageKey) {
         return productImages.get(imageKey);
     }
@@ -530,10 +560,12 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getDefaultCategory()
      */
+    @XmlElement
     public Category getDefaultCategory() {
         return defaultCategory;
     }
 
+    @XmlTransient
     public Map<String, Media> getProductMedia() {
         return productMedia;
     }
@@ -554,6 +586,7 @@ public class ProductImpl implements Product {
         this.defaultCategory = defaultCategory;
     }
 
+    @XmlTransient
     public List<Category> getAllParentCategories() {
         return allParentCategories;
     }
@@ -565,6 +598,7 @@ public class ProductImpl implements Product {
         }
     }
 
+    @XmlTransient
     public List<RelatedProduct> getCrossSaleProducts() {
         return crossSaleProducts;
     }
@@ -576,6 +610,7 @@ public class ProductImpl implements Product {
         }    	
     }
 
+    @XmlTransient
     public List<RelatedProduct> getUpSaleProducts() {
         return upSaleProducts;
     }
@@ -588,6 +623,7 @@ public class ProductImpl implements Product {
         this.upSaleProducts = upSaleProducts;
     }
 
+    @XmlTransient
     public List<ProductAttribute> getProductAttributes() {
 		return productAttributes;
 	}
