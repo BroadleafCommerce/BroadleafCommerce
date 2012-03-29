@@ -16,22 +16,17 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.annotations.*;
 
 /**
  * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
@@ -55,6 +50,7 @@ import org.hibernate.annotations.*;
 @Table(name="BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @XmlRootElement(name = "skuAttribute")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class SkuAttributeImpl implements SkuAttribute {
 
     /** The Constant serialVersionUID. */
@@ -100,7 +96,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
      */
-    @XmlAttribute
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -115,7 +111,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getValue()
      */
-    @XmlAttribute
+    @XmlElement
     public String getValue() {
         return value;
     }
@@ -130,7 +126,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
      */
-    @XmlAttribute
+    @XmlElement
     public Boolean getSearchable() {
         return searchable;
     }
@@ -145,7 +141,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
      */
-    @XmlAttribute
+    @XmlElement
     public String getName() {
         return name;
     }

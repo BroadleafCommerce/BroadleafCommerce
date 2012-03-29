@@ -16,27 +16,25 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Parameter;
+
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_FEATURED")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @XmlRootElement(name = "featuredProduct")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class FeaturedProductImpl implements FeaturedProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -76,7 +74,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product = new ProductImpl();
 
-    @XmlAttribute
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -89,12 +87,12 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.sequence = sequence;
     }
 
-    @XmlAttribute
+    @XmlElement
     public Long getSequence() {
     	return this.sequence;
     }
 
-    @XmlAttribute
+    @XmlElement
     public String getPromotionMessage() {
         return promotionMessage;
     }

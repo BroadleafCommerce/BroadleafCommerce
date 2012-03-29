@@ -18,16 +18,16 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -42,10 +42,7 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -73,6 +70,7 @@ import java.util.*;
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @XmlRootElement(name = "product")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class ProductImpl implements Product {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
@@ -225,7 +223,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getId()
      */
-    @XmlAttribute
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -242,7 +240,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
      */
-    @XmlAttribute
+    @XmlElement
     public String getName() {
         return name;
     }
@@ -298,7 +296,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveStartDate()
      */
-    @XmlAttribute
+    @XmlElement
     public Date getActiveStartDate() {
         return activeStartDate;
     }
@@ -317,7 +315,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveEndDate()
      */
-    @XmlAttribute
+    @XmlElement
     public Date getActiveEndDate() {
         return activeEndDate;
     }
@@ -336,7 +334,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#isActive()
      */
-    @XmlAttribute
+    @XmlElement
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
@@ -346,7 +344,7 @@ public class ProductImpl implements Product {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
-    @XmlAttribute
+    @XmlElement
     public String getModel() {
         return model;
     }
@@ -355,7 +353,7 @@ public class ProductImpl implements Product {
         this.model = model;
     }
 
-    @XmlAttribute
+    @XmlElement
     public String getManufacturer() {
         return manufacturer;
     }
@@ -373,7 +371,7 @@ public class ProductImpl implements Product {
     	this.dimension = dimension;
     }
 
-    @XmlAttribute
+    @XmlElement
     public BigDecimal getWidth() {
         return dimension==null?null:dimension.getWidth();
     }
@@ -382,7 +380,7 @@ public class ProductImpl implements Product {
         dimension.setWidth(width);
     }
 
-    @XmlAttribute
+    @XmlElement
     public BigDecimal getHeight() {
         return dimension==null?null:dimension.getHeight();
     }
@@ -391,7 +389,7 @@ public class ProductImpl implements Product {
         dimension.setHeight(height);
     }
 
-    @XmlAttribute
+    @XmlElement
     public BigDecimal getDepth() {
         return dimension==null?null:dimension.getDepth();
     }
@@ -404,7 +402,7 @@ public class ProductImpl implements Product {
         dimension.setGirth(girth);
     }
 
-    @XmlAttribute
+    @XmlElement
     public BigDecimal getGirth() {
         return dimension==null?null:dimension.getGirth();
     }
@@ -431,12 +429,12 @@ public class ProductImpl implements Product {
      * Returns the product dimensions as a String (assumes measurements are in inches)
      * @return a String value of the product dimensions
      */
-    @XmlAttribute
+    @XmlElement
     public String getDimensionString() {
         return dimension==null?null:dimension.getDimensionString();
     }
 
-    @XmlAttribute
+    @XmlElement
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
@@ -445,7 +443,7 @@ public class ProductImpl implements Product {
         this.isFeaturedProduct = isFeaturedProduct;
     }
 
-    @XmlAttribute
+    @XmlElement
     public boolean isMachineSortable() {
         return isMachineSortable;
     }
@@ -466,7 +464,7 @@ public class ProductImpl implements Product {
 	/**
 	 * @return the promoMessage
 	 */
-    @XmlAttribute
+    @XmlElement
 	public String getPromoMessage() {
 		return promoMessage;
 	}
@@ -633,6 +631,7 @@ public class ProductImpl implements Product {
 	}
 
 	@Override
+    @XmlTransient
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -642,6 +641,7 @@ public class ProductImpl implements Product {
     }
 
     @Override
+    @XmlTransient
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

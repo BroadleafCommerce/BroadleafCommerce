@@ -33,9 +33,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 /**
  * The Class ProductAttributeImpl.
@@ -46,6 +44,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseProductAttribute")
 @XmlRootElement(name = "productAttribute")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class ProductAttributeImpl implements ProductAttribute {
 
 	/** The Constant serialVersionUID. */
@@ -94,7 +93,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getId()
      */
-    @XmlAttribute
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -109,7 +108,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getValue()
      */
-    @XmlAttribute
+    @XmlElement
     public String getValue() {
         return value;
     }
@@ -124,7 +123,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getSearchable()
      */
-    @XmlAttribute
+    @XmlElement
     public Boolean getSearchable() {
         return searchable;
     }
@@ -139,7 +138,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getName()
      */
-    @XmlAttribute
+    @XmlElement
     public String getName() {
         return name;
     }

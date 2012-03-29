@@ -18,21 +18,14 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -41,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name="BLC_PRODUCT_CROSS_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @XmlRootElement(name = "crossSaleProduct")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class CrossSaleProductImpl implements RelatedProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -79,7 +73,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct = new ProductImpl();
 
-    @XmlAttribute
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -88,7 +82,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
         this.id = id;
     }
 
-    @XmlAttribute
+    @XmlElement
     public String getPromotionMessage() {
         return promotionMessage;
     }
@@ -97,7 +91,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
         this.promotionMessage = promotionMessage;
     }
 
-    @XmlAttribute
+    @XmlElement
     public Long getSequence() {
         return sequence;
     }

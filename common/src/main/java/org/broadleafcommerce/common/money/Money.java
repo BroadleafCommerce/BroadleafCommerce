@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.common.money;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -27,6 +30,7 @@ import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Locale;
 
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
 	
     private static final long serialVersionUID = 1L;
@@ -117,12 +121,12 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         this.amount = BankersRounding.setScale(amount, scale);
     }
 
-    @XmlAttribute
+    @XmlElement
     public BigDecimal getAmount() {
         return amount;
     }
 
-    @XmlAttribute
+    @XmlElement
     public Currency getCurrency() {
         return currency;
     }

@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -26,9 +28,6 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -41,10 +40,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.*;
@@ -71,6 +67,7 @@ import java.util.*;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable
 @XmlRootElement(name = "sku")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class SkuImpl implements Sku {
 	
 	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -188,7 +185,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getId()
      */
-    @XmlAttribute
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -205,7 +202,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSalePrice()
      */
-    @XmlAttribute
+    @XmlElement
     public Money getSalePrice() {
     	if (dynamicPrices != null) {
     		return dynamicPrices.getSalePrice();
@@ -237,7 +234,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getRetailPrice()
      */
-    @XmlAttribute
+    @XmlElement
     public Money getRetailPrice() {
     	if (dynamicPrices != null) {
     		return dynamicPrices.getRetailPrice();
@@ -270,7 +267,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getListPrice()
      */
-    @XmlAttribute
+    @XmlElement
     public Money getListPrice() {
         return new Money(retailPrice);
     }
@@ -289,7 +286,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getName()
      */
-    @XmlAttribute
+    @XmlElement
     public String getName() {
         return name;
     }
@@ -343,7 +340,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isTaxable()
      */
-    @XmlAttribute
+    @XmlElement
     public Boolean isTaxable() {
         if (taxable == null)
             return null;
@@ -375,7 +372,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isDiscountable()
      */
-    @XmlAttribute
+    @XmlElement
     public Boolean isDiscountable() {
         if (discountable == null)
             return null;
@@ -407,7 +404,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isAvailable()
      */
-    @XmlAttribute
+    @XmlElement
     public Boolean isAvailable() {
         if (available == null)
             return null;
@@ -436,7 +433,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveStartDate()
      */
-    @XmlAttribute
+    @XmlElement
     public Date getActiveStartDate() {
         return activeStartDate;
     }
@@ -455,7 +452,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveEndDate()
      */
-    @XmlAttribute
+    @XmlElement
     public Date getActiveEndDate() {
         return activeEndDate;
     }
@@ -473,7 +470,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isActive()
      */
-    @XmlAttribute
+    @XmlElement
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
