@@ -16,21 +16,19 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderBaseTest extends CommonSetupBaseTest {
 
@@ -83,7 +81,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         return order;
     }
     
-    public Order setUpExistingCartWithInactiveSkuAndInactiveBundle(Customer customer) throws PricingException {
+    public Order initializeExistingCartWithInactiveSkuAndInactiveBundle(Customer customer) throws PricingException {
         Sku newSku = addTestSku("Large Plastic Crate", "Plastic Crate", "Crates");
         Sku newInactiveSku = addTestSku("Large Red Plastic Crate", "Plastic Crate", "Crates", false);
         
@@ -103,7 +101,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         return order;
     }
 
-    public Order setUpExistingCart(Customer customer) throws PricingException {
+    public Order initializeExistingCart(Customer customer) throws PricingException {
     	Sku newSku = addTestSku("Large Plastic Crate", "Plastic Crate", "Crates");
     	Sku newOtherSku = addTestSku("Large Red Plastic Crate", "Plastic Crate", "Crates");
     	

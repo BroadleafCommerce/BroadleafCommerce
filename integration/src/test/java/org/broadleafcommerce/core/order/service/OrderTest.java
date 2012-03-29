@@ -16,28 +16,11 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.order.FulfillmentGroupDataProvider;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
@@ -51,7 +34,6 @@ import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -59,6 +41,12 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class OrderTest extends OrderBaseTest {
 
@@ -658,7 +646,7 @@ public class OrderTest extends OrderBaseTest {
         shippingRate = shippingRateService.save(shippingRate);
         sr2 = shippingRateService.save(sr2);
     	Customer customer = createCustomerWithAddresses();
-    	Order order = setUpExistingCart(customer);
+    	Order order = initializeExistingCart(customer);
     	CustomerAddress customerAddress = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0);
     	
     	FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();

@@ -150,7 +150,7 @@ public class CartTest extends OrderBaseTest {
     	Customer customer = customerService.saveCustomer(createNamedCustomer());
     	
     	//sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
-    	setUpExistingCartWithInactiveSkuAndInactiveBundle(customer);
+    	initializeExistingCartWithInactiveSkuAndInactiveBundle(customer);
     	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
     	
     	assert response.getAddedItems().size() == 2;
