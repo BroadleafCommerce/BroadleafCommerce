@@ -58,8 +58,8 @@ public class CartControllerREST extends AbstractCartController {
     }
     
     @RequestMapping(value = "promos/promo/{promoCode}", method = RequestMethod.POST)
-    public String updatePromoCode (@PathVariable String promoCode, @ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
+    public String addPromoCode(@PathVariable String promoCode, @ModelAttribute(value = "cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         cartSummary.setPromoCode(promoCode);
-    	return super.updatePromoCode(cartSummary, model, request);
+    	return super.addPromoCode(cartSummary, model, request);
     }
 }

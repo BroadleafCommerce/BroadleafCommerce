@@ -283,58 +283,8 @@ public abstract class AbstractCartController {
 
         cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
         model.addAttribute("cartSummary", cartSummary);
-        return cartView;
-    }
 
-    @RequestMapping(value = "/viewCart.htm", params="updateItemAttributes", method = RequestMethod.POST)
-    public String updateItemAttributes(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
-        if (errors.hasErrors()) {
-            model.addAttribute("cartSummary", cartSummary);
-            return cartView;
-        }
-        Order currentCartOrder = retrieveCartOrder(request, model);
-        List<OrderItem> orderItems = currentCartOrder.getOrderItems();
-        List<CartOrderItem> items = new ArrayList<CartOrderItem>(cartSummary.getRows());
-        for (CartOrderItem cartOrderItem : items) {
-            OrderItem orderItem = (OrderItem)CollectionUtils.find(orderItems,
-                    new BeanPropertyValueEqualsPredicate("id", cartOrderItem.getOrderItem().getId()));
-            //in case the item was removed from the cart from another browser tab
-            if (orderItem != null) {
-                if (cartOrderItem.getQuantity() > 0) {
-                    orderItem.setQuantity(cartOrderItem.getQuantity());
-                    try {
-                        cartService.updateItemQuantity(currentCartOrder, orderItem);
-                    } catch (ItemNotFoundException e) {
-                        LOG.error("Item not found in order: ("+orderItem.getId()+")", e);
-                    } catch (PricingException e) {
-                        LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
-                    }
-                } else {
-                    try {
-                        cartService.removeItemFromOrder(currentCartOrder, orderItem);
-                        cartSummary.getRows().remove(cartOrderItem);
-                    } catch (Exception e) {
-                        // TODO: handle exception gracefully
-                        LOG.error("Unable to remove item from the order: ("+currentCartOrder.getId()+")");
-                    }
-                }
-            }
-        }
-
-        //re-add cart items in case there were item splits resulting from promotions
-        if (currentCartOrder.getOrderItems() != null ) {
-        	cartSummary.getRows().clear();
-            for (OrderItem orderItem : currentCartOrder.getOrderItems()) {
-                CartOrderItem cartOrderItem = new CartOrderItem();
-                cartOrderItem.setOrderItem(orderItem);
-                cartOrderItem.setQuantity(orderItem.getQuantity());
-                cartSummary.getRows().add(cartOrderItem);
-            }
-        }
-
-        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
-        model.addAttribute("cartSummary", cartSummary);
-        return cartView;
+        return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
 
     @RequestMapping(params="checkout", method = RequestMethod.POST)
@@ -353,19 +303,16 @@ public abstract class AbstractCartController {
         return cartView;
     }
 
-    @RequestMapping(value = "/viewCart.htm", params="updatePromo", method = RequestMethod.POST)
-    public String updatePromoCode (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
+    @RequestMapping(value = "/viewCart.htm", params="addPromo", method = RequestMethod.POST)
+    public String addPromoCode(@ModelAttribute(value = "cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
 
         if (cartSummary.getPromoCode() != null) {
             OfferCode code = offerService.lookupOfferCodeByCode(cartSummary.getPromoCode());
 
             if (code != null ) {
-                currentCartOrder.addOfferCode(code);
-                List<Offer> offers = offerService.buildOfferListForOrder(currentCartOrder);
-                offerService.applyOffersToOrder(offers, currentCartOrder);
+                currentCartOrder = cartService.addOfferCode(currentCartOrder, code, true);
                 currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);
-                cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
             }
             else {
                 model.addAttribute("promoError", "Invalid promo code entered.");
@@ -386,7 +333,21 @@ public abstract class AbstractCartController {
         cartSummary.setPromoCode(null);
         model.addAttribute("currentCartOrder", currentCartOrder );
         model.addAttribute("cartSummary", cartSummary);
-        return cartView;
+        return "redirect:/basket/viewCart.htm";
+    }
+
+    @RequestMapping(value = "/viewCart.htm", params="removePromoFromCart", method = {RequestMethod.GET,  RequestMethod.POST})
+    public String removePromoCode(@RequestParam String orderOfferCode, @ModelAttribute CartSummary cartSummary, ModelMap model, HttpServletRequest request) {
+        Order currentCartOrder = retrieveCartOrder(request, model);
+        try {
+            currentCartOrder = cartService.removeOfferCode(currentCartOrder, offerService.lookupOfferCodeByCode(orderOfferCode),true);
+        } catch (PricingException e) {
+            model.addAttribute("error", "remove");
+            LOG.error("An error occurred while removing a promo from the cart: ("+orderOfferCode+")", e);
+        }
+        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
+
+        return "redirect:/basket/viewCart.htm";
     }
     
     protected Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
