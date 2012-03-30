@@ -129,7 +129,8 @@ public class MergeContextLoader extends ContextLoader {
         wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
         wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
         customizeContext(servletContext, wac);
-        wac.refresh();
+        //NOTE: in Spring 3.1, refresh gets called automatically. All that is required is to return the context back to Spring
+        //wac.refresh();
 
         return wac;
     }
