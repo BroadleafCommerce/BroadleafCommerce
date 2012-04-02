@@ -16,6 +16,34 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
@@ -28,18 +56,17 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
-
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.*;
-import java.util.*;
+import org.hibernate.annotations.Type;
 
 /**
  * @author bTaylor
@@ -262,7 +289,6 @@ public class CategoryImpl implements Category {
     }
 
     @Override
-    @XmlElement
     public String getGeneratedUrl() {
         return buildLink(this, false);
     }
@@ -306,7 +332,6 @@ public class CategoryImpl implements Category {
     }
 
     @Override
-    @XmlElement
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(activeStartDate, activeEndDate, true)) {
@@ -339,7 +364,7 @@ public class CategoryImpl implements Category {
     }
 
     @Override
-    @XmlElement
+    @XmlAnyElement
     public Category getDefaultParentCategory() {
         return defaultParentCategory;
     }
@@ -356,7 +381,6 @@ public class CategoryImpl implements Category {
     }
 
     @Override
-    @XmlElement
     public boolean hasAllChildCategories(){
     	return !allChildCategories.isEmpty();
     }
@@ -383,7 +407,6 @@ public class CategoryImpl implements Category {
     }
 
     @Override
-    @XmlElement
     public boolean hasChildCategories() {
         return !getChildCategories().isEmpty();
     }
@@ -405,7 +428,6 @@ public class CategoryImpl implements Category {
 
     @Override
     @Deprecated
-    @XmlTransient
     public String getCategoryImage(String imageKey) {
         return categoryImages.get(imageKey);
     }
@@ -428,7 +450,6 @@ public class CategoryImpl implements Category {
         return childCategoryURLMap;
     }
 
-    @XmlTransient
     public Map<String, List<Long>> createChildCategoryURLMap() {
     	try {
             Map<String, List<Long>> newMap = new HashMap<String, List<Long>>(50);
