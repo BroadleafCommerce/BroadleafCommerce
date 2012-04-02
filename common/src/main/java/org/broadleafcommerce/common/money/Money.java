@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.common.money;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -29,6 +25,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Locale;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.broadleafcommerce.common.money.util.CurrencyAdapter;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
@@ -127,6 +130,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     @XmlElement
+    @XmlJavaTypeAdapter(CurrencyAdapter.class)
     public Currency getCurrency() {
         return currency;
     }
