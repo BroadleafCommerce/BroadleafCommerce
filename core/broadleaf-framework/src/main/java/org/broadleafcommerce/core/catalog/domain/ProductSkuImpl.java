@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +45,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @AdminPresentationClass(friendlyName = "skuProduct")
 @XmlRootElement(name = "productSku")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlSeeAlso(SkuImpl.class)
 public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	private static final Log LOG = LogFactory.getLog(ProductSkuImpl.class);

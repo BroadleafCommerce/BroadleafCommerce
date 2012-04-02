@@ -46,7 +46,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.Log;
@@ -101,7 +100,6 @@ import org.hibernate.annotations.Type;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @XmlRootElement(name = "product")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlSeeAlso(CategoryImpl.class)
 public class ProductImpl implements Product {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
