@@ -16,18 +16,23 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 
@@ -39,6 +44,9 @@ import javax.persistence.Table;
 @Table(name = "BLC_PRODUCT_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "skuProduct")
+@XmlRootElement(name = "productSku")
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlSeeAlso(SkuImpl.class)
 public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	private static final Log LOG = LogFactory.getLog(ProductSkuImpl.class);
@@ -53,6 +61,7 @@ public class ProductSkuImpl extends ProductImpl implements ProductSku {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.catalog.domain.ProductSku#getSku()
 	 */
+    @XmlAnyElement
 	public Sku getSku() {
 		return sku;
 	}
