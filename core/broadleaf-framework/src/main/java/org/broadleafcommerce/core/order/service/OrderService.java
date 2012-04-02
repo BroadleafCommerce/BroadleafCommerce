@@ -16,7 +16,11 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.offer.domain.Offer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -34,10 +38,6 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public interface OrderService {
 
@@ -87,8 +87,6 @@ public interface OrderService {
     
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
 
-    public Order addOfferToOrder(Order order, String offerCode);
-
     public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException;
     
     public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException;
@@ -100,14 +98,12 @@ public interface OrderService {
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException;
     
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException;
-
-    public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException;
     
-    public Order removeOfferFromOrder(Order order, Offer offer, boolean priceOrder) throws PricingException;
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
 
-    public Order removeAllOffersFromOrder(Order order) throws PricingException;
-    
-    public Order removeAllOffersFromOrder(Order order, boolean priceOrder) throws PricingException;
+    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
+
+    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
 
     public void removeNamedOrderForCustomer(String name, Customer customer);
 

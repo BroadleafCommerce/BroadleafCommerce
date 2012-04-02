@@ -18,20 +18,31 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class GoogleAnalyticsTag extends SimpleTagSupport {
-
-    private static final long serialVersionUID = 1L;
+    
+    private static final Log LOG = LogFactory.getLog(GoogleAnalyticsTag.class);
+	
+    @Value("${googleAnalytics.webPropertyId}")
     private String webPropertyId;
+    
     private Order order;
 
     public void setOrder(Order order) {
@@ -45,50 +56,74 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
+        
+        if (webPropertyId == null) {
+	        ServletContext sc = ((PageContext) getJspContext()).getServletContext();
+	        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
+	        context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
+        }
+        
+        if (webPropertyId.equals("UA-XXXXXXX-X")) {
+        	LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
+        }
+        
         out.println(analytics(webPropertyId, order));
         super.doTag();
     }
 
+    /**
+     * Documentation for the recommended asynchronous GA tag is at:
+     * http://code.google.com/apis/analytics/docs/tracking/gaTrackingEcommerce.html
+     * 
+     * @param webPropertyId - Google Analytics ID
+     * @param order - optionally track the order submission. This should be included on the
+     * page after the order has been sucessfully submitted. If null, this will just track the current page
+     * @return the relevant Javascript to render on the page
+     */
     protected String analytics(String webPropertyId, Order order) {
         StringBuffer sb = new StringBuffer();
-
+        
+        sb.append("<script type=\"text/javascript\">");
+        sb.append("var _gaq = _gaq || [];");
+        sb.append("_gaq.push(['_setAccount', '" + webPropertyId + "']);");
+        sb.append("_gaq.push(['_trackPageview']);");
+        
         if (order != null) {
-            sb.append("<script type=\"text/javascript\">");
-            sb.append("var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");");
-            sb.append("document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"))");
-            sb.append("</script> <script type=\"text/javascript\">");
-            sb.append(" try { var pageTracker = _gat._getTracker(\"" + webPropertyId + "\");");
-            sb.append("pageTracker._trackPageview();");
-
             Address paymentAddress = order.getPaymentInfos().get(0).getAddress();
 
-            sb.append("pageTracker._addTrans(" + order.getId() + "," + order.getName() + "," +
-                    order.getTotal() + "," + order.getTotalTax() + "," + order.getTotalShipping() + "," +
-                    paymentAddress.getCity() + "," + paymentAddress.getState().getName() + "," +
-                    paymentAddress.getCountry().getName() + ");" );
+            sb.append("_gaq.push(['_addTrans','" + order.getId() + "'");
+            sb.append(",'" + order.getName() + "'");
+            sb.append(",'" + order.getTotal() + "'");
+            sb.append(",'" + order.getTotalTax() + "'");
+            sb.append(",'" + order.getTotalShipping() + "'");
+            sb.append(",'" + paymentAddress.getCity() + "'");
+            sb.append(",'" + paymentAddress.getState().getName() + "'");
+            sb.append(",'" + paymentAddress.getCountry().getName() + "'");
+            sb.append("]);");
 
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                    DiscreteOrderItem orderItem = (DiscreteOrderItem) fulfillmentGroupItem.getOrderItem();
-                    sb.append("pageTracker._addItem(" + order.getId() + "," + orderItem.getSku().getId() + "," +
-                            orderItem.getSku().getName() + "," + null + "," +
-                            orderItem.getPrice() + "," + orderItem.getQuantity() + ");" );
+                	DiscreteOrderItem orderItem = (DiscreteOrderItem) fulfillmentGroupItem.getOrderItem();
+                    sb.append("_gaq.push(['_addItem','" + order.getId() + "'");
+                    sb.append(",'" + orderItem.getSku().getId() + "'");
+                    sb.append(",'" + orderItem.getSku().getName() + "'");
+                    sb.append(",' " + orderItem.getProduct().getDefaultCategory() + "'");
+                    sb.append(",'" + orderItem.getPrice() + "'");
+                    sb.append(",'" + orderItem.getQuantity() + "'");
+                    sb.append("]);");
                 }
             }
-
-            sb.append("pageTracker._trackTrans();");
-            sb.append("} catch(err) {}</script>");
+            sb.append("_gaq.push(['_trackTrans']);");
         }
-        else {
-            sb.append("<script type=\"text/javascript\">");
-            sb.append("var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");");
-            sb.append("document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"))");
-            sb.append("</script> <script type=\"text/javascript\">");
-            sb.append(" try { var pageTracker = _gat._getTracker(\"" + webPropertyId + "\");");
-            sb.append("pageTracker._trackPageview();");
-            sb.append("} catch(err) {}</script>");
-        }
+        
+        sb.append(" (function() {"
+				+ "var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;"
+				+ "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';"
+				+ "var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);"
+				+ "})();");
+        sb.append("</script>");
 
         return sb.toString();
     }
+    
 }

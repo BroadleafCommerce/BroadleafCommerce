@@ -81,7 +81,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 				if (event.isLeftButtonDown()) {
 					SC.confirm(BLCMain.getMessageManager().getString("confirmResetPassword"), new BooleanCallback() {
 						public void execute(Boolean value) {
-							if (value) {
+							if (value != null && value) {
 								BLCMain.NON_MODAL_PROGRESS.startProgress();
 								
 								PersistencePerspective tempPerspective = new PersistencePerspective();

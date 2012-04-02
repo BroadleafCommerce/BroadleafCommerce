@@ -29,6 +29,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.ResultSet;
+import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.DSOperationType;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
@@ -219,11 +220,14 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
-                itemSaved(response, rawData, request);
+                if (response.getStatus() != RPCResponse.STATUS_VALIDATION_ERROR) {
+                    itemSaved(response, rawData, request);
+                    display.getDynamicFormDisplay().getSaveButton().disable();
+                    display.getDynamicFormDisplay().getRefreshButton().disable();
+                }
+
             }
         }, requestProperties);
-        display.getDynamicFormDisplay().getSaveButton().disable();
-        display.getDynamicFormDisplay().getRefreshButton().disable();
     }
 
     protected void itemSaved(DSResponse response, Object rawData, DSRequest request) {

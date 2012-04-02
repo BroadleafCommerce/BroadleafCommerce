@@ -128,6 +128,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
         }, null);
 		formPresenter.disable();
 		display.getListDisplay().getRemoveButton().disable();
+		display.getListDisplay().getAddButton().disable();
 		allChildCategoriesPresenter.disable();
 	}
 
@@ -182,7 +183,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				if (event.isLeftButtonDown()) {
 					SC.confirm(BLCMain.getMessageManager().getString("confirmDelete"), new BooleanCallback() {
 						public void execute(Boolean value) {
-							if (value) {
+							if (value != null && value) {
 								getDisplay().getOrphanedCategoryGrid().removeSelectedData();
 								getDisplay().getRemoveOrphanedButton().disable();
 								getDisplay().getInsertOrphanButton().disable();
