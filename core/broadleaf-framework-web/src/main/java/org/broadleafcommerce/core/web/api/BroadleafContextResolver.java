@@ -35,18 +35,18 @@ import org.springframework.stereotype.Component;
 public class BroadleafContextResolver implements ContextResolver<JAXBContext>, InitializingBean {
 	
 	@Resource(name="blEntityConfiguration")
-	private EntityConfiguration ec;
+	protected EntityConfiguration ec;
 	
-	private JAXBContext context;
+	protected JAXBContext context;
 	
 	/**
 	 * getContext can pass in an implementation. Store the implementation details from the EntityConfiguration
 	 */
-	private HashSet<String> domainImplementationNames = new HashSet<String>();
+	protected HashSet<String> entityImplementationNames = new HashSet<String>();
 	
 	@Override
 	public JAXBContext getContext(Class<?> type) {
-		if (domainImplementationNames.contains(type.getName())) {
+		if (entityImplementationNames.contains(type.getName())) {
 			return context;
 		}
 		
@@ -76,7 +76,7 @@ public class BroadleafContextResolver implements ContextResolver<JAXBContext>, I
 		for (Class<?> clazz : classes) {
 			if (clazz.isAnnotationPresent(XmlRootElement.class) || clazz.isAnnotationPresent(XmlType.class)) {
 				xmlClasses.add(clazz);
-				domainImplementationNames.add(clazz.getName());
+				entityImplementationNames.add(clazz.getName());
 			}
 		}
 		
