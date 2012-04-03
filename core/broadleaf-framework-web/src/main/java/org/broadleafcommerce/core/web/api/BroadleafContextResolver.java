@@ -37,7 +37,7 @@ public class BroadleafContextResolver implements ContextResolver<JAXBContext>, I
 	@Resource(name="blEntityConfiguration")
 	protected EntityConfiguration ec;
 	
-	protected JAXBContext context;
+	protected static JAXBContext context;
 	
 	/**
 	 * getContext can pass in an implementation. Store the implementation details from the EntityConfiguration
