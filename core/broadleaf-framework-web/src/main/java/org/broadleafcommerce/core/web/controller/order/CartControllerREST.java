@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.order;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.broadleafcommerce.core.web.order.model.CartSummary;
@@ -30,6 +28,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 @Controller("blCartControllerREST")
@@ -58,8 +58,8 @@ public class CartControllerREST extends AbstractCartController {
     }
     
     @RequestMapping(value = "promos/promo/{promoCode}", method = RequestMethod.POST)
-    public String updatePromoCode (@PathVariable String promoCode, @ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
+    public String addPromoCode(@PathVariable String promoCode, @ModelAttribute(value = "cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         cartSummary.setPromoCode(promoCode);
-    	return super.updatePromoCode(cartSummary, model, request);
+    	return super.addPromoCode(cartSummary, model, request);
     }
 }
