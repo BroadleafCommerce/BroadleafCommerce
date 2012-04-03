@@ -26,4 +26,6 @@ public interface OfferAuditDao {
 	public void delete(OfferAudit offerAudit);
 	
 	public OfferAudit create();
+    
+    public Long countUsesByCustomer(Long customerId, Long offerId);
 }

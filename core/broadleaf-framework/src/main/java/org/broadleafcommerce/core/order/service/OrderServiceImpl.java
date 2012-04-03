@@ -26,7 +26,9 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
@@ -106,6 +108,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
+    
+    @Resource(name = "blOfferService")
+    protected OfferService offerService;
 
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -140,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
 
         return fg;
     }
-    
+
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity) {
     	Sku sku = skuDao.readSkuById(skuId);
     	Product product;
@@ -164,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
         
         return itemRequest;
     }
-    
+
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
     	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, null);
     }
@@ -188,7 +193,7 @@ public class OrderServiceImpl implements OrderService {
 
         return addDiscreteItemToOrder(order, itemRequest, priceOrder);
     }
-    
+
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
     	return addDiscreteItemToOrder(order, itemRequest, true);
     }
@@ -197,7 +202,7 @@ public class OrderServiceImpl implements OrderService {
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
         return addOrderItemToOrder(order, item, priceOrder);
     }
-    
+
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException {
     	return addDynamicPriceDiscreteItemToOrder(order, itemRequest, skuPricingConsiderations, true);
     }
@@ -405,10 +410,6 @@ public class OrderServiceImpl implements OrderService {
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
         return addItemToFulfillmentGroup(item, fulfillmentGroup, item.getQuantity(), priceOrder);
     }
-
-    public Order addOfferToOrder(Order order, String offerCode) {
-        throw new UnsupportedOperationException();
-    }
     
     public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
     	updateItemQuantity(order, item, true);
@@ -443,29 +444,35 @@ public class OrderServiceImpl implements OrderService {
     	removeFulfillmentGroupFromOrder(order, fulfillmentGroup, true);
     }
 
+    @Override
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         fulfillmentGroupDao.delete(fulfillmentGroup);
         updateOrder(order, priceOrder);
     }
-    
-    public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
-    	return removeAllOffersFromOrder(order, true);
+
+    @Override
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+        if( !order.getAddedOfferCodes().contains(offerCode)) {
+            if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
+                throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
+            }
+            order.getAddedOfferCodes().add(offerCode);
+            order = updateOrder(order, priceOrder);
+        }
+        return order;
     }
 
-    public Order removeOfferFromOrder(Order order, Offer offer, boolean priceOrder) throws PricingException {
-        order.getCandidateOrderOffers().remove(offer);
-        offerDao.delete(offer);
+    @Override
+    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
+        order.getAddedOfferCodes().remove(offerCode);
         order = updateOrder(order, priceOrder);
         return order;
     }
-    
-    public Order removeAllOffersFromOrder(Order order) throws PricingException {
-    	return removeAllOffersFromOrder(order, true);
-    }
 
-    public Order removeAllOffersFromOrder(Order order, boolean priceOrder) throws PricingException {
-        order.getCandidateOrderOffers().clear();
+    @Override
+    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
+        order.getAddedOfferCodes().clear();
         order = updateOrder(order, priceOrder);
         return order;
     }
@@ -741,5 +748,7 @@ public class OrderServiceImpl implements OrderService {
         bundleOrderItemRequest.setDiscreteOrderItems(discreteOrderItemRequests);
         return bundleOrderItemRequest;
     }
+    
+    
 
 }

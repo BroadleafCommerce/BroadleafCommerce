@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -29,6 +27,9 @@ import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
 
 /**
  * The Interface OfferService.
@@ -111,5 +112,28 @@ public interface OfferService {
 	public PromotableItemFactory getPromotableItemFactory();
 
 	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+
+    /**
+     * Validates that the passed in customer has not exceeded the max uses for the
+     * passed in offer.
+     *
+     * Returns true if it is ok for the customer to use this offer with their current order.
+     * Returns false if it is not ok for the customer to use this offer with their current order.
+     *
+     * This condition could pass if the system allows two concurrent carts for the same customer.
+     * The condition will fail at order submisstion time when the VerfiyCustomerMaxOfferUsesActivity
+     * runs (if that activity is configured as part of the checkout workflow.)
+     *
+     * This method only checks offers who have a max_customer_uses value that is greater than zero.
+     * By default offers can be used as many times as the customer's order qualifies.
+     *
+     * This method offers no protection against systems that allow customers to create
+     * multiple ids in the system.
+     *
+     * @param offer The offer to check
+     * @param customer The customer to check
+     * @return
+     */
+    public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer);
 	
 }
