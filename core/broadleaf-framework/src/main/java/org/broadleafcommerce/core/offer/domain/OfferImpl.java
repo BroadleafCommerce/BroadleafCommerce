@@ -16,17 +16,17 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -156,8 +156,12 @@ public class OfferImpl implements Offer {
     protected String deliveryType;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName="Offer Max Uses", order=7, group="Description", groupOrder=1)
-    protected int maxUses;
+    @AdminPresentation(friendlyName="Offer Max Uses Per Order", order=7, group="Description", groupOrder=2)
+    protected int maxUsesPerOrder;
+
+    @Column(name = "MAX_USES_PER_CUSTOMER")
+    @AdminPresentation(friendlyName="Max Uses Per Customer", order=7, group="Description", groupOrder=1)
+    protected Long maxUsesPerCustomer;
 
     @Column(name = "USES")
     @AdminPresentation(friendlyName="Offer Current Uses", visibility =VisibilityEnum.HIDDEN_ALL)
@@ -391,12 +395,29 @@ public class OfferImpl implements Offer {
         this.deliveryType = deliveryType.getType();
     }
 
+    public Long getMaxUsesPerCustomer() {
+        return maxUsesPerCustomer;
+    }
+
+    public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
+        this.maxUsesPerCustomer = maxUsesPerCustomer;
+    }
+
+    public int getMaxUsesPerOrder() {
+        return maxUsesPerOrder;
+    }
+
+    public void setMaxUsesPerOrder(int maxUsesPerOrder) {
+        this.maxUsesPerOrder = maxUsesPerOrder;
+    }
+
+
     public int getMaxUses() {
-        return maxUses;
+        return maxUsesPerOrder;
     }
 
     public void setMaxUses(int maxUses) {
-        this.maxUses = maxUses;
+        this.maxUsesPerOrder = maxUses;
     }
 
     @Deprecated

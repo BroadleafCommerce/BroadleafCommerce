@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -100,7 +101,7 @@ public interface OrderService {
     
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException;
     
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
 
     public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
 

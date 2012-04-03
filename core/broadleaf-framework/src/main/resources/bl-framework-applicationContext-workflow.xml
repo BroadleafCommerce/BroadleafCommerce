@@ -118,7 +118,9 @@
 		</property>
 		<property name="activities">
 			<list>
+                <bean class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
+                <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
 				<bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
 			</list>
 		</property>
