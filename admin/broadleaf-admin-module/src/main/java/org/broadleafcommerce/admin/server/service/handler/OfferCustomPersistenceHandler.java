@@ -193,25 +193,25 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getUnHtmlEncodedValue());
+            prop.setValue(prop.getRawValue());
         }
         prop = entity.findProperty("appliesToCustomerRules");
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getUnHtmlEncodedValue());
+            prop.setValue(prop.getRawValue());
         }
         prop = entity.findProperty("appliesToOrderRules");
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getUnHtmlEncodedValue());
+            prop.setValue(prop.getRawValue());
         }
         prop = entity.findProperty("appliesToFulfillmentGroupRules");
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getUnHtmlEncodedValue());
+            prop.setValue(prop.getRawValue());
         }
     }
 
