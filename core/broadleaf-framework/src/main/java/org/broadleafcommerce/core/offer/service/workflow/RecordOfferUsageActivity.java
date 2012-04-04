@@ -44,7 +44,7 @@ public class RecordOfferUsageActivity extends BaseActivity {
     @Resource(name="blOfferAuditDao")
     private OfferAuditDao offerAuditDao;
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.REQUIRED)
     public ProcessContext execute(ProcessContext context) throws Exception {
         Set<Long> appliedOfferIds = new HashSet<Long>();
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
