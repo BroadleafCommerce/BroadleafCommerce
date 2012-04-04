@@ -43,7 +43,7 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity {
     @Resource(name="blOfferAuditDao")
     private OfferAuditDao offerAuditDao;
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.REQUIRED)
     public ProcessContext execute(ProcessContext context) throws Exception {
         Map<Long,Long> offerIdToAllowedUsesMap = new HashMap<Long,Long>();
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
