@@ -15,17 +15,24 @@
  */
 package org.broadleafcommerce.core.web.api.catalog;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
@@ -35,9 +42,9 @@ import java.util.List;
  *
  * User: Kelly Tisdell
  */
-@Path("/catalog/")
 @Component("blRestCatalogEndpoint")
 @Scope("singleton")
+@Path("/catalog/")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CatalogEndpoint {
@@ -66,8 +73,10 @@ public class CatalogEndpoint {
 
     @GET
     @Path("category/name/{name}")
-    public List<Category> findCategoryByName(@PathParam("name") String name) {
-        return catalogService.findCategoriesByName(name);
+    public Response findCategoryByName(@PathParam("name") String name) {
+        List<Category> cats = catalogService.findCategoriesByName(name);
+        GenericEntity<List<Category>> entity = new GenericEntity<List<Category>>(cats) {};
+        return Response.ok(entity).build();
     }
 
     @GET
