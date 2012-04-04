@@ -51,7 +51,7 @@ public class OfferAuditImpl implements OfferAudit {
     protected Long customerId;
 
     @Column(name = "ORDER_ID")
-    @Index(name="OFFERAUDIT_ORDER_INDEX", columnNames={"RELATED_ID"})
+    @Index(name="OFFERAUDIT_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Long orderId;
 
     @Column(name = "REDEEMED_DATE")
