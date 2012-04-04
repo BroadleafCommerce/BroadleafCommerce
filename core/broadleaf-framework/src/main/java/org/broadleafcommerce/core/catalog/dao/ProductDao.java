@@ -62,6 +62,17 @@ public interface ProductDao {
     public List<Product> readProductsByName(@Nonnull String searchName);
 
     /**
+     * Find a subset of {@code Product} instances whose name starts with
+     * or is equal to the passed in search parameter.  Res
+     * @param searchName
+     * @param limit the maximum number of results
+     * @param offset the starting point in the record set
+     * @return the list of product instances that fit the search criteria
+     */
+    @Nonnull
+    public List<Product> readProductsByName(@Nonnull String searchName, @Nonnull int limit, @Nonnull int offset);
+
+    /**
      * Find all products whose start and end dates are before and after the passed in
      * date and who are related to the given category
      *
@@ -72,6 +83,9 @@ public interface ProductDao {
     @Nonnull
     public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate);
 
+    @Nonnull
+    public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate, @Nonnull int limit, @Nonnull int offset);
+
     /**
      * Find all products related to the passed in category
      *
@@ -80,6 +94,17 @@ public interface ProductDao {
      */
     @Nonnull
     public List<Product> readProductsByCategory(@Nonnull Long categoryId);
+
+    /**
+     * Find all products related to the passed in category
+     *
+     * @param categoryId the primary key of the category to whom the resulting product list should be related
+     * @param limit the maximum number of results to return
+     * @param offset the starting point in the record set
+     * @return the list of products qualified for the category
+     */
+    @Nonnull
+    public List<Product> readProductsByCategory(@Nonnull Long categoryId, @Nonnull int limit, @Nonnull int offset);
 
     /**
      * Find all the products related to the passed in sku

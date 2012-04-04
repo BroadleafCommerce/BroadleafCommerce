@@ -50,8 +50,18 @@ public class CatalogServiceImpl implements CatalogService {
         return productDao.readProductsByName(searchName);
     }
 
+    @Override
+    public List<Product> findProductsByName(String searchName, int limit, int offset) {
+        return productDao.readProductsByName(searchName, limit, offset);
+    }
+
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate);
+    }
+
+    @Override
+    public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset) {
+        return productDao.readActiveProductsByCategory(category.getId(), currentDate, limit, offset);
     }
 
     public Product saveProduct(Product product) {
@@ -72,6 +82,11 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readCategoriesByName(categoryName);
     }
 
+    @Override
+    public List<Category> findCategoriesByName(String categoryName, int limit, int offset) {
+        return categoryDao.readCategoriesByName(categoryName, limit, offset);
+    }
+
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
@@ -85,8 +100,18 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<Category> findAllCategories(int limit, int offset) {
+        return categoryDao.readAllCategories(limit, offset);
+    }
+
+    @Override
     public List<Category> findAllSubCategories(Category category) {
         return categoryDao.readAllSubCategories(category);
+    }
+
+    @Override
+    public List<Category> findAllSubCategories(Category category, int limit, int offset) {
+        return categoryDao.readAllSubCategories(category, limit, offset);
     }
 
     @Override
@@ -94,8 +119,18 @@ public class CatalogServiceImpl implements CatalogService {
         return categoryDao.readActiveSubCategoriesByCategory(category);
     }
 
+    @Override
+    public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset) {
+        return categoryDao.readActiveSubCategoriesByCategory(category, limit, offset);
+    }
+
     public List<Product> findAllProducts() {
         return categoryDao.readAllProducts();
+    }
+
+    @Override
+    public List<Product> findAllProducts(int limit, int offset) {
+        return categoryDao.readAllProducts(limit, offset);
     }
 
     public List<Sku> findAllSkus() {
@@ -124,6 +159,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     public List<Product> findProductsForCategory(Category category) {
         return productDao.readProductsByCategory(category.getId());
+    }
+
+    @Override
+    public List<Product> findProductsForCategory(Category category, int limit, int offset) {
+        return productDao.readProductsByCategory(category.getId(), limit, offset);
     }
 
     public void setCategoryDao(CategoryDao categoryDao) {

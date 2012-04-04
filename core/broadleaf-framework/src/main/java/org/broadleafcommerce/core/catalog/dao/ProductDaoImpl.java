@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,6 +66,16 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
+    public List<Product> readProductsByName(@Nonnull String searchName, @Nonnull int limit, @Nonnull int offset) {
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME", Product.class);
+        query.setParameter("name", searchName + '%');
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
     	Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
@@ -86,11 +97,42 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
+    public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate, int limit, int offset) {
+        Date myDate;
+        Long myCurrentDateResolution = currentDateResolution;
+        synchronized(this) {
+            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                this.currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = this.currentDate;
+            }
+        }
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
+        query.setParameter("categoryId", categoryId);
+        query.setParameter("currentDate", myDate);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<Product> readProductsByCategory(Long categoryId) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Product> readProductsByCategory(Long categoryId, int limit, int offset) {
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
+        query.setParameter("categoryId", categoryId);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
 
         return query.getResultList();
     }

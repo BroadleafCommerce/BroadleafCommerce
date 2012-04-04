@@ -27,13 +27,25 @@ import java.util.Map;
 
 public interface CatalogService {
 
-    public Product saveProduct(Product product);    
+    public Product saveProduct(Product product);
 
     public Product findProductById(Long productId);
 
     public List<Product> findProductsByName(String searchName);
 
+    /**
+     * Find a subset of {@code Product} instances whose name starts with
+     * or is equal to the passed in search parameter.  Res
+     * @param searchName
+     * @param limit the maximum number of results
+     * @param offset the starting point in the record set
+     * @return the list of product instances that fit the search criteria
+     */
+    public List<Product> findProductsByName(String searchName, int limit, int offset);
+
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
+
+    public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     public Category saveCategory(Category category);
     
@@ -63,11 +75,27 @@ public interface CatalogService {
      */
     public List<Category> findCategoriesByName(String categoryName);
 
+    /**
+     * Retrieve a list of {@code Category} instances based on the search criteria
+     *
+     * @param categoryName the name of the category to search by
+     * @param limit the maximum number of results to return
+     * @param offset the starting point of the records to return
+     * @return a list of category instances that match the search criteria
+     */
+    public List<Category> findCategoriesByName(String categoryName, int limit, int offset);
+
     public List<Category> findAllCategories();
+
+    public List<Category> findAllCategories(int limit, int offset);
 
     public List<Product> findAllProducts();
 
+    public List<Product> findAllProducts(int limit, int offset);
+
     public List<Product> findProductsForCategory(Category category);
+
+    public List<Product> findProductsForCategory(Category category, int limit, int offset);
 
     public Sku saveSku(Sku sku);
 
@@ -87,6 +115,10 @@ public interface CatalogService {
 
     public List<Category> findAllSubCategories(Category category);
 
+    public List<Category> findAllSubCategories(Category category, int limit, int offset);
+
     public List<Category> findActiveSubCategoriesByCategory(Category category);
-    
+
+    public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
+
 }

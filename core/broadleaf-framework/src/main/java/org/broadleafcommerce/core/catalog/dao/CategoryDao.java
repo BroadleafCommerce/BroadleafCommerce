@@ -64,6 +64,9 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readCategoriesByName(@Nonnull String categoryName);
 
+    @Nonnull
+    public List<Category> readCategoriesByName(@Nonnull String categoryName, int limit, int offset);
+
     /**
      * Persist a {@code Category} instance to the datastore
      *
@@ -82,12 +85,25 @@ public interface CategoryDao {
     public List<Category> readAllCategories();
 
     /**
+     * Retrieve a subset of all categories
+     *
+     * @param limit the maximum number of results, defaults to 20
+     * @param offset the starting point in the record set, defaults to 0
+     * @return
+     */
+    @Nonnull
+    public List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
+
+    /**
      * Retrieve all products in the datastore
      *
      * @return a list of all {@code Category} instances in the datastore, regardless of their category association
      */
     @Nonnull
     public List<Product> readAllProducts();
+
+    @Nonnull
+    public List<Product> readAllProducts(@Nonnull int limit, @Nonnull int offset);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
@@ -97,6 +113,17 @@ public interface CategoryDao {
      */
     @Nonnull
     public List<Category> readAllSubCategories(@Nonnull Category category);
+
+    /**
+     * Retrieve a list of all child categories of the passed in {@code Category} instance
+     *
+     * @param category the parent category
+     * @param limit the maximum number of results to return
+     * @param offset the starting point in the record set
+     * @return a list of all child categories
+     */
+    @Nonnull
+    public List<Category> readAllSubCategories(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
     /**
      * Removed the passed in {@code Category} instance from the datastore
@@ -140,6 +167,20 @@ public interface CategoryDao {
      */
     @Nonnull
     public List<Category> readActiveSubCategoriesByCategory(Category category);
+
+    /**
+     * Retrieve a list of all active child categories of the passed in {@code Category} instance.
+     * This method bases its search on a current time value. To make the retrieval of values more
+     * efficient, the current time is cached for a configurable amount of time. See
+     * {@link #getCurrentDateResolution()}
+     *
+     * @param category the parent category
+     * @param limit the maximum number of results to return
+     * @param offset the starting point in the record set
+     * @return a list of all active child categories
+     */
+    @Nonnull
+    public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
     /**
      * Retrieve the value in milliseconds for how long the current data/time is cached when performing

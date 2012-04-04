@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -77,6 +78,16 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    public List<Category> readCategoriesByName(String categoryName, int limit, int offset) {
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME", Category.class);
+        query.setParameter("categoryName", categoryName);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<Category> readAllCategories() {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -85,8 +96,27 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    public List<Category> readAllCategories(int offset, int limit) {
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
+        return  query.getResultList();
+    }
+
+
+    @Override
     public List<Product> readAllProducts() {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ALL_PRODUCTS", Product.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Product> readAllProducts(int limit, int offset) {
+        TypedQuery<Product> query = em.createNamedQuery("BC_READ_ALL_PRODUCTS", Product.class);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
         return query.getResultList();
     }
 
@@ -94,6 +124,16 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readAllSubCategories(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
         query.setParameter("defaultParentCategory", category);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Category> readAllSubCategories(Category category, int limit, int offset) {
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
+        query.setParameter("defaultParentCategory", category);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
         return query.getResultList();
     }
 
@@ -114,6 +154,28 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setParameter("currentDate", myDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
+        Date myDate;
+        Long myCurrentDateResolution = currentDateResolution;
+        synchronized(this) {
+            Date now = SystemTime.asDate();
+            if (now.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                currentDate = new Date(now.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = currentDate;
+            }
+        }
+        TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
+        query.setParameter("defaultParentCategory", category);
+        query.setParameter("currentDate", myDate);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
 
         return query.getResultList();
     }
