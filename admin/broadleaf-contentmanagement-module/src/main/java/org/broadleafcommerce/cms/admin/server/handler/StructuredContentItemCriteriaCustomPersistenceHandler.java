@@ -63,7 +63,7 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getUnHtmlEncodedValue());
+            prop.setValue(prop.getRawValue());
         }
     }
 
