@@ -19,12 +19,9 @@ package org.broadleafcommerce.openadmin.client.presenter.structure;
 import java.util.Map;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.ResultSet;
-import com.smartgwt.client.types.DSOperationType;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -43,7 +40,6 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.JoinStructure;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
@@ -141,6 +137,8 @@ public class EditableJoinStructurePresenter extends AbstractSubPresentable {
         rowDoubleClickedHandlerRegistration = display.getGrid().addCellDoubleClickHandler(new CellDoubleClickHandler() {
             @Override
             public void onCellDoubleClick(CellDoubleClickEvent cellDoubleClickEvent) {
+                JoinStructure joinStructure = (JoinStructure) ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+                display.getGrid().getSelectedRecord().setAttribute(joinStructure.getSortField(), Integer.parseInt(display.getGrid().getSelectedRecord().getAttribute(joinStructure.getSortField()))-1);
                 BLCMain.ENTITY_ADD.editRecord(joinStructureEditTitle, (DynamicEntityDataSource) display.getGrid().getDataSource(), display.getGrid().getSelectedRecord(), new ItemEditedHandler() {
                     @Override
                     public void onItemEdited(ItemEdited event) {
