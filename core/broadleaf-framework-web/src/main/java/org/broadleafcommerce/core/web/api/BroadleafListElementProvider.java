@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.broadleafcommerce.core.web.api;
 
 import java.io.IOException;
@@ -136,10 +151,12 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation annotations[], MediaType mediaType) {
 	    if (Collection.class.isAssignableFrom(type)) {
-	    	//Look up what's parameterized in the Collection
+            //Look up what's parameterized in the Collection
 	        final ParameterizedType pt = (ParameterizedType)genericType;
 	        if (pt.getActualTypeArguments().length > 1) {
-	        	LOG.info("A collection with multiple parameterized types is unsupported");
+                if (LOG.isInfoEnabled()) {
+	        	    LOG.info("A collection with multiple parameterized types is unsupported");
+                }
 	        	return false;
 	        }
 	        final Type ta = pt.getActualTypeArguments()[0];
@@ -152,11 +169,15 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
 	        			) {
 	        		return true;
 	        	} else {
-	        		LOG.info(broadleafEntityClass.getName() + " is not annotated with JAXB annotations, skipping serialization");
+                    if (LOG.isInfoEnabled()) {
+	        		    LOG.info(broadleafEntityClass.getName() + " is not annotated with JAXB annotations, skipping serialization");
+                    }
 	        		return false;
 	        	}
 	        } catch (NoSuchBeanDefinitionException e) {
-	        	LOG.debug("Could not find a mapping for " + ((Class<?>)ta).getName());
+                if (LOG.isDebugEnabled()) {
+	        	    LOG.debug("Could not find a mapping for " + ((Class<?>)ta).getName());
+                }
 	        }
 	    }
 	    
