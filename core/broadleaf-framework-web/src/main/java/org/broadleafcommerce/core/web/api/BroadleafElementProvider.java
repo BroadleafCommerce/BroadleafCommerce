@@ -36,8 +36,11 @@ import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 
+import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
+import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -50,7 +53,7 @@ import com.sun.jersey.spi.inject.Injectable;
 
 /**
  * <p>
- * This was written in order to support generic lists that Broadleaf happens to know about. This is not
+ * This was written in order to support generic lists and entities that Broadleaf happens to know about. This is not
  * supported by default by Jersey because the isWriteable/isReadable methods only take in Classes and Types
  * as parameters. Default ...ListElementProviders will then check these types, get the parameterized class,
  * then inspect that to see if there is an @XMLRootElement or @XMLType on that class. If not, it will fail.
@@ -80,9 +83,9 @@ import com.sun.jersey.spi.inject.Injectable;
 @Provider
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-public class BroadleafListElementProvider implements MessageBodyWriter<Object>, MessageBodyReader<Object> {
+public class BroadleafElementProvider implements MessageBodyWriter<Object>, MessageBodyReader<Object> {
 	
-	private static final Log LOG = LogFactory.getLog(BroadleafListElementProvider.class);
+	private static final Log LOG = LogFactory.getLog(BroadleafElementProvider.class);
 	
 	@Resource(name="blEntityConfiguration")
 	protected EntityConfiguration ec;
@@ -92,9 +95,14 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
 	
 	@Context
 	protected Injectable<XMLInputFactory> xif;
+
+    @Context
+    protected Injectable<SAXParserFactory> spf;
 	
 	protected static JSONListElementProvider.App jsonListProvider;
 	protected static XMLListElementProvider.App xmlListProvider;
+    protected static XMLRootElementProvider.App xmlRootElementProvider;
+    protected static JSONRootElementProvider.App jsonRootElementProvider;
 	
     @Override
     public final void writeTo(
@@ -113,11 +121,27 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
 	    if (xmlListProvider == null) {
 	    	xmlListProvider = new XMLListElementProvider.App(xif, ps);
 	    }
+
+        if (xmlRootElementProvider == null) {
+            xmlRootElementProvider = new XMLRootElementProvider.App(spf, ps);
+        }
+
+        if (jsonRootElementProvider == null) {
+            jsonRootElementProvider = new JSONRootElementProvider.App(ps);
+        }
     	
     	if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
-    		jsonListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
-    	} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE) || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) { 	
-	    	xmlListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            if (Collection.class.isAssignableFrom(type)) {
+    		    jsonListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else {
+                jsonRootElementProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            }
+    	} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE) || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
+            if (Collection.class.isAssignableFrom(type)) {
+	    	    xmlListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else {
+                xmlRootElementProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            }
     	}
     }
     
@@ -136,9 +160,17 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
 	    }
 	    
 	    if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
-    		return jsonListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
-    	} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE) || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) { 	
-	    	return xmlListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            if (Collection.class.isAssignableFrom(type)){
+    		    return jsonListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else {
+                return jsonRootElementProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            }
+    	} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE) || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
+            if (Collection.class.isAssignableFrom(type)){
+	    	    return xmlListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else {
+                return xmlRootElementProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            }
     	}
 	    
 	    return null;
@@ -150,6 +182,13 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
      */
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation annotations[], MediaType mediaType) {
+        
+        if (! mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
+                && ! mediaType.isCompatible(MediaType.TEXT_XML_TYPE)
+                && ! mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+            return false;
+        }
+        
 	    if (Collection.class.isAssignableFrom(type)) {
             //Look up what's parameterized in the Collection
 	        final ParameterizedType pt = (ParameterizedType)genericType;
@@ -179,7 +218,25 @@ public class BroadleafListElementProvider implements MessageBodyWriter<Object>, 
 	        	    LOG.debug("Could not find a mapping for " + ((Class<?>)ta).getName());
                 }
 	        }
-	    }
+	    } else {
+            try {
+                Class<?> broadleafEntityClass = ec.lookupEntityClass(type.getName());
+                if (broadleafEntityClass != null &&
+                        (broadleafEntityClass.isAnnotationPresent(XmlRootElement.class) || broadleafEntityClass.isAnnotationPresent(XmlType.class))
+                        ) {
+                    return true;
+                } else {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info(broadleafEntityClass.getName() + " is not annotated with JAXB annotations, skipping serialization");
+                    }
+                    return false;
+                }
+            } catch (NoSuchBeanDefinitionException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Could not find a mapping for " + type.getName());
+                }
+            }
+        }
 	    
 	    return false;
     }
