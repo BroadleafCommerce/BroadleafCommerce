@@ -205,10 +205,10 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 				}
 			}
         });
-        ruleRefreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
+        ruleRefreshButtonHandlerRegistration = getDisplay().getStructuredContentRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-                    refresh();
+                    changeSelection(currentStructuredContentRecord);
 				}
 			}
         });
