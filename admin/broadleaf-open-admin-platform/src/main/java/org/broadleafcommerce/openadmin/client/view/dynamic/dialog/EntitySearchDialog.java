@@ -78,7 +78,9 @@ public class EntitySearchDialog extends Window {
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
-				saveButton.enable();
+                if (searchGrid.anySelected()) {
+				    saveButton.enable();
+                }
 			}
         });
         
