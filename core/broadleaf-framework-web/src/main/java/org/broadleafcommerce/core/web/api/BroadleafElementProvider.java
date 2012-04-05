@@ -159,6 +159,14 @@ public class BroadleafElementProvider implements MessageBodyWriter<Object>, Mess
 	    	xmlListProvider = new XMLListElementProvider.App(xif, ps);
 	    }
 	    
+	    if (xmlRootElementProvider == null) {
+            xmlRootElementProvider = new XMLRootElementProvider.App(spf, ps);
+        }
+
+        if (jsonRootElementProvider == null) {
+            jsonRootElementProvider = new JSONRootElementProvider.App(ps);
+        }
+	    
 	    if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
             if (Collection.class.isAssignableFrom(type)){
     		    return jsonListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
@@ -181,13 +189,8 @@ public class BroadleafElementProvider implements MessageBodyWriter<Object>, Mess
      * if it should actually be serialized
      */
     @Override
-    public boolean isWriteable(Class<?> type, Type genericType, Annotation annotations[], MediaType mediaType) {
-        
-        if (! mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
-                && ! mediaType.isCompatible(MediaType.TEXT_XML_TYPE)
-                && ! mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
-            return false;
-        }
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation annotations[], MediaType mediaType) {        
+        Type lookupType = type;
         
 	    if (Collection.class.isAssignableFrom(type)) {
             //Look up what's parameterized in the Collection
@@ -198,47 +201,41 @@ public class BroadleafElementProvider implements MessageBodyWriter<Object>, Mess
                 }
 	        	return false;
 	        }
-	        final Type ta = pt.getActualTypeArguments()[0];
-	    	
-	        try {
-	        	//Based on the parameterized type of the Collection, see if it's something Broadleaf knows about and has XML annotations
-	        	Class<?> broadleafEntityClass = ec.lookupEntityClass(((Class<?>)ta).getName());
-	        	if (broadleafEntityClass != null && 
-	        			(broadleafEntityClass.isAnnotationPresent(XmlRootElement.class) || broadleafEntityClass.isAnnotationPresent(XmlType.class))
-	        			) {
-	        		return true;
-	        	} else {
-                    if (LOG.isInfoEnabled()) {
-	        		    LOG.info(broadleafEntityClass.getName() + " is not annotated with JAXB annotations, skipping serialization");
-                    }
-	        		return false;
-	        	}
-	        } catch (NoSuchBeanDefinitionException e) {
-                if (LOG.isDebugEnabled()) {
-	        	    LOG.debug("Could not find a mapping for " + ((Class<?>)ta).getName());
+	        lookupType = pt.getActualTypeArguments()[0];	    	
+	    } else if (type.isArray()) {
+            lookupType = type.getComponentType();
+        }
+	    
+	    boolean result = false;
+	    try {
+        	//Based on the parameterized type of the Collection, see if it's something Broadleaf knows about and has XML annotations
+        	Class<?> broadleafEntityClass = ec.lookupEntityClass(((Class<?>)lookupType).getName());
+        	if (broadleafEntityClass != null && 
+        			(broadleafEntityClass.isAnnotationPresent(XmlRootElement.class) || broadleafEntityClass.isAnnotationPresent(XmlType.class))
+        			) {
+        		result = true;
+        	} else {
+                if (LOG.isInfoEnabled()) {
+        		    LOG.info(broadleafEntityClass.getName() + " is not annotated with JAXB annotations, skipping serialization");
                 }
-	        }
-	    } else {
-            try {
-                Class<?> broadleafEntityClass = ec.lookupEntityClass(type.getName());
-                if (broadleafEntityClass != null &&
-                        (broadleafEntityClass.isAnnotationPresent(XmlRootElement.class) || broadleafEntityClass.isAnnotationPresent(XmlType.class))
-                        ) {
-                    return true;
-                } else {
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info(broadleafEntityClass.getName() + " is not annotated with JAXB annotations, skipping serialization");
-                    }
-                    return false;
-                }
-            } catch (NoSuchBeanDefinitionException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Could not find a mapping for " + type.getName());
-                }
+        	}
+        } catch (NoSuchBeanDefinitionException e) {
+            if (LOG.isDebugEnabled()) {
+        	    LOG.debug("Could not find a mapping for " + ((Class<?>)lookupType).getName());
             }
         }
 	    
-	    return false;
+	    return result && isSupported(mediaType);
+    }
+    
+    public static boolean isSupported(MediaType mediaType) {
+    	if ( mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)
+                ||  mediaType.isCompatible(MediaType.TEXT_XML_TYPE)
+                ||  mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+            return true;
+        }
+    	
+    	return false;
     }
     
 	@Override
