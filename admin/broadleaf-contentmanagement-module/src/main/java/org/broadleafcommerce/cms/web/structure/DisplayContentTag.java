@@ -132,7 +132,6 @@ public class DisplayContentTag extends BodyTagSupport {
         }
         return secure;
     }
-    
 
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -142,6 +141,7 @@ public class DisplayContentTag extends BodyTagSupport {
 
         List<StructuredContentDTO> contentItems;
         StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
+        assert(contentName != null && !"".equals(contentName) && structuredContentType != null);
 
         if (locale == null) {
             locale = (Locale) request.getAttribute(BroadleafProcessURLFilter.LOCALE_VAR);
@@ -149,10 +149,14 @@ public class DisplayContentTag extends BodyTagSupport {
 
         int cnt = (count == null) ? Integer.MAX_VALUE : count;
 
-        if (contentName == null || "".equals(contentName)) {
-            contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, cnt, mvelParameters, isSecure(request));
+        if (structuredContentType == null) {
+            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, cnt, mvelParameters, isSecure(request));
         } else {
-            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, cnt, mvelParameters, isSecure(request));
+            if (contentName == null || "".equals(contentName)) {
+                contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, cnt, mvelParameters, isSecure(request));
+            } else {
+                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, cnt, mvelParameters, isSecure(request));
+            }
         }
                 
         pageContext.setAttribute(getNumResultsVar(), contentItems.size());

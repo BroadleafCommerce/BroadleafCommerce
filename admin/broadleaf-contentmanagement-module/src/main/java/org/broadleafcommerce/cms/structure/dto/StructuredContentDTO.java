@@ -51,6 +51,7 @@ public class StructuredContentDTO implements Serializable {
     }
 
     public void setContentName(String contentName) {
+        values.put("contentName", contentName);
         this.contentName = contentName;
     }
 
@@ -59,6 +60,7 @@ public class StructuredContentDTO implements Serializable {
     }
 
     public void setContentType(String contentType) {
+        values.put("contentType", contentType);
         this.contentType = contentType;
     }
 
@@ -67,6 +69,7 @@ public class StructuredContentDTO implements Serializable {
     }
 
     public void setLocaleCode(String localeCode) {
+        values.put("localeCode", localeCode);
         this.localeCode = localeCode;
     }
 
@@ -75,6 +78,7 @@ public class StructuredContentDTO implements Serializable {
     }
 
     public void setPriority(Integer priority) {
+        values.put("priority", priority);
         this.priority = priority;
     }
 
