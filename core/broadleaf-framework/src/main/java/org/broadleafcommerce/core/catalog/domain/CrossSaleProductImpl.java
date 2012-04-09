@@ -24,17 +24,11 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_PRODUCT_CROSS_SALE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@XmlRootElement(name = "crossSaleProduct")
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class CrossSaleProductImpl implements RelatedProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -73,7 +67,6 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct = new ProductImpl();
 
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -82,7 +75,6 @@ public class CrossSaleProductImpl implements RelatedProduct {
         this.id = id;
     }
 
-    @XmlElement
     public String getPromotionMessage() {
         return promotionMessage;
     }
@@ -91,7 +83,6 @@ public class CrossSaleProductImpl implements RelatedProduct {
         this.promotionMessage = promotionMessage;
     }
 
-    @XmlElement
     public Long getSequence() {
         return sequence;
     }
@@ -100,12 +91,10 @@ public class CrossSaleProductImpl implements RelatedProduct {
         this.sequence = sequence;
     }
 
-    @XmlElement
     public Product getProduct() {
         return product;
     }
 
-    @XmlElement
     public Product getRelatedProduct() {
         return relatedSaleProduct;
     }

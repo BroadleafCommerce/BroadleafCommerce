@@ -33,7 +33,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.*;
 
 /**
  * The Class ProductAttributeImpl.
@@ -43,8 +42,6 @@ import javax.xml.bind.annotation.*;
 @Table(name="BLC_PRODUCT_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseProductAttribute")
-@XmlRootElement(name = "productAttribute")
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class ProductAttributeImpl implements ProductAttribute {
 
 	/** The Constant serialVersionUID. */
@@ -93,7 +90,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getId()
      */
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -108,7 +104,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getValue()
      */
-    @XmlElement
     public String getValue() {
         return value;
     }
@@ -123,7 +118,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getSearchable()
      */
-    @XmlElement
     public Boolean getSearchable() {
         return searchable;
     }
@@ -138,7 +132,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getName()
      */
-    @XmlElement
     public String getName() {
         return name;
     }
@@ -159,7 +152,6 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getProduct()
      */
-    @XmlElement
     public Product getProduct() {
         return product;
     }

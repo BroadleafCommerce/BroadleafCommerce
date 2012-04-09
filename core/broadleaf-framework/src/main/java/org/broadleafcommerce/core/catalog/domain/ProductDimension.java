@@ -18,9 +18,6 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -31,7 +28,6 @@ import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 
 @Embeddable
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class ProductDimension implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -64,7 +60,6 @@ public class ProductDimension implements Serializable {
     @AdminPresentation(friendlyName="Product Dimension Units", order=16, group="Dimension", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.DimensionUnitOfMeasureType")
     protected String dimensionUnitOfMeasure;
 
-    @XmlElement
     public BigDecimal getWidth() {
         return width;
     }
@@ -73,7 +68,6 @@ public class ProductDimension implements Serializable {
         this.width = width;
     }
 
-    @XmlElement
     public BigDecimal getHeight() {
         return height;
     }
@@ -82,7 +76,6 @@ public class ProductDimension implements Serializable {
         this.height = height;
     }
 
-    @XmlElement
     public BigDecimal getDepth() {
         return depth;
     }
@@ -96,12 +89,10 @@ public class ProductDimension implements Serializable {
      * inches)
      * @return a String value of the product dimensions
      */
-    @XmlElement
     public String getDimensionString() {
         return height + "Hx" + width + "Wx" + depth + "D\"";
     }
 
-    @XmlElement
     public BigDecimal getGirth() {
         return girth;
     }
@@ -110,7 +101,6 @@ public class ProductDimension implements Serializable {
         this.girth = girth;
     }
 
-    @XmlElement
     public ContainerSizeType getSize() {
         return ContainerSizeType.getInstance(size);
     }
@@ -121,7 +111,6 @@ public class ProductDimension implements Serializable {
     	}
     }
 
-    @XmlElement
     public ContainerShapeType getContainer() {
         return ContainerShapeType.getInstance(container);
     }
@@ -132,7 +121,6 @@ public class ProductDimension implements Serializable {
     	}
     }
 
-    @XmlElement
     public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
         return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
     }

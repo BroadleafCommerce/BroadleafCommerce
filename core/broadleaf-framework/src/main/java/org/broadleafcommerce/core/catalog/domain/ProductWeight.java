@@ -22,9 +22,6 @@ import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -34,7 +31,6 @@ import java.math.BigDecimal;
  *
  */
 @Embeddable
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class ProductWeight implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +43,6 @@ public class ProductWeight implements Serializable {
     @AdminPresentation(friendlyName="Product Weight Units", order=18, group="Weight", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
     protected String weightUnitOfMeasure;
 
-    @XmlElement
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
         return WeightUnitOfMeasureType.getInstance(weightUnitOfMeasure);
     }
@@ -58,7 +53,6 @@ public class ProductWeight implements Serializable {
     	}
     }
 
-    @XmlElement
     public BigDecimal getWeight() {
         return weight;
     }

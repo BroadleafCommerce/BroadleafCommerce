@@ -24,17 +24,11 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_FEATURED")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@XmlRootElement(name = "featuredProduct")
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class FeaturedProductImpl implements FeaturedProduct {
 
 	private static final long serialVersionUID = 1L;
@@ -74,7 +68,6 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product = new ProductImpl();
 
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -87,12 +80,10 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.sequence = sequence;
     }
 
-    @XmlElement
     public Long getSequence() {
     	return this.sequence;
     }
 
-    @XmlElement
     public String getPromotionMessage() {
         return promotionMessage;
     }
@@ -101,7 +92,6 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.promotionMessage = promotionMessage;
     }
 
-    @XmlElement
     public Category getCategory() {
         return category;
     }
@@ -110,7 +100,6 @@ public class FeaturedProductImpl implements FeaturedProduct {
         this.category = category;
     }
 
-    @XmlElement
     public Product getProduct() {
         return product;
     }

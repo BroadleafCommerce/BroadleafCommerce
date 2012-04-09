@@ -23,10 +23,6 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class SkuAttributeImpl is the default implementation of {@link SkuAttribute}.
@@ -49,8 +45,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@XmlRootElement(name = "skuAttribute")
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class SkuAttributeImpl implements SkuAttribute {
 
     /** The Constant serialVersionUID. */
@@ -96,7 +90,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
      */
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -111,7 +104,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getValue()
      */
-    @XmlElement
     public String getValue() {
         return value;
     }
@@ -126,7 +118,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
      */
-    @XmlElement
     public Boolean getSearchable() {
         return searchable;
     }
@@ -141,7 +132,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
      */
-    @XmlElement
     public String getName() {
         return name;
     }
@@ -164,7 +154,6 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
      */
-    @XmlElement
     public Sku getSku() {
         return sku;
     }
