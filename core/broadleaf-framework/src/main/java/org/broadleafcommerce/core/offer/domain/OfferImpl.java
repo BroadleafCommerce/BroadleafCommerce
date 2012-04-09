@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -306,6 +307,8 @@ public class OfferImpl implements Offer {
         this.stackable = stackable;
     }
 
+    @Deprecated
+    @JsonIgnore
     public boolean getStackable(){
     	return stackable;
     }
@@ -352,6 +355,7 @@ public class OfferImpl implements Offer {
     }
 
     @Deprecated
+    @JsonIgnore
     public boolean getApplyDiscountToMarkedItems() {
     	return applyDiscountToMarkedItems;
     }
@@ -379,6 +383,8 @@ public class OfferImpl implements Offer {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
 
+    @Deprecated
+    @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
     	return combinableWithOtherOffers;
     }
