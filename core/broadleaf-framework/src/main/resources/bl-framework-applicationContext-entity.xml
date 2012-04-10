@@ -54,6 +54,8 @@
     <bean id="org.broadleafcommerce.core.catalog.wrapper.ProductWrapper" class="org.broadleafcommerce.core.catalog.wrapper.ProductWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.wrapper.RelatedProductWrapper" class="org.broadleafcommerce.core.catalog.wrapper.RelatedProductWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.wrapper.SkuWrapper" class="org.broadleafcommerce.core.catalog.wrapper.SkuWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.catalog.wrapper.SkuAttributeWrapper" class="org.broadleafcommerce.core.catalog.wrapper.SkuAttributeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.catalog.wrapper.ProductAttributeWrapper" class="org.broadleafcommerce.core.catalog.wrapper.ProductAttributeWrapper" scope="prototype"/>
 
     <bean id="org.broadleafcommerce.core.media.wrapper.MediaWrapper" class="org.broadleafcommerce.core.media.wrapper.MediaWrapper" scope="prototype"/>
     

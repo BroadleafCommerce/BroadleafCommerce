@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.catalog.wrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.wrapper.MediaWrapper;
 
 import javax.xml.bind.annotation.*;
 import java.util.*;
@@ -56,31 +54,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
     @XmlElement
     protected Date activeEndDate;
 
-    @XmlElement
-    protected CategoryWrapper parentCategory;
-
-    @XmlElementWrapper
-    @XmlElement
-    protected List<MediaWrapper> media;
-
     public void wrap(Category category) {
         this.id = category.getId();
         this.name = category.getName();
         this.description = category.getDescription();
         this.activeStartDate = category.getActiveStartDate();
         this.activeEndDate = category.getActiveEndDate();
-        if (category.getCategoryMedia() != null && category.getCategoryMedia().size() > 0) {
-            media = new ArrayList<MediaWrapper>();
-            Collection<Media> medias = category.getCategoryMedia().values();
-            for (Media med : medias) {
-                MediaWrapper mediaWrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                mediaWrapper.wrap(med);
-                media.add(mediaWrapper);
-            }
-        }
-
-        parentCategory = (CategoryWrapper)entityConfiguration.createEntityInstance(CategoryWrapper.class.getName());
-        parentCategory.wrap(category.getDefaultParentCategory());
 
     }
 }

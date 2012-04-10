@@ -15,15 +15,20 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.wrapper.*;
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.media.wrapper.MediaWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +51,9 @@ public class CatalogEndpoint {
     @Resource(name="blCatalogService")
     private CatalogService catalogService;
 
+    @Resource(name="blEntityConfiguration")
+    private EntityConfiguration entityConfiguration;
+
     /**
      * Search for {@code Product} by product id
      *
@@ -54,8 +62,14 @@ public class CatalogEndpoint {
      */
     @GET
     @Path("product/{id}")
-    public Product findProductById(@PathParam("id") Long id) {
-        return catalogService.findProductById(id);
+    public ProductWrapper findProductById(@PathParam("id") Long id) {
+        Product product = catalogService.findProductById(id);
+        if (product != null) {
+            ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
+            wrapper.wrap(product);
+            return wrapper;
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     /**
@@ -69,11 +83,23 @@ public class CatalogEndpoint {
      */
     @GET
     @Path("products")
-    public List<Product> findProductsByName(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
+    public List<ProductWrapper> findProductsByName(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+        List<Product> result = null;
         if (name == null) {
-            return catalogService.findAllProducts(limit, offset);
+            result = catalogService.findAllProducts(limit, offset);
+        } else {
+            result = catalogService.findProductsByName(name, limit, offset);
         }
-        return catalogService.findProductsByName(name, limit, offset);
+
+        List<ProductWrapper> out = new ArrayList<ProductWrapper>();
+        if (result != null) {
+            for (Product product : result) {
+                ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
+                wrapper.wrap(product);
+                out.add(wrapper);
+            }
+        }
+        return out;
     }
 
     /**
@@ -84,148 +110,262 @@ public class CatalogEndpoint {
      */
     @GET
     @Path("product/{id}/skus")
-    public List<Sku> findSkusByProductById(@PathParam("id") Long id) {
+    public List<SkuWrapper> findSkusByProductById(@PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
-        return product.getAllSkus();
+        if (product != null) {
+            List<Sku> skus = product.getAllSkus();
+            List<SkuWrapper> out = new ArrayList<SkuWrapper>();
+            if (skus != null) {
+                for (Sku sku : skus) {
+                    SkuWrapper wrapper = (SkuWrapper)entityConfiguration.createEntityInstance(SkuWrapper.class.getName());
+                    wrapper.wrap(sku);
+                    out.add(wrapper);
+                }
+                return out;
+            }
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("categories")
-    public List<Category> findAllCategories(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
+    public CategoriesWrapper findAllCategories(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+        List<Category> categories = null;
         if (name != null) {
-            return catalogService.findCategoriesByName(name, limit, offset);
+            categories = catalogService.findCategoriesByName(name, limit, offset);
+        } else {
+            categories = catalogService.findAllCategories(limit, offset);
         }
-        return catalogService.findAllCategories(limit, offset);
+        CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+        wrapper.wrap(categories);
+        return wrapper;
     }
 
     @GET
     @Path("category/{id}/categories")
-    public List<Category> findSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset, @QueryParam("active") @DefaultValue("false") boolean active) {
+    public CategoriesWrapper findSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset, @QueryParam("active") @DefaultValue("false") boolean active) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
+            List<Category> categories = null;
+            CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
             if (active) {
-                return catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
+                categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
+            } else {
+                categories = catalogService.findAllSubCategories(category, limit, offset);
             }
-            return catalogService.findAllSubCategories(category, limit, offset);
+            wrapper.wrap(categories);
+            return wrapper;
         }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
 
-        return null;
     }
 
     @GET
     @Path("category/{id}/activeSubcategories")
-    public List<Category> findActiveSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
+    public CategoriesWrapper findActiveSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
-            return catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
+            List<Category> categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
+            CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+            wrapper.wrap(categories);
+            return wrapper;
         }
 
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("category/{id}")
-    public Category findCategoryById(@PathParam("id") Long id) {
-        return catalogService.findCategoryById(id);
+    public CategoryWrapper findCategoryById(@PathParam("id") Long id) {
+        Category cat = catalogService.findCategoryById(id);
+        if (cat != null) {
+            CategoryWrapper wrapper = (CategoryWrapper)entityConfiguration.createEntityInstance(CategoryWrapper.class.getName());
+            wrapper.wrap(cat);
+            return wrapper;
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("category/{id}/products")
-    public List<Product> findProductsForCategory(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset, @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
+    public List<ProductWrapper> findProductsForCategory(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset, @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
+            List<Product> products = null;
+            ArrayList<ProductWrapper> out = new ArrayList<ProductWrapper>();
             if (activeOnly) {
-                return catalogService.findActiveProductsByCategory(category, new Date(), limit, offset);
+                products = catalogService.findActiveProductsByCategory(category, new Date(), limit, offset);
+            } else {
+                products = catalogService.findProductsForCategory(category, limit, offset);
             }
-            return catalogService.findProductsForCategory(category, limit, offset);
+            if (products != null) {
+                for (Product product : products) {
+                    ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
+                    wrapper.wrap(product);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("product/{id}/related-products/upsale")
-    public List<RelatedProduct> findUpSaleProductsByProduct(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
+    public List<RelatedProductWrapper> findUpSaleProductsByProduct(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            return product.getUpSaleProducts();        
+            List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
+
+            //TODO: Write a service method that accepts offset and limit
+            List<RelatedProduct> relatedProds = product.getUpSaleProducts();
+            if (relatedProds != null) {
+                for (RelatedProduct prod : relatedProds) {
+                    RelatedProductWrapper wrapper = (RelatedProductWrapper)entityConfiguration.createEntityInstance(RelatedProductWrapper.class.getName());
+                    wrapper.wrap(prod);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("product/{id}/related-products/crosssale")
-    public List<RelatedProduct> findCrossSaleProductsByProduct(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
+    public List<RelatedProductWrapper> findCrossSaleProductsByProduct(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            return product.getCrossSaleProducts();
+            List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
+
+            //TODO: Write a service method that accepts offset and limit
+            List<RelatedProduct> xSellProds = product.getCrossSaleProducts();
+            if (xSellProds != null) {
+                for (RelatedProduct prod : xSellProds) {
+                    RelatedProductWrapper wrapper = (RelatedProductWrapper)entityConfiguration.createEntityInstance(RelatedProductWrapper.class.getName());
+                    wrapper.wrap(prod);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("product/{id}/product-attributes")
-    public List<ProductAttribute> findProductAttributesForProduct(@PathParam("id") Long id) {
+    public List<ProductAttributeWrapper> findProductAttributesForProduct(@PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            return product.getProductAttributes();
+            ArrayList<ProductAttributeWrapper> out = new ArrayList<ProductAttributeWrapper>();
+            if (product.getProductAttributes() != null) {
+                for (ProductAttribute attribute : product.getProductAttributes()) {
+                    ProductAttributeWrapper wrapper = (ProductAttributeWrapper)entityConfiguration.createEntityInstance(ProductAttributeWrapper.class.getName());
+                    wrapper.wrap(attribute);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("sku/{id}/sku-attributes")
-    public List<SkuAttribute> findSkuAttributesForSku(@PathParam("id") Long id) {
+    public List<SkuAttributeWrapper> findSkuAttributesForSku(@PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
-            return sku.getSkuAttributes();
+            ArrayList<SkuAttributeWrapper> out = new ArrayList<SkuAttributeWrapper>();
+            if (sku.getSkuAttributes() != null) {
+                for (SkuAttribute attribute : sku.getSkuAttributes()) {
+                    SkuAttributeWrapper wrapper = (SkuAttributeWrapper)entityConfiguration.createEntityInstance(SkuAttributeWrapper.class.getName());
+                    wrapper.wrap(attribute);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("sku/{id}/media")
-    public Map<String, Media> findMediaForSku(@PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForSku(@PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
-            return sku.getSkuMedia();
+            List<MediaWrapper> medias = new ArrayList<MediaWrapper>();
+            if (sku.getSkuMedia() != null && ! sku.getSkuMedia().isEmpty()) {
+                for (Media media : sku.getSkuMedia().values()) {
+                    MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                    wrapper.wrap(media);
+                    medias.add(wrapper);
+                }
+            }
+            return medias;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("sku/{id}")
-    public Sku findSkuById(@PathParam("id") Long id) {
-        return catalogService.findSkuById(id);
+    public SkuWrapper findSkuById(@PathParam("id") Long id) {
+        Sku sku = catalogService.findSkuById(id);
+        if (sku != null) {
+            SkuWrapper wrapper = (SkuWrapper)entityConfiguration.createEntityInstance(SkuWrapper.class.getName());
+            wrapper.wrap(sku);
+            return wrapper;
+        }
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("product/{id}/media")
-    public Map<String, Media> findMediaForProduct(@PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForProduct(@PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            return product.getProductMedia();
+            ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
+            Map<String, Media> media = product.getProductMedia();
+            if (media != null) {
+                for (Media med : media.values()) {
+                    MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                    wrapper.wrap(med);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("category/{id}/media")
-    public Map<String, Media> findMediaForCategory(@PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForCategory(@PathParam("id") Long id) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
-            return category.getCategoryMedia();
+            ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
+            Map<String, Media> media = category.getCategoryMedia();
+            if (media != null) {
+                for (Media med : media.values()) {
+                    MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                    wrapper.wrap(med);
+                    out.add(wrapper);
+                }
+            }
+            return out;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
     @Path("product/{id}/categories")
-    public List<Category> findParentCategoriesForProduct(@PathParam("id") Long id) {
+    public CategoriesWrapper findParentCategoriesForProduct(@PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            return product.getAllParentCategories();
+            CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+            wrapper.wrap(product.getAllParentCategories());
+            return wrapper;
         }
-        return null;
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
 }

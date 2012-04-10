@@ -18,52 +18,40 @@ package org.broadleafcommerce.core.catalog.wrapper;
 
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 
-import javax.xml.bind.annotation.*;
-import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * This is a JAXB wrapper to wrap Sku.
+ * To change this template use File | Settings | File Templates.
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement(name = "sku")
+@XmlRootElement(name = "productAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
+public class ProductAttributeWrapper extends BaseWrapper implements APIWrapper<ProductAttribute>{
 
     @XmlElement
     protected Long id;
 
     @XmlElement
-    protected Date activeStartDate;
+    protected Long productId;
 
     @XmlElement
-    protected Date activeEndDate;
+    protected String attributeName;
 
     @XmlElement
-    protected String name;
+    protected String attributeValue;
 
-    @XmlElement
-    protected String description;
-
-    @XmlElement
-    protected Money retailPrice;
-    
-    @XmlElement
-    protected Money salePrice;
-    
     @Override
-    public void wrap(Sku model) {
+    public void wrap(ProductAttribute model) {
         this.id = model.getId();
-        this.activeStartDate = model.getActiveStartDate();
-        this.activeEndDate = model.getActiveEndDate();
-        this.name = model.getName();
-        this.description = model.getDescription();
-        this.retailPrice = model.getRetailPrice();
-        this.salePrice = model.getSalePrice();
-
+        this.productId = model.getProduct().getId();
+        this.attributeName = model.getName();
+        this.attributeValue = model.getValue();
     }
 }

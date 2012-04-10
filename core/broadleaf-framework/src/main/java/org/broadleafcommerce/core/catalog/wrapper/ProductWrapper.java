@@ -19,13 +19,9 @@ package org.broadleafcommerce.core.catalog.wrapper;
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.wrapper.MediaWrapper;
 
 import javax.xml.bind.annotation.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around Product.
@@ -53,9 +49,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     protected Date activeEndDate;
 
     @XmlElement
-    protected CategoryWrapper defaultCategory;
-
-    @XmlElement
     protected String manufacturer;
 
     @XmlElement
@@ -63,10 +56,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
 
     @XmlElement
     protected String promoMessage;
-
-    @XmlElementWrapper(name = "productMediaList")
-    @XmlElement
-    protected List<MediaWrapper> productMedia;
 
     @Override
     public void wrap(Product model) {
@@ -79,17 +68,5 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
-        if (model.getProductMedia() != null && model.getProductMedia().size() > 0) {
-            productMedia = new ArrayList<MediaWrapper>();
-            for (Media media : model.getProductMedia().values()) {
-                MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                wrapper.wrap(media);
-                productMedia.add(wrapper);
-            }
-        }
-        if (model.getDefaultCategory() != null) {
-            defaultCategory = (CategoryWrapper)entityConfiguration.createEntityInstance(CategoryWrapper.class.getName());
-            defaultCategory.wrap(model.getDefaultCategory());
-        }
     }
 }
