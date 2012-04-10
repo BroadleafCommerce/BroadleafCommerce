@@ -16,12 +16,23 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.events.*;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.events.MouseMoveEvent;
+import com.smartgwt.client.widgets.events.MouseMoveHandler;
+import com.smartgwt.client.widgets.events.MouseOutEvent;
+import com.smartgwt.client.widgets.events.MouseOutHandler;
 import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
 import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
@@ -33,8 +44,12 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.admin.client.datasource.promotion.*;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.admin.client.datasource.promotion.CustomerListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OrderItemListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OrderListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
@@ -44,10 +59,7 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 /**
  * @author jfischer
@@ -112,9 +124,6 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
                 public void onChanged(ChangedEvent event) {
                     Date myDate = (Date) event.getValue();
                     if (myDate != null) {
-                        myDate.setHours(23);
-                        myDate.setMinutes(59);
-                        myDate.setSeconds(59);
                         event.getItem().setValue(myDate);
                     }
                 }
