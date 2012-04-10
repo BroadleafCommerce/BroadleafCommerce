@@ -24,7 +24,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -34,12 +33,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 /**
- * JAXB has trouble mapping interfaces, therefore this allows us to find the correct implementation
- * for interfaces and set up the appropriate JAXBContext.
+ * JAXB is used as a mapping and marshalling framework for XML and JSON associated with RESTful services.
+ * The classes that we care about marshalling and unmarshalling should be configured in Broadleaf's
+ * EntityConfiguration.  They should also be annotated with @XMLRootElement.
  * 
- * For example, a ProductSkuImpl is related to SkuImpl. If SkuImpl is subclassed with a custom implementation
- * (e.g. MyCompanySkuImpl) then MyCompanySkuImpl will be added to the JAXBContext for serialization instead
- * of SkuImpl.
+ * This class is a Spring-managed Bean.  It is also discoverable by the JAXRS framework as it is annotated
+ * with @Provider.  This class will provide a JAXBContext for classes configured in the EntityConfiguration
+ * that have @XMLRootElement annotations.  It will return a null context for classes that to not match those
+ * requirements.
  * 
  * @author phillipverheyden
  *
@@ -94,12 +95,7 @@ public class BroadleafContextResolver implements ContextResolver<JAXBContext>, I
 				entityImplementationNames.add(clazz.getName());
 			}
 		}
-		
-		try {
-			context = JAXBContext.newInstance(xmlClasses.toArray(new Class<?>[xmlClasses.size()]));
-		} catch (JAXBException e) {
-			throw new RuntimeException(e);
-		}		
+        context = JAXBContext.newInstance(xmlClasses.toArray(new Class<?>[xmlClasses.size()]));
 	}
 
 }
