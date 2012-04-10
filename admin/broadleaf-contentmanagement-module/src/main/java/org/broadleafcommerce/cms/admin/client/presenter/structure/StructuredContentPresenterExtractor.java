@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -35,9 +38,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 
@@ -130,10 +130,6 @@ public class StructuredContentPresenterExtractor {
                                 if (response.getStatus()!=RPCResponse.STATUS_FAILURE) {
                                     try {
                                         extractQualifierData(newId, false, dirtyValues);
-                                        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
-                                        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
-                                        getDisplay().getStructuredContentSaveButton().disable();
-                                        getDisplay().getStructuredContentRefreshButton().disable();
                                         if (!presenter.currentStructuredContentId.equals(newId)) {
                                             Record myRecord = getDisplay().getListDisplay().getGrid().getResultSet().find("id", presenter.currentStructuredContentId);
                                             if (myRecord != null) {
@@ -168,6 +164,13 @@ public class StructuredContentPresenterExtractor {
 			SC.warn(e.getMessage());
 		}
 	}
+
+    protected void resetButtonState() {
+        getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+        getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
+        getDisplay().getStructuredContentSaveButton().disable();
+        getDisplay().getStructuredContentRefreshButton().disable();
+    }
 	
 	protected void extractQualifierData(final String id, boolean isValidation, Map<String, Object> dirtyValues) throws IncompatibleMVELTranslationException {
 		for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
@@ -182,10 +185,7 @@ public class StructuredContentPresenterExtractor {
                         presenter.getPresenterSequenceSetupManager().getDataSource("scItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
-                                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                                getDisplay().getStructuredContentSaveButton().enable();
-                                getDisplay().getStructuredContentRefreshButton().enable();
+                                resetButtonState();
                             }
                         });
                     } else {
@@ -200,15 +200,15 @@ public class StructuredContentPresenterExtractor {
                             public void execute(DSResponse response, Object rawData, DSRequest request) {
                                 builder.setDirty(false);
                                 builder.setRecord(temp);
-                                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                                getDisplay().getStructuredContentSaveButton().enable();
-                                getDisplay().getStructuredContentRefreshButton().enable();
+                                resetButtonState();
                             }
                         });
                     }
                 }
             }
+        }
+        if (getDisplay().getItemBuilderViews().size() == 0) {
+            resetButtonState();
         }
 	}
 }

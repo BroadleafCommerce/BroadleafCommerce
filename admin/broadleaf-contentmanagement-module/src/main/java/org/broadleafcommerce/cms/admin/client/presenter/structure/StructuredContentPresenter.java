@@ -80,9 +80,6 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
 	@Override
 	protected void removeClicked() {
-        Record selectedRecord = display.getListDisplay().getGrid().getSelectedRecord();
-        final String primaryKey = display.getListDisplay().getGrid().getDataSource().getPrimaryKeyFieldName();
-        final String id = selectedRecord.getAttribute(primaryKey);
         display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -164,10 +161,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 final FormOnlyView formOnlyView = new FormOnlyView(dataSource, true, true, false);
                 formOnlyView.getForm().addItemChangedHandler(new ItemChangedHandler() {
                     public void onItemChanged(ItemChangedEvent event) {
-                        getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                        getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                        getDisplay().getStructuredContentSaveButton().enable();
-                        getDisplay().getStructuredContentRefreshButton().enable();
+                        resetButtons();
                     }
                 });
                 formOnlyView.setID("contentTypeForm");
@@ -240,10 +234,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                     final ItemBuilderDisplay display = getDisplay().addItemBuilder(getPresenterSequenceSetupManager().getDataSource("scOrderItemDS"));
                     bindItemBuilderEvents(display);
                     display.setDirty(true);
-                    getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                    getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                    getDisplay().getStructuredContentSaveButton().enable();
-                    getDisplay().getStructuredContentRefreshButton().enable();
+                    resetButtons();
                 }
             }
         });
@@ -252,34 +243,22 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         }
         getDisplay().getCustomerFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
+                resetButtons();
             }
         });
         getDisplay().getProductFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
+                resetButtons();
             }
         });
         getDisplay().getRequestFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
+                resetButtons();
             }
         });
         getDisplay().getTimeFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
             public void onFilterChanged(FilterChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
+                resetButtons();
             }
         });
 	}
@@ -300,50 +279,43 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
             }
         }
+        resetButtons();
+    }
+
+    protected void bindItemBuilderEvents(final ItemBuilderDisplay display) {
+        display.getRemoveButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                extractor.removeItemQualifer(display);
+            }
+        });
+        display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            public void onItemChanged(ItemChangedEvent event) {
+                resetButtons();
+                display.setDirty(true);
+            }
+        });
+        display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
+            public void onItemChanged(ItemChangedEvent event) {
+                resetButtons();
+                display.setDirty(true);
+            }
+        });
+        display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
+            public void onFilterChanged(FilterChangedEvent event) {
+                resetButtons();
+                display.setDirty(true);
+            }
+        });
+    }
+
+    protected void resetButtons() {
         getDisplay().getDynamicFormDisplay().getSaveButton().enable();
         getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
         getDisplay().getStructuredContentSaveButton().enable();
         getDisplay().getStructuredContentRefreshButton().enable();
     }
 
-    protected void bindItemBuilderEvents(final ItemBuilderDisplay display) {
-        display.getRemoveButton().addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (getDisplay().getItemBuilderViews().size() > 1) {
-                    extractor.removeItemQualifer(display);
-                }
-            }
-        });
-        display.getRawItemForm().addItemChangedHandler(new ItemChangedHandler() {
-            public void onItemChanged(ItemChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
-                display.setDirty(true);
-            }
-        });
-        display.getItemForm().addItemChangedHandler(new ItemChangedHandler() {
-            public void onItemChanged(ItemChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
-                display.setDirty(true);
-            }
-        });
-        display.getItemFilterBuilder().addFilterChangedHandler(new FilterChangedHandler() {
-            public void onFilterChanged(FilterChangedEvent event) {
-                getDisplay().getDynamicFormDisplay().getSaveButton().enable();
-                getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
-                getDisplay().getStructuredContentSaveButton().enable();
-                getDisplay().getStructuredContentRefreshButton().enable();
-                display.setDirty(true);
-            }
-        });
-    }
-
-	public void setup() {
+    public void setup() {
         super.setup();
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("structuredContentDS", new StructuredContentListDataSourceFactory(), new NullAsyncCallbackAdapter()));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("scCustomerDS", new CustomerListDataSourceFactory(), new AsyncCallbackAdapter() {
