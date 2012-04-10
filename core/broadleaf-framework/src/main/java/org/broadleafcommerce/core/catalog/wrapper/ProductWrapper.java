@@ -57,6 +57,9 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     @XmlElement
     protected String promoMessage;
 
+    @XmlElement
+    protected ProductWeightWrapper productWeight;
+
     @Override
     public void wrap(Product model) {
         this.id = model.getId();
@@ -64,9 +67,11 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.description = model.getDescription();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
-        
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
+
+        productWeight = (ProductWeightWrapper)entityConfiguration.createEntityInstance(ProductWeightWrapper.class.getName());
+        productWeight.wrap(model.getWeight());
     }
 }
