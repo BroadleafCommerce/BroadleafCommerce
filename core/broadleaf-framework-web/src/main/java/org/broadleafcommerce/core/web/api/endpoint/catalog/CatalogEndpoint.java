@@ -84,7 +84,7 @@ public class CatalogEndpoint {
     @GET
     @Path("products")
     public List<ProductWrapper> findProductsByName(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
-        List<Product> result = null;
+        List<Product> result;
         if (name == null) {
             result = catalogService.findAllProducts(limit, offset);
         } else {
@@ -130,7 +130,7 @@ public class CatalogEndpoint {
     @GET
     @Path("categories")
     public CategoriesWrapper findAllCategories(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
-        List<Category> categories = null;
+        List<Category> categories;
         if (name != null) {
             categories = catalogService.findCategoriesByName(name, limit, offset);
         } else {
@@ -146,7 +146,7 @@ public class CatalogEndpoint {
     public CategoriesWrapper findSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset, @QueryParam("active") @DefaultValue("false") boolean active) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
-            List<Category> categories = null;
+            List<Category> categories;
             CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
             if (active) {
                 categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
@@ -191,7 +191,7 @@ public class CatalogEndpoint {
     public List<ProductWrapper> findProductsForCategory(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset, @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
-            List<Product> products = null;
+            List<Product> products;
             ArrayList<ProductWrapper> out = new ArrayList<ProductWrapper>();
             if (activeOnly) {
                 products = catalogService.findActiveProductsByCategory(category, new Date(), limit, offset);
@@ -344,12 +344,10 @@ public class CatalogEndpoint {
         if (category != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
             Map<String, Media> media = category.getCategoryMedia();
-            if (media != null) {
-                for (Media med : media.values()) {
-                    MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                    wrapper.wrap(med);
-                    out.add(wrapper);
-                }
+            for (Media med : media.values()) {
+                MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                wrapper.wrap(med);
+                out.add(wrapper);
             }
             return out;
         }

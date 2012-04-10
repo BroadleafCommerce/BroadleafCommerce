@@ -60,6 +60,9 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     @XmlElement
     protected ProductWeightWrapper productWeight;
 
+    @XmlElement
+    protected ProductDimensionWrapper productDimension;
+
     @Override
     public void wrap(Product model) {
         this.id = model.getId();
@@ -73,5 +76,8 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
 
         productWeight = (ProductWeightWrapper)entityConfiguration.createEntityInstance(ProductWeightWrapper.class.getName());
         productWeight.wrap(model.getWeight());
+
+        productDimension = (ProductDimensionWrapper)entityConfiguration.createEntityInstance(ProductDimensionWrapper.class.getName());
+        productDimension.wrap(model.getDimension());
     }
 }
