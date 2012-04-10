@@ -334,7 +334,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                     wrapper.wrap(media, request);
                     if (wrapper.isAllowOverrideUrl()){
-                        wrapper.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(getStaticAssetService().convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     medias.add(wrapper);
                 }
@@ -370,7 +370,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                     wrapper.wrap(med, request);
                     if (wrapper.isAllowOverrideUrl()){
-                        wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(getStaticAssetService().convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     out.add(wrapper);
                 }
