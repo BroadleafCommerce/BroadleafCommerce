@@ -18,7 +18,8 @@ package org.broadleafcommerce.core.catalog.wrapper;
 
 import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
-import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.wrapper.MediaWrapper;
 
@@ -28,23 +29,17 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This is a JAXB wrapper around Product.
- *
+ * This is a JAXB wrapper to wrap Sku.
+ * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement(name = "product")
+@XmlRootElement(name = "sku")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
+public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
 
     @XmlElement
     protected Long id;
-    
-    @XmlElement
-    protected String name;
-
-    @XmlElement
-    protected String description;
 
     @XmlElement
     protected Date activeStartDate;
@@ -53,43 +48,38 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     protected Date activeEndDate;
 
     @XmlElement
-    protected CategoryWrapper defaultCategory;
+    protected String name;
 
     @XmlElement
-    protected String manufacturer;
+    protected String description;
 
     @XmlElement
-    protected String model;
-
+    protected Money retailPrice;
+    
     @XmlElement
-    protected String promoMessage;
-
-    @XmlElementWrapper(name = "productMediaList")
+    protected Money salePrice;
+    
+    @XmlElementWrapper(name = "mediaList")
     @XmlElement
-    protected List<MediaWrapper> productMedia;
-
+    protected List<MediaWrapper> media;
+    
     @Override
-    public void wrap(Product model) {
+    public void wrap(Sku model) {
         this.id = model.getId();
-        this.name = model.getName();
-        this.description = model.getDescription();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
-        
-        this.manufacturer = model.getManufacturer();
-        this.model = model.getModel();
-        this.promoMessage = model.getPromoMessage();
-        if (model.getProductMedia() != null && model.getProductMedia().size() > 0) {
-            productMedia = new ArrayList<MediaWrapper>();
-            for (Media media : model.getProductMedia().values()) {
+        this.name = model.getName();
+        this.description = model.getDescription();
+        this.retailPrice = model.getRetailPrice();
+        this.salePrice = model.getSalePrice();
+        if (model.getSkuMedia() != null && model.getSkuMedia().size() > 0) {
+            media = new ArrayList<MediaWrapper>();
+            for (Media med : model.getSkuMedia().values()) {
                 MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                wrapper.wrap(media);
-                productMedia.add(wrapper);
+                wrapper.wrap(med);
+                media.add(wrapper);
             }
         }
-        if (model.getDefaultCategory() != null) {
-            defaultCategory = (CategoryWrapper)entityConfiguration.createEntityInstance(CategoryWrapper.class.getName());
-            defaultCategory.wrap(model.getDefaultCategory());
-        }
+
     }
 }

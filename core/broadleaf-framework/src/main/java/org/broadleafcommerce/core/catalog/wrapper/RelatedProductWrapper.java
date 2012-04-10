@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement
+@XmlRootElement(name = "relatedProduct")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<RelatedProduct> {
 
