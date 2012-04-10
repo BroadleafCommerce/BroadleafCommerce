@@ -73,7 +73,9 @@ public class EntityConfiguration implements ApplicationContextAware{
 
     public Object createEntityInstance(String beanId) {
         Object bean = applicationcontext.getBean(beanId);
-        if (bean.getClass().isAssignableFrom(ApplicationContextAware.class)) {
+        //We want to assign the parent application context (not the entity application context) to object
+        //if it is ApplicationContextAware.
+        if (ApplicationContextAware.class.isAssignableFrom(bean.getClass())) {
             ((ApplicationContextAware)bean).setApplicationContext(parentApplicationContext);
         }
         if (LOG.isDebugEnabled()) {
@@ -84,7 +86,10 @@ public class EntityConfiguration implements ApplicationContextAware{
 
     public <T> T createEntityInstance(String beanId, Class<T> resultClass) {
         T bean = (T) applicationcontext.getBean(beanId);
-        if (bean.getClass().isAssignableFrom(ApplicationContextAware.class)) {
+
+        //We want to assign the parent application context (not the entity application context) to object
+        //if it is ApplicationContextAware.
+        if (ApplicationContextAware.class.isAssignableFrom(bean.getClass())) {
             ((ApplicationContextAware)bean).setApplicationContext(parentApplicationContext);
         }
         if (LOG.isDebugEnabled()) {
