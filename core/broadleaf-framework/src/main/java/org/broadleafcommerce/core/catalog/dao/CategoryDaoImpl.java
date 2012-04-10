@@ -96,7 +96,7 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
-    public List<Category> readAllCategories(int offset, int limit) {
+    public List<Category> readAllCategories(int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
