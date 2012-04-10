@@ -26,7 +26,14 @@ public interface StateDao {
 
     public List<State> findStates(String countryAbbreviation);
 
+    /**
+	 * @deprecated Use {@link #findStatesByAbbreviation(String)} instead
+	 */
     public State findStateByAbbreviation(String abbreviation);
+    
+    public State findStateById(Long id);
+    
+    public List<State> findStatesByAbbreviation(String abbreviation);
 
     public State create();
     

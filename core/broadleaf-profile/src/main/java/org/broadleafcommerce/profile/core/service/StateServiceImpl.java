@@ -38,8 +38,19 @@ public class StateServiceImpl implements StateService {
         return stateDao.findStates(countryAbbreviation);
     }
 
+    /**
+	 * @deprecated Use {@link #findStatesByAbbreviation(String)} instead
+	 */
     public State findStateByAbbreviation(String abbreviation) {
         return stateDao.findStateByAbbreviation(abbreviation);
+    }
+    
+    public State findStateById(Long id) {
+    	return stateDao.findStateById(id);
+    }
+    
+    public List<State> findStatesByAbbreviation(String abbreviation) {
+    	return stateDao.findStatesByAbbreviation(abbreviation);
     }
     
     public State save(State state) {
