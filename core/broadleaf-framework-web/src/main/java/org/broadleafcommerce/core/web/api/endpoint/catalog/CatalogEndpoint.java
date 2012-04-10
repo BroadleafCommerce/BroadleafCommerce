@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -25,7 +26,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -53,6 +56,9 @@ public class CatalogEndpoint {
 
     @Resource(name="blEntityConfiguration")
     private EntityConfiguration entityConfiguration;
+
+    @Resource(name="blStaticAssetService")
+    private StaticAssetService staticAssetService;
 
     /**
      * Search for {@code Product} by product id
@@ -290,7 +296,7 @@ public class CatalogEndpoint {
 
     @GET
     @Path("sku/{id}/media")
-    public List<MediaWrapper> findMediaForSku(@PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForSku(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             List<MediaWrapper> medias = new ArrayList<MediaWrapper>();
@@ -298,6 +304,9 @@ public class CatalogEndpoint {
                 for (Media media : sku.getSkuMedia().values()) {
                     MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
                     wrapper.wrap(media);
+                    if (wrapper.isAllowOverrideUrl()){
+                        wrapper.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                    }
                     medias.add(wrapper);
                 }
             }
@@ -320,7 +329,7 @@ public class CatalogEndpoint {
 
     @GET
     @Path("product/{id}/media")
-    public List<MediaWrapper> findMediaForProduct(@PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForProduct(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
@@ -329,6 +338,9 @@ public class CatalogEndpoint {
                 for (Media med : media.values()) {
                     MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
                     wrapper.wrap(med);
+                    if (wrapper.isAllowOverrideUrl()){
+                        wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
+                    }
                     out.add(wrapper);
                 }
             }

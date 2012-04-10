@@ -21,10 +21,7 @@ import org.broadleafcommerce.common.api.APIWrapper;
 import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.media.domain.Media;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 /**
  *  JAXB wrapper class for Media.
@@ -32,6 +29,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "media")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
+
+    /**
+     * This allows us to control whether the URL should / can be overwritten, for example by the static asset service.
+     */
+    @XmlTransient
+    protected boolean allowOverrideUrl = true;
 
     @XmlElement
     protected Long id;
@@ -50,5 +53,23 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
         this.name = media.getName();
         this.label = media.getLabel();
         this.url = media.getUrl();
+    }
+
+    public boolean isAllowOverrideUrl() {
+        return allowOverrideUrl;
+    }
+
+    public void setAllowOverrideUrl(boolean allow) {
+        this.allowOverrideUrl = allow;
+    }
+
+    /**
+     * Call this only if allowOverrideUrl is true, and only AFTER you call wrap.
+     * @param url
+     */
+    public void setUrl(String url) {
+        if (allowOverrideUrl){
+            this.url = url;
+        }
     }
 }
