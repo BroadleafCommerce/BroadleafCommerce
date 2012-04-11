@@ -40,7 +40,6 @@ import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
@@ -135,15 +134,9 @@ public class CheckoutController {
         }
 
         checkoutForm.getBillingAddress().setCountry(countryService.findCountryByAbbreviation(checkoutForm.getBillingAddress().getCountry().getAbbreviation()));
-        List<State> billingStates = stateService.findStatesByAbbreviation(checkoutForm.getBillingAddress().getState().getAbbreviation());
-        State billingState = (billingStates == null || billingStates.size() == 0) ? null : billingStates.get(0);
-        checkoutForm.getBillingAddress().setState(billingState);
-        
+        checkoutForm.getBillingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getBillingAddress().getState().getAbbreviation()));
         checkoutForm.getShippingAddress().setCountry(countryService.findCountryByAbbreviation(checkoutForm.getShippingAddress().getCountry().getAbbreviation()));
-        
-        List<State> shippingStates = stateService.findStatesByAbbreviation(checkoutForm.getShippingAddress().getState().getAbbreviation());
-        State shippingState = (shippingStates == null || shippingStates.size() == 0) ? null : shippingStates.get(0);
-        checkoutForm.getShippingAddress().setState(shippingState);
+        checkoutForm.getShippingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getShippingAddress().getState().getAbbreviation()));
         
         Order order = retrieveCartOrder(request, model);
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
