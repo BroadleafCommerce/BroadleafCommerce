@@ -25,15 +25,12 @@ import org.hibernate.annotations.Index;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,12 +42,7 @@ public class StateImpl implements State {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StateId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StateImpl", allocationSize = 50)
-    @Column(name = "STATE_ID")
-    protected Long id;
-
-	@Column(name = "ABBREVIATION")
+    @Column(name = "ABBREVIATION")
     protected String abbreviation;
 
     @Column(name = "NAME", nullable = false)
@@ -61,14 +53,6 @@ public class StateImpl implements State {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     protected Country country;
-    
-    public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
     public String getAbbreviation() {
         return abbreviation;
