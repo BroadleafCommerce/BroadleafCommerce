@@ -164,7 +164,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     }
 
     public Money getValue() {
-        return value == null ? null : new Money(value);
+        return value == null ? null : new Money(value, Money.defaultCurrency(), value.scale());
     }
     
     public void setValue(Money value) {
