@@ -7,12 +7,6 @@
 		<query>SELECT state FROM org.broadleafcommerce.profile.core.domain.State state
 		ORDER BY state.name</query>
 	</named-query>
-	
-	<named-query name="BC_FIND_STATES_BY_ABBREVIATION" >
-		<query>SELECT state FROM org.broadleafcommerce.profile.core.domain.State state
-		WHERE state.abbreviation = :abbreviation
-		ORDER BY state.name</query>
-	</named-query>
 
 	<named-query name="BC_FIND_STATES_BY_COUNTRY_ABBREVIATION" >
 		<query>SELECT state FROM org.broadleafcommerce.profile.core.domain.State state
