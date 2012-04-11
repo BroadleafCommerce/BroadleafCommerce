@@ -17,6 +17,9 @@
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
 import org.broadleafcommerce.core.order.service.CartService;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,10 +41,15 @@ import javax.ws.rs.core.MediaType;
 @Path("/cart/")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CartEndpoint {
+public class CartEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCartService")
     protected CartService cartService;
 
+    protected ApplicationContext context;
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 }

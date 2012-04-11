@@ -17,6 +17,9 @@
 package org.broadleafcommerce.core.web.api.endpoint.customer;
 
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -37,10 +40,15 @@ import javax.ws.rs.core.MediaType;
 @Path("/customer/")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CustomerEndpoint {
+public class CustomerEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
+    protected ApplicationContext context;
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 }

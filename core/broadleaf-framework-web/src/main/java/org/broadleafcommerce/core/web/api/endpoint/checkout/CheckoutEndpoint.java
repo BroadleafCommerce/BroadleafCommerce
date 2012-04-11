@@ -17,6 +17,9 @@
 package org.broadleafcommerce.core.web.api.endpoint.checkout;
 
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -37,10 +40,16 @@ import javax.ws.rs.core.MediaType;
 @Path("/cart/checkout/")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CheckoutEndpoint {
+public class CheckoutEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
 
+    protected ApplicationContext context;
 
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 }
