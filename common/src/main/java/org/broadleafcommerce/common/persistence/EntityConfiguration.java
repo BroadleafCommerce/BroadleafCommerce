@@ -20,20 +20,17 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Component("blEntityConfiguration")
-public class EntityConfiguration implements ApplicationContextAware{
+public class EntityConfiguration {
 
     private static final Log LOG = LogFactory.getLog(EntityConfiguration.class);
 
     private final HashMap<String, Class<?>> entityMap = new HashMap<String, Class<?>>(50);
-    private ApplicationContext parentApplicationContext;
     private ApplicationContext applicationcontext;
     private Resource[] entityContexts;
 
@@ -73,11 +70,6 @@ public class EntityConfiguration implements ApplicationContextAware{
 
     public Object createEntityInstance(String beanId) {
         Object bean = applicationcontext.getBean(beanId);
-        //We want to assign the parent application context (not the entity application context) to object
-        //if it is ApplicationContextAware.
-        if (ApplicationContextAware.class.isAssignableFrom(bean.getClass())) {
-            ((ApplicationContextAware)bean).setApplicationContext(parentApplicationContext);
-        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Returning instance of class (" + bean.getClass().getName() + ") configured with bean id (" + beanId + ')');
         }
@@ -86,12 +78,6 @@ public class EntityConfiguration implements ApplicationContextAware{
 
     public <T> T createEntityInstance(String beanId, Class<T> resultClass) {
         T bean = (T) applicationcontext.getBean(beanId);
-
-        //We want to assign the parent application context (not the entity application context) to object
-        //if it is ApplicationContextAware.
-        if (ApplicationContextAware.class.isAssignableFrom(bean.getClass())) {
-            ((ApplicationContextAware)bean).setApplicationContext(parentApplicationContext);
-        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Returning instance of class (" + bean.getClass().getName() + ") configured with bean id (" + beanId + ')');
         }
@@ -106,9 +92,4 @@ public class EntityConfiguration implements ApplicationContextAware{
 		this.entityContexts = entityContexts;
 		applicationcontext = new GenericXmlApplicationContext(entityContexts);
 	}
-
-    @Override
-    public void setApplicationContext(ApplicationContext parentApplicationContext) throws BeansException {
-        this.parentApplicationContext = parentApplicationContext;
-    }
 }

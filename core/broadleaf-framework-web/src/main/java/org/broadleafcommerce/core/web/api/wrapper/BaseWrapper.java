@@ -30,20 +30,10 @@ import javax.xml.bind.annotation.XmlTransient;
 public abstract class BaseWrapper implements ApplicationContextAware {
 
     @XmlTransient
-    private EntityConfiguration entityConfiguration;
-
-    @XmlTransient
     protected ApplicationContext context;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
-    }
-
-    protected EntityConfiguration getEntityConfiguration() {
-        if (entityConfiguration == null){
-            entityConfiguration = (EntityConfiguration)context.getBean("blEntityConfiguration");
-        }
-        return entityConfiguration;
     }
 }

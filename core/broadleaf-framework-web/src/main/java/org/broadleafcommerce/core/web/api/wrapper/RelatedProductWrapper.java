@@ -52,7 +52,7 @@ public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<Rel
         this.sequence = model.getSequence();
         this.promotionalMessage = model.getPromotionMessage();
 
-        product = (ProductWrapper)getEntityConfiguration().createEntityInstance(ProductWrapper.class.getName());
+        product = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
         product.wrap(model.getRelatedProduct(), request);
     }
 }

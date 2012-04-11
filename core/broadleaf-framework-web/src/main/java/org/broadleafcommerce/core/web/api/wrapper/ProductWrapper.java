@@ -74,12 +74,12 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.promoMessage = model.getPromoMessage();
 
         if (model.getWeight() != null){
-            productWeight = (ProductWeightWrapper)getEntityConfiguration().createEntityInstance(ProductWeightWrapper.class.getName());
+            productWeight = (ProductWeightWrapper)context.getBean(ProductWeightWrapper.class.getName());
             productWeight.wrap(model.getWeight(), request);
         }
 
         if (model.getDimension() != null){
-            productDimension = (ProductDimensionWrapper)getEntityConfiguration().createEntityInstance(ProductDimensionWrapper.class.getName());
+            productDimension = (ProductDimensionWrapper)context.getBean(ProductDimensionWrapper.class.getName());
             productDimension.wrap(model.getDimension(), request);
         }
     }

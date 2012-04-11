@@ -57,9 +57,6 @@ public class CatalogEndpoint implements ApplicationContextAware {
     @Resource(name="blCatalogService")
     private CatalogService catalogService;
 
-    @Resource(name="blEntityConfiguration")
-    private EntityConfiguration entityConfiguration;
-
     private ApplicationContext context;
 
     //We don't inject this here because of a few dependency issues. Instead, we look this up dynamically
@@ -77,7 +74,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public ProductWrapper findProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
+            ProductWrapper wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
             wrapper.wrap(product, request);
             return wrapper;
         }
@@ -109,7 +106,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         List<ProductWrapper> out = new ArrayList<ProductWrapper>();
         if (result != null) {
             for (Product product : result) {
-                ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
+                ProductWrapper wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
                 wrapper.wrap(product, request);
                 out.add(wrapper);
             }
@@ -132,7 +129,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             List<SkuWrapper> out = new ArrayList<SkuWrapper>();
             if (skus != null) {
                 for (Sku sku : skus) {
-                    SkuWrapper wrapper = (SkuWrapper)entityConfiguration.createEntityInstance(SkuWrapper.class.getName());
+                    SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
                     wrapper.wrap(sku, request);
                     out.add(wrapper);
                 }
@@ -154,7 +151,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         } else {
             categories = catalogService.findAllCategories(limit, offset);
         }
-        CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+        CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
         wrapper.wrap(categories, request);
         return wrapper;
     }
@@ -169,7 +166,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories;
-            CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+            CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
             if (active) {
                 categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
             } else {
@@ -191,7 +188,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
-            CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+            CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
             wrapper.wrap(categories, request);
             return wrapper;
         }
@@ -204,7 +201,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public CategoryWrapper findCategoryById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Category cat = catalogService.findCategoryById(id);
         if (cat != null) {
-            CategoryWrapper wrapper = (CategoryWrapper)entityConfiguration.createEntityInstance(CategoryWrapper.class.getName());
+            CategoryWrapper wrapper = (CategoryWrapper)context.getBean(CategoryWrapper.class.getName());
             wrapper.wrap(cat, request);
             return wrapper;
         }
@@ -229,7 +226,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             }
             if (products != null) {
                 for (Product product : products) {
-                    ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
+                    ProductWrapper wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
                     wrapper.wrap(product, request);
                     out.add(wrapper);
                 }
@@ -253,7 +250,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             List<RelatedProduct> relatedProds = product.getUpSaleProducts();
             if (relatedProds != null) {
                 for (RelatedProduct prod : relatedProds) {
-                    RelatedProductWrapper wrapper = (RelatedProductWrapper)entityConfiguration.createEntityInstance(RelatedProductWrapper.class.getName());
+                    RelatedProductWrapper wrapper = (RelatedProductWrapper)context.getBean(RelatedProductWrapper.class.getName());
                     wrapper.wrap(prod,request);
                     out.add(wrapper);
                 }
@@ -277,7 +274,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             List<RelatedProduct> xSellProds = product.getCrossSaleProducts();
             if (xSellProds != null) {
                 for (RelatedProduct prod : xSellProds) {
-                    RelatedProductWrapper wrapper = (RelatedProductWrapper)entityConfiguration.createEntityInstance(RelatedProductWrapper.class.getName());
+                    RelatedProductWrapper wrapper = (RelatedProductWrapper)context.getBean(RelatedProductWrapper.class.getName());
                     wrapper.wrap(prod, request);
                     out.add(wrapper);
                 }
@@ -296,7 +293,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             ArrayList<ProductAttributeWrapper> out = new ArrayList<ProductAttributeWrapper>();
             if (product.getProductAttributes() != null) {
                 for (ProductAttribute attribute : product.getProductAttributes()) {
-                    ProductAttributeWrapper wrapper = (ProductAttributeWrapper)entityConfiguration.createEntityInstance(ProductAttributeWrapper.class.getName());
+                    ProductAttributeWrapper wrapper = (ProductAttributeWrapper)context.getBean(ProductAttributeWrapper.class.getName());
                     wrapper.wrap(attribute, request);
                     out.add(wrapper);
                 }
@@ -315,7 +312,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             ArrayList<SkuAttributeWrapper> out = new ArrayList<SkuAttributeWrapper>();
             if (sku.getSkuAttributes() != null) {
                 for (SkuAttribute attribute : sku.getSkuAttributes()) {
-                    SkuAttributeWrapper wrapper = (SkuAttributeWrapper)entityConfiguration.createEntityInstance(SkuAttributeWrapper.class.getName());
+                    SkuAttributeWrapper wrapper = (SkuAttributeWrapper)context.getBean(SkuAttributeWrapper.class.getName());
                     wrapper.wrap(attribute, request);
                     out.add(wrapper);
                 }
@@ -334,7 +331,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             List<MediaWrapper> medias = new ArrayList<MediaWrapper>();
             if (sku.getSkuMedia() != null && ! sku.getSkuMedia().isEmpty()) {
                 for (Media media : sku.getSkuMedia().values()) {
-                    MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                    MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                     wrapper.wrap(media, request);
                     if (wrapper.isAllowOverrideUrl()){
                         wrapper.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
@@ -353,7 +350,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
                                   @PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
-            SkuWrapper wrapper = (SkuWrapper)entityConfiguration.createEntityInstance(SkuWrapper.class.getName());
+            SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
             wrapper.wrap(sku, request);
             return wrapper;
         }
@@ -370,7 +367,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             Map<String, Media> media = product.getProductMedia();
             if (media != null) {
                 for (Media med : media.values()) {
-                    MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                    MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                     wrapper.wrap(med, request);
                     if (wrapper.isAllowOverrideUrl()){
                         wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
@@ -392,7 +389,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
             Map<String, Media> media = category.getCategoryMedia();
             for (Media med : media.values()) {
-                MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
+                MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                 wrapper.wrap(med, request);
                 out.add(wrapper);
             }
@@ -407,7 +404,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
                                                             @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
-            CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
+            CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
             wrapper.wrap(product.getAllParentCategories(), request);
             return wrapper;
         }

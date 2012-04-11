@@ -36,7 +36,7 @@ public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Ca
 
     public void wrap(List<Category> cats, HttpServletRequest request) {
         for (Category category : cats) {
-            CategoryWrapper wrapper = (CategoryWrapper) getEntityConfiguration().createEntityInstance(CategoryWrapper.class.getName());
+            CategoryWrapper wrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
             wrapper.wrap(category, request);
             categories.add(wrapper);
         }
