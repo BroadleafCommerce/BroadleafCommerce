@@ -22,6 +22,9 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.wrapper.*;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.wrapper.MediaWrapper;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +52,7 @@ import java.util.Map;
 @Path("/catalog/")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CatalogEndpoint {
+public class CatalogEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCatalogService")
     private CatalogService catalogService;
@@ -57,7 +60,10 @@ public class CatalogEndpoint {
     @Resource(name="blEntityConfiguration")
     private EntityConfiguration entityConfiguration;
 
-    @Resource(name="blStaticAssetService")
+    private ApplicationContext context;
+
+    //We don't inject this here because of a few dependency issues. Instead, we look this up dynamically
+    //using the ApplicationContext
     private StaticAssetService staticAssetService;
 
     /**
@@ -378,5 +384,16 @@ public class CatalogEndpoint {
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
+
+    private StaticAssetService getStaticAssetService() {
+        if (staticAssetService == null) {
+            staticAssetService = (StaticAssetService)this.context.getBean("blStaticAssetService");
+        }
+        return staticAssetService;
+    }
 }
 

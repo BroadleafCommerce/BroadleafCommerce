@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.CartService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +39,8 @@ import javax.ws.rs.core.MediaType;
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class OrderHistoryEndpoint {
 
-    @Resource(name="blOrderService")
-    protected OrderService orderService;
+    @Resource(name="blCartService")
+    protected CartService cartService;
 
 
 }
