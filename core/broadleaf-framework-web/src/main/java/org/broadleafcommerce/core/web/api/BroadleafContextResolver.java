@@ -17,6 +17,8 @@ package org.broadleafcommerce.core.web.api;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Produces;
@@ -30,6 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
@@ -48,54 +52,42 @@ import org.springframework.stereotype.Component;
 @Component
 @Provider
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class BroadleafContextResolver implements ContextResolver<JAXBContext>, InitializingBean {
+public class BroadleafContextResolver implements ContextResolver<JAXBContext>, InitializingBean, ApplicationContextAware {
 	
-	@Resource(name="blEntityConfiguration")
-	protected EntityConfiguration ec;
-	
+    protected ApplicationContext applicationContext;
+    
 	protected static JAXBContext context;
 	
 	/**
 	 * getContext can pass in an implementation. Store the implementation details from the EntityConfiguration
 	 */
-	protected HashSet<String> entityImplementationNames = new HashSet<String>();
+	protected Map<String, Object> apiWrappers;
 	
 	@Override
 	public JAXBContext getContext(Class<?> type) {
-		if (entityImplementationNames.contains(type.getName())) {
+		if (apiWrappers.containsKey(type.getName())) {
 			return context;
 		}
-		
-		try {
-			if (ec.lookupEntityClass(type.getName()) != null){
-				return context;
-			}
-			
-			return null;
-			
-		} catch (BeansException e) {
-			//bean not found in the context
-			return null;
-		}
+		return null;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		String[] entityBeans = ec.getEntityBeanNames();
-		Class<?>[] classes = new Class<?>[entityBeans.length];
-		for (int i = 0; i < classes.length; i++) {
-			classes[i] = ec.lookupEntityClass(entityBeans[i]);
+		apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
+        Set<String> keySet = apiWrappers.keySet();
+        
+		Class<?>[] classes = new Class<?>[keySet.size()];
+        int count = 0;
+		for (String key : keySet) {
+			classes[count] = apiWrappers.get(key).getClass();
+            count++;
 		}
-		
-		//Go through the declared beans and only add the ones declared via JAXB annotations to the JAXB context
-		ArrayList<Class<?>> xmlClasses = new ArrayList<Class<?>>();
-		for (Class<?> clazz : classes) {
-			if (clazz.isAnnotationPresent(XmlRootElement.class) || clazz.isAnnotationPresent(XmlType.class)) {
-				xmlClasses.add(clazz);
-				entityImplementationNames.add(clazz.getName());
-			}
-		}
-        context = JAXBContext.newInstance(xmlClasses.toArray(new Class<?>[xmlClasses.size()]));
+
+        context = JAXBContext.newInstance(classes);
 	}
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
