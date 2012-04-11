@@ -14,44 +14,36 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.common.api.BaseWrapper;
-import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.ProductWeight;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
 
 /**
- * To change this template use File | Settings | File Templates.
+ * This is a JAXB wrapper around ProductWeight
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement(name = "productAttribute")
+@XmlRootElement(name = "productWeight")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ProductAttributeWrapper extends BaseWrapper implements APIWrapper<ProductAttribute>{
+public class ProductWeightWrapper implements APIWrapper<ProductWeight>{
 
     @XmlElement
-    protected Long id;
+    protected BigDecimal weight;
 
     @XmlElement
-    protected Long productId;
-
-    @XmlElement
-    protected String attributeName;
-
-    @XmlElement
-    protected String attributeValue;
+    protected String unitOfMeasure;
 
     @Override
-    public void wrap(ProductAttribute model) {
-        this.id = model.getId();
-        this.productId = model.getProduct().getId();
-        this.attributeName = model.getName();
-        this.attributeValue = model.getValue();
+    public void wrap(ProductWeight model, HttpServletRequest request) {
+        this.weight = model.getWeight();
+        this.unitOfMeasure = model.getWeightUnitOfMeasure().getType();
     }
 }

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
-
-import org.broadleafcommerce.common.api.APIWrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.catalog.domain.Category;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.*;
 
 /**
@@ -36,10 +34,10 @@ public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Ca
     @XmlElement(name = "category")
     protected List<CategoryWrapper> categories = new ArrayList<CategoryWrapper>();
 
-    public void wrap(List<Category> cats) {
+    public void wrap(List<Category> cats, HttpServletRequest request) {
         for (Category category : cats) {
             CategoryWrapper wrapper = (CategoryWrapper) getEntityConfiguration().createEntityInstance(CategoryWrapper.class.getName());
-            wrapper.wrap(category);
+            wrapper.wrap(category, request);
             categories.add(wrapper);
         }
     }

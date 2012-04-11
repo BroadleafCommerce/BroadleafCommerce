@@ -14,36 +14,45 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.core.catalog.domain.ProductWeight;
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
 
 /**
- * This is a JAXB wrapper around ProductWeight
- * <p/>
+ * This is a JAXB wrapper for RelatedProducts
+ *
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement(name = "productWeight")
+@XmlRootElement(name = "relatedProduct")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ProductWeightWrapper implements APIWrapper<ProductWeight>{
+public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<RelatedProduct> {
 
     @XmlElement
-    protected BigDecimal weight;
+    protected Long id;
+    
+    @XmlElement
+    protected Long sequence;
+    
+    @XmlElement
+    protected String promotionalMessage;
 
     @XmlElement
-    protected String unitOfMeasure;
-
+    protected ProductWrapper product;
+    
     @Override
-    public void wrap(ProductWeight model) {
-        this.weight = model.getWeight();
-        this.unitOfMeasure = model.getWeightUnitOfMeasure().getType();
+    public void wrap(RelatedProduct model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.sequence = model.getSequence();
+        this.promotionalMessage = model.getPromotionMessage();
+
+        product = (ProductWrapper)getEntityConfiguration().createEntityInstance(ProductWrapper.class.getName());
+        product.wrap(model.getRelatedProduct(), request);
     }
 }

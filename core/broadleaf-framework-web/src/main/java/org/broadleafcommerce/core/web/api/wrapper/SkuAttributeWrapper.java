@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,7 +47,7 @@ public class SkuAttributeWrapper extends BaseWrapper implements APIWrapper<SkuAt
     protected String attributeValue;
 
     @Override
-    public void wrap(SkuAttribute model) {
+    public void wrap(SkuAttribute model, HttpServletRequest request) {
         this.id = model.getId();
         this.skuId = model.getSku().getId();
         this.attributeName = model.getName();

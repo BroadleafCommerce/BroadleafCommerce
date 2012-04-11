@@ -45,19 +45,5 @@
 	<bean id="org.broadleafcommerce.core.content.domain.Content" class="org.broadleafcommerce.core.content.domain.ContentImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.core.content.domain.ContentDetails" class="org.broadleafcommerce.core.content.domain.ContentDetailsImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.core.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
-	
-    <!-- The following beans are for API Wrappers.  They must be prototype scoped.  They are not JPA entities. However, they 
-               are JAXB-annotated classes.  Override for extensibility.  Unlike the entities above that are keyed by their interface name,
-               these are keyed by their base implementation name. JAXB doesn't like interfaces too much, so we use a base wrapper class that can be extended and overwritten here. -->
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.CategoryWrapper" class="org.broadleafcommerce.core.catalog.wrapper.CategoryWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.CategoriesWrapper" class="org.broadleafcommerce.core.catalog.wrapper.CategoriesWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.ProductWrapper" class="org.broadleafcommerce.core.catalog.wrapper.ProductWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.RelatedProductWrapper" class="org.broadleafcommerce.core.catalog.wrapper.RelatedProductWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.SkuWrapper" class="org.broadleafcommerce.core.catalog.wrapper.SkuWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.SkuAttributeWrapper" class="org.broadleafcommerce.core.catalog.wrapper.SkuAttributeWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.ProductAttributeWrapper" class="org.broadleafcommerce.core.catalog.wrapper.ProductAttributeWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.ProductWeightWrapper" class="org.broadleafcommerce.core.catalog.wrapper.ProductWeightWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.catalog.wrapper.ProductDimensionWrapper" class="org.broadleafcommerce.core.catalog.wrapper.ProductDimensionWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.media.wrapper.MediaWrapper" class="org.broadleafcommerce.core.media.wrapper.MediaWrapper" scope="prototype"/>
-    
+
 </beans>

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.*;
 import java.util.Date;
 
@@ -56,7 +55,7 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     protected Money salePrice;
     
     @Override
-    public void wrap(Sku model) {
+    public void wrap(Sku model, HttpServletRequest request) {
         this.id = model.getId();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();

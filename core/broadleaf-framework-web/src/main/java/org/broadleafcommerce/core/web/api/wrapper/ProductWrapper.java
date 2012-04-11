@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.*;
 import java.util.Date;
 
@@ -64,7 +63,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     protected ProductDimensionWrapper productDimension;
 
     @Override
-    public void wrap(Product model) {
+    public void wrap(Product model, HttpServletRequest request) {
         this.id = model.getId();
         this.name = model.getName();
         this.description = model.getDescription();
@@ -75,9 +74,9 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.promoMessage = model.getPromoMessage();
 
         productWeight = (ProductWeightWrapper)getEntityConfiguration().createEntityInstance(ProductWeightWrapper.class.getName());
-        productWeight.wrap(model.getWeight());
+        productWeight.wrap(model.getWeight(), request);
 
         productDimension = (ProductDimensionWrapper)getEntityConfiguration().createEntityInstance(ProductDimensionWrapper.class.getName());
-        productDimension.wrap(model.getDimension());
+        productDimension.wrap(model.getDimension(), request);
     }
 }

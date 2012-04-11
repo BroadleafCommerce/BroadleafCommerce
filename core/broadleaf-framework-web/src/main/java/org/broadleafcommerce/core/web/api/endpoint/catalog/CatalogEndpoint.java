@@ -19,9 +19,9 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.catalog.wrapper.*;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.wrapper.MediaWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.*;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -74,11 +74,11 @@ public class CatalogEndpoint implements ApplicationContextAware {
      */
     @GET
     @Path("product/{id}")
-    public ProductWrapper findProductById(@PathParam("id") Long id) {
+    public ProductWrapper findProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
-            wrapper.wrap(product);
+            wrapper.wrap(product, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -95,7 +95,10 @@ public class CatalogEndpoint implements ApplicationContextAware {
      */
     @GET
     @Path("products")
-    public List<ProductWrapper> findProductsByName(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+    public List<ProductWrapper> findProductsByName(@Context HttpServletRequest request,
+                                                   @QueryParam("name") String name,
+                                                   @QueryParam("limit") @DefaultValue("20") int limit,
+                                                   @QueryParam("offset") @DefaultValue("1") int offset) {
         List<Product> result;
         if (name == null) {
             result = catalogService.findAllProducts(limit, offset);
@@ -107,7 +110,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         if (result != null) {
             for (Product product : result) {
                 ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
-                wrapper.wrap(product);
+                wrapper.wrap(product, request);
                 out.add(wrapper);
             }
         }
@@ -122,7 +125,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
      */
     @GET
     @Path("product/{id}/skus")
-    public List<SkuWrapper> findSkusByProductById(@PathParam("id") Long id) {
+    public List<SkuWrapper> findSkusByProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<Sku> skus = product.getAllSkus();
@@ -130,7 +133,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (skus != null) {
                 for (Sku sku : skus) {
                     SkuWrapper wrapper = (SkuWrapper)entityConfiguration.createEntityInstance(SkuWrapper.class.getName());
-                    wrapper.wrap(sku);
+                    wrapper.wrap(sku, request);
                     out.add(wrapper);
                 }
                 return out;
@@ -141,7 +144,10 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("categories")
-    public CategoriesWrapper findAllCategories(@QueryParam("name") String name, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+    public CategoriesWrapper findAllCategories(@Context HttpServletRequest request,
+                                               @QueryParam("name") String name,
+                                               @QueryParam("limit") @DefaultValue("20") int limit,
+                                               @QueryParam("offset") @DefaultValue("1") int offset) {
         List<Category> categories;
         if (name != null) {
             categories = catalogService.findCategoriesByName(name, limit, offset);
@@ -149,13 +155,17 @@ public class CatalogEndpoint implements ApplicationContextAware {
             categories = catalogService.findAllCategories(limit, offset);
         }
         CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
-        wrapper.wrap(categories);
+        wrapper.wrap(categories, request);
         return wrapper;
     }
 
     @GET
     @Path("category/{id}/categories")
-    public CategoriesWrapper findSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset, @QueryParam("active") @DefaultValue("false") boolean active) {
+    public CategoriesWrapper findSubCategories(@Context HttpServletRequest request,
+                                               @PathParam("id") Long id,
+                                               @QueryParam("limit") @DefaultValue("20") int limit,
+                                               @QueryParam("offset") @DefaultValue("1") int offset,
+                                               @QueryParam("active") @DefaultValue("false") boolean active) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories;
@@ -165,7 +175,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             } else {
                 categories = catalogService.findAllSubCategories(category, limit, offset);
             }
-            wrapper.wrap(categories);
+            wrapper.wrap(categories, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -174,12 +184,15 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("category/{id}/activeSubcategories")
-    public CategoriesWrapper findActiveSubCategories(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+    public CategoriesWrapper findActiveSubCategories(@Context HttpServletRequest request,
+                                                     @PathParam("id") Long id,
+                                                     @QueryParam("limit") @DefaultValue("20") int limit,
+                                                     @QueryParam("offset") @DefaultValue("1") int offset) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
             CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
-            wrapper.wrap(categories);
+            wrapper.wrap(categories, request);
             return wrapper;
         }
 
@@ -188,11 +201,11 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("category/{id}")
-    public CategoryWrapper findCategoryById(@PathParam("id") Long id) {
+    public CategoryWrapper findCategoryById(@Context HttpServletRequest request, @PathParam("id") Long id) {
         Category cat = catalogService.findCategoryById(id);
         if (cat != null) {
             CategoryWrapper wrapper = (CategoryWrapper)entityConfiguration.createEntityInstance(CategoryWrapper.class.getName());
-            wrapper.wrap(cat);
+            wrapper.wrap(cat, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -200,7 +213,11 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("category/{id}/products")
-    public List<ProductWrapper> findProductsForCategory(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset, @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
+    public List<ProductWrapper> findProductsForCategory(@Context HttpServletRequest request,
+                                                        @PathParam("id") Long id,
+                                                        @QueryParam("limit") @DefaultValue("20") int limit,
+                                                        @QueryParam("offset") @DefaultValue("1") int offset,
+                                                        @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Product> products;
@@ -213,7 +230,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (products != null) {
                 for (Product product : products) {
                     ProductWrapper wrapper = (ProductWrapper)entityConfiguration.createEntityInstance(ProductWrapper.class.getName());
-                    wrapper.wrap(product);
+                    wrapper.wrap(product, request);
                     out.add(wrapper);
                 }
             }
@@ -224,7 +241,10 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("product/{id}/related-products/upsale")
-    public List<RelatedProductWrapper> findUpSaleProductsByProduct(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+    public List<RelatedProductWrapper> findUpSaleProductsByProduct(@Context HttpServletRequest request,
+                                                                   @PathParam("id") Long id,
+                                                                   @QueryParam("limit") @DefaultValue("20") int limit,
+                                                                   @QueryParam("offset") @DefaultValue("1") int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
@@ -234,7 +254,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (relatedProds != null) {
                 for (RelatedProduct prod : relatedProds) {
                     RelatedProductWrapper wrapper = (RelatedProductWrapper)entityConfiguration.createEntityInstance(RelatedProductWrapper.class.getName());
-                    wrapper.wrap(prod);
+                    wrapper.wrap(prod,request);
                     out.add(wrapper);
                 }
             }
@@ -245,7 +265,10 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("product/{id}/related-products/crosssale")
-    public List<RelatedProductWrapper> findCrossSaleProductsByProduct(@PathParam("id") Long id, @QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("1") int offset) {
+    public List<RelatedProductWrapper> findCrossSaleProductsByProduct(@Context HttpServletRequest request,
+                                                                      @PathParam("id") Long id,
+                                                                      @QueryParam("limit") @DefaultValue("20") int limit,
+                                                                      @QueryParam("offset") @DefaultValue("1") int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
@@ -255,7 +278,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (xSellProds != null) {
                 for (RelatedProduct prod : xSellProds) {
                     RelatedProductWrapper wrapper = (RelatedProductWrapper)entityConfiguration.createEntityInstance(RelatedProductWrapper.class.getName());
-                    wrapper.wrap(prod);
+                    wrapper.wrap(prod, request);
                     out.add(wrapper);
                 }
             }
@@ -266,14 +289,15 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("product/{id}/product-attributes")
-    public List<ProductAttributeWrapper> findProductAttributesForProduct(@PathParam("id") Long id) {
+    public List<ProductAttributeWrapper> findProductAttributesForProduct(@Context HttpServletRequest request,
+                                                                         @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ArrayList<ProductAttributeWrapper> out = new ArrayList<ProductAttributeWrapper>();
             if (product.getProductAttributes() != null) {
                 for (ProductAttribute attribute : product.getProductAttributes()) {
                     ProductAttributeWrapper wrapper = (ProductAttributeWrapper)entityConfiguration.createEntityInstance(ProductAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute);
+                    wrapper.wrap(attribute, request);
                     out.add(wrapper);
                 }
             }
@@ -284,14 +308,15 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("sku/{id}/sku-attributes")
-    public List<SkuAttributeWrapper> findSkuAttributesForSku(@PathParam("id") Long id) {
+    public List<SkuAttributeWrapper> findSkuAttributesForSku(@Context HttpServletRequest request,
+                                                             @PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             ArrayList<SkuAttributeWrapper> out = new ArrayList<SkuAttributeWrapper>();
             if (sku.getSkuAttributes() != null) {
                 for (SkuAttribute attribute : sku.getSkuAttributes()) {
                     SkuAttributeWrapper wrapper = (SkuAttributeWrapper)entityConfiguration.createEntityInstance(SkuAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute);
+                    wrapper.wrap(attribute, request);
                     out.add(wrapper);
                 }
             }
@@ -302,14 +327,15 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("sku/{id}/media")
-    public List<MediaWrapper> findMediaForSku(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForSku(@Context HttpServletRequest request,
+                                              @PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             List<MediaWrapper> medias = new ArrayList<MediaWrapper>();
             if (sku.getSkuMedia() != null && ! sku.getSkuMedia().isEmpty()) {
                 for (Media media : sku.getSkuMedia().values()) {
                     MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                    wrapper.wrap(media);
+                    wrapper.wrap(media, request);
                     if (wrapper.isAllowOverrideUrl()){
                         wrapper.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                     }
@@ -323,11 +349,12 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("sku/{id}")
-    public SkuWrapper findSkuById(@PathParam("id") Long id) {
+    public SkuWrapper findSkuById(@Context HttpServletRequest request,
+                                  @PathParam("id") Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             SkuWrapper wrapper = (SkuWrapper)entityConfiguration.createEntityInstance(SkuWrapper.class.getName());
-            wrapper.wrap(sku);
+            wrapper.wrap(sku, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -335,7 +362,8 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("product/{id}/media")
-    public List<MediaWrapper> findMediaForProduct(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForProduct(@Context HttpServletRequest request,
+                                                  @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
@@ -343,7 +371,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (media != null) {
                 for (Media med : media.values()) {
                     MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                    wrapper.wrap(med);
+                    wrapper.wrap(med, request);
                     if (wrapper.isAllowOverrideUrl()){
                         wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                     }
@@ -357,14 +385,15 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("category/{id}/media")
-    public List<MediaWrapper> findMediaForCategory(@PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForCategory(@Context HttpServletRequest request,
+                                                   @PathParam("id") Long id) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
             Map<String, Media> media = category.getCategoryMedia();
             for (Media med : media.values()) {
                 MediaWrapper wrapper = (MediaWrapper)entityConfiguration.createEntityInstance(MediaWrapper.class.getName());
-                wrapper.wrap(med);
+                wrapper.wrap(med, request);
                 out.add(wrapper);
             }
             return out;
@@ -374,11 +403,12 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("product/{id}/categories")
-    public CategoriesWrapper findParentCategoriesForProduct(@PathParam("id") Long id) {
+    public CategoriesWrapper findParentCategoriesForProduct(@Context HttpServletRequest request,
+                                                            @PathParam("id") Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             CategoriesWrapper wrapper = (CategoriesWrapper)entityConfiguration.createEntityInstance(CategoriesWrapper.class.getName());
-            wrapper.wrap(product.getAllParentCategories());
+            wrapper.wrap(product.getAllParentCategories(), request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);

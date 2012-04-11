@@ -15,12 +15,11 @@
  */
 
 
-package org.broadleafcommerce.core.media.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.media.domain.Media;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.*;
 
 /**
@@ -48,7 +47,7 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
     @XmlElement
     protected String label;
     
-    public void wrap(Media media) {
+    public void wrap(Media media, HttpServletRequest request) {
         this.id = media.getId();
         this.name = media.getName();
         this.label = media.getLabel();

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.api;
+package org.broadleafcommerce.core.web.api.wrapper;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This interface is the super interface for all classes that will provide a JAXB wrapper
@@ -26,5 +28,5 @@ package org.broadleafcommerce.common.api;
  * @param <T>
  */
 public interface APIWrapper<T> {
-    public void wrap(T model);
+    public void wrap(T model, HttpServletRequest request);
 }

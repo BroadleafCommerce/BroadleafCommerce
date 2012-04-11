@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.api;
+package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.beans.BeansException;

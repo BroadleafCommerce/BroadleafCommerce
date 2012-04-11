@@ -14,46 +14,43 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.APIWrapper;
-import org.broadleafcommerce.common.api.BaseWrapper;
-import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * This is a JAXB wrapper for RelatedProducts
- *
+ * To change this template use File | Settings | File Templates.
+ * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement(name = "relatedProduct")
+@XmlRootElement(name = "productAttribute")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<RelatedProduct> {
+public class ProductAttributeWrapper extends BaseWrapper implements APIWrapper<ProductAttribute>{
 
     @XmlElement
     protected Long id;
-    
-    @XmlElement
-    protected Long sequence;
-    
-    @XmlElement
-    protected String promotionalMessage;
 
     @XmlElement
-    protected ProductWrapper product;
-    
+    protected Long productId;
+
+    @XmlElement
+    protected String attributeName;
+
+    @XmlElement
+    protected String attributeValue;
+
     @Override
-    public void wrap(RelatedProduct model) {
+    public void wrap(ProductAttribute model, HttpServletRequest request) {
         this.id = model.getId();
-        this.sequence = model.getSequence();
-        this.promotionalMessage = model.getPromotionMessage();
-
-        product = (ProductWrapper)getEntityConfiguration().createEntityInstance(ProductWrapper.class.getName());
-        product.wrap(model.getRelatedProduct());
+        this.productId = model.getProduct().getId();
+        this.attributeName = model.getName();
+        this.attributeValue = model.getValue();
     }
 }

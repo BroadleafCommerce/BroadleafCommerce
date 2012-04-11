@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.catalog.wrapper;
+package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.api.BaseWrapper;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.common.api.APIWrapper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.*;
 import java.util.*;
 
@@ -54,7 +53,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
     @XmlElement
     protected Date activeEndDate;
 
-    public void wrap(Category category) {
+    public void wrap(Category category, HttpServletRequest request) {
         this.id = category.getId();
         this.name = category.getName();
         this.description = category.getDescription();
