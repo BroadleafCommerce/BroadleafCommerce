@@ -71,7 +71,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     	try {
 			fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Unsupported encoding to decode fullUrl");
+			throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
 		}
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
     }
