@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.cms.file.service;
 
+import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
@@ -32,11 +39,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -62,6 +64,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Override
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox) {
+    	try {
+			fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
+		}
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl, targetSandBox);
     }
 
