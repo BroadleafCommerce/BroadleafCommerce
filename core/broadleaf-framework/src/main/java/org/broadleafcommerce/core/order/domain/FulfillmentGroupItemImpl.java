@@ -145,23 +145,23 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 		setOrderItem(null);
 	}
 
-	@Override
-	public List<TaxDetail> getTaxes() {
-		return this.taxes;
-	}
+    @Override
+    public List<TaxDetail> getTaxes() {
+        return this.taxes;
+    }
 
-	@Override
-	public void setTaxes(List<TaxDetail> taxes) {
-		this.taxes = taxes;
-	}
-	
+    @Override
+    public void setTaxes(List<TaxDetail> taxes) {
+        this.taxes = taxes;
+    }
+    
     public Money getTotalTax() {
-		return totalTax == null ? null : new Money(totalTax);
-	}
+        return totalTax == null ? null : new Money(totalTax);
+    }
 
-	public void setTotalTax(Money totalTax) {
-		this.totalTax = Money.toAmount(totalTax);
-	}
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = Money.toAmount(totalTax);
+    }
 
     @Override
     public boolean equals(Object obj) {

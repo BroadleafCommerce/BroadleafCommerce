@@ -123,20 +123,20 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     }
     
     public List<TaxDetail> getTaxes() {
-		return taxes;
-	}
+        return taxes;
+    }
 
-	public void setTaxes(List<TaxDetail> taxes) {
-		this.taxes = taxes;
-	}
-	
+    public void setTaxes(List<TaxDetail> taxes) {
+        this.taxes = taxes;
+    }
+    
     public Money getTotalTax() {
-		return totalTax == null ? null : new Money(totalTax);
-	}
+        return totalTax == null ? null : new Money(totalTax);
+    }
 
-	public void setTotalTax(Money totalTax) { 
-		this.totalTax = Money.toAmount(totalTax);
-	}
+    public void setTotalTax(Money totalTax) { 
+        this.totalTax = Money.toAmount(totalTax);
+    }
 
 	@Override
     public int hashCode() {

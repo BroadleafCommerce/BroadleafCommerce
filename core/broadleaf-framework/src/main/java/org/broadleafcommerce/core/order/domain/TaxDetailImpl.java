@@ -40,10 +40,10 @@ import org.hibernate.annotations.Parameter;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "baseTaxDetail")
 public class TaxDetailImpl implements TaxDetail {
-	
-	private static final long serialVersionUID = -4036994446393527252L;
+    
+    private static final long serialVersionUID = -4036994446393527252L;
 
-	@Id
+    @Id
     @GeneratedValue(generator = "TaxDetailId")
     @GenericGenerator(
         name="TaxDetailId",
@@ -73,53 +73,53 @@ public class TaxDetailImpl implements TaxDetail {
     protected BigDecimal rate;
     
     public TaxDetailImpl() {
-    	
+        
     }
     
     public TaxDetailImpl(TaxType type, Money amount, BigDecimal rate) {
-    	this.type = type;
-    	this.amount = amount;
-    	this.rate = rate;
+        this.type = type;
+        this.amount = amount;
+        this.rate = rate;
     }
 
     @Override
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
     @Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
-	public TaxType getType() {
-		return type;
-	}
+    public TaxType getType() {
+        return type;
+    }
 
     @Override
-	public void setType(TaxType type) {
-		this.type = type;
-	}
+    public void setType(TaxType type) {
+        this.type = type;
+    }
 
     @Override
-	public Money getAmount() {
-		return amount;
-	}
+    public Money getAmount() {
+        return amount;
+    }
 
     @Override
-	public void setAmount(Money amount) {
-		this.amount = amount;
-	}
+    public void setAmount(Money amount) {
+        this.amount = amount;
+    }
 
     @Override
-	public BigDecimal getRate() {
-		return rate;
-	}
+    public BigDecimal getRate() {
+        return rate;
+    }
 
     @Override
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
     
 }

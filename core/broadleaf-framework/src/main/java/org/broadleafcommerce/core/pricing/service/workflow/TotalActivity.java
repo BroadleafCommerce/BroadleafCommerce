@@ -48,7 +48,7 @@ public class TotalActivity extends BaseActivity {
         total = total.add(order.getTotalShipping());
         // There may not be any taxes on the order
         if (order.getTotalTax() != null) {
-        	total = total.add(order.getTotalTax());
+            total = total.add(order.getTotalTax());
         }
 
         Money fees = new Money(BigDecimal.ZERO);
@@ -77,57 +77,57 @@ public class TotalActivity extends BaseActivity {
     protected void setTaxSums(Order order) {
         Money orderTotalTax = new Money(BigDecimal.ZERO);
         
-    	for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-	        Money fgTotalFgTax = new Money(BigDecimal.ZERO);
-	        Money fgTotalItemTax = new Money(BigDecimal.ZERO);
-	        Money fgTotalFeeTax = new Money(BigDecimal.ZERO);
-	        
-	        // Add in all FG specific taxes (such as shipping tax)
-	        if (fg.getTaxes() != null) {
-		        for (TaxDetail tax : fg.getTaxes()) {
-		        	fgTotalFgTax = fgTotalFgTax.add(tax.getAmount());
-		        }
-	        }
-	        
-	    	for (FulfillmentGroupItem item : fg.getFulfillmentGroupItems()) {
-	    		Money itemTotalTax = new Money(BigDecimal.ZERO);
-	    		
-	    		// Add in all taxes for this item
-	    		if (item.getTaxes() != null) {
-		    		for (TaxDetail tax : item.getTaxes()) {
-		    			itemTotalTax = itemTotalTax.add(tax.getAmount());
-		    		}
-	    		}
-	    		
-	    		item.setTotalTax(itemTotalTax);
-	    		fgTotalItemTax = fgTotalItemTax.add(itemTotalTax);
-	    	}
-	    	
-	    	for (FulfillmentGroupFee fee : fg.getFulfillmentGroupFees()) {
-	    		Money feeTotalTax = new Money(BigDecimal.ZERO);
-	    		
-	    		// Add in all taxes for this fee
-	    		if (fee.getTaxes() != null) {
-		    		for (TaxDetail tax : fee.getTaxes()) {
-		    			feeTotalTax = feeTotalTax.add(tax.getAmount());
-		    		}
-	    		}
-	    		
-	    		fee.setTotalTax(feeTotalTax);
-	    		fgTotalFeeTax = fgTotalFeeTax.add(feeTotalTax);
-	    	}
-	    	
-	    	Money fgTotalTax = new Money(BigDecimal.ZERO).add(fgTotalFgTax).add(fgTotalItemTax).add(fgTotalFeeTax);
-	    	
-	    	// Set the fulfillment group tax sums
-	    	fg.setTotalFulfillmentGroupTax(fgTotalFgTax);
-	    	fg.setTotalItemTax(fgTotalItemTax);
-	    	fg.setTotalFeeTax(fgTotalFeeTax);
-	    	fg.setTotalTax(fgTotalTax);
-	    	
-	    	orderTotalTax = orderTotalTax.add(fgTotalTax);
-    	}
-    	
-    	order.setTotalTax(orderTotalTax);
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+            Money fgTotalFgTax = new Money(BigDecimal.ZERO);
+            Money fgTotalItemTax = new Money(BigDecimal.ZERO);
+            Money fgTotalFeeTax = new Money(BigDecimal.ZERO);
+            
+            // Add in all FG specific taxes (such as shipping tax)
+            if (fg.getTaxes() != null) {
+                for (TaxDetail tax : fg.getTaxes()) {
+                    fgTotalFgTax = fgTotalFgTax.add(tax.getAmount());
+                }
+            }
+            
+            for (FulfillmentGroupItem item : fg.getFulfillmentGroupItems()) {
+                Money itemTotalTax = new Money(BigDecimal.ZERO);
+                
+                // Add in all taxes for this item
+                if (item.getTaxes() != null) {
+                    for (TaxDetail tax : item.getTaxes()) {
+                        itemTotalTax = itemTotalTax.add(tax.getAmount());
+                    }
+                }
+                
+                item.setTotalTax(itemTotalTax);
+                fgTotalItemTax = fgTotalItemTax.add(itemTotalTax);
+            }
+            
+            for (FulfillmentGroupFee fee : fg.getFulfillmentGroupFees()) {
+                Money feeTotalTax = new Money(BigDecimal.ZERO);
+                
+                // Add in all taxes for this fee
+                if (fee.getTaxes() != null) {
+                    for (TaxDetail tax : fee.getTaxes()) {
+                        feeTotalTax = feeTotalTax.add(tax.getAmount());
+                    }
+                }
+                
+                fee.setTotalTax(feeTotalTax);
+                fgTotalFeeTax = fgTotalFeeTax.add(feeTotalTax);
+            }
+            
+            Money fgTotalTax = new Money(BigDecimal.ZERO).add(fgTotalFgTax).add(fgTotalItemTax).add(fgTotalFeeTax);
+            
+            // Set the fulfillment group tax sums
+            fg.setTotalFulfillmentGroupTax(fgTotalFgTax);
+            fg.setTotalItemTax(fgTotalItemTax);
+            fg.setTotalFeeTax(fgTotalFeeTax);
+            fg.setTotalTax(fgTotalTax);
+            
+            orderTotalTax = orderTotalTax.add(fgTotalTax);
+        }
+        
+        order.setTotalTax(orderTotalTax);
     }
 }

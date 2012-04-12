@@ -103,7 +103,7 @@ public interface FulfillmentGroup extends Serializable {
      * 
      * @param taxes the list of taxes on this fulfillment group
      */
-	public void setTaxes(List<TaxDetail> taxes);
+    public void setTaxes(List<TaxDetail> taxes);
 
     /**
      * Gets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment 

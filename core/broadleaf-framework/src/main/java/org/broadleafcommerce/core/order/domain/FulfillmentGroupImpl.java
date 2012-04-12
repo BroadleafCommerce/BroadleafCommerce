@@ -350,14 +350,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
     
     public List<TaxDetail> getTaxes() {
-		return taxes;
-	}
+        return taxes;
+    }
 
-	public void setTaxes(List<TaxDetail> taxes) {
-		this.taxes = taxes;
-	}
+    public void setTaxes(List<TaxDetail> taxes) {
+        this.taxes = taxes;
+    }
 
-	public Money getTotalTax() {
+    public Money getTotalTax() {
         return totalTax == null ? null : new Money(totalTax);
     }
 

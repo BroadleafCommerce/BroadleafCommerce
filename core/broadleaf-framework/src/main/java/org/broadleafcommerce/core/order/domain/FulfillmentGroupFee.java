@@ -55,8 +55,8 @@ public interface FulfillmentGroupFee extends Serializable {
      * 
      * @param taxes the list of taxes on this fee
      */
-	public void setTaxes(List<TaxDetail> taxes);
-	
+    public void setTaxes(List<TaxDetail> taxes);
+    
     /**
      * Gets the total tax for this fee, which is the sum of all taxes for this fee.
      * This total is calculated in the TotalActivity stage of the pricing workflow.

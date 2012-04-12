@@ -43,22 +43,22 @@ public class SimpleTaxModule implements TaxModule {
 
     public Order calculateTaxForOrder(Order order) throws TaxException {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-        	
-        	// Set taxes on the fulfillment group items
-	    	for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-	    		List<TaxDetail> taxes = new ArrayList<TaxDetail>();
-	    		
-	    		TaxDetail tax = new TaxDetailImpl();
-	    		tax.setRate(new BigDecimal(factor));
-	    		tax.setType(TaxType.STATE);
-	    		tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
-	    		taxes.add(tax);
-	    		
-	    		fgItem.setTaxes(taxes);
-	    	}
-	
-	    	// Do not tax fulfillment group fees
-	    	// Do not tax shipping
+            
+            // Set taxes on the fulfillment group items
+            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                List<TaxDetail> taxes = new ArrayList<TaxDetail>();
+                
+                TaxDetail tax = new TaxDetailImpl();
+                tax.setRate(new BigDecimal(factor));
+                tax.setType(TaxType.STATE);
+                tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
+                taxes.add(tax);
+                
+                fgItem.setTaxes(taxes);
+            }
+    
+            // Do not tax fulfillment group fees
+            // Do not tax shipping
         }
 
         return order;
