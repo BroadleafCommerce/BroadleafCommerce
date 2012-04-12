@@ -159,7 +159,7 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity tempEntity = buildEntity(temp, request);
-        final ListGridRecord record = associatedGrid.getRecord(associatedGrid.getRecordIndex(temp));
+        final ListGridRecord record = associatedGrid.getSelectedRecord();
     	Entity entity = buildEntity(record, request);
     	for (Property property : tempEntity.getProperties()) {
     		entity.findProperty(property.getName()).setValue(property.getValue());
