@@ -15,6 +15,7 @@
 	<bean id="org.broadleafcommerce.core.order.domain.BundleOrderItem" class="org.broadleafcommerce.core.order.domain.BundleOrderItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.PersonalMessage" class="org.broadleafcommerce.core.order.domain.PersonalMessageImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.order.domain.TaxDetail" class="org.broadleafcommerce.core.order.domain.TaxDetailImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.PaymentInfo" class="org.broadleafcommerce.core.payment.domain.PaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>

@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
-
-import java.io.Serializable;
-import java.util.List;
 
 public interface FulfillmentGroup extends Serializable {
 
@@ -88,30 +88,90 @@ public interface FulfillmentGroup extends Serializable {
     public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
 
     public void removeAllAdjustments();
-
-    public Money getCityTax();
-
-    void setCityTax(Money cityTax);
-
-    public Money getCountyTax();
-
-    public void setCountyTax(Money countyTax);
-
-    public Money getStateTax();
-
-    public void setStateTax(Money stateTax);
     
-    public Money getDistrictTax();
+    /**
+     * Gets a list of TaxDetail objects, which are taxes that apply directly to this fulfillment group. 
+     * An example of a such a tax would be a shipping tax.
+     * 
+     * @return a list of taxes that apply to this fulfillment group
+     */
+    public List<TaxDetail> getTaxes();
 
-    public void setDistrictTax(Money districtTax);
+    /**
+     * Gets the list of TaxDetail objects, which are taxes that apply directly to this fulfillment group. 
+     * An example of a such a tax would be a shipping tax.
+     * 
+     * @param taxes the list of taxes on this fulfillment group
+     */
+	public void setTaxes(List<TaxDetail> taxes);
 
-    public Money getCountryTax();
-
-    public void setCountryTax(Money countryTax);
-
+    /**
+     * Gets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * group items, fees, and taxes on this fulfillment group itself (such as a shipping tax).
+     * This total is calculated in the TotalActivity stage of the pricing workflow.
+     *
+     * @return the total tax for the fulfillment group
+     */
     public Money getTotalTax();
 
+    /**
+     * Sets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * group items, fees, and taxes on this fulfillment group itself (such as a shipping tax).
+     * This total should only be set during the TotalActivity stage of the pricing workflow.
+     *
+     * @param the total tax for this fulfillment group
+     */
     public void setTotalTax(Money totalTax);
+    
+    /**
+     * Gets the total item tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * group items. This total is calculated in the TotalActivity stage of the pricing workflow.
+     *
+     * @return the total tax for this fulfillment group
+     */
+    public Money getTotalItemTax();
+
+    /**
+     * Sets the total item tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * group items. This total should only be set during the TotalActivity stage of the pricing workflow.
+     *
+     * @param the total tax for this fulfillment group
+     */
+    public void setTotalItemTax(Money totalItemTax);
+    
+    /**
+     * Gets the total fee tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * group fees. This total is calculated in the TotalActivity stage of the pricing workflow.
+     *
+     * @return the total tax for this fulfillment group
+     */
+    public Money getTotalFeeTax();
+
+    /**
+     * Sets the total fee tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * group fees. This total should only be set during the TotalActivity stage of the pricing workflow.
+     *
+     * @param the total tax for this fulfillment group
+     */
+    public void setTotalFeeTax(Money totalFeeTax);
+    
+    /**
+     * Gets the total fulfillment group tax for this fulfillment group, which is the sum of the taxes 
+     * on this fulfillment group itself (such as a shipping tax) only. It does not include the taxes on 
+     * items or fees in this fulfillment group. This total is calculated in the TotalActivity stage of the pricing workflow.
+     *
+     * @return the total tax for this fulfillment group
+     */
+    public Money getTotalFulfillmentGroupTax();
+
+    /**
+     * Sets the total fulfillment group tax for this fulfillment group, which is the sum of the taxes 
+     * on this fulfillment group itself (such as a shipping tax) only. It does not include the taxes on 
+     * items or fees in this fulfillment group. This total should only be set during the TotalActivity stage of the pricing workflow.
+     *
+     * @param the total tax for this fulfillment group
+     */
+    public void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax);
 
     public String getDeliveryInstruction();
 
@@ -145,10 +205,6 @@ public interface FulfillmentGroup extends Serializable {
 
     public void removeAllFulfillmentGroupFees();
     
-    public Boolean isShippingPriceTaxable();
-
-	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
-	
 	public String getService();
 
 	public void setService(String service);

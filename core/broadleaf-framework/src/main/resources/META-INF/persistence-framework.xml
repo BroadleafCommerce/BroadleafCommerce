@@ -65,6 +65,7 @@
 		<class>org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl</class>
 		<class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl</class>
 		<class>org.broadleafcommerce.core.order.domain.PersonalMessageImpl</class>
+		<class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
 		<class>org.broadleafcommerce.core.payment.domain.PaymentInfoImpl</class>
 		<class>org.broadleafcommerce.core.payment.domain.AmountItemImpl</class>
 		<class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>

@@ -16,23 +16,26 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -131,30 +134,28 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
-
-    @Column(name = "CITY_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FG City Tax", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal cityTax;
-
-    @Column(name = "COUNTY_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FG County Tax", order=5, group="Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal countyTax;
-
-    @Column(name = "STATE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FG State Tax", order=6, group="Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal stateTax;
     
-    @Column(name = "DISTRICT_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FG District Tax", order=7, group="Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal districtTax;
-
-    @Column(name = "COUNTRY_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FG Country Tax", order=8, group="Pricing", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal countryTax;
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName="FG Total Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
+    
+    @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
+    @AdminPresentation(friendlyName="FG Total Item Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal totalItemTax;
+    
+    @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
+    @AdminPresentation(friendlyName="FG Total Fee Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal totalFeeTax;
+    
+    @Column(name = "TOTAL_FG_TAX", precision=19, scale=5)
+    @AdminPresentation(friendlyName="FG Total FG Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal totalFulfillmentGroupTax;
 
     @Column(name = "DELIVERY_INSTRUCTION")
     @AdminPresentation(friendlyName="FG Delivery Instruction", order=4, group="Description")
@@ -188,10 +189,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
     
-    @Column(name = "SHIPPING_PRICE_TAXABLE")
-    @AdminPresentation(friendlyName="Shipping Price Taxable", order=7, group="Pricing")
-    protected Boolean isShippingPriceTaxable = Boolean.FALSE;
-
     public Long getId() {
         return id;
     }
@@ -351,56 +348,48 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     public void setShippingPrice(Money shippingPrice) {
         this.shippingPrice = Money.toAmount(shippingPrice);
     }
-
-    public Money getCityTax() {
-        return cityTax == null ? null : new Money(cityTax);
-    }
-
-    public void setCityTax(Money cityTax) {
-        this.cityTax = Money.toAmount(cityTax);
-    }
-
-    public Money getCountyTax() {
-        return countyTax == null ? null : new Money(countyTax);
-    }
-
-    public void setCountyTax(Money countyTax) {
-        this.countyTax = Money.toAmount(countyTax);
-    }
-
-    public Money getStateTax() {
-        return stateTax == null ? null : new Money(stateTax);
-    }
-
-    public void setStateTax(Money stateTax) {
-        this.stateTax = Money.toAmount(stateTax);
-    }
     
-    public Money getDistrictTax() {
-        return districtTax == null ? null : new Money(districtTax);
-    }
+    public List<TaxDetail> getTaxes() {
+		return taxes;
+	}
 
-    public void setDistrictTax(Money districtTax) {
-        this.districtTax = Money.toAmount(districtTax);
-    }
+	public void setTaxes(List<TaxDetail> taxes) {
+		this.taxes = taxes;
+	}
 
-    public Money getCountryTax() {
-        return countryTax == null ? null : new Money(countryTax);
-    }
-
-    public void setCountryTax(Money countryTax) {
-        this.countryTax = Money.toAmount(countryTax);
-    }
-
-    public Money getTotalTax() {
+	public Money getTotalTax() {
         return totalTax == null ? null : new Money(totalTax);
     }
 
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
+    
+    public Money getTotalItemTax() {
+		return totalItemTax == null ? null : new Money(totalItemTax);
+	}
 
-    public String getDeliveryInstruction() {
+	public void setTotalItemTax(Money totalItemTax) {
+		this.totalItemTax = Money.toAmount(totalItemTax);
+	}
+
+	public Money getTotalFeeTax() {
+		return totalFeeTax == null ? null : new Money(totalFeeTax);
+	}
+
+	public void setTotalFeeTax(Money totalFeeTax) {
+		this.totalFeeTax = Money.toAmount(totalFeeTax);
+	}
+
+	public Money getTotalFulfillmentGroupTax() {
+		return totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax);
+	}
+
+	public void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax) {
+		this.totalFulfillmentGroupTax = Money.toAmount(totalFulfillmentGroupTax);
+	}
+
+	public String getDeliveryInstruction() {
         return deliveryInstruction;
     }
 
@@ -468,14 +457,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
             fulfillmentGroupFees.clear();
         }
     }
-
-    public Boolean isShippingPriceTaxable() {
-		return isShippingPriceTaxable;
-	}
-
-	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
-		this.isShippingPriceTaxable = isShippingPriceTaxable;
-	}
 
 	public String getService() {
 		return service;
