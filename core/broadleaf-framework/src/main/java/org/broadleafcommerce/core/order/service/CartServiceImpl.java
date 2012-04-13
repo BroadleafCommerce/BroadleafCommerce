@@ -254,26 +254,39 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
 			for (OrderItem orderItem : customerCart.getOrderItems()) {
 				 if (orderItem instanceof DiscreteOrderItem) {
 					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-					if (!discreteOrderItem.getSku().isActive(
-							discreteOrderItem.getProduct(),
-							orderItem.getCategory())) {
-						itemsToRemove.add(orderItem);
-					}
+                    if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                        if (!discreteOrderItem.getSku().isActive(
+                                discreteOrderItem.getProduct(),
+                                orderItem.getCategory())) {
+                            itemsToRemove.add(orderItem);
+                        }
+                    } else {
+                        if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                            itemsToRemove.add(orderItem);
+                        }
+                    }
 				} else if (orderItem instanceof BundleOrderItem) {
 					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
 					boolean removeBundle = false;
 					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
 							.getDiscreteOrderItems()) {
-						if (!discreteOrderItem.getSku().isActive(
-								discreteOrderItem.getProduct(),
-								orderItem.getCategory())) {
-							/*
-							 * Bundle has an inactive item in it -- remove the
-							 * whole bundle
-							 */
-							removeBundle = true;
-							break;
-						}
+                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                            if (!discreteOrderItem.getSku().isActive(
+                                    discreteOrderItem.getProduct(),
+                                    orderItem.getCategory())) {
+                                /*
+                                 * Bundle has an inactive item in it -- remove the
+                                 * whole bundle
+                                 */
+                                removeBundle = true;
+                                break;
+                            }
+                        } else {
+                            if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                removeBundle = true;
+                                break;
+                            }
+                        }
 					}
 					if (removeBundle) {
 						itemsToRemove.add(orderItem);
