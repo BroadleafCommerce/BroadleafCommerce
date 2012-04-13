@@ -16,12 +16,11 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
@@ -175,12 +174,22 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         orderItem.removeAllAdjustments();
                         orderItem.removeAllCandidateItemOffers();
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                        if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                            DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                            addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
-                            mergeCartResponse.getAddedItems().add(orderItem);
+                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                            if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
+                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
+                                mergeCartResponse.getAddedItems().add(orderItem);
+                            } else {
+                                mergeCartResponse.getRemovedItems().add(orderItem);
+                            }
                         } else {
-                            mergeCartResponse.getRemovedItems().add(orderItem);
+                            if (discreteOrderItem.getProduct().isActive() && orderItem.getCategory().isActive()) {
+                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
+                                mergeCartResponse.getAddedItems().add(orderItem);
+                            } else {
+                                mergeCartResponse.getRemovedItems().add(orderItem);
+                            }
                         }
                     } else if (orderItem instanceof BundleOrderItem) {
                         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
@@ -193,11 +202,17 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                             discreteOrderItem.removeAllCandidateItemOffers();
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
                             discreteOrderItemRequests.add(itemRequest);
-                            if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                                /*
-                                 * Bundle has an inactive item in it -- remove the whole bundle
-                                 */
-                                removeBundle = true;
+                            if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                                if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
+                                    /*
+                                     * Bundle has an inactive item in it -- remove the whole bundle
+                                     */
+                                    removeBundle = true;
+                                }
+                            } else {
+                                if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                    removeBundle = true;
+                                }
                             }
                         }
                         BundleOrderItemRequest bundleOrderItemRequest = createBundleOrderItemRequest(bundleOrderItem, discreteOrderItemRequests);
