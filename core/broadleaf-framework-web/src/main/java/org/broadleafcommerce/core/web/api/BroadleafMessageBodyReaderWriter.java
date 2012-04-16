@@ -22,6 +22,7 @@ import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
 import com.sun.jersey.spi.inject.Injectable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,6 +47,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -120,8 +122,12 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         }
 
         if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
-            if (Collection.class.isAssignableFrom(type)){
+            if (Collection.class.isAssignableFrom(type)) {
                 return jsonListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else if(type.isArray()) {
+                // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
+                // if it's an array, the default list provider checks the componentType of only first argument
+                return jsonListProvider.readFrom((Class) genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
                 // the default root element providers don't actually use genericType in their implementations.
@@ -130,6 +136,10 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         } else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE) || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
             if (Collection.class.isAssignableFrom(type)){
                 return xmlListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else if(type.isArray()) {
+                // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
+                // if it's an array, the default list provider checks the componentType of only first argument
+                return xmlListProvider.readFrom((Class)genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
                 // the default root element providers don't actually use genericType in their implementations.
@@ -166,12 +176,20 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         if (mediaType.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
             if (Collection.class.isAssignableFrom(type)) {
     		    jsonListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else if(type.isArray()) {
+                // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
+                // if it's an array, the default list provider checks the componentType of only first argument
+                jsonListProvider.writeTo(t, (Class)genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 jsonRootElementProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
             }
     	} else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE) || mediaType.isCompatible(MediaType.TEXT_XML_TYPE)) {
             if (Collection.class.isAssignableFrom(type)) {
 	    	    xmlListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
+            } else if(type.isArray()) {
+                // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
+                // if it's an array, the default list provider checks the componentType of only first argument
+                xmlListProvider.writeTo(t, (Class)genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 xmlRootElementProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
             }
@@ -216,7 +234,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         * The default providers can then handle the actual serialization of the List or Root element safely.
         *
         */
-    protected Type getApiWrapper(Class<?> type, Type lookupType){
+    protected Type getApiWrapper(Class<?> type, Type lookupType) {
         Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
         Set<String> keySet = apiWrappers.keySet();
 
@@ -225,6 +243,8 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
                 if (Collection.class.isAssignableFrom(type)) {
                     Type[] paramType = {apiWrappers.get(key).getClass()};
                     return ParameterizedTypeImpl.make(type, paramType, null);
+                } else if (type.isArray()) {
+                    return Array.newInstance(apiWrappers.get(key).getClass(), 0).getClass();
                 } else {
                     return apiWrappers.get(key).getClass();
                 }
