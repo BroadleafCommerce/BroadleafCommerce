@@ -57,7 +57,7 @@ import java.util.Set;
 /**
  * <p>
  * This custom MessageBodyReaderWriter was written in order to correctly handle any custom extended entities that Broadleaf is aware of.
- * The intent is to replace any paramerterized types with the correct implentations that are defined in the Application Context.
+ * The intent is to replace any paramerterized types with the correct implementations that are defined in the Application Context.
  * Once the correct generic types are replaced, the class then delegates to the default XML or JSON List providers.
  * </p>
  *
@@ -126,7 +126,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
                 return jsonListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else if(type.isArray()) {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
-                // if it's an array, the default list provider checks the componentType of only first argument
+                // if it's an array, the default list provider checks the componentType of only the first argument
                 return jsonListProvider.readFrom((Class) genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
@@ -138,7 +138,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
                 return xmlListProvider.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else if(type.isArray()) {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
-                // if it's an array, the default list provider checks the componentType of only first argument
+                // if it's an array, the default list provider checks the componentType of only the first argument
                 return xmlListProvider.readFrom((Class)genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
@@ -178,7 +178,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
     		    jsonListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else if(type.isArray()) {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
-                // if it's an array, the default list provider checks the componentType of only first argument
+                // if it's an array, the default list provider checks the componentType of only the first argument
                 jsonListProvider.writeTo(t, (Class)genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 jsonRootElementProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
@@ -188,7 +188,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
 	    	    xmlListProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else if(type.isArray()) {
                 // Since we've replaced  the genericType param with the correct implementation, we have to pass that as the first argument as well because
-                // if it's an array, the default list provider checks the componentType of only first argument
+                // if it's an array, the default list provider checks the componentType of only the first argument
                 xmlListProvider.writeTo(t, (Class)genericType, genericType, annotations, mediaType, httpHeaders, entityStream);
             } else {
                 xmlRootElementProvider.writeTo(t, type, genericType, annotations, mediaType, httpHeaders, entityStream);
@@ -230,7 +230,7 @@ public class BroadleafMessageBodyReaderWriter implements MessageBodyReader<Objec
         *
         * Via the ApplicationContext we can look up exactly what implementation corresponds to the
         * parameterized domain interface and determine if that is annotated with proper JAXB annotations for serialization.
-        * We then return the correct implementing Class in case of a root element or a new ParameterizedType in case of a Collection
+        * We then return the correct implementing Class in case of a root element, a new ParameterizedType in case of a collection, or a new Array in case of an array
         * The default providers can then handle the actual serialization of the List or Root element safely.
         *
         */
