@@ -61,5 +61,9 @@ public interface ItemBuilderDisplay {
 	public Record getRecord();
 
 	public void setRecord(Record record);
+
+    public CriteriaCharacteristics getCharacteristics();
+
+    public void setCharacteristics(CriteriaCharacteristics characteristics);
 	
 }

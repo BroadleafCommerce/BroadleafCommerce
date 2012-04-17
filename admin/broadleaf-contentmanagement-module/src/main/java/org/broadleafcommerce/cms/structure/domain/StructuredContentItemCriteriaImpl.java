@@ -175,7 +175,6 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         StructuredContentItemCriteriaImpl newField = new StructuredContentItemCriteriaImpl();
         newField.quantity = quantity;
         newField.orderItemMatchRule = orderItemMatchRule;
-        newField.structuredContent = structuredContent;
 
         return newField;
     }
