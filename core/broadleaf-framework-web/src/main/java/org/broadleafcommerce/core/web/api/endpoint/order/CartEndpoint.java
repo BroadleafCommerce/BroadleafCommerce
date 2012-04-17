@@ -16,7 +16,11 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,10 +28,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * JAXRS endpoint for providing RESTful services related to the shopping cart.
@@ -46,10 +51,60 @@ public class CartEndpoint implements ApplicationContextAware {
     @Resource(name="blCartService")
     protected CartService cartService;
 
+    @Resource(name="blCustomerState")
+    protected CustomerState customerState;
+
     protected ApplicationContext context;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
+
+   /**
+     * Search for {@code Order} by {@code Customer}
+     *
+     * @return the cart for the customer
+     */
+    @GET
+    @Path("/find")
+    public OrderWrapper findCartForCustomer(@Context HttpServletRequest request) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+
+            if (cart != null) {
+                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                wrapper.wrap(cart, request);
+
+                return wrapper;
+            }
+        }
+
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+   /**
+     * Create a new {@code Order} for {@code Customer}
+     *
+     * @return the cart for the customer
+     */
+    @GET
+    @Path("/create")
+    public OrderWrapper createNewCartForCustomer(@Context HttpServletRequest request) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.createNewCartForCustomer(customer);
+
+            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+            wrapper.wrap(cart, request);
+
+            return wrapper;
+        }
+
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
 }
