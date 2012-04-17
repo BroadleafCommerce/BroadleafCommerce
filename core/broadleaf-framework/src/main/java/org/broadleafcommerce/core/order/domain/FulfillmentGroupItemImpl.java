@@ -16,23 +16,34 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
 @Entity
@@ -65,6 +76,16 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     @Column(name = "STATUS")
     @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
     private String status;
+    
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_FG_ITEM_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ITEM_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
+    
+    @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
+    @AdminPresentation(friendlyName="Total Item Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal totalTax;
 
     public Long getId() {
         return id;
@@ -123,6 +144,24 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 		setFulfillmentGroup(null);
 		setOrderItem(null);
 	}
+
+    @Override
+    public List<TaxDetail> getTaxes() {
+        return this.taxes;
+    }
+
+    @Override
+    public void setTaxes(List<TaxDetail> taxes) {
+        this.taxes = taxes;
+    }
+    
+    public Money getTotalTax() {
+        return totalTax == null ? null : new Money(totalTax);
+    }
+
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = Money.toAmount(totalTax);
+    }
 
     @Override
     public boolean equals(Object obj) {

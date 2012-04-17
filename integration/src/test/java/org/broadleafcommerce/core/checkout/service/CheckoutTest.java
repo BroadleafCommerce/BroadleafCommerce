@@ -16,11 +16,28 @@
 
 package org.broadleafcommerce.core.checkout.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
-import org.broadleafcommerce.core.order.domain.*;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
@@ -30,20 +47,17 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.profile.core.domain.*;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountryImpl;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class CheckoutTest extends BaseTest {
 
@@ -94,7 +108,6 @@ public class CheckoutTest extends BaseTest {
         address.setCountry(country);
          
         FulfillmentGroup group = new FulfillmentGroupImpl();
-        group.setIsShippingPriceTaxable(true);
         group.setOrder(order);
         group.setAddress(address);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
@@ -228,7 +241,7 @@ public class CheckoutTest extends BaseTest {
         assert(referenced == null);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
+        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping price is not taxable
         assert (response.getPaymentResponse().getResponseItems().size() > 0);
         //assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }

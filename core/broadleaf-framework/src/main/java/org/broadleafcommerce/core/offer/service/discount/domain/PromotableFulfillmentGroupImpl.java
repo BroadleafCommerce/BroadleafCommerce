@@ -235,46 +235,6 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
 				.setFulfillmentGroupAdjustments(fulfillmentGroupAdjustments);
 	}
 
-	public Money getCityTax() {
-		return delegate.getCityTax();
-	}
-
-	public void setCityTax(Money cityTax) {
-		delegate.setCityTax(cityTax);
-	}
-
-	public Money getCountyTax() {
-		return delegate.getCountyTax();
-	}
-
-	public void setCountyTax(Money countyTax) {
-		delegate.setCountyTax(countyTax);
-	}
-
-	public Money getStateTax() {
-		return delegate.getStateTax();
-	}
-
-	public void setStateTax(Money stateTax) {
-		delegate.setStateTax(stateTax);
-	}
-
-	public Money getDistrictTax() {
-		return delegate.getDistrictTax();
-	}
-
-	public void setDistrictTax(Money districtTax) {
-		delegate.setDistrictTax(districtTax);
-	}
-
-	public Money getCountryTax() {
-		return delegate.getCountryTax();
-	}
-
-	public void setCountryTax(Money countryTax) {
-		delegate.setCountryTax(countryTax);
-	}
-
 	public Money getTotalTax() {
 		return delegate.getTotalTax();
 	}
@@ -342,14 +302,6 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
 
 	public void removeAllFulfillmentGroupFees() {
 		delegate.removeAllFulfillmentGroupFees();
-	}
-
-	public Boolean isShippingPriceTaxable() {
-		return delegate.isShippingPriceTaxable();
-	}
-
-	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
-		delegate.setIsShippingPriceTaxable(isShippingPriceTaxable);
 	}
 
 	public String getService() {

@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.broadleafcommerce.common.money.Money;
 
@@ -42,7 +43,33 @@ public interface FulfillmentGroupFee extends Serializable {
 
     public void setReportingCode(String reportingCode);
     
-    public Boolean isTaxable();
+    /**
+     * Gets a list of TaxDetail objects, which are taxes that apply directly to this fee.
+     * 
+     * @return a list of taxes that apply to this fee
+     */
+    public List<TaxDetail> getTaxes();
 
-    public void setTaxable(Boolean isTaxable);
+    /**
+     * Sets the list of TaxDetail objects, which are taxes that apply directly to this fee.
+     * 
+     * @param taxes the list of taxes on this fee
+     */
+    public void setTaxes(List<TaxDetail> taxes);
+    
+    /**
+     * Gets the total tax for this fee, which is the sum of all taxes for this fee.
+     * This total is calculated in the TotalActivity stage of the pricing workflow.
+     *
+     * @return the total tax for this fee
+     */
+    public Money getTotalTax();
+
+    /**
+     * Sets the total tax for this fee, which is the sum of all taxes for this fee.
+     * This total should only be set during the TotalActivity stage of the pricing workflow.
+     *
+     * @param totalTax the total tax for this fee
+     */
+    public void setTotalTax(Money totalTax);
 }
