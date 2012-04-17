@@ -74,7 +74,7 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
                 }
             } else {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
-                if (discreteOrderItem.getSku().isDiscountable()) {
+                if (discreteOrderItem.getSku().isDiscountable() == null || discreteOrderItem.getSku().isDiscountable()) {
                 	//use the decorator patter to return the quantity for this fgItem, not the quantity on the discrete order item
                     discreteOrderItems.add(itemFactory.createPromotableOrderItem(new DiscreteOrderItemDecorator(discreteOrderItem, fgItem.getQuantity()), order));
                 }
