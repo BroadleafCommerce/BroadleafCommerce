@@ -16,11 +16,17 @@
 
 package org.broadleafcommerce.core.pricing.service.module;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.TaxDetail;
+import org.broadleafcommerce.core.order.domain.TaxDetailImpl;
+import org.broadleafcommerce.core.order.domain.TaxType;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
-import org.broadleafcommerce.common.money.Money;
 
 /**
  * Simple factor-based tax module. Not really useful for anything
@@ -36,41 +42,24 @@ public class SimpleTaxModule implements TaxModule {
     protected Double factor;
 
     public Order calculateTaxForOrder(Order order) throws TaxException {
-    	Money subTotal = order.calculateOrderItemsFinalPrice(false);
-    	
-    	for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
-                if (fulfillmentGroupFee.isTaxable()) {
-                	subTotal = subTotal.add(fulfillmentGroupFee.getAmount());
-                }
-            }
-        }
-    	
-        Money totalTax = subTotal.multiply(factor);
-
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-        	Money fgTotalTax;
-        	if (fulfillmentGroup.isShippingPriceTaxable() == null || fulfillmentGroup.isShippingPriceTaxable()) {
-	            fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
-        	} else {
-        		fgTotalTax = new Money(0D);
-        	}
-            fulfillmentGroup.setTotalTax(fgTotalTax);
-            fulfillmentGroup.setCityTax(new Money(0D));
-            fulfillmentGroup.setStateTax(new Money(0D));
-            fulfillmentGroup.setDistrictTax(new Money(0D));
-            fulfillmentGroup.setCountyTax(new Money(0D));
-            fulfillmentGroup.setCountryTax(new Money(0D));
-
-            totalTax = totalTax.add(fgTotalTax);
+            
+            // Set taxes on the fulfillment group items
+            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                List<TaxDetail> taxes = new ArrayList<TaxDetail>();
+                
+                TaxDetail tax = new TaxDetailImpl();
+                tax.setRate(new BigDecimal(factor));
+                tax.setType(TaxType.STATE);
+                tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
+                taxes.add(tax);
+                
+                fgItem.setTaxes(taxes);
+            }
+    
+            // Do not tax fulfillment group fees
+            // Do not tax shipping
         }
-
-        order.setCityTax(new Money(0D));
-        order.setStateTax(new Money(0D));
-        order.setDistrictTax(new Money(0D));
-        order.setCountyTax(new Money(0D));
-        order.setCountryTax(new Money(0D));
-        order.setTotalTax(totalTax);
 
         return order;
     }

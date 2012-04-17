@@ -17,23 +17,32 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -58,13 +67,20 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     @Column(name = "REPORTING_CODE")
-    private String reportingCode;
+    protected String reportingCode;
 
-    @Column(name = "IS_TAXABLE")
-    private Boolean isTaxable = Boolean.FALSE;
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
+    
+    @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
+    @AdminPresentation(friendlyName="Total Fee Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal totalTax;
 
     public Long getId() {
         return id;
@@ -98,14 +114,6 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         this.name = name;
     }
 
-    public Boolean isTaxable() {
-        return isTaxable;
-    }
-
-    public void setTaxable(Boolean isTaxable) {
-        this.isTaxable = isTaxable;
-    }
-
     public String getReportingCode() {
         return reportingCode;
     }
@@ -113,17 +121,33 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
     }
+    
+    public List<TaxDetail> getTaxes() {
+        return taxes;
+    }
 
-    @Override
+    public void setTaxes(List<TaxDetail> taxes) {
+        this.taxes = taxes;
+    }
+    
+    public Money getTotalTax() {
+        return totalTax == null ? null : new Money(totalTax);
+    }
+
+    public void setTotalTax(Money totalTax) { 
+        this.totalTax = Money.toAmount(totalTax);
+    }
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
         result = prime * result + ((fulfillmentGroup == null) ? 0 : fulfillmentGroup.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + (isTaxable ? 1231 : 1237);
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((reportingCode == null) ? 0 : reportingCode.hashCode());
+        result = prime * result + ((taxes == null) ? 0 : taxes.hashCode());
         return result;
     }
 
@@ -150,8 +174,6 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (isTaxable != other.isTaxable)
             return false;
         if (name == null) {
             if (other.name != null)

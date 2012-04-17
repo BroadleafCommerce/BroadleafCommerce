@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -29,7 +30,6 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface Order extends Serializable {
@@ -48,7 +48,8 @@ public interface Order extends Serializable {
 
     /**
      * Returns the subtotal price for the order.  The subtotal price is the price of all order items
-     * with item offers applied.  The subtotal does not take into account the order offers.
+     * with item offers applied.  The subtotal does not take into account the order offers or any
+     * taxes that apply to this order.
      *
      * @return the total item price with offers applied
      */
@@ -56,7 +57,8 @@ public interface Order extends Serializable {
 
     /**
      * Sets the subtotal price for the order.  The subtotal price is the price of all order items
-     * with item offers applied.  The subtotal does not take into account the order offers.
+     * with item offers applied.  The subtotal does not take into account the order offers or any
+     * taxes that apply to this order.
      *
      * @param subTotal
      */
@@ -98,28 +100,20 @@ public interface Order extends Serializable {
 
     public void setSubmitDate(Date submitDate);
 
-    public Money getCityTax();
-
-    public void setCityTax(Money cityTax);
-
-    public Money getCountyTax();
-
-    public void setCountyTax(Money countyTax);
-
-    public Money getStateTax();
-
-    public void setStateTax(Money stateTax);
-    
-    public Money getDistrictTax();
-
-    public void setDistrictTax(Money districtTax);
-
-    public Money getCountryTax();
-
-    public void setCountryTax(Money countryTax);
-
+    /**
+     * Gets the total tax for this order, which is the sum of the taxes on all fulfillment 
+     * groups. This total is calculated in the TotalActivity stage of the pricing workflow.
+     *
+     * @return the total tax for the order
+     */
     public Money getTotalTax();
 
+    /**
+     * Sets the total tax of this order, which is the sum of the taxes on all fulfillment
+     * groups. This total should only be set during the TotalActivity stage of the pricing workflow.
+     *
+     * @param the total tax for this order
+     */
     public void setTotalTax(Money totalTax);
 
     public Money getTotalShipping();
