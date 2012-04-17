@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
+import java.util.LinkedHashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.Criteria;
@@ -30,9 +32,8 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-
-import java.util.LinkedHashMap;
 
 /**
  * 
@@ -60,7 +61,7 @@ public class OfferPresenterInitializer {
 		return presenter.getDisplay();
 	}
 	
-	public void initSectionBasedOnType(String sectionType, Record selectedRecord) {
+	public void initSectionBasedOnType(String sectionType, Record selectedRecord, final FilterRestartCallback cb) {
         getDisplay().getCustomerLayout().setVisible(true);
         getDisplay().getOrderSectionLayout().setVisible(true);
         getDisplay().getCustomerSection().setVisible(true);
@@ -125,7 +126,7 @@ public class OfferPresenterInitializer {
 		initBasicItems(selectedRecord);
 		initCustomerCriteria(selectedRecord);
 		initOrderCriteria(selectedRecord);
-		initItemQualifiers(selectedRecord, sectionType);
+		initItemQualifiers(selectedRecord, sectionType, cb);
 		
 		if (sectionType.equals("ORDER_ITEM")) {
 			initItemTargets(selectedRecord);
@@ -274,7 +275,7 @@ public class OfferPresenterInitializer {
 		initOrderRule(orderRule, selectedRecord);
 	}
 
-	public void initItemQualifiers(final Record selectedRecord, final String type) {
+	public void initItemQualifiers(final Record selectedRecord, final String type, final FilterRestartCallback cb) {
 		Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
 		offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -337,6 +338,9 @@ public class OfferPresenterInitializer {
 					getDisplay().removeAllItemBuilders();
 					presenter.bindItemBuilderEvents(getDisplay().addItemBuilder(orderItemDataSource));
 				}
+                if (cb != null) {
+                    cb.processComplete();
+                }
 			}
 		});
 		String offerItemQualifierRuleType = selectedRecord.getAttribute("offerItemQualifierRuleType");

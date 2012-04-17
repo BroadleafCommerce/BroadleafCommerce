@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic;
 
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
-
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -31,6 +29,7 @@ import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.FieldDataSourceWrapper;
 
 /**
  * 
@@ -49,7 +48,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 	protected Record record;
 	protected Boolean incompatibleMVEL = false;
 	protected Boolean dirty = false;
-	
+	protected CriteriaCharacteristics characteristics;
 
 	public ItemBuilderView(DataSource itemDataSource, Boolean allowDelete) {
 		super(10);
@@ -224,7 +223,15 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		label.setVisible(true);
 	}
 
-	@Override
+    public CriteriaCharacteristics getCharacteristics() {
+        return characteristics;
+    }
+
+    public void setCharacteristics(CriteriaCharacteristics characteristics) {
+        this.characteristics = characteristics;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

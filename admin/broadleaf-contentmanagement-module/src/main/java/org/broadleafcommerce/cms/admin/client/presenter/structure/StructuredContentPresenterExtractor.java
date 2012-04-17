@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.smartgwt.client.data.Criteria;
@@ -58,6 +60,7 @@ public class StructuredContentPresenterExtractor {
 	private static final AdvancedCriteriaToMVELTranslator TRANSLATOR = new AdvancedCriteriaToMVELTranslator();
 	
 	protected StructuredContentPresenter presenter;
+    protected List<ItemBuilderDisplay> removedItemQualifiers = new ArrayList<ItemBuilderDisplay>();
 	
 	public StructuredContentPresenterExtractor(StructuredContentPresenter presenter) {
 		this.presenter = presenter;
@@ -207,8 +210,21 @@ public class StructuredContentPresenterExtractor {
                 }
             }
         }
+        for (ItemBuilderDisplay removedDisplay : removedItemQualifiers) {
+            if (removedDisplay.getDirty() && !isValidation) {
+                removeItemQualifer(removedDisplay);
+            }
+        }
         if (getDisplay().getItemBuilderViews().size() == 0) {
             resetButtonState();
         }
 	}
+
+    public List<ItemBuilderDisplay> getRemovedItemQualifiers() {
+        return removedItemQualifiers;
+    }
+
+    public void setRemovedItemQualifiers(List<ItemBuilderDisplay> removedItemQualifiers) {
+        this.removedItemQualifiers = removedItemQualifiers;
+    }
 }
