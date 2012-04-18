@@ -73,7 +73,7 @@ public class CartEndpoint implements ApplicationContextAware {
      * @return the cart for the customer
      */
     @GET
-    @Path("/find")
+    @Path("find")
     public OrderWrapper findCartForCustomer(@Context HttpServletRequest request) {
         Customer customer = customerState.getCustomer(request);
 
@@ -97,7 +97,7 @@ public class CartEndpoint implements ApplicationContextAware {
      * @return the cart for the customer
      */
     @GET
-    @Path("/create")
+    @Path("create")
     public OrderWrapper createNewCartForCustomer(@Context HttpServletRequest request) {
         Customer customer = customerState.getCustomer(request);
 
@@ -114,7 +114,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @POST
-    @Path("/add/{categoryId}/{productId}/{skuId}")
+    @Path("add/{categoryId}/{productId}/{skuId}")
     public OrderItemWrapper addSkuToOrder(@Context HttpServletRequest request,
                                       @PathParam("categoryId") Long categoryId,
                                       @PathParam("productId") Long productId,
@@ -143,7 +143,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @POST
-    @Path("/remove/{itemId}")
+    @Path("remove/{itemId}")
     public OrderWrapper removeItemFromOrder(@Context HttpServletRequest request,
                                             @PathParam("itemId") Long itemId,
                                             @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
@@ -169,7 +169,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @POST
-    @Path("/update/{itemId}/{quantity}")
+    @Path("update/{itemId}/{quantity}")
     public OrderWrapper updateItemQuantity(@Context HttpServletRequest request,
                                                @PathParam("itemId") Long itemId,
                                                @PathParam("quantity") Integer quantity,
