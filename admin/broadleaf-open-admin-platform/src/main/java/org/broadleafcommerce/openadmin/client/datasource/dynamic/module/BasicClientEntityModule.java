@@ -523,7 +523,6 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     public Entity buildEntity(Record record, DSRequest request) {
 		Entity entity = new Entity();
-		entity.setType(record.getAttributeAsStringArray("_type"));
 		Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
 		List<Property> properties = new ArrayList<Property>();
 		String[] attributes = record.getAttributes();
@@ -542,7 +541,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					property.setIsDirty(true);
 				}
 				properties.add(property);
-			}
+			} else if (attribute.equals("_type")) {
+                entity.setType(record.getAttributeAsStringArray("_type"));
+            }
 		}
 		
 		Property fullyQualifiedName = new Property();
