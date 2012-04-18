@@ -16,8 +16,14 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
+import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -106,5 +112,95 @@ public class CartEndpoint implements ApplicationContextAware {
 
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
+
+    @POST
+    @Path("/add/{categoryId}/{productId}/{skuId}")
+    public OrderItemWrapper addSkuToOrder(@Context HttpServletRequest request,
+                                      @PathParam("categoryId") Long categoryId,
+                                      @PathParam("productId") Long productId,
+                                      @PathParam("skuId") Long skuId,
+                                      @QueryParam("quantity") @DefaultValue("1") int quantity,
+                                      @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null && skuId != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+            if (cart != null) {
+                try {
+                    OrderItem orderItem = cartService.addSkuToOrder(cart.getId(), skuId, productId, categoryId, quantity, priceOrder);
+                    OrderItemWrapper wrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
+                    wrapper.wrap(orderItem, request);
+
+                    return wrapper;
+                } catch (PricingException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                }
+
+            }
+        }
+
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @POST
+    @Path("/remove/{itemId}")
+    public OrderWrapper removeItemFromOrder(@Context HttpServletRequest request,
+                                            @PathParam("itemId") Long itemId,
+                                            @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+            if (cart != null) {
+                try {
+                    Order order = cartService.removeItemFromOrder(cart.getId(), itemId, priceOrder);
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(order, request);
+
+                    return wrapper;
+                } catch (PricingException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                }
+
+            }
+        }
+
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @POST
+    @Path("/update/{itemId}/{quantity}")
+    public OrderWrapper updateItemQuantity(@Context HttpServletRequest request,
+                                               @PathParam("itemId") Long itemId,
+                                               @PathParam("quantity") Integer quantity,
+                                               @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+            if (cart != null) {
+                OrderItem item = (OrderItem) CollectionUtils.find(cart.getOrderItems(),
+                        new BeanPropertyValueEqualsPredicate("id", itemId));
+                item.setQuantity(quantity);
+                try {
+                    cartService.updateItemQuantity(cart, item, priceOrder);
+
+                    Order order = cartService.save(cart, priceOrder);
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(order, request);
+
+                    return wrapper;
+                } catch (ItemNotFoundException e) {
+                    throw new WebApplicationException(Response.Status.NOT_FOUND);
+                } catch (PricingException pe) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+
 
 }
