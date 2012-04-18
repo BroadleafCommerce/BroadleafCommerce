@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.common.security.util.CookieUtils;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 /**
@@ -46,6 +47,13 @@ public class EnhancedTokenBasedRememberMeServices extends TokenBasedRememberMeSe
 
 	@Resource(name="blCookieUtils")
 	protected CookieUtils cookieUtils;
+
+    @Deprecated
+    public EnhancedTokenBasedRememberMeServices() {}
+    
+    public EnhancedTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
+        super(key, userDetailsService);
+    }
 	
 	@Override
 	protected void setCookie(String[] tokens, int maxAge, HttpServletRequest request, HttpServletResponse response) {
