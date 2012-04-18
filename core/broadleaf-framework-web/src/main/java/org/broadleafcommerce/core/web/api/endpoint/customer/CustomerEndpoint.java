@@ -54,13 +54,4 @@ public class CustomerEndpoint implements ApplicationContextAware {
         this.context = applicationContext;
     }
 
-    @POST
-    @Path("create")
-    public CustomerWrapper createAnonymousCustomer(@Context HttpServletRequest request) {
-        Customer customer = customerService.createCustomerFromId(null);
-
-        CustomerWrapper wrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
-        wrapper.wrap(customer, request);
-        return wrapper;
-    }
 }

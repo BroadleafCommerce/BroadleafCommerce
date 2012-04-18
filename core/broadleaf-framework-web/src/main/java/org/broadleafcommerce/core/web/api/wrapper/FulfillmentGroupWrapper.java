@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     protected Long id;
 
     @XmlElement
-    protected MoneyWrapper total;
+    protected Money total;
 
     @XmlElement
     protected AddressWrapper address;
@@ -49,10 +50,7 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @Override
     public void wrap(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
-
-        MoneyWrapper totalWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        totalWrapper.wrap(model.getTotal(), request);
-        this.total = totalWrapper;
+        this.total = model.getTotal();
 
         AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
         addressWrapper.wrap(model.getAddress(), request);

@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -49,13 +50,16 @@ import javax.ws.rs.core.Response;
  */
 @Component("blRestCartEndpoint")
 @Scope("singleton")
-@Path("/cart/")
+@Path("/cart")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CartEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCartService")
     protected CartService cartService;
+
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
 
     @Resource(name="blCustomerState")
     protected CustomerState customerState;
@@ -73,7 +77,6 @@ public class CartEndpoint implements ApplicationContextAware {
      * @return the cart for the customer
      */
     @GET
-    @Path("find")
     public OrderWrapper findCartForCustomer(@Context HttpServletRequest request) {
         Customer customer = customerState.getCustomer(request);
 
@@ -86,9 +89,11 @@ public class CartEndpoint implements ApplicationContextAware {
 
                 return wrapper;
             }
+
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
    /**
@@ -96,26 +101,25 @@ public class CartEndpoint implements ApplicationContextAware {
      *
      * @return the cart for the customer
      */
-    @GET
-    @Path("create")
+    @POST
     public OrderWrapper createNewCartForCustomer(@Context HttpServletRequest request) {
         Customer customer = customerState.getCustomer(request);
 
-        if (customer != null) {
-            Order cart = cartService.createNewCartForCustomer(customer);
-
-            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrap(cart, request);
-
-            return wrapper;
+        if (customer == null) {
+            customer = customerService.createCustomerFromId(null);
         }
 
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        Order cart = cartService.createNewCartForCustomer(customer);
+
+        OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+        wrapper.wrap(cart, request);
+
+        return wrapper;
     }
 
     @POST
-    @Path("add/{categoryId}/{productId}/{skuId}")
-    public OrderItemWrapper addSkuToOrder(@Context HttpServletRequest request,
+    @Path("/{categoryId}/{productId}/{skuId}")
+    public OrderWrapper addSkuToOrder(@Context HttpServletRequest request,
                                       @PathParam("categoryId") Long categoryId,
                                       @PathParam("productId") Long productId,
                                       @PathParam("skuId") Long skuId,
@@ -128,22 +132,22 @@ public class CartEndpoint implements ApplicationContextAware {
             if (cart != null) {
                 try {
                     OrderItem orderItem = cartService.addSkuToOrder(cart.getId(), skuId, productId, categoryId, quantity, priceOrder);
-                    OrderItemWrapper wrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
-                    wrapper.wrap(orderItem, request);
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(orderItem.getOrder(), request);
 
                     return wrapper;
                 } catch (PricingException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                 }
-
             }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @POST
-    @Path("remove/{itemId}")
+    @DELETE
+    @Path("/items/{itemId}")
     public OrderWrapper removeItemFromOrder(@Context HttpServletRequest request,
                                             @PathParam("itemId") Long itemId,
                                             @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
@@ -161,18 +165,18 @@ public class CartEndpoint implements ApplicationContextAware {
                 } catch (PricingException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                 }
-
             }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @POST
-    @Path("update/{itemId}/{quantity}")
+    @PUT
+    @Path("/items/{itemId}")
     public OrderWrapper updateItemQuantity(@Context HttpServletRequest request,
                                                @PathParam("itemId") Long itemId,
-                                               @PathParam("quantity") Integer quantity,
+                                               @QueryParam("quantity") Integer quantity,
                                                @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
         Customer customer = customerState.getCustomer(request);
 
@@ -196,9 +200,10 @@ public class CartEndpoint implements ApplicationContextAware {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                 }
             }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
 

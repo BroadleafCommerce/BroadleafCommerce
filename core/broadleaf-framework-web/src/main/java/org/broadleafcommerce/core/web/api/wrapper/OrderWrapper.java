@@ -16,17 +16,19 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a JAXB wrapper around Order.
- *
+ * <p/>
  * User: Elbert Bautista
  * Date: 4/10/12
  */
@@ -41,36 +43,44 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     protected String status;
 
     @XmlElement
-    protected MoneyWrapper totalTax;
+    protected Money totalTax;
 
     @XmlElement
-    protected MoneyWrapper totalShipping;
+    protected Money totalShipping;
 
     @XmlElement
-    protected MoneyWrapper subTotal;
+    protected Money subTotal;
 
     @XmlElement
-    protected MoneyWrapper total;
+    protected Money total;
+
+    @XmlElement
+    protected CustomerWrapper customer;
+
+    @XmlElement(name = "orderItem")
+    @XmlElementWrapper(name = "orderItems")
+    protected List<OrderItemWrapper> orderItems;
 
     @Override
     public void wrap(Order model, HttpServletRequest request) {
         this.id = model.getId();
         this.status = model.getStatus().getType();
+        this.totalTax = model.getTotalTax();
+        this.totalShipping = model.getTotalShipping();
+        this.subTotal = model.getSubTotal();
+        this.total = model.getTotal();
 
-        MoneyWrapper totalTaxWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        totalTaxWrapper.wrap(model.getTotalTax(), request);
-        this.totalTax = totalTaxWrapper;
+        if (model.getOrderItems() != null && !model.getOrderItems().isEmpty()) {
+            this.orderItems = new ArrayList<OrderItemWrapper>();
+            for (OrderItem orderItem : model.getOrderItems()) {
+                OrderItemWrapper orderItemWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
+                orderItemWrapper.wrap(orderItem, request);
+                this.orderItems.add(orderItemWrapper);
+            }
+        }
 
-        MoneyWrapper totalShippingWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        totalShippingWrapper.wrap(model.getTotalShipping(), request);
-        this.totalShipping = totalShippingWrapper;
-
-        MoneyWrapper subTotalWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        subTotalWrapper.wrap(model.getSubTotal(), request);
-        this.subTotal = subTotalWrapper;
-
-        MoneyWrapper totalWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        totalWrapper.wrap(model.getTotal(), request);
-        this.total = totalWrapper;
+        CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
+        customerWrapper.wrap(model.getCustomer(), request);
+        this.customer = customerWrapper;
     }
 }

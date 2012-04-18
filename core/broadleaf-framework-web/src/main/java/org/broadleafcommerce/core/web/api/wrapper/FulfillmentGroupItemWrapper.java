@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,10 +45,10 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
     protected OrderItemWrapper orderItem;
 
     @XmlElement
-    protected MoneyWrapper retailPrice;
+    protected Money retailPrice;
 
     @XmlElement
-    protected MoneyWrapper salePrice;
+    protected Money salePrice;
 
     @Override
     public void wrap(FulfillmentGroupItem model, HttpServletRequest request) {
@@ -61,12 +62,7 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
         orderItemWrapper.wrap(model.getOrderItem(), request);
         this.orderItem = orderItemWrapper;
 
-        MoneyWrapper retailPriceWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        retailPriceWrapper.wrap(model.getRetailPrice(), request);
-        this.retailPrice = retailPriceWrapper;
-
-        MoneyWrapper salePriceWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        salePriceWrapper.wrap(model.getSalePrice(), request);
-        this.salePrice = salePriceWrapper;
+        this.retailPrice = model.getRetailPrice();
+        this.salePrice = model.getSalePrice();
     }
 }

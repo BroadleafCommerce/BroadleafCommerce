@@ -48,7 +48,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
     @Resource(name="blCustomerService")
     private CustomerService customerService;
     
-    private String customerIdAttributeName = Customer.class.getName() + ".customerId";
+    private String customerIdAttributeName = "customerId";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

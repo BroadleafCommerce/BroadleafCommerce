@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
@@ -47,16 +48,16 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     protected Integer quantity;
 
     @XmlElement
-    protected MoneyWrapper retailPrice;
+    protected Money retailPrice;
 
     @XmlElement
-    protected MoneyWrapper salePrice;
+    protected Money salePrice;
 
     @XmlElement
     protected CategoryWrapper category;
 
     @XmlElement
-    protected OrderWrapper order;
+    protected Long orderId;
 
     @XmlElement
     protected SkuWrapper sku;
@@ -69,22 +70,16 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         this.id = model.getId();
         this.name = model.getName();
         this.quantity = model.getQuantity();
+        this.retailPrice = model.getRetailPrice();
+        this.salePrice = model.getSalePrice();
 
-        MoneyWrapper retailPriceWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        retailPriceWrapper.wrap(model.getRetailPrice(), request);
-        this.retailPrice = retailPriceWrapper;
+        if (model.getCategory() != null) {
+            CategoryWrapper categoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            categoryWrapper.wrap(model.getCategory(), request);
+            this.category = categoryWrapper;
+        }
 
-        MoneyWrapper salePriceWrapper = (MoneyWrapper) context.getBean(MoneyWrapper.class.getName());
-        salePriceWrapper.wrap(model.getSalePrice(), request);
-        this.salePrice = salePriceWrapper;
-
-        CategoryWrapper categoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-        categoryWrapper.wrap(model.getCategory(), request);
-        this.category = categoryWrapper;
-
-        OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-        orderWrapper.wrap(model.getOrder(), request);
-        this.order = orderWrapper;
+        this.orderId = model.getOrder().getId();
 
         if (model instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem) model;
