@@ -87,7 +87,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
      *
      * @param name
      * @param limit the maximum number of results, defaults to 20
-     * @param offset the starting point in the record set, defaults to 1
+     * @param offset the starting point in the record set, defaults to 0
      * @return the list of product instances that fit the search criteria
      */
     @GET
@@ -95,7 +95,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public List<ProductWrapper> findProductsByName(@Context HttpServletRequest request,
                                                    @QueryParam("name") String name,
                                                    @QueryParam("limit") @DefaultValue("20") int limit,
-                                                   @QueryParam("offset") @DefaultValue("1") int offset) {
+                                                   @QueryParam("offset") @DefaultValue("0") int offset) {
         List<Product> result;
         if (name == null) {
             result = catalogService.findAllProducts(limit, offset);
@@ -144,7 +144,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public CategoriesWrapper findAllCategories(@Context HttpServletRequest request,
                                                @QueryParam("name") String name,
                                                @QueryParam("limit") @DefaultValue("20") int limit,
-                                               @QueryParam("offset") @DefaultValue("1") int offset) {
+                                               @QueryParam("offset") @DefaultValue("0") int offset) {
         List<Category> categories;
         if (name != null) {
             categories = catalogService.findCategoriesByName(name, limit, offset);
@@ -161,7 +161,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public CategoriesWrapper findSubCategories(@Context HttpServletRequest request,
                                                @PathParam("id") Long id,
                                                @QueryParam("limit") @DefaultValue("20") int limit,
-                                               @QueryParam("offset") @DefaultValue("1") int offset,
+                                               @QueryParam("offset") @DefaultValue("0") int offset,
                                                @QueryParam("active") @DefaultValue("false") boolean active) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
@@ -184,7 +184,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public CategoriesWrapper findActiveSubCategories(@Context HttpServletRequest request,
                                                      @PathParam("id") Long id,
                                                      @QueryParam("limit") @DefaultValue("20") int limit,
-                                                     @QueryParam("offset") @DefaultValue("1") int offset) {
+                                                     @QueryParam("offset") @DefaultValue("0") int offset) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
@@ -213,7 +213,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public List<ProductWrapper> findProductsForCategory(@Context HttpServletRequest request,
                                                         @PathParam("id") Long id,
                                                         @QueryParam("limit") @DefaultValue("20") int limit,
-                                                        @QueryParam("offset") @DefaultValue("1") int offset,
+                                                        @QueryParam("offset") @DefaultValue("0") int offset,
                                                         @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
@@ -241,7 +241,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public List<RelatedProductWrapper> findUpSaleProductsByProduct(@Context HttpServletRequest request,
                                                                    @PathParam("id") Long id,
                                                                    @QueryParam("limit") @DefaultValue("20") int limit,
-                                                                   @QueryParam("offset") @DefaultValue("1") int offset) {
+                                                                   @QueryParam("offset") @DefaultValue("0") int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
@@ -265,7 +265,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
     public List<RelatedProductWrapper> findCrossSaleProductsByProduct(@Context HttpServletRequest request,
                                                                       @PathParam("id") Long id,
                                                                       @QueryParam("limit") @DefaultValue("20") int limit,
-                                                                      @QueryParam("offset") @DefaultValue("1") int offset) {
+                                                                      @QueryParam("offset") @DefaultValue("0") int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();

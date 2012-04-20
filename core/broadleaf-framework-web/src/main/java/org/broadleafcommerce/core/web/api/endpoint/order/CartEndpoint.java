@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.web.api.endpoint.order;
 
 import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
@@ -57,6 +59,9 @@ public class CartEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCartService")
     protected CartService cartService;
+
+    @Resource(name="blOfferService")
+    protected OfferService offerService;
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
@@ -207,5 +212,83 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
 
+    @POST
+    @Path("/offer")
+    public OrderWrapper addOfferCode(@Context HttpServletRequest request,
+                                     @QueryParam("promoCode") String promoCode,
+                                     @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+            OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
+            if (cart != null && offerCode != null) {
+                try {
+                    cart = cartService.addOfferCode(cart, offerCode, priceOrder);
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(cart, request);
+
+                    return wrapper;
+                } catch (PricingException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                }
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+    }
+
+    @DELETE
+    @Path("/offer")
+    public OrderWrapper removeOfferCode(@Context HttpServletRequest request,
+                                        @QueryParam("promoCode") String promoCode,
+                                        @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+            OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
+            if (cart != null && offerCode != null) {
+                try {
+                    cart = cartService.removeOfferCode(cart, offerCode, priceOrder);
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(cart, request);
+
+                    return wrapper;
+                } catch (PricingException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                }
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+    }
+
+    @DELETE
+    @Path("/offers")
+    public OrderWrapper removeAllOfferCodes(@Context HttpServletRequest request,
+                                        @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+        Customer customer = customerState.getCustomer(request);
+
+        if (customer != null) {
+            Order cart = cartService.findCartForCustomer(customer);
+            if (cart != null) {
+                try {
+                    cart = cartService.removeAllOfferCodes(cart, priceOrder);
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(cart, request);
+
+                    return wrapper;
+                } catch (PricingException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                }
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+    }
 
 }
