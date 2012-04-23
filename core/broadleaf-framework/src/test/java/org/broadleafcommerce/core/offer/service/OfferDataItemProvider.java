@@ -152,6 +152,7 @@ public class OfferDataItemProvider {
 		
 		Sku sku1 = new SkuImpl();
 		sku1.setName("test1");
+        sku1.setId(1L);
 		sku1.setDiscountable(true);
 		sku1.setRetailPrice(new Money(19.99D));
 		product1.getAllSkus().add(sku1);
@@ -167,6 +168,7 @@ public class OfferDataItemProvider {
 		
 		Sku sku2 = new SkuImpl();
 		sku2.setName("test2");
+        sku2.setId(2L);
 		sku2.setDiscountable(true);
 		sku2.setRetailPrice(new Money(29.99D));
 		product2.getAllSkus().add(sku2);
