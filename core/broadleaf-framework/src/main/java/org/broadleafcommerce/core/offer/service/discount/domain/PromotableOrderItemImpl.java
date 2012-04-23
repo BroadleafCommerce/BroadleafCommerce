@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -24,13 +29,8 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.money.BankersRounding;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.broadleafcommerce.money.Money;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -105,12 +105,23 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
             saleAdjustmentPrice = tempDiscountedSalePrice.getAmount();
         }
         retailAdjustmentPrice = tempDiscountedRetailPrice.getAmount();
-                            	
+    }
+
+    public void resetAdjustmentPrice() {
+        delegate.updatePrices();
+
+        Money tempDiscountedRetailPrice = delegate.getRetailPrice();
+        Money tempDiscountedSalePrice = delegate.getSalePrice();
+
+        if (tempDiscountedSalePrice != null) {
+            saleAdjustmentPrice = tempDiscountedSalePrice.getAmount();
+        }
+        retailAdjustmentPrice = tempDiscountedRetailPrice.getAmount();
     }
     
     public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment) {
-    	((PromotableOrderItemAdjustment) orderItemAdjustment).computeAdjustmentValues();
-        delegate.getOrderItemAdjustments().add(((PromotableOrderItemAdjustment) orderItemAdjustment).getDelegate());
+    	orderItemAdjustment.computeAdjustmentValues();
+        delegate.getOrderItemAdjustments().add(orderItemAdjustment.getDelegate());
         order.resetTotalitarianOfferApplied();
         computeAdjustmentPrice();
     }

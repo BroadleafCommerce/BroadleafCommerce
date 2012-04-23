@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.util.List;
+
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -23,8 +25,6 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.money.Money;
-
-import java.util.List;
 
 public interface PromotableOrderItem {
 	 
@@ -131,4 +131,6 @@ public interface PromotableOrderItem {
      * @return
      */
     int fixAdjustments(boolean useSaleAdjustments);
+
+    public void resetAdjustmentPrice();
 }

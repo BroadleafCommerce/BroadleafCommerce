@@ -77,14 +77,18 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
     
     public void resetDiscreteOrderItems() {
-    	for (PromotableOrderItem orderItem : discreteOrderItems) {
-    		orderItem.reset();
-    	}
-    	discreteOrderItems = null;
-    	for (PromotableOrderItem orderItem : discountableDiscreteOrderItems) {
-    		orderItem.reset();
-    	}
-    	discountableDiscreteOrderItems = null;
+        if (discreteOrderItems != null) {
+            for (PromotableOrderItem orderItem : discreteOrderItems) {
+                orderItem.reset();
+            }
+            discreteOrderItems = null;
+        }
+        if (discountableDiscreteOrderItems != null) {
+            for (PromotableOrderItem orderItem : discountableDiscreteOrderItems) {
+                orderItem.reset();
+            }
+            discountableDiscreteOrderItems = null;
+        }
     }
     
     public void resetTotalitarianOfferApplied() {

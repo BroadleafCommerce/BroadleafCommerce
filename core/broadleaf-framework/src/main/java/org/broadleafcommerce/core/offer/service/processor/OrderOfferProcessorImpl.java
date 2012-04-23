@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
@@ -38,6 +38,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFa
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
@@ -314,43 +315,66 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 		Order order = promotableOrder.getDelegate();
 		List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
 		Map<Long, Map<String, Object[]>> gatherMap = new HashMap<Long, Map<String, Object[]>>();
-		for (FulfillmentGroup group : order.getFulfillmentGroups()) {
-			Map<String, Object[]> gatheredItem = gatherMap.get(group);
-			if (gatheredItem == null) {
-				gatheredItem = new HashMap<String, Object[]>();
-				gatherMap.put(group.getId(), gatheredItem);
-			}
-			for (FulfillmentGroupItem fgItem : group.getFulfillmentGroupItems()) {
-				OrderItem orderItem = fgItem.getOrderItem();
-				/*
-				 * TODO gatherCart will currently not clean up split items inside of a
-				 * BundleOrderItem
-				 */
-				if (!CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
-					Object[] gatheredOrderItem = gatheredItem.get(orderItem.getName());
-					if (gatheredOrderItem == null) {
-						gatheredItem.put(orderItem.getName(), new Object[]{orderItem, fgItem});
-						continue;
-					}
-					((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + orderItem.getQuantity());
-					((FulfillmentGroupItem) gatheredOrderItem[1]).setQuantity(((FulfillmentGroupItem) gatheredOrderItem[1]).getQuantity() + fgItem.getQuantity());
-					itemsToRemove.add(orderItem);
-				}
-			}
-		}
-		try {
-			for (Map<String, Object[]> values : gatherMap.values()) {
-				for (Object[] item : values.values()) {
-					orderItemService.saveOrderItem((OrderItem) item[0]);
-					fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
-				}
-			}
+        try {
+            if (!CollectionUtils.isEmpty(order.getFulfillmentGroups())) {
+                for (FulfillmentGroup group : order.getFulfillmentGroups()) {
+                    Map<String, Object[]> gatheredItem = gatherMap.get(group.getId());
+                    if (gatheredItem == null) {
+                        gatheredItem = new HashMap<String, Object[]>();
+                        gatherMap.put(group.getId(), gatheredItem);
+                    }
+                    for (FulfillmentGroupItem fgItem : group.getFulfillmentGroupItems()) {
+                        OrderItem orderItem = fgItem.getOrderItem();
+                        /*
+                         * TODO gatherCart will currently not clean up split items inside of a
+                         * BundleOrderItem
+                         */
+                        if (CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
+                            String identifier = (orderItem instanceof DiscreteOrderItem)?String.valueOf(((DiscreteOrderItem) orderItem).getSku().getId()):orderItem.getName();
+                            identifier += '_' + orderItem.getPrice().stringValue();
+                            Object[] gatheredOrderItem = gatheredItem.get(identifier);
+                            if (gatheredOrderItem == null) {
+                                gatheredItem.put(identifier, new Object[]{orderItem, fgItem});
+                                continue;
+                            }
+                            ((OrderItem) gatheredOrderItem[0]).setQuantity(((OrderItem) gatheredOrderItem[0]).getQuantity() + orderItem.getQuantity());
+                            ((FulfillmentGroupItem) gatheredOrderItem[1]).setQuantity(((FulfillmentGroupItem) gatheredOrderItem[1]).getQuantity() + fgItem.getQuantity());
+                            itemsToRemove.add(orderItem);
+                        }
+                    }
+                }
+                for (Map<String, Object[]> values : gatherMap.values()) {
+                    for (Object[] item : values.values()) {
+                        orderItemService.saveOrderItem((OrderItem) item[0]);
+                        fulfillmentGroupItemDao.save((FulfillmentGroupItem) item[1]);
+                    }
+                }
+            } else {
+                Map<String, OrderItem> gatheredItem = new HashMap<String, OrderItem>();
+                for (OrderItem orderItem : order.getOrderItems()) {
+                    if (CollectionUtils.isEmpty(orderItem.getOrderItemAdjustments())) {
+                        String identifier = (orderItem instanceof DiscreteOrderItem)?String.valueOf(((DiscreteOrderItem) orderItem).getSku().getId()):orderItem.getName();
+                        identifier += '_' + orderItem.getPrice().stringValue();
+                        OrderItem gatheredOrderItem = gatheredItem.get(identifier);
+                        if (gatheredOrderItem == null) {
+                            gatheredItem.put(identifier, orderItem);
+                            continue;
+                        }
+                        gatheredOrderItem.setQuantity(gatheredOrderItem.getQuantity() + orderItem.getQuantity());
+                        itemsToRemove.add(orderItem);
+                    }
+                }
+                for (OrderItem orderItem : gatheredItem.values()) {
+                    orderItemService.saveOrderItem(orderItem);
+                }
+            }
 			for (OrderItem orderItem : itemsToRemove) {
 				cartService.removeItemFromOrder(order, orderItem, false);
 			}
 		} catch (PricingException e) {
 			throw new RuntimeException("Could not gather the cart", e);
 		}
+        promotableOrder.resetDiscreteOrderItems();
 	}
     
     /**
@@ -371,16 +395,17 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 		//If adjustments are removed - merge split items back together before adding to the cart
 		List<PromotableOrderItem> itemsToRemove = new ArrayList<PromotableOrderItem>();
 		Iterator<PromotableOrderItem> finalItems = order.getDiscountableDiscreteOrderItems().iterator();
+        Map<String, PromotableOrderItem> allItems = new HashMap<String, PromotableOrderItem>();
 		while(finalItems.hasNext()) {
 			PromotableOrderItem nextItem = finalItems.next();
 			List<PromotableOrderItem> mySplits = order.searchSplitItems(nextItem);
 			if (!CollectionUtils.isEmpty(mySplits)) {
-				if (mySplits.size() == 1 && mySplits.contains(nextItem)) {
+				//if (mySplits.size() == 1 && mySplits.contains(nextItem)) {
 					//the item was not split - no need to merge
-					mySplits.remove(nextItem);
-					continue;
-				}
-				PromotableOrderItem cloneItem = (PromotableOrderItem) nextItem.clone();
+					//mySplits.remove(nextItem);
+					//continue;
+				//}
+				PromotableOrderItem cloneItem = nextItem.clone();
 				cloneItem.clearAllDiscount();
 				cloneItem.clearAllQualifiers();
 				cloneItem.removeAllAdjustments();
@@ -394,7 +419,14 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 					}
 				}
 				if (cloneItem.getQuantity() > 0) {
-					mySplits.add(cloneItem);
+                    String identifier = String.valueOf(cloneItem.getSku().getId());
+                    if (allItems.containsKey(identifier)) {
+                        PromotableOrderItem savedItem = allItems.get(identifier);
+                        savedItem.setQuantity(savedItem.getQuantity() + cloneItem.getQuantity());
+                    } else {
+                        allItems.put(identifier, cloneItem);
+                        mySplits.add(cloneItem);
+                    }
 				}
 				if (mySplits.contains(nextItem)) {
 					mySplits.remove(nextItem);
@@ -420,25 +452,38 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 						}
 					}
 					for (PromotableOrderItem myItem : mySplits) {
-						DiscreteOrderItem delegateItem = (DiscreteOrderItem) myItem.getDelegate();
+                        myItem.assignFinalPrice();
+						DiscreteOrderItem delegateItem = myItem.getDelegate();
 						if (delegateItem.getBundleOrderItem() == null) {
 							delegateItem = (DiscreteOrderItem) cartService.addOrderItemToOrder(order.getDelegate(), delegateItem, false);
-							cartService.addItemToFulfillmentGroup(delegateItem, targetGroup.getDelegate(), false);
+                            if (targetGroup != null) {
+							    cartService.addItemToFulfillmentGroup(delegateItem, targetGroup.getDelegate(), false);
+                            }
 						} else {
 							//TODO test promotions with BundleOrderItems in cart
 							delegateItem = (DiscreteOrderItem) cartService.addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
 						}
+                        //reset adjustment retail and sale values, since their transient values are erased after the above persistence events
+                        if (myItem.isHasOrderItemAdjustments()) {
+                            for (OrderItemAdjustment adjustment : delegateItem.getOrderItemAdjustments()) {
+                                PromotableOrderItemAdjustment promotableOrderItemAdjustment = promotableItemFactory.createPromotableOrderItemAdjustment(adjustment, myItem);
+                                myItem.resetAdjustmentPrice();
+                                promotableOrderItemAdjustment.computeAdjustmentValues();
+                                myItem.computeAdjustmentPrice();
+                            }
+                        }
 					}
 				}
 			}
 			for (PromotableOrderItem orderItem : itemsToRemove) {
-				DiscreteOrderItem delegateItem = (DiscreteOrderItem) orderItem.getDelegate();
-				if (delegateItem.getBundleOrderItem() == null) {
-					cartService.removeItemFromOrder(order.getDelegate(), orderItem.getDelegate(), false);
-				} else {
-					//TODO test promotions with BundleOrderItems in cart
-					cartService.removeItemFromBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), orderItem.getDelegate(), false);
-				}
+				DiscreteOrderItem delegateItem = orderItem.getDelegate();
+                if (delegateItem.getBundleOrderItem() == null) {
+                    cartService.removeItemFromOrder(order.getDelegate(), orderItem.getDelegate(), false);
+                } else {
+                    //TODO test promotions with BundleOrderItems in cart
+
+                    cartService.removeItemFromBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), orderItem.getDelegate(), false);
+                }
 			}
 			order.resetDiscreteOrderItems();
 		} catch (PricingException e) {

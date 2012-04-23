@@ -179,7 +179,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     }
 
     public Money getRetailPriceValue() {
-        if (salesValue == null) {
+        if (retailValue == null) {
             return Money.ZERO;
         }
         return this.retailValue;
