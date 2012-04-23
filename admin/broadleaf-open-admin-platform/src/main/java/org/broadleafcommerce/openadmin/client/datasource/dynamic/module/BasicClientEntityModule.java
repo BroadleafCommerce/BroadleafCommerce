@@ -322,7 +322,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     protected String updateMinutesFromDateFilter(String originalDateString, int position) {
         String timezone = DateTimeFormat.getFormat("Z").format(new Date());
         if (originalDateString != null) {
-            int pos = originalDateString.indexOf("T06:00:00");
+            int pos = originalDateString.indexOf("T");
             switch (position) {
                 case 0: 
                     if (pos >= 0) {
