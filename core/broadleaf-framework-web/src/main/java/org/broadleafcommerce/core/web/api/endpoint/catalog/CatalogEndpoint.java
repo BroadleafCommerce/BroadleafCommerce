@@ -198,9 +198,22 @@ public class CatalogEndpoint implements ApplicationContextAware {
 
     @GET
     @Path("category/{id}")
-    public CategoryWrapper findCategoryById(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    public CategoryWrapper findCategoryById(@Context HttpServletRequest request,
+                                            @PathParam("id") Long id,
+                                            @QueryParam("productLimit") @DefaultValue("20") int productLimit,
+                                            @QueryParam("productOffset") @DefaultValue("0") int productOffset,                                            @QueryParam("subcategoryLimit") @DefaultValue("20") int subcategoryLimit,
+                                            @QueryParam("subcategoryOffset") @DefaultValue("0") int subcategoryOffset,
+                                            @QueryParam("subcategoryDepth") @DefaultValue("1") int subcategoryDepth) {
         Category cat = catalogService.findCategoryById(id);
         if (cat != null) {
+
+            //Explicitly setting these request attributes because the CategoryWrapper.wrap() method needs them
+            request.setAttribute("productLimit", productLimit);
+            request.setAttribute("productOffset", productOffset);
+            request.setAttribute("subcategoryLimit", subcategoryLimit);
+            request.setAttribute("subcategoryOffset", subcategoryOffset);
+            request.setAttribute("subcategoryDepth", subcategoryDepth);
+
             CategoryWrapper wrapper = (CategoryWrapper)context.getBean(CategoryWrapper.class.getName());
             wrapper.wrap(cat, request);
             return wrapper;

@@ -56,9 +56,18 @@ public class ProductDimensionWrapper extends BaseWrapper implements APIWrapper<P
         this.width = model.getWidth();
         this.depth = model.getDepth();
         this.height = model.getHeight();
-        this.dimensionUnitOfMeasure = model.getDimensionUnitOfMeasure().getType();
         this.girth = model.getGirth();
-        this.size = model.getSize().getType();
-        this.container = model.getContainer().getType();
+
+        if (model.getDimensionUnitOfMeasure() != null) {
+            this.dimensionUnitOfMeasure = model.getDimensionUnitOfMeasure().getType();
+        }
+
+        if (model.getSize() != null) {
+            this.size = model.getSize().getType();
+        }
+
+        if (model.getContainer() != null) {
+            this.container = model.getContainer().getType();
+        }
     }
 }

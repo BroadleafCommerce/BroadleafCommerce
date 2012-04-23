@@ -44,6 +44,8 @@ public class ProductWeightWrapper implements APIWrapper<ProductWeight>{
     @Override
     public void wrap(ProductWeight model, HttpServletRequest request) {
         this.weight = model.getWeight();
-        this.unitOfMeasure = model.getWeightUnitOfMeasure().getType();
+        if (model.getWeightUnitOfMeasure() != null) {
+            this.unitOfMeasure = model.getWeightUnitOfMeasure().getType();
+        }
     }
 }
