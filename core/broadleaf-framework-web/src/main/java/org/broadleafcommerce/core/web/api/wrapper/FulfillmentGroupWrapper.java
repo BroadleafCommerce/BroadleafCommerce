@@ -47,10 +47,21 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @XmlElement
     protected OrderWrapper order;
 
+    @XmlElement
+    protected PhoneWrapper phone;
+
+    @XmlElement
+    protected String method;
+
+    @XmlElement
+    protected String service;
+
     @Override
     public void wrap(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
         this.total = model.getTotal();
+        this.method = model.getMethod();
+        this.service = model.getService();
 
         AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
         addressWrapper.wrap(model.getAddress(), request);
@@ -59,5 +70,10 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
         OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
         orderWrapper.wrap(model.getOrder(), request);
         this.order = orderWrapper;
+
+        PhoneWrapper phoneWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+        phoneWrapper.wrap(model.getPhone(), request);
+        this.phone = phoneWrapper;
+
     }
 }

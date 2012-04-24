@@ -39,7 +39,7 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
     protected Long id;
 
     @XmlElement
-    protected FulfillmentGroupWrapper fulfillmentGroup;
+    protected Long fulfillmentGroupId;
 
     @XmlElement
     protected OrderItemWrapper orderItem;
@@ -50,13 +50,19 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
     @XmlElement
     protected Money salePrice;
 
+    @XmlElement
+    protected Money totalTax;
+
+    @XmlElement
+    protected Integer quantity;
+
     @Override
     public void wrap(FulfillmentGroupItem model, HttpServletRequest request) {
         this.id = model.getId();
 
-        FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-        fulfillmentGroupWrapper.wrap(model.getFulfillmentGroup(), request);
-        this.fulfillmentGroup = fulfillmentGroupWrapper;
+        if (model.getFulfillmentGroup() != null) {
+            this.fulfillmentGroupId = model.getFulfillmentGroup().getId();
+        }
 
         OrderItemWrapper orderItemWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
         orderItemWrapper.wrap(model.getOrderItem(), request);
@@ -64,5 +70,7 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
 
         this.retailPrice = model.getRetailPrice();
         this.salePrice = model.getSalePrice();
+        this.totalTax = model.getTotalTax();
+        this.quantity = model.getQuantity();
     }
 }
