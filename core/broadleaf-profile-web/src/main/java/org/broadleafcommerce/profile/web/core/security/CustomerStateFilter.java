@@ -16,21 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.core.Ordered;
-import org.springframework.security.authentication.RememberMeAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
-
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -41,6 +26,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.core.Ordered;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 @Component("blCustomerStateFilter")
 /**
@@ -75,7 +76,7 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
 		HttpServletResponse response = (HttpServletResponse) baseResponse;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = null;
-        if (authentication != null) {
+        if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
             String userName = request.getUserPrincipal().getName();
             customer = (Customer) request.getAttribute(customerRequestAttributeName);
             if (userName != null && (customer == null || !userName.equals(customer.getUsername()))) {
