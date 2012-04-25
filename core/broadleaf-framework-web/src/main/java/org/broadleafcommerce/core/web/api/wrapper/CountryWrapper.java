@@ -17,9 +17,14 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.service.CountryService;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around Country.
@@ -27,7 +32,9 @@ import javax.xml.bind.annotation.XmlElement;
  * User: Elbert Bautista
  * Date: 4/10/12
  */
-public class CountryWrapper extends BaseWrapper implements APIWrapper<Country> {
+@XmlRootElement(name = "country")
+@XmlAccessorType(value = XmlAccessType.FIELD)
+public class CountryWrapper extends BaseWrapper implements APIWrapper<Country>, APIUnwrapper<Country> {
 
     @XmlElement
     protected String name;
@@ -39,5 +46,16 @@ public class CountryWrapper extends BaseWrapper implements APIWrapper<Country> {
     public void wrap(Country model, HttpServletRequest request) {
         this.name = model.getName();
         this.abbreviation = model.getAbbreviation();
+    }
+
+    @Override
+    public Country unwrap(HttpServletRequest request, ApplicationContext appContext) {
+        CountryService countryService = (CountryService) appContext.getBean("blCountryService");
+        if (this.abbreviation != null) {
+            Country country = countryService.findCountryByAbbreviation(this.abbreviation);
+            return country;
+        }
+
+        return null;
     }
 }

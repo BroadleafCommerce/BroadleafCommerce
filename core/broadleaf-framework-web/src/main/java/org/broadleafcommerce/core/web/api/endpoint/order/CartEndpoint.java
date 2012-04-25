@@ -20,11 +20,14 @@ import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -42,6 +45,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JAXRS endpoint for providing RESTful services related to the shopping cart.
@@ -52,7 +57,7 @@ import javax.ws.rs.core.Response;
  */
 @Component("blRestCartEndpoint")
 @Scope("singleton")
-@Path("/cart")
+@Path("/cart/")
 @Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CartEndpoint implements ApplicationContextAware {
@@ -123,7 +128,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @POST
-    @Path("/{categoryId}/{productId}/{skuId}")
+    @Path("{categoryId}/{productId}/{skuId}")
     public OrderWrapper addSkuToOrder(@Context HttpServletRequest request,
                                       @PathParam("categoryId") Long categoryId,
                                       @PathParam("productId") Long productId,
@@ -152,7 +157,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @DELETE
-    @Path("/items/{itemId}")
+    @Path("items/{itemId}")
     public OrderWrapper removeItemFromOrder(@Context HttpServletRequest request,
                                             @PathParam("itemId") Long itemId,
                                             @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
@@ -178,7 +183,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @PUT
-    @Path("/items/{itemId}")
+    @Path("items/{itemId}")
     public OrderWrapper updateItemQuantity(@Context HttpServletRequest request,
                                                @PathParam("itemId") Long itemId,
                                                @QueryParam("quantity") Integer quantity,
@@ -213,7 +218,7 @@ public class CartEndpoint implements ApplicationContextAware {
 
 
     @POST
-    @Path("/offer")
+    @Path("offer")
     public OrderWrapper addOfferCode(@Context HttpServletRequest request,
                                      @QueryParam("promoCode") String promoCode,
                                      @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
@@ -240,7 +245,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @DELETE
-    @Path("/offer")
+    @Path("offer")
     public OrderWrapper removeOfferCode(@Context HttpServletRequest request,
                                         @QueryParam("promoCode") String promoCode,
                                         @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
@@ -267,7 +272,7 @@ public class CartEndpoint implements ApplicationContextAware {
     }
 
     @DELETE
-    @Path("/offers")
+    @Path("offers")
     public OrderWrapper removeAllOfferCodes(@Context HttpServletRequest request,
                                         @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
         Customer customer = customerState.getCustomer(request);

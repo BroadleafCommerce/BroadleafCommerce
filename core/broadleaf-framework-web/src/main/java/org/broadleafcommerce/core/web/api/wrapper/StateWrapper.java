@@ -17,9 +17,14 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.service.StateService;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper around State.
@@ -27,7 +32,9 @@ import javax.xml.bind.annotation.XmlElement;
  * User: Elbert Bautista
  * Date: 4/10/12
  */
-public class StateWrapper extends BaseWrapper implements APIWrapper<State> {
+@XmlRootElement(name = "state")
+@XmlAccessorType(value = XmlAccessType.FIELD)
+public class StateWrapper extends BaseWrapper implements APIWrapper<State>, APIUnwrapper<State> {
 
     @XmlElement
     protected String name;
@@ -41,4 +48,13 @@ public class StateWrapper extends BaseWrapper implements APIWrapper<State> {
         this.abbreviation = model.getAbbreviation();
     }
 
+    @Override
+    public State unwrap(HttpServletRequest request, ApplicationContext appContext) {
+        StateService stateService = (StateService) appContext.getBean("blStateService");
+        if (this.abbreviation != null) {
+            State state = stateService.findStateByAbbreviation(this.abbreviation);
+            return state;
+        }
+        return null;
+    }
 }

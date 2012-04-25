@@ -18,12 +18,17 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a JAXB wrapper around FulfillmentGroup.
@@ -33,19 +38,19 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "fulfillmentGroup")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<FulfillmentGroup> {
+public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<FulfillmentGroup>, APIUnwrapper<FulfillmentGroupRequest> {
 
     @XmlElement
     protected Long id;
+
+    @XmlElement
+    protected Long orderId;
 
     @XmlElement
     protected Money total;
 
     @XmlElement
     protected AddressWrapper address;
-
-    @XmlElement
-    protected OrderWrapper order;
 
     @XmlElement
     protected PhoneWrapper phone;
@@ -56,6 +61,10 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @XmlElement
     protected String service;
 
+    @XmlElement(name = "fulfillmentGroupItem")
+    @XmlElementWrapper(name = "fulfillmentGroupItems")
+    protected List<FulfillmentGroupItemWrapper> fulfillmentGroupItems;
+
     @Override
     public void wrap(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
@@ -63,17 +72,62 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
         this.method = model.getMethod();
         this.service = model.getService();
 
-        AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
-        addressWrapper.wrap(model.getAddress(), request);
-        this.address = addressWrapper;
+        if (model.getOrder() != null) {
+            this.orderId = model.getOrder().getId();
+        }
 
-        OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-        orderWrapper.wrap(model.getOrder(), request);
-        this.order = orderWrapper;
+        if (model.getAddress() != null) {
+            AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
+            addressWrapper.wrap(model.getAddress(), request);
+            this.address = addressWrapper;
+        }
 
-        PhoneWrapper phoneWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
-        phoneWrapper.wrap(model.getPhone(), request);
-        this.phone = phoneWrapper;
+        if (model.getPhone() != null) {
+            PhoneWrapper phoneWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+            phoneWrapper.wrap(model.getPhone(), request);
+            this.phone = phoneWrapper;
+        }
 
+        List<FulfillmentGroupItem> fgs = model.getFulfillmentGroupItems();
+        if (fgs != null && !fgs.isEmpty()) {
+            List<FulfillmentGroupItemWrapper> fulfillmentGroupItemWrappers = new ArrayList<FulfillmentGroupItemWrapper>();
+            for (FulfillmentGroupItem fgi : fgs) {
+                FulfillmentGroupItemWrapper fulfillmentGroupItemWrapper = (FulfillmentGroupItemWrapper) context.getBean(FulfillmentGroupItemWrapper.class.getName());
+                fulfillmentGroupItemWrapper.wrap(fgi, request);
+                fulfillmentGroupItemWrappers.add(fulfillmentGroupItemWrapper);
+            }
+            this.fulfillmentGroupItems = fulfillmentGroupItemWrappers;
+        }
+
+    }
+
+    @Override
+    public FulfillmentGroupRequest unwrap(HttpServletRequest request, ApplicationContext appContext) {
+        FulfillmentGroupRequest fulfillmentGroupRequest = new FulfillmentGroupRequest();
+        fulfillmentGroupRequest.setMethod(this.method);
+        fulfillmentGroupRequest.setService(this.service);
+
+        List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
+        for (FulfillmentGroupItemWrapper wrapper : this.fulfillmentGroupItems) {
+            fulfillmentGroupItemRequests.add(wrapper.unwrap(request, appContext));
+        }
+
+        fulfillmentGroupRequest.setFulfillmentGroupItemRequests(fulfillmentGroupItemRequests);
+
+        OrderService orderService = (OrderService) appContext.getBean("blCartService");
+        Order order = orderService.findOrderById(this.orderId);
+        if (order != null) {
+            fulfillmentGroupRequest.setOrder(order);
+        }
+
+        if (this.address != null) {
+            fulfillmentGroupRequest.setAddress(this.address.unwrap(request, appContext));
+        }
+
+        if (this.phone != null) {
+            fulfillmentGroupRequest.setPhone(this.phone.unwrap(request, appContext));
+        }
+
+        return fulfillmentGroupRequest;
     }
 }

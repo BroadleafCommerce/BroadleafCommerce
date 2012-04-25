@@ -17,6 +17,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MoneyWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MoneyWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.PhoneWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PhoneWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductDimensionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductDimensionWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductWeightWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductWeightWrapper" scope="prototype"/>

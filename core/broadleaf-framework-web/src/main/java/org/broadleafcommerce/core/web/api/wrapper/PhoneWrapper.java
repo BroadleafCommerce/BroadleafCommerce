@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.service.PhoneService;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "phone")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class PhoneWrapper extends BaseWrapper implements APIWrapper<Phone> {
+public class PhoneWrapper extends BaseWrapper implements APIWrapper<Phone>, APIUnwrapper<Phone> {
 
     @XmlElement
     protected Long id;
@@ -52,5 +54,18 @@ public class PhoneWrapper extends BaseWrapper implements APIWrapper<Phone> {
         this.phoneNumber = model.getPhoneNumber();
         this.isActive = model.isActive();
         this.isDefault = model.isDefault();
+    }
+
+    @Override
+    public Phone unwrap(HttpServletRequest request, ApplicationContext appContext) {
+        PhoneService phoneService = (PhoneService) appContext.getBean("blPhoneService");
+        Phone phone = phoneService.create();
+
+        phone.setActive(this.isActive);
+        phone.setDefault(this.isDefault);
+        phone.setId(this.id);
+        phone.setPhoneNumber(this.phoneNumber);
+
+        return phone;
     }
 }

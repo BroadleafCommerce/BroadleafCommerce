@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "address")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class AddressWrapper extends BaseWrapper implements APIWrapper<Address> {
+public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, APIUnwrapper<Address> {
 
     @XmlElement
     protected Long id;
@@ -101,5 +103,35 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address> {
         this.isBusiness = model.isBusiness();
         this.isDefault = model.isDefault();
 
+    }
+
+    @Override
+    public Address unwrap(HttpServletRequest request, ApplicationContext appContext) {
+        AddressService addressService = (AddressService) appContext.getBean("blAddressService");
+        Address address = addressService.create();
+
+        address.setId(this.id);
+        address.setFirstName(this.firstName);
+        address.setLastName(this.lastName);
+        address.setAddressLine1(this.addressLine1);
+        address.setAddressLine2(this.addressLine2);
+        address.setCity(this.city);
+
+        if (this.state != null) {
+            address.setState(this.state.unwrap(request, appContext));
+        }
+
+        if (this.country != null) {
+            address.setCountry(this.country.unwrap(request, appContext));
+        }
+
+        address.setPostalCode(this.postalCode);
+        address.setPrimaryPhone(this.primaryPhone);
+        address.setSecondaryPhone(this.secondaryPhone);
+        address.setCompanyName(this.companyName);
+        address.setBusiness(this.isBusiness);
+        address.setDefault(this.isDefault);
+
+        return address;
     }
 }

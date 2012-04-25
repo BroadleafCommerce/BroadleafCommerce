@@ -18,6 +18,10 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,7 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "fulfillmentGroupItem")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapper<FulfillmentGroupItem> {
+public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapper<FulfillmentGroupItem>, APIUnwrapper<FulfillmentGroupItemRequest> {
 
     @XmlElement
     protected Long id;
@@ -42,7 +46,7 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
     protected Long fulfillmentGroupId;
 
     @XmlElement
-    protected OrderItemWrapper orderItem;
+    protected Long orderItemId;
 
     @XmlElement
     protected Money retailPrice;
@@ -64,13 +68,27 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
             this.fulfillmentGroupId = model.getFulfillmentGroup().getId();
         }
 
-        OrderItemWrapper orderItemWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
-        orderItemWrapper.wrap(model.getOrderItem(), request);
-        this.orderItem = orderItemWrapper;
+        if (model.getOrderItem() != null) {
+            this.orderItemId = model.getOrderItem().getId();
+        }
 
         this.retailPrice = model.getRetailPrice();
         this.salePrice = model.getSalePrice();
         this.totalTax = model.getTotalTax();
         this.quantity = model.getQuantity();
+    }
+
+    @Override
+    public FulfillmentGroupItemRequest unwrap(HttpServletRequest request, ApplicationContext appContext) {
+        OrderItemService orderItemService = (OrderItemService) appContext.getBean("blOrderItemService");
+        OrderItem orderItem = orderItemService.readOrderItemById(this.orderItemId);
+        if (orderItem != null) {
+            FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
+            fulfillmentGroupItemRequest.setOrderItem(orderItem);
+            fulfillmentGroupItemRequest.setQuantity(this.quantity);
+            return fulfillmentGroupItemRequest;
+        }
+
+        return null;
     }
 }
