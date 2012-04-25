@@ -46,15 +46,14 @@ public class SimpleTaxModule implements TaxModule {
             
             // Set taxes on the fulfillment group items
             for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                List<TaxDetail> taxes = new ArrayList<TaxDetail>();
+                fgItem.getTaxes().clear();
                 
                 TaxDetail tax = new TaxDetailImpl();
                 tax.setRate(new BigDecimal(factor));
                 tax.setType(TaxType.STATE);
                 tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
-                taxes.add(tax);
-                
-                fgItem.setTaxes(taxes);
+                fgItem.getTaxes().add(tax);
+
             }
     
             // Do not tax fulfillment group fees
