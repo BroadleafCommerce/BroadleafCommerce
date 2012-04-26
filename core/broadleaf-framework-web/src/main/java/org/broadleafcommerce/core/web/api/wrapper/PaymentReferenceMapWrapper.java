@@ -13,39 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.money.Money;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.util.Currency;
+import java.util.Map;
 
 /**
- * This is a JAXB wrapper around Money.
+ * <p>
+ * This is a JAXB wrapper that
+ * encapsulates the mapping between a PaymentInfoWrapper and a ReferencedWrapper
  *
+ * This is just a container, and will not be wrapped or unwrapped from a BLC entity
+ *
+ * <p/>
  * User: Elbert Bautista
- * Date: 4/10/12
+ * Date: 4/26/12
  */
-@XmlRootElement(name = "money")
+@XmlRootElement(name = "paymentReferenceMap")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class MoneyWrapper extends BaseWrapper implements APIWrapper<Money> {
+public class PaymentReferenceMapWrapper extends BaseWrapper {
 
     @XmlElement
-    protected BigDecimal amount;
+    protected PaymentInfoWrapper paymentInfoWrapper;
 
     @XmlElement
-    protected Currency currency;
+    protected ReferencedWrapper referencedWrapper;
 
-    @Override
-    public void wrap(Money model, HttpServletRequest request) {
-        this.amount = model.getAmount();
-        this.currency = model.getCurrency();
+    public PaymentInfoWrapper getPaymentInfoWrapper() {
+        return paymentInfoWrapper;
     }
 
+    public void setPaymentInfoWrapper(PaymentInfoWrapper paymentInfoWrapper) {
+        this.paymentInfoWrapper = paymentInfoWrapper;
+    }
+
+    public ReferencedWrapper getReferencedWrapper() {
+        return referencedWrapper;
+    }
+
+    public void setReferencedWrapper(ReferencedWrapper referencedWrapper) {
+        this.referencedWrapper = referencedWrapper;
+    }
 }
