@@ -664,9 +664,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             cartService.removeItemFromOrder(order.getDelegate(), bundleContainer.getKey(), false);
             for (BundleOrderItem vals : gatheredBundleItems.values()) {
                 vals.setId(null);
-                cartService.addOrderItemToOrder(order.getDelegate(), vals, false);
+                BundleOrderItem temp = (BundleOrderItem) cartService.addOrderItemToOrder(order.getDelegate(), vals, false);
                 if (targetGroup != null) {
-                    cartService.addItemToFulfillmentGroup(vals, targetGroup.getDelegate(), false);
+                    cartService.addItemToFulfillmentGroup(temp, targetGroup.getDelegate(), false);
                 }
             }
         }
