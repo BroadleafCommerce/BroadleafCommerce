@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl;
@@ -29,18 +33,16 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.manipulation.DiscreteOrderItemDecorator;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.money.BankersRounding;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGroup {
 
 	private static final long serialVersionUID = 1L;
 	
-	protected Money adjustmentPrice;  // retailPrice with adjustments
+	protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
 	protected FulfillmentGroup delegate;
 	protected PromotableOrder order;
 	protected PromotableItemFactory itemFactory;
@@ -72,7 +74,7 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
                 }
             } else {
                 DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
-                if (discreteOrderItem.getSku().isDiscountable()) {
+                if (discreteOrderItem.getSku().isDiscountable() == null || discreteOrderItem.getSku().isDiscountable()) {
                 	//use the decorator patter to return the quantity for this fgItem, not the quantity on the discrete order item
                     discreteOrderItems.add(itemFactory.createPromotableOrderItem(new DiscreteOrderItemDecorator(discreteOrderItem, fgItem.getQuantity()), order));
                 }
@@ -87,9 +89,9 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
      */
     public void addFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment fulfillmentGroupAdjustment) {
         if (delegate.getFulfillmentGroupAdjustments().size() == 0) {
-            adjustmentPrice = delegate.getRetailShippingPrice();
+            adjustmentPrice = delegate.getRetailShippingPrice().getAmount();
         }
-        adjustmentPrice = adjustmentPrice.subtract(fulfillmentGroupAdjustment.getValue());
+        adjustmentPrice = adjustmentPrice.subtract(fulfillmentGroupAdjustment.getValue().getAmount());
         delegate.getFulfillmentGroupAdjustments().add(fulfillmentGroupAdjustment.getDelegate());
         order.resetTotalitarianOfferApplied();
     }
@@ -101,7 +103,7 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
     }
     
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-        Money currentPrice = null;
+        Money currentPrice;
         if (delegate.getSaleShippingPrice() != null && allowSalesPrice) {
             currentPrice = delegate.getSaleShippingPrice();
         } else {
@@ -111,11 +113,11 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
     }
     
     public Money getAdjustmentPrice() {
-        return adjustmentPrice == null ? null : adjustmentPrice;
+        return adjustmentPrice == null ? null : new Money(adjustmentPrice, delegate.getRetailShippingPrice().getCurrency(), adjustmentPrice.scale()==0? BankersRounding.DEFAULT_SCALE:adjustmentPrice.scale());
     }
 
     public void setAdjustmentPrice(Money adjustmentPrice) {
-        this.adjustmentPrice = adjustmentPrice;
+        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
     
     public Money getRetailShippingPrice() {
