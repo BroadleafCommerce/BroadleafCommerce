@@ -154,7 +154,7 @@ public class CartTest extends OrderBaseTest {
     	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
     	
     	assert response.getAddedItems().size() == 2;
-    	assert response.getOrder().getOrderItems().size() == 4;
+    	assert response.getOrder().getOrderItems().size() == 3;
     	assert response.isMerged();
     	assert response.getRemovedItems().size() == 4;
     }
