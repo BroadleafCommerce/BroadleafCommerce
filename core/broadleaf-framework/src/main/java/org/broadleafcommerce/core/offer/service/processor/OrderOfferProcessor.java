@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
@@ -52,7 +51,7 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	
 	public void compileOrderTotal(PromotableOrder order);
     
-    public void initializeSplitItems(PromotableOrder order, List<PromotableOrderItem> items);
+    public void initializeSplitItems(PromotableOrder order);
 	
     public CartService getCartService();
 
@@ -71,5 +70,7 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	public PromotableItemFactory getPromotableItemFactory();
 
 	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+
+    public void initializeBundleSplitItems(PromotableOrder order);
 	
 }

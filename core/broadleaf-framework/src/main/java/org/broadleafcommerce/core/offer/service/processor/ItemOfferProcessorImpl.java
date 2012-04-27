@@ -136,7 +136,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#applyAllItemOffers(java.util.List, java.util.List)
      */
     public boolean applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order) {
-        // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
+        // Iterate through the collection of CandidateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
         // The same offer may be applied to different Order Items
         //
@@ -190,6 +190,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 				)
 			) 
 		{
+            // At this point, we should not have any official adjustment on the order
+            // for this item.
 	    	applyItemQualifiersAndTargets(itemOffer, order);
 	    	allSplitItems = order.getAllSplitItems();
 	    	for (PromotableOrderItem splitItem : allSplitItems) {
@@ -230,40 +232,69 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		    // compare adjustment price to sales price and remove adjustments if sales price is better
 		    for (PromotableOrderItem splitItem : allSplitItems) {
 		        if (splitItem.isHasOrderItemAdjustments()) {
-		            Money itemPrice = splitItem.getRetailPrice();
-		            if (splitItem.getSalePrice() != null) {
-		                itemPrice = splitItem.getSalePrice();
-		            }
-		            if (splitItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice)) {
-		                // adjustment price is not best price, remove adjustments for this item
-		                int offersRemoved = splitItem.removeAllAdjustments();
-		                appliedItemOffersCount -= offersRemoved;
-		            }
-		        }
-		    }
+                    boolean useSaleAdjustments = false;
+                    int adjustmentsRemoved = 0;
+		            
+                    Money adjustmentPrice;
+                    if (splitItem.getDelegate().getIsOnSale()) {
+                        if (splitItem.getSaleAdjustmentPrice().lessThanOrEqual(splitItem.getRetailAdjustmentPrice())) {
+                            adjustmentPrice = splitItem.getSaleAdjustmentPrice();
+                            useSaleAdjustments = true;
+                        }  else {
+                            adjustmentPrice = splitItem.getRetailAdjustmentPrice();
+                        }
+
+                        if (! adjustmentPrice.lessThan(splitItem.getSalePrice())) {
+                            adjustmentsRemoved = adjustmentsRemoved + splitItem.removeAllAdjustments();
+                        }
+                    } else {
+                        if (! splitItem.getRetailAdjustmentPrice().lessThan(splitItem.getRetailPrice())) {
+                            adjustmentsRemoved = adjustmentsRemoved + splitItem.removeAllAdjustments();
+                        }
+                    }
+
+                    adjustmentsRemoved = adjustmentsRemoved + splitItem.fixAdjustments(useSaleAdjustments);
+                    appliedItemOffersCount -= adjustmentsRemoved;
+                }
+
+
+            }
 		    mergeSplitItems(order);
 		}
 		return appliedItemOffersCount;
 	}
 
 	protected int checkLegacyAdjustments(List<PromotableOrderItem> discreteOrderItems, int appliedItemOffersCount) {
-		if (appliedItemOffersCount > 0) {
-		    // compare adjustment price to sales price and remove adjustments if sales price is better
-		    for (PromotableOrderItem discreteOrderItem : discreteOrderItems) {
-		        if (discreteOrderItem.getAdjustmentPrice() != null) {
-		            Money itemPrice = discreteOrderItem.getRetailPrice();
-		            if (discreteOrderItem.getSalePrice() != null) {
-		                itemPrice = discreteOrderItem.getSalePrice();
-		            }
-		            if (discreteOrderItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice)) {
-		                // adjustment price is not best price, remove adjustments for this item
-		                int offersRemoved = discreteOrderItem.removeAllAdjustments();
-		                appliedItemOffersCount = appliedItemOffersCount - offersRemoved;
-		            }
-		        }
-		    }
-		}
-		return appliedItemOffersCount;
+        if (appliedItemOffersCount > 0) {
+            for (PromotableOrderItem discreteOrderItem : discreteOrderItems) {
+                if (discreteOrderItem.isHasOrderItemAdjustments()) {
+                    boolean useSaleAdjustments = false;
+                    int adjustmentsRemoved = 0;
+
+                    Money adjustmentPrice;
+                    if (discreteOrderItem.getDelegate().getIsOnSale()) {
+                        if (discreteOrderItem.getSaleAdjustmentPrice().lessThanOrEqual(discreteOrderItem.getRetailAdjustmentPrice())) {
+                            adjustmentPrice = discreteOrderItem.getSaleAdjustmentPrice();
+                            useSaleAdjustments = true;
+                        }  else {
+                            adjustmentPrice = discreteOrderItem.getRetailAdjustmentPrice();
+                        }
+
+                        if (! adjustmentPrice.lessThanOrEqual(discreteOrderItem.getSalePrice())) {
+                            adjustmentsRemoved = adjustmentsRemoved + discreteOrderItem.removeAllAdjustments();
+                        }
+                    } else {
+                        if (! discreteOrderItem.getRetailAdjustmentPrice().lessThanOrEqual(discreteOrderItem.getRetailPrice())) {
+                            adjustmentsRemoved = adjustmentsRemoved + discreteOrderItem.removeAllAdjustments();
+                        }
+                    }
+
+                    adjustmentsRemoved = adjustmentsRemoved + discreteOrderItem.fixAdjustments(useSaleAdjustments);
+                    appliedItemOffersCount -= adjustmentsRemoved;
+                }
+            }
+        }
+        return appliedItemOffersCount;
 	}
 
 	protected int applyLegacyAdjustments(int appliedItemOffersCount, PromotableCandidateItemOffer itemOffer, int beforeCount, PromotableOrderItem orderItem) {
@@ -377,7 +408,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		} while (matchFound);
 		
 		if (order.getSplitItems().size() == 0) {
-			initializeSplitItems(order, order.getDiscountableDiscreteOrderItems());
+			initializeSplitItems(order);
 		}
 		List<PromotableOrderItem> allSplitItems = order.getAllSplitItems();
 		for (PromotableOrderItem chargeableItem : allSplitItems) {
@@ -424,8 +455,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     @SuppressWarnings("unchecked")
 	public void applyAndCompareOrderAndItemOffers(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers) {
 		if (!qualifiedItemOffers.isEmpty()) {
-		    // Sort order item offers by priority and total discount
+		    // Sort order item offers by priority and potential total discount
 			Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
+
+            // At this point, the list of qualifiedItemOffers contains all
+            // offers that might effect an item on this order.   The orders have
+            // been sorted in the order they will be applied based on the
+            // potential order savings.
 			applyAllItemOffers(qualifiedItemOffers, order);
 		}
 		
@@ -442,7 +478,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		if (!qualifiedOrderOffers.isEmpty() && !qualifiedItemOffers.isEmpty()) {
 		    List<PromotableCandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
 		    order.removeAllOrderAdjustments();
-		    for (PromotableCandidateOrderOffer condidateOrderOffer : qualifiedOrderOffers) {
+		    for (PromotableCandidateOrderOffer candidateOrderOffer : qualifiedOrderOffers) {
 		    	// recheck the list of order offers and verify if they still apply with the new subtotal
 		    	/*
 		    	 * Note - there is an edge case possibility where this logic would miss an order promotion
@@ -450,8 +486,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		    	 * the item deductions, the order promotion would have been included and ended up giving the 
 		    	 * customer a better deal than the item deductions.
 		    	 */
-		        if (couldOfferApplyToOrder(condidateOrderOffer.getOffer(), order)) {
-		            finalQualifiedOrderOffers.add(condidateOrderOffer);
+		        if (couldOfferApplyToOrder(candidateOrderOffer.getOffer(), order)) {
+		            finalQualifiedOrderOffers.add(candidateOrderOffer);
 		        }
 		    }
 
