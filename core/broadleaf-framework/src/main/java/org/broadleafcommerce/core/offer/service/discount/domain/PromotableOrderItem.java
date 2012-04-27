@@ -34,11 +34,28 @@ public interface PromotableOrderItem {
      * @param orderItemAdjustment
      */
     public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment);
-    
-    public Money getAdjustmentPrice();
-    
-    public void setAdjustmentPrice(Money adjustmentPrice);
-    
+
+    /**
+     * The price after discounts if all applicable discounts are applied
+     * to the retail price.
+     *
+     * @return
+     */
+    public Money getRetailAdjustmentPrice();
+
+
+    public void setRetailAdjustmentPrice(Money adjustmentPrice);
+
+    /**
+     * The price after discounts if all applicable discounts are applied
+     * to the sale price.
+     *
+     */
+    public Money getSaleAdjustmentPrice();
+
+    public void setSaleAdjustmentPrice(Money adjustmentPrice);
+
+
     public boolean isNotCombinableOfferApplied();
     
     public boolean isHasOrderItemAdjustments();
@@ -106,4 +123,14 @@ public interface PromotableOrderItem {
 	public void addCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer);
 	
 	public PromotableOrderItem clone();
+
+    /**
+     * Removes all zero based adjustments and sets the adjusted price on the delegate.
+     *
+     * @param useSaleAdjustments
+     * @return
+     */
+    int fixAdjustments(boolean useSaleAdjustments);
+
+    public void resetAdjustmentPrice();
 }
