@@ -207,6 +207,21 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public OrderItem clone() {
+        BundleOrderItemImpl orderItem = (BundleOrderItemImpl) super.clone();
+        if (getDiscreteOrderItems() != null) {
+            for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
+                DiscreteOrderItem temp = (DiscreteOrderItem) discreteOrderItem.clone();
+                temp.setBundleOrderItem(orderItem);
+                orderItem.getDiscreteOrderItems().add(temp);
+            }
+        }
+        if (getBundleOrderItemFeePrices() != null) orderItem.getBundleOrderItemFeePrices().addAll(getBundleOrderItemFeePrices());
+
+        return orderItem;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = super.hashCode();
         int result = 1;
