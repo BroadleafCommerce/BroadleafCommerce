@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -52,13 +53,15 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
                 adjustmentPrice = order.getSubTotal();
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            	delegate.setValue(new Money(delegate.getOffer().getValue()));
+            	delegate.setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-            	delegate.setValue(adjustmentPrice.subtract(new Money(delegate.getOffer().getValue())));
+                BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
+            	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-            	delegate.setValue(adjustmentPrice.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"))));
+                BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+            	delegate.setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(delegate.getValue())) {
             	delegate.setValue(adjustmentPrice);
@@ -67,7 +70,7 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     }
     
     public Money getValue() {
-		if (delegate.getValue() == null) {
+		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
 			computeAdjustmentValue();
 		}
 		return delegate.getValue();

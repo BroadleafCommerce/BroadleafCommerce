@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -45,35 +46,89 @@ public class PromotableOrderItemAdjustmentImpl implements PromotableOrderItemAdj
 	/*
      * Calculates the value of the adjustment
      */
-    public void computeAdjustmentValue() {
+    public void computeAdjustmentValues() {
+
         if (delegate.getOffer() != null && orderItem != null) {
-            Money adjustmentPrice = orderItem.getAdjustmentPrice(); // get the current price of the item with all adjustments
-            if (adjustmentPrice == null) {
-                if ((delegate.getOffer().getApplyDiscountToSalePrice()) && (orderItem.getSalePrice() != null)) {
-                    adjustmentPrice = orderItem.getSalePrice();
+            Money retailAdjustmentPrice = orderItem.getRetailAdjustmentPrice();
+            Money salesAdjustmentPrice = orderItem.getSaleAdjustmentPrice();
+            
+            if (retailAdjustmentPrice == null) {
+                retailAdjustmentPrice = orderItem.getRetailPrice();
+            }
+            
+            if (delegate.getOrderItem().getIsOnSale() && salesAdjustmentPrice == null) {
+                salesAdjustmentPrice = orderItem.getSalePrice();
+            }
+            
+            // The value of an AMOUNT_OFF type order is the amount specified on the offer.
+            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) { 
+                Money amountOff = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), 5);
+                
+                // compute value for on sale price
+                if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
+                    if (amountOff.lessThan(salesAdjustmentPrice)) {
+                        delegate.setSalesPriceValue(amountOff);
+                    } else {
+                        // Adjustment takes this item down to zero.
+                        delegate.setSalesPriceValue(salesAdjustmentPrice);
+                    }                    
                 } else {
-                    adjustmentPrice = orderItem.getRetailPrice();
+                    // Not applicable to sales price
+                    delegate.setSalesPriceValue(Money.ZERO);                    
+                }
+                
+                // compute value for retail price
+                if (amountOff.lessThan(retailAdjustmentPrice)) {
+                    delegate.setRetailPriceValue(amountOff);                    
+                } else {
+                    // Adjustment takes this item down to zero.
+                    delegate.setRetailPriceValue(retailAdjustmentPrice);
+                }                
+            }
+            
+            // The value of FIX_PRICE depends on whether the item was on sale or not. 
+            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
+                Money fixPriceAmount = new Money(delegate.getOffer().getValue(), retailAdjustmentPrice.getCurrency(), 5);
+                
+                if (fixPriceAmount.lessThan(retailAdjustmentPrice)) {
+                    BigDecimal offerValue = retailAdjustmentPrice.getAmount().subtract(fixPriceAmount.getAmount());
+                    delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), 5));
+                } else {
+                    delegate.setRetailPriceValue(Money.ZERO);
+                }
+                        
+                if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
+                    if (fixPriceAmount.lessThan(salesAdjustmentPrice)) {
+                        delegate.setSalesPriceValue(fixPriceAmount);                        
+                    } else {
+                        // Sale price is less than the fixed price already
+                        delegate.setSalesPriceValue(Money.ZERO);
+                    }
                 }
             }
-            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            	delegate.setValue(new Money(delegate.getOffer().getValue()));
-            }
-            if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-            	delegate.setValue(adjustmentPrice.subtract(new Money(delegate.getOffer().getValue())));
-            }
+            
+            // The current logic assume serial execution of percent off promotions.   Parallel logic 
+            // would be slightly different. 
             if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-            	delegate.setValue(adjustmentPrice.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"))));
+                if (delegate.getOffer().getApplyDiscountToSalePrice() && delegate.getOrderItem().getIsOnSale()) {
+                    BigDecimal offerValue = salesAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+                    delegate.setSalesPriceValue(new Money(offerValue, salesAdjustmentPrice.getCurrency(), 5));
+                } else {
+                    delegate.setSalesPriceValue(Money.ZERO);
+                }
+                
+                BigDecimal offerValue = retailAdjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+            	delegate.setRetailPriceValue(new Money(offerValue, retailAdjustmentPrice.getCurrency(), 5));
             }
-            if (adjustmentPrice.lessThan(delegate.getValue())) {
-            	delegate.setValue(adjustmentPrice);
-            }
+
         }
     }
-    
-    public Money getValue() {
-		if (delegate.getValue() == null) {
-            computeAdjustmentValue();
-        }
-		return delegate.getValue();
-	}
+
+    public Money getRetailPriceValue() {
+        return delegate.getRetailPriceValue();
+    }
+
+    public Money getSalesPriceValue() {
+        return delegate.getSalesPriceValue();
+    }
 }

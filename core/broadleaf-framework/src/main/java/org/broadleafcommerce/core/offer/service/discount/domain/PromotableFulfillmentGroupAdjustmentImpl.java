@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -58,13 +59,15 @@ public class PromotableFulfillmentGroupAdjustmentImpl implements PromotableFulfi
                 }
             }
             if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF )) {
-            	setValue(new Money(delegate.getOffer().getValue()));
+            	setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
             }
             if (getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-            	setValue(adjustmentPrice.subtract(new Money(delegate.getOffer().getValue())));
+                BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
+            	setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-            	setValue(adjustmentPrice.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"))));
+                BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+            	setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
             }
             if (adjustmentPrice.lessThan(getValue())) {
             	setValue(adjustmentPrice);
@@ -108,7 +111,7 @@ public class PromotableFulfillmentGroupAdjustmentImpl implements PromotableFulfi
 	}
 
 	public Money getValue() {
-		if (delegate.getValue() == null) {
+		if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
             computeAdjustmentValue();
         }
 		return delegate.getValue();
