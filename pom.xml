@@ -10,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>1.5.2.1</version>
+    <version>1.5.2.2</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -232,49 +232,49 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-instrument</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-usps-schemas</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-usps</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-cybersource-api</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-cybersource</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -282,21 +282,21 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-profile-web</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -304,21 +304,21 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-framework-web</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-admin-module</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-admin-module</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -326,14 +326,14 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contentmanagement-module</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-contentmanagement-module</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -341,14 +341,14 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-open-admin-platform</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>broadleaf-open-admin-platform</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
@@ -356,7 +356,7 @@
             <dependency>
                 <groupId>org.broadleafcommerce</groupId>
                 <artifactId>integration</artifactId>
-                <version>1.5.2.1</version>
+                <version>1.5.2.2</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
