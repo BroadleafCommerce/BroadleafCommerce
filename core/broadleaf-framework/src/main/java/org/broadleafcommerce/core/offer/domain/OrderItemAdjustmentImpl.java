@@ -112,10 +112,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
     @AdminPresentation(friendlyName="Item Adjustment Value", order=2, group="Description")
     protected BigDecimal value = Money.ZERO.getAmount();
-
-    @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName="Apply To Sale Price", order=3, group="Description")
-    protected boolean appliedToSalePrice;
     
     @Transient
     protected Money retailValue;
@@ -168,14 +164,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     
     public void setValue(Money value) {
     	this.value = value.getAmount();
-    }
-
-    public boolean isAppliedToSalePrice() {
-        return appliedToSalePrice;
-    }
-
-    public void setAppliedToSalePrice(boolean appliedToSalePrice) {
-        this.appliedToSalePrice = appliedToSalePrice;
     }
 
     public Money getRetailPriceValue() {

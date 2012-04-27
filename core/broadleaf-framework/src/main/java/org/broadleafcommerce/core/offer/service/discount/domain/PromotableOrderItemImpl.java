@@ -464,30 +464,19 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
      */
     @Override
     public int fixAdjustments(boolean useSaleAdjustments) {
-        
+        //ignore useSaleAdjustments - as this would introduce a new database schema requirement that was not present in 1.5.2-GA
+
         Iterator<OrderItemAdjustment> adjustmentsIterator = delegate.getOrderItemAdjustments().iterator();
         int removeCount = 0;
         
         while (adjustmentsIterator.hasNext()) {
             OrderItemAdjustment currentAdjustment = adjustmentsIterator.next();
-            if (useSaleAdjustments) {
-                if (currentAdjustment.getSalesPriceValue().lessThanOrEqual(BigDecimal.ZERO)) {
-                    currentAdjustment.setOrderItem(null);
-                    adjustmentsIterator.remove();
-                    removeCount++;
-                } else {
-                    currentAdjustment.setAppliedToSalePrice(true);
-                    currentAdjustment.setValue(currentAdjustment.getSalesPriceValue());
-                }
+            if (currentAdjustment.getRetailPriceValue().lessThanOrEqual(BigDecimal.ZERO)) {
+                currentAdjustment.setOrderItem(null);
+                adjustmentsIterator.remove();
+                removeCount++;
             } else {
-                if (currentAdjustment.getRetailPriceValue().lessThanOrEqual(BigDecimal.ZERO)) {
-                    currentAdjustment.setOrderItem(null);
-                    adjustmentsIterator.remove();
-                    removeCount++;
-                } else {
-                    currentAdjustment.setAppliedToSalePrice(false);
-                    currentAdjustment.setValue(currentAdjustment.getRetailPriceValue());
-                }
+                currentAdjustment.setValue(currentAdjustment.getRetailPriceValue());
             }
         }
         return removeCount;

@@ -28,19 +28,6 @@ public interface OrderItemAdjustment extends Adjustment {
     public void setOrderItem(OrderItem orderItem);
 
     /**
-     * Even for items that are on sale, it is possible that an adjustment was made
-     * to the retail price that gave the customer a better offer.
-     *
-     * Since some offers can be applied to the sale price and some only to the
-     * retail price, this setting provides the required value.
-     *
-     * @return true if this adjustment was applied to the sale price
-     */
-    public boolean isAppliedToSalePrice();
-
-    public void setAppliedToSalePrice(boolean appliedToSalePrice);
-
-    /**
      * Value of this adjustment relative to the retail price.
      * @return
      */
