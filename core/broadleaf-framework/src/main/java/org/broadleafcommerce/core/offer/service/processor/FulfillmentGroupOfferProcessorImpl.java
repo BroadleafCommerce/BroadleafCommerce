@@ -16,21 +16,29 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.FulfillmentGroupOfferPotential;
-import org.broadleafcommerce.core.offer.service.discount.domain.*;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroupAdjustment;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
-import org.broadleafcommerce.common.money.Money;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * 
@@ -233,7 +241,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 			order.removeAllOrderAdjustments();
 			order.removeAllItemAdjustments();
 			gatherCart(order);
-			initializeSplitItems(order, order.getDiscountableDiscreteOrderItems());
+			initializeSplitItems(order);
 		}
 		return fgOfferApplied;
 	}

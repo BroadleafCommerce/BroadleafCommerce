@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
@@ -37,11 +42,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The Class OfferServiceImpl.
@@ -229,6 +229,7 @@ public class OfferServiceImpl implements OfferService {
             orderOfferProcessor.compileOrderTotal(promotableOrder);
         } else {
         	itemOfferProcessor.gatherCart(promotableOrder);
+            orderOfferProcessor.initializeBundleSplitItems(promotableOrder);
             List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
             List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
             
