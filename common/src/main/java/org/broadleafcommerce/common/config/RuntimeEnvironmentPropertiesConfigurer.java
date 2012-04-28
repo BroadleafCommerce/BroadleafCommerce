@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.common.config;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -25,12 +31,6 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringValueResolver;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * A property resource configurer that chooses the property file at runtime
@@ -149,7 +149,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         return resources;
     }
 
-    protected String determineEnvironment() {
+    public String determineEnvironment() {
         String environment = keyResolver.resolveRuntimeEnvironmentKey();
 
         if (environment == null) {
@@ -206,6 +206,10 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
      */
     public void setDefaultEnvironment(String defaultEnvironment) {
         this.defaultEnvironment = defaultEnvironment;
+    }
+
+    public String getDefaultEnvironment() {
+        return defaultEnvironment;
     }
 
     public void setKeyResolver(RuntimeEnvironmentKeyResolver keyResolver) {
