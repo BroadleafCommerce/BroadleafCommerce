@@ -17,8 +17,10 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +63,14 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "orderItems")
     protected List<OrderItemWrapper> orderItems;
 
+    @XmlElement(name = "fulfillmentGroup")
+    @XmlElementWrapper(name = "fulfillmentGroups")
+    protected List<FulfillmentGroupWrapper> fulfillmentGroups;
+
+    @XmlElement(name = "paymentInfo")
+    @XmlElementWrapper(name = "paymentInfos")
+    protected List<PaymentInfoWrapper> paymentInfos;
+
     @Override
     public void wrap(Order model, HttpServletRequest request) {
         this.id = model.getId();
@@ -76,6 +86,24 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
                 OrderItemWrapper orderItemWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
                 orderItemWrapper.wrap(orderItem, request);
                 this.orderItems.add(orderItemWrapper);
+            }
+        }
+
+        if (model.getFulfillmentGroups() != null && !model.getFulfillmentGroups().isEmpty()) {
+            this.fulfillmentGroups = new ArrayList<FulfillmentGroupWrapper>();
+            for (FulfillmentGroup fulfillmentGroup : model.getFulfillmentGroups()) {
+                FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
+                fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                this.fulfillmentGroups.add(fulfillmentGroupWrapper);
+            }
+        }
+
+        if (model.getPaymentInfos() != null && !model.getPaymentInfos().isEmpty()) {
+            this.paymentInfos = new ArrayList<PaymentInfoWrapper>();
+            for (PaymentInfo paymentInfo : model.getPaymentInfos()) {
+                PaymentInfoWrapper paymentInfoWrapper = (PaymentInfoWrapper) context.getBean(PaymentInfoWrapper.class.getName());
+                paymentInfoWrapper.wrap(paymentInfo, request);
+                this.paymentInfos.add(paymentInfoWrapper);
             }
         }
 

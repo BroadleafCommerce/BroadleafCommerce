@@ -22,11 +22,13 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.*;
 import org.broadleafcommerce.core.payment.service.CompositePaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.wrapper.*;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -42,10 +44,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JAXRS endpoint for exposing the checkout process as a set of RESTful services.
@@ -124,13 +123,19 @@ public class CheckoutEndpoint implements ApplicationContextAware {
                 try {
                     if (mapWrappers != null && !mapWrappers.isEmpty()) {
                         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+                        List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
                         for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
                             PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
                             Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
 
                             payments.put(paymentInfo, referenced);
+                            paymentInfos.add(paymentInfo);
                         }
+
+                        cart.setPaymentInfos(paymentInfos);
+                        cart.setStatus(OrderStatus.SUBMITTED);
+                        cart.setSubmitDate(Calendar.getInstance().getTime());
 
                         CheckoutResponse response = checkoutService.performCheckout(cart, payments);
                         Order order = response.getOrder();
@@ -139,6 +144,15 @@ public class CheckoutEndpoint implements ApplicationContextAware {
                         return wrapper;
                     }
                 } catch (CheckoutException e) {
+
+                    cart.setStatus(OrderStatus.IN_PROCESS);
+
+                    try {
+                        cartService.save(cart, false);
+                    } catch (PricingException e1) {
+                        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    }
+
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                 }
             }
