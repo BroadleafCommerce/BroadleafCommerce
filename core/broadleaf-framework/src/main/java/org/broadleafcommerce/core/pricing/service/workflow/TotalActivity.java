@@ -57,7 +57,6 @@ public class TotalActivity extends BaseActivity {
             fgTotal = fgTotal.add(fulfillmentGroup.getMerchandiseTotal());
             fgTotal = fgTotal.add(fulfillmentGroup.getShippingPrice());
             fgTotal = fgTotal.add(fulfillmentGroup.getTotalTax());
-            fgTotal = fgTotal.add(fulfillmentGroup.getTotalTax());
             
             for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
                 fgTotal = fgTotal.add(fulfillmentGroupFee.getAmount());
