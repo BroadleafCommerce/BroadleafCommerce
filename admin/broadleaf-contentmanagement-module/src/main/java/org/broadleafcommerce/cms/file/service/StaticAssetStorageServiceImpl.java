@@ -188,6 +188,27 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             if (staticAsset == null) {
                 //try with lower case
                 staticAsset = findStaticAsset(fullUrl.toLowerCase(), sandBox);
+                if (staticAsset == null) {
+                    int extPos = fullUrl.lastIndexOf('.');
+                    if (extPos >= 0) {
+                        String prefix = fullUrl.substring(0, extPos);
+                        String extension = fullUrl.substring(extPos, fullUrl.length());
+                        //try with upper case prefix
+                        staticAsset = findStaticAsset(prefix.toUpperCase() + extension, sandBox);
+                        if (staticAsset == null) {
+                            //try lower case prefix
+                            staticAsset = findStaticAsset(prefix.toLowerCase() + extension, sandBox);
+                            if (staticAsset == null) {
+                                //try upper case extension
+                                staticAsset = findStaticAsset(prefix + extension.toUpperCase(), sandBox);
+                                if (staticAsset == null) {
+                                    //try lower case extension
+                                    staticAsset = findStaticAsset(prefix + extension.toLowerCase(), sandBox);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         if (staticAsset == null) {
