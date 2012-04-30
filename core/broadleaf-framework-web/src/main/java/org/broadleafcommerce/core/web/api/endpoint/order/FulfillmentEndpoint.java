@@ -152,7 +152,7 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
 
     @PUT
     @Path("group/{fulfillmentGroupId}")
-    public FulfillmentGroupItemWrapper addItemToFulfillmentGroup(@Context HttpServletRequest request,
+    public FulfillmentGroupWrapper addItemToFulfillmentGroup(@Context HttpServletRequest request,
                                                                  @PathParam("fulfillmentGroupId") Long fulfillmentGroupId,
                                                                  FulfillmentGroupItemWrapper wrapper,
                                                                  @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
@@ -180,7 +180,11 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
 
                     if (fulfillmentGroup != null && orderItem != null) {
                         try {
-                            cartService.addItemToFulfillmentGroup(orderItem, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity(), priceOrder);
+                            FulfillmentGroup fg = cartService.addItemToFulfillmentGroup(orderItem, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity(), priceOrder);
+                            FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
+                            fulfillmentGroupWrapper.wrap(fg, request);
+                            return fulfillmentGroupWrapper;
+
                         } catch (PricingException e) {
                             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                         }
