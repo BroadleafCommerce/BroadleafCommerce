@@ -159,6 +159,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-context</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>spring-aop</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>
