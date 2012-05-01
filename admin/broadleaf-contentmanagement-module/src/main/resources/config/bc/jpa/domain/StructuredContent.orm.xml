@@ -128,7 +128,7 @@
                         structuredContent.id in
                         (SELECT sandboxItem.temporaryItemId
                            FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
-                           WHERE (sandboxItem.originalSandBox = :sandbox OR sandboxItem.sandBox = :sandbox) AND
+                           WHERE (sandboxItem.originalSandBoxId = :sandbox OR sandboxItem.originalSandBoxId = :sandbox) AND
                                   sandboxItem.archivedFlag = 'N' AND
                                   sandboxItem.temporaryItemId = structuredContent.id)
                   ORDER BY structuredContent.priority
