@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -33,12 +39,6 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service("blCartService")
 /*
@@ -177,12 +177,22 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         orderItem.removeAllAdjustments();
                         orderItem.removeAllCandidateItemOffers();
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                        if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                            DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                            addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
-                            mergeCartResponse.getAddedItems().add(orderItem);
+                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                            if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
+                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
+                                mergeCartResponse.getAddedItems().add(orderItem);
+                            } else {
+                                mergeCartResponse.getRemovedItems().add(orderItem);
+                            }
                         } else {
-                            mergeCartResponse.getRemovedItems().add(orderItem);
+                            if (discreteOrderItem.getProduct().isActive() && orderItem.getCategory().isActive()) {
+                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
+                                mergeCartResponse.getAddedItems().add(orderItem);
+                            } else {
+                                mergeCartResponse.getRemovedItems().add(orderItem);
+                            }
                         }
                     } else if (orderItem instanceof BundleOrderItem) {
                         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
@@ -195,11 +205,17 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                             discreteOrderItem.removeAllCandidateItemOffers();
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
                             discreteOrderItemRequests.add(itemRequest);
-                            if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                                /*
-                                 * Bundle has an inactive item in it -- remove the whole bundle
-                                 */
-                                removeBundle = true;
+                            if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                                if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
+                                    /*
+                                     * Bundle has an inactive item in it -- remove the whole bundle
+                                     */
+                                    removeBundle = true;
+                                }
+                            } else {
+                                if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                    removeBundle = true;
+                                }
                             }
                         }
                         BundleOrderItemRequest bundleOrderItemRequest = createBundleOrderItemRequest(bundleOrderItem, discreteOrderItemRequests);
@@ -256,26 +272,39 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
 			for (OrderItem orderItem : customerCart.getOrderItems()) {
 				 if (orderItem instanceof DiscreteOrderItem) {
 					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-					if (!discreteOrderItem.getSku().isActive(
-							discreteOrderItem.getProduct(),
-							orderItem.getCategory())) {
-						itemsToRemove.add(orderItem);
-					}
+                    if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                        if (!discreteOrderItem.getSku().isActive(
+                                discreteOrderItem.getProduct(),
+                                orderItem.getCategory())) {
+                            itemsToRemove.add(orderItem);
+                        }
+                    } else {
+                        if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                            itemsToRemove.add(orderItem);
+                        }
+                    }
 				} else if (orderItem instanceof BundleOrderItem) {
 					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
 					boolean removeBundle = false;
 					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
 							.getDiscreteOrderItems()) {
-						if (!discreteOrderItem.getSku().isActive(
-								discreteOrderItem.getProduct(),
-								orderItem.getCategory())) {
-							/*
-							 * Bundle has an inactive item in it -- remove the
-							 * whole bundle
-							 */
-							removeBundle = true;
-							break;
-						}
+                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                            if (!discreteOrderItem.getSku().isActive(
+                                    discreteOrderItem.getProduct(),
+                                    orderItem.getCategory())) {
+                                /*
+                                 * Bundle has an inactive item in it -- remove the
+                                 * whole bundle
+                                 */
+                                removeBundle = true;
+                                break;
+                            }
+                        } else {
+                            if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                removeBundle = true;
+                                break;
+                            }
+                        }
 					}
 					if (removeBundle) {
 						itemsToRemove.add(orderItem);

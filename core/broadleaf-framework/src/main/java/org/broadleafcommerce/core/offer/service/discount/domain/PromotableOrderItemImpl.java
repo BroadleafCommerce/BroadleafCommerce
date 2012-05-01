@@ -105,12 +105,23 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
             saleAdjustmentPrice = tempDiscountedSalePrice.getAmount();
         }
         retailAdjustmentPrice = tempDiscountedRetailPrice.getAmount();
-                            	
+    }
+
+    public void resetAdjustmentPrice() {
+        delegate.updatePrices();
+
+        Money tempDiscountedRetailPrice = delegate.getRetailPrice();
+        Money tempDiscountedSalePrice = delegate.getSalePrice();
+
+        if (tempDiscountedSalePrice != null) {
+            saleAdjustmentPrice = tempDiscountedSalePrice.getAmount();
+        }
+        retailAdjustmentPrice = tempDiscountedRetailPrice.getAmount();
     }
     
     public void addOrderItemAdjustment(PromotableOrderItemAdjustment orderItemAdjustment) {
-    	((PromotableOrderItemAdjustment) orderItemAdjustment).computeAdjustmentValues();
-        delegate.getOrderItemAdjustments().add(((PromotableOrderItemAdjustment) orderItemAdjustment).getDelegate());
+    	orderItemAdjustment.computeAdjustmentValues();
+        delegate.getOrderItemAdjustments().add(orderItemAdjustment.getDelegate());
         order.resetTotalitarianOfferApplied();
         computeAdjustmentPrice();
     }

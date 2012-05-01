@@ -139,6 +139,27 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     }
 
     @Override
+    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale locale) {
+
+        String queryName = null;
+        if (sandBox == null) {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME";
+        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_PRODUCTION_SANDBOX";
+        } else {
+            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_USER_SANDBOX";
+        }
+
+        Query query = em.createNamedQuery(queryName);
+        query.setParameter("contentName", name);
+        query.setParameter("locale", locale);
+        if (sandBox != null) {
+            query.setParameter("sandbox", sandBox);
+        }
+        return query.getResultList();
+    }
+
+    @Override
     public StructuredContentType findStructuredContentTypeByName(String name) {
         Query query = em.createNamedQuery("BC_READ_STRUCTURED_CONTENT_TYPE_BY_NAME");
         query.setParameter("name",name);

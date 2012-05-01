@@ -16,13 +16,18 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.offer.domain.OfferAudit;
+import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
+import org.springframework.stereotype.Repository;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
@@ -51,6 +56,21 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     public OfferAudit readAuditById(final Long offerAuditId) {
         return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(OfferAudit.class.getName()), offerAuditId);
+    }
+
+    public Long countUsesByCustomer(Long customerId, Long offerId) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        cq.select(cb.count(cq.from(OfferAuditImpl.class)));
+
+        Root<OfferAuditImpl> from = cq.from(OfferAuditImpl.class);
+        Predicate customerIdClause = cb.equal(from.get("customerId"),customerId);
+        
+        Predicate offerIdClause = cb.equal(from.get("offerId"), offerId);
+        cq.where(cb.and(customerIdClause, offerIdClause));
+
+        Long result =  em.createQuery(cq).getSingleResult();
+        return result;
     }
 
 }

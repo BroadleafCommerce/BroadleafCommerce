@@ -95,7 +95,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Content Name", order=1, groupOrder = 1, group="Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
-    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "SC_TYPE_ID"})
+    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "ARCHIVED_FLAG", "SC_TYPE_ID"})
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
@@ -105,7 +105,6 @@ public class StructuredContentImpl implements StructuredContent {
 
     @AdminPresentation(friendlyName="Priority", order=3, group="Description")
     @Column(name = "PRIORITY", nullable = false)
-    @Index(name="PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})

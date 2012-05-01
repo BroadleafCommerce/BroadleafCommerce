@@ -16,24 +16,32 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.broadleafcommerce.common.money.BankersRounding;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.OrderItemPriceComparator;
-import org.broadleafcommerce.core.order.domain.*;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitorAdapter;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class PromotableOrderImpl implements PromotableOrder {
 
@@ -44,6 +52,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected boolean notCombinableOfferApplied = false;    
     protected boolean hasOrderAdjustments = false;
     protected List<OrderItemSplitContainer> splitItems = new ArrayList<OrderItemSplitContainer>();
+    protected List<BundleOrderItemSplitContainer> bundleSplitItems = new ArrayList<BundleOrderItemSplitContainer>();
     protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
     protected Order delegate;
     protected List<PromotableFulfillmentGroup> fulfillmentGroups;
@@ -71,14 +80,18 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
     
     public void resetDiscreteOrderItems() {
-    	for (PromotableOrderItem orderItem : discreteOrderItems) {
-    		orderItem.reset();
-    	}
-    	discreteOrderItems = null;
-    	for (PromotableOrderItem orderItem : discountableDiscreteOrderItems) {
-    		orderItem.reset();
-    	}
-    	discountableDiscreteOrderItems = null;
+        if (discreteOrderItems != null) {
+            for (PromotableOrderItem orderItem : discreteOrderItems) {
+                orderItem.reset();
+            }
+            discreteOrderItems = null;
+        }
+        if (discountableDiscreteOrderItems != null) {
+            for (PromotableOrderItem orderItem : discountableDiscreteOrderItems) {
+                orderItem.reset();
+            }
+            discountableDiscreteOrderItems = null;
+        }
     }
     
     public void resetTotalitarianOfferApplied() {
@@ -161,10 +174,16 @@ public class PromotableOrderImpl implements PromotableOrder {
    }
 
     public void removeAllItemAdjustments() {
-        for (PromotableOrderItem orderItem: getDiscountableDiscreteOrderItems()) {
-        	orderItem.removeAllAdjustments();
+        for (OrderItem orderItem : getDelegate().getOrderItems()) {
+            orderItem.removeAllAdjustments();
             adjustmentPrice = null;
             resetTotalitarianOfferApplied();
+            if (orderItem instanceof BundleOrderItem) {
+                for (DiscreteOrderItem discreteOrderItem : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
+                    discreteOrderItem.setPrice(null);
+                }
+            }
+            orderItem.setPrice(null);
             orderItem.assignFinalPrice();
         }
         splitItems.clear();
@@ -224,13 +243,20 @@ public class PromotableOrderImpl implements PromotableOrder {
 		}
 		return null;
 	}
+
+    public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key) {
+        for (BundleOrderItemSplitContainer container : bundleSplitItems) {
+            if (container.getKey().equals(key)) {
+                return container.getSplitItems();
+            }
+        }
+        return null;
+    }
 	
 	public void removeAllCandidateOffers() {
     	removeAllCandidateOrderOffers();
-        if (getDiscountableDiscreteOrderItems() != null) {
-            for (PromotableOrderItem item : getDiscountableDiscreteOrderItems()) {
-                item.getDelegate().removeAllCandidateItemOffers();
-            }
+        for (OrderItem orderItem : getDelegate().getOrderItems()) {
+            orderItem.removeAllCandidateItemOffers();
         }
 
         removeAllCandidateFulfillmentGroupOffers();
@@ -347,6 +373,11 @@ public class PromotableOrderImpl implements PromotableOrder {
 		for (PromotableOrderItem orderItem : getDiscountableDiscreteOrderItems()) {
             orderItem.assignFinalPrice();
         }
+        for (OrderItem orderItem : getDelegate().getOrderItems()) {
+            if (orderItem instanceof BundleOrderItem) {
+                orderItem.assignFinalPrice();
+            }
+        }
 	}
     
     public Customer getCustomer() {
@@ -387,8 +418,21 @@ public class PromotableOrderImpl implements PromotableOrder {
 				}
 				
 			};
+            //filter out the original bundle order items and replace with the split bundles
+            List<OrderItem> basicOrderItems = new ArrayList<OrderItem>();
+            basicOrderItems.addAll(delegate.getOrderItems());
+            Iterator<OrderItem> itr = basicOrderItems.iterator();
+            while (itr.hasNext()) {
+                OrderItem temp = itr.next();
+                if (temp instanceof BundleOrderItem) {
+                    itr.remove();
+                }
+            }
+            for (BundleOrderItemSplitContainer container : bundleSplitItems) {
+                basicOrderItems.addAll(container.getSplitItems());
+            }
 			try {
-				for (OrderItem temp : delegate.getOrderItems()) {
+				for (OrderItem temp : basicOrderItems) {
 					temp.accept(visitor);
 				}
 			} catch (PricingException e) {
@@ -433,5 +477,12 @@ public class PromotableOrderImpl implements PromotableOrder {
 	public Order getDelegate() {
 		return delegate;
 	}
-	
+
+    public List<BundleOrderItemSplitContainer> getBundleSplitItems() {
+        return bundleSplitItems;
+    }
+
+    public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems) {
+        this.bundleSplitItems = bundleSplitItems;
+    }
 }

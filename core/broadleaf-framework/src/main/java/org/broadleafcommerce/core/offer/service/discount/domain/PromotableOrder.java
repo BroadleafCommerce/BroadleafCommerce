@@ -18,7 +18,9 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import java.util.List;
 
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -131,5 +133,11 @@ public interface PromotableOrder {
     public Customer getCustomer();
     
     public List<PromotableOrderItem> getDiscreteOrderItems();
-    
+
+    public List<BundleOrderItemSplitContainer> getBundleSplitItems();
+
+    public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems);
+
+    public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key);
+
 }

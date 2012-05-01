@@ -473,6 +473,32 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return evaluateAndPriortizeContent(contentList, count, ruleDTOs);
     }
 
+    @Override
+    public List<StructuredContentDTO> lookupStructuredContentItemsByName(SandBox sandBox, String contentName, org.broadleafcommerce.common.locale.domain.Locale locale, Integer count, Map<String, Object> ruleDTOs, boolean secure) {
+        List<StructuredContent> sandBoxContentList = null;
+
+        String cacheKey = buildNameKey(getProductionSandBox(sandBox), locale, "any", contentName);
+        cacheKey = cacheKey+"-"+secure;
+        List<StructuredContentDTO> productionContentDTOList = getStructuredContentListFromCache(cacheKey);
+        if (productionContentDTOList == null) {
+            List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(getProductionSandBox(sandBox), contentName, locale);
+            productionContentDTOList = buildStructuredContentDTOList(productionContentList, secure);
+            if (productionContentDTOList != null) {
+                addStructuredContentListToCache(cacheKey, productionContentDTOList);
+            }
+        }
+
+        final List<StructuredContentDTO> contentList;
+        if (! isProductionSandBox(sandBox)) {
+            sandBoxContentList = structuredContentDao.findActiveStructuredContentByName(sandBox, contentName, locale);
+            contentList = mergeContent(productionContentDTOList, sandBoxContentList, secure);
+        } else {
+            contentList = productionContentDTOList;
+        }
+
+        return evaluateAndPriortizeContent(contentList, count, ruleDTOs);
+    }
+
     private SandBox getProductionSandBox(SandBox currentSandBox) {
         SandBox productionSandBox = null;
         if (currentSandBox == null || SandBoxType.PRODUCTION.equals(currentSandBox.getSandBoxType())) {

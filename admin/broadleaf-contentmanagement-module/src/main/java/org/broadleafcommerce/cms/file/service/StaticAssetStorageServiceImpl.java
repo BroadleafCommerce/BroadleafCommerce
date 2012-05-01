@@ -171,10 +171,45 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }
 
-    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
+    protected StaticAsset findStaticAsset(String fullUrl, SandBox sandBox) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
         if (staticAsset == null && sandBox != null) {
             staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
+        }
+
+        return staticAsset;
+    }
+
+    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
+        StaticAsset staticAsset = findStaticAsset(fullUrl, sandBox);
+        if (staticAsset == null) {
+            //try with upper case
+            staticAsset = findStaticAsset(fullUrl.toUpperCase(), sandBox);
+            if (staticAsset == null) {
+                //try with lower case
+                staticAsset = findStaticAsset(fullUrl.toLowerCase(), sandBox);
+                if (staticAsset == null) {
+                    int extPos = fullUrl.lastIndexOf('.');
+                    if (extPos >= 0) {
+                        String prefix = fullUrl.substring(0, extPos);
+                        String extension = fullUrl.substring(extPos, fullUrl.length());
+                        //try with upper case prefix
+                        staticAsset = findStaticAsset(prefix.toUpperCase() + extension, sandBox);
+                        if (staticAsset == null) {
+                            //try lower case prefix
+                            staticAsset = findStaticAsset(prefix.toLowerCase() + extension, sandBox);
+                            if (staticAsset == null) {
+                                //try upper case extension
+                                staticAsset = findStaticAsset(prefix + extension.toUpperCase(), sandBox);
+                                if (staticAsset == null) {
+                                    //try lower case extension
+                                    staticAsset = findStaticAsset(prefix + extension.toLowerCase(), sandBox);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         if (staticAsset == null) {
             assert sandBox != null;

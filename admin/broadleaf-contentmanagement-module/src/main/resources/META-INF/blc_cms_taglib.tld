@@ -26,7 +26,7 @@
         <description>Returns the internationalized message for the passed in messageKey</description>
        	<attribute>
 			<name>contentType</name>
-			<required>true</required>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
             <description>The type of content to look up.</description>
 		</attribute>

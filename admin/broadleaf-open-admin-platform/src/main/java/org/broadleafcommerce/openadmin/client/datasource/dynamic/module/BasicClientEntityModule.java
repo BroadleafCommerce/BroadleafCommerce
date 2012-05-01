@@ -322,7 +322,7 @@ public class BasicClientEntityModule implements DataSourceModule {
     protected String updateMinutesFromDateFilter(String originalDateString, int position) {
         String timezone = DateTimeFormat.getFormat("Z").format(new Date());
         if (originalDateString != null) {
-            int pos = originalDateString.indexOf("T06:00:00");
+            int pos = originalDateString.indexOf("T");
             switch (position) {
                 case 0: 
                     if (pos >= 0) {
@@ -646,7 +646,6 @@ public class BasicClientEntityModule implements DataSourceModule {
     
     public Entity buildEntity(Record record, DSRequest request) {
 		Entity entity = new Entity();
-		entity.setType(record.getAttributeAsStringArray("_type"));
 		Map<String, Object> dirtyValues = request.getAttributeAsMap("dirtyValues");
 		List<Property> properties = new ArrayList<Property>();
 		String[] attributes = record.getAttributes();
@@ -665,7 +664,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 					property.setIsDirty(true);
 				}
 				properties.add(property);
-			}
+			} else if (attribute.equals("_type")) {
+                entity.setType(record.getAttributeAsStringArray("_type"));
+            }
 		}
 		
 		Property fullyQualifiedName = new Property();

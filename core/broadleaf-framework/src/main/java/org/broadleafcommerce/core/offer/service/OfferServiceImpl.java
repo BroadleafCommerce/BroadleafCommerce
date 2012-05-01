@@ -16,8 +16,14 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
+import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
@@ -37,11 +43,6 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * The Class OfferServiceImpl.
  */
@@ -54,6 +55,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Resource(name="blOfferCodeDao")
     protected OfferCodeDao offerCodeDao;
+    
+    @Resource(name="blOfferAuditDao")
+    protected OfferAuditDao offerAuditDao;
 
     @Resource(name="blOfferDao")
     protected OfferDao offerDao;
@@ -88,7 +92,7 @@ public class OfferServiceImpl implements OfferService {
      * entered during checkout, or has a delivery type of automatic are added to the list.  The same offer
      * cannot appear more than once in the list.
      *
-     * @param delegate
+     * @param code
      * @return a List of offers that may apply to this order
      */
     public Offer lookupOfferByCode(String code) {
@@ -166,7 +170,7 @@ public class OfferServiceImpl implements OfferService {
      * without a end date will be processed.  The start and end dates on the offer will
      * still need to be evaluated.
      *
-     * @param offers
+     * @param offerCodes
      * @return a List of non-expired offers
      */
     protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
@@ -225,6 +229,7 @@ public class OfferServiceImpl implements OfferService {
             orderOfferProcessor.compileOrderTotal(promotableOrder);
         } else {
         	itemOfferProcessor.gatherCart(promotableOrder);
+            orderOfferProcessor.initializeBundleSplitItems(promotableOrder);
             List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
             List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
             
@@ -264,6 +269,18 @@ public class OfferServiceImpl implements OfferService {
     	fulfillmentGroupOfferProcessor.gatherCart(promotableOrder);
     	fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
     }
+    
+    public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
+        if (customer != null && customer.getId() != null && offer != null && offer.getId() != null) {
+            if (offer.getMaxUsesPerCustomer() != null && offer.getMaxUsesPerCustomer() > 0) {                
+                Long currentUses = offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId());
+                if (currentUses >= offer.getMaxUsesPerCustomer()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }        
 
 	public CustomerOfferDao getCustomerOfferDao() {
 		return customerOfferDao;

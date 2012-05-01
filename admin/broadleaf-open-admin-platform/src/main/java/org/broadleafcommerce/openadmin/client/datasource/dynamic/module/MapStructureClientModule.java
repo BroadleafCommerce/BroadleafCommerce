@@ -26,7 +26,6 @@ import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.FieldType;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.tree.TreeNode;
@@ -158,19 +157,19 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
-        Entity tempEntity = buildEntity(temp, request);
-        final ListGridRecord record = associatedGrid.getRecord(associatedGrid.getRecordIndex(temp));
-    	Entity entity = buildEntity(record, request);
-    	for (Property property : tempEntity.getProperties()) {
-    		entity.findProperty(property.getName()).setValue(property.getValue());
-    	}
-        String componentId = request.getComponentId();
-        if (componentId != null) {
-            if (entity.getType() == null) {
-            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
-            	entity.setType(type);
-            }
-        }
+        Entity entity = buildEntity(temp, request);
+//        final ListGridRecord record = associatedGrid.getSelectedRecord();
+//    	Entity entity = buildEntity(record, request);
+//    	for (Property property : tempEntity.getProperties()) {
+//    		entity.findProperty(property.getName()).setValue(property.getValue());
+//    	}
+//        String componentId = request.getComponentId();
+//        if (componentId != null) {
+//            if (entity.getType() == null) {
+//            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("_type");
+//            	entity.setType(type);
+//            }
+//        }
         service.remove(new PersistencePackage(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, BLCMain.csrfToken), new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);

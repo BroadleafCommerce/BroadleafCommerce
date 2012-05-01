@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.offer.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -51,7 +50,6 @@ import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -107,10 +105,12 @@ public class OfferTest extends CommonSetupBaseTest {
 
     private long sku1;
     private long sku2;
+    private CreateOfferUtility createOfferUtility;
 
     @Test(groups = { "offerCreateSku1" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class)
     @Rollback(false)
     public void createSku1(Sku sku) {
+        createOfferUtility = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setName("test1");
@@ -135,13 +135,14 @@ public class OfferTest extends CommonSetupBaseTest {
     @Test(groups =  {"testPercentageOffOffer"}, dependsOnGroups = { "offerCreateSku1", "offerCreateSku2" })
     @Transactional
     public void testPercentOffOfferWithScaleGreaterThanTwo() throws Exception {
+        CreateOfferUtility cou = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", ShippingServiceType.BANDED_SHIPPING.getType(), 5D, order));
         cartService.save(order, false);
 
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 1, order));
-        order.addOfferCode( createOfferCode( "20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10) );
+        order.addOfferCode(createOfferUtility.createOfferCode("20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -158,9 +159,9 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 10));
-        order.addOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != "+sku1, true, true, 10));
-        order.addOfferCode(createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != " + sku1, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -176,10 +177,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, false, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == "+sku1, true, true, 1));
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != "+sku1, false, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, false, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, false, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -195,10 +196,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == "+sku1, true, false, 1));
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != "+sku1, true, false, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == " + sku1, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != " + sku1, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -214,10 +215,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == "+sku1, true, true, 1));
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -233,8 +234,8 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -250,8 +251,8 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        OfferCode offerCode1 = createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1);
-        OfferCode offerCode2 = createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1);
+        OfferCode offerCode1 = createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1);
+        OfferCode offerCode2 = createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1);
 
         order.addOfferCode(offerCode1);
         order.addOfferCode(offerCode2);
@@ -279,10 +280,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, 50D, true, 2, order));
 
-        order.addOfferCode(createOfferCode("25 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 25, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("35 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 35, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("45 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 45, null, null, true, false, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("25 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 25, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("35 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 35, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("45 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 45, null, null, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -298,10 +299,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, "order.subTotal.getAmount() >= 400", true, true, 1));
-        order.addOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, "order.subTotal.getAmount() >= 400", false, true, 1));
-        order.addOfferCode(createOfferCode("100 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 100, null, "order.subTotal.getAmount() >= 400", false, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, "order.subTotal.getAmount() < 400", false, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, "order.subTotal.getAmount() >= 400", true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, "order.subTotal.getAmount() >= 400", false, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("100 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 100, null, "order.subTotal.getAmount() >= 400", false, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, "order.subTotal.getAmount() < 400", false, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -317,9 +318,9 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -335,11 +336,11 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, false, 1));
-        order.addOfferCode(createOfferCode("10 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 10, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("15 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 15, null, null, true, true, 1));
-        order.addOfferCode(createOfferCode("90 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 90, null, null, true, false, 1));
-        order.addOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("10 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 10, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("15 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 15, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("90 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 90, null, null, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -355,10 +356,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 10));
-        order.addOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != "+sku1, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != " + sku1, true, true, 10));
         
-        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.AUTOMATIC);
         offer = offerService.save(offer);
 
@@ -376,10 +377,10 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 10));
-        order.addOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != "+sku1, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != " + sku1, true, true, 10));
         
-        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.MANUAL);
         offer = offerService.save(offer);
         CustomerOffer customerOffer = new CustomerOfferImpl();
@@ -401,9 +402,9 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 20D, null, true, 1, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1, order));
 
-        order.addOfferCode(createOfferCode("15%OFF", "15 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 15, null, null, false, true, 0));
+        order.addOfferCode(createOfferUtility.createOfferCode("15%OFF", "15 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 15, null, null, false, true, 0));
 
-        Offer offer1 = createOffer("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, false, true, 0);
+        Offer offer1 = createOfferUtility.createOffer("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, false, true, 0);
         offer1.setDeliveryType(OfferDeliveryType.MANUAL);
         offerDao.save(offer1);
         CustomerOffer customerOffer1 = new CustomerOfferImpl();
@@ -411,7 +412,7 @@ public class OfferTest extends CommonSetupBaseTest {
         customerOffer1.setOffer(offer1);
         customerOfferDao.save(customerOffer1);
 
-        Offer offer2 = createOffer("10 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 10, null, "discreteOrderItem.sku.id == "+sku2, false, true, 0);
+        Offer offer2 = createOfferUtility.createOffer("10 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 10, null, "discreteOrderItem.sku.id == " + sku2, false, true, 0);
         offer2.setDeliveryType(OfferDeliveryType.MANUAL);
         offerDao.save(offer2);
         CustomerOffer customerOffer2 = new CustomerOfferImpl();
@@ -435,8 +436,8 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1, order));
 
-        order.addOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 10));
-        order.addOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 10));
+        order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -453,14 +454,14 @@ public class OfferTest extends CommonSetupBaseTest {
         Long customerId = customer.getId();
         customerOffer.setCustomer(customerService.saveCustomer(customer));
 
-        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer = offerService.save(offer);
         Long offerId = offer.getId();
         offerDao.delete(offer);
         Offer deletedOffer = offerDao.readOfferById(offerId);
         assert deletedOffer == null;
 
-        offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer = offerService.save(offer);
 
         customerOffer.setOffer(offer);
@@ -484,7 +485,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Test(groups =  {"testReadAllOffers"}, dependsOnGroups = { "testOfferDelete"})
     @Transactional
     public void testReadAllOffers() throws Exception {
-        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.MANUAL);
         offer = offerService.save(offer);
         List<Offer> allOffers = offerService.findAllOffers();
@@ -495,7 +496,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Transactional
     public void testOfferCodeDao() throws Exception {
         String offerCodeString = "AJ's Code";
-        OfferCode offerCode = createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        OfferCode offerCode = createOfferUtility.createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offerCode.setOfferCode(offerCodeString);
         offerCode = offerService.saveOfferCode(offerCode);
         Long offerCodeId = offerCode.getId();
@@ -521,7 +522,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Transactional
     public void testCustomerOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
-        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         CustomerOffer customerOffer = new CustomerOfferImpl();
         customerOffer.setCustomer(order.getCustomer());
         customerOffer.setOffer(offer);
@@ -607,39 +608,15 @@ public class OfferTest extends CommonSetupBaseTest {
     }
 
     private OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        return createOfferCode("NONAME", offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+        return createOfferUtility.createOfferCode(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
     }
 
     private OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        OfferCode offerCode = offerCodeDao.create();
-        Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
-        offerCode.setOffer(offer);
-        offerCode.setOfferCode(offerCodeName);
-        offerCode = offerService.saveOfferCode(offerCode);
-        return offerCode;
+        return createOfferUtility.createOfferCode(offerCodeName, offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
     }
 
     private Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        Offer offer = offerDao.create();
-        offer.setName(offerName);
-        offer.setStartDate(SystemTime.asDate());
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1);
-        offer.setStartDate(calendar.getTime());
-        calendar.add(Calendar.DATE, 2);
-        offer.setEndDate(calendar.getTime());
-        offer.setType(offerType);
-        offer.setDiscountType(discountType);
-        offer.setValue(BigDecimal.valueOf(value));
-        offer.setDeliveryType(OfferDeliveryType.CODE);
-        offer.setStackable(stackable);
-        offer.setAppliesToOrderRules(orderRule);
-        offer.setAppliesToCustomerRules(customerRule);
-        offer.setCombinableWithOtherOffers(combinable);
-        offer.setPriority(priority);
-        offer = offerService.save(offer);
-        offer.setMaxUses(50);
-        return offer;
+        return createOfferUtility.createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
     }
 
 

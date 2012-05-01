@@ -95,6 +95,18 @@ public interface StructuredContentDao {
     public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale);
 
     /**
+     * Called by the <code>DisplayContentTag</code> to locate content based
+     * on the current SandBox, StructuredContentType, Name, and Locale.
+     *
+     * @param sandBox
+     * @param name
+     * @param locale
+     * @return
+     */
+    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale locale);
+
+
+    /**
      * Used to lookup the StructuredContentType by name.
      *
      * @param name

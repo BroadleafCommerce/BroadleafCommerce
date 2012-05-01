@@ -261,5 +261,9 @@
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
         </dependency>
+        <dependency>
+            <groupId>eu.medsea.mimeutil</groupId>
+            <artifactId>mime-util</artifactId>
+        </dependency>
     </dependencies>
 </project>

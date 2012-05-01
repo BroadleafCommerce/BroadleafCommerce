@@ -131,4 +131,6 @@ public interface PromotableOrderItem {
      * @return
      */
     int fixAdjustments(boolean useSaleAdjustments);
+
+    public void resetAdjustmentPrice();
 }

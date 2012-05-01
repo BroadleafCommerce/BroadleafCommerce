@@ -16,11 +16,17 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.StaticAssetsTileGridDataSourceFactory;
@@ -56,10 +62,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDia
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * 
  * @author jfischer
@@ -90,6 +92,23 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		productAttributePresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
 	}
+
+    @Override
+    protected void saveClicked() {
+        DynamicForm form = display.getDynamicFormDisplay().getFormOnlyDisplay().getForm();
+        form.setValue("sku.name", (String) form.getValue("name"));
+        form.setValue("sku.description", (String) form.getValue("description"));
+        form.setValue("sku.longDescription", (String) form.getValue("longDescription"));
+        Date activeStartDate = (Date) form.getValue("activeStartDate");
+        if (activeStartDate != null) {
+            form.setValue("sku.activeStartDate", activeStartDate);
+        }
+        Date activeEndDate = (Date) form.getValue("activeEndDate");
+        if (activeEndDate != null) {
+            form.setValue("sku.activeEndDate", activeEndDate);
+        }
+        super.saveClicked();
+    }
 
     @Override
     protected void itemSaved(DSResponse response, Object rawData, DSRequest request) {

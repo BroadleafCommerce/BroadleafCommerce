@@ -105,7 +105,7 @@ public class EntityEditDialog extends Window {
             		dynamicForm.saveData(new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
                             if (response.getStatus()== RPCResponse.STATUS_SUCCESS) {
-                                TreeNode record = new TreeNode(request.getData());
+                                TreeNode record = (TreeNode) response.getData()[0];
                                 if (handler != null) {
                                     handler.onItemEdited(new ItemEdited(record, dynamicForm.getDataSource()));
                                 }

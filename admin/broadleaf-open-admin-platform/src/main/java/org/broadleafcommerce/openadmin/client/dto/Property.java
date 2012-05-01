@@ -36,6 +36,7 @@ public class Property implements IsSerializable, Serializable {
 	private FieldMetadata metadata = new FieldMetadata();
 	private Boolean isDirty = false;
     private String unHtmlEncodedValue;
+    private String rawValue;
 
 	public String getName() {
 		return name;
@@ -83,6 +84,14 @@ public class Property implements IsSerializable, Serializable {
 
     public void setUnHtmlEncodedValue(String unHtmlEncodedValue) {
         this.unHtmlEncodedValue = unHtmlEncodedValue;
+    }
+
+    public String getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(String rawValue) {
+        this.rawValue = rawValue;
     }
 
     @Override

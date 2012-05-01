@@ -16,24 +16,6 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,6 +37,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -156,8 +157,12 @@ public class OfferImpl implements Offer {
     protected String deliveryType;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName="Offer Max Uses", order=7, group="Description", groupOrder=1)
-    protected int maxUses;
+    @AdminPresentation(friendlyName="Offer Max Uses Per Order", order=7, group="Description", groupOrder=2)
+    protected int maxUsesPerOrder;
+
+    @Column(name = "MAX_USES_PER_CUSTOMER")
+    @AdminPresentation(friendlyName="Max Uses Per Customer", order=7, group="Description", groupOrder=1)
+    protected Long maxUsesPerCustomer;
 
     @Column(name = "USES")
     @AdminPresentation(friendlyName="Offer Current Uses", visibility =VisibilityEnum.HIDDEN_ALL)
@@ -306,6 +311,8 @@ public class OfferImpl implements Offer {
         this.stackable = stackable;
     }
 
+    @Deprecated
+    @JsonIgnore
     public boolean getStackable(){
     	return stackable;
     }
@@ -352,6 +359,7 @@ public class OfferImpl implements Offer {
     }
 
     @Deprecated
+    @JsonIgnore
     public boolean getApplyDiscountToMarkedItems() {
     	return applyDiscountToMarkedItems;
     }
@@ -379,6 +387,8 @@ public class OfferImpl implements Offer {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
 
+    @Deprecated
+    @JsonIgnore
     public boolean getCombinableWithOtherOffers() {
     	return combinableWithOtherOffers;
     }
@@ -391,12 +401,29 @@ public class OfferImpl implements Offer {
         this.deliveryType = deliveryType.getType();
     }
 
+    public Long getMaxUsesPerCustomer() {
+        return maxUsesPerCustomer;
+    }
+
+    public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
+        this.maxUsesPerCustomer = maxUsesPerCustomer;
+    }
+
+    public int getMaxUsesPerOrder() {
+        return maxUsesPerOrder;
+    }
+
+    public void setMaxUsesPerOrder(int maxUsesPerOrder) {
+        this.maxUsesPerOrder = maxUsesPerOrder;
+    }
+
+
     public int getMaxUses() {
-        return maxUses;
+        return maxUsesPerOrder;
     }
 
     public void setMaxUses(int maxUses) {
-        this.maxUses = maxUses;
+        this.maxUsesPerOrder = maxUses;
     }
 
     @Deprecated

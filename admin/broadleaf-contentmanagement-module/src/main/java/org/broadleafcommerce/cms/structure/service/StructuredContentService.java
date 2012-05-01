@@ -190,9 +190,32 @@ public interface StructuredContentService extends SandBoxItemListener {
      */
     public List<StructuredContentDTO> lookupStructuredContentItemsByType(SandBox sandBox, StructuredContentType contentType, Locale locale, Integer count, Map<String,Object> ruleDTOs, boolean secure);
 
+    /**
+     * This method returns content by name only.
+     * <br>
+     * Returns active content items for the passed in sandbox that match the passed in type.
+     * <br>
+     * The SandBox parameter impacts the results as follows.  If a <code>SandBoxType</code> of
+     * production is passed in, only those items in that SandBox are returned.
+     * <br>
+     * If a non-production SandBox is passed in, then the method will return the items associatd
+     * with the related production SandBox and then merge in the results of the passed in SandBox.
+     *
+     * @param sandBox - the sandbox to find structured content items (null indicates items that are in production for
+     *                  sites that are single tenant.
+     * @param contentName - the name of content to return
+     * @param count - the max number of content items to return
+     * @param ruleDTOs - a Map of objects that will be used in MVEL processing.
+     * @param secure - set to true if the request is being served over https
+     * @return - The matching items
+     * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
+     */
+    public List<StructuredContentDTO> lookupStructuredContentItemsByName(SandBox sandBox, String contentName, Locale locale, Integer count, Map<String,Object> ruleDTOs, boolean secure);
+
+
 
     /**
-     * This method returns content
+     * This method returns content by name and type.
      * <br>
      * Returns active content items for the passed in sandbox that match the passed in type.
      * <br>

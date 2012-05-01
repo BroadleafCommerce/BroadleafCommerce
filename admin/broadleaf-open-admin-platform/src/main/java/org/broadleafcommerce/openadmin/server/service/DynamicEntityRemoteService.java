@@ -131,6 +131,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
     protected void cleanEntity(Entity entity) throws ServiceException {
         try {
             for (Property property : entity.getProperties()) {
+                property.setRawValue(property.getValue());
                 property.setValue(exploitProtectionService.cleanString(property.getValue()));
                 property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
             }

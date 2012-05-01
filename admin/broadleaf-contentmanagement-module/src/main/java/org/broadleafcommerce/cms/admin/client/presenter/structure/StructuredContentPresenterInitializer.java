@@ -92,34 +92,35 @@ public class StructuredContentPresenterInitializer {
 		Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
 		offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-                getDisplay().removeAllItemBuilders();
-                for (Record record : response.getData()) {
-                    if (Integer.parseInt(record.getAttribute("quantity")) > 0) {
-                        final ItemBuilderDisplay display = getDisplay().addItemBuilder(orderItemDataSource);
-                        if (disabled) {
-                            display.disable();
-                        }
-                        presenter.bindItemBuilderEvents(display);
-                        display.getItemFilterBuilder().clearCriteria();
-                        display.setRecord(record);
-                        display.getItemQuantity().setValue(Integer.parseInt(record.getAttribute("quantity")));
-                        try {
-                            display.getItemFilterBuilder().setVisible(true);
-                            display.getRawItemForm().setVisible(false);
-                            AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(record.getAttribute("orderItemMatchRule"), orderItemDataSource);
-                            if (myCriteria != null) {
-                                display.getItemFilterBuilder().setCriteria(myCriteria);
-                            }
-                        } catch (IncompatibleMVELTranslationException e) {
-                            throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
-                        }
-                        display.getRemoveButton().addClickHandler(new ClickHandler() {
-                            public void onClick(ClickEvent event) {
-                                getDisplay().removeItemBuilder(display);
-                            }
-                        });
+            getDisplay().removeAllItemBuilders();
+            for (Record record : response.getData()) {
+                if (Integer.parseInt(record.getAttribute("quantity")) > 0) {
+                    final ItemBuilderDisplay display = getDisplay().addItemBuilder(orderItemDataSource);
+                    display.setDirty(false);
+                    if (disabled) {
+                        display.disable();
                     }
+                    presenter.bindItemBuilderEvents(display);
+                    display.getItemFilterBuilder().clearCriteria();
+                    display.setRecord(record);
+                    display.getItemQuantity().setValue(Integer.parseInt(record.getAttribute("quantity")));
+                    try {
+                        display.getItemFilterBuilder().setVisible(true);
+                        display.getRawItemForm().setVisible(false);
+                        AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(record.getAttribute("orderItemMatchRule"), orderItemDataSource);
+                        if (myCriteria != null) {
+                            display.getItemFilterBuilder().setCriteria(myCriteria);
+                        }
+                    } catch (IncompatibleMVELTranslationException e) {
+                        throw new RuntimeException(BLCMain.getMessageManager().getString("mvelTranslationProblem"), e);
+                    }
+                    display.getRemoveButton().addClickHandler(new ClickHandler() {
+                        public void onClick(ClickEvent event) {
+                            getDisplay().removeItemBuilder(display);
+                        }
+                    });
                 }
+            }
 			}
 		});
 	}

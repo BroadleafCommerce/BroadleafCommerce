@@ -16,10 +16,16 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
@@ -32,11 +38,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 10/19/11
- * Time: 6:41 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class StructuredContentItemCriteriaCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
@@ -63,7 +65,7 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
         if (prop != null && prop.getValue() != null) {
             //antisamy XSS protection encodes the values in the MVEL
             //reverse this behavior
-            prop.setValue(prop.getUnHtmlEncodedValue());
+            prop.setValue(prop.getRawValue());
         }
     }
 
@@ -98,14 +100,40 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-			adminInstance = (StructuredContentItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             if (adminInstance.getStructuredContent().getLockedFlag()) {
-                throw new IllegalArgumentException("Unable to update a locked record");
+                /*
+                This may be an attempt to delete a target item criteria off an otherwise un-edited, production StructuredContent instance
+                 */
+                CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+                CriteriaQuery<StructuredContent> query = criteriaBuilder.createQuery(StructuredContent.class);
+                Root<StructuredContentImpl> root = query.from(StructuredContentImpl.class);
+                query.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("archivedFlag"), Boolean.FALSE), criteriaBuilder.equal(root.get("originalItemId"), adminInstance.getStructuredContent().getId())));
+                query.select(root);
+                TypedQuery<StructuredContent> scQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query);
+                try {
+                    checkCriteria: {
+                        StructuredContent myContent = scQuery.getSingleResult();
+                        for (StructuredContentItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
+                            if (itemCriteria.getOrderItemMatchRule().equals(adminInstance.getOrderItemMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
+                                //manually set the values - otherwise unwanted properties will be set
+                                itemCriteria.setOrderItemMatchRule(entity.findProperty("orderItemMatchRule").getValue());
+                                itemCriteria.setQuantity(Integer.parseInt(entity.findProperty("quantity").getValue()));
+                                adminInstance = itemCriteria;
+                                break checkCriteria;
+                            }
+                        }
+                        throw new RuntimeException("Unable to find an item criteria to update");
+                    }
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Unable to update a locked record");
+                }
+            } else {
+                adminInstance = (StructuredContentItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             }
             adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.merge(adminInstance);
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
-			return adminEntity;
+            return adminEntity;
 		} catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
@@ -120,9 +148,31 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(StructuredContentItemCriteria.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			StructuredContentItemCriteria adminInstance = (StructuredContentItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+
             if (adminInstance.getStructuredContent().getLockedFlag()) {
-                throw new IllegalArgumentException("Unable to update a locked record");
+                /*
+                This may be an attempt to delete a target item criteria off an otherwise un-edited, production StructuredContent instance
+                 */
+                CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+                CriteriaQuery<StructuredContent> query = criteriaBuilder.createQuery(StructuredContent.class);
+                Root<StructuredContentImpl> root = query.from(StructuredContentImpl.class);
+                query.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("archivedFlag"), Boolean.FALSE), criteriaBuilder.equal(root.get("originalItemId"), adminInstance.getStructuredContent().getId())));
+                query.select(root);
+                TypedQuery<StructuredContent> scQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query);
+                try {
+                    StructuredContent myContent = scQuery.getSingleResult();
+                    for (StructuredContentItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
+                        if (itemCriteria.getOrderItemMatchRule().equals(adminInstance.getOrderItemMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
+                            myContent.getQualifyingItemCriteria().remove(itemCriteria);
+                            return;
+                        }
+                    }
+                    throw new RuntimeException("Unable to find an item criteria to delete");
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Unable to update a locked record");
+                }
             }
+
             dynamicEntityDao.remove(adminInstance);
 		} catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);

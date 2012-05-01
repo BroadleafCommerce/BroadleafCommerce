@@ -35,6 +35,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
@@ -106,6 +108,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
+    
+    @Resource(name = "blOfferService")
+    protected OfferService offerService;
 
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -447,8 +452,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
         if( !order.getAddedOfferCodes().contains(offerCode)) {
+            if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
+                throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
+            }
             order.getAddedOfferCodes().add(offerCode);
             order = updateOrder(order, priceOrder);
         }
@@ -740,5 +748,7 @@ public class OrderServiceImpl implements OrderService {
         bundleOrderItemRequest.setDiscreteOrderItems(discreteOrderItemRequests);
         return bundleOrderItemRequest;
     }
+    
+    
 
 }

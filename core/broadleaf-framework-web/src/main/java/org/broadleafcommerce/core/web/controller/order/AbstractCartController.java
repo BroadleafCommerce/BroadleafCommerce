@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -310,7 +311,14 @@ public abstract class AbstractCartController {
             OfferCode code = offerService.lookupOfferCodeByCode(cartSummary.getPromoCode());
 
             if (code != null ) {
-                currentCartOrder = cartService.addOfferCode(currentCartOrder, code, true);
+                try {
+                    currentCartOrder = cartService.addOfferCode(currentCartOrder, code, true);
+                } catch (OfferMaxUseExceededException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Customer exceeded max uses for offer code " + code);
+                    }
+                    model.addAttribute("promoError", "That offer code has been used the maximum allowed number of times.");
+                }
                 currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);
             }
             else {

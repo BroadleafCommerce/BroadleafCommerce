@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
 
 public interface Offer extends Serializable {
 
@@ -111,8 +111,48 @@ public interface Offer extends Serializable {
 
     public void setDeliveryType(OfferDeliveryType deliveryType);
 
+    /**
+     * Returns the maximum number of times that this offer
+     * can be used by the same customer.   This field
+     * tracks the number of times the offer can be used
+     * and not how many times it is applied.
+     *
+     * 0 or null indicates unlimited usage per customer.
+     *
+     * @return
+     */
+    public Long getMaxUsesPerCustomer();
+
+    /**
+     * Sets the maximum number of times that this offer
+       can be used by the same customer.  Intended as a transient
+     * field that gets derived from the other persisted max uses fields
+     * including maxUsesPerOrder and maxUsesPerCustomer.
+     *
+     * 0 or null indicates unlimited usage.
+     *
+     * @param maxUses
+     */
+    public void setMaxUsesPerCustomer(Long maxUses);
+
+    /**
+     * Returns the maximum number of times that this offer
+     * can be used in the current order.
+     *
+     * 0 indicates unlimited usage.
+     *
+     * @return
+     */
     public int getMaxUses() ;
 
+    /**
+     * Sets the maximum number of times that this offer
+     * can be used in the current order.
+     *
+     * 0 indicates unlimited usage.
+     *
+     * @param maxUses
+     */
     public void setMaxUses(int maxUses) ;
 
     @Deprecated

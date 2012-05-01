@@ -111,7 +111,7 @@ public class OrderTest extends OrderBaseTest {
     @Rollback(false)
     @Transactional
     public void addAnotherItemToOrder() throws PricingException {
-    	numOrderItems++;
+    	//numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         Order order = orderService.findOrderById(orderId);
         assert order != null;
@@ -125,7 +125,9 @@ public class OrderTest extends OrderBaseTest {
         assert item.getSku() != null;
         assert item.getSku().equals(sku);
         order = orderService.findOrderById(orderId);
-        assert(order.getOrderItems().size()==2);
+        //the quantity for this item in the cart is incremented because of gatherCart functionality in OrderOfferProcessor
+        assert(order.getOrderItems().size()==1);
+        assert(order.getOrderItems().get(0).getQuantity()==2);
     }
 
     @Test(groups = { "addBundleToOrder" }, dependsOnGroups = { "addAnotherItemToOrder" })
@@ -189,6 +191,7 @@ public class OrderTest extends OrderBaseTest {
         OrderItem item = orderItems.get(0);
         //item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
         ((DiscreteOrderItem) item).getSku().setSalePrice(new Money(BigDecimal.valueOf(10000)));
+        ((DiscreteOrderItem) item).getSku().setRetailPrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
         orderService.updateItemQuantity(order, item);
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
@@ -225,7 +228,7 @@ public class OrderTest extends OrderBaseTest {
     public void checkOrderItems() throws PricingException {
         Order order = orderService.findOrderById(orderId);
         //the removal from the previous test was rolled back
-        assert order.getOrderItems().size() == 2;
+        assert order.getOrderItems().size() == 1;
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
         assert bundleOrderItem == null;
     }

@@ -316,7 +316,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
             FieldMetadata metadata = mergedProperties.get(property);
-            if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(entity.getClass())) {
+            if (Class.forName(metadata.getInheritedFromType()).isAssignableFrom(entity.getClass()) || entity.getClass().isAssignableFrom(Class.forName(metadata.getInheritedFromType()))) {
                 boolean proceed = true;
                 if (property.contains(".")) {
                     StringTokenizer tokens = new StringTokenizer(property, ".");
