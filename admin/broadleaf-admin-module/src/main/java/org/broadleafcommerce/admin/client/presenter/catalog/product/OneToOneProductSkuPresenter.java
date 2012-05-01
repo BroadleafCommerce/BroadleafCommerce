@@ -99,8 +99,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         form.setValue("sku.name", (String) form.getValue("name"));
         form.setValue("sku.description", (String) form.getValue("description"));
         form.setValue("sku.longDescription", (String) form.getValue("longDescription"));
-        form.setValue("sku.activeStartDate", (Date) form.getValue("activeStartDate"));
-        form.setValue("sku.activeEndDate", (Date) form.getValue("activeEndDate"));
+        Date activeStartDate = (Date) form.getValue("activeStartDate");
+        if (activeStartDate != null) {
+            form.setValue("sku.activeStartDate", activeStartDate);
+        }
+        Date activeEndDate = (Date) form.getValue("activeEndDate");
+        if (activeEndDate != null) {
+            form.setValue("sku.activeEndDate", activeEndDate);
+        }
         super.saveClicked();
     }
 
