@@ -20,6 +20,7 @@ import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -235,6 +236,8 @@ public class CartEndpoint implements ApplicationContextAware {
 
                     return wrapper;
                 } catch (PricingException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                } catch (OfferMaxUseExceededException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                 }
             }

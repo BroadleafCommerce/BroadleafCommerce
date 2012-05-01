@@ -189,6 +189,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
     
+    @Column(name = "SHIPPING_PRICE_TAXABLE")
+    @AdminPresentation(friendlyName="Shipping Price Taxable", order=7, group="Pricing")
+    protected Boolean isShippingPriceTaxable = Boolean.FALSE;
+
     public Long getId() {
         return id;
     }
@@ -457,6 +461,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
             fulfillmentGroupFees.clear();
         }
     }
+
+    public Boolean isShippingPriceTaxable() {
+		return isShippingPriceTaxable;
+	}
+
+	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
+		this.isShippingPriceTaxable = isShippingPriceTaxable;
+	}
 
 	public String getService() {
 		return service;
