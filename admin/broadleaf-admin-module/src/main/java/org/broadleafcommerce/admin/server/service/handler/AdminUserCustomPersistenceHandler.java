@@ -16,11 +16,18 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
@@ -30,10 +37,10 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-
-import javax.annotation.Resource;
-import java.util.Map;
 
 /**
  * 
@@ -55,15 +62,40 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
         return true;
     }
 
+    @Override
 	public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
+		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUser.class.getName());
 	}
 
+    @Override
 	public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-		return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(AdminUserImpl.class.getName());
+		return canHandleAdd(persistencePackage);
 	}
 
-	public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    @Override
+    public Boolean canHandleInspect(PersistencePackage persistencePackage) {
+        return canHandleAdd(persistencePackage);
+    }
+
+    @Override
+    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+        try {
+            Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+            PersistenceModule persistenceModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getInspectType());
+            persistenceModule.updateMergedProperties(persistencePackage, allMergedProperties);
+            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entities, allMergedProperties);
+
+            DynamicResultSet results = new DynamicResultSet(mergedMetadata);
+            return results;
+        } catch (ClassNotFoundException e) {
+            LOG.error("Unable to inspect", e);
+            throw new ServiceException("Unable to inspect", e);
+        }
+    }
+
+    @Override
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
 		Entity entity  = persistencePackage.getEntity();
 		try {
@@ -80,10 +112,12 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 			
 			return adminEntity;
 		} catch (Exception e) {
+            LOG.error("Unable to add entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
 		}
 	}
 
+    @Override
 	public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {       
 		Entity entity = persistencePackage.getEntity();
 		try {
@@ -91,6 +125,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 			Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
 			Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
 			AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            dynamicEntityDao.detach(adminInstance);
 			adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 			adminInstance.setUnencodedPassword(adminInstance.getPassword());
 			adminInstance.setPassword(null);
@@ -105,7 +140,8 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 			
 			return adminEntity;
 		} catch (Exception e) {
-			throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+            LOG.error("Unable to update entity for " + entity.getType()[0], e);
+			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
 		}
 	}
 }
