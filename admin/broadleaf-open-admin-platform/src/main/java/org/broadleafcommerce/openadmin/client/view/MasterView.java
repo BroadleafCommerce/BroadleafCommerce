@@ -460,6 +460,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
                         final DynamicEntityDataSource userDS = new DynamicEntityDataSource(CeilingEntities.ADMIN_USER);
                         userDS.buildFields(null, false, new AsyncCallbackAdapter() {
                             public void onSetupSuccess(DataSource ds) {
+                                //strip out password validation
+                                userDS.getField("password").setValidators();
+
                                 AdminUser currentUser = SecurityManager.USER;
                                 Record userRecord = new Record();
                                 userRecord.setAttribute("id", currentUser.getId());                                
