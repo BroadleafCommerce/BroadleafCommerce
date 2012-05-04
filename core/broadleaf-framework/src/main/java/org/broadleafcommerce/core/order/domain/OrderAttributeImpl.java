@@ -64,12 +64,12 @@ public class OrderAttributeImpl implements OrderAttribute {
     protected Long id;
     
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName="Attribute Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="OrderAttributeImpl_Attribute_Name", order=1, group="Description", prominent=true)
     protected String name;
 
     /** The value. */
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName="Attribute Value", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="OrderAttributeImpl_Attribute_Value", order=2, group="Description", prominent=true)
     protected String value;
     
     @ManyToOne(targetEntity = OrderImpl.class, optional=false)

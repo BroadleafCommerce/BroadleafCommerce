@@ -128,49 +128,49 @@ public class CategoryImpl implements Category {
         }
     )
     @Column(name = "CATEGORY_ID")
-    @AdminPresentation(friendlyName="Category ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="CategoryImpl_Category_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Category Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Name", order=1, group="Description", prominent=true)
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName="Category Url", order=2, group="Description")
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Url", order=2, group="Description")
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Url_Key", order=3, group="Description")
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Category Description", order=5, group="Description", largeEntry=true)
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Description", order=5, group="Description", largeEntry=true)
     protected String description;
 
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName="Category Active Start Date", order=7, group="Active Date Range")
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Active_Start_Date", order=7, group="Active Date Range")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName="Category Active End Date", order=8, group="Active Date Range")
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Active_End_Date", order=8, group="Active Date Range")
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName="Category Display Template", order=4, group="Description")
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Display_Template", order=4, group="Description")
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Long_Description", order=6, group="Description", largeEntry=true)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="CategoryImpl_Category_Default_Parent", order=7, group="Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Category defaultParentCategory;
 
     @ManyToMany(targetEntity = CategoryImpl.class)

@@ -53,14 +53,14 @@ public class CustomerImpl implements Customer {
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName="Customer Id", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="CustomerImpl_Customer_Id", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Embedded
     protected Auditable auditable = new Auditable();
 
     @Column(name = "USER_NAME")
-    @AdminPresentation(friendlyName="UserName", order=1, group="Customer", prominent=true)
+    @AdminPresentation(friendlyName="CustomerImpl_UserName", order=1, group="Customer", prominent=true)
     protected String username;
 
     @Column(name = "PASSWORD")
@@ -68,22 +68,22 @@ public class CustomerImpl implements Customer {
     protected String password;
 
     @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName="First Name", order=2, group="Customer", prominent=true)
+    @AdminPresentation(friendlyName="CustomerImpl_First_Name", order=2, group="Customer", prominent=true)
     protected String firstName;
 
     @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName="Last Name", order=3, group="Customer", prominent=true)
+    @AdminPresentation(friendlyName="CustomerImpl_Last_Name", order=3, group="Customer", prominent=true)
     protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="CUSTOMER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
-    @AdminPresentation(friendlyName="Email Address", order=4, group="Customer")
+    @AdminPresentation(friendlyName="CustomerImpl_Email_Address", order=4, group="Customer")
     protected String emailAddress;
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    @AdminPresentation(friendlyName="Challenge Question", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName="CustomerImpl_Challenge_Question", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
@@ -95,16 +95,16 @@ public class CustomerImpl implements Customer {
     protected boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    @AdminPresentation(friendlyName="Customer Receive Email", group="Customer")
+    @AdminPresentation(friendlyName="CustomerImpl_Customer_Receive_Email", group="Customer")
     protected boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    @AdminPresentation(friendlyName="Customer Registered", group="Customer")
+    @AdminPresentation(friendlyName="CustomerImpl_Customer_Registered", group="Customer")
     protected boolean registered = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName="Customer Locale", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName="CustomerImpl_Customer_Locale", group="Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
 
     @Transient

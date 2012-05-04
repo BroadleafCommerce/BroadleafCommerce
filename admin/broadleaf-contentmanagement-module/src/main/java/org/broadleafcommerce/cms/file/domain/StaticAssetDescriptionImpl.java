@@ -57,11 +57,11 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description")
+    @AdminPresentation(friendlyName="StaticAssetDescriptionImpl_Description")
     protected String description;
 
     @Column (name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Long Description", largeEntry = true)
+    @AdminPresentation(friendlyName="StaticAssetDescriptionImpl_Long_Description", largeEntry = true)
     protected String longDescription;
 
     @Override

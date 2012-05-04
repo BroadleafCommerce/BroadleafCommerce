@@ -105,7 +105,7 @@ public class OrderImpl implements Order {
 
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Order Name", group="Order", order=1, prominent=true)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Name", group="Order", order=1, prominent=true)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
@@ -115,37 +115,37 @@ public class OrderImpl implements Order {
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
-    @AdminPresentation(friendlyName="Order Status", group="Order", order=2, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus")
+    @AdminPresentation(friendlyName="OrderImpl_Order_Status", group="Order", order=2, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus")
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Order Total Tax", group="Order", order=9, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Total_Tax", group="Order", order=9, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Order Total Shipping", group="Order", order=10, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Total_Shipping", group="Order", order=10, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalShipping;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Order Subtotal", group="Order", order=3, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Subtotal", group="Order", order=3, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Order Total", group="Order", order=11, fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Total", group="Order", order=11, fieldType= SupportedFieldType.MONEY)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
-    @AdminPresentation(friendlyName="Order Submit Date", group="Order", order=12)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Submit_Date", group="Order", order=12)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
-    @AdminPresentation(friendlyName="Order Number", group="Order", order=3, prominent=true)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Number", group="Order", order=3, prominent=true)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
-    @AdminPresentation(friendlyName="Order Email Address", group="Order", order=13)
+    @AdminPresentation(friendlyName="OrderImpl_Order_Email_Address", group="Order", order=13)
     protected String emailAddress;
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})

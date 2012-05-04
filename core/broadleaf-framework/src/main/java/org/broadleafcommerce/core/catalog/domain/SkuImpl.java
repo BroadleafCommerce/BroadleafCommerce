@@ -116,64 +116,64 @@ public class SkuImpl implements Sku {
     )
     @Column(name = "SKU_ID")
     @SearchableId
-    @AdminPresentation(friendlyName="Sku ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     /** The sale price. */
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Sku Sale Price", order=9, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Sale_Price", order=9, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal salePrice;
 
     /** The retail price. */
     @Column(name = "RETAIL_PRICE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName="Sku Retail Price", order=10, group="Price", prominent=true, fieldType= SupportedFieldType.MONEY, groupOrder=3)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Retail_Price", order=10, group="Price", prominent=true, fieldType= SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal retailPrice;
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Sku Name", order=1, group="Sku Description", prominent=true, columnWidth="25%", groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Name", order=1, group="Sku Description", prominent=true, columnWidth="25%", groupOrder=4)
     protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Sku Description", order=2, group="Sku Description", largeEntry=true, groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Description", order=2, group="Sku Description", largeEntry=true, groupOrder=4)
     protected String description;
 
     /** The long description. */
     @Lob
     @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Sku Large Description", order=3, group="Sku Description", largeEntry=true, groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Large_Description", order=3, group="Sku Description", largeEntry=true, groupOrder=4)
     protected String longDescription;
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName="Sku Taxable", order=4, group="Sku Description", groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Taxable", order=4, group="Sku Description", groupOrder=4)
     protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName="Sku Discountable", order=5, group="Sku Description", groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Discountable", order=5, group="Sku Description", groupOrder=4)
     protected Character discountable;
 
     /** The available. */
     @Column(name = "AVAILABLE_FLAG")
     @Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName="Sku Available", order=6, group="Sku Description", groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Available", order=6, group="Sku Description", groupOrder=4)
     protected Character available;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName="Sku Start Date", order=7, group="Sku Description", groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_Start_Date", order=7, group="Sku Description", groupOrder=4)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName="Sku End Date", order=8, group="Sku Description", groupOrder=4)
+    @AdminPresentation(friendlyName="SkuImpl_Sku_End_Date", order=8, group="Sku Description", groupOrder=4)
     protected Date activeEndDate;
     
     @Transient

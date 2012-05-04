@@ -80,34 +80,34 @@ public class OfferCodeImpl implements OfferCode {
         }
     )
     @Column(name = "OFFER_CODE_ID")
-    @AdminPresentation(friendlyName="Offer Code Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="OfferCodeImpl_Offer_Code_Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
-    @AdminPresentation(friendlyName="Offer", group="Description")
+    @AdminPresentation(friendlyName="OfferCodeImpl_Offer", group="Description")
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
     @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
-    @AdminPresentation(friendlyName="Offer Code", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="OfferCodeImpl_Offer_Code", order=1, group="Description", prominent=true)
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName="Code Start Date", order=1, group="Activity Range")
+    @AdminPresentation(friendlyName="OfferCodeImpl_Code_Start_Date", order=1, group="Activity Range")
     protected Date startDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName="Code End Date", order=2, group="Activity Range")
+    @AdminPresentation(friendlyName="OfferCodeImpl_Code_End_Date", order=2, group="Activity Range")
     protected Date endDate;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName="Code Max Uses", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="OfferCodeImpl_Code_Max_Uses", order=2, group="Description", prominent=true)
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="Code Uses", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     

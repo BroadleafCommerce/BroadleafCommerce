@@ -53,92 +53,92 @@ public class AddressImpl implements Address {
     protected Long id;
 
     @Column(name = "ADDRESS_LINE1", nullable = false)
-    @AdminPresentation(friendlyName="Address #1", order=6, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Address_#1", order=6, group="Address")
     protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
-    @AdminPresentation(friendlyName="Address #2", order=7, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Address_#2", order=7, group="Address")
     protected String addressLine2;
 
     @Column(name = "CITY", nullable = false)
-    @AdminPresentation(friendlyName="City", order=8, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_City", order=8, group="Address")
     protected String city;
 
     @Column(name = "POSTAL_CODE", nullable = false)
-    @AdminPresentation(friendlyName="Postal Code", order=14, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Postal_Code", order=14, group="Address")
     protected String postalCode;
 
     @Column(name = "COUNTY")
-    @AdminPresentation(friendlyName="County", order=11, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_County", order=11, group="Address")
     protected String county;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName="State", order=9, group="Address", excluded = true)
+    @AdminPresentation(friendlyName="AddressImpl_State", order=9, group="Address", excluded = true)
     protected State state;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName="Country", order=12, group="Address", excluded = true)
+    @AdminPresentation(friendlyName="AddressImpl_Country", order=12, group="Address", excluded = true)
     protected Country country;
     
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
      */
     @Column(name = "TOKENIZED_ADDRESS")
-    @AdminPresentation(friendlyName="Tokenized Address", order=15, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="AddressImpl_Tokenized_Address", order=15, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String tokenizedAddress;
     
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
      */
     @Column(name = "STANDARDIZED")
-    @AdminPresentation(friendlyName="Standardized", order=16, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="AddressImpl_Standardized", order=16, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected Boolean standardized = Boolean.FALSE;
 
     @Column(name = "ZIP_FOUR")
-    @AdminPresentation(friendlyName="Four Digit Zip", order=17, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Four_Digit_Zip", order=17, group="Address")
     protected String zipFour;
 
     @Column(name = "COMPANY_NAME")
-    @AdminPresentation(friendlyName="Company Name", order=3, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Company_Name", order=3, group="Address")
     protected String companyName;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName="Default Address", order=18, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Default_Address", order=18, group="Address")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName="Active Address", order=19, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Active_Address", order=19, group="Address")
     protected boolean isActive = true;
 
     @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName="First Name", order=1, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_First_Name", order=1, group="Address")
     protected String firstName;
 
     @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName="Last Name", order=2, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Last_Name", order=2, group="Address")
     protected String lastName;
 
     @Column(name = "PRIMARY_PHONE")
-    @AdminPresentation(friendlyName="Primary Phone", order=4, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Primary_Phone", order=4, group="Address")
     protected String primaryPhone;
 
     @Column(name = "SECONDARY_PHONE")
-    @AdminPresentation(friendlyName="Secondary Phone", order=5, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Secondary_Phone", order=5, group="Address")
     protected String secondaryPhone;
 
     @Column(name = "IS_BUSINESS")
-    @AdminPresentation(friendlyName="Business Address", order=20, group="Address")
+    @AdminPresentation(friendlyName="AddressImpl_Business_Address", order=20, group="Address")
     protected boolean isBusiness = false;
     
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
      */
     @Column(name = "VERIFICATION_LEVEL")
-    @AdminPresentation(friendlyName="Verification Level", order=21, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="AddressImpl_Verification_Level", order=21, group="Address", visibility=VisibilityEnum.HIDDEN_ALL)
     protected String verificationLevel;
 
     public Long getId() {

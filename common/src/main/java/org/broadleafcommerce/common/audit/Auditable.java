@@ -33,20 +33,20 @@ public class Auditable implements Serializable {
 
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName="Date Created", group="Audit", groupOrder=1000, readOnly=true)
+    @AdminPresentation(friendlyName="Auditable_Date_Created", group="Audit", groupOrder=1000, readOnly=true)
     protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
-    @AdminPresentation(friendlyName="Created By", group="Audit", visibility = VisibilityEnum.HIDDEN_ALL, readOnly=true)
+    @AdminPresentation(friendlyName="Auditable_Created_By", group="Audit", visibility = VisibilityEnum.HIDDEN_ALL, readOnly=true)
     protected Long createdBy;
 
     @Column(name = "DATE_UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName="Date Updated", group="Audit", readOnly = true)
+    @AdminPresentation(friendlyName="Auditable_Date_Updated", group="Audit", readOnly = true)
     protected Date dateUpdated;
 
     @Column(name = "UPDATED_BY")
-    @AdminPresentation(friendlyName="Updated By", group="Audit", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
+    @AdminPresentation(friendlyName="Auditable_Updated_By", group="Audit", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected Long updatedBy;
 
     public Date getDateCreated() {

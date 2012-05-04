@@ -62,11 +62,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     private static final long serialVersionUID = 1L;
     
     @Column(name="BASE_RETAIL_PRICE")
-    @AdminPresentation(friendlyName="Base Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="DiscreteOrderItemImpl_Base_Retail_Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
     
     @Column(name="BASE_SALE_PRICE")
-    @AdminPresentation(friendlyName="Base Sale Price", order=2, group="Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="DiscreteOrderItemImpl_Base_Sale_Price", order=2, group="Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)

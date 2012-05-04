@@ -36,11 +36,11 @@ public class ProductWeight implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WEIGHT")
-    @AdminPresentation(friendlyName="Product Weight", order=17, group="Weight")
+    @AdminPresentation(friendlyName="ProductWeight_Product_Weight", order=17, group="Weight")
     protected BigDecimal weight;
 
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName="Product Weight Units", order=18, group="Weight", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
+    @AdminPresentation(friendlyName="ProductWeight_Product_Weight_Units", order=18, group="Weight", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
     protected String weightUnitOfMeasure;
 
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {

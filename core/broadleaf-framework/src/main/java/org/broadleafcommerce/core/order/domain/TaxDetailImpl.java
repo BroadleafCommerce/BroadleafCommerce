@@ -61,15 +61,15 @@ public class TaxDetailImpl implements TaxDetail {
     protected Long id;
     
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName="Tax Type", order=1, group="Tax Detail")
+    @AdminPresentation(friendlyName="TaxDetailImpl_Tax_Type", order=1, group="Tax Detail")
     protected TaxType type;
     
     @Column(name = "AMOUNT")
-    @AdminPresentation(friendlyName="Tax Amount", order=2, group="Tax Detail")
+    @AdminPresentation(friendlyName="TaxDetailImpl_Tax_Amount", order=2, group="Tax Detail")
     protected Money amount;
     
     @Column(name = "RATE")
-    @AdminPresentation(friendlyName="Tax Type", order=1, group="Tax Detail")
+    @AdminPresentation(friendlyName="TaxDetailImpl_Tax_Rate", order=1, group="Tax Detail")
     protected BigDecimal rate;
     
     public TaxDetailImpl() {

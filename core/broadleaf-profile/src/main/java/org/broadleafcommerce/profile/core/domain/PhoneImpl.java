@@ -45,15 +45,15 @@ public class PhoneImpl implements Phone {
     protected Long id;
 
     @Column(name = "PHONE_NUMBER", nullable=false)
-    @AdminPresentation(friendlyName="Phone Number", order=1, group="Phone")
+    @AdminPresentation(friendlyName="PhoneImpl_Phone_Number", order=1, group="Phone")
     protected String phoneNumber;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName="Default Phone", order=2, group="Phone")
+    @AdminPresentation(friendlyName="PhoneImpl_Default_Phone", order=2, group="Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName="Active Phone", order=3, group="Phone")
+    @AdminPresentation(friendlyName="PhoneImpl_Active_Phone", order=3, group="Phone")
     protected boolean isActive = true;
 
     public Long getId() {

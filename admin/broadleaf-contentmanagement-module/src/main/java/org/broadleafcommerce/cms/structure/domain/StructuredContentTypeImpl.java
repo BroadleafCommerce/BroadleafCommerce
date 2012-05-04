@@ -55,16 +55,16 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName="Name", order=1, group="Details", prominent=true)
+    @AdminPresentation(friendlyName="StructuredContentTypeImpl_Name", order=1, group="Details", prominent=true)
     protected String name;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=2, group="Details",prominent=true)
+    @AdminPresentation(friendlyName="StructuredContentTypeImpl_Description", order=2, group="Details",prominent=true)
     protected String description;
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
     @JoinColumn(name="SC_FLD_TMPLT_ID")
-    @AdminPresentation(friendlyName="Content Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StructuredContentTypeImpl_Content_Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override

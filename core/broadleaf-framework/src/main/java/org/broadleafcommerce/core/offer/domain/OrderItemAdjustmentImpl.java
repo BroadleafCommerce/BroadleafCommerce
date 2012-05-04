@@ -106,15 +106,15 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName="Item Adjustment Reason", order=1, group="Description")
+    @AdminPresentation(friendlyName="OrderItemAdjustmentImpl_Item_Adjustment_Reason", order=1, group="Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
-    @AdminPresentation(friendlyName="Item Adjustment Value", order=2, group="Description")
+    @AdminPresentation(friendlyName="OrderItemAdjustmentImpl_Item_Adjustment_Value", order=2, group="Description")
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName="Apply To Sale Price", order=3, group="Description")
+    @AdminPresentation(friendlyName="OrderItemAdjustmentImpl_Apply_To_Sale_Price", order=3, group="Description")
     protected boolean appliedToSalePrice;
     
     @Transient

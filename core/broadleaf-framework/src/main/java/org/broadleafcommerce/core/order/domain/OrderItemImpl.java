@@ -92,7 +92,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 50)
     @Column(name = "ORDER_ITEM_ID")
-    @AdminPresentation(friendlyName="Order Item ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="OrderItemImpl_Order_Item_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -109,23 +109,23 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected Order order;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Item Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderItemImpl_Item_Retail_Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Item Sale Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderItemImpl_Item_Sale_Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Item Price", order=4, group="Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="OrderItemImpl_Item_Price", order=4, group="Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="Item Quantity", order=5, group="Pricing")
+    @AdminPresentation(friendlyName="OrderItemImpl_Item_Quantity", order=5, group="Pricing")
     protected int quantity;
     
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName="OrderItemImpl_Item_Name", order=1, group="Description", prominent=true, groupOrder = 1)
     protected String name;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })

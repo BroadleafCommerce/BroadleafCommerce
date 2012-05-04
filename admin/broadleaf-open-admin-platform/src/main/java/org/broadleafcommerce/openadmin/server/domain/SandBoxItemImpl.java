@@ -37,8 +37,8 @@ import java.util.List;
         {
             @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName="Date Created", group="Audit", readOnly = true)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName="Date Updated", group="Audit", readOnly = true)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName="SandBoxItemImpl_Date_Created", group="Audit", readOnly = true)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName="SandBoxItemImpl_Date_Updated", group="Audit", readOnly = true)),
             @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.author", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.site", value=@AdminPresentation(excluded = true)),
@@ -75,16 +75,16 @@ public class SandBoxItemImpl implements SandBoxItem {
 	protected Long originalSandBoxId;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
-    @AdminPresentation(friendlyName="Item Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
+    @AdminPresentation(friendlyName="SandBoxItemImpl_Item_Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
     @Index(name="SANDBOX_ITEM_TYPE_INDEX", columnNames={"SANDBOX_ITEM_TYPE"})
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
-    @AdminPresentation(friendlyName="Operation Type", order=3, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
+    @AdminPresentation(friendlyName="SandBoxItemImpl_Operation_Type", order=3, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
     protected String sandboxOperationType;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=1, group="Details")
+    @AdminPresentation(friendlyName="SandBoxItemImpl_Description", order=1, group="Details")
     protected String description;
 
     @Column(name = "TEMPORARY_ITEM_ID")

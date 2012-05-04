@@ -63,17 +63,17 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         }
     )
     @Column(name = "SC_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName="Item Criteria Id", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StructuredContentItemCriteriaImpl_Item_Criteria_Id", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StructuredContentItemCriteriaImpl_Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
 	protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
-    @AdminPresentation(friendlyName="Order Item Match Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = StructuredContentImpl.class)
