@@ -136,10 +136,36 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money add(Money other) {
-        return new Money(amount.add(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
+    	if (!other.getCurrency().equals(getCurrency())) {
+    		if (
+	            CurrencyConversionContext.getCurrencyConversionContext() != null &&
+	            CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
+	            CurrencyConversionContext.getCurrencyConversionService() != null
+    	        ) {
+    			other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
+    		} else {
+    			//TODO: configure exception
+    			return null;
+    		}
+    	}
+    	
+		return new Money(amount.add(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
     public Money subtract(Money other) {
+    	if (!other.getCurrency().equals(getCurrency())) {
+    		if (
+	            CurrencyConversionContext.getCurrencyConversionContext() != null &&
+	            CurrencyConversionContext.getCurrencyConversionContext().size() > 0 &&
+	            CurrencyConversionContext.getCurrencyConversionService() != null
+    	        ) {
+    			other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
+    		} else {
+    			//TODO: configure exception
+    			return null;
+    		}
+    	}
+    	
         return new Money(amount.subtract(other.amount), currency, amount.scale()==0?BankersRounding.DEFAULT_SCALE:amount.scale());
     }
 
