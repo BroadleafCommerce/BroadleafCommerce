@@ -45,19 +45,19 @@ public class PersonalMessageImpl implements PersonalMessage {
     protected Long id;
 
     @Column(name = "MESSAGE_TO")
-    @AdminPresentation(friendlyName="Message To", order=1, group="Personal Message")
+    @AdminPresentation(friendlyName="PersonalMessageImpl_Message_To", order=1, group="Personal Message")
     protected String messageTo;
 
     @Column(name = "MESSAGE_FROM")
-    @AdminPresentation(friendlyName="Message From", order=2, group="Personal Message")
+    @AdminPresentation(friendlyName="PersonalMessageImpl_Message_From", order=2, group="Personal Message")
     protected String messageFrom;
 
     @Column(name = "MESSAGE")
-    @AdminPresentation(friendlyName="Message", order=3, group="Personal Message")
+    @AdminPresentation(friendlyName="PersonalMessageImpl_Message", order=3, group="Personal Message")
     protected String message;
 
     @Column(name = "OCCASION")
-    @AdminPresentation(friendlyName="Occasion", order=4, group="Personal Message")
+    @AdminPresentation(friendlyName="PersonalMessageImpl_Occasion", order=4, group="Personal Message")
     protected String occasion;
 
     public Long getId() {

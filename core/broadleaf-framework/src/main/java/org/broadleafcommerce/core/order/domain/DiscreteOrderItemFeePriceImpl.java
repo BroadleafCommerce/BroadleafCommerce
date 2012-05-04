@@ -57,15 +57,15 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     protected DiscreteOrderItem discreteOrderItem;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Amount", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="DiscreteOrderItemFeePriceImpl_Amount", order=2, group="Description", prominent=true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="DiscreteOrderItemFeePriceImpl_Name", order=1, group="Description", prominent=true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
-    @AdminPresentation(friendlyName="Reporting Code", order=3, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, group="Description", prominent=true)
     private String reportingCode;
 
     public Long getId() {

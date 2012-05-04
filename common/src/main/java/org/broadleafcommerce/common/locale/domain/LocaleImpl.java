@@ -42,15 +42,15 @@ public class LocaleImpl implements Locale {
 
     @Id
     @Column (name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName="Locale Code", order=1, group="Details", prominent=true)
+    @AdminPresentation(friendlyName="LocaleImpl_Locale_Code", order=1, group="Details", prominent=true)
     protected String localeCode;
 
     @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName="Name", order=2, group="Details", prominent=true)
+    @AdminPresentation(friendlyName="LocaleImpl_Name", order=2, group="Details", prominent=true)
     protected String friendlyName;
 
     @Column (name = "DEFAULT_FLAG")
-    @AdminPresentation(friendlyName="Is Default", order=3, group="Details", prominent=true)
+    @AdminPresentation(friendlyName="LocaleImpl_Is_Default", order=3, group="Details", prominent=true)
     protected Boolean defaultFlag;
 
     @Override

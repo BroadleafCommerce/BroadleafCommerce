@@ -87,7 +87,7 @@ public class StaticAssetImpl implements StaticAsset {
     protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName="Item Name", order=1, group = "Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Item_Name", order=1, group = "Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
     protected String name;
 
     /*@ManyToOne(targetEntity = SiteImpl.class)
@@ -97,20 +97,20 @@ public class StaticAssetImpl implements StaticAsset {
     protected Site site;
 
     @Column(name ="FULL_URL", nullable = false)
-    @AdminPresentation(friendlyName="Full URL", order=2, group = "Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Full_URL", order=2, group = "Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
 
     @Column(name = "FILE_SIZE")
-    @AdminPresentation(friendlyName="File Size (Bytes)", order=3, group = "Details", readOnly = true)
+    @AdminPresentation(friendlyName="StaticAssetImpl_File_Size_Bytes", order=3, group = "Details", readOnly = true)
     protected Long fileSize;
 
     @Column(name = "MIME_TYPE")
-    @AdminPresentation(friendlyName="Mime Type", order=4, group = "Details", readOnly = true)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Mime_Type", order=4, group = "Details", readOnly = true)
     protected String mimeType;
 
     @Column(name = "FILE_EXTENSION")
-    @AdminPresentation(friendlyName="File Extension", order=5, group = "Details", readOnly = true)
+    @AdminPresentation(friendlyName="StaticAssetImpl_File_Extension", order=5, group = "Details", readOnly = true)
     protected String fileExtension;
 
     @ManyToMany(targetEntity = StaticAssetDescriptionImpl.class, cascade = CascadeType.ALL)
@@ -132,22 +132,22 @@ public class StaticAssetImpl implements StaticAsset {
 	protected SandBox originalSandBox;
 
     @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName="Archived Flag", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Archived_Flag", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ASST_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag = false;
 
     @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName="Deleted Flag", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Deleted_Flag", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ASST_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
     protected Boolean deletedFlag = false;
 
     @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName="Is Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ASST_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
     protected Boolean lockedFlag = false;
 
     @Column (name = "ORIG_ASSET_ID")
-    @AdminPresentation(friendlyName="Original Asset ID", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="StaticAssetImpl_Original_Asset_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ORIG_ASSET_ID_INDX", columnNames={"ORIG_ASSET_ID"})
     protected Long originalAssetId;
 

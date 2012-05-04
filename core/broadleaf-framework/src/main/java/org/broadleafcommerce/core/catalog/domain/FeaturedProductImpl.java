@@ -55,7 +55,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     protected Long sequence;
 
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
+    @AdminPresentation(friendlyName="FeaturedProductImpl_Featured_Product_Promotion_Message", largeEntry=true)
     protected String promotionMessage;
     
 	@ManyToOne(targetEntity = CategoryImpl.class)

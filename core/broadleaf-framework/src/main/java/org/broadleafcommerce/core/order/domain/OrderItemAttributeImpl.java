@@ -69,11 +69,11 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     protected Long id;
     
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName="Attribute Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="OrderItemAttributeImpl_Attribute_Name", order=1, group="Description", prominent=true)
     protected String name;
 
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName="Attribute Value", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="OrderItemAttributeImpl_Attribute_Value", order=2, group="Description", prominent=true)
     protected String value;
     
     @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)

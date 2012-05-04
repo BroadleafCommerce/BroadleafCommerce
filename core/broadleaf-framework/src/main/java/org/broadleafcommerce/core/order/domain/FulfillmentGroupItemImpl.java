@@ -84,7 +84,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
     @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Total Item Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="FulfillmentGroupItemImpl_Total_Item_Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     public Long getId() {

@@ -51,16 +51,16 @@ public class AdminUserImpl implements AdminUser {
     @GeneratedValue(generator = "AdminUserId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminUserId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminUserImpl", allocationSize = 50)
     @Column(name = "ADMIN_USER_ID")
-    @AdminPresentation(friendlyName="Admin User ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="AdminUserImpl_Admin_User_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     private Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Admin Name", order=1, group="User", prominent=true)
+    @AdminPresentation(friendlyName="AdminUserImpl_Admin_Name", order=1, group="User", prominent=true)
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
-    @AdminPresentation(friendlyName="Admin Login", order=2, group="User", prominent=true)
+    @AdminPresentation(friendlyName="AdminUserImpl_Admin_Login", order=2, group="User", prominent=true)
     protected String login;
 
     @Column(name = "PASSWORD", nullable=false)
@@ -83,15 +83,15 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName="Admin Email Address", order=4, group="User")
+    @AdminPresentation(friendlyName="AdminUserImpl_Admin_Email_Address", order=4, group="User")
     protected String email;
 
     @Column(name = "PHONE_NUMBER")
-    @AdminPresentation(friendlyName="Phone Number", order=5, group="User")
+    @AdminPresentation(friendlyName="AdminUserImpl_Phone_Number", order=5, group="User")
     protected String phoneNumber;
 
     @Column(name = "ACTIVE_STATUS_FLAG")
-    @AdminPresentation(friendlyName="Active Status", order=6, group="User")
+    @AdminPresentation(friendlyName="AdminUserImpl_Active_Status", order=6, group="User")
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     /** All roles that this user has */

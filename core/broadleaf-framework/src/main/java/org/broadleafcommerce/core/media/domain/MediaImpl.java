@@ -55,16 +55,16 @@ public class MediaImpl implements Media {
 
     @Column(name = "NAME", nullable = false)
     @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Media Name", order=1, prominent=true)
+    @AdminPresentation(friendlyName="MediaImpl_Media_Name", order=1, prominent=true)
     protected String name;
 
     @Column(name = "URL", nullable = false)
     @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
-    @AdminPresentation(friendlyName="Media Url", order=2, prominent=true, fieldType = SupportedFieldType.ASSET_URL)
+    @AdminPresentation(friendlyName="MediaImpl_Media_Url", order=2, prominent=true, fieldType = SupportedFieldType.ASSET_URL)
     protected String url;
 
     @Column(name = "LABEL", nullable = false)
-    @AdminPresentation(friendlyName="Media Label", order=3, prominent=true)
+    @AdminPresentation(friendlyName="MediaImpl_Media_Label", order=3, prominent=true)
     protected String label;
 
     public Long getId() {

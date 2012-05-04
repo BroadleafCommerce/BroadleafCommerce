@@ -44,7 +44,7 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
     protected Long id;
 
     @Column(name = "CEILING_ENTITY", nullable=false)
-    @AdminPresentation(friendlyName="Ceiling Entity Name", order=1, group="Permission", prominent=true)
+    @AdminPresentation(friendlyName="AdminPermissionQualifiedEntityImpl_Ceiling_Entity_Name", order=1, group="Permission", prominent=true)
     protected String ceilingEntityFullyQualifiedName;
 
     @ManyToOne(targetEntity = AdminPermissionImpl.class)

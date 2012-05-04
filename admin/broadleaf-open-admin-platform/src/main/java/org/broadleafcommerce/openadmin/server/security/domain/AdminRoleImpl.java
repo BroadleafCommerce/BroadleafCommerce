@@ -57,16 +57,16 @@ public class AdminRoleImpl implements AdminRole {
     @GeneratedValue(generator = "AdminRoleId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminRoleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminRoleImpl", allocationSize = 50)
     @Column(name = "ADMIN_ROLE_ID")
-    @AdminPresentation(friendlyName="Admin Role ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="AdminRoleImpl_Admin_Role_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINROLE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="Role", prominent=true)
+    @AdminPresentation(friendlyName="AdminRoleImpl_Name", order=1, group="Role", prominent=true)
     protected String name;
 
     @Column(name = "DESCRIPTION", nullable=false)
-    @AdminPresentation(friendlyName="Description", order=2, group="Role", prominent=true)
+    @AdminPresentation(friendlyName="AdminRoleImpl_Description", order=2, group="Role", prominent=true)
     protected String description;
 
     /** All users that have this role */

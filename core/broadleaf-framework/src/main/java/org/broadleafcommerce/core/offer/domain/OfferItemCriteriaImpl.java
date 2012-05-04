@@ -66,17 +66,17 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
         }
     )
     @Column(name = "OFFER_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName="Item Criteria Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="OfferItemCriteriaImpl_Item_Criteria_Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="OfferItemCriteriaImpl_Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
 	protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
-    @AdminPresentation(friendlyName="Order Item Match Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName="OfferItemCriteriaImpl_Order_Item_Match_Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = OfferImpl.class)

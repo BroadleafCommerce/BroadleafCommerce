@@ -33,31 +33,31 @@ public class ProductDimension implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WIDTH")
-    @AdminPresentation(friendlyName="Product Width", order=10, group="Dimension")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Width", order=10, group="Dimension")
     protected BigDecimal width;
 
     @Column(name = "HEIGHT")
-    @AdminPresentation(friendlyName="Product Height", order=11, group="Dimension")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Height", order=11, group="Dimension")
     protected BigDecimal height;
 
     @Column(name = "DEPTH")
-    @AdminPresentation(friendlyName="Product Depth", order=12, group="Dimension")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Depth", order=12, group="Dimension")
     protected BigDecimal depth;
 
     @Column(name = "GIRTH")
-    @AdminPresentation(friendlyName="Product Girth", order=13, group="Dimension")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Girth", order=13, group="Dimension")
     protected BigDecimal girth;
 
     @Column(name = "CONTAINER_SIZE")
-    @AdminPresentation(friendlyName="Product Container Size", order=14, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Container_Size", order=14, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType")
     protected String size;
 
     @Column(name = "CONTAINER_SHAPE")
-    @AdminPresentation(friendlyName="Product Container Shape", order=15, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Container_Shape", order=15, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType")
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName="Product Dimension Units", order=16, group="Dimension", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.DimensionUnitOfMeasureType")
+    @AdminPresentation(friendlyName="ProductDimension_Product_Dimension_Units", order=16, group="Dimension", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.DimensionUnitOfMeasureType")
     protected String dimensionUnitOfMeasure;
 
     public BigDecimal getWidth() {

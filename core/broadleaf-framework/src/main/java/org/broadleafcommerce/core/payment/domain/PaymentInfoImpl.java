@@ -76,34 +76,34 @@ public class PaymentInfoImpl implements PaymentInfo {
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
-    @AdminPresentation(friendlyName="Payment Address", order=1, group="Address")
+    @AdminPresentation(friendlyName="PaymentInfoImpl_Payment_Address", order=1, group="Address")
     protected Address address;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "PHONE_ID")
     @Index(name="ORDERPAYMENT_PHONE_INDEX", columnNames={"PHONE_ID"})
-    @AdminPresentation(friendlyName="Payment Phone", order=1, group="Phone")
+    @AdminPresentation(friendlyName="PaymentInfoImpl_Payment_Phone", order=1, group="Phone")
     protected Phone phone;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Payment Amount", order=3, group="Description", prominent=true, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="PaymentInfoImpl_Payment_Amount", order=3, group="Description", prominent=true, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName="Payment Reference Number", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="PaymentInfoImpl_Payment_Reference_Number", order=1, group="Description", prominent=true)
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
-    @AdminPresentation(friendlyName="Payment Type", order=2, group="Description", prominent=true, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
+    @AdminPresentation(friendlyName="PaymentInfoImpl_Payment_Type", order=2, group="Description", prominent=true, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
     protected String type;
     
     @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})
     protected List<AmountItem> amountItems = new ArrayList<AmountItem>();
     
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
-    @AdminPresentation(friendlyName="Payment IP Address", order=4, group="Description")
+    @AdminPresentation(friendlyName="PaymentInfoImpl_Payment_IP_Address", order=4, group="Description")
     protected String customerIpAddress;
     
     @CollectionOfElements

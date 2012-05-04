@@ -61,7 +61,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName="Field Template Name", order=1, group="Details",prominent=true)
+    @AdminPresentation(friendlyName="StructuredContentFieldTemplateImpl_Field_Template_Name", order=1, group="Details",prominent=true)
     protected String name;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
