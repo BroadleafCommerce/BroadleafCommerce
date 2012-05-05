@@ -360,4 +360,5 @@ public interface GeneratedMessages extends ConstantsWithLookup {
     public String PhoneImpl_Active_Phone();
     public String StateImpl_baseState();
     public String StateImpl_State();
+    public String ImageStaticAssetImpl_Image_Details();
 }

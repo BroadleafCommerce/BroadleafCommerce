@@ -31,6 +31,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedEvent;
 import com.smartgwt.client.widgets.tile.events.SelectionChangedHandler;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
@@ -85,7 +86,7 @@ public class AssetSearchDialog extends Window {
             }
         });
 		
-        saveButton = new IButton("Ok");
+        saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	//getSelectedRecord() throws a ClassCastException from SmartGWT, maybe a bug.  this seems to work instead:
@@ -95,7 +96,7 @@ public class AssetSearchDialog extends Window {
             }
         });
 
-        IButton cancelButton = new IButton("Cancel");  
+        IButton cancelButton = new IButton(BLCMain.getMessageManager().getString("cancel"));
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
             	hide();

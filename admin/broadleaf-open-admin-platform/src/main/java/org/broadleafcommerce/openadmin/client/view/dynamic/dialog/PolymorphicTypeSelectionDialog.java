@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
@@ -30,11 +33,9 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.HLayout;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -76,7 +77,7 @@ public class PolymorphicTypeSelectionDialog extends Window {
         
         addItem(searchGrid);
         
-        saveButton = new IButton("Ok");
+        saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	Record selectedRecord = searchGrid.getSelectedRecord();
@@ -85,7 +86,7 @@ public class PolymorphicTypeSelectionDialog extends Window {
             }
         });
 
-        IButton cancelButton = new IButton("Cancel");  
+        IButton cancelButton = new IButton(BLCMain.getMessageManager().getString("cancel"));
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
             	hide();

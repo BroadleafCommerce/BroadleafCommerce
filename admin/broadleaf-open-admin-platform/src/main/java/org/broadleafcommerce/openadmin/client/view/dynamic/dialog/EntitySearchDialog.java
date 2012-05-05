@@ -86,7 +86,7 @@ public class EntitySearchDialog extends Window {
         
         addItem(searchGrid);
         
-        saveButton = new IButton("Ok");
+        saveButton = new IButton(BLCMain.getMessageManager().getString("ok"));
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	Record selectedRecord = searchGrid.getSelectedRecord();
@@ -95,7 +95,7 @@ public class EntitySearchDialog extends Window {
             }
         });
 
-        IButton cancelButton = new IButton("Cancel");  
+        IButton cancelButton = new IButton(BLCMain.getMessageManager().getString("cancel"));
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
             	hide();

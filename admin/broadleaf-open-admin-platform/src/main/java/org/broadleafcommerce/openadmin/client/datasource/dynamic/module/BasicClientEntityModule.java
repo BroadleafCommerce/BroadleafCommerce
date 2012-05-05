@@ -838,6 +838,17 @@ public class BasicClientEntityModule implements DataSourceModule {
                         break;
                 }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
+                if (group != null && !group.equals("")) {
+                    //check if the friendly name is an i18N key
+                    try {
+                        String val = BLCMain.getMessageManager().getString(group);
+                        if (val != null) {
+                            group = val;
+                        }
+                    } catch (MissingResourceException e) {
+                        //do nothing
+                    }
+                }
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
                 Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
 				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
