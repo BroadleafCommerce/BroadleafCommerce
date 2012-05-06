@@ -75,4 +75,10 @@ public class LocaleDaoImpl implements LocaleDao {
         Query query = em.createNamedQuery("BC_READ_ALL_LOCALES");
         return (List<Locale>) query.getResultList();
     }
+    
+    @Override
+    public Locale save(Locale locale){
+    	return em.merge(locale);
+    }
+    
 }

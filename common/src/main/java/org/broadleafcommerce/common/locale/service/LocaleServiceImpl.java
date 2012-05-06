@@ -63,4 +63,10 @@ public class LocaleServiceImpl implements LocaleService {
     public List<Locale> findAllLocales() {
         return localeDao.findAllLocales();
     }
+    
+    @Override
+    public Locale save(Locale locale) {
+    	return localeDao.save(locale);
+    }
+    
 }
