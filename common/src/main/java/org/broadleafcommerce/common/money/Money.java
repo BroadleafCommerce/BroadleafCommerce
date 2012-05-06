@@ -144,8 +144,8 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     	        ) {
     			other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
     		} else {
-    			//TODO: configure exception
-    			return null;
+    			throw new UnsupportedOperationException("No currency conversion service is registered, cannot add different currency " +
+    					"types together (" + getCurrency().getCurrencyCode() + " " + other.getCurrency().getCurrencyCode() + ")");
     		}
     	}
     	
@@ -161,8 +161,8 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     	        ) {
     			other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
     		} else {
-    			//TODO: configure exception
-    			return null;
+    			throw new UnsupportedOperationException("No currency conversion service is registered, cannot subtract different currency " +
+    					"types (" + getCurrency().getCurrencyCode() + ", " + other.getCurrency().getCurrencyCode() + ")");
     		}
     	}
     	
