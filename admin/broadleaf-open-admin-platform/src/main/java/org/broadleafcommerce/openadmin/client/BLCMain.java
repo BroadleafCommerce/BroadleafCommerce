@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -41,9 +44,6 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDial
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * 
  * @author jfischer
@@ -54,6 +54,7 @@ public class BLCMain implements EntryPoint {
 	public static final MessageManager MESSAGE_MANAGER = new MessageManager();
     static {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
+        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessages.class));
     }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
 
