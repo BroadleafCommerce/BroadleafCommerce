@@ -2,10 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	       http://www.springframework.org/schema/aop
+	       http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
 
@@ -62,6 +65,12 @@
 	
 	<bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
 	<bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
+
+    <aop:config>
+        <aop:pointcut id="blLocaleServiceOperation" expression="execution(* org.broadleafcommerce.common.locale.service.LocaleService.*(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLocaleServiceOperation"/>
+    </aop:config>
+    
 
 	<bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.MessageCreator">
 		<constructor-arg ref="blVelocityEngine"/>
