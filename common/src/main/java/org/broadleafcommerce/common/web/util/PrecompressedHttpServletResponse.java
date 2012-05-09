@@ -9,6 +9,7 @@ import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+import org.hibernate.tool.hbm2x.StringUtils;
 
 /**
  * @author Jeff Fischer
@@ -38,7 +39,7 @@ public class PrecompressedHttpServletResponse extends HttpServletResponseWrapper
     @Override
     public String getContentType() {
         String contentType = super.getContentType();
-        if (contentType.contains("zip") && this.contentType != null) {
+        if (!StringUtils.isEmpty(contentType) && !StringUtils.isEmpty(this.contentType) && contentType.contains("zip")) {
             return this.contentType;
         }
 
