@@ -251,7 +251,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                         }
                    });
         }
-        return urlCache.get(requestURIWithoutContextPath);
+        return urlCache.getIfPresent(requestURIWithoutContextPath);
     }
 
     private URLProcessor determineURLProcessor(String requestURI) {
