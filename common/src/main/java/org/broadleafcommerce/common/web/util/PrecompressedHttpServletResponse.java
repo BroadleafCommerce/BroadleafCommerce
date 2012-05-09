@@ -2,14 +2,13 @@ package org.broadleafcommerce.common.web.util;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
 import java.util.Collection;
 
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-import org.hibernate.tool.hbm2x.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jeff Fischer
