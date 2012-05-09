@@ -45,7 +45,7 @@ import java.lang.reflect.Method;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_ORDER_ITEM_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseProductAttribute")
+@AdminPresentationClass(friendlyName = "OrderItemAttributeImpl_baseProductAttribute")
 public class OrderItemAttributeImpl implements OrderItemAttribute {
 
     public static final Log LOG = LogFactory.getLog(OrderItemAttributeImpl.class);
@@ -69,11 +69,11 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     protected Long id;
     
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName="OrderItemAttributeImpl_Attribute_Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Name", order=1, group = "OrderItemAttributeImpl_Description", prominent=true)
     protected String name;
 
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName="OrderItemAttributeImpl_Attribute_Value", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Value", order=2, group = "OrderItemAttributeImpl_Description", prominent=true)
     protected String value;
     
     @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)

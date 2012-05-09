@@ -41,7 +41,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_PRODUCT_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseProductAttribute")
+@AdminPresentationClass(friendlyName = "ProductAttributeImpl_baseProductAttribute")
 public class ProductAttributeImpl implements ProductAttribute {
 
 	/** The Constant serialVersionUID. */
@@ -68,17 +68,17 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="ProductAttributeImpl_Attribute_Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order=1, group = "ProductAttributeImpl_Description", prominent=true)
     protected String name;
 
     /** The value. */
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName="ProductAttributeImpl_Attribute_Value", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
 
     /** The searchable. */
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName="ProductAttributeImpl_Attribute_Searchable", order=3, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Searchable", order=3, group = "ProductAttributeImpl_Description", prominent=true)
     protected Boolean searchable;
     
     /** The product. */

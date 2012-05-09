@@ -46,7 +46,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_OFFER_ITEM_CRITERIA")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseOfferItemCriteria")
+@AdminPresentationClass(friendlyName = "OfferItemCriteriaImpl_baseOfferItemCriteria")
 public class OfferItemCriteriaImpl implements OfferItemCriteria {
 	
 	public static final long serialVersionUID = 1L;
@@ -66,17 +66,17 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
         }
     )
     @Column(name = "OFFER_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName="OfferItemCriteriaImpl_Item_Criteria_Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Item_Criteria_Id", group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="OfferItemCriteriaImpl_Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Quantity", group = "OfferItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
 	protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
-    @AdminPresentation(friendlyName="OfferItemCriteriaImpl_Order_Item_Match_Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Order_Item_Match_Rule", group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = OfferImpl.class)

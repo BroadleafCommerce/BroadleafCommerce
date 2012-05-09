@@ -72,7 +72,7 @@ import org.hibernate.annotations.Parameter;
         @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOrderItemAdjustment")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemAdjustmentImpl_baseOrderItemAdjustment")
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     public static final long serialVersionUID = 1L;
@@ -106,15 +106,15 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName="OrderItemAdjustmentImpl_Item_Adjustment_Reason", order=1, group="Description")
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order=1, group = "OrderItemAdjustmentImpl_Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
-    @AdminPresentation(friendlyName="OrderItemAdjustmentImpl_Item_Adjustment_Value", order=2, group="Description")
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Value", order=2, group = "OrderItemAdjustmentImpl_Description")
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName="OrderItemAdjustmentImpl_Apply_To_Sale_Price", order=3, group="Description")
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Apply_To_Sale_Price", order=3, group = "OrderItemAdjustmentImpl_Description")
     protected boolean appliedToSalePrice;
     
     @Transient

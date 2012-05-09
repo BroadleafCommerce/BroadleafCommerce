@@ -48,8 +48,8 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
 @AdminPresentationOverrides(
     {
-        @AdminPresentationOverride(name="address.state.name", value=@AdminPresentation(friendlyName="CustomerAddressImpl_State", visibility = VisibilityEnum.FORM_HIDDEN, order=9, group="Address", readOnly = true)),
-        @AdminPresentationOverride(name="address.country.name", value=@AdminPresentation(friendlyName="CustomerAddressImpl_Country", visibility = VisibilityEnum.FORM_HIDDEN, order=12, group="Address", readOnly = true)),
+        @AdminPresentationOverride(name="address.state.name", value=@AdminPresentation(friendlyName = "CustomerAddressImpl_State", visibility = VisibilityEnum.FORM_HIDDEN, order=9, group = "CustomerAddressImpl_Address", readOnly = true)),
+        @AdminPresentationOverride(name="address.country.name", value=@AdminPresentation(friendlyName = "CustomerAddressImpl_Country", visibility = VisibilityEnum.FORM_HIDDEN, order=12, group = "CustomerAddressImpl_Address", readOnly = true)),
         @AdminPresentationOverride(name="address.firstName", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="address.lastName", value=@AdminPresentation(excluded = true))
     }
@@ -66,7 +66,7 @@ public class CustomerAddressImpl implements CustomerAddress {
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
-    @AdminPresentation(friendlyName="CustomerAddressImpl_Address_Name", order=1, group = "Identification", groupOrder = 1, requiredOverride = RequiredOverride.REQUIRED, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.core.service.type.CustomerAddressType")
+    @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order=1, group = "CustomerAddressImpl_Identification", groupOrder = 1, requiredOverride = RequiredOverride.REQUIRED, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.core.service.type.CustomerAddressType")
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)

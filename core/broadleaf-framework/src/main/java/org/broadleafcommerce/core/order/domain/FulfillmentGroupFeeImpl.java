@@ -79,7 +79,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
     @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupFeeImpl_Total_Fee_Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=9, group = "FulfillmentGroupFeeImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     public Long getId() {

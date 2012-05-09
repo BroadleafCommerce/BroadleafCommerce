@@ -59,73 +59,73 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
-    @AdminPresentation(friendlyName = "User Name", order = 1, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_User_Name", order = 1, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String userName;
 
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "Amount", order = 2, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected BigDecimal amountPaid;
 
     @Column(name = "AUTHORIZATION_CODE")
-    @AdminPresentation(friendlyName = "Authorization Code", order = 3, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Authorization_Code", order = 3, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String authorizationCode;
 
     @Column(name = "MIDDLEWARE_RESPONSE_CODE")
-    @AdminPresentation(friendlyName = "Middleware Response Code", order = 4, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Middleware_Response_Code", order = 4, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String middlewareResponseCode;
 
     @Column(name = "MIDDLEWARE_RESPONSE_TEXT")
-    @AdminPresentation(friendlyName = "Middleware Response Text", order = 5, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Middleware_Response_Text", order = 5, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String middlewareResponseText;
 
     @Column(name = "PROCESSOR_RESPONSE_CODE")
-    @AdminPresentation(friendlyName = "Processor Response Code", order = 6, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Processor_Response_Code", order = 6, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String processorResponseCode;
 
     @Column(name = "PROCESSOR_RESPONSE_TEXT")
-    @AdminPresentation(friendlyName = "Processor Response Text", order = 7, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Processor_Response_Text", order = 7, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String processorResponseText;
 
     @Column(name = "IMPLEMENTOR_RESPONSE_CODE")
-    @AdminPresentation(friendlyName = "Implementer Response Code", order = 8, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Implementer_Response_Code", order = 8, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String implementorResponseCode;
 
     @Column(name = "IMPLEMENTOR_RESPONSE_TEXT")
-    @AdminPresentation(friendlyName = "Implementer Response Text", order = 9, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Implementer_Response_Text", order = 9, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String implementorResponseText;
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "Response Ref Number", order = 10, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Response_Ref_Number", order = 10, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String referenceNumber;
 
     @Column(name = "TRANSACTION_SUCCESS")
-    @AdminPresentation(friendlyName = "Transaction Successful", order = 11, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Successful", order = 11, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected Boolean transactionSuccess;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName = "Transaction Time", order = 12, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Time", order = 12, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected Date transactionTimestamp;
 
     @Column(name = "TRANSACTION_ID")
-    @AdminPresentation(friendlyName = "Transaction Id", order = 13, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Id", order = 13, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String transactionId;
 
     @Column(name = "AVS_CODE")
-    @AdminPresentation(friendlyName = "AVS Code", order = 14, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_AVS_Code", order = 14, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String avsCode;
 
     @Transient
     protected String cvvCode;
 
     @Column(name = "REMAINING_BALANCE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "Remaining Balance", order = 15, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Remaining_Balance", order = 15, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected BigDecimal remainingBalance;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
     @Index(name="PAYRESPONSE_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
-    @AdminPresentation(friendlyName = "Transaction Type", order = 16, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Type", order = 16, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String transactionType;
 
     @CollectionOfElements
@@ -146,7 +146,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
     @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "Payment Ref Number", order = 17, group = "Payment Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Payment_Ref_Number", order = 17, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String paymentInfoReferenceNumber;
 
     public String getAuthorizationCode() {

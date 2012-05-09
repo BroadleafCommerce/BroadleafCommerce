@@ -35,7 +35,7 @@ import javax.persistence.TableGenerator;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CHALLENGE_QUESTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseChallengeQuestion")
+@AdminPresentationClass(friendlyName = "ChallengeQuestionImpl_baseChallengeQuestion")
 public class ChallengeQuestionImpl implements ChallengeQuestion {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +47,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     protected Long id;
 
     @Column(name = "QUESTION", nullable=false)
-    @AdminPresentation(friendlyName="ChallengeQuestionImpl_Challenge_Question", group="Customer")
+    @AdminPresentation(friendlyName = "ChallengeQuestionImpl_Challenge_Question", group = "ChallengeQuestionImpl_Customer")
     protected String question;
 
     public Long getId() {

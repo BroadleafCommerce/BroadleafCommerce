@@ -53,20 +53,20 @@ public class SiteImpl implements Site {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName="SiteImpl_Site_Name", order=1, group="Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order=1, group = "SiteImpl_Site")
     protected String name;
 
     @Column (name = "SITE_IDENTIFIER_TYPE")
-    @AdminPresentation(friendlyName="SiteImpl_Site_Identifier_Type", order=2, group="Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order=2, group = "SiteImpl_Site")
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
-    @AdminPresentation(friendlyName="SiteImpl_Site_Identifier_Value", order=3, group="Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, group = "SiteImpl_Site")
     protected String siteIdentifierValue;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
-    @AdminPresentation(friendlyName="SiteImpl_Production_SandBox", order=4, group="Site", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SiteImpl_Production_SandBox", order=4, group = "SiteImpl_Site", visibility = VisibilityEnum.HIDDEN_ALL)
     protected SandBox productionSandbox;
 
     @Override

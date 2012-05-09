@@ -69,7 +69,7 @@ import org.hibernate.annotations.Index;
         @AdminPresentationOverride(name="pageTemplate.locale", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "basePage")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageImpl_basePage")
 public class PageImpl implements Page {
 
     private static final long serialVersionUID = 1L;
@@ -82,16 +82,16 @@ public class PageImpl implements Page {
     
     @ManyToOne (targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
-    @AdminPresentation(friendlyName="PageImpl_Page_Template", group = "Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "PageImpl_Page_Template", group = "PageImpl_Basic", order=2, excluded=true, visibility = VisibilityEnum.GRID_HIDDEN, requiredOverride = RequiredOverride.REQUIRED)
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="PageImpl_Description", order=3, group="Basic", prominent=true)
+    @AdminPresentation(friendlyName = "PageImpl_Description", order=3, group = "PageImpl_Basic", prominent=true)
     protected String description;
 
     @Column (name = "FULL_URL")
     @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
-    @AdminPresentation(friendlyName="PageImpl_Full_Url", order=1, group="Basic", prominent=true)
+    @AdminPresentation(friendlyName = "PageImpl_Full_Url", order=1, group = "PageImpl_Basic", prominent=true)
     protected String fullUrl;
 
     @ManyToMany(targetEntity = PageFieldImpl.class, cascade = CascadeType.ALL)
@@ -112,22 +112,22 @@ public class PageImpl implements Page {
 	protected SandBox originalSandBox;
 
     @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName="PageImpl_Deleted", order=2, group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageImpl_Deleted", order=2, group = "PageImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="PAGE_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
     protected Boolean deletedFlag = false;
 
     @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName="PageImpl_Archived", order=5, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageImpl_Archived", order=5, group = "PageImpl_Page", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="PAGE_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag = false;
 
     @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName="PageImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="PAGE_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
     protected Boolean lockedFlag = false;
 
     @Column (name = "ORIG_PAGE_ID")
-    @AdminPresentation(friendlyName="PageImpl_Original_Page_ID", order=6, group="Page", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageImpl_Original_Page_ID", order=6, group = "PageImpl_Page", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ORIG_PAGE_ID_INDX", columnNames={"ORIG_PAGE_ID"})
     protected Long originalPageId;
 
