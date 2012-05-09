@@ -156,6 +156,10 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true)
     protected String orderItemType;
 
+    @Column(name = "ITEM_TAXABLE_FLAG")
+    @AdminPresentation(excluded = true)
+    protected Boolean itemTaxable;
+
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
@@ -514,5 +518,18 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     public void accept(OrderItemVisitor visitor) throws PricingException {
         visitor.visit(this);
+    }
+
+
+    /**
+     * Returns true.   Expected to be overridden by subclasses.
+     * @return
+     */
+    public Boolean isTaxable() {
+        return itemTaxable;
+    }
+
+    public void setTaxable(Boolean taxable) {
+        this.itemTaxable = taxable;
     }
 }

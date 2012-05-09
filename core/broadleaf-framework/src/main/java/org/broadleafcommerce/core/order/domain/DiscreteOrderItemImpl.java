@@ -110,6 +110,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (sku.getSalePrice() != null) {
             this.baseSalePrice = sku.getSalePrice().getAmount();
         }
+        this.itemTaxable = sku.isTaxable();
         setName(sku.getName());
     }
 
