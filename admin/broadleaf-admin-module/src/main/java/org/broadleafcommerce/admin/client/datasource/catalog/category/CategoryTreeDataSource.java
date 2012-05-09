@@ -109,6 +109,7 @@ public class CategoryTreeDataSource extends TreeGridDataSource {
                     TreeNode[] recordList = new TreeNode[]{record};
                     response.setData(recordList);
                     processResponse(requestId, response);
+                    setLinkedValue(null);
                 }
 			}
 		});
