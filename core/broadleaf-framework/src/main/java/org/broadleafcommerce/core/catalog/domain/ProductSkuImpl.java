@@ -38,7 +38,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "skuProduct")
+@AdminPresentationClass(friendlyName = "ProductSkuImpl_skuProduct")
 public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	private static final Log LOG = LogFactory.getLog(ProductSkuImpl.class);

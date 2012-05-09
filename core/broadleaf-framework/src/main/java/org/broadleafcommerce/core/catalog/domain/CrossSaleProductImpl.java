@@ -51,7 +51,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
     private Long id;
 	
 	@Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName="CrossSaleProductImpl_Cross_Sale_Promotion_Message", largeEntry=true)
+    @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", largeEntry=true)
     private String promotionMessage;
 
     @Column(name = "SEQUENCE")

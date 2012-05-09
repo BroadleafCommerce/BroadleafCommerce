@@ -36,7 +36,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseState")
+@AdminPresentationClass(friendlyName = "StateImpl_baseState")
 public class StateImpl implements State {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +47,7 @@ public class StateImpl implements State {
 
     @Column(name = "NAME", nullable = false)
     @Index(name="STATE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="StateImpl_State", order=9, group="Address")
+    @AdminPresentation(friendlyName = "StateImpl_State", order=9, group = "StateImpl_Address")
     protected String name;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)

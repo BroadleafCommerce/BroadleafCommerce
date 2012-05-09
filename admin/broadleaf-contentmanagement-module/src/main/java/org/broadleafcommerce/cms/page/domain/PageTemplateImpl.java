@@ -53,7 +53,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAGE_TMPLT")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "basePageTemplate")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageTemplateImpl_basePageTemplate")
 public class PageTemplateImpl implements PageTemplate {
 
     private static final long serialVersionUID = 1L;
@@ -62,18 +62,18 @@ public class PageTemplateImpl implements PageTemplate {
     @GeneratedValue(generator = "PageTemplateId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PageTemplateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PageTemplateImpl", allocationSize = 10)
     @Column(name = "PAGE_TMPLT_ID")
-    @AdminPresentation(friendlyName = "Template Id", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
+    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Id", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected Long id;
 
     @Column (name = "TMPLT_NAME")
-    @AdminPresentation(friendlyName = "Template Name", prominent = true)
+    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Name", prominent = true)
     protected String templateName;
 
     @Column (name = "TMPLT_DESCR")
     protected String templateDescription;
 
     @Column (name = "TMPLT_PATH")
-    @AdminPresentation(friendlyName = "Template Path", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
+    @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Path", visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)
     protected String templatePath;
 
     @ManyToOne(targetEntity = LocaleImpl.class)

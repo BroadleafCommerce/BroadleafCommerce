@@ -37,8 +37,8 @@ import java.util.List;
         {
             @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
             @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName="SandBoxItemImpl_Date_Created", group="Audit", readOnly = true)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName="SandBoxItemImpl_Date_Updated", group="Audit", readOnly = true)),
+            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Created", group = "SandBoxItemImpl_Audit", readOnly = true)),
+            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Updated", group = "SandBoxItemImpl_Audit", readOnly = true)),
             @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.author", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="sandBox.site", value=@AdminPresentation(excluded = true)),
@@ -50,7 +50,7 @@ import java.util.List;
         }
 )
 @EntityListeners(value = { AdminAuditableListener.class })
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseSandBoxItem")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SandBoxItemImpl_baseSandBoxItem")
 public class SandBoxItemImpl implements SandBoxItem {
 
 	private static final long serialVersionUID = 1L;
@@ -75,16 +75,16 @@ public class SandBoxItemImpl implements SandBoxItem {
 	protected Long originalSandBoxId;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
-    @AdminPresentation(friendlyName="SandBoxItemImpl_Item_Type", order=2, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=2, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
     @Index(name="SANDBOX_ITEM_TYPE_INDEX", columnNames={"SANDBOX_ITEM_TYPE"})
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
-    @AdminPresentation(friendlyName="SandBoxItemImpl_Operation_Type", order=3, group="Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=3, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
     protected String sandboxOperationType;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="SandBoxItemImpl_Description", order=1, group="Details")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Description", order=1, group = "SandBoxItemImpl_Details")
     protected String description;
 
     @Column(name = "TEMPORARY_ITEM_ID")

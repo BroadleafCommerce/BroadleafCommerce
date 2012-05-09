@@ -43,7 +43,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "BLC_SC_ITEM_CRITERIA")
 @Inheritance(strategy=InheritanceType.JOINED)
-@AdminPresentationClass(friendlyName = "baseStructuredContentItemCriteria")
+@AdminPresentationClass(friendlyName = "StructuredContentItemCriteriaImpl_baseStructuredContentItemCriteria")
 public class StructuredContentItemCriteriaImpl implements StructuredContentItemCriteria {
 	
 	public static final long serialVersionUID = 1L;
@@ -63,17 +63,17 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         }
     )
     @Column(name = "SC_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName="StructuredContentItemCriteriaImpl_Item_Criteria_Id", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id", group = "StructuredContentItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="StructuredContentItemCriteriaImpl_Quantity", group="Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Quantity", group = "StructuredContentItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
 	protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
-    @AdminPresentation(friendlyName="StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
 	protected String orderItemMatchRule;
     
     @ManyToOne(targetEntity = StructuredContentImpl.class)

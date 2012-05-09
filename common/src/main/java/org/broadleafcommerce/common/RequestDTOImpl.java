@@ -28,13 +28,13 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @AdminPresentation(friendlyName = "Request URI")
+    @AdminPresentation(friendlyName = "RequestDTOImpl_Request_URI")
     private String requestURI;
 
-    @AdminPresentation(friendlyName = "Full Url")
+    @AdminPresentation(friendlyName = "RequestDTOImpl_Full_Url")
     private String fullUrlWithQueryString;
 
-    @AdminPresentation(friendlyName = "Is Secure")
+    @AdminPresentation(friendlyName = "RequestDTOImpl_Is_Secure")
     private Boolean secure;
 
     public RequestDTOImpl() {

@@ -43,7 +43,7 @@ import javax.persistence.TableGenerator;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_TYPE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContentType")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentTypeImpl_baseStructuredContentType")
 public class StructuredContentTypeImpl implements StructuredContentType {
 
     private static final long serialVersionUID = 1L;
@@ -55,16 +55,16 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName="StructuredContentTypeImpl_Name", order=1, group="Details", prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Name", order=1, group = "StructuredContentTypeImpl_Details", prominent=true)
     protected String name;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="StructuredContentTypeImpl_Description", order=2, group="Details",prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Description", order=2, group = "StructuredContentTypeImpl_Details",prominent=true)
     protected String description;
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
     @JoinColumn(name="SC_FLD_TMPLT_ID")
-    @AdminPresentation(friendlyName="StructuredContentTypeImpl_Content_Template", order=2, group="Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Content_Template", order=2, group = "StructuredContentTypeImpl_Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override

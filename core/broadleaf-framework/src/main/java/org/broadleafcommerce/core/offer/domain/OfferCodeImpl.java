@@ -60,7 +60,7 @@ import java.util.List;
         @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOfferCode")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferCodeImpl_baseOfferCode")
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;
@@ -80,34 +80,34 @@ public class OfferCodeImpl implements OfferCode {
         }
     )
     @Column(name = "OFFER_CODE_ID")
-    @AdminPresentation(friendlyName="OfferCodeImpl_Offer_Code_Id", group="Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code_Id", group = "OfferCodeImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
-    @AdminPresentation(friendlyName="OfferCodeImpl_Offer", group="Description")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", group = "OfferCodeImpl_Description")
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
     @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
-    @AdminPresentation(friendlyName="OfferCodeImpl_Offer_Code", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order=1, group = "OfferCodeImpl_Description", prominent=true)
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName="OfferCodeImpl_Code_Start_Date", order=1, group="Activity Range")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order=1, group = "OfferCodeImpl_Activity_Range")
     protected Date startDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName="OfferCodeImpl_Code_End_Date", order=2, group="Activity Range")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order=2, group = "OfferCodeImpl_Activity_Range")
     protected Date endDate;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName="OfferCodeImpl_Code_Max_Uses", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order=2, group = "OfferCodeImpl_Description", prominent=true)
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     

@@ -37,7 +37,7 @@ import org.hibernate.annotations.Cascade;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUNDLE_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationClass(friendlyName = "bundleOrderItem")
+@AdminPresentationClass(friendlyName = "BundleOrderItemImpl_bundleOrderItem")
 public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderItem {
 
     private static final long serialVersionUID = 1L;

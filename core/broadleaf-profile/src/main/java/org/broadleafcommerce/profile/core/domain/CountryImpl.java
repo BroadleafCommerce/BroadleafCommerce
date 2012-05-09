@@ -32,7 +32,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_COUNTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseCountry")
+@AdminPresentationClass(friendlyName = "CountryImpl_baseCountry")
 public class CountryImpl implements Country {
 
     private static final long serialVersionUID = 1L;
@@ -42,7 +42,7 @@ public class CountryImpl implements Country {
     protected String abbreviation;
 
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName="CountryImpl_Country", order=12, group="Address")
+    @AdminPresentation(friendlyName = "CountryImpl_Country", order=12, group = "CountryImpl_Address")
     protected String name;
 
     public String getAbbreviation() {

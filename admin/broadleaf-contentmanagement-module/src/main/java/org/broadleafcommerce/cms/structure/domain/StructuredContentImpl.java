@@ -78,7 +78,7 @@ import java.util.Set;
             @AdminPresentationOverride(name="locale.defaultFlag", value=@AdminPresentation(excluded = true))
         }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContent")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
 public class StructuredContentImpl implements StructuredContent {
 
     private static final long serialVersionUID = 1L;
@@ -93,7 +93,7 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
-    @AdminPresentation(friendlyName="StructuredContentImpl_Content_Name", order=1, groupOrder = 1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Name", order=1, groupOrder = 1, group = "StructuredContentImpl_Description", prominent=true)
     @Column(name = "CONTENT_NAME", nullable = false)
     @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "ARCHIVED_FLAG", "SC_TYPE_ID"})
     protected String contentName;
@@ -103,7 +103,7 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Locale locale;
 
-    @AdminPresentation(friendlyName="StructuredContentImpl_Priority", order=3, group="Description")
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order=3, group = "StructuredContentImpl_Description")
     @Column(name = "PRIORITY", nullable = false)
     protected Integer priority;
 
@@ -118,14 +118,14 @@ public class StructuredContentImpl implements StructuredContent {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
-    @AdminPresentation(friendlyName="StructuredContentImpl_Original_Item_Id", order=1, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Original_Item_Id", order=1, group = "StructuredContentImpl_Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "ORIG_ITEM_ID")
     @Index(name="SC_ORIG_ITEM_ID_INDEX", columnNames={"ORIG_ITEM_ID"})
     protected Long originalItemId;
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
     @JoinColumn(name="SANDBOX_ID")
-    @AdminPresentation(friendlyName="StructuredContentImpl_Content_SandBox", order=1, group="Stuctured Content", excluded = true)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_SandBox", order=1, group = "StructuredContentImpl_Stuctured_Content", excluded = true)
     protected SandBox sandbox;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
@@ -135,7 +135,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="SC_TYPE_ID")
-    @AdminPresentation(friendlyName="StructuredContentImpl_Content_Type", order=2, group="Description", excluded=true, visibility = VisibilityEnum.GRID_HIDDEN, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order=2, group = "StructuredContentImpl_Description", excluded=true, visibility = VisibilityEnum.GRID_HIDDEN, requiredOverride = RequiredOverride.REQUIRED)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
@@ -145,23 +145,23 @@ public class StructuredContentImpl implements StructuredContent {
     @BatchSize(size = 20)
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
-    @AdminPresentation(friendlyName="StructuredContentImpl_Deleted", order=2, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Deleted", order=2, group = "StructuredContentImpl_Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "DELETED_FLAG")
     @Index(name="SC_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
     protected Boolean deletedFlag;
 
-    @AdminPresentation(friendlyName="StructuredContentImpl_Archived", order=3, group="Internal", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Archived", order=3, group = "StructuredContentImpl_Internal", visibility = VisibilityEnum.HIDDEN_ALL)
     @Column(name = "ARCHIVED_FLAG")
     @Index(name="SC_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     protected Boolean archivedFlag;
 
-    @AdminPresentation(friendlyName="StructuredContentImpl_Offline", order=4, group="Description")
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order=4, group = "StructuredContentImpl_Description")
     @Column(name = "OFFLINE_FLAG")
     @Index(name="SC_OFFLN_FLG_INDX", columnNames={"OFFLINE_FLAG"})
     protected Boolean offlineFlag = false;
 
     @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName="StructuredContentImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="SC_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
     protected Boolean lockedFlag = false;
 
