@@ -55,7 +55,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_PERMISSION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseAdminPermission")
+@AdminPresentationClass(friendlyName = "AdminPermissionImpl_baseAdminPermission")
 public class AdminPermissionImpl implements AdminPermission {
     private static final long serialVersionUID = 1L;
 
@@ -63,21 +63,21 @@ public class AdminPermissionImpl implements AdminPermission {
     @GeneratedValue(generator = "AdminPermissionId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminPermissionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminPermissionImpl", allocationSize = 50)
     @Column(name = "ADMIN_PERMISSION_ID")
-    @AdminPresentation(friendlyName="AdminPermissionImpl_Admin_Permission_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Admin_Permission_ID", group = "AdminPermissionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINPERM_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="AdminPermissionImpl_Name", order=1, group="Permission", prominent=true)
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Name", order=1, group = "AdminPermissionImpl_Permission", prominent=true)
     protected String name;
 
     @Column(name = "PERMISSION_TYPE", nullable=false)
     @Index(name="ADMINPERM_TYPE_INDEX", columnNames={"PERMISSION_TYPE"})
-    @AdminPresentation(friendlyName="AdminPermissionImpl_Permission_Type", order=3, group="Permission", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.security.service.type.PermissionType")
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order=3, group = "AdminPermissionImpl_Permission", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.security.service.type.PermissionType")
     protected String type;
 
     @Column(name = "DESCRIPTION", nullable=false)
-    @AdminPresentation(friendlyName="AdminPermissionImpl_Description", order=2, group="Permission", prominent=true)
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Description", order=2, group = "AdminPermissionImpl_Permission", prominent=true)
     protected String description;
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)

@@ -65,40 +65,40 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @GeneratedValue(generator = "SkuAvailabilityId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SkuAvailabilityId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAvailabilityImpl", allocationSize = 50)
     @Column(name = "SKU_AVAILABILITY_ID")
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Sku_Availability_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Sku_Availability_ID", group = "SkuAvailabilityImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     /** The sale price. */
     @Column(name = "SKU_ID")
     @Index(name="SKUAVAIL_SKU_INDEX", columnNames={"SKU_ID"})
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long skuId;
 
     /** The retail price. */
     @Column(name = "LOCATION_ID")
     @Index(name="SKUAVAIL_LOCATION_INDEX", columnNames={"LOCATION_ID"})
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Location_ID", group="Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Location_ID", group = "SkuAvailabilityImpl_Description")
     protected Long locationId;
 
     /** The quantity on hand. */
     @Column(name = "QTY_ON_HAND")
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Quantity_On_Hand", group="Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Quantity_On_Hand", group = "SkuAvailabilityImpl_Description")
     protected Integer quantityOnHand;
 
     /** The reserve quantity. */
     @Column(name = "RESERVE_QTY")
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Reserve_Quantity", group="Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Reserve_Quantity", group = "SkuAvailabilityImpl_Description")
     protected Integer reserveQuantity;
 
     /** The description. */
     @Column(name = "AVAILABILITY_STATUS")
     @Index(name="SKUAVAIL_STATUS_INDEX", columnNames={"AVAILABILITY_STATUS"})
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Availability_Status", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Availability_Status", group = "SkuAvailabilityImpl_Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType")
     protected String availabilityStatus;
 
     /** The date this product will be available. */
     @Column(name = "AVAILABILITY_DATE")
-    @AdminPresentation(friendlyName="SkuAvailabilityImpl_Available_Date", group="Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Available_Date", group = "SkuAvailabilityImpl_Description")
     protected Date availabilityDate;
 
     public Long getId() {

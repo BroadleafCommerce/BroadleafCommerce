@@ -129,5 +129,10 @@ public interface OrderItem extends Serializable {
      * @param orderItemAttributes
      */
     public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes);
+
+
+    public Boolean isTaxable();
+
+    public void setTaxable(Boolean taxable);
     
 }

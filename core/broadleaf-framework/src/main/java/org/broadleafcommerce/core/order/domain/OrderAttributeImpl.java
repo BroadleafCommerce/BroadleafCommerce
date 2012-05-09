@@ -41,7 +41,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_ORDER_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseProductAttribute")
+@AdminPresentationClass(friendlyName = "OrderAttributeImpl_baseProductAttribute")
 public class OrderAttributeImpl implements OrderAttribute {
 
     private static final long serialVersionUID = 1L;
@@ -64,12 +64,12 @@ public class OrderAttributeImpl implements OrderAttribute {
     protected Long id;
     
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName="OrderAttributeImpl_Attribute_Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Name", order=1, group = "OrderAttributeImpl_Description", prominent=true)
     protected String name;
 
     /** The value. */
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName="OrderAttributeImpl_Attribute_Value", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Value", order=2, group = "OrderAttributeImpl_Description", prominent=true)
     protected String value;
     
     @ManyToOne(targetEntity = OrderImpl.class, optional=false)

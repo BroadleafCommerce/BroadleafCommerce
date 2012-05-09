@@ -64,7 +64,7 @@ import org.hibernate.annotations.Parameter;
 @AdminPresentationOverrides(
         {@AdminPresentationOverride(name="targetItemCriteria.offer", value=@AdminPresentation(excluded = true))}
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOffer")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferImpl_baseOffer")
 public class OfferImpl implements Offer {
 
     public static final long serialVersionUID = 1L;
@@ -84,54 +84,54 @@ public class OfferImpl implements Offer {
         }
     )
     @Column(name = "OFFER_ID")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Id", order=1, group="Description", groupOrder=1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", order=1, group = "OfferImpl_Description", groupOrder=1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Name", order=1, group="Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order=1, group = "OfferImpl_Description", prominent=true, groupOrder=1)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Description", order=2, group="Description", largeEntry=true, prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order=2, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder=1)
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Type", order=3, group="Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order=3, group = "OfferImpl_Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder=1)
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Discount_Type", order=4, group="Amount", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType", groupOrder=2)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order=4, group = "OfferImpl_Amount", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType", groupOrder=2)
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false)
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Value", order=5, group="Amount", prominent=true, groupOrder=2)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order=5, group = "OfferImpl_Amount", prominent=true, groupOrder=2)
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Priority", group="Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", group = "OfferImpl_Description", groupOrder=1)
     protected int priority;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Start_Date", group="Activity Range", order=1, groupOrder=3)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", group = "OfferImpl_Activity_Range", order=1, groupOrder=3)
     protected Date startDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_End_Date", group="Activity Range", order=2, groupOrder=3)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date", group = "OfferImpl_Activity_Range", order=2, groupOrder=3)
     protected Date endDate;
 
     @Column(name = "STACKABLE")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Stackable", group="Application", groupOrder=4)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable", group = "OfferImpl_Application", groupOrder=4)
     protected boolean stackable;
 
     @Column(name = "TARGET_SYSTEM")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Target_System", group="Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System", group = "OfferImpl_Description", groupOrder=1)
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName="OfferImpl_Apply_To_Sale_Price", group="Application", groupOrder=4)
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", group = "OfferImpl_Application", groupOrder=4)
     protected boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
@@ -148,33 +148,33 @@ public class OfferImpl implements Offer {
     protected boolean applyDiscountToMarkedItems;
     
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Combinable", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable", group = "OfferImpl_Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Delivery_Type", group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDeliveryType", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Delivery_Type", group = "OfferImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDeliveryType", groupOrder=1)
     @Index(name="OFFER_DELIVERY_INDEX", columnNames={"OFFER_DELIVERY_TYPE"})
     protected String deliveryType;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Max_Uses_Per_Order", order=7, group="Description", groupOrder=2)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order=7, group = "OfferImpl_Description", groupOrder=2)
     protected int maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
-    @AdminPresentation(friendlyName="OfferImpl_Max_Uses_Per_Customer", order=7, group="Description", groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer", order=7, group = "OfferImpl_Description", groupOrder=1)
     protected Long maxUsesPerCustomer;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="OfferImpl_Offer_Current_Uses", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Current_Uses", visibility =VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
-    @AdminPresentation(friendlyName="OfferImpl_Item_Qualifier_Rule", group="Application", groupOrder=4, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule", group = "OfferImpl_Application", groupOrder=4, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemQualifierRuleType;
     
     @Column(name = "OFFER_ITEM_TARGET_RULE")
-    @AdminPresentation(friendlyName="OfferImpl_Item_Target_Rule", group="Application", groupOrder=4, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
+    @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule", group = "OfferImpl_Application", groupOrder=4, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemTargetRuleType;
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -184,13 +184,13 @@ public class OfferImpl implements Offer {
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @ManyToOne(targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
-    @AdminPresentation(friendlyName="OfferImpl_Target_Item_Criteria", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Criteria", group = "OfferImpl_Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected OfferItemCriteria targetItemCriteria;
     
     @Column(name = "TOTALITARIAN_OFFER")
-    @AdminPresentation(friendlyName="OfferImpl_Totalitarian_Offer", group="Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer", group = "OfferImpl_Application", groupOrder=4, visibility =VisibilityEnum.HIDDEN_ALL)
     protected Boolean totalitarianOffer;
     
     @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
@@ -201,7 +201,7 @@ public class OfferImpl implements Offer {
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
-    @AdminPresentation(friendlyName="OfferImpl_Treat_As_New_Format", group="Application", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format", group = "OfferImpl_Application", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean treatAsNewFormat;
 
     public Long getId() {

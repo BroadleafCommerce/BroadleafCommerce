@@ -49,7 +49,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD_TMPLT")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseStructuredContentFieldTemplate")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentFieldTemplateImpl_baseStructuredContentFieldTemplate")
 public class StructuredContentFieldTemplateImpl implements StructuredContentFieldTemplate {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +61,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName="StructuredContentFieldTemplateImpl_Field_Template_Name", order=1, group="Details",prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentFieldTemplateImpl_Field_Template_Name", order=1, group = "StructuredContentFieldTemplateImpl_Details",prominent=true)
     protected String name;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})

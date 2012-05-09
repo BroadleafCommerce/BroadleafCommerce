@@ -38,7 +38,7 @@ import org.hibernate.annotations.Parameter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_TAX_DETAIL")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "baseTaxDetail")
+@AdminPresentationClass(friendlyName = "TaxDetailImpl_baseTaxDetail")
 public class TaxDetailImpl implements TaxDetail {
     
     private static final long serialVersionUID = -4036994446393527252L;
@@ -61,15 +61,15 @@ public class TaxDetailImpl implements TaxDetail {
     protected Long id;
     
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName="TaxDetailImpl_Tax_Type", order=1, group="Tax Detail")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Type", order=1, group = "TaxDetailImpl_Tax_Detail")
     protected TaxType type;
     
     @Column(name = "AMOUNT")
-    @AdminPresentation(friendlyName="TaxDetailImpl_Tax_Amount", order=2, group="Tax Detail")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Amount", order=2, group = "TaxDetailImpl_Tax_Detail")
     protected Money amount;
     
     @Column(name = "RATE")
-    @AdminPresentation(friendlyName="TaxDetailImpl_Tax_Rate", order=1, group="Tax Detail")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order=1, group = "TaxDetailImpl_Tax_Detail")
     protected BigDecimal rate;
     
     public TaxDetailImpl() {

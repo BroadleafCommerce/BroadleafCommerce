@@ -33,7 +33,7 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 
 	public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(ContentManagementMessages.class));
-		
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCMS.class));
 		setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
 		setModuleKey("BLCContentManagement");
 

@@ -82,7 +82,7 @@ import java.util.Map;
         @AdminPresentationOverride(name="bundleOrderItem", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOrderItem")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 public class OrderItemImpl implements OrderItem, Cloneable {
 
 	private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
@@ -92,7 +92,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 50)
     @Column(name = "ORDER_ITEM_ID")
-    @AdminPresentation(friendlyName="OrderItemImpl_Order_Item_ID", group="Primary Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Order_Item_ID", group = "OrderItemImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -109,23 +109,23 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected Order order;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="OrderItemImpl_Item_Retail_Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order=2, group = "OrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="OrderItemImpl_Item_Sale_Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order=3, group = "OrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="OrderItemImpl_Item_Price", order=4, group="Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Price", order=4, group = "OrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="OrderItemImpl_Item_Quantity", order=5, group="Pricing")
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Quantity", order=5, group = "OrderItemImpl_Pricing")
     protected int quantity;
     
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName="OrderItemImpl_Item_Name", order=1, group="Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=1, group = "OrderItemImpl_Description", prominent=true, groupOrder = 1)
     protected String name;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
@@ -155,6 +155,10 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     @AdminPresentation(excluded = true)
     protected String orderItemType;
+
+    @Column(name = "ITEM_TAXABLE_FLAG")
+    @AdminPresentation(excluded = true)
+    protected Boolean itemTaxable;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -514,5 +518,18 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     public void accept(OrderItemVisitor visitor) throws PricingException {
         visitor.visit(this);
+    }
+
+
+    /**
+     * Returns true.   Expected to be overridden by subclasses.
+     * @return
+     */
+    public Boolean isTaxable() {
+        return itemTaxable;
+    }
+
+    public void setTaxable(Boolean taxable) {
+        this.itemTaxable = taxable;
     }
 }

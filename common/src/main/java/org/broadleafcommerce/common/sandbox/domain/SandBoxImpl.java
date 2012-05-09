@@ -65,7 +65,7 @@ public class SandBoxImpl implements SandBox {
     protected Site site;
 
     @Column(name = "SANDBOX_TYPE")
-    @AdminPresentation(friendlyName="SandBoxImpl_SandBox_Type", group="Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.sandbox.domain.SandBoxType")
+    @AdminPresentation(friendlyName = "SandBoxImpl_SandBox_Type", group = "SandBoxImpl_Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.sandbox.domain.SandBoxType")
     protected String sandboxType;
 
 	/* (non-Javadoc)

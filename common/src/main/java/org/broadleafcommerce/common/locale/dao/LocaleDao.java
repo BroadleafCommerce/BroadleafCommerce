@@ -42,5 +42,7 @@ public interface LocaleDao {
      * @return
      */
     public List<Locale> findAllLocales();
+    
+    public Locale save(Locale locale);
 
 }

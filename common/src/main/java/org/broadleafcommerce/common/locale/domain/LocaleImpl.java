@@ -35,22 +35,22 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_LOCALE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@AdminPresentationClass(friendlyName = "baseLocale")
+@AdminPresentationClass(friendlyName = "LocaleImpl_baseLocale")
 public class LocaleImpl implements Locale {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column (name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName="LocaleImpl_Locale_Code", order=1, group="Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order=1, group = "LocaleImpl_Details", prominent=true)
     protected String localeCode;
 
     @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName="LocaleImpl_Name", order=2, group="Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Name", order=2, group = "LocaleImpl_Details", prominent=true)
     protected String friendlyName;
 
     @Column (name = "DEFAULT_FLAG")
-    @AdminPresentation(friendlyName="LocaleImpl_Is_Default", order=3, group="Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order=3, group = "LocaleImpl_Details", prominent=true)
     protected Boolean defaultFlag;
 
     @Override

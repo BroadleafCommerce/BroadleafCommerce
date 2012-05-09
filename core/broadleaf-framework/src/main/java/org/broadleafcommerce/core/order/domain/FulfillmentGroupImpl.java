@@ -62,7 +62,7 @@ import org.hibernate.annotations.Index;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseFulfillmentGroup")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupImpl_baseFulfillmentGroup")
 public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     private static final long serialVersionUID = 1L;
@@ -81,7 +81,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="FG_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Reference_Number", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Reference_Number", order=1, group = "FulfillmentGroupImpl_Description", prominent=true)
     protected String referenceNumber;
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
@@ -101,28 +101,28 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Shipping_Method", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Method", order=2, group = "FulfillmentGroupImpl_Description", prominent=true)
     protected String method;
     
     @Column(name = "SERVICE")
     @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Shipping_Service", order=3, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Service", order=3, group = "FulfillmentGroupImpl_Description", prominent=true)
     protected String service;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Retail_Shipping_Price", order=1, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Retail_Shipping_Price", order=1, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailShippingPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Sale_Shipping_Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Sale_Shipping_Price", order=2, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal saleShippingPrice;
 
     @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Shipping_Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price", order=3, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal shippingPrice;   
 
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Type", order=4, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupType")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupType")
     protected String type = FulfillmentGroupType.SHIPPING.getType();
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
@@ -142,28 +142,28 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Total_Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
     
     @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Total_Item_Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Item_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalItemTax;
     
     @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Total_Fee_Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Fee_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalFeeTax;
     
     @Column(name = "TOTAL_FG_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Total_FG_Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_FG_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalFulfillmentGroupTax;
 
     @Column(name = "DELIVERY_INSTRUCTION")
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Delivery_Instruction", order=4, group="Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Delivery_Instruction", order=4, group = "FulfillmentGroupImpl_Description")
     protected String deliveryInstruction;
 
     @Column(name = "IS_PRIMARY")
     @Index(name="FG_PRIMARY_INDEX", columnNames={"IS_PRIMARY"})
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Primary_FG", order=5, group="Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Primary_FG", order=5, group = "FulfillmentGroupImpl_Description")
     protected boolean primary = false;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class)
@@ -172,16 +172,16 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected PersonalMessage personalMessage;
 
     @Column(name = "MERCHANDISE_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Merchandise_Total", order=10, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Merchandise_Total", order=10, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal merchandiseTotal;
 
     @Column(name = "TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Total", order=11, group="Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total", order=11, group = "FulfillmentGroupImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal total;
 
     @Column(name = "STATUS")
     @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_FG_Status", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Status", order=6, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType")
     protected String status;
     
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
@@ -190,7 +190,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
     
     @Column(name = "SHIPPING_PRICE_TAXABLE")
-    @AdminPresentation(friendlyName="FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group="Pricing")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
 
     public Long getId() {

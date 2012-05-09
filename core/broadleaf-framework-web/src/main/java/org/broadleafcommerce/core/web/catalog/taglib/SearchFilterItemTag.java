@@ -199,8 +199,8 @@ public class SearchFilterItemTag extends SimpleTagSupport {
 
         out.println("<div id='searchFilter-"+propertyCss+"'></div>");
         out.println("Range:");
-        out.println("<input type=\"text\" id=\"min-" + propertyCss + "\" name='min-" + property + "' value='$"+min.getAmount().toPlainString()+"'/> - ");
-        out.println("<input type=\"text\" id=\"max-" + propertyCss + "\" name='max-" + property + "' value='$"+max.getAmount().toPlainString()+"'/> <br/>");
+        out.println("<input type=\"text\" id=\"min-" + propertyCss + "\" name='min-" + property + "' value='"+min.getCurrency().getSymbol()+min.getAmount().toPlainString()+"'/> - ");
+        out.println("<input type=\"text\" id=\"max-" + propertyCss + "\" name='max-" + property + "' value='"+max.getCurrency().getSymbol()+max.getAmount().toPlainString()+"'/> <br/>");
 
         out.println("        <script type=\"text/javascript\">\r\n" +
                 "        $(function() {\r\n" +
@@ -209,8 +209,8 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "                min: "+ min.getAmount().toPlainString() +", max: "+ max.getAmount().toPlainString() + "," +
                 "                values: ["+ min.getAmount().toPlainString() +","+ max.getAmount().toPlainString() +"]," +
                 "                slide: function(event, ui) {\r\n" +
-                "                    $(\"#min-" + propertyCss + "\").val('$' + ui.values[0] );\r\n" +
-                "                    $(\"#max-" + propertyCss + "\").val('$' + ui.values[1]);\r\n" +
+                "                    $(\"#min-" + propertyCss + "\").val('" + min.getCurrency().getSymbol() + "' + ui.values[0] );\r\n" +
+                "                    $(\"#max-" + propertyCss + "\").val('" + max.getCurrency().getSymbol() + "' + ui.values[1]);\r\n" +
                 "                }\r\n" +
                 "            });\r\n" +
                 "        });\r\n" +

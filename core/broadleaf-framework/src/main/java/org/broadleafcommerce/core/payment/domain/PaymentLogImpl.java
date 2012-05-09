@@ -56,12 +56,12 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "USER_NAME", nullable=false)
     @Index(name="PAYMENTLOG_USER_INDEX", columnNames={"USER_NAME"})
-    @AdminPresentation(friendlyName = "User Name", order = 1, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_User_Name", order = 1, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String userName;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName = "Transaction Time", order = 3, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Time", order = 3, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected Date transactionTimestamp;
 
     @Column(name = "ORDER_PAYMENT_ID")
@@ -76,29 +76,29 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
     @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "Payment Ref Number", order = 4, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Payment_Ref_Number", order = 4, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String paymentInfoReferenceNumber;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
     @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
-    @AdminPresentation(friendlyName = "Transaction Type", order = 5, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Type", order = 5, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String transactionType;
 
     @Column(name = "TRANSACTION_SUCCESS")
-    @AdminPresentation(friendlyName = "Transaction Successfule", order = 6, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Successfule", order = 6, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected Boolean transactionSuccess;
 
     @Column(name = "EXCEPTION_MESSAGE")
-    @AdminPresentation(friendlyName = "Exception Message", order = 7, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Exception_Message", order = 7, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String exceptionMessage;
 
     @Column(name = "LOG_TYPE", nullable=false)
     @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnNames={"LOG_TYPE"})
-    @AdminPresentation(friendlyName = "Type", order = 8, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Type", order = 8, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String logType;
 
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "Amount", order = 2, group = "Payment Log", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentLogImpl_Amount", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected BigDecimal amountPaid;
 
     public Long getId() {

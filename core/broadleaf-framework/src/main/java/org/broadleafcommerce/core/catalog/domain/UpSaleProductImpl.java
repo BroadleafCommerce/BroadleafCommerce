@@ -55,7 +55,7 @@ public class UpSaleProductImpl implements RelatedProduct {
     private Long id;
 	
 	@Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName="UpSaleProductImpl_Upsale_Promotion_Message", largeEntry=true)
+    @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message", largeEntry=true)
     private String promotionMessage;
 
     @Column(name = "SEQUENCE")

@@ -71,7 +71,7 @@ import java.math.BigDecimal;
         @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseFulfillmentGroupAdjustment")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment")
 public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment {
 
     public static final long serialVersionUID = 1L;
@@ -105,11 +105,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName="FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason", order=1, group="Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason", order=1, group = "FulfillmentGroupAdjustmentImpl_Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
-    @AdminPresentation(friendlyName="FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value", order=2, group="Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value", order=2, group = "FulfillmentGroupAdjustmentImpl_Description")
     protected BigDecimal value = Money.ZERO.getAmount();
 
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){

@@ -44,4 +44,7 @@ public interface LocaleService {
      * @return The default locale
      */
     public List<Locale> findAllLocales();
+    
+    public Locale save(Locale locale);
+    
 }

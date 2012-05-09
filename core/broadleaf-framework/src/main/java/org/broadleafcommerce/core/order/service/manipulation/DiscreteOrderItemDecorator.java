@@ -284,4 +284,13 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
         discreteOrderItem.setOrderItemAttributes(orderItemAttributes);
     }
 
+    @Override
+    public Boolean isTaxable() {
+        return discreteOrderItem.isTaxable();
+    }
+
+    @Override
+    public void setTaxable(Boolean taxable) {
+        discreteOrderItem.setTaxable(taxable);
+    }
 }

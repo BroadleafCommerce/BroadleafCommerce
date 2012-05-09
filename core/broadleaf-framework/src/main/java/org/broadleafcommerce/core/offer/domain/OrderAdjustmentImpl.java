@@ -71,7 +71,7 @@ import java.math.BigDecimal;
         @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseOrderAdjustment")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderAdjustmentImpl_baseOrderAdjustment")
 public class OrderAdjustmentImpl implements OrderAdjustment {
 
     public static final long serialVersionUID = 1L;
@@ -105,11 +105,11 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName="OrderAdjustmentImpl_Order_Adjustment_Reason", order=1, group="Description")
+    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Order_Adjustment_Reason", order=1, group = "OrderAdjustmentImpl_Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
-    @AdminPresentation(friendlyName="OrderAdjustmentImpl_Order_Adjustment_Value", order=2, group="Description")
+    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Order_Adjustment_Value", order=2, group = "OrderAdjustmentImpl_Description")
     protected BigDecimal value = Money.ZERO.getAmount();
 
     public void init(Order order, Offer offer, String reason){

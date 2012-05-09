@@ -41,7 +41,7 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_DISC_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-@AdminPresentationClass(friendlyName = "baseDiscreteOrderItemFreePrice")
+@AdminPresentationClass(friendlyName = "DiscreteOrderItemFeePriceImpl_baseDiscreteOrderItemFreePrice")
 public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice  {
 
     private static final long serialVersionUID = 1L;
@@ -57,15 +57,15 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     protected DiscreteOrderItem discreteOrderItem;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName="DiscreteOrderItemFeePriceImpl_Amount", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Amount", order=2, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName="DiscreteOrderItemFeePriceImpl_Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Name", order=1, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
-    @AdminPresentation(friendlyName="DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, group="Description", prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
     private String reportingCode;
 
     public Long getId() {

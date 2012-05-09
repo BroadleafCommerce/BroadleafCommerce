@@ -34,11 +34,11 @@ import javax.persistence.*;
 public class ImageStaticAssetImpl extends StaticAssetImpl implements ImageStaticAsset {
 
     @Column(name ="WIDTH")
-    @AdminPresentation(friendlyName="ImageStaticAssetImpl_Width", order=1, group = "ImageStaticAssetImpl_Image_Details", readOnly = true)
+    @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Width", order=1, group = "ImageStaticAssetImpl_Image_Details", readOnly = true)
     protected Integer width;
 
     @Column(name ="HEIGHT")
-    @AdminPresentation(friendlyName="ImageStaticAssetImpl_Height", order=2, group = "ImageStaticAssetImpl_Image_Details", readOnly = true)
+    @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Height", order=2, group = "ImageStaticAssetImpl_Image_Details", readOnly = true)
     protected Integer height;
 
     @Override

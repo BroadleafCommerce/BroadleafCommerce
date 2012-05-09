@@ -56,17 +56,17 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_DISCRETE_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationClass(friendlyName = "discreteOrderItem")
+@AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;
     
     @Column(name="BASE_RETAIL_PRICE")
-    @AdminPresentation(friendlyName="DiscreteOrderItemImpl_Base_Retail_Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Retail_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
     
     @Column(name="BASE_SALE_PRICE")
-    @AdminPresentation(friendlyName="DiscreteOrderItemImpl_Base_Sale_Price", order=2, group="Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Sale_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
@@ -110,6 +110,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (sku.getSalePrice() != null) {
             this.baseSalePrice = sku.getSalePrice().getAmount();
         }
+        this.itemTaxable = sku.isTaxable();
         setName(sku.getName());
     }
 

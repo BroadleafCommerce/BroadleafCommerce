@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extensible enumeration of tax detail types
@@ -40,6 +40,9 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
     public static final TaxType COUNTY = new TaxType("county", "County");
     public static final TaxType COUNTRY = new TaxType("country", "Country");
     public static final TaxType SHIPPING = new TaxType("shipping", "Shipping");
+
+    // Used by SimpleTaxModule to represent total taxes owed.
+    public static final TaxType COMBINED = new TaxType("combined", "Combined");
 
     public static TaxType getInstance(final String type) {
         return TYPES.get(type);
