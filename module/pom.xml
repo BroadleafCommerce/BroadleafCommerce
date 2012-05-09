@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>broadleaf</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.6.0-M1-24</version>
+		<version>1.6.0-M1-25</version>
 	</parent>
 	<artifactId>module</artifactId>
 	<packaging>pom</packaging>
