@@ -1,14 +1,13 @@
 package org.broadleafcommerce.common.web.util;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-
-import java.util.Collection;
-
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
 import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.util.Collection;
 
 /**
  * @author Jeff Fischer
@@ -38,11 +37,15 @@ public class PrecompressedHttpServletResponse extends HttpServletResponseWrapper
     @Override
     public String getContentType() {
         String contentType = super.getContentType();
-        if (contentType.contains("zip") && this.contentType != null) {
+        if (contentType != null) {
+            if (contentType.contains("zip") && this.contentType != null) {
+                return this.contentType;
+            }
+
+            return contentType;
+        } else {
             return this.contentType;
         }
-
-        return contentType;
     }
 
     @Override
