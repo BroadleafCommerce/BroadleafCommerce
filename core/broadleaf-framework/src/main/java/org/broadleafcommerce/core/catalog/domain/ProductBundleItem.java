@@ -2,6 +2,14 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import java.io.Serializable;
 
+/**
+ * Represents the {@link Product} being sold in a bundle along with metadata
+ * about the relationship itself like how many items should be included in the
+ * bundle
+ * 
+ * @author Phillip Verheyden
+ * @see ProductBundle, Product
+ */
 public interface ProductBundleItem extends Serializable {
 
     public int getQuantity();
