@@ -3,6 +3,8 @@ package org.broadleafcommerce.core.catalog.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import org.broadleafcommerce.common.money.Money;
+
 /**
  * Default implementation for representing a bundle that can be sold
  * individually. Product bundles are composed of multiple
@@ -10,8 +12,8 @@ import java.util.List;
  * <p>
  * Bundle prices are determined 1 of 2 ways, depending on the pricing model:
  * <ol>
- * <li>The sum of the prices of its {@link ProductBundleItem}</li>
- * <li>Uses the pricing information on the bundle itself</li>
+ * <li><b>ITEM_SUM</b>: The sum of the prices of its {@link ProductBundleItem}</li>
+ * <li><b>BUNDLE</b>: Uses the pricing information on the bundle itself</li>
  * </ol>
  * </p>
  * 
@@ -21,9 +23,30 @@ import java.util.List;
  */
 public interface ProductBundle extends Product, Serializable {
 
+    /**
+     * @return The pricing model for this bundle
+     */
     public String getPricingModel();
 
+    /**
+     * 
+     * @param pricingModel
+     *            <b>ITEM_SUM</b> if the retailPrice and salePrice of this
+     *            bundle should be the composition of its items, <b>BUNDLE</b>
+     *            if this retailPrice and salePrice should come from the default
+     *            Sku
+     */
     public void setPricingModel(String pricingModel);
+
+    /**
+     * @return the sum of the retail prices of the bundle items
+     */
+    public Money getBundleItemsRetailPrice();
+
+    /**
+     * @return the sum of the sale prices of the bundle items
+     */
+    public Money getBundleItemsSalePrice();
 
     /**
      * Gets whether or not this should be bundled together if the individual

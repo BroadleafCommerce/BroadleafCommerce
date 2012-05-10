@@ -18,15 +18,18 @@ public interface ProductBundleItem extends Serializable {
 
     public void setQuantity(Integer quantity);
 
-    public void setSalePrice(Money salePrice);
-
     /**
      * Allows for overriding the related Product's sale price. This is only used
      * if the pricing model for the bundle is a composition of its parts
      * getProduct().getDefaultSku().getSalePrice()
      * 
-     * @return this sale price if it is set,
-     *         getProduct().getDefaultSku().getSalePrice() if this sale price is
+     * @param salePrice The sale price for this bundle item
+     */
+    public void setSalePrice(Money salePrice);
+
+    /**
+     * @return this salePrice if it is set,
+     *         getProduct().getDefaultSku().getSalePrice() if this item's salePrice is
      *         null
      */
     public Money getSalePrice();

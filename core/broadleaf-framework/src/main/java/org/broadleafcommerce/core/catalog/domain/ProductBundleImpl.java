@@ -1,5 +1,6 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -55,6 +57,40 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     public void setPricingModel(String pricingModel) {
         this.pricingModel = pricingModel;
+    }
+    
+    public Money getRetailPrice() {
+        if (getPricingModel().equals("ITEM_SUM")) {
+            return getBundleItemsRetailPrice();
+        } else if (getPricingModel().equals(("BUNDLE"))) {
+            return super.getDefaultSku().getRetailPrice();
+        }
+        return null;
+    }
+    
+    public Money getSalePrice() {
+        if (getPricingModel().equals("ITEM_SUM")) {
+            return getBundleItemsSalePrice();
+        } else if (getPricingModel().equals(("BUNDLE"))) {
+            return super.getDefaultSku().getSalePrice();
+        }
+        return null;
+    }
+    
+    public Money getBundleItemsRetailPrice() {
+        Money price = new Money(BigDecimal.ZERO);
+        for (ProductBundleItem item : bundleItems){
+            price.add(item.getProduct().getDefaultSku().getRetailPrice());
+        }
+        return price;
+    }
+    
+    public Money getBundleItemsSalePrice() {
+        Money price = new Money(BigDecimal.ZERO);
+        for (ProductBundleItem item : bundleItems){
+            price.add(item.getSalePrice());
+        }
+        return price;
     }
 
     public Boolean getAutoBundle() {
