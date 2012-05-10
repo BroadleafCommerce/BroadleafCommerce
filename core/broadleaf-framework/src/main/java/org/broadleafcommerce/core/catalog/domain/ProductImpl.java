@@ -38,6 +38,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -175,6 +176,11 @@ public class ProductImpl implements Product {
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=7, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isMachineSortable = true;
+    
+    @OneToOne(optional = true, targetEntity = SkuImpl.class)
+    @JoinColumn(name = "SKU_ID")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Sku defaultSku;
     
     /** The skus. */
     @Transient
@@ -454,7 +460,15 @@ public class ProductImpl implements Product {
         this.isMachineSortable = isMachineSortable;
     }
 
-    public ProductWeight getWeight() {
+    public Sku getDefaultSku() {
+		return defaultSku;
+	}
+
+	public void setDefaultSku(Sku defaultSku) {
+		this.defaultSku = defaultSku;
+	}
+
+	public ProductWeight getWeight() {
         return weight;
     }
 
