@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -15,9 +17,13 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.compass.annotations.SearchableId;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -27,7 +33,27 @@ import org.hibernate.annotations.Index;
 public class ProductBundleItemImpl implements ProductBundleItem {
 
     private static final long serialVersionUID = 1L;
-
+    
+    /** The id. */
+    @Id
+    @GeneratedValue(generator= "ProductBundleItemId")
+    @GenericGenerator(
+        name="ProductBundleItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
+            @Parameter(name="segment_value", value="ProductBundleItemImpl"),
+            @Parameter(name="increment_size", value="50"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductBundleItemImpl")
+        }
+    )
+    @Column(name = "PRODUCT_ID")
+    @SearchableId
+    @AdminPresentation(friendlyName = "ProductBundleItemImpl_Product_ID", group = "ProductBundleItemImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Long id;
+    
     @Column(name = "QUANTITY")
     @AdminPresentation(friendlyName = "Quantity")
     protected Integer quantity;
@@ -43,9 +69,9 @@ public class ProductBundleItemImpl implements ProductBundleItem {
     @Index(name = "BUNDLE_PRODUCT_INDEX", columnNames = { "BUNDLE_PRODUCT_ID" })
     protected ProductBundle bundle;
 
-    @ManyToOne(targetEntity = ProductImpl.class, optional = false)
-    @JoinColumn(name = "PRODUCT_ID")
-    @Index(name = "BUNDLE_ITEM_PRODUCT_INDEX", columnNames = { "PRODUCT_ID" })
+    //@ManyToOne(targetEntity = ProductImpl.class, optional = false)
+    //@JoinColumn(name = "PRODUCT_ID")
+    //@Index(name = "BUNDLE_ITEM_PRODUCT_INDEX", columnNames = { "PRODUCT_ID" })
     private Product product = new ProductImpl();
 
     public Integer getQuantity() {
