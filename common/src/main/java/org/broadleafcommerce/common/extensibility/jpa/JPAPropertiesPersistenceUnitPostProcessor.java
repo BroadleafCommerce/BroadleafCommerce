@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.extensibility.jpa;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -61,12 +62,18 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements
     public void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo pui) {
         if (persistenceUnitProperties != null) {
             Set<String> keys = persistenceUnitProperties.keySet();
+
+            Properties props = pui.getProperties();
+
             for (String key : keys) {
                 String value = persistenceUnitProperties.get(key);
-                if (value != null && ! "".equals(value) && ! "null".equalsIgnoreCase(value)) {
-                    pui.addProperty(key, value);
+                if ("null".equalsIgnoreCase(value)){
+                    props.remove(key);
+                } else if (value != null && ! "".equals(value)) {
+                    props.put(key, value);
                 }
             }
+            pui.setProperties(props);
         }
     }
     
