@@ -208,12 +208,22 @@ public interface Sku extends Serializable {
     public void setSkuMedia(Map<String, Media> skuMedia);
     /**
      * Get all the parent products since a sku can exist in multiple
+     * 
+     * In order to achieve this they should be sold in a ProductBundle
+     * 
+     * @see ProductBundle
      */
+    @Deprecated
     public List<Product> getAllParentProducts();
 
     /**
      * Set all the parent products since a sku can exist in multiple
+     * 
+     * In order to achieve this they should be sold in a ProductBundle
+     * 
+     * @see ProductBundle
      */
+    @Deprecated
     public void setAllParentProducts(List<Product> allParentProducts);
 
     public boolean isActive(Product product, Category category);
