@@ -1,5 +1,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -8,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
@@ -24,13 +27,12 @@ public class ProductBundleItemImpl implements ProductBundleItem {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "QUANTITY")
-    protected int quantity;
+    protected Integer quantity;
 
-    @Column(name = "OVERRIDE_PRICE")
-    protected boolean overridePrice;
-
-    @Column(name = "OVERRIDE_UNIT_PRICE")
-    protected boolean overrideUnitPrice;
+    @Column(name = "SALE_PRICE")
+    protected BigDecimal salePrice;
+    
+    //TODO: add flag for allowing the price to be modified by the ProductOptions
 
     @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false)
     @JoinColumn(name = "PRODUCT_ID")
@@ -42,28 +44,24 @@ public class ProductBundleItemImpl implements ProductBundleItem {
     @Index(name = "BUNDLE_ITEM_PRODUCT_INDEX", columnNames = { "PRODUCT_ID" })
     private Product product = new ProductImpl();
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-
-    public boolean isOverridePrice() {
-        return overridePrice;
+    
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = Money.toAmount(salePrice);
     }
-
-    public void setOverridePrice(boolean overridePrice) {
-        this.overridePrice = overridePrice;
-    }
-
-    public boolean isOverrideUnitPrice() {
-        return overrideUnitPrice;
-    }
-
-    public void setOverrideUnitPrice(boolean overrideUnitPrice) {
-        this.overrideUnitPrice = overrideUnitPrice;
+    
+    public Money getSalePrice() {
+        if (salePrice == null) {
+            return getProduct().getDefaultSku().getSalePrice();
+        } else {
+            return new Money(salePrice);
+        }
     }
 
     public ProductBundle getBundle() {

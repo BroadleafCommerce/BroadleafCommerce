@@ -36,7 +36,7 @@ public interface ProductBundle extends Product, Serializable {
      *         bundled together when added to the cart separately, <b>false</b>
      *         otherwise
      */
-    public boolean isAutoBundle();
+    public Boolean getAutoBundle();
 
     /**
      * Sets whether or not this should be bundled together if the individual
@@ -49,16 +49,19 @@ public interface ProductBundle extends Product, Serializable {
      *            Whether or not the items in the bundle should be auto-bundled
      *            if added to the cart separately
      */
-    public void setAutoBundle(boolean autoBundle);
+    public void setAutoBundle(Boolean autoBundle);
 
     /**
      * Gets whether or not the items in this bundle should be considered for
-     * promotions using the promotion engine
+     * promotions using the promotion engine <br />
+     * <br />
+     * Note: this is only applicable when the pricing model is the sum of the
+     * bundle items
      * 
      * @return <b>true</b> if the items should be included in the promotion
      *         engine, <b>false</b> otherwise
      */
-    public boolean isItemsPromotable();
+    public Boolean getItemsPromotable();
 
     /**
      * Sets whether or not the items in this bundle should be considered for
@@ -68,7 +71,7 @@ public interface ProductBundle extends Product, Serializable {
      *            Whether or not the items in the bundle should be considered
      *            for promotions
      */
-    public void setItemsPromotable(boolean itemsPromotable);
+    public void setItemsPromotable(Boolean itemsPromotable);
 
     /**
      * Gets whether or not the bundle itself should be promotable. <br>
@@ -79,7 +82,7 @@ public interface ProductBundle extends Product, Serializable {
      * @return <b>true</b> if the bundle itself should be available for
      *         promotion, <b>false</b> otherwise
      */
-    public boolean isBundlePromotable();
+    public Boolean getBundlePromotable();
 
     /**
      * Gets whether or not the bundle itself should be promotable. <br>
@@ -91,7 +94,7 @@ public interface ProductBundle extends Product, Serializable {
      *            Whether or not the bundle itself should be available for
      *            promotion
      */
-    public void setBundlePromotable(boolean bundlePromotable);
+    public void setBundlePromotable(Boolean bundlePromotable);
 
     public List<ProductBundleItem> getBundleItems();
 

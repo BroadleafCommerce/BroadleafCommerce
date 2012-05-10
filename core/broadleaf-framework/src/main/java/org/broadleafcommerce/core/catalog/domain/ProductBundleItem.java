@@ -2,6 +2,8 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.common.money.Money;
+
 /**
  * Represents the {@link Product} being sold in a bundle along with metadata
  * about the relationship itself like how many items should be included in the
@@ -12,17 +14,22 @@ import java.io.Serializable;
  */
 public interface ProductBundleItem extends Serializable {
 
-    public int getQuantity();
+    public Integer getQuantity();
 
-    public void setQuantity(int quantity);
+    public void setQuantity(Integer quantity);
 
-    public boolean isOverridePrice();
+    public void setSalePrice(Money salePrice);
 
-    public void setOverridePrice(boolean overridePrice);
-
-    public boolean isOverrideUnitPrice();
-
-    public void setOverrideUnitPrice(boolean overrideUnitPrice);
+    /**
+     * Allows for overriding the related Product's sale price. This is only used
+     * if the pricing model for the bundle is a composition of its parts
+     * getProduct().getDefaultSku().getSalePrice()
+     * 
+     * @return this sale price if it is set,
+     *         getProduct().getDefaultSku().getSalePrice() if this sale price is
+     *         null
+     */
+    public Money getSalePrice();
 
     public ProductBundle getBundle();
 

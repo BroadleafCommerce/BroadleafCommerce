@@ -31,13 +31,13 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
-    protected boolean autoBundle;
+    protected Boolean autoBundle;
 
     @Column(name = "ITEMS_PROMOTABLE")
-    protected boolean itemsPromotable;
+    protected Boolean itemsPromotable;
 
     @Column(name = "BUNDLE_PROMOTABLE")
-    protected boolean bundlePromotable;
+    protected Boolean bundlePromotable;
 
     @OneToMany(mappedBy = "bundle", targetEntity = ProductBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
@@ -53,27 +53,27 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         this.pricingModel = pricingModel;
     }
 
-    public boolean isAutoBundle() {
+    public Boolean getAutoBundle() {
         return autoBundle;
     }
 
-    public void setAutoBundle(boolean autoBundle) {
+    public void setAutoBundle(Boolean autoBundle) {
         this.autoBundle = autoBundle;
     }
 
-    public boolean isItemsPromotable() {
+    public Boolean getItemsPromotable() {
         return itemsPromotable;
     }
 
-    public void setItemsPromotable(boolean itemsPromotable) {
+    public void setItemsPromotable(Boolean itemsPromotable) {
         this.itemsPromotable = itemsPromotable;
     }
 
-    public boolean isBundlePromotable() {
+    public Boolean getBundlePromotable() {
         return bundlePromotable;
     }
 
-    public void setBundlePromotable(boolean bundlePromotable) {
+    public void setBundlePromotable(Boolean bundlePromotable) {
         this.bundlePromotable = bundlePromotable;
     }
 
