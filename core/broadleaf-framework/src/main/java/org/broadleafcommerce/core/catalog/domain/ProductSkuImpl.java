@@ -31,6 +31,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * 
+ * ProductImpl should be used for extension which contains defaultSku
+ * 
  * @author jfischer
  *
  */
@@ -39,6 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "BLC_PRODUCT_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "ProductSkuImpl_skuProduct")
+@Deprecated
 public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	private static final Log LOG = LogFactory.getLog(ProductSkuImpl.class);
@@ -62,6 +65,14 @@ public class ProductSkuImpl extends ProductImpl implements ProductSku {
 	 */
 	public void setSku(Sku sku) {
 		this.sku = sku;
+	}
+	
+	public Sku getDefaultSku() {
+		return sku;
+	}
+	
+	public void setDefaultSku(Sku defaultSku){
+		this.sku = defaultSku;
 	}
 
 	@Override

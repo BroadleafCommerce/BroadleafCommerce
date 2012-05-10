@@ -22,9 +22,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.media.domain.Media;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
@@ -349,6 +349,10 @@ public interface Product extends Serializable {
     boolean isMachineSortable();
 
     void setMachineSortable(boolean isMachineSortable);
+    
+    public Sku getDefaultSku();
+
+	public void setDefaultSku(Sku defaultSku);	
 
     void setGirth(BigDecimal girth);
 
