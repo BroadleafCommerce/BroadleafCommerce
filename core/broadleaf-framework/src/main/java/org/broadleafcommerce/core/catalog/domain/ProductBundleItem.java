@@ -14,6 +14,10 @@ import org.broadleafcommerce.common.money.Money;
  */
 public interface ProductBundleItem extends Serializable {
 
+    public Long getId();
+    
+    public void setId(Long id);
+    
     public Integer getQuantity();
 
     public void setQuantity(Integer quantity);
