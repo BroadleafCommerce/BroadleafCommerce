@@ -566,10 +566,12 @@ public class SkuImpl implements Sku {
     }
 
     @XmlTransient
+    @Deprecated
     public List<Product> getAllParentProducts() {
         return allParentProducts;
     }
 
+    @Deprecated
     public void setAllParentProducts(List<Product> allParentProducts) {
         this.allParentProducts = allParentProducts;
     }
