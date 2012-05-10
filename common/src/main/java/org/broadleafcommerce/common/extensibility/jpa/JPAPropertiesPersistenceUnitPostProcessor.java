@@ -42,12 +42,15 @@ import java.util.Set;
  *        <property name="persistenceUnitPostProcessors">
  *            <list>
  *                <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor">
- *                    <map>
- *                        <!-- Notice that the value will be replaced by property substitution from an environment
+ *                    <property name="persistenceUnitProperties">
+ *                        <map>
+ *                            <!-- Notice that the value will be replaced by property substitution from an environment
  *                                 specific file. Also note that the Persistence Unit name is prepended to the key and value to allow for configuration of
- *                                 multiple Persistence Units.. -->
- *                        <entry key="blPU.hibernate.dialect" value="${blPU.hibernate.dialect}"/>
- *                    </map>
+ *                                 multiple Persistence Units. This needs to be keyed this way in the properties file. The prepended persistence 
+ *                                 unit name will be removed from the property name when it is added to the Persistence Unit. -->
+ *                            <entry key="blPU.hibernate.dialect" value="${blPU.hibernate.dialect}"/>
+ *                        </map>
+ *                    </property>
  *                </bean>
  *            </list>
  *        </property>
