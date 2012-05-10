@@ -198,6 +198,7 @@ public class SkuImpl implements Sku {
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
+    @Deprecated
     protected List<Product> allParentProducts = new ArrayList<Product>();
     
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = {CascadeType.ALL})
