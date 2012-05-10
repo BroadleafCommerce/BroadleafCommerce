@@ -212,7 +212,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                                                 getDisplay().getListDisplay().getGrid().selectRecord(0);
                                                             }
                                                         });
-                                                    SC.say("Current item no longer matches the search criteria.  Clearing filter criteria.");
+                                                    SC.say(BLCMain.getMessageManager().getString("criteriaDoesNotMatch"));
                                                 }
                                             }
 

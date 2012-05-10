@@ -185,14 +185,14 @@ public class BLCMain implements EntryPoint {
                             setCurrentModuleKey(requestedModuleKey);
 
                             if (currentModuleKey == null) {
-                                SC.say("Your login does not have authorization to view any modules.");
+                                SC.say(getMessageManager().getString("noModulesAuthorized"));
                                 return;
                             }
 
                             setCurrentPageKey(requestedPageKey);
 
                             if (currentPageKey == null) {
-                                SC.say("Your login does not have authorization to view any pages for the passed in module.");
+                                SC.say(getMessageManager().getString("noAuthorizedPages"));
                                 return;
                             }
 

@@ -111,4 +111,7 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
 
     public String ok();
     public String cancel();
+    public String noModulesAuthorized();
+    public String noAuthorizedPages();
+    public String insufficientPrivileges();
 }

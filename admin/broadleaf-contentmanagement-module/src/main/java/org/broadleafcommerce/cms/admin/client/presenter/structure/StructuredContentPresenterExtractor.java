@@ -34,6 +34,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
@@ -150,7 +151,7 @@ public class StructuredContentPresenterExtractor {
                                                             getDisplay().getListDisplay().getGrid().selectRecord(0);
                                                         }
                                                     });
-                                                SC.say("Current item no longer matches the search criteria.  Clearing filter criteria.");
+                                                SC.say(BLCMain.getMessageManager().getString("criteriaDoesNotMatch"));
                                             }
                                         }
                                         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentStructuredContentRecord));
