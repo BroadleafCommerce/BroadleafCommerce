@@ -130,6 +130,14 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_Secondary_Phone", order=5, group = "AddressImpl_Address")
     protected String secondaryPhone;
 
+    @Column(name = "FAX")
+    @AdminPresentation(friendlyName = "AddressImpl_Fax", order=6, group = "AddressImpl_Address")
+    protected String fax;
+
+    @Column(name = "EMAIL_ADDRESS")
+    @AdminPresentation(friendlyName = "AddressImpl_Email_Address", order=7, group = "AddressImpl_Address")
+    protected String emailAddress;
+
     @Column(name = "IS_BUSINESS")
     @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order=20, group = "AddressImpl_Address")
     protected boolean isBusiness = false;
@@ -299,6 +307,22 @@ public class AddressImpl implements Address {
 
     public void setVerificationLevel(String verificationLevel) {
         this.verificationLevel = verificationLevel;
+    }
+
+    public String getFax() {
+        return this.fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+
+    public String getEmailAddress() {
+        return this.emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     @Override

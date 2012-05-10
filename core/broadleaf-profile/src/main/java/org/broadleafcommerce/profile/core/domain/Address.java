@@ -87,6 +87,14 @@ public interface Address extends Serializable {
     public String getSecondaryPhone();
 
     public void setSecondaryPhone(String secondaryPhone);
+    
+    public String getFax();
+    
+    public void setFax(String fax);
+
+    public String getEmailAddress();
+
+    public void setEmailAddress(String emailAddress);
 
     public boolean isBusiness();
 
