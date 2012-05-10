@@ -32,6 +32,8 @@ public interface GeneratedMessagesEntityProfile extends ConstantsWithLookup {
     public String AddressImpl_Address_2();
     public String AddressImpl_City();
     public String AddressImpl_Postal_Code();
+    public String AddressImpl_Fax() ;
+    public String AddressImpl_Email_Address();
     public String AddressImpl_County();
     public String AddressImpl_State();
     public String AddressImpl_Country();

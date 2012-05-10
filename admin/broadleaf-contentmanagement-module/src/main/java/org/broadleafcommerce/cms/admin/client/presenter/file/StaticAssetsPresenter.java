@@ -185,7 +185,7 @@ public class StaticAssetsPresenter extends DynamicEntityPresenter implements Ins
                                                     getDisplay().getListDisplay().getGrid().selectRecord(0);
                                                 }
                                             });
-                                        SC.say("Current item no longer matches the search criteria.  Clearing filter criteria.");
+                                        SC.say(BLCMain.getMessageManager().getString("criteriaDoesNotMatch"));
                                     }
                                 }
                                 getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(currentSelectedRecord));

@@ -71,5 +71,16 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String baseSandBoxItem();
     public String assetUploadNameHint();
     public String assetUploadFullUrlHint();
+    public String criteriaDoesNotMatch();
 
+    public String PagesCustomPersistenceHandler_Page_Template();
+    public String PagesCustomPersistenceHandler_Lock();
+    public String PageTemplateCustomPersistenceHandler_ID();
+    public String StaticAssetCustomPersistenceHandler_File();
+//    public String StaticAssetCustomPersistenceHandler_Space_();
+    public String StaticAssetCustomPersistenceHandler_Preview();
+    public String StructuredContentCustomPersistenceHandler_Locale();
+    public String StructuredContentCustomPersistenceHandler_Content_Type();
+    public String StructuredContentCustomPersistenceHandler_Lock();
+    public String StructuredContentTypeCustomPersistenceHandler_ID();
 }

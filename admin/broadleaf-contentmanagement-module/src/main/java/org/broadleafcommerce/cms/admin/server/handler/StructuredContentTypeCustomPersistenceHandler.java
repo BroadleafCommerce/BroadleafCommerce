@@ -184,7 +184,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             FieldPresentationAttributes attributes = new FieldPresentationAttributes();
             fieldMetadata.setPresentationAttributes(attributes);
             attributes.setName("id");
-            attributes.setFriendlyName("ID");
+            attributes.setFriendlyName("StructuredContentTypeCustomPersistenceHandler_ID");
             attributes.setSecurityLevel("");
             attributes.setVisibility(VisibilityEnum.HIDDEN_ALL);
             attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);

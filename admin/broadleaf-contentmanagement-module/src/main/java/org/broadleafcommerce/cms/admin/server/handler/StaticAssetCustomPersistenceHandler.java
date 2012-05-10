@@ -424,7 +424,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         FieldPresentationAttributes attributes = new FieldPresentationAttributes();
         fieldMetadata.setPresentationAttributes(attributes);
         attributes.setName("file");
-        attributes.setFriendlyName("File");
+        attributes.setFriendlyName("StaticAssetCustomPersistenceHandler_File");
         attributes.setGroup("Upload");
         attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         attributes.setProminent(false);
@@ -468,7 +468,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         FieldPresentationAttributes iconLargeAttributes = new FieldPresentationAttributes();
         iconLargeMetadata.setPresentationAttributes(iconLargeAttributes);
         iconLargeAttributes.setName("pictureLarge");
-        iconLargeAttributes.setFriendlyName("Preview");
+        iconLargeAttributes.setFriendlyName("StaticAssetCustomPersistenceHandler_Preview");
         iconLargeAttributes.setGroup("Preview");
         iconLargeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconLargeAttributes.setProminent(false);

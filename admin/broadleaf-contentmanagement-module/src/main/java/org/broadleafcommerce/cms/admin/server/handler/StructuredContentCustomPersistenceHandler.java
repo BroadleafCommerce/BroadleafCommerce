@@ -155,7 +155,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         FieldPresentationAttributes attributes = new FieldPresentationAttributes();
         fieldMetadata.setPresentationAttributes(attributes);
         attributes.setName("locale");
-        attributes.setFriendlyName("Locale");
+        attributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Locale");
         attributes.setGroup("Description");
         attributes.setOrder(3);
         attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
@@ -196,7 +196,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
         contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
         contentTypeAttributes.setName("structuredContentType_Grid");
-        contentTypeAttributes.setFriendlyName("Content Type");
+        contentTypeAttributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Content_Type");
         contentTypeAttributes.setGroup("Description");
         contentTypeAttributes.setOrder(2);
         contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
@@ -218,7 +218,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
         iconMetadata.setPresentationAttributes(iconAttributes);
         iconAttributes.setName("picture");
-        iconAttributes.setFriendlyName("Lock");
+        iconAttributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Lock");
         iconAttributes.setGroup("Locked Details");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconAttributes.setProminent(true);

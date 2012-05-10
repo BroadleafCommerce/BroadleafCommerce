@@ -184,7 +184,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             FieldPresentationAttributes attributes = new FieldPresentationAttributes();
             fieldMetadata.setPresentationAttributes(attributes);
             attributes.setName("id");
-            attributes.setFriendlyName("ID");
+            attributes.setFriendlyName("PagesCustomPersistenceHandler_ID");
             attributes.setSecurityLevel("");
             attributes.setVisibility(VisibilityEnum.VISIBLE_ALL);
             attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);

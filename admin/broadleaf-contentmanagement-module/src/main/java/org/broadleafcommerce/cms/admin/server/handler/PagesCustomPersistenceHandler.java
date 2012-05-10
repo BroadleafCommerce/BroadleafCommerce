@@ -251,7 +251,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         FieldPresentationAttributes contentTypeAttributes = new FieldPresentationAttributes();
         contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
         contentTypeAttributes.setName("pageTemplate_Grid");
-        contentTypeAttributes.setFriendlyName("Page Template");
+        contentTypeAttributes.setFriendlyName("PagesCustomPersistenceHandler_Page_Template");
         contentTypeAttributes.setGroup("Description");
         contentTypeAttributes.setOrder(2);
         contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
@@ -273,7 +273,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         FieldPresentationAttributes iconAttributes = new FieldPresentationAttributes();
         iconMetadata.setPresentationAttributes(iconAttributes);
         iconAttributes.setName("picture");
-        iconAttributes.setFriendlyName("Lock");
+        iconAttributes.setFriendlyName("PagesCustomPersistenceHandler_Lock");
         iconAttributes.setGroup("Locked Details");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconAttributes.setProminent(true);
