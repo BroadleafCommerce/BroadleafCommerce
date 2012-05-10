@@ -33,6 +33,8 @@
         <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductSkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>

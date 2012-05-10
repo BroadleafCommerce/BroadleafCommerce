@@ -10,6 +10,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.BatchSize;
@@ -31,12 +32,15 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
+    @AdminPresentation(friendlyName = "Auto Bundle")
     protected Boolean autoBundle;
 
     @Column(name = "ITEMS_PROMOTABLE")
+    @AdminPresentation(friendlyName = "Items are promotable")
     protected Boolean itemsPromotable;
 
     @Column(name = "BUNDLE_PROMOTABLE")
+    @AdminPresentation(friendlyName = "Bundle is promotable")
     protected Boolean bundlePromotable;
 
     @OneToMany(mappedBy = "bundle", targetEntity = ProductBundleItemImpl.class, cascade = { CascadeType.ALL })

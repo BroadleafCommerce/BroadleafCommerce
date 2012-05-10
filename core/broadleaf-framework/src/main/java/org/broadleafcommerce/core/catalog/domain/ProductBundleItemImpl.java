@@ -11,8 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -27,16 +29,18 @@ public class ProductBundleItemImpl implements ProductBundleItem {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "QUANTITY")
+    @AdminPresentation(friendlyName = "Quantity")
     protected Integer quantity;
 
     @Column(name = "SALE_PRICE")
+    @AdminPresentation(friendlyName = "Sale Price", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
     
     //TODO: add flag for allowing the price to be modified by the ProductOptions
 
     @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false)
-    @JoinColumn(name = "PRODUCT_ID")
-    @Index(name = "PRODFEATURED_PRODUCT_INDEX", columnNames = { "PRODUCT_ID" })
+    @JoinColumn(name = "BUNDLE_PRODUCT_ID")
+    @Index(name = "BUNDLE_PRODUCT_INDEX", columnNames = { "BUNDLE_PRODUCT_ID" })
     protected ProductBundle bundle;
 
     @ManyToOne(targetEntity = ProductImpl.class, optional = false)
