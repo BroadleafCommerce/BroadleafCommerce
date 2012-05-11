@@ -116,7 +116,7 @@ public class SkuImpl implements Sku {
 
     /** The long description. */
     @Lob
-    @Column(name = "LONG_DESCRIPTION")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName="Sku Large Description", order=3, group="Sku Description", largeEntry=true, groupOrder=4)
     protected String longDescription;
 
