@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.media.domain.Media;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.media.domain.Media;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
@@ -188,7 +188,7 @@ public interface Product extends Serializable {
     /**
      * Sets the product media map.
      *
-     * @param productImages - a map of product images
+     * @param productMedia - a map of product images
      */
     void setProductMedia(Map<String, Media> productMedia);
 
@@ -209,7 +209,6 @@ public interface Product extends Serializable {
     /**
      * Returns the default {@link Category} this product is associated with.
      *
-     * @param defaultCategory - the default {@link Category} to associate this product with
      */
     Category getDefaultCategory();
 

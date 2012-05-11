@@ -1,9 +1,9 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.money.Money;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.broadleafcommerce.common.money.Money;
 
 /**
  * Default implementation for representing a bundle that can be sold
@@ -22,9 +22,15 @@ import org.broadleafcommerce.common.money.Money;
  * @see ProductBundleItem
  */
 public interface ProductBundle extends Product, Serializable {
+    public static final String PRICING_MODEL_ITEM_SUM = "ITEM_SUM";
+    public static final String PRICING_MODEL_BUNDLE = "BUNDLE";
+
 
     /**
      * @return The pricing model for this bundle
+     *
+     * ITEM_SUM indicates that the bundle is priced by the sum of the contained items.
+     * BUNDLE indicates that the bundle is priced by the price on the bundle itself.
      */
     public String getPricingModel();
 
