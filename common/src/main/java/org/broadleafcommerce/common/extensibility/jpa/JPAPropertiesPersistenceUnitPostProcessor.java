@@ -42,11 +42,15 @@ import java.util.Set;
  *        <property name="persistenceUnitPostProcessors">
  *            <list>
  *                <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor">
- *                    <map>
- *                        <!-- Notice that the value will be replaced by property substitution from an environment
- *                                 specific file -->
- *                        <entry key="hibernate.dialect" value="${hibernate.dialect}"/>
- *                    </map>
+ *                    <property name="persistenceUnitProperties">
+ *                        <map>
+ *                            <!-- Notice that the value will be replaced by property substitution from an environment
+ *                                 specific file. Also note that the Persistence Unit name is prepended to the key and value to allow for configuration of
+ *                                 multiple Persistence Units. This needs to be keyed this way in the properties file. The prepended persistence 
+ *                                 unit name will be removed from the property name when it is added to the Persistence Unit. -->
+ *                            <entry key="blPU.hibernate.dialect" value="${blPU.hibernate.dialect}"/>
+ *                        </map>
+ *                    </property>
  *                </bean>
  *            </list>
  *        </property>
@@ -61,16 +65,19 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements
     @Override
     public void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo pui) {
         if (persistenceUnitProperties != null) {
+            String puName = pui.getPersistenceUnitName() + ".";
             Set<String> keys = persistenceUnitProperties.keySet();
-
             Properties props = pui.getProperties();
 
             for (String key : keys) {
-                String value = persistenceUnitProperties.get(key);
-                if ("null".equalsIgnoreCase(value)){
-                    props.remove(key);
-                } else if (value != null && ! "".equals(value)) {
-                    props.put(key, value);
+                if (key.startsWith(puName)){
+                    String value = persistenceUnitProperties.get(key);
+                    String newKey = key.substring(puName.length());
+                    if ("null".equalsIgnoreCase(value)){
+                        props.remove(newKey);
+                    } else if (value != null && ! "".equals(value)) {
+                        props.put(newKey, value);
+                    }
                 }
             }
             pui.setProperties(props);
