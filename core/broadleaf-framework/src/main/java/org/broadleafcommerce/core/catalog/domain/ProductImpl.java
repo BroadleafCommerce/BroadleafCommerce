@@ -109,7 +109,7 @@ public class ProductImpl implements Product {
     /** The long description. */
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "LONG_DESCRIPTION")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @SearchableProperty(name="productDescription")
     @AdminPresentation(friendlyName="Product Long Description", order=3, group="Product Description", prominent=false, largeEntry=true, groupOrder=1)
     protected String longDescription;

@@ -157,7 +157,7 @@ public class CategoryImpl implements Category {
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "LONG_DESCRIPTION")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
     protected String longDescription;
 
