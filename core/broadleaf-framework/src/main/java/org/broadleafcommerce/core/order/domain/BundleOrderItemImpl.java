@@ -16,22 +16,34 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,6 +63,49 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
+    @Column(name="BASE_RETAIL_PRICE")
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Retail_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    protected BigDecimal baseRetailPrice;
+
+    @Column(name="BASE_SALE_PRICE")
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Sale_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    protected BigDecimal baseSalePrice;
+
+    @ManyToOne(targetEntity = SkuImpl.class)
+    @JoinColumn(name = "SKU_ID")
+    @NotFound(action = NotFoundAction.IGNORE)
+    protected Sku sku;
+
+    @ManyToOne(targetEntity = ProductBundleImpl.class)
+    @JoinColumn(name = "PRODUCT_BUNDLE_ID")
+    protected ProductBundle productBundle;
+
+    public Sku getSku() {
+           return sku;
+    }
+
+    public void setSku(Sku sku) {
+       this.sku = sku;
+        if (sku != null) {
+           if (sku.getRetailPrice() != null) {
+               this.baseRetailPrice = sku.getRetailPrice().getAmount();
+           }
+           if (sku.getSalePrice() != null) {
+               this.baseSalePrice = sku.getSalePrice().getAmount();
+           }
+           this.itemTaxable = sku.isTaxable();
+           setName(sku.getName());
+        }
+    }
+
+    public ProductBundle getProductBundle() {
+        return productBundle;
+    }
+
+    public void setProductBundle(ProductBundle productBundle) {
+        this.productBundle = productBundle;
+    }
+
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         return discreteOrderItems;
     }
@@ -69,77 +124,127 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
 	@Override
     public void removeAllCandidateItemOffers() {
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            discreteOrderItem.removeAllCandidateItemOffers();
+        if (shouldSumItems()) {
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                discreteOrderItem.removeAllCandidateItemOffers();
+            }
+        } else {
+            removeAllCandidateItemOffers();
         }
     }
 
     @Override
     public int removeAllAdjustments() {
-    	int removedAdjustmentCount = 0;
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-        	removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
+        if (shouldSumItems()) {
+            int removedAdjustmentCount = 0;
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
+            }
+            return removedAdjustmentCount;
+        } else {
+            return removeAllAdjustments();
         }
-        return removedAdjustmentCount;
     }
 
 	@Override
     public void assignFinalPrice() {
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            discreteOrderItem.assignFinalPrice();
+        if (shouldSumItems()) {
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                discreteOrderItem.assignFinalPrice();
+            }
         }
         price = getCurrentPrice().getAmount();
     }
 
     @Override
     public Money getTaxablePrice() {
-        Money currentBundleTaxablePrice = new Money();
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            Money currentItemTaxablePrice = discreteOrderItem.getTaxablePrice();
-            currentBundleTaxablePrice = currentBundleTaxablePrice.add(new Money(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity()));
+        if (shouldSumItems()) {
+            Money currentBundleTaxablePrice = new Money();
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                Money currentItemTaxablePrice = discreteOrderItem.getTaxablePrice();
+                currentBundleTaxablePrice = currentBundleTaxablePrice.add(new Money(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity()));
+            }
+            for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
+                if (fee.isTaxable()) {
+                    currentBundleTaxablePrice = currentBundleTaxablePrice.add(fee.getAmount());
+                }
+            }
+            return currentBundleTaxablePrice;
+        } else {
+            Money taxablePrice = new Money(0D);
+            if (sku != null && sku.isTaxable() == null || sku.isTaxable()) {
+                taxablePrice = getPrice();
+            }
+            return taxablePrice;
         }
-        for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
-        	if (fee.isTaxable()) {
-        		currentBundleTaxablePrice = currentBundleTaxablePrice.add(fee.getAmount());
-        	}
+    }
+
+    private boolean shouldSumItems() {
+        if (productBundle != null) {
+            return (ProductBundle.PRICING_MODEL_ITEM_SUM.equals(productBundle.getPricingModel()));
         }
-        return currentBundleTaxablePrice;
+        return true;
     }
 
     @Override
     public Money getRetailPrice() {
-        Money bundleRetailPrice = new Money();
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            Money itemRetailPrice = discreteOrderItem.getRetailPrice();
-            bundleRetailPrice = bundleRetailPrice.add(new Money(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity()));
+        if (shouldSumItems()) {
+            Money bundleRetailPrice = new Money();
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                Money itemRetailPrice = discreteOrderItem.getRetailPrice();
+                bundleRetailPrice = bundleRetailPrice.add(new Money(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity()));
+            }
+            for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
+                bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
+            }
+            return bundleRetailPrice;
+        } else {
+            return super.getRetailPrice();
         }
-        for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
-        	bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
-        }
-        return bundleRetailPrice;
     }
 
 
     @Override
     public Money getSalePrice() {
-        Money bundleSalePrice = null;
-        if (hasSaleItems()) {
-            bundleSalePrice = new Money();
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                Money itemSalePrice = null;
-                if (discreteOrderItem.getSalePrice() != null) {
-                    itemSalePrice = discreteOrderItem.getSalePrice();
-                } else {
-                    itemSalePrice = discreteOrderItem.getRetailPrice();
+
+        if (shouldSumItems()) {
+            Money bundleSalePrice = null;
+            if (hasSaleItems()) {
+                bundleSalePrice = new Money();
+                for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                    Money itemSalePrice = null;
+                    if (discreteOrderItem.getSalePrice() != null) {
+                        itemSalePrice = discreteOrderItem.getSalePrice();
+                    } else {
+                        itemSalePrice = discreteOrderItem.getRetailPrice();
+                    }
+                    bundleSalePrice = bundleSalePrice.add(new Money(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity()));
                 }
-                bundleSalePrice = bundleSalePrice.add(new Money(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity()));
+                for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
+                    bundleSalePrice = bundleSalePrice.add(fee.getAmount());
+                }
             }
-            for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
-            	bundleSalePrice = bundleSalePrice.add(fee.getAmount());
-            }
+            return bundleSalePrice;
+        } else {
+            return super.getSalePrice();
         }
-        return bundleSalePrice;
     }
+
+    public Money getBaseRetailPrice() {
+   		return baseRetailPrice != null?new Money(baseRetailPrice):null;
+   	}
+
+   	public void setBaseRetailPrice(Money baseRetailPrice) {
+   		this.baseRetailPrice = baseRetailPrice.getAmount();
+   	}
+
+   	public Money getBaseSalePrice() {
+   		return baseSalePrice!=null?new Money(baseRetailPrice):null;
+   	}
+
+   	public void setBaseSalePrice(Money baseSalePrice) {
+   		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
+   	}
 
     private boolean hasSaleItems() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
@@ -161,19 +266,37 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public Money getCurrentPrice() {
-        Money currentBundlePrice = new Money();
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            Money currentItemPrice = discreteOrderItem.getCurrentPrice();
-            currentBundlePrice = currentBundlePrice.add(new Money(currentItemPrice.doubleValue() * discreteOrderItem.getQuantity()));
+        if (shouldSumItems()) {
+            Money currentBundlePrice = new Money();
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                Money currentItemPrice = discreteOrderItem.getCurrentPrice();
+                currentBundlePrice = currentBundlePrice.add(new Money(currentItemPrice.doubleValue() * discreteOrderItem.getQuantity()));
+            }
+            return currentBundlePrice;
+        } else {
+            return super.getCurrentPrice();
         }
-        return currentBundlePrice;
     }
     
     @Override
     public boolean updatePrices() {
         boolean updated = false;
-        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            if (discreteOrderItem.updatePrices()){
+        if (shouldSumItems()) {
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                if (discreteOrderItem.updatePrices()){
+                    updated = true;
+                }
+            }
+        } else {
+
+            if (getSku() != null && !getSku().getRetailPrice().equals(getRetailPrice())) {
+                setBaseRetailPrice(getSku().getRetailPrice());
+                setRetailPrice(getSku().getRetailPrice());
+                updated = true;
+            }
+            if (getSku() != null && getSku().getSalePrice() != null && !getSku().getSalePrice().equals(getSalePrice())) {
+                setBaseSalePrice(getSku().getSalePrice());
+                setSalePrice(getSku().getSalePrice());
                 updated = true;
             }
         }
@@ -217,6 +340,11 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             }
         }
         if (getBundleOrderItemFeePrices() != null) orderItem.getBundleOrderItemFeePrices().addAll(getBundleOrderItemFeePrices());
+
+        orderItem.setBaseRetailPrice(getBaseRetailPrice());
+        orderItem.setBaseSalePrice(getBaseSalePrice());
+        orderItem.setSku(sku);
+        orderItem.setProductBundle(productBundle);
 
         return orderItem;
     }

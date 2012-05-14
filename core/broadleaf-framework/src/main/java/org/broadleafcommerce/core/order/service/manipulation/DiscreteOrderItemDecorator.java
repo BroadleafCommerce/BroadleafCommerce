@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -72,7 +73,32 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
 		discreteOrderItem.setBundleOrderItem(bundleOrderItem);
 	}
 
-	public Money getTaxablePrice() {
+    /**
+     * If this item is part of a bundle that was created via a ProductBundle, then this
+     * method returns a reference to the corresponding SkuBundleItem.
+     * <p/>
+     * For manually created
+     * <p/>
+     * For all others, this method returns null.
+     *
+     * @return
+     */
+    @Override
+    public SkuBundleItem getSkuBundleItem() {
+        return discreteOrderItem.getSkuBundleItem();
+    }
+
+    /**
+     * Sets the associated skuBundleItem.
+     *
+     * @param skuBundleItem
+     */
+    @Override
+    public void setSkuBundleItem(SkuBundleItem skuBundleItem) {
+        discreteOrderItem.setSkuBundleItem(skuBundleItem);
+    }
+
+    public Money getTaxablePrice() {
 		return discreteOrderItem.getTaxablePrice();
 	}
 

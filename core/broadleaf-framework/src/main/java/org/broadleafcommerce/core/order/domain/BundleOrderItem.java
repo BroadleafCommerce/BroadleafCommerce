@@ -16,9 +16,11 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.util.List;
-
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+
+import java.util.List;
 
 
 public interface BundleOrderItem extends OrderItem {
@@ -34,5 +36,42 @@ public interface BundleOrderItem extends OrderItem {
     public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices);
 
     public boolean hasAdjustedItems();
+
+    public Money getBaseRetailPrice();
+
+   	public void setBaseRetailPrice(Money baseRetailPrice);
+
+   	public Money getBaseSalePrice();
+
+   	public void setBaseSalePrice(Money baseSalePrice);
+
+    /**
+     * For BundleOrderItem created from a ProductBundle, this will represent the default sku of
+     * the product bundle.
+     *
+     * This can be null for implementations that programatically create product bundles.
+     *
+     * @return
+     */
+    Sku getSku();
+
+    void setSku(Sku sku);
+
+    /**
+     * Returns the associated ProductBundle or null if not applicable.
+     *
+     * If null, then this ProductBundle was manually created.
+     *
+     * @return
+     */
+    ProductBundle getProductBundle();
+
+    /**
+     * Sets the ProductBundle associated with this BundleOrderItem.
+     *
+     * @param bundle
+     */
+    void setProductBundle(ProductBundle bundle);
+
     
 }

@@ -8,18 +8,18 @@ import java.util.List;
 /**
  * Default implementation for representing a bundle that can be sold
  * individually. Product bundles are composed of multiple
- * {@link ProductBundleItem}. <br>
+ * {@link SkuBundleItem}. <br>
  * <p>
  * Bundle prices are determined 1 of 2 ways, depending on the pricing model:
  * <ol>
- * <li><b>ITEM_SUM</b>: The sum of the prices of its {@link ProductBundleItem}</li>
+ * <li><b>ITEM_SUM</b>: The sum of the prices of its {@link SkuBundleItem}</li>
  * <li><b>BUNDLE</b>: Uses the pricing information on the bundle itself</li>
  * </ol>
  * </p>
  * 
  * @author Phillip Verheyden
  * 
- * @see ProductBundleItem
+ * @see SkuBundleItem
  */
 public interface ProductBundle extends Product, Serializable {
     public static final String PRICING_MODEL_ITEM_SUM = "ITEM_SUM";
@@ -118,15 +118,15 @@ public interface ProductBundle extends Product, Serializable {
      * <b>Note:</b> this should only be used if the pricing model for the bundle
      * uses the pricing on the bundle itself and not on the sum of its bundle
      * items
-     * 
+     *
      * @param bundlePromotable
      *            Whether or not the bundle itself should be available for
      *            promotion
      */
     public void setBundlePromotable(Boolean bundlePromotable);
 
-    public List<ProductBundleItem> getBundleItems();
+    public List<SkuBundleItem> getSkuBundleItems();
 
-    public void setBundleItems(List<ProductBundleItem> bundleItems);
+    public void setSkuBundleItems(List<SkuBundleItem> bundleItems);
 
 }

@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.domain;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,39 @@ public interface DiscreteOrderItem extends OrderItem {
 
     void setProduct(Product product);
 
+    /**
+     * If this item is part of a bundle, this method will return the containing bundle item.
+     * @return
+     */
     BundleOrderItem getBundleOrderItem();
 
+    /**
+     * Sets the parent bundle item.
+     *
+     * Setting to null removes this item from the bundle.
+     *
+     * @param bundleOrderItem
+     */
     void setBundleOrderItem(BundleOrderItem bundleOrderItem);
+
+    /**
+     * If this item is part of a bundle that was created via a ProductBundle, then this
+     * method returns a reference to the corresponding SkuBundleItem.
+     *
+     * For manually created
+     *
+     * For all others, this method returns null.
+     *
+     * @return
+     */
+    SkuBundleItem getSkuBundleItem();
+
+    /**
+     * Sets the associated skuBundleItem.
+     *
+     * @param skuBundleItem
+     */
+    void setSkuBundleItem(SkuBundleItem skuBundleItem);
 
     Money getTaxablePrice();
 

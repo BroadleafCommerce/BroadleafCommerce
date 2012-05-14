@@ -16,16 +16,19 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -82,8 +85,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
-    @Index(name="DISCRETE_BUNDLE_INDEX", columnNames={"BUNDLE_ORDER_ITEM_ID"})
     protected BundleOrderItem bundleOrderItem;
+
+    @ManyToOne(targetEntity = SkuBundleItemImpl.class)
+    @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
+    protected SkuBundleItem SkuBundleItem;
     
     @CollectionOfElements
     @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
@@ -138,7 +144,32 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         this.bundleOrderItem = bundleOrderItem;
     }
 
-	@Override
+    /**
+     * If this item is part of a bundle that was created via a ProductBundle, then this
+     * method returns a reference to the corresponding SkuBundleItem.
+     * <p/>
+     * For manually created
+     * <p/>
+     * For all others, this method returns null.
+     *
+     * @return
+     */
+    @Override
+    public SkuBundleItem getSkuBundleItem() {
+        return SkuBundleItem;
+    }
+
+    /**
+     * Sets the associated SkuBundleItem.
+     *
+     * @param SkuBundleItem
+     */
+    @Override
+    public void setSkuBundleItem(SkuBundleItem SkuBundleItem) {
+        this.SkuBundleItem=SkuBundleItem;
+    }
+
+    @Override
 	public String getName() {
 		String name = super.getName();
 		if (name == null) {
@@ -149,16 +180,24 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
 	@Override
     public boolean updatePrices() {
+        Money skuRetailPrice = getSku().getRetailPrice();
+        Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
+
+        if (SkuBundleItem != null && ProductBundle.PRICING_MODEL_ITEM_SUM.equals(SkuBundleItem.getBundle().getPricingModel())) {
+            skuSalePrice = SkuBundleItem.getSalePrice();
+            skuRetailPrice = SkuBundleItem.getRetailPrice();
+        }
+
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
-        if (!getSku().getRetailPrice().equals(getRetailPrice())) {
-            setBaseRetailPrice(getSku().getRetailPrice());
-            setRetailPrice(getSku().getRetailPrice());
+        if (!skuRetailPrice.equals(getRetailPrice())) {
+            setBaseRetailPrice(skuRetailPrice);
+            setRetailPrice(skuRetailPrice);
             updated = true;
         }
-        if (getSku().getSalePrice() != null && !getSku().getSalePrice().equals(getSalePrice())) {
-            setBaseSalePrice(getSku().getSalePrice());
-            setSalePrice(getSku().getSalePrice());
+        if (skuSalePrice != null && !skuSalePrice.equals(getSalePrice())) {
+            setBaseSalePrice(skuSalePrice);
+            setSalePrice(skuSalePrice);
             updated = true;
         }
         if (getDiscreteOrderItemFeePrices() != null) {

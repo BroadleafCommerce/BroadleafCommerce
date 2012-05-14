@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +55,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemDao.saveOrderItem(orderItem);
     }
     
-    protected void populateDiscreteOrderItem(DiscreteOrderItem item, DiscreteOrderItemRequest itemRequest) {
+    protected void populateDiscreteOrderItem(DiscreteOrderItem item, OrderItemRequest itemRequest) {
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
@@ -82,6 +83,18 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
 
+        item.updatePrices();
+        item.assignFinalPrice();
+        item.setPersonalMessage(itemRequest.getPersonalMessage());
+
+        return item;
+    }
+
+    public DiscreteOrderItem createDiscreteOrderItem(final OrderItemRequest itemRequest) {
+        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
+        populateDiscreteOrderItem(item, itemRequest);
+        item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
+        item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.updatePrices();
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());

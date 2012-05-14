@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +24,9 @@ import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -40,6 +34,7 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
+import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -55,8 +50,10 @@ import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.OrderServiceException;
+import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -68,6 +65,14 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class OrderServiceImpl implements OrderService {
 
@@ -93,6 +98,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+
+    @Resource(name = "blOrderItemDao")
+    protected OrderItemDao orderItemDao;
 
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
@@ -146,30 +154,6 @@ public class OrderServiceImpl implements OrderService {
         return fg;
     }
 
-    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity) {
-    	Sku sku = skuDao.readSkuById(skuId);
-    	Product product;
-        if (productId != null) {
-            product = productDao.readProductById(productId);
-        } else {
-            product = null;
-        }
-        Category category;
-        if (categoryId != null) {
-            category = categoryDao.readCategoryById(categoryId);
-        } else {
-            category = null;
-        }
-        
-        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
-        itemRequest.setCategory(category);
-        itemRequest.setProduct(product);
-        itemRequest.setQuantity(quantity);
-        itemRequest.setSku(sku);
-        
-        return itemRequest;
-    }
-
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
     	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, null);
     }
@@ -187,11 +171,14 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
 
-        Order order = findOrderById(orderId);
-        DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(skuId, productId, categoryId, quantity);
-        itemRequest.setItemAttributes(itemAttributes);
+        OrderItemRequestDTO requestDTO = new OrderItemRequestDTO();
+        requestDTO.setCategoryId(categoryId);
+        requestDTO.setProductId(productId);
+        requestDTO.setSkuId(skuId);
+        requestDTO.setQuantity(quantity);
+        requestDTO.setItemAttributes(itemAttributes);
 
-        return addDiscreteItemToOrder(order, itemRequest, priceOrder);
+        return addItemToOrder(orderId, requestDTO, priceOrder);
     }
 
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
@@ -748,7 +735,156 @@ public class OrderServiceImpl implements OrderService {
         bundleOrderItemRequest.setDiscreteOrderItems(discreteOrderItemRequests);
         return bundleOrderItemRequest;
     }
-    
-    
 
+
+    /**
+     * Returns the order associated with the passed in orderId.
+     *
+     * @param orderId
+     * @return
+     */
+    protected Order validateOrder(Long orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("orderId required when adding item to order.");
+        }
+
+        Order order = findOrderById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("No order found matching passed in orderId " + orderId + " while trying to addItemToOrder.");
+        }
+
+        return order;
+    }
+
+    protected Product validateProduct(Long productId) {
+        if (productId != null) {
+            Product product = productDao.readProductById(productId);
+            if (product == null) {
+                throw new IllegalArgumentException("No product found matching passed in productId " + productId + " while trying to addItemToOrder.");
+            }
+            return product;
+        }
+        return null;
+    }
+
+    protected Category determineCategory(Product product, Long categoryId) {
+        Category category = null;
+        if (categoryId != null) {
+            category = categoryDao.readCategoryById(categoryId);
+        }
+
+        if (category == null && product != null) {
+            category = product.getDefaultCategory();
+        }
+        return category;
+    }
+
+    protected Sku determineSku(Product product, Long skuId, Map<String,String> attributeValues) {
+        // Check whether the sku is correct given the product options.
+        Sku sku = findSkuThatMatchesProductOptions(product, attributeValues);
+
+        if (sku == null && skuId != null) {
+            sku = skuDao.readSkuById(skuId);
+        }
+
+        if (sku == null && product != null) {
+            // Set to the default sku
+            sku = product.getDefaultSku();
+        }
+        return sku;
+    }
+
+    /**
+     * Checks to make sure the correct SKU is still attached to the order.
+     * For example, if you have the SKU for a Large, Red T-shirt in the
+     * cart and your UI allows the user to change the one of the attributes
+     * (e.g. red to black), then it is possible that the SKU needs to
+     * be adjusted as well.
+     */
+    protected Sku findSkuThatMatchesProductOptions(Product product, Map<String,String> attributeValues) {
+        // TODO: Product Options
+        return null;
+    }
+
+
+    protected DiscreteOrderItem createDiscreteOrderItem(Sku sku, Product product, Category category, int quantity, Map<String,String> itemAttributes) {
+        DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
+        item.setSku(sku);
+        item.setProduct(product);
+        item.setQuantity(quantity);
+        item.setCategory(category);
+        item.setBaseSalePrice(sku.getSalePrice());
+        item.setBaseRetailPrice(sku.getRetailPrice());
+
+        if (itemAttributes != null && itemAttributes.size() > 0) {
+            Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
+            item.setOrderItemAttributes(orderItemAttributes);
+
+            for (String key : itemAttributes.keySet()) {
+                String value = itemAttributes.get(key);
+                OrderItemAttribute attribute = new OrderItemAttributeImpl();
+                attribute.setName(key);
+                attribute.setValue(value);
+                attribute.setOrderItem(item);
+                orderItemAttributes.put(key, attribute);
+            }
+        }
+
+        item.updatePrices();
+        item.assignFinalPrice();
+        return item;
+    }
+
+    /**
+     * Adds an item to the passed in order.
+     *
+     * The orderItemRequest can be sparsely populated.
+     *
+     * When priceOrder is false, the system will not reprice the order.   This is more performant in
+     * cases such as bulk adds where the repricing could be done for the last item only.
+     *
+     * @see OrderItemRequestDTO
+     * @param orderItemRequestDTO
+     * @param priceOrder
+     * @return
+     */
+    @Override
+    public OrderItem addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
+        if (orderItemRequestDTO.getQuantity() == 0) {
+            LOG.debug("Not adding item to order because quantity is zero.");
+            return null;
+        }
+
+        Order order = validateOrder(orderId);
+        Product product = validateProduct(orderItemRequestDTO.getProductId());
+        Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes());
+        Category category = determineCategory(product, orderItemRequestDTO.getCategoryId());
+
+        if (! (product instanceof ProductBundle)) {
+            DiscreteOrderItem item = createDiscreteOrderItem(sku, product, category, orderItemRequestDTO.getQuantity(), orderItemRequestDTO.getItemAttributes());
+            return addOrderItemToOrder(order, item, priceOrder);
+        } else {
+            ProductBundle bundle = (ProductBundle) product;
+            BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
+            bundleOrderItem.setQuantity(orderItemRequestDTO.getQuantity());
+            bundleOrderItem.setCategory(category);
+            bundleOrderItem.setName(sku.getName());
+            bundleOrderItem.setProductBundle(bundle);
+
+            for (SkuBundleItem skuBundleItem : bundle.getSkuBundleItems()) {
+                Product bundleProduct = skuBundleItem.getProduct();
+                Sku bundleSku = skuBundleItem.getSku();
+
+                Category bundleCategory = determineCategory(bundleProduct, orderItemRequestDTO.getCategoryId());
+
+                DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleSku, bundleProduct, bundleCategory, skuBundleItem.getQuantity(), orderItemRequestDTO.getItemAttributes());
+                bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
+                bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);
+                bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
+            }
+
+            bundleOrderItem.updatePrices();
+            return addOrderItemToOrder(order, bundleOrderItem, priceOrder);
+        }
+    }
 }

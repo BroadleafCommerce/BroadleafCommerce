@@ -1,16 +1,5 @@
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -19,6 +8,16 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,11 +44,11 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @AdminPresentation(friendlyName = "Bundle is promotable")
     protected Boolean bundlePromotable;
 
-    @OneToMany(mappedBy = "bundle", targetEntity = ProductBundleItemImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
-    protected List<ProductBundleItem> bundleItems;
+    protected List<SkuBundleItem> skuBundleItems;
 
     public String getPricingModel() {
         return pricingModel;
@@ -79,15 +78,15 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     
     public Money getBundleItemsRetailPrice() {
         Money price = new Money(BigDecimal.ZERO);
-        for (ProductBundleItem item : bundleItems){
-            price.add(item.getProduct().getDefaultSku().getRetailPrice());
+        for (SkuBundleItem item : getSkuBundleItems()) {
+            price.add(item.getRetailPrice());
         }
         return price;
     }
     
     public Money getBundleItemsSalePrice() {
         Money price = new Money(BigDecimal.ZERO);
-        for (ProductBundleItem item : bundleItems){
+        for (SkuBundleItem item : getSkuBundleItems()){
             price.add(item.getSalePrice());
         }
         return price;
@@ -117,12 +116,11 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         this.bundlePromotable = bundlePromotable;
     }
 
-    public List<ProductBundleItem> getBundleItems() {
-        return bundleItems;
+    public List<SkuBundleItem> getSkuBundleItems() {
+        return skuBundleItems;
     }
 
-    public void setBundleItems(List<ProductBundleItem> bundleItems) {
-        this.bundleItems = bundleItems;
+    public void setSkuBundleItems(List<SkuBundleItem> skuBundleItems) {
+        this.skuBundleItems = skuBundleItems;
     }
-
 }

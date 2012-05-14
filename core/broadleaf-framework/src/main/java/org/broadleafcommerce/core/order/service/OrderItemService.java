@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.HashMap;
-
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
@@ -27,14 +25,25 @@ import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 
+import java.util.HashMap;
+
 public interface OrderItemService {
 
     public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest);
 
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest);
 
+    /**
+     * Used to create "manual" product bundles.   Manual product bundles are primarily designed
+     * for grouping items in the cart display.    Typically ProductBundle will be used to
+     * achieve non programmer related bundles.
+     *
+     *
+     * @param itemRequest
+     * @return
+     */
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
-    
+
     public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
 
     public OrderItem readOrderItemById(Long orderItemId);

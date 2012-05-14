@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.common.money.Money;
 
 public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHandler {
 
@@ -45,6 +45,20 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
 			throw new RuntimeException(e);
 		}
 	}
+
+    /**
+     * This is used with SkuBundleItem to allow the bundle override price.
+     *
+     * @param sku
+     * @param salePriceOverride
+     */
+    public DefaultDynamicSkuPricingInvocationHandler(Sku sku, BigDecimal salePriceOverride) {
+        this(sku);
+
+        if (salePriceOverride != null) {
+            salePrice = new Money(salePriceOverride);
+        }
+   	}
 	
 	private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
         try {
