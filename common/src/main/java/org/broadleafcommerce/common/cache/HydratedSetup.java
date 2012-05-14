@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.common.cache;
 
+import javax.persistence.Entity;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,10 +32,7 @@ import org.broadleafcommerce.common.cache.engine.HydratedAnnotationManager;
 import org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory;
 import org.broadleafcommerce.common.cache.engine.HydratedCacheManager;
 import org.broadleafcommerce.common.cache.engine.HydrationDescriptor;
-
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.hibernate.annotations.Cache;
 
 /**
  * 
@@ -37,6 +42,31 @@ import java.lang.reflect.Method;
 public class HydratedSetup {
 	
 	private static final Log LOG = LogFactory.getLog(HydratedSetup.class);
+    private static Map<String, String> inheritanceHierarchyRoots = Collections.synchronizedMap(new HashMap<String, String>());
+
+    private static String getInheritanceHierarchyRoot(Class<?> myEntityClass) {
+        String myEntityName = myEntityClass.getName();
+        if (inheritanceHierarchyRoots.containsKey(myEntityName)) {
+            return inheritanceHierarchyRoots.get(myEntityName);
+        }
+        Class<?> currentClass = myEntityClass;
+        boolean eof = false;
+        while (!eof) {
+            Class<?> superclass = currentClass.getSuperclass();
+            if (superclass.equals(Object.class) || !superclass.isAnnotationPresent(Entity.class)) {
+                eof = true;
+            } else {
+                currentClass = superclass;
+            }
+        }
+
+        if (!currentClass.isAnnotationPresent(Cache.class)) {
+            currentClass = myEntityClass;
+        }
+
+        inheritanceHierarchyRoots.put(myEntityName, currentClass.getName());
+        return inheritanceHierarchyRoots.get(myEntityName);
+    }
 
 	public static void populateFromCache(Object entity) {
 		HydratedCacheManager manager = HydratedCacheEventListenerFactory.getConfiguredManager();
@@ -47,11 +77,11 @@ public class HydratedSetup {
 			for (String field : descriptor.getHydratedMutators().keySet()) {
 				try {
 					Serializable entityId = (Serializable) idMutators[0].invoke(entity);
-					Object hydratedItem = manager.getHydratedCacheElementItem(cacheRegion, entity.getClass().getName(), entityId, field);
+					Object hydratedItem = manager.getHydratedCacheElementItem(cacheRegion, getInheritanceHierarchyRoot(entity.getClass()), entityId, field);
 					if (hydratedItem == null) {
 						Method factoryMethod = entity.getClass().getMethod(descriptor.getHydratedMutators().get(field).getFactoryMethod(), new Class[]{});
 						Object fieldVal = factoryMethod.invoke(entity);
-						manager.addHydratedCacheElementItem(cacheRegion, entity.getClass().getName(), entityId, field, fieldVal);
+						manager.addHydratedCacheElementItem(cacheRegion, getInheritanceHierarchyRoot(entity.getClass()), entityId, field, fieldVal);
 						hydratedItem = fieldVal;
 					}
 					descriptor.getHydratedMutators().get(field).getMutators()[1].invoke(entity, hydratedItem);
