@@ -25,7 +25,6 @@ package org.broadleafcommerce.core.catalog.domain;
  * @author jfischer
  *
  */
-@Deprecated 
 public interface ProductSku extends Product {
 
 	/**
