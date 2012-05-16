@@ -158,7 +158,9 @@ public abstract class AbstractCartController {
         }
         
         model.addAttribute("cartSummary", cartSummary);
-        return cartViewRedirect ? "redirect:" + cartView : cartView;
+
+        throw new RuntimeException("test");
+        //return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
 
     /*
