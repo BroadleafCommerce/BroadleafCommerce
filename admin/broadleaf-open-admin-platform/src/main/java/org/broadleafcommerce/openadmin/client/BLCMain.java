@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -27,6 +30,7 @@ import com.smartgwt.client.util.KeyCallback;
 import com.smartgwt.client.util.Page;
 import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
@@ -40,9 +44,6 @@ import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * 
@@ -72,6 +73,7 @@ public class BLCMain implements EntryPoint {
 	public static String currentModuleKey;
     public static String currentPageKey;
     public static String currentViewKey;
+    public static PostLaunch postLaunch = null;
 	
 	public static final boolean DEBUG = true;
 	
@@ -197,6 +199,9 @@ public class BLCMain implements EntryPoint {
                             MASTERVIEW.draw();
                             AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
                             modules.get(currentModuleKey).postDraw();
+                        }
+                        if (postLaunch != null) {
+                            postLaunch.onLaunched();
                         }
                     }
                 });
