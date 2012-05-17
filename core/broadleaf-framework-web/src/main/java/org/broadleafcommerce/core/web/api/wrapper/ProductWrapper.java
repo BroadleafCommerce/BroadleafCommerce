@@ -56,12 +56,6 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     @XmlElement
     protected String promoMessage;
 
-    @XmlElement
-    protected ProductWeightWrapper productWeight;
-
-    @XmlElement
-    protected ProductDimensionWrapper productDimension;
-
     @Override
     public void wrap(Product model, HttpServletRequest request) {
         this.id = model.getId();
@@ -73,14 +67,5 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
 
-        if (model.getWeight() != null){
-            productWeight = (ProductWeightWrapper)context.getBean(ProductWeightWrapper.class.getName());
-            productWeight.wrap(model.getWeight(), request);
-        }
-
-        if (model.getDimension() != null){
-            productDimension = (ProductDimensionWrapper)context.getBean(ProductDimensionWrapper.class.getName());
-            productDimension.wrap(model.getDimension(), request);
-        }
     }
 }

@@ -16,15 +16,12 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.media.domain.Media;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.core.media.domain.Media;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
@@ -244,72 +241,6 @@ public interface Product extends Serializable {
     void setManufacturer(String manufacturer);
 
     /**
-     * Returns the {@link ProductDimension} for this product
-     * @return a ProductDimensions object
-     */
-    ProductDimension getDimension();
-
-    /**
-     * Sets the {@link ProductDimension} for this product
-     * @param dimension
-     */
-    void setDimension(ProductDimension dimension);
-
-    /**
-     * Returns the product dimension width
-     * @return width dimension of the product
-     */
-    BigDecimal getWidth();
-
-    /**
-     * Sets the product dimension width
-     * @param width
-     */
-    void setWidth(BigDecimal width);
-
-    /**
-     * Returns the product dimension height
-     * @return height dimension of the product
-     */
-    BigDecimal getHeight();
-
-    /**
-     * Sets the product dimension height
-     * @param height
-     */
-    void setHeight(BigDecimal height);
-
-    /**
-     * Returns the product dimension depth
-     * @return width depth of the product
-     */
-    BigDecimal getDepth();
-
-    /**
-     * Sets the product dimension depth
-     * @param depth
-     */
-    void setDepth(BigDecimal depth);
-
-    /**
-     * Returns the weight of the product
-     * @return weight of product
-     */
-    ProductWeight getWeight();
-
-    /**
-     * Sets the product weight
-     * @param weight
-     */
-    void setWeight(ProductWeight weight);
-
-    /**
-     * Returns a String representation of the product dimension
-     * @return a product dimension String
-     */
-    String getDimensionString();
-
-    /**
      * Returns a List of this product's related Cross Sales
      * @return
      */
@@ -352,18 +283,6 @@ public interface Product extends Serializable {
     public Sku getDefaultSku();
 
 	public void setDefaultSku(Sku defaultSku);	
-
-    void setGirth(BigDecimal girth);
-
-    BigDecimal getGirth();
-
-    ContainerSizeType getSize();
-
-    void setSize(ContainerSizeType size);
-
-    ContainerShapeType getContainer();
-
-    void setContainer(ContainerShapeType container);
     
     List<ProductAttribute> getProductAttributes();
 

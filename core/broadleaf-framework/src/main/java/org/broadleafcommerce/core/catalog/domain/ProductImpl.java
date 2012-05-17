@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,8 +49,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.compass.annotations.Searchable;
@@ -160,14 +156,6 @@ public class ProductImpl implements Product {
     @SearchableProperty(name="productManufacturer")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=5, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String manufacturer;
-
-    /** The product dimensions **/
-    @Embedded
-    protected ProductDimension dimension = new ProductDimension();
-
-    /** The product weight **/
-    @Embedded
-    protected ProductWeight weight = new ProductWeight();
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=6, group = "ProductImpl_Product_Description", prominent=false)
@@ -380,70 +368,6 @@ public class ProductImpl implements Product {
         this.manufacturer = manufacturer;
     }
 
-    public ProductDimension getDimension() {
-        return dimension;
-    }
-
-    public void setDimension(ProductDimension dimension) {
-    	this.dimension = dimension;
-    }
-
-    public BigDecimal getWidth() {
-        return dimension==null?null:dimension.getWidth();
-    }
-
-    public void setWidth(BigDecimal width) {
-        dimension.setWidth(width);
-    }
-
-    public BigDecimal getHeight() {
-        return dimension==null?null:dimension.getHeight();
-    }
-
-    public void setHeight(BigDecimal height) {
-        dimension.setHeight(height);
-    }
-
-    public BigDecimal getDepth() {
-        return dimension==null?null:dimension.getDepth();
-    }
-
-    public void setDepth(BigDecimal depth) {
-        dimension.setDepth(depth);
-    }
-
-    public void setGirth(BigDecimal girth) {
-        dimension.setGirth(girth);
-    }
-
-    public BigDecimal getGirth() {
-        return dimension==null?null:dimension.getGirth();
-    }
-
-    public ContainerSizeType getSize() {
-        return dimension==null?null:dimension.getSize();
-    }
-
-    public void setSize(ContainerSizeType size) {
-        dimension.setSize(size);
-    }
-
-    public ContainerShapeType getContainer() {
-        return dimension==null?null:dimension.getContainer();
-    }
-
-    public void setContainer(ContainerShapeType container) {
-        dimension.setContainer(container);
-    }
-
-    /**
-     * Returns the product dimensions as a String (assumes measurements are in inches)
-     * @return a String value of the product dimensions
-     */
-    public String getDimensionString() {
-        return dimension==null?null:dimension.getDimensionString();
-    }
-
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
@@ -467,14 +391,6 @@ public class ProductImpl implements Product {
 	public void setDefaultSku(Sku defaultSku) {
 		this.defaultSku = defaultSku;
 	}
-
-	public ProductWeight getWeight() {
-        return weight;
-    }
-
-    public void setWeight(ProductWeight weight) {
-        this.weight = weight;
-    }
 
 	/**
 	 * @return the promoMessage

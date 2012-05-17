@@ -118,27 +118,5 @@ public class ProductDaoTest extends BaseTest {
         Product testProduct = productDao.readProductById(productId);
         assert (testProduct.isFeaturedProduct() == true);
     }
-
-    @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
-    public void testProductAttributes(Product product) {
-        product.setWidth(new BigDecimal("25.5"));
-        product.setHeight(new BigDecimal("50"));
-        product.setDepth(new BigDecimal("75.5"));
-        ProductWeight weight = new ProductWeight();
-        weight.setWeightUnitOfMeasure(WeightUnitOfMeasureType.POUNDS);
-        weight.setWeight(new BigDecimal("100.1"));
-        product.setWeight(weight);
-        //System.out.println(product.getWidth().toString());
-        //System.out.println(product.getHeight().toString());
-        //System.out.println(product.getDepth().toString());
-        //System.out.println(product.getWeight().getWeight().toString());
-        product = catalogService.saveProduct(product);
-        Product result = productDao.readProductById(product.getId());
-        assert result.getWidth().doubleValue() == 25.5D;
-        assert result.getHeight().doubleValue() == 50D;
-        assert result.getDepth().doubleValue() == 75.5D;
-        assert result.getWeight().getWeight().doubleValue() == 100.1D;
-        //   assert result.getDimensionString().equals("50Hx25.5Wx75.5D\"");
-    }
-
+    
 }

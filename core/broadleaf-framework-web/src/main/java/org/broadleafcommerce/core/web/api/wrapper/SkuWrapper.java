@@ -16,12 +16,16 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
-import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 
 /**
  * This is a JAXB wrapper to wrap Sku.
@@ -54,6 +58,12 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     @XmlElement
     protected Money salePrice;
     
+    @XmlElement
+    protected ProductWeightWrapper productWeight;
+
+    @XmlElement
+    protected ProductDimensionWrapper productDimension;
+    
     @Override
     public void wrap(Sku model, HttpServletRequest request) {
         this.id = model.getId();
@@ -64,5 +74,14 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
         this.retailPrice = model.getRetailPrice();
         this.salePrice = model.getSalePrice();
 
+        if (model.getWeight() != null){
+            productWeight = (ProductWeightWrapper)context.getBean(ProductWeightWrapper.class.getName());
+            productWeight.wrap(model.getWeight(), request);
+        }
+
+        if (model.getDimension() != null){
+            productDimension = (ProductDimensionWrapper)context.getBean(ProductDimensionWrapper.class.getName());
+            productDimension.wrap(model.getDimension(), request);
+        }
     }
 }

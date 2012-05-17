@@ -167,6 +167,14 @@ public interface Sku extends Serializable {
      */
     public void setActiveEndDate(Date activeEndDate);
 
+    public ProductDimension getDimension();
+
+    public void setDimension(ProductDimension dimension);
+
+    public ProductWeight getWeight();
+
+    public void setWeight(ProductWeight weight);
+    
     /**
      * Returns a boolean indicating whether this sku is active.  This is used to determine whether a user
      * the sku can add the sku to their cart.

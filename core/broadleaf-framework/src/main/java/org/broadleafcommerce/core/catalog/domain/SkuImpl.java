@@ -43,6 +43,7 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -174,6 +175,14 @@ public class SkuImpl implements Sku {
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "SkuImpl_Sku_Description", groupOrder=4)
     protected Date activeEndDate;
+    
+    /** The product dimensions **/
+    @Embedded
+    protected ProductDimension dimension = new ProductDimension();
+
+    /** The product weight **/
+    @Embedded
+    protected ProductWeight weight = new ProductWeight();
     
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
@@ -490,6 +499,22 @@ public class SkuImpl implements Sku {
      */
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
+    }
+
+    public ProductDimension getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(ProductDimension dimension) {
+        this.dimension = dimension;
+    }
+
+    public ProductWeight getWeight() {
+        return weight;
+    }
+
+    public void setWeight(ProductWeight weight) {
+        this.weight = weight;
     }
 
     /*
