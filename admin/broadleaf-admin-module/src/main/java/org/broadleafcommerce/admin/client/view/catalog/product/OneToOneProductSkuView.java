@@ -72,7 +72,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab("Details");
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("detailsTabTitle"));
         detailsTab.setID("productSkuDetailsTab");
         
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productDetailsTitle"), entityDataSource);
@@ -80,7 +80,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(attributesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
-        Tab crossSaleTab = new Tab("Featured"); 
+        Tab crossSaleTab = new Tab(BLCMain.getMessageManager().getString("featuredTabTitle")); 
         crossSaleTab.setID("productSkuCrossSaleTab");
         
         VLayout crossLayout = new VLayout();
@@ -113,7 +113,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         
         mediaTab.setPane(mediaLayout);
         
-        Tab categoriesTab = new Tab("Categories");
+        Tab categoriesTab = new Tab(BLCMain.getMessageManager().getString("categoriesTabTitle"));
         categoriesTab.setID("productSkuCategoriesTab");
         
         VLayout categoriesLayout = new VLayout();

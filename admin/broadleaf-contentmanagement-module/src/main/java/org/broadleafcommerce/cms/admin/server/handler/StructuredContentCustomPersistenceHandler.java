@@ -156,7 +156,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         fieldMetadata.setPresentationAttributes(attributes);
         attributes.setName("locale");
         attributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Locale");
-        attributes.setGroup("Description");
+        attributes.setGroup("StructuredContentCustomPersistenceHandler_Description");
         attributes.setOrder(3);
         attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         attributes.setProminent(true);
@@ -197,7 +197,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
         contentTypeAttributes.setName("structuredContentType_Grid");
         contentTypeAttributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Content_Type");
-        contentTypeAttributes.setGroup("Description");
+        contentTypeAttributes.setGroup("StructuredContentCustomPersistenceHandler_Description");
         contentTypeAttributes.setOrder(2);
         contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         contentTypeAttributes.setProminent(true);
@@ -219,7 +219,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         iconMetadata.setPresentationAttributes(iconAttributes);
         iconAttributes.setName("picture");
         iconAttributes.setFriendlyName("StructuredContentCustomPersistenceHandler_Lock");
-        iconAttributes.setGroup("Locked Details");
+        iconAttributes.setGroup("StructuredContentCustomPersistenceHandler_Locked_Details");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
@@ -249,7 +249,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         fieldMetadata.setPresentationAttributes(attributes);
         attributes.setName(name);
         attributes.setFriendlyName(name);
-        attributes.setGroup("Rules");
+        attributes.setGroup("StructuredContentCustomPersistenceHandler_Rules");
         attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         attributes.setProminent(false);
         attributes.setBroadleafEnumeration("");

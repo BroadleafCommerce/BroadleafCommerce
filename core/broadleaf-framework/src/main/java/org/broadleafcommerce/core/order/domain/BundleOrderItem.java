@@ -17,13 +17,14 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.List;
 
 
-public interface BundleOrderItem extends OrderItem {
+public interface BundleOrderItem extends OrderItem, SkuAccessor {
 
     List<DiscreteOrderItem> getDiscreteOrderItems();
 
@@ -72,6 +73,11 @@ public interface BundleOrderItem extends OrderItem {
      * @param bundle
      */
     void setProductBundle(ProductBundle bundle);
+
+    /**
+     * Same as getProductBundle.
+     */
+    Product getProduct();
 
     
 }

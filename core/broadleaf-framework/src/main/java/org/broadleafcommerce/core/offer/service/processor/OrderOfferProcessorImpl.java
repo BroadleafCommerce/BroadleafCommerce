@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -55,6 +48,13 @@ import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitConta
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -569,6 +569,20 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    /**
+     * Returns null if the item is not part of a bundle.
+     * @return
+     */
+    private Long getBundleId(OrderItem item) {
+        if (item instanceof DiscreteOrderItem) {
+            DiscreteOrderItem discreteItem =  (DiscreteOrderItem) item;
+            if (discreteItem.getBundleOrderItem() != null) {
+                return discreteItem.getBundleOrderItem().getId();
+            }
+        }
+        return null;
+    }
+
     protected void mergeSplitDiscreteOrderItems(PromotableOrder order) throws PricingException {
         //If adjustments are removed - merge split items back together before adding to the cart
         List<PromotableOrderItem> itemsToRemove = new ArrayList<PromotableOrderItem>();
@@ -593,8 +607,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 }
                 if (cloneItem.getQuantity() > 0) {
                     String identifier = String.valueOf(cloneItem.getSku().getId());
-                    if (cloneItem.getDelegate().getBundleOrderItem() != null) {
-                        identifier += cloneItem.getDelegate().getBundleOrderItem().getId();
+                    Long bundleItemId = getBundleId(cloneItem.getDelegate());
+                    if (bundleItemId != null) {
+                        identifier += bundleItemId;
                     }
                     if (allItems.containsKey(identifier)) {
                         PromotableOrderItem savedItem = allItems.get(identifier);
@@ -604,7 +619,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                         mySplits.add(cloneItem);
                     }
                 }
-                if (nextItem.getDelegate().getBundleOrderItem() == null) {
+
+                Long nextItemBundleItemId = getBundleId(nextItem.getDelegate());
+                if (nextItemBundleItemId != null) {
                     if (mySplits.contains(nextItem)) {
                         mySplits.remove(nextItem);
                     } else {
@@ -622,24 +639,26 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 PromotableFulfillmentGroup targetGroup = getTargetFulfillmentGroup(order, key.getKey());
                 for (PromotableOrderItem myItem : mySplits) {
                     myItem.assignFinalPrice();
-                    DiscreteOrderItem delegateItem = myItem.getDelegate();
-                    if (delegateItem.getBundleOrderItem() == null) {
+                    OrderItem delegateItem = myItem.getDelegate();
+                    Long delegateItemBundleItemId = getBundleId(delegateItem);
+                    if (delegateItemBundleItemId == null) {
                         delegateItem = (DiscreteOrderItem) cartService.addOrderItemToOrder(order.getDelegate(), delegateItem, false);
                         if (targetGroup != null) {
                             cartService.addItemToFulfillmentGroup(delegateItem, targetGroup.getDelegate(), false);
                         }
                     } else {
-                        delegateItem.getBundleOrderItem().getDiscreteOrderItems().add(delegateItem);
+                        ((DiscreteOrderItem) delegateItem).getBundleOrderItem().getDiscreteOrderItems().add((DiscreteOrderItem) delegateItem);
                     }
                 }
             }
         }
         for (PromotableOrderItem orderItem : itemsToRemove) {
-            DiscreteOrderItem delegateItem = orderItem.getDelegate();
-            if (delegateItem.getBundleOrderItem() == null) {
+            OrderItem delegateItem = orderItem.getDelegate();
+            Long delegateItemBundleItemId = getBundleId(delegateItem);
+            if (delegateItemBundleItemId == null) {
                 cartService.removeItemFromOrder(order.getDelegate(), orderItem.getDelegate(), false);
             } else {
-                delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(orderItem.getDelegate());
+                ((DiscreteOrderItem) delegateItem).getBundleOrderItem().getDiscreteOrderItems().remove(orderItem.getDelegate());
             }
         }
     }

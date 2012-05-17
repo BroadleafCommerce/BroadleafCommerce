@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
@@ -42,6 +36,12 @@ import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitorAdapter;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class PromotableOrderImpl implements PromotableOrder {
 
@@ -181,6 +181,7 @@ public class PromotableOrderImpl implements PromotableOrder {
             if (orderItem instanceof BundleOrderItem) {
                 for (DiscreteOrderItem discreteOrderItem : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
                     discreteOrderItem.setPrice(null);
+                    discreteOrderItem.assignFinalPrice();
                 }
             }
             orderItem.setPrice(null);

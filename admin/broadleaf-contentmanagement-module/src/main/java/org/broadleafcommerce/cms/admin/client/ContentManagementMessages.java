@@ -83,4 +83,13 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String StructuredContentCustomPersistenceHandler_Content_Type();
     public String StructuredContentCustomPersistenceHandler_Lock();
     public String StructuredContentTypeCustomPersistenceHandler_ID();
+    //groups
+    public String PagesCustomPersistenceHandler_Description();
+    public String PagesCustomPersistenceHandler_Locked_Details();
+    public String StaticAssetCustomPersistenceHandler_Upload();
+    public String StaticAssetCustomPersistenceHandler_Asset_Details();
+    public String StructuredContentCustomPersistenceHandler_Description();
+    public String StructuredContentCustomPersistenceHandler_Locked_Details();
+    public String StructuredContentCustomPersistenceHandler_Rules();
+    
 }

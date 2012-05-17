@@ -65,12 +65,6 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     @JoinColumn(name = "PRODUCT_BUNDLE_ID", referencedColumnName = "PRODUCT_ID")
     protected ProductBundle bundle;
 
-
-    @OneToOne(targetEntity = ProductImpl.class, optional = false)
-    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
-    private Product product;
-
-
     @OneToOne(targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     private Sku sku;
@@ -104,7 +98,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
                 throw new IllegalArgumentException("Unable to price bundle item.   DynamicPricing is enabled but no default sku is associated with the ProductBundle.");
             }
 
-       		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this.getProduct().getDefaultSku(), salePrice);
+       		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
        		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
        		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
        		handler.reset();
@@ -140,14 +134,6 @@ public class SkuBundleItemImpl implements SkuBundleItem {
 
     public void setBundle(ProductBundle bundle) {
         this.bundle = bundle;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public Sku getSku() {

@@ -21,11 +21,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -89,7 +88,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @ManyToOne(targetEntity = SkuBundleItemImpl.class)
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
-    protected SkuBundleItem SkuBundleItem;
+    protected SkuBundleItem skuBundleItem;
     
     @CollectionOfElements
     @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
@@ -156,7 +155,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
      */
     @Override
     public SkuBundleItem getSkuBundleItem() {
-        return SkuBundleItem;
+        return skuBundleItem;
     }
 
     /**
@@ -166,7 +165,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
      */
     @Override
     public void setSkuBundleItem(SkuBundleItem SkuBundleItem) {
-        this.SkuBundleItem=SkuBundleItem;
+        this.skuBundleItem =SkuBundleItem;
     }
 
     @Override
@@ -183,9 +182,15 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         Money skuRetailPrice = getSku().getRetailPrice();
         Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
 
-        if (SkuBundleItem != null && ProductBundle.PRICING_MODEL_ITEM_SUM.equals(SkuBundleItem.getBundle().getPricingModel())) {
-            skuSalePrice = SkuBundleItem.getSalePrice();
-            skuRetailPrice = SkuBundleItem.getRetailPrice();
+        // Override retail/sale prices from skuBundle.
+        if (skuBundleItem != null) {
+            if (skuBundleItem.getSalePrice() != null) {
+                skuSalePrice = skuBundleItem.getSalePrice();
+            }
+
+            if (skuBundleItem.getRetailPrice() != null) {
+                skuRetailPrice = skuBundleItem.getRetailPrice();
+            }
         }
 
         boolean updated = false;
@@ -200,6 +205,8 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             setSalePrice(skuSalePrice);
             updated = true;
         }
+
+        // Adjust prices by adding in fees if they are attached.
         if (getDiscreteOrderItemFeePrices() != null) {
 	        for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
 	        	setSalePrice(getSalePrice().add(fee.getAmount()));

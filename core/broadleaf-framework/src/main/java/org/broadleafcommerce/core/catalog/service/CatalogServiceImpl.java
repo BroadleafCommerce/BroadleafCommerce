@@ -21,11 +21,14 @@ import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +65,13 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate, limit, offset);
+    }
+
+    @Override
+    public List<ProductBundle> findAutomaticProductBundles() {
+        List<ProductBundle> bundles =  productDao.readAutomaticProductBundles();
+        Collections.sort(bundles, new ProductBundleComparator());
+        return bundles;
     }
 
     public Product saveProduct(Product product) {

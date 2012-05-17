@@ -813,8 +813,6 @@ public class OrderServiceImpl implements OrderService {
         item.setProduct(product);
         item.setQuantity(quantity);
         item.setCategory(category);
-        item.setBaseSalePrice(sku.getSalePrice());
-        item.setBaseRetailPrice(sku.getRetailPrice());
 
         if (itemAttributes != null && itemAttributes.size() > 0) {
             Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
@@ -868,11 +866,12 @@ public class OrderServiceImpl implements OrderService {
             BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
             bundleOrderItem.setQuantity(orderItemRequestDTO.getQuantity());
             bundleOrderItem.setCategory(category);
+            bundleOrderItem.setSku(sku);
             bundleOrderItem.setName(sku.getName());
             bundleOrderItem.setProductBundle(bundle);
 
             for (SkuBundleItem skuBundleItem : bundle.getSkuBundleItems()) {
-                Product bundleProduct = skuBundleItem.getProduct();
+                Product bundleProduct = skuBundleItem.getBundle();
                 Sku bundleSku = skuBundleItem.getSku();
 
                 Category bundleCategory = determineCategory(bundleProduct, orderItemRequestDTO.getCategoryId());
@@ -884,6 +883,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
             bundleOrderItem.updatePrices();
+            bundleOrderItem.assignFinalPrice();
             return addOrderItemToOrder(order, bundleOrderItem, priceOrder);
         }
     }

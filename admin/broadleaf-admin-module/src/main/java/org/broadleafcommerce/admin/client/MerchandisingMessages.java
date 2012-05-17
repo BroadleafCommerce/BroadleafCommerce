@@ -72,5 +72,7 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String otherProduct();
     public String baseCategory();
     public String baseProductAttribute();
-
+    public String detailsTabTitle();
+    public String featuredTabTitle();
+    public String categoriesTabTitle();
 }

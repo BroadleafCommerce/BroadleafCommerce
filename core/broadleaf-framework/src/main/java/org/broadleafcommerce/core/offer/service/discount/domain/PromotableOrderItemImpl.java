@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -31,6 +26,13 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.SkuAccessor;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -40,17 +42,17 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected BigDecimal saleAdjustmentPrice;
     protected List<PromotionDiscount> promotionDiscounts = new ArrayList<PromotionDiscount>();
     protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
-    protected DiscreteOrderItem delegate;
+    protected OrderItem delegate;
     protected PromotableOrder order;
     protected PromotableItemFactory itemFactory;    
     
-    public PromotableOrderItemImpl(DiscreteOrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
-    	this.delegate = (DiscreteOrderItem) orderItem;
+    public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
+    	this.delegate = orderItem;
     	this.order = order;
     	this.itemFactory = itemFactory;
     }
     
-    public DiscreteOrderItem getDelegate() {
+    public OrderItem getDelegate() {
     	return delegate;
     }
     
@@ -427,7 +429,11 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 	}
 	
 	public Sku getSku() {
-		return delegate.getSku();
+        if (delegate instanceof SkuAccessor) {
+            return ((SkuAccessor) delegate).getSku();
+        } else {
+		    return null;
+        }
 	}
 	
 	public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {

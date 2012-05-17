@@ -252,7 +252,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         contentTypeFieldMetadata.setPresentationAttributes(contentTypeAttributes);
         contentTypeAttributes.setName("pageTemplate_Grid");
         contentTypeAttributes.setFriendlyName("PagesCustomPersistenceHandler_Page_Template");
-        contentTypeAttributes.setGroup("Description");
+        contentTypeAttributes.setGroup("PagesCustomPersistenceHandler_Description");
         contentTypeAttributes.setOrder(2);
         contentTypeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         contentTypeAttributes.setProminent(false);
@@ -274,7 +274,7 @@ public class PagesCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         iconMetadata.setPresentationAttributes(iconAttributes);
         iconAttributes.setName("picture");
         iconAttributes.setFriendlyName("PagesCustomPersistenceHandler_Lock");
-        iconAttributes.setGroup("Locked Details");
+        iconAttributes.setGroup("PagesCustomPersistenceHandler_Description");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");

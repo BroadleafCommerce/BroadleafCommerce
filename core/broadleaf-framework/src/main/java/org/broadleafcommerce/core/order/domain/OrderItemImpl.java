@@ -76,6 +76,7 @@ import java.util.Map;
         @AdminPresentationOverride(name="product.activeStartDate", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="product.activeEndDate", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="product.sku", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="product.defaultSku", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="sku.name", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="sku.salePrice", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="sku.retailPrice", value=@AdminPresentation(excluded = true)),

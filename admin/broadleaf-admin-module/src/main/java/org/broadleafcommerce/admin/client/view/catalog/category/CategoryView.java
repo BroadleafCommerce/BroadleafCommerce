@@ -117,7 +117,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab("Details");
+        Tab detailsTab = new Tab(BLCMain.getMessageManager().getString("detailsTabTitle"));
         detailsTab.setID("categoryDetailsTab");
         
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("categoryDetailsTitle"), entityDataSource);

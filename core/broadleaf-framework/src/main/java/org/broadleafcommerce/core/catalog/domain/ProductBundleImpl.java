@@ -44,6 +44,10 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @AdminPresentation(friendlyName = "Bundle is promotable")
     protected Boolean bundlePromotable;
 
+    @Column(name = "BUNDLE_PRIORITY")
+    @AdminPresentation(friendlyName = "Priority for auto bundling.")
+    protected int priority=99;
+
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
@@ -122,5 +126,42 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     public void setSkuBundleItems(List<SkuBundleItem> skuBundleItems) {
         this.skuBundleItems = skuBundleItems;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public BigDecimal getPotentialSavings() {
+        if (skuBundleItems != null) {
+            Money totalNormalPrice = new Money();
+            Money totalBundlePrice = new Money();
+
+            for (SkuBundleItem skuBundleItem : skuBundleItems) {
+                totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                if (ProductBundle.PRICING_MODEL_ITEM_SUM.equals(pricingModel)) {
+                    if (skuBundleItem.getSalePrice() != null) {
+                        totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
+                    } else {
+                        totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                    }
+                }
+            }
+
+            if (ProductBundle.PRICING_MODEL_BUNDLE.equals(pricingModel)) {
+                if (getSalePrice() != null) {
+                    totalBundlePrice = getSalePrice();
+                } else {
+                    totalBundlePrice = getRetailPrice();
+                }
+            }
+            return totalNormalPrice.subtract(totalBundlePrice).getAmount();
+        }
+
+        return BigDecimal.ZERO;
     }
 }

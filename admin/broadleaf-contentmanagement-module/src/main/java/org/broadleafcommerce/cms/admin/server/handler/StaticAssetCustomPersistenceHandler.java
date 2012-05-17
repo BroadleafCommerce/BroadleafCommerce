@@ -425,7 +425,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         fieldMetadata.setPresentationAttributes(attributes);
         attributes.setName("file");
         attributes.setFriendlyName("StaticAssetCustomPersistenceHandler_File");
-        attributes.setGroup("Upload");
+        attributes.setGroup("StaticAssetCustomPersistenceHandler_Upload");
         attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         attributes.setProminent(false);
         attributes.setBroadleafEnumeration("");
@@ -446,7 +446,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconMetadata.setPresentationAttributes(iconAttributes);
         iconAttributes.setName("picture");
         iconAttributes.setFriendlyName(" ");
-        iconAttributes.setGroup("Asset Details");
+        iconAttributes.setGroup("StaticAssetCustomPersistenceHandler_Asset_Details");
         iconAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconAttributes.setProminent(true);
         iconAttributes.setBroadleafEnumeration("");
@@ -469,7 +469,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         iconLargeMetadata.setPresentationAttributes(iconLargeAttributes);
         iconLargeAttributes.setName("pictureLarge");
         iconLargeAttributes.setFriendlyName("StaticAssetCustomPersistenceHandler_Preview");
-        iconLargeAttributes.setGroup("Preview");
+        iconLargeAttributes.setGroup("StaticAssetCustomPersistenceHandler_Preview");
         iconLargeAttributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         iconLargeAttributes.setProminent(false);
         iconLargeAttributes.setBroadleafEnumeration("");
@@ -522,7 +522,7 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
         fieldMetadata.setPresentationAttributes(attributes);
         attributes.setName(name);
         attributes.setFriendlyName(name);
-        attributes.setGroup("Upload");
+        attributes.setGroup("StaticAssetCustomPersistenceHandler_Upload");
         attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         attributes.setProminent(false);
         attributes.setBroadleafEnumeration("");
