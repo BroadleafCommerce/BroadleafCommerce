@@ -116,7 +116,7 @@ public class ProductImpl implements Product {
     protected Long id;
 
     /** The name. */
-    @Column(name = "NAME", nullable=false)
+    @Column(name = "NAME")
     @SearchableProperty(name="productName")
     @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "ProductImpl_Product_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
@@ -255,6 +255,11 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
      */
     public String getName() {
+        if (name == null) {
+            if (getDefaultSku() != null) {
+                return getDefaultSku().getName();
+            }
+        }
         return name;
     }
 
@@ -272,6 +277,11 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getDescription()
      */
     public String getDescription() {
+        if (description == null) {
+            if (getDefaultSku() != null) {
+                return getDefaultSku().getDescription();
+            }
+        }
         return description;
     }
 
@@ -290,6 +300,11 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getLongDescription()
      */
     public String getLongDescription() {
+        if (longDescription == null) {
+            if (getDefaultSku() != null) {
+                return getDefaultSku().getLongDescription();
+            }
+        }
         return longDescription;
     }
 
