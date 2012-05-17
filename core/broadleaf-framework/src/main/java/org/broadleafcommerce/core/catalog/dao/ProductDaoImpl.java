@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.common.time.SystemTime;
@@ -46,6 +47,8 @@ public class ProductDaoImpl implements ProductDao {
 
     protected Long currentDateResolution = 10000L;
     private Date currentDate = SystemTime.asDate();
+
+    private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
 
     @Override
     public Product save(Product product) {
@@ -79,7 +82,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
     	Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
+    	synchronized(DATE_LOCK) {
 	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
 	    		this.currentDate = new Date(currentDate.getTime());
 	    		myDate = currentDate;
@@ -100,7 +103,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate, int limit, int offset) {
         Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-        synchronized(this) {
+        synchronized(DATE_LOCK) {
             if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
                 this.currentDate = new Date(currentDate.getTime());
                 myDate = currentDate;
@@ -157,7 +160,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readActiveProductsBySku(Long skuId, Date currentDate) {
     	Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
+    	synchronized(DATE_LOCK) {
 	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
 	    		this.currentDate = new Date(currentDate.getTime());
 	    		myDate = currentDate;
@@ -176,7 +179,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate) {
     	Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(this) {
+    	synchronized(DATE_LOCK) {
 	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
 	    		this.currentDate = new Date(currentDate.getTime());
 	    		myDate = currentDate;
@@ -204,7 +207,26 @@ public class ProductDaoImpl implements ProductDao {
         return (Product) entityConfiguration.createEntityInstance(productType.getType());
     }
 
-	public Long getCurrentDateResolution() {
+    @Override
+    public List<ProductBundle> readAutomaticProductBundles() {
+        Date myDate;
+        Long myCurrentDateResolution = currentDateResolution;
+       	synchronized(DATE_LOCK) {
+   	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+   	    		this.currentDate = new Date(currentDate.getTime());
+   	    		myDate = currentDate;
+   	    	} else {
+   	    		myDate = this.currentDate;
+   	    	}
+       	}
+        TypedQuery<ProductBundle> query = em.createNamedQuery("BC_READ_AUTOMATIC_PRODUCT_BUNDLES", ProductBundle.class);
+        query.setParameter("currentDate", myDate);
+        query.setParameter("autoBundle", Boolean.TRUE);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+    }
+
+    public Long getCurrentDateResolution() {
 		return currentDateResolution;
 	}
 

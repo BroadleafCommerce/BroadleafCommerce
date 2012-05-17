@@ -3,6 +3,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.money.Money;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -128,5 +129,24 @@ public interface ProductBundle extends Product, Serializable {
     public List<SkuBundleItem> getSkuBundleItems();
 
     public void setSkuBundleItems(List<SkuBundleItem> bundleItems);
+
+    /**
+     * Used to determine the order for automatic bundling.
+     * @return
+     */
+    public Integer getPriority();
+
+    public void setPriority(Integer priority);
+
+    /**
+     * Calculates the potential savings by summing up the retail prices of the
+     * contained items and comparing to the actual bundle prices.
+     *
+     * Used to determine the order for automatic bundling in case items might
+     * qualify for multiple bundles.
+     *
+     * @return
+     */
+    public BigDecimal getPotentialSavings();
 
 }

@@ -44,10 +44,6 @@ public interface SkuBundleItem extends Serializable {
 
     public Money getRetailPrice();
 
-    public Product getProduct();
-
-    public void setProduct(Product product);
-
     public Sku getSku();
 
     public void setSku(Sku sku);

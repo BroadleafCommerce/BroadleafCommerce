@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -129,7 +130,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                 discreteOrderItem.removeAllCandidateItemOffers();
             }
         } else {
-            removeAllCandidateItemOffers();
+            super.removeAllCandidateItemOffers();
         }
     }
 
@@ -142,7 +143,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             }
             return removedAdjustmentCount;
         } else {
-            return removeAllAdjustments();
+            return super.removeAllAdjustments();
         }
     }
 
@@ -281,14 +282,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @Override
     public boolean updatePrices() {
         boolean updated = false;
-        if (shouldSumItems()) {
-            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                if (discreteOrderItem.updatePrices()){
-                    updated = true;
-                }
-            }
-        } else {
 
+        // Only need to update prices if we are not summing the contained items to determine
+        // the price.
+        if (! shouldSumItems()) {
             if (getSku() != null && !getSku().getRetailPrice().equals(getRetailPrice())) {
                 setBaseRetailPrice(getSku().getRetailPrice());
                 setRetailPrice(getSku().getRetailPrice());
@@ -327,6 +324,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         } else if (!name.equals(other.name))
             return false;
         return true;
+    }
+
+    public Product getProduct() {
+        return getProductBundle();
     }
 
     @Override

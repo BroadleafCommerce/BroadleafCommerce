@@ -36,6 +36,15 @@
 		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)</query>
 	</named-query>
 
+    <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
+   		<query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundle productBundle
+   		WHERE productBundle.autoBundle = :autoBundle
+   		AND productBundle.activeStartDate &lt;= :currentDate
+   		AND (productBundle.activeEndDate &gt; :currentDate OR productBundle.activeEndDate = null)</query>
+   	</named-query>
+
+
+
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
 		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId

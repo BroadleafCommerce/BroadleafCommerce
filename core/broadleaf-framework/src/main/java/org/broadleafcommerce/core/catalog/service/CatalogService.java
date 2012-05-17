@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
@@ -46,6 +47,19 @@ public interface CatalogService {
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
 
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
+
+    /**
+     * Find all ProductBundles whose automatic attribute is set to true.
+     *
+     * Automatic product bundles are collections of products that can receive special
+     * pricing.  With automatic product bundles, if a customer adds all of the
+     * components of the bundle individually to the cart, they will automatically get
+     * assembeled into a bundle.
+     *
+     * @return
+     */
+    public List<ProductBundle> findAutomaticProductBundles();
+
 
     public Category saveCategory(Category category);
     

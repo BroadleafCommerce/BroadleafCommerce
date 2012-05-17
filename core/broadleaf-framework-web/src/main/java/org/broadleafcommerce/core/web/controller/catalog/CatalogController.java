@@ -282,7 +282,7 @@ public class CatalogController {
         wishlistRequest.setAddCategoryId(currentCategory.getId());
         wishlistRequest.setAddProductId(product.getId());
         wishlistRequest.setQuantity(1);
-        wishlistRequest.setAddSkuId(((ProductSku) product).getSku().getId());
+        wishlistRequest.setAddSkuId(product.getDefaultSku().getId());
         model.addAttribute("wishlistRequest", wishlistRequest);
 
         return (productPosition !=0);

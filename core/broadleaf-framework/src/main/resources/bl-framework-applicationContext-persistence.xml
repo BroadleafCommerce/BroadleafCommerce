@@ -115,6 +115,11 @@
 		<aop:pointcut id="blTargetContentServiceOperation" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.remove*(..))"/>
 		<aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation"/>
 	</aop:config>
+
+    <aop:config>
+   		<aop:pointcut id="blPricingServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.PricingService.executePricing(..))"/>
+   		<aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPricingServiceOperation"/>
+   	</aop:config>
 	
 	<aop:config>
 		<aop:pointcut id="blTargetContentServiceOperation2" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.update*(..))"/>
