@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javassist.expr.NewArray;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -233,6 +235,10 @@ public class ProductImpl implements Product {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
+    
+    @OneToMany(mappedBy = "product", targetEntity = ProductOptionImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
     /*
      * (non-Javadoc)
@@ -564,6 +570,16 @@ public class ProductImpl implements Product {
 	public void setProductAttributes(List<ProductAttribute> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
+	
+    @Override
+    public List<ProductOption> getProductOptions() {
+        return productOptions;
+    }
+
+    @Override
+    public void setProductOptions(List<ProductOption> productOptions) {
+        this.productOptions = productOptions;
+    }
 
 	@Override
     public int hashCode() {

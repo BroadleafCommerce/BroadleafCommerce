@@ -88,11 +88,14 @@ public interface ProductOption extends Serializable {
      * Sets the option value.  (e.g. "Red")
      * @param label
      */
-    public void setOptionLabel(String label);
+    public void setOptionLabel(String optionLabel);
+    
+    public Boolean getRequired();
+    
+    public void setRequired(Boolean required);
+    
+    public Product getProduct();
 
-
-
-
-
+    public void setProduct(Product product);
 
 }
