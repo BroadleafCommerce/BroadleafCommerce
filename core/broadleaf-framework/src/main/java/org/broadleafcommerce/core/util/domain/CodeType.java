@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.util.domain;
 
 import java.io.Serializable;
 
+@Deprecated
 public interface CodeType extends Serializable {
 
     public void setId(Long id);

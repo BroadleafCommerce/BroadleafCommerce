@@ -33,6 +33,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "BLC_CODE_TYPES")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Deprecated
 public class CodeTypeImpl implements CodeType {
 
     public static final long serialVersionUID = 1L;

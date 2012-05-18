@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.core.util.domain.CodeType;
 
+@Deprecated
 public interface CodeTypeService {
 
     public List<CodeType> findAllCodeTypes();

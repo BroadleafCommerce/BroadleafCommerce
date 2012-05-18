@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.util.domain.CodeType;
 import org.springframework.stereotype.Service;
 
 @Service("blCodeTypeService")
+@Deprecated
 public class CodeTypeServiceImpl implements CodeTypeService {
 
     @Resource(name="blCodeTypeDao")
