@@ -166,9 +166,9 @@ public class ProductImpl implements Product {
     protected boolean isMachineSortable = true;
     
     @OneToOne(optional = true, targetEntity = SkuImpl.class)
-    @JoinColumn(name = "SKU_ID")
+    @JoinColumn(name = "DEFAULT_SKU_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected Sku defaultSku;
+    protected Sku sku;
     
     /** The skus. */
     @Transient
@@ -400,11 +400,11 @@ public class ProductImpl implements Product {
     }
 
     public Sku getDefaultSku() {
-		return defaultSku;
+		return sku;
 	}
 
 	public void setDefaultSku(Sku defaultSku) {
-		this.defaultSku = defaultSku;
+		this.sku = defaultSku;
 	}
 
 	/**
