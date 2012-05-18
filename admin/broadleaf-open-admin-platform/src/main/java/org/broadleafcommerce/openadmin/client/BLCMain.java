@@ -30,6 +30,7 @@ import com.smartgwt.client.util.KeyCallback;
 import com.smartgwt.client.util.Page;
 import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
 import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
@@ -76,6 +77,7 @@ public class BLCMain implements EntryPoint {
 	public static String currentModuleKey;
     public static String currentPageKey;
     public static String currentViewKey;
+    public static PostLaunch postLaunch = null;
 	
 	public static final boolean DEBUG = true;
 	
@@ -201,6 +203,9 @@ public class BLCMain implements EntryPoint {
                             MASTERVIEW.draw();
                             AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
                             modules.get(currentModuleKey).postDraw();
+                        }
+                        if (postLaunch != null) {
+                            postLaunch.onLaunched();
                         }
                     }
                 });
