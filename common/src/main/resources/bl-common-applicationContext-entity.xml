@@ -8,4 +8,6 @@
 	<bean id="org.broadleafcommerce.common.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.common.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.common.email.domain.EmailTarget" class="org.broadleafcommerce.common.email.domain.EmailTargetImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl" scope="prototype"/>
+
 </beans>
