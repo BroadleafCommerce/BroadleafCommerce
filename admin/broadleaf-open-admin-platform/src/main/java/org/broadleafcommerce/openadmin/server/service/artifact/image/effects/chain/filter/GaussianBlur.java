@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
@@ -96,7 +97,7 @@ public class GaussianBlur extends BaseFilter {
         //do nothing
     }
 
-	public GaussianBlur(int kernelSize, int numOfPasses) {
+	public GaussianBlur(int kernelSize, int numOfPasses, RenderingHints hints) {
 		this.kernelSize = kernelSize;
 		this.numOfPasses = numOfPasses;
 	}
@@ -125,7 +126,7 @@ public class GaussianBlur extends BaseFilter {
         String numOfPassesApplyFactor = parameterMap.get(key + "-num-passes-apply-factor");
         numOfPasses.setApplyFactor(numOfPassesApplyFactor == null ? false : Boolean.valueOf(numOfPassesApplyFactor));
         numOfPasses.setName("num-passes");
-        numOfPasses.setType(ParameterTypeEnum.FLOAT.toString());
+        numOfPasses.setType(ParameterTypeEnum.INT.toString());
         numOfPasses.setValue(parameterMap.get(key + "-num-passes-amount"));
 
         operation.setParameters(new UnmarshalledParameter[]{kernelSize, numOfPasses});
