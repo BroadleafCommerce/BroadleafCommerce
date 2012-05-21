@@ -75,6 +75,7 @@ public interface OrderService {
      * @return
      * @throws PricingException
      */
+    @Deprecated
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException;
 
     /**
@@ -86,6 +87,7 @@ public interface OrderService {
      * @return
      * @throws PricingException
      */
+    @Deprecated
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
 
@@ -205,6 +207,7 @@ public interface OrderService {
      * @return
      * @throws PricingException
      */
+    @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
 
     /**
@@ -219,6 +222,7 @@ public interface OrderService {
      * @return
      * @throws PricingException
      */
+    @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> orderItemAttributes) throws PricingException;
 
     /**
@@ -233,6 +237,7 @@ public interface OrderService {
      * @return
      * @throws PricingException
      */
+    @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException;
 
     /**
@@ -248,6 +253,7 @@ public interface OrderService {
      * @return
      * @throws PricingException
      */
+    @Deprecated
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> orderItemAttributes) throws PricingException;
 
 
