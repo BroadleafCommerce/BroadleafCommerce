@@ -57,13 +57,6 @@ public class UnsharpMask extends BaseFilter {
         String factor = parameterMap.get(key + "-factor");
         operation.setFactor(factor==null?null:Double.valueOf(factor));
 
-        UnmarshalledParameter radius = new UnmarshalledParameter();
-        String radiusApplyFactor = parameterMap.get(key + "-radius-apply-factor");
-        radius.setApplyFactor(radiusApplyFactor == null ? false : Boolean.valueOf(radiusApplyFactor));
-        radius.setName("radius");
-        radius.setType(ParameterTypeEnum.INT.toString());
-        radius.setValue(parameterMap.get(key + "-radius-amount"));
-
         UnmarshalledParameter amount = new UnmarshalledParameter();
         String amountApplyFactor = parameterMap.get(key + "-value-apply-factor");
         amount.setApplyFactor(amountApplyFactor == null ? false : Boolean.valueOf(amountApplyFactor));
@@ -71,7 +64,14 @@ public class UnsharpMask extends BaseFilter {
         amount.setType(ParameterTypeEnum.FLOAT.toString());
         amount.setValue(parameterMap.get(key + "-value-amount"));
 
-        operation.setParameters(new UnmarshalledParameter[]{radius, amount});
+        UnmarshalledParameter radius = new UnmarshalledParameter();
+        String radiusApplyFactor = parameterMap.get(key + "-radius-apply-factor");
+        radius.setApplyFactor(radiusApplyFactor == null ? false : Boolean.valueOf(radiusApplyFactor));
+        radius.setName("radius");
+        radius.setType(ParameterTypeEnum.INT.toString());
+        radius.setValue(parameterMap.get(key + "-radius-amount"));
+
+        operation.setParameters(new UnmarshalledParameter[]{amount, radius});
         return operation;
     }
 
@@ -119,7 +119,7 @@ public class UnsharpMask extends BaseFilter {
         }
         
         int[] originalPixels = ImageConverter.getPixels(src);
-		GaussianBlur blur = new GaussianBlur(radius, 1);
+		GaussianBlur blur = new GaussianBlur(radius, 1, hints);
 		dst = blur.filter(src, null);
 		int[] uMaskBlur = ImageConverter.getPixels(dst);
 		int imageWidth = dst.getWidth();
