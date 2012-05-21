@@ -16,17 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
-
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class UnsharpMask extends BaseFilter {
 
@@ -47,31 +47,32 @@ public class UnsharpMask extends BaseFilter {
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.GAUSSIANBLUR.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
-            Operation operation = new Operation();
-            operation.setName(key);
-            String factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
-            UnmarshalledParameter radius = new UnmarshalledParameter();
-            String radiusApplyFactor = parameterMap.get(key + "-radius-apply-factor");
-            radius.setApplyFactor(radiusApplyFactor == null ? false : Boolean.valueOf(radiusApplyFactor));
-            radius.setName("radius");
-            radius.setType(ParameterTypeEnum.INT.toString());
-            radius.setValue(parameterMap.get(key + "-radius-amount"));
-
-            UnmarshalledParameter amount = new UnmarshalledParameter();
-            String amountApplyFactor = parameterMap.get(key + "-value-apply-factor");
-            amount.setApplyFactor(amountApplyFactor == null ? false : Boolean.valueOf(amountApplyFactor));
-            amount.setName("value");
-            amount.setType(ParameterTypeEnum.FLOAT.toString());
-            amount.setValue(parameterMap.get(key + "-value-amount"));
-
-            operation.setParameters(new UnmarshalledParameter[]{radius, amount});
-            return operation;
+        if (!containsMyFilterParams(key, parameterMap)) {
+            return null;
         }
 
-        return null;
+        Operation operation = new Operation();
+        operation.setName(key);
+        String factor = parameterMap.get(key + "-factor");
+        operation.setFactor(factor==null?null:Double.valueOf(factor));
+
+        UnmarshalledParameter radius = new UnmarshalledParameter();
+        String radiusApplyFactor = parameterMap.get(key + "-radius-apply-factor");
+        radius.setApplyFactor(radiusApplyFactor == null ? false : Boolean.valueOf(radiusApplyFactor));
+        radius.setName("radius");
+        radius.setType(ParameterTypeEnum.INT.toString());
+        radius.setValue(parameterMap.get(key + "-radius-amount"));
+
+        UnmarshalledParameter amount = new UnmarshalledParameter();
+        String amountApplyFactor = parameterMap.get(key + "-value-apply-factor");
+        amount.setApplyFactor(amountApplyFactor == null ? false : Boolean.valueOf(amountApplyFactor));
+        amount.setName("value");
+        amount.setType(ParameterTypeEnum.FLOAT.toString());
+        amount.setValue(parameterMap.get(key + "-value-amount"));
+
+        operation.setParameters(new UnmarshalledParameter[]{radius, amount});
+        return operation;
     }
 
 	/* (non-Javadoc)

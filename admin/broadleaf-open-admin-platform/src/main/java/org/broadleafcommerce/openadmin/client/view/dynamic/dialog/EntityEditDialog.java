@@ -221,7 +221,7 @@ public class EntityEditDialog extends Window {
                 previewImg.setImageHeight(60);
                 previewImg.setImageWidth(60);
             } else {
-                srcPath = url + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true";
+                srcPath = url + "?largeAdminThumbnail";
             }
             previewImg.setSrc(srcPath);
         } else {

@@ -124,6 +124,39 @@
         <property name="staticAssetEnvironmentSecureUrlPrefix" value="${asset.server.url.prefix.secure}"/>
 	</bean>
 
+    <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
+        <property name="namedOperationComponents">
+            <list>
+                <ref bean="blStaticMapNamedOperationComponent"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent">
+        <property name="namedOperations">
+            <map>
+                <entry key="smallAdminThumbnail">
+                    <map>
+                        <entry key="resize-width-amount" value="20"/>
+                        <entry key="resize-height-amount" value="20"/>
+                        <entry key="resize-high-quality" value="false"/>
+                        <entry key="resize-maintain-aspect-ratio" value="true"/>
+                        <entry key="resize-reduce-only" value="true"/>
+                    </map>
+                </entry>
+                <entry key="largeAdminThumbnail">
+                    <map>
+                        <entry key="resize-width-amount" value="60"/>
+                        <entry key="resize-height-amount" value="60"/>
+                        <entry key="resize-high-quality" value="false"/>
+                        <entry key="resize-maintain-aspect-ratio" value="true"/>
+                        <entry key="resize-reduce-only" value="true"/>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
     <bean id="blPageURLProcessor" class="org.broadleafcommerce.cms.web.PageURLProcessor"/>
 
     <bean id="blProcessURLFilter" class="org.broadleafcommerce.cms.web.BroadleafProcessURLFilter">
