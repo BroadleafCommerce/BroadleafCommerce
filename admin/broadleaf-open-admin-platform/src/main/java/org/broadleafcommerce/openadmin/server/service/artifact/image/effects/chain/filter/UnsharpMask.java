@@ -46,7 +46,7 @@ public class UnsharpMask extends BaseFilter {
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
-        String key = FilterTypeEnum.GAUSSIANBLUR.toString().toLowerCase();
+        String key = FilterTypeEnum.UNSHARPMASK.toString().toLowerCase();
 
         if (!containsMyFilterParams(key, parameterMap)) {
             return null;
