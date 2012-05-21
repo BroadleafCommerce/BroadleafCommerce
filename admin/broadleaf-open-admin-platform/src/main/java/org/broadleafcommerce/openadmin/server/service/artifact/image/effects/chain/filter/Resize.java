@@ -16,17 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
-
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class Resize extends BaseFilter {
 
@@ -55,46 +52,47 @@ public class Resize extends BaseFilter {
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.RESIZE.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
-            Operation operation = new Operation();
-            operation.setName(key);
-            String factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
-            UnmarshalledParameter targetWidth = new UnmarshalledParameter();
-            String targetWidthApplyFactor = parameterMap.get(key + "-width-apply-factor");
-            targetWidth.setApplyFactor(targetWidthApplyFactor == null ? false : Boolean.valueOf(targetWidthApplyFactor));
-            targetWidth.setName("target-width");
-            targetWidth.setType(ParameterTypeEnum.INT.toString());
-            targetWidth.setValue(parameterMap.get(key + "-width-amount"));
-
-            UnmarshalledParameter targetHeight = new UnmarshalledParameter();
-            String targetHeightApplyFactor = parameterMap.get(key + "-height-apply-factor");
-            targetHeight.setApplyFactor(targetHeightApplyFactor == null ? false : Boolean.valueOf(targetHeightApplyFactor));
-            targetHeight.setName("target-height");
-            targetHeight.setType(ParameterTypeEnum.INT.toString());
-            targetHeight.setValue(parameterMap.get(key + "-height-amount"));
-
-            UnmarshalledParameter highQuality = new UnmarshalledParameter();
-            highQuality.setName("high-quality");
-            highQuality.setType(ParameterTypeEnum.BOOLEAN.toString());
-            highQuality.setValue(parameterMap.get(key + "-high-quality")==null?"false":parameterMap.get(key + "-high-quality"));
-
-            UnmarshalledParameter maintainAspectRatio = new UnmarshalledParameter();
-            maintainAspectRatio.setName("maintain-aspect-ratio");
-            maintainAspectRatio.setType(ParameterTypeEnum.BOOLEAN.toString());
-            maintainAspectRatio.setValue(parameterMap.get(key + "-maintain-aspect-ratio") == null ? "false" : parameterMap.get(key + "-maintain-aspect-ratio"));
-
-            UnmarshalledParameter reduceOnly = new UnmarshalledParameter();
-            reduceOnly.setName("reduce-only");
-            reduceOnly.setType(ParameterTypeEnum.BOOLEAN.toString());
-            reduceOnly.setValue(parameterMap.get(key + "-reduce-only") == null ? "false" : parameterMap.get(key + "-reduce-only"));
-
-            operation.setParameters(new UnmarshalledParameter[]{targetWidth, targetHeight, highQuality, maintainAspectRatio, reduceOnly});
-            return operation;
+        if (!containsMyFilterParams(key, parameterMap)) {
+            return null;
         }
 
-        return null;
+        Operation operation = new Operation();
+        operation.setName(key);
+        String factor = parameterMap.get(key + "-factor");
+        operation.setFactor(factor==null?null:Double.valueOf(factor));
+
+        UnmarshalledParameter targetWidth = new UnmarshalledParameter();
+        String targetWidthApplyFactor = parameterMap.get(key + "-width-apply-factor");
+        targetWidth.setApplyFactor(targetWidthApplyFactor == null ? false : Boolean.valueOf(targetWidthApplyFactor));
+        targetWidth.setName("target-width");
+        targetWidth.setType(ParameterTypeEnum.INT.toString());
+        targetWidth.setValue(parameterMap.get(key + "-width-amount"));
+
+        UnmarshalledParameter targetHeight = new UnmarshalledParameter();
+        String targetHeightApplyFactor = parameterMap.get(key + "-height-apply-factor");
+        targetHeight.setApplyFactor(targetHeightApplyFactor == null ? false : Boolean.valueOf(targetHeightApplyFactor));
+        targetHeight.setName("target-height");
+        targetHeight.setType(ParameterTypeEnum.INT.toString());
+        targetHeight.setValue(parameterMap.get(key + "-height-amount"));
+
+        UnmarshalledParameter highQuality = new UnmarshalledParameter();
+        highQuality.setName("high-quality");
+        highQuality.setType(ParameterTypeEnum.BOOLEAN.toString());
+        highQuality.setValue(parameterMap.get(key + "-high-quality")==null?"false":parameterMap.get(key + "-high-quality"));
+
+        UnmarshalledParameter maintainAspectRatio = new UnmarshalledParameter();
+        maintainAspectRatio.setName("maintain-aspect-ratio");
+        maintainAspectRatio.setType(ParameterTypeEnum.BOOLEAN.toString());
+        maintainAspectRatio.setValue(parameterMap.get(key + "-maintain-aspect-ratio") == null ? "false" : parameterMap.get(key + "-maintain-aspect-ratio"));
+
+        UnmarshalledParameter reduceOnly = new UnmarshalledParameter();
+        reduceOnly.setName("reduce-only");
+        reduceOnly.setType(ParameterTypeEnum.BOOLEAN.toString());
+        reduceOnly.setValue(parameterMap.get(key + "-reduce-only") == null ? "false" : parameterMap.get(key + "-reduce-only"));
+
+        operation.setParameters(new UnmarshalledParameter[]{targetWidth, targetHeight, highQuality, maintainAspectRatio, reduceOnly});
+        return operation;
     }
 
 	/* (non-Javadoc)

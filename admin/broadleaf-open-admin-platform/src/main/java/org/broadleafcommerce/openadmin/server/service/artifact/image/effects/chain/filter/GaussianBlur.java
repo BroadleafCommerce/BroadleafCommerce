@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
@@ -28,6 +24,10 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class GaussianBlur extends BaseFilter {
 
@@ -104,31 +104,32 @@ public class GaussianBlur extends BaseFilter {
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.GAUSSIANBLUR.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
-            Operation operation = new Operation();
-            operation.setName(key);
-            String factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
-            UnmarshalledParameter kernelSize = new UnmarshalledParameter();
-            String kernelSizeApplyFactor = parameterMap.get(key + "-kernel-size-apply-factor");
-            kernelSize.setApplyFactor(kernelSizeApplyFactor == null ? false : Boolean.valueOf(kernelSizeApplyFactor));
-            kernelSize.setName("kernel-size");
-            kernelSize.setType(ParameterTypeEnum.INT.toString());
-            kernelSize.setValue(parameterMap.get(key + "-kernel-size-amount"));
-
-            UnmarshalledParameter numOfPasses = new UnmarshalledParameter();
-            String numOfPassesApplyFactor = parameterMap.get(key + "-num-passes-apply-factor");
-            numOfPasses.setApplyFactor(numOfPassesApplyFactor == null ? false : Boolean.valueOf(numOfPassesApplyFactor));
-            numOfPasses.setName("num-passes");
-            numOfPasses.setType(ParameterTypeEnum.FLOAT.toString());
-            numOfPasses.setValue(parameterMap.get(key + "-num-passes-amount"));
-
-            operation.setParameters(new UnmarshalledParameter[]{kernelSize, numOfPasses});
-            return operation;
+        if (!containsMyFilterParams(key, parameterMap)) {
+            return null;
         }
 
-        return null;
+        Operation operation = new Operation();
+        operation.setName(key);
+        String factor = parameterMap.get(key + "-factor");
+        operation.setFactor(factor==null?null:Double.valueOf(factor));
+
+        UnmarshalledParameter kernelSize = new UnmarshalledParameter();
+        String kernelSizeApplyFactor = parameterMap.get(key + "-kernel-size-apply-factor");
+        kernelSize.setApplyFactor(kernelSizeApplyFactor == null ? false : Boolean.valueOf(kernelSizeApplyFactor));
+        kernelSize.setName("kernel-size");
+        kernelSize.setType(ParameterTypeEnum.INT.toString());
+        kernelSize.setValue(parameterMap.get(key + "-kernel-size-amount"));
+
+        UnmarshalledParameter numOfPasses = new UnmarshalledParameter();
+        String numOfPassesApplyFactor = parameterMap.get(key + "-num-passes-apply-factor");
+        numOfPasses.setApplyFactor(numOfPassesApplyFactor == null ? false : Boolean.valueOf(numOfPassesApplyFactor));
+        numOfPasses.setName("num-passes");
+        numOfPasses.setType(ParameterTypeEnum.FLOAT.toString());
+        numOfPasses.setValue(parameterMap.get(key + "-num-passes-amount"));
+
+        operation.setParameters(new UnmarshalledParameter[]{kernelSize, numOfPasses});
+        return operation;
     }
 
 	public BufferedImage filter(BufferedImage src, BufferedImage dst) {

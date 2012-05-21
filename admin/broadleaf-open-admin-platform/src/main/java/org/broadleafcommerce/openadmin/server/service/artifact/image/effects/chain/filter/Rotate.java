@@ -16,18 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
-
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class Rotate extends BaseFilter {
 
@@ -46,24 +45,25 @@ public class Rotate extends BaseFilter {
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.ROTATE.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
-            Operation operation = new Operation();
-            operation.setName(key);
-            String factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
-            UnmarshalledParameter rotate = new UnmarshalledParameter();
-            String rotateApplyFactor = parameterMap.get(key + "-rotate-apply-factor");
-            rotate.setApplyFactor(rotateApplyFactor == null ? false : Boolean.valueOf(rotateApplyFactor));
-            rotate.setName("rotate");
-            rotate.setType(ParameterTypeEnum.DOUBLE.toString());
-            rotate.setValue(parameterMap.get(key + "-rotate-amount"));
-
-            operation.setParameters(new UnmarshalledParameter[]{rotate});
-            return operation;
+        if (!containsMyFilterParams(key, parameterMap)) {
+            return null;
         }
 
-        return null;
+        Operation operation = new Operation();
+        operation.setName(key);
+        String factor = parameterMap.get(key + "-factor");
+        operation.setFactor(factor==null?null:Double.valueOf(factor));
+
+        UnmarshalledParameter rotate = new UnmarshalledParameter();
+        String rotateApplyFactor = parameterMap.get(key + "-rotate-apply-factor");
+        rotate.setApplyFactor(rotateApplyFactor == null ? false : Boolean.valueOf(rotateApplyFactor));
+        rotate.setName("rotate");
+        rotate.setType(ParameterTypeEnum.DOUBLE.toString());
+        rotate.setValue(parameterMap.get(key + "-rotate-amount"));
+
+        operation.setParameters(new UnmarshalledParameter[]{rotate});
+        return operation;
     }
 
 	/* (non-Javadoc)

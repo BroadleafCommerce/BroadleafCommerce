@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
@@ -27,6 +23,10 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class AlterHSB extends BaseFilter {
 
@@ -49,38 +49,38 @@ public class AlterHSB extends BaseFilter {
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.ALTERHSB.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
-            Operation operation = new Operation();
-            operation.setName(key);
-            String factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor));
-
-            UnmarshalledParameter hue = new UnmarshalledParameter();
-            String hueApplyFactor = parameterMap.get(key + "-hue-apply-factor");
-            hue.setApplyFactor(hueApplyFactor==null?false:Boolean.valueOf(hueApplyFactor));
-            hue.setName("hue");
-            hue.setType(ParameterTypeEnum.FLOAT.toString());
-            hue.setValue(parameterMap.get(key + "-hue-amount"));
-
-            UnmarshalledParameter saturation = new UnmarshalledParameter();
-            String saturationApplyFactor = parameterMap.get(key + "-saturation-apply-factor");
-            saturation.setApplyFactor(saturationApplyFactor == null ? false : Boolean.valueOf(saturationApplyFactor));
-            saturation.setName("saturation");
-            saturation.setType(ParameterTypeEnum.FLOAT.toString());
-            saturation.setValue(parameterMap.get(key + "-saturation-amount"));
-
-            UnmarshalledParameter brightness = new UnmarshalledParameter();
-            String brightnessApplyFactor = parameterMap.get(key + "-brightness-apply-factor");
-            brightness.setApplyFactor(brightnessApplyFactor == null ? false : Boolean.valueOf(brightnessApplyFactor));
-            brightness.setName("brightness");
-            brightness.setType(ParameterTypeEnum.FLOAT.toString());
-            brightness.setValue(parameterMap.get(key + "-brightness-amount"));
-
-            operation.setParameters(new UnmarshalledParameter[]{hue, saturation, brightness});
-            return operation;
+        if (!containsMyFilterParams(key, parameterMap)) {
+            return null;
         }
 
-        return null;
+        Operation operation = new Operation();
+        operation.setName(key);
+        String factor = parameterMap.get(key + "-factor");
+        operation.setFactor(factor==null?null:Double.valueOf(factor));
+
+        UnmarshalledParameter hue = new UnmarshalledParameter();
+        String hueApplyFactor = parameterMap.get(key + "-hue-apply-factor");
+        hue.setApplyFactor(hueApplyFactor==null?false:Boolean.valueOf(hueApplyFactor));
+        hue.setName("hue");
+        hue.setType(ParameterTypeEnum.FLOAT.toString());
+        hue.setValue(parameterMap.get(key + "-hue-amount"));
+
+        UnmarshalledParameter saturation = new UnmarshalledParameter();
+        String saturationApplyFactor = parameterMap.get(key + "-saturation-apply-factor");
+        saturation.setApplyFactor(saturationApplyFactor == null ? false : Boolean.valueOf(saturationApplyFactor));
+        saturation.setName("saturation");
+        saturation.setType(ParameterTypeEnum.FLOAT.toString());
+        saturation.setValue(parameterMap.get(key + "-saturation-amount"));
+
+        UnmarshalledParameter brightness = new UnmarshalledParameter();
+        String brightnessApplyFactor = parameterMap.get(key + "-brightness-apply-factor");
+        brightness.setApplyFactor(brightnessApplyFactor == null ? false : Boolean.valueOf(brightnessApplyFactor));
+        brightness.setName("brightness");
+        brightness.setType(ParameterTypeEnum.FLOAT.toString());
+        brightness.setValue(parameterMap.get(key + "-brightness-amount"));
+
+        operation.setParameters(new UnmarshalledParameter[]{hue, saturation, brightness});
+        return operation;
     }
 
 	/* (non-Javadoc)
