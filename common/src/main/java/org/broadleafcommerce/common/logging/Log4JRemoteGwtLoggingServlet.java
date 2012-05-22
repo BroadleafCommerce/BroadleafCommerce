@@ -9,8 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Converts a java util logging logRecord into a commmons logging event 
- */
+* Converts a java util logging logRecord into a commmons logging event 
+*/
 public class Log4JRemoteGwtLoggingServlet extends RemoteServiceServlet
 		implements RemoteLoggingService {
 
@@ -27,16 +27,15 @@ public class Log4JRemoteGwtLoggingServlet extends RemoteServiceServlet
         String message;
         message=getThreadLocalRequest().getRemoteAddr()+":"+record.getMessage();
         if (Level.INFO.equals(level)) {
-        	
-            LOG.info(message);
+            LOG.info(message,record.getThrown());
         } else if (Level.SEVERE.equals(level)) {
-        	LOG.error(message);
+        	LOG.error(message,record.getThrown());
         } else if (Level.WARNING.equals(level)) {
-        	LOG.warn(message);
+        	LOG.warn(message,record.getThrown());
         } else if (Level.FINE.equals(level)) {
-        	LOG.debug(message);
+        	LOG.debug(message,record.getThrown());
         }else   {
-        	LOG.error(message);
+        	LOG.error(message,record.getThrown());
         }
 
         return null;
