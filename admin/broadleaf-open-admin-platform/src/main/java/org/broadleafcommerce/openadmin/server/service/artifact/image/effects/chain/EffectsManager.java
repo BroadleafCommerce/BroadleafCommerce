@@ -112,7 +112,7 @@ public class EffectsManager {
 	 * @param filters the filters to set
 	 */
 	public void setFilters(Map<String, OperationBuilder> filters) {
-		this.filters = filters;
+		this.filters.putAll(filters);
 	}
 
 	/**
