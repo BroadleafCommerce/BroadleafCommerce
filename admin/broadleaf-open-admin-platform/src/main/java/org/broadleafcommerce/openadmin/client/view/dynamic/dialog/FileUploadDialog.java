@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -102,6 +103,7 @@ public class FileUploadDialog extends Window {
 
                                 if (errorJs != null) {
                                     SC.warn(errorJs.isString().stringValue());
+                                    java.util.logging.Logger.getLogger(getClass().toString()).warning(errorJs.isString().stringValue());;
                                 } else {
                                     Entity entity = new Entity();
                                     String type = entityJs.get("type").isString().stringValue();
@@ -126,6 +128,7 @@ public class FileUploadDialog extends Window {
                                 }
                             } catch (Exception e) {
                                 SC.warn(e.getMessage());
+                                java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
                             } finally {
                                 uploadProgressWindow.stopProgress();
                                 Timer timer = new Timer() {

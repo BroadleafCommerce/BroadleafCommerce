@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.client.presenter.promotion;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -25,6 +26,7 @@ import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+
 import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
@@ -125,12 +127,14 @@ public class OfferPresenterExtractor {
                             getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
                         } catch (IncompatibleMVELTranslationException e) {
                             SC.warn(e.getMessage());
+                            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
                         }
                     }
                 }, requestProperties);
             }
 		} catch (IncompatibleMVELTranslationException e) {
 			SC.warn(e.getMessage());
+			java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);;
 		}
 	}
 	

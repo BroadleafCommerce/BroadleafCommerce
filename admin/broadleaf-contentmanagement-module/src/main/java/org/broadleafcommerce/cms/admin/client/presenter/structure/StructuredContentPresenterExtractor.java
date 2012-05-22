@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -157,6 +158,7 @@ public class StructuredContentPresenterExtractor {
                                         getDisplay().getListDisplay().getGrid().selectRecord(getDisplay().getListDisplay().getGrid().getRecordIndex(presenter.currentStructuredContentRecord));
                                     } catch (IncompatibleMVELTranslationException e) {
                                         SC.warn(e.getMessage());
+                                        java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
                                     }
                                 }
                             }
@@ -166,6 +168,7 @@ public class StructuredContentPresenterExtractor {
             }, requestProperties);
 		} catch (IncompatibleMVELTranslationException e) {
 			SC.warn(e.getMessage());
+			java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,e.getMessage(),e);
 		}
 	}
 

@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * 
@@ -126,6 +127,7 @@ public class DynamicEntityDataSource extends AbstractDynamicDataSource {
 		}
         if (myModule == null) {
 			SC.warn("Unable to find a compatible data source module for the operation type: " + operationType);
+            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,"Unable to find a compatible data source module for the operation type: " + operationType);;
 			throw new RuntimeException("Unable to find a compatible data source module for the operation type: " + operationType);
 		}
         

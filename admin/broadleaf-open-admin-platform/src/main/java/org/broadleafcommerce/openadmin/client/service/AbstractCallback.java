@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.logging.Level;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -79,6 +80,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
             exception.getMessage().contains("XSRF token mismatch")
         ) {
             SC.logWarn("Retrieving admin user (AbstractCallback.onOtherException)...");
+        	java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,"Retrieving admin user (AbstractCallback.onOtherException)...",exception);
             AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
                 @Override
                 public void onSuccess(AdminUser result) {
@@ -92,9 +94,11 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
                             Window.open(builder.buildString(), "_self", null);
                         } else {
                             SC.logWarn("Admin user found. Reporting calback exception (AbstractCallback.onOtherException)...");
+                            java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user found. Reporting calback exception (AbstractCallback.onOtherException)...");;
                             reportException(msg, exception);
                             String errorMsg = exception.getMessage();
                             SC.warn(errorMsg);
+                            java.util.logging.Logger.getLogger(getClass().toString()).warning(errorMsg);;
                         }
                     }
                 }
@@ -103,6 +107,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
             reportException(msg, exception);
             String errorMsg = exception.getMessage();
             SC.warn(errorMsg);
+            java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,errorMsg,exception);
         }
     }
 
@@ -110,6 +115,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
     protected void onSecurityException(final ApplicationSecurityException exception) {
         final String msg = "Security Exception";
         SC.logWarn("Retrieving admin user (AbstractCallback.onSecurityException)...");
+        java.util.logging.Logger.getLogger(getClass().toString()).warning("Retrieving admin user (AbstractCallback.onSecurityException)...");;
         AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
             @Override
             public void onSuccess(AdminUser result) {
@@ -117,10 +123,13 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
                     logout(msg, exception);
                 } else {
                     SC.logWarn("Admin user found. Reporting calback exception (AbstractCallback.onSecurityException)...");
+                    java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user found. Reporting calback exception (AbstractCallback.onSecurityException)...");;
                     reportException(msg, exception);
                     //SC.warn("Your Profile doesn't have the Capability necessary to perform this task.");
+                    java.util.logging.Logger.getLogger(getClass().toString()).warning("Your Profile doesn't have the Capability necessary to perform this task.");;
                     String errorMsg = exception.getMessage();
                     SC.warn(errorMsg);
+                    java.util.logging.Logger.getLogger(getClass().toString()).warning(errorMsg);;
                 }
             }
         });
@@ -128,6 +137,7 @@ public abstract class AbstractCallback<T> extends SecuredAsyncCallback<T> {
 
     protected void logout(String msg, Throwable exception) {
         SC.logWarn("Admin user not found. Logging out (AbstractCallback.onSecurityException)...");
+        java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user not found. Logging out (AbstractCallback.onSecurityException)...");;
         reportException(msg, exception);
         UrlBuilder builder = Window.Location.createUrlBuilder();
         builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
