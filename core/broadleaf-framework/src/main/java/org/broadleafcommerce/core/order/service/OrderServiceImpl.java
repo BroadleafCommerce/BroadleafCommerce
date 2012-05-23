@@ -867,7 +867,7 @@ public class OrderServiceImpl implements OrderService {
             bundleOrderItem.setQuantity(orderItemRequestDTO.getQuantity());
             bundleOrderItem.setCategory(category);
             bundleOrderItem.setSku(sku);
-            bundleOrderItem.setName(sku.getName());
+            bundleOrderItem.setName(product.getName());
             bundleOrderItem.setProductBundle(bundle);
 
             for (SkuBundleItem skuBundleItem : bundle.getSkuBundleItems()) {
