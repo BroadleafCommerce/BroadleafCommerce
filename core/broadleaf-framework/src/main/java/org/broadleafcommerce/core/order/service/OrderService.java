@@ -147,6 +147,7 @@ public interface OrderService {
     
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
 
+    public FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException;
     /**
      * Delegates to the fully parametrized method with priceOrder = true.
      *

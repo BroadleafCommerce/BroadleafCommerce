@@ -356,6 +356,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
+        return addItemToFulfillmentGroup(item.getOrder(), item, fulfillmentGroup, quantity, priceOrder);
+    }
+
+    public FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
+
         // 1) Find the item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
@@ -368,12 +373,12 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-        
+
         if (fulfillmentGroup.getId() == null) {
             // API user is trying to add an item to a fulfillment group not created
             fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup, priceOrder);
-        } 
-        
+        }
+
         FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, quantity);
         fgi = fulfillmentGroupItemDao.save(fgi);
 
@@ -383,7 +388,7 @@ public class OrderServiceImpl implements OrderService {
 
         return fulfillmentGroup;
     }
-    
+
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException {
     	return addItemToFulfillmentGroup(item, fulfillmentGroup, true);
     }
