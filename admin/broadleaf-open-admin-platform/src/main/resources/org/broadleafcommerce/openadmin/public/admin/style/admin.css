@@ -95,6 +95,7 @@
     font-family:helvetica, sans-serif;
     font-size:12px;
     color:#454545;
+    padding: 10px 10px;
     text-align:center;
 }
 
@@ -102,6 +103,7 @@
 .secondaryMenuText-selected,
 .secondaryMenuText-selectedOver {
     color:white;
+    padding: 10px 10px;
 }
 
 .headerItem, .headerItemDisabled {
