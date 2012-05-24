@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.net.SocketException;
 import java.util.Map;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.View;
@@ -66,7 +66,7 @@ public class StaticAssetView implements View {
                 }
             }
             os.flush();
-        } catch (SocketException e) {
+        } catch (ClientAbortException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to stream asset", e);
             }
