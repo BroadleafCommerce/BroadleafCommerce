@@ -356,12 +356,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
-    	Order order = item.getOrder();
-    	
-    	if (order == null) {
-    		throw new OrderServiceException("The order item does not have an order associated with it. Check to make sure you're not adding an order item that belongs to a BundleOrderItem. BundleOrderItems cannot be split among fulfillment groups");
-    	}
-        
         // 1) Find the item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
