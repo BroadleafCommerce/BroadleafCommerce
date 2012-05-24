@@ -330,11 +330,11 @@ public class StaticAssetCustomPersistenceHandler extends CustomPersistenceHandle
             Property fullUrl = entity.findProperty("fullUrl");
             Property property = new Property();
             property.setName("picture");
-            property.setValue(assetServerUrlPrefix + fullUrl.getValue() + "?filterType=resize&resize-width-amount=20&resize-height-amount=20&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property.setValue(assetServerUrlPrefix + fullUrl.getValue() + "?smallAdminThumbnail");
             entity.addProperty(property);
             Property property2 = new Property();
             property2.setName("pictureLarge");
-            property2.setValue(assetServerUrlPrefix + fullUrl.getValue() + "?filterType=resize&resize-width-amount=60&resize-height-amount=60&resize-high-quality=false&resize-maintain-aspect-ratio=true&resize-reduce-only=true");
+            property2.setValue(assetServerUrlPrefix + fullUrl.getValue() + "?largeAdminThumbnail");
             entity.addProperty(property2);
         } else {
             Property property = new Property();

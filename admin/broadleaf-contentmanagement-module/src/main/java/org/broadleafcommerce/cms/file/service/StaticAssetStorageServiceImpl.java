@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
+import org.broadleafcommerce.cms.file.service.operation.NamedOperationManager;
 import org.broadleafcommerce.openadmin.server.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
@@ -91,6 +92,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Resource(name="blStaticAssetStorageDao")
     protected StaticAssetStorageDao staticAssetStorageDao;
+
+    @Resource(name="blNamedOperationManager")
+    protected NamedOperationManager namedOperationManager;
 
     protected Thread cleanupThread = new Thread(new Runnable() {
         @Override
@@ -216,12 +220,16 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
         }
         String mimeType = staticAsset.getMimeType();
-        String cacheName = constructCacheFileName(staticAsset, parameterMap);
+
+        //extract the values for any named parameters
+        Map<String, String> convertedParameters = namedOperationManager.manageNamedParameters(parameterMap);
+
+        String cacheName = constructCacheFileName(staticAsset, convertedParameters);
         File cacheFile = new File(cacheDirectory!=null?new File(cacheDirectory):DEFAULTCACHEDIRECTORY, cacheName);
         if (!cacheFile.exists()) {
             clearObsoleteCacheFiles(staticAsset, cacheFile);
             StaticAssetStorage storage = readStaticAssetStorageByStaticAssetId(staticAsset.getId());
-            if (!parameterMap.isEmpty()) {
+            if (!convertedParameters.isEmpty()) {
                 //there are filter operations to perform on the asset
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 InputStream is = null;
@@ -247,7 +255,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     }
                 }
                 InputStream original = new ByteArrayInputStream(baos.toByteArray());
-                Operation[] operations = artifactService.buildOperations(parameterMap, original, staticAsset.getMimeType());
+                Operation[] operations = artifactService.buildOperations(convertedParameters, original, staticAsset.getMimeType());
                 InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType());
                 createCacheFile(converted, cacheFile);
                 if ("image/gif".equals(mimeType)) {
@@ -389,4 +397,5 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     public void setCleanupThreadEnabled(boolean cleanupThreadEnabled) {
         this.cleanupThreadEnabled = cleanupThreadEnabled;
     }
+
 }

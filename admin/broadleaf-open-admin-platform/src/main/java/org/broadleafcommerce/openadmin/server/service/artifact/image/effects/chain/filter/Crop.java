@@ -16,20 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
-
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.InputStream;
 import java.util.Map;
+
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class Crop extends BaseFilter {
 
@@ -48,32 +45,33 @@ public class Crop extends BaseFilter {
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.CROP.toString().toLowerCase();
-        if (parameterMap.containsKey("filterType") && key.equals(parameterMap.get("filterType"))) {
-            Operation operation = new Operation();
-            operation.setName(key);
-            String factor = parameterMap.get(key + "-factor");
-            operation.setFactor(factor==null?null:Double.valueOf(factor));
 
-            UnmarshalledParameter rectangle = new UnmarshalledParameter();
-            String rectangleApplyFactor = parameterMap.get(key + "-apply-factor");
-            rectangle.setApplyFactor(rectangleApplyFactor == null ? false : Boolean.valueOf(rectangleApplyFactor));
-            rectangle.setName("rectangle");
-            rectangle.setType(ParameterTypeEnum.RECTANGLE.toString());
-            StringBuffer sb = new StringBuffer();
-            sb.append(parameterMap.get(key + "-x-amount"));
-            sb.append(",");
-            sb.append(parameterMap.get(key + "-y-amount"));
-            sb.append(",");
-            sb.append(parameterMap.get(key + "-width-amount"));
-            sb.append(",");
-            sb.append(parameterMap.get(key + "-height-amount"));
-            rectangle.setValue(sb.toString());
-
-            operation.setParameters(new UnmarshalledParameter[]{rectangle});
-            return operation;
+        if (!containsMyFilterParams(key, parameterMap)) {
+            return null;
         }
 
-        return null;
+        Operation operation = new Operation();
+        operation.setName(key);
+        String factor = parameterMap.get(key + "-factor");
+        operation.setFactor(factor==null?null:Double.valueOf(factor));
+
+        UnmarshalledParameter rectangle = new UnmarshalledParameter();
+        String rectangleApplyFactor = parameterMap.get(key + "-apply-factor");
+        rectangle.setApplyFactor(rectangleApplyFactor == null ? false : Boolean.valueOf(rectangleApplyFactor));
+        rectangle.setName("rectangle");
+        rectangle.setType(ParameterTypeEnum.RECTANGLE.toString());
+        StringBuffer sb = new StringBuffer();
+        sb.append(parameterMap.get(key + "-x-amount"));
+        sb.append(",");
+        sb.append(parameterMap.get(key + "-y-amount"));
+        sb.append(",");
+        sb.append(parameterMap.get(key + "-width-amount"));
+        sb.append(",");
+        sb.append(parameterMap.get(key + "-height-amount"));
+        rectangle.setValue(sb.toString());
+
+        operation.setParameters(new UnmarshalledParameter[]{rectangle});
+        return operation;
     }
 
 	/* (non-Javadoc)
