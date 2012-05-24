@@ -100,6 +100,14 @@
 			<artifactId>jsp-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring3</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-profile</artifactId>
 		</dependency>
