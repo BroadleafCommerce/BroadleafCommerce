@@ -23,6 +23,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.AbstractModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityCommon;
+import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityFramework;
+import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityOpenAdmin;
+import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityProfile;
 
 /**
  * 
@@ -34,7 +38,11 @@ public class MerchandisingModule extends AbstractModule {
 	public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(MerchandisingMessages.class));
         addConstants(GWT.<ConstantsWithLookup>create(PromotionMessages.class));
-		
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCommon.class));
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityOpenAdmin.class));
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityProfile.class));
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityFramework.class));
+
 		setModuleTitle(BLCMain.getMessageManager().getString("merchandisingModuleTitle"));
 		setModuleKey("BLCMerchandising");
 		

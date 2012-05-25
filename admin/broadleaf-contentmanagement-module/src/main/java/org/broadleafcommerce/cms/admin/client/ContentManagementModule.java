@@ -20,6 +20,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.AbstractHtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityCommon;
+import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityOpenAdmin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,9 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 	public void onModuleLoad() {
         addConstants(GWT.<ConstantsWithLookup>create(ContentManagementMessages.class));
         addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCMS.class));
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCommon.class));
+        addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityOpenAdmin.class));
+        
 		setModuleTitle(BLCMain.getMessageManager().getString("cmsModuleTitle"));
 		setModuleKey("BLCContentManagement");
 

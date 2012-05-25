@@ -55,10 +55,6 @@ public class BLCMain implements EntryPoint {
 	public static final MessageManager MESSAGE_MANAGER = new MessageManager();
     static {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
-        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityCommon.class));
-        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityOpenAdmin.class));
-        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityFramework.class));
-        MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(GeneratedMessagesEntityProfile.class));
     }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
 
