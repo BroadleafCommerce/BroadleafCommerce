@@ -9,8 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -21,7 +22,7 @@ import org.hibernate.annotations.Parameter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_bundleProduct")
+@AdminPresentationClass(friendlyName = "Base Product Option")
 public class ProductOptionImpl implements ProductOption {
 
     private static final long serialVersionUID = 1L;
@@ -44,15 +45,19 @@ public class ProductOptionImpl implements ProductOption {
     protected Long id;
     
     @Column(name = "TYPE")
+    @AdminPresentation(friendlyName = "Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.ProductOptionType")
     protected String type;
     
     @Column(name = "OPTION_LABEL")
+    @AdminPresentation(friendlyName = "Option Label")
     protected String optionLabel;
     
     @Column(name = "VALUE")
+    @AdminPresentation(friendlyName = "Value")
     protected String value;
     
     @Column(name = "REQUIRED")
+    @AdminPresentation(friendlyName = "Required")
     protected Boolean required;
     
     @ManyToOne(targetEntity = ProductImpl.class)

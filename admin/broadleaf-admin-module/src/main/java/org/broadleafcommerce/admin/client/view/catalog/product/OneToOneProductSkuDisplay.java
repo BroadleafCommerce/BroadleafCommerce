@@ -36,4 +36,6 @@ public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 	
 	public GridStructureDisplay getAllCategoriesDisplay();
 	
+	public GridStructureDisplay getProductOptionsDisplay();
+
 }

@@ -98,7 +98,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     public Money getBundleItemsRetailPrice() {
         Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()) {
-            price.add(item.getRetailPrice());
+            price = price.add(item.getRetailPrice());
         }
         return price;
     }
@@ -106,7 +106,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     public Money getBundleItemsSalePrice() {
         Money price = new Money(BigDecimal.ZERO);
         for (SkuBundleItem item : getSkuBundleItems()){
-            price.add(item.getSalePrice());
+            price = price.add(item.getSalePrice());
         }
         return price;
     }
@@ -157,12 +157,12 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
             Money totalBundlePrice = new Money();
 
             for (SkuBundleItem skuBundleItem : skuBundleItems) {
-                totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                totalNormalPrice = totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
                 if (ProductBundle.PRICING_MODEL_ITEM_SUM.equals(pricingModel)) {
                     if (skuBundleItem.getSalePrice() != null) {
-                        totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
+                        totalBundlePrice = totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
                     } else {
-                        totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
+                        totalBundlePrice = totalBundlePrice.add(skuBundleItem.getRetailPrice().multiply(skuBundleItem.getQuantity()));
                     }
                 }
             }

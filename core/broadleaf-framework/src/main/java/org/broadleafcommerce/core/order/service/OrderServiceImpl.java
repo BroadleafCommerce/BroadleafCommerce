@@ -356,12 +356,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
-    	Order order = item.getOrder();
-    	
-    	if (order == null) {
-    		throw new OrderServiceException("The order item does not have an order associated with it. Check to make sure you're not adding an order item that belongs to a BundleOrderItem. BundleOrderItems cannot be split among fulfillment groups");
-    	}
-        
+        return addItemToFulfillmentGroup(item.getOrder(), item, fulfillmentGroup, quantity, priceOrder);
+    }
+
+    public FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
+
         // 1) Find the item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
@@ -374,12 +373,12 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-        
+
         if (fulfillmentGroup.getId() == null) {
             // API user is trying to add an item to a fulfillment group not created
             fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup, priceOrder);
-        } 
-        
+        }
+
         FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, quantity);
         fgi = fulfillmentGroupItemDao.save(fgi);
 
@@ -389,7 +388,7 @@ public class OrderServiceImpl implements OrderService {
 
         return fulfillmentGroup;
     }
-    
+
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException {
     	return addItemToFulfillmentGroup(item, fulfillmentGroup, true);
     }
@@ -867,7 +866,7 @@ public class OrderServiceImpl implements OrderService {
             bundleOrderItem.setQuantity(orderItemRequestDTO.getQuantity());
             bundleOrderItem.setCategory(category);
             bundleOrderItem.setSku(sku);
-            bundleOrderItem.setName(sku.getName());
+            bundleOrderItem.setName(product.getName());
             bundleOrderItem.setProductBundle(bundle);
 
             for (SkuBundleItem skuBundleItem : bundle.getSkuBundleItems()) {

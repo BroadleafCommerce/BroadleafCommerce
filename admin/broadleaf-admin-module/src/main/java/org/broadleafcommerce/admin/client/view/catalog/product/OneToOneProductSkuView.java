@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.admin.client.view.catalog.product;
 
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.Side;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.layout.HLayout;
-import com.smartgwt.client.widgets.layout.VLayout;
-import com.smartgwt.client.widgets.tab.Tab;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
@@ -33,6 +26,14 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
+
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Side;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
 
 /**
  * 
@@ -48,6 +49,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected DynamicEntityListView listDisplay;
 	protected GridStructureView attributesDisplay;
 	protected GridStructureView allCategoriesDisplay;
+	protected GridStructureView productOptionsDisplay;
     
 	public OneToOneProductSkuView() {
 		setHeight100();
@@ -108,6 +110,25 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         mediaLayout.setBackgroundColor("#eaeaea");
         mediaLayout.setOverflow(Overflow.AUTO);
         
+        Tab productOptionsTab = new Tab(BLCMain.getMessageManager().getString("productOptionsTabTitle"));
+        productOptionsTab.setID("productSkuProductOptionsTab");
+        
+        VLayout productOptionsLayout = new VLayout();
+        productOptionsLayout.setID("productSkuProductOptionsLayout");
+        productOptionsLayout.setHeight100();
+        productOptionsLayout.setWidth100();
+        productOptionsLayout.setBackgroundColor("#eaeaea");
+        productOptionsLayout.setOverflow(Overflow.AUTO);
+        
+        productOptionsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionsListTitle"), false, true);
+        productOptionsDisplay.getGrid().setDisabled(false);
+        productOptionsDisplay.getGrid().setCanEdit(true);
+        productOptionsDisplay.getGrid().setEditByCell(true);
+        productOptionsDisplay.getGrid().setAutoSaveEdits(true);
+        productOptionsDisplay.getGrid().setSaveByCell(true);
+        productOptionsLayout.addMember(productOptionsDisplay);
+        productOptionsTab.setPane(productOptionsLayout);
+
         mediaDisplay = new GridStructureView(BLCMain.getMessageManager().getString("mediaListTitle"), false, true);
         mediaLayout.addMember(mediaDisplay);
         
@@ -132,6 +153,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         topTabSet.addTab(crossSaleTab);
         topTabSet.addTab(mediaTab);
         topTabSet.addTab(categoriesTab);
+        topTabSet.addTab(productOptionsTab);
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
@@ -167,6 +189,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 
 	public GridStructureDisplay getAllCategoriesDisplay() {
 		return allCategoriesDisplay;
+	}
+
+	public GridStructureDisplay getProductOptionsDisplay() {
+	    return productOptionsDisplay;
 	}
 
 }
