@@ -161,6 +161,7 @@ public class BLCMain implements EntryPoint {
 	
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
         SC.logWarn("Retrieving web app context...");
+        java.util.logging.Logger.getLogger(BLCMain.class.toString()).info("Retrieving web app context...");;
         AppServices.UTILITY.getAllItems(new AbstractCallback<String[]>() {
             @Override
             public void onSuccess(String[] result) {
@@ -178,12 +179,14 @@ public class BLCMain implements EntryPoint {
                         SecurityManager.USER = result;
                         if (result == null) {
                             SC.logWarn("Admin user not found. Logging out...");
+                            java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user not found. Logging out...");;
                             UrlBuilder builder = Window.Location.createUrlBuilder();
                             builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
                             builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
                             Window.open(builder.buildString(), "_self", null);
                         } else {
                             SC.logWarn("Admin user found. Loading interface...");
+                            java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user found. Loading interface...");;
                             setCurrentModuleKey(requestedModuleKey);
 
                             if (currentModuleKey == null) {

@@ -74,18 +74,22 @@ public class EffectsManager {
 			throw new FilterNotFoundException("An effects filter was not found for the name: " + effectName);
 		}
         Class filterClass = filterObject.getClass();
-		
-		Parameter[] marshalledParameters = new Parameter[parameters.length];
-		for (int j=0;j<parameters.length;j++) {
-			marshalledParameters[j] = conversionManager.convertParameter(parameters[j].getValue(), parameters[j].getType(), factor, parameters[j].isApplyFactor());
-		}
-		
-		Class[] types = new Class[marshalledParameters.length + 1];
-		Object[] args = new Object[marshalledParameters.length + 1];
-		for (int j=0;j<types.length-1;j++){
-			types[j] = marshalledParameters[j].getParameterClass();
-			args[j] = marshalledParameters[j].getParameterInstance();
-		}
+
+        Class[] types = new Class[1];
+        Object[] args = new Object[1];
+        if (parameters != null) {
+            Parameter[] marshalledParameters = new Parameter[parameters.length];
+            for (int j=0;j<parameters.length;j++) {
+                marshalledParameters[j] = conversionManager.convertParameter(parameters[j].getValue(), parameters[j].getType(), factor, parameters[j].isApplyFactor());
+            }
+
+            types = new Class[marshalledParameters.length + 1];
+            args = new Object[marshalledParameters.length + 1];
+            for (int j=0;j<types.length-1;j++){
+                types[j] = marshalledParameters[j].getParameterClass();
+                args[j] = marshalledParameters[j].getParameterInstance();
+            }
+        }
 		types[types.length-1] = RenderingHints.class;
 		args[types.length-1] = null;
 		Constructor constructor = filterClass.getConstructor(types);
@@ -108,7 +112,7 @@ public class EffectsManager {
 	 * @param filters the filters to set
 	 */
 	public void setFilters(Map<String, OperationBuilder> filters) {
-		this.filters = filters;
+		this.filters.putAll(filters);
 	}
 
 	/**

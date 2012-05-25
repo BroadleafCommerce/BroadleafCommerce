@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.cms.web.file;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,12 +30,6 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by jfischer
@@ -49,7 +49,7 @@ public class StaticAssetViewController extends AbstractController {
     protected SandBoxService sandBoxService;
 
     protected Map<String, String> convertParameterMap(Map<String, String[]> parameterMap) {
-        Map<String, String> convertedMap = new HashMap<String, String>(parameterMap.size());
+        Map<String, String> convertedMap = new LinkedHashMap<String, String>(parameterMap.size());
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
             convertedMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ','));
         }

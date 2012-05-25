@@ -17,16 +17,17 @@
 package org.broadleafcommerce.cms.web.file;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.web.servlet.View;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.web.servlet.View;
 
 /**
  * Created by jfischer
@@ -66,8 +67,14 @@ public class StaticAssetView implements View {
             }
             os.flush();
 		} catch (Exception e) {
-			LOG.error("Unable to stream asset", e);
-            throw e;
+            if (e.getCause() instanceof SocketException) {
+			    if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to stream asset", e);
+                }
+            } else {
+                LOG.error("Unable to stream asset", e);
+                throw e;
+            }
 		} finally {
             try {
                 bis.close();

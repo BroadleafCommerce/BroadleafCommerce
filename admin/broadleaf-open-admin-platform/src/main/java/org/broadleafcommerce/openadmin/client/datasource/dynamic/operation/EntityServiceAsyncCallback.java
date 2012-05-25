@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.operation;
 
+import java.util.logging.Level;
+
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -66,10 +68,11 @@ public abstract class EntityServiceAsyncCallback<T> extends AbstractCallback<T> 
 	protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught, boolean showWarning) {
         response.setStatus(RPCResponse.STATUS_FAILURE);
         dataSource.processResponse(requestId, response);
-
+        java.util.logging.Logger.getLogger(getClass().toString()).log(Level.SEVERE,opType.name()+" Error while processing RPC request",caught);
+        
         if (showWarning) {
             // show a dialog with error message
-            SC.warn("<b>" + opType.name()
+        	  SC.warn("<b>" + opType.name()
                     + "</b><br/><br/>Error while processing RPC request:<br/><br/>"
                     + caught.getMessage(), null);
         }
