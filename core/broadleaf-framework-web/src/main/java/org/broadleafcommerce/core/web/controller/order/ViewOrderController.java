@@ -51,7 +51,7 @@ public class ViewOrderController {
         return "listOrders";
     }
 
-    @RequestMapping(method = {RequestMethod.GET})
+    @RequestMapping(value="viewOrderDetails", method = {RequestMethod.GET})
     public String viewOrderDetails (ModelMap model, HttpServletRequest request, @RequestParam(required = true) String orderNumber) {
         Order order = cartService.findOrderByOrderNumber(orderNumber);
         if (order == null) {
@@ -62,7 +62,7 @@ public class ViewOrderController {
         return "viewOrderDetails";
     }
 
-    @RequestMapping(method = {RequestMethod.GET})
+    @RequestMapping(value="viewOrderConfirmation", method = {RequestMethod.GET})
     public String viewOrderConfirmation (ModelMap model, HttpServletRequest request, @RequestParam(required = true) String orderNumber) {
         Order order = cartService.findOrderByOrderNumber(orderNumber);
         if (order == null) {
@@ -73,13 +73,13 @@ public class ViewOrderController {
         return "checkout/checkoutConfirmation";
     }
 
-    @RequestMapping(method =  {RequestMethod.GET})
+    @RequestMapping(value="findOrder", method =  {RequestMethod.GET})
     public String findOrder (ModelMap model, HttpServletRequest request) {
         model.addAttribute("findOrderForm", new FindOrderForm());
         return "findOrder";
     }
 
-    @RequestMapping(method =  {RequestMethod.POST})
+    @RequestMapping(value="findOrder", method =  {RequestMethod.POST})
     public String processFindOrder (@ModelAttribute FindOrderForm findOrderForm, ModelMap model, HttpServletRequest request) {
         Order order = cartService.findOrderByOrderNumber(findOrderForm.getOrderNumber());
 

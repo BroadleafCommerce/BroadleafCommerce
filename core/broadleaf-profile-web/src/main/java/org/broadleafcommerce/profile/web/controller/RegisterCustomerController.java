@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.profile.web.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
@@ -69,12 +70,12 @@ public class RegisterCustomerController {
     @Resource(name="blLoginService")
     protected LoginService loginService;
 
-    @RequestMapping(method = { RequestMethod.GET })
+    @RequestMapping(value="registerCustomer", method = { RequestMethod.GET })
     public String registerCustomer() {
         return getDisplayRegistrationFormView();
     }
 
-    @RequestMapping(method = { RequestMethod.POST })
+    @RequestMapping(value="registerCustomer", method = { RequestMethod.POST })
     public ModelAndView registerCustomer(@ModelAttribute("registerCustomerForm") RegisterCustomerForm registerCustomerForm,
             BindingResult errors, HttpServletRequest request, HttpServletResponse response) {
         registerCustomerValidator.validate(registerCustomerForm, errors);
@@ -88,7 +89,7 @@ public class RegisterCustomerController {
         }
     }
     
-    @RequestMapping (method = { RequestMethod.GET })
+    @RequestMapping (value="registerCustomerSuccess", method = { RequestMethod.GET })
     public String registerCustomerSuccess() {
         return "/account/registration/registerCustomerSuccess";
     }

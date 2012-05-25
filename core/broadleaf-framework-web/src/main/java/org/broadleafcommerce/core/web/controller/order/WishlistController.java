@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.core.web.controller.order;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -34,9 +38,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 1) Created the WishlistController as an extension of the CartController
@@ -58,7 +59,7 @@ public class WishlistController extends CartController {
         super();
     }
 
-    @RequestMapping(method =  {RequestMethod.POST}, params="addToWishlist")
+    @RequestMapping(value="addToWishlist", method =  {RequestMethod.POST}, params="addToWishlist")
     public String addToWishlist(ModelMap model, HttpServletRequest request, @ModelAttribute WishlistRequest wishlistRequest, BindingResult errors) {
         if (wishlistRequest.getWishlistName() != null && wishlistRequest.getWishlistName().length() > 0) {
         	Order wishlist = cartService.findNamedOrderForCustomer(wishlistRequest.getWishlistName(), customerState.getCustomer(request));
@@ -84,7 +85,7 @@ public class WishlistController extends CartController {
         return "wishlist/showWishlists";
     }
 
-    @RequestMapping(method = {RequestMethod.GET})
+    @RequestMapping(value="viewWishlist", method = {RequestMethod.GET})
     public String viewWishlist(ModelMap model, HttpServletRequest request, @RequestParam("id") Long id) {
         Order wishlist = cartService.findOrderById(id);
         CartSummary cartSummary = new CartSummary();
@@ -107,7 +108,7 @@ public class WishlistController extends CartController {
         return "wishlist/viewWishlist";
     }
     
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value="createWishlist", method = {RequestMethod.GET, RequestMethod.POST})
     public String createWishlist(ModelMap model, HttpServletRequest request, @ModelAttribute WishlistRequest wishlistRequest) {
     	boolean wishlistCreated = false;
     	Order wishlistOrder = new OrderImpl();
@@ -134,7 +135,7 @@ public class WishlistController extends CartController {
         return viewWishlist(model, request, wishlistOrder.getId());
     }
 
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value="createWishlistName", method = {RequestMethod.GET, RequestMethod.POST})
     public String createWishlistName(ModelMap model, HttpServletRequest request) {
     	WishlistRequest wishlistRequest = (WishlistRequest) model.get("wishlistRequest");
     	
@@ -148,13 +149,13 @@ public class WishlistController extends CartController {
         return "wishlist/createWishlistName";
     }
 
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value="removeWishlist", method = {RequestMethod.GET, RequestMethod.POST})
     public String removeWishlist(@RequestParam String wishlistName, ModelMap model, HttpServletRequest request) {
         cartService.removeNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
         return showWishlists(model, request);
     }
     
-    @RequestMapping(method = {RequestMethod.GET})
+    @RequestMapping(value="removeWishlistItem", method = {RequestMethod.GET})
     public String removeWishlistItem(@RequestParam long orderItemId, @RequestParam long orderId, ModelMap model, HttpServletRequest request) {
     	Order wishlist = cartService.findOrderById(orderId);
     	try {
@@ -166,7 +167,7 @@ public class WishlistController extends CartController {
         return viewWishlist(model, request, wishlist.getId());
     }
 
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value="moveItemToCart", method = {RequestMethod.GET, RequestMethod.POST})
     public String moveItemToCart(@RequestParam long orderItemId, @RequestParam String wishlistName, ModelMap model, HttpServletRequest request) {
         Order wishlistOrder = cartService.findNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
 
@@ -181,7 +182,7 @@ public class WishlistController extends CartController {
         return viewWishlist(model, request, wishlistOrder.getId());
     }
 
-    @RequestMapping(method = {RequestMethod.GET})
+    @RequestMapping(value="moveAllItemsToCart", method = {RequestMethod.GET})
     public String moveAllItemsToCart(@RequestParam String wishlistName, ModelMap model, HttpServletRequest request) {
         Order wishlistOrder = cartService.findNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
         try {

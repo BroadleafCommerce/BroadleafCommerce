@@ -81,7 +81,7 @@ public class CustomerPhoneController {
      *
      * @return
      */
-    @RequestMapping(method =  {
+    @RequestMapping(value="deletePhone", method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String deletePhone(@RequestParam(required = true)
@@ -118,7 +118,7 @@ public class CustomerPhoneController {
      *
      * @return
      */
-    @RequestMapping(method =  {
+    @RequestMapping(value="makePhoneDefault", method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String makePhoneDefault(@RequestParam(required = true)
@@ -143,7 +143,7 @@ public class CustomerPhoneController {
      *
      * @return
      */
-    @RequestMapping(method =  {
+    @RequestMapping(value="savePhone", method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String savePhone(@ModelAttribute("phoneNameForm")
@@ -246,7 +246,7 @@ public class CustomerPhoneController {
      * @param errors
      * @return
      */
-    @RequestMapping(method =  {
+    @RequestMapping(value="viewPhone", method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String viewPhone(@RequestParam(required = false)
