@@ -52,7 +52,6 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.core.order.service.exception.OrderServiceException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
@@ -60,7 +59,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.pricing.service.advice.PricingExecutionManager;
+import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -93,9 +92,6 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
-    @Resource(name = "blPricingExecutionManager")
-    protected PricingExecutionManager pricingExecutionManager;
-
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
@@ -119,6 +115,11 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
+
+    @Resource(name = "blPricingService")
+    protected PricingService pricingService;
+
+    protected boolean automaticallyMergeLikeItems = true;
 
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -178,7 +179,8 @@ public class OrderServiceImpl implements OrderService {
         requestDTO.setQuantity(quantity);
         requestDTO.setItemAttributes(itemAttributes);
 
-        return addItemToOrder(orderId, requestDTO, priceOrder);
+        Order order = addItemToOrder(orderId, requestDTO, priceOrder);
+        return findLastMatchingItem(order, skuId, productId);
     }
 
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
@@ -235,8 +237,8 @@ public class OrderServiceImpl implements OrderService {
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException {
         removeOrderItemFromFullfillmentGroup(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
-        orderItemService.delete(itemFromOrder);
         itemFromOrder.setOrder(null);
+        orderItemService.delete(itemFromOrder);
         order = updateOrder(order, priceOrder);
         return order;
     }
@@ -307,8 +309,11 @@ public class OrderServiceImpl implements OrderService {
         fg.setPhone(fulfillmentGroupRequest.getPhone());
         fg.setMethod(fulfillmentGroupRequest.getMethod());
         fg.setService(fulfillmentGroupRequest.getService());
-        for (FulfillmentGroupItemRequest request : fulfillmentGroupRequest.getFulfillmentGroupItemRequests()) {
-            fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity(), priceOrder);
+
+        for (int i=0; i< fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size(); i++) {
+            FulfillmentGroupItemRequest request = fulfillmentGroupRequest.getFulfillmentGroupItemRequests().get(i);
+            boolean shouldPriceOrder = (priceOrder && (i == (fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size() - 1)));
+            fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity(), shouldPriceOrder);
         }
 
         return fg;
@@ -481,37 +486,157 @@ public class OrderServiceImpl implements OrderService {
     }
     
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
-    	return addOrderItemToOrder(order, newOrderItem, true);
-    }
-    	
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
-        int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
         orderItems.add(newOrderItem);
         newOrderItem.setOrder(order);
-        orderItemIndex = orderItems.size() - 1;
+        order = updateOrder(order, true);
+        return findLastMatchingItem(order, newOrderItem);
+    }
 
-        // don't worry about fulfillment groups, since the phase for adding
-        // items occurs before shipping arrangements
+    private boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
+        // Must match on SKU and options
+        if (item1.getSku() != null && item2.getSku() != null) {
+            if (item1.getSku().getId().equals(item2.getSku().getId())) {
+                // TODO: Compare options if product has product options
+                return true;
+            }
+        } else {
+            if (item1.getProduct() != null && item2.getProduct() != null) {
+                if (item1.getProduct().getId().equals(item2.getProduct().getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    private OrderItem findLastMatchingDiscreteItem(Order order, DiscreteOrderItem itemToFind) {
+        for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
+            OrderItem currentItem = (order.getOrderItems().get(i));
+            if (currentItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+                if (itemMatches(discreteItem, itemToFind)) {
+                    return discreteItem;
+                }
+
+            } else if (currentItem instanceof BundleOrderItem) {
+                for (DiscreteOrderItem discreteItem : (((BundleOrderItem) currentItem).getDiscreteOrderItems())) {
+                    if (itemMatches(discreteItem, itemToFind)) {
+                        return discreteItem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean bundleItemMatches(BundleOrderItem item1, BundleOrderItem item2) {
+        if (item1.getSku() != null && item2.getSku() != null) {
+            return item1.getSku().getId().equals(item1.getSku().getId());
+        }
+
+        // Otherwise, scan the items.
+        HashMap<Long, Integer> skuMap = new HashMap<Long, Integer>();
+        for(DiscreteOrderItem item : item1.getDiscreteOrderItems()) {
+            if (skuMap.get(item.getSku().getId()) == null) {
+                skuMap.put(item.getSku().getId(), Integer.valueOf(item.getQuantity()));
+            } else {
+                Integer qty = skuMap.get(item.getSku().getId());
+                skuMap.put(item.getSku().getId(), Integer.valueOf(qty + item.getQuantity()));
+            }
+        }
+
+        // Now consume the quantities in the map
+        for(DiscreteOrderItem item : item2.getDiscreteOrderItems()) {
+            if (skuMap.containsKey(item.getSku().getId())) {
+                Integer qty = skuMap.get(item.getSku().getId());
+                Integer newQty = Integer.valueOf(qty - item.getQuantity());
+                if (newQty.intValue() == 0) {
+                    skuMap.remove(item.getSku().getId());
+                } else if (newQty.intValue() > 0) {
+                    skuMap.put(item.getSku().getId(), newQty);
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+            // If all of the quantities were consumed, this is a match.
+            return skuMap.isEmpty();
+        }
+
+        return false;
+    }
+
+
+    private OrderItem findLastMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
+        for (int i=(order.getOrderItems().size()-1); i > 0; i--) {
+            OrderItem currentItem = (order.getOrderItems().get(i));
+            if (currentItem instanceof BundleOrderItem) {
+                if (bundleItemMatches((BundleOrderItem) currentItem, itemToFind)) {
+                    return currentItem;
+                }
+            }
+        }
+        return null;
+    }
+
+    private OrderItem findLastMatchingItem(Order order, OrderItem itemToFind) {
+        if (itemToFind instanceof BundleOrderItem) {
+            return findLastMatchingBundleItem(order, (BundleOrderItem) itemToFind);
+        } else if (itemToFind instanceof DiscreteOrderItem) {
+            return findLastMatchingDiscreteItem(order, (DiscreteOrderItem) itemToFind);
+        } else {
+            return null;
+        }
+    }
+
+    private OrderItem findLastMatchingItem(Order order,Long skuId, Long productId) {
+        if (order.getOrderItems() != null) {
+            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
+                OrderItem currentItem = (order.getOrderItems().get(i));
+                if (currentItem instanceof DiscreteOrderItem) {
+                    DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+                    if (skuId != null) {
+                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getId())) {
+                            return discreteItem;
+                        }
+                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getId())) {
+                        return discreteItem;
+                    }
+
+                } else if (currentItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
+                    if (skuId != null) {
+                        if (bundleItem.getSku() != null && skuId.equals(bundleItem.getSku().getId())) {
+                            return bundleItem;
+                        }
+                    } else if (productId != null && bundleItem.getProduct() != null && productId.equals(bundleItem.getProduct().getId())) {
+                        return bundleItem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    	
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        List<OrderItem> orderItems = order.getOrderItems();
+        orderItems.add(newOrderItem);
+        newOrderItem.setOrder(order);
         order = updateOrder(order, priceOrder);
-
-        return order.getOrderItems().get(orderItemIndex);
+        return findLastMatchingItem(order, newOrderItem);
     }
     
     public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
-    	int bundleIndex = order.getOrderItems().indexOf(bundle);
         List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
         orderItems.add(newOrderItem);
-        int orderItemIndex = orderItems.size() - 1;
         newOrderItem.setBundleOrderItem(bundle);
-
-        // don't worry about fulfillment groups, since the phase for adding
-        // items occurs before shipping arrangements
 
         order = updateOrder(order, priceOrder);
 
-        return ((BundleOrderItem) order.getOrderItems().get(bundleIndex)).getDiscreteOrderItems().get(orderItemIndex);
+        return findLastMatchingItem(order, bundle);
     }
     
     public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
@@ -649,14 +774,6 @@ public class OrderServiceImpl implements OrderService {
         this.fulfillmentGroupItemDao = fulfillmentGroupItemDao;
     }
 
-    public PricingExecutionManager getPricingExecutionManager() {
-        return pricingExecutionManager;
-    }
-
-    public void setPricingExecutionManager(PricingExecutionManager pricingExecutionManager) {
-        this.pricingExecutionManager = pricingExecutionManager;
-    }
-
     public OrderItemService getOrderItemService() {
         return orderItemService;
     }
@@ -670,12 +787,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected Order updateOrder(Order order, Boolean priceOrder) throws PricingException {
-    	order = persistOrder(order);
-    	if (priceOrder) {
-    		pricingExecutionManager.executePricing(order);
-    	}
-        return order;
+        if (priceOrder) {
+            order = pricingService.executePricing(order);
+        }
+        return persistOrder(order);
     }
+
 
     protected Order persistOrder(Order order) {
         return orderDao.save(order);
@@ -846,8 +963,9 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    public OrderItem addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
-        if (orderItemRequestDTO.getQuantity() == 0) {
+    public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
+
+        if (orderItemRequestDTO.getQuantity() == null || orderItemRequestDTO.getQuantity() == 0) {
             LOG.debug("Not adding item to order because quantity is zero.");
             return null;
         }
@@ -857,9 +975,12 @@ public class OrderServiceImpl implements OrderService {
         Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes());
         Category category = determineCategory(product, orderItemRequestDTO.getCategoryId());
 
-        if (! (product instanceof ProductBundle)) {
+        if (product == null || ! (product instanceof ProductBundle)) {
             DiscreteOrderItem item = createDiscreteOrderItem(sku, product, category, orderItemRequestDTO.getQuantity(), orderItemRequestDTO.getItemAttributes());
-            return addOrderItemToOrder(order, item, priceOrder);
+            List<OrderItem> orderItems = order.getOrderItems();
+            orderItems.add(item);
+            item.setOrder(order);
+            return updateOrder(order, priceOrder);
         } else {
             ProductBundle bundle = (ProductBundle) product;
             BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
@@ -883,7 +1004,19 @@ public class OrderServiceImpl implements OrderService {
 
             bundleOrderItem.updatePrices();
             bundleOrderItem.assignFinalPrice();
-            return addOrderItemToOrder(order, bundleOrderItem, priceOrder);
+
+            List<OrderItem> orderItems = order.getOrderItems();
+            orderItems.add(bundleOrderItem);
+            bundleOrderItem.setOrder(order);
+            return updateOrder(order, priceOrder);
         }
+    }
+
+    public boolean getAutomaticallyMergeLikeItems() {
+        return automaticallyMergeLikeItems;
+    }
+
+    public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
+        this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
     }
 }

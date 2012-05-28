@@ -167,6 +167,10 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @MapKey(name="value")
     protected Map<String,OrderItemAttribute> orderItemAttributeMap;
 
+    @Column(name = "SPLIT_PARENT_ITEM_ID")
+    @AdminPresentation(excluded = true)
+    protected Long splitParentItemId;
+
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
     }
@@ -437,6 +441,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 			orderItem.setRetailPrice(getRetailPrice());
 			orderItem.setSalePrice(getSalePrice());
 			orderItem.setPrice(getPrice());
+            orderItem.setSplitParentItemId(getSplitParentItemId());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -532,5 +537,13 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     public void setTaxable(Boolean taxable) {
         this.itemTaxable = taxable;
+    }
+
+    public Long getSplitParentItemId() {
+        return splitParentItemId;
+    }
+
+    public void setSplitParentItemId(Long splitParentItemId) {
+        this.splitParentItemId = splitParentItemId;
     }
 }

@@ -63,6 +63,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
@@ -105,6 +106,19 @@ public class PricingTest extends BaseTest {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         
         customerService.saveCustomer(order.getCustomer());
+
+        Country country = new CountryImpl();
+        country.setAbbreviation("US");
+        country.setName("United States");
+
+        country = countryService.save(country);
+
+        State state = new StateImpl();
+        state.setAbbreviation("TX");
+        state.setName("Texas");
+        state.setCountry(country);
+
+        state = stateService.save(state);
         
         Address address = new AddressImpl();
         address.setAddressLine1("123 Test Rd");
@@ -113,14 +127,7 @@ public class PricingTest extends BaseTest {
         address.setLastName("Fischer");
         address.setPostalCode("75240");
         address.setPrimaryPhone("972-978-9067");
-        State state = new StateImpl();
-        state.setAbbreviation("ALL");
-        state.setName("ALL");
         address.setState(state);
-        Country country = new CountryImpl();
-        country.setAbbreviation("US");
-        country.setName("United States");
-        state.setCountry(country);
         address.setCountry(country);
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
@@ -196,6 +203,8 @@ public class PricingTest extends BaseTest {
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).subtract(order.getOrderAdjustmentsValue())));
     }
 
+
+
     @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
     @Transactional
     public void testShipping() throws Exception {
@@ -209,6 +218,19 @@ public class PricingTest extends BaseTest {
         // setup group1 - standard
         group1.setMethod("standard");
         group1.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+
+        Country country = new CountryImpl();
+        country.setAbbreviation("US");
+        country.setName("United States");
+
+        country = countryService.save(country);
+
+        State state = new StateImpl();
+        state.setAbbreviation("TX");
+        state.setName("Texas");
+        state.setCountry(country);
+
+        state = stateService.save(state);
         
         Address address = new AddressImpl();
         address.setAddressLine1("123 Test Rd");
@@ -217,20 +239,7 @@ public class PricingTest extends BaseTest {
         address.setLastName("Fischer");
         address.setPostalCode("75240");
         address.setPrimaryPhone("972-978-9067");
-        
-        Country country = new CountryImpl();
-        country.setAbbreviation("US");
-        country.setName("United States");
-        
-        countryService.save(country);
-        
-        State state = new StateImpl();
-        state.setAbbreviation("TX");
-        state.setName("Texas");
-        state.setCountry(country);
-        
-        stateService.save(state);
-        
+
         address.setState(state);
         address.setCountry(country);
         group1.setAddress(address);

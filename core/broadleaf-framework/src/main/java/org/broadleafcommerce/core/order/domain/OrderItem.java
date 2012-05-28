@@ -134,5 +134,17 @@ public interface OrderItem extends Serializable {
     public Boolean isTaxable();
 
     public void setTaxable(Boolean taxable);
+
+    /**
+     * If the system automatically split an item to accommodate the promotion logic (e.g. buy one get one free),
+     * then this value is set to the originalItemId.
+     *
+     * Returns null otherwise.
+     *
+     * @return
+     */
+    public Long getSplitParentItemId();
+
+    public void setSplitParentItemId(Long id);
     
 }

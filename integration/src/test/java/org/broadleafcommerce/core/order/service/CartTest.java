@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
@@ -27,6 +24,9 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CartTest extends OrderBaseTest {
 
@@ -154,7 +154,7 @@ public class CartTest extends OrderBaseTest {
     	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
     	
     	assert response.getAddedItems().size() == 2;
-    	assert response.getOrder().getOrderItems().size() == 3;
+    	assert response.getOrder().getOrderItems().size() == 4;
     	assert response.isMerged();
     	assert response.getRemovedItems().size() == 4;
     }

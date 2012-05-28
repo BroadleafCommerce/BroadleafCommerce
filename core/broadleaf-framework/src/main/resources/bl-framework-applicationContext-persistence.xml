@@ -49,26 +49,14 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
 	</aop:config>
 
-	<bean id="blPricingExecutionManager" class="org.broadleafcommerce.core.pricing.service.advice.PricingExecutionManagerImpl">
-        <property name="order" value="2"/>
-    </bean>
-
 	<aop:config>
 		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.OrderService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
-	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue1" expression="execution(* org.broadleafcommerce.core.order.service.OrderService.*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue1"/>
-        </aop:aspect>
 	</aop:config>
 	
 	<aop:config>
 		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.CartService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation" order="1"/>
-	    <aop:aspect id="blPricingAspect2" ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue2" expression="execution(* org.broadleafcommerce.core.order.service.CartService.*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue2"/>
-        </aop:aspect>
 	</aop:config>
 
 	<aop:config>

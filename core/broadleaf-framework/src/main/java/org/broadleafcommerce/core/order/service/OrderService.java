@@ -81,6 +81,9 @@ public interface OrderService {
     /**
      * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
      *
+     * Due to cart merging and gathering requirements, the item returned is not an
+     * actual cart item.
+     *
      * @param order
      * @param itemRequest
      * @param priceOrder
@@ -279,9 +282,11 @@ public interface OrderService {
      * @param priceOrder
      * @return
      */
-    public OrderItem addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
+    public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
     /**
+     *
+     * @deprecated
      * Typically, adding an item to the cart utilizes the:
      *
      * addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
@@ -299,6 +304,7 @@ public interface OrderService {
      *
      * addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
      *
+     * @deprecated
      * @param order
      * @param newOrderItem
      * @param priceOrder
@@ -311,8 +317,25 @@ public interface OrderService {
 
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
 
+    /**
+     * @deprecated
+     * @param order
+     * @param itemRequest
+     * @param skuPricingConsiderations
+     * @return
+     * @throws PricingException
+     */
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
 
+    /**
+     * @deprecated
+     * @param order
+     * @param itemRequest
+     * @param skuPricingConsiderations
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     */
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
 
     /**
@@ -390,6 +413,24 @@ public interface OrderService {
      * @return
      */
     public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException;
-    
+
+    /**
+     * @see #setAutomaticallyMergeLikeItems(boolean)
+     * @return
+     */
+    boolean getAutomaticallyMergeLikeItems();
+
+    /**
+     * When set to true, the system when items are added to the cart, they will
+     * automatically be merged.    For example, when a user adds an item to the cart
+     * and then adds the item again, the item will have its quantity changed to 2
+     * instead of the cart containing two separate items.
+     *
+     * If this logic needs to be more complex, it is possible to extend the behavior by
+     * overriding OrderOfferProcessor.buildIdentifier().
+     *
+     * @param automaticallyMergeLikeItems
+     */
+    void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
 
 }
