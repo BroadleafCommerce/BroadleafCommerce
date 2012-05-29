@@ -239,4 +239,9 @@ public interface Sku extends Serializable {
     List<SkuAttribute> getSkuAttributes();
 
 	void setSkuAttributes(List<SkuAttribute> skuAttributes);
+
+    Product getDefaultProduct();
+
+    void setDefaultProduct(Product product);
+
 }
