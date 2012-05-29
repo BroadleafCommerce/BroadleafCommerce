@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 
 /**
  * A product option represents a value that is entered to specify more information about
@@ -69,33 +69,21 @@ public interface ProductOption extends Serializable {
      * @param type
      */
     public void setType(ProductOptionType type);
-
-    /**
-     * Gets the option name.  (e.g. "color")
-     * @param
-     */
-    public String getAttributeName();
-
-    /**
-     * Sets the option value.  (e.g. "color")
-     * @param attributeName
-     */
-    public void setAttributeName(String attributeName);
     
+    public String getLabel();
+
+    public void setLabel(String label);
+
     public Boolean getRequired();
-    
-    public void setRequired(Boolean required);
-    
-    public Product getProduct();
 
-    public void setProduct(Product product);
+    public void setRequired(Boolean required);
+
+    public List<Product> getProducts();
+
+    public void setProducts(List<Product> products);
 
     public List<ProductOptionValue> getAllowedValues();
 
     public void setAllowedValues(List<ProductOptionValue> allowedValues);
-
-    public Long getDisplayOrder();
-
-    public void setDisplayOrder(Long order);
 
 }

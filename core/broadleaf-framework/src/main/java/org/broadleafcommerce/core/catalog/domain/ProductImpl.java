@@ -236,8 +236,10 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
     
-    @OneToMany(mappedBy = "product", targetEntity = ProductOptionImpl.class, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)
+    @JoinTable(name = "BLC_PRODUCT_OPTION_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_ID", referencedColumnName = "PRODUCT_OPTION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
     /*

@@ -16,22 +16,28 @@
 
 package org.broadleafcommerce.core.catalog.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValueType;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
@@ -44,6 +50,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Resource(name="blSkuDao")
     protected SkuDao skuDao;
+    
+    @Resource(name="blProductOptionDao")
+    protected ProductOptionDao productOptionDao;
 
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
@@ -199,4 +208,25 @@ public class CatalogServiceImpl implements CatalogService {
     public Product createProduct(ProductType productType) {
     	return productDao.create(productType);
     }
+    
+    public ProductOption findProductOptionById(Long productOptionId) {
+        return productOptionDao.readProductOptionById(productOptionId);
+    }
+    
+    public Map<ProductOptionValueType, List<ProductOption>> groupProductOptionsByType(List<ProductOption> options) {
+        
+        Map<ProductOptionValueType, List<ProductOption>> result = new HashMap<ProductOptionValueType, List<ProductOption>>();
+        /*
+        for (ProductOption option : options) {
+            List<ProductOption> typeOptions = result.get(option.getType());
+            if (typeOptions == null) {
+                typeOptions = new ArrayList<ProductOption>();
+                result.put(option.getType(), typeOptions);
+            }
+            typeOptions.add(option);
+        }
+        */
+        return result;
+    }
+    
 }
