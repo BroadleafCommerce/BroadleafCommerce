@@ -319,4 +319,24 @@ public class DiscreteOrderItemDecorator implements DiscreteOrderItem {
     public void setTaxable(Boolean taxable) {
         discreteOrderItem.setTaxable(taxable);
     }
+
+    /**
+     * If the system automatically split an item to accommodate the promotion logic (e.g. buy one get one free),
+     * then this value is set to the originalItemId.
+     * <p/>
+     * Returns null otherwise.
+     *
+     * @return
+     */
+    @Override
+    public Long getSplitParentItemId() {
+        return discreteOrderItem.getSplitParentItemId();
+    }
+
+    @Override
+    public void setSplitParentItemId(Long id) {
+        discreteOrderItem.setSplitParentItemId(id);
+    }
+
+
 }

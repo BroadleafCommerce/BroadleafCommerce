@@ -39,6 +39,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
@@ -90,7 +91,7 @@ public class OrderTest extends OrderBaseTest {
 
     @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "createSku" })
     @Rollback(false)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addItemToOrder() throws PricingException {
         numOrderItems++;
         Sku sku = skuDao.readFirstSku();
@@ -111,23 +112,44 @@ public class OrderTest extends OrderBaseTest {
     @Rollback(false)
     @Transactional
     public void addAnotherItemToOrder() throws PricingException {
-    	//numOrderItems++;
+    	numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
+        orderService.setAutomaticallyMergeLikeItems(true);
+
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
-        DiscreteOrderItem item = (DiscreteOrderItem) orderService.addDiscreteItemToOrder(order, itemRequest);
-        assert item != null;
-        assert item.getQuantity() == 1;
+        DiscreteOrderItem item = (DiscreteOrderItem) orderService.addDiscreteItemToOrder(order, itemRequest, true);
         assert item.getSku() != null;
         assert item.getSku().equals(sku);
+        assert item.getQuantity() == 2;  // item-was merged with prior item.
+
         order = orderService.findOrderById(orderId);
-        //the quantity for this item in the cart is incremented because of gatherCart functionality in OrderOfferProcessor
+
         assert(order.getOrderItems().size()==1);
         assert(order.getOrderItems().get(0).getQuantity()==2);
+
+        // re-price the order without automatically merging.
+        orderService.setAutomaticallyMergeLikeItems(false);
+        DiscreteOrderItemRequest itemRequest2 = new DiscreteOrderItemRequest();
+        itemRequest2.setQuantity(1);
+        itemRequest2.setSku(sku);
+        DiscreteOrderItem item2 = (DiscreteOrderItem) orderService.addDiscreteItemToOrder(order, itemRequest2, true);
+
+        assert item2.getSku() != null;
+        assert item2.getSku().equals(sku);
+        assert item2.getQuantity() == 1;  // item-was not auto-merged with prior items.
+
+        order = orderService.findOrderById(orderId);
+
+        assert(order.getOrderItems().size()==2);
+        assert(order.getOrderItems().get(0).getQuantity()==2);
+        assert(order.getOrderItems().get(1).getQuantity()==1);
+
+
     }
 
     @Test(groups = { "addBundleToOrder" }, dependsOnGroups = { "addAnotherItemToOrder" })
@@ -228,7 +250,7 @@ public class OrderTest extends OrderBaseTest {
     public void checkOrderItems() throws PricingException {
         Order order = orderService.findOrderById(orderId);
         //the removal from the previous test was rolled back
-        assert order.getOrderItems().size() == 1;
+        assert order.getOrderItems().size() == 2;
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
         assert bundleOrderItem == null;
     }

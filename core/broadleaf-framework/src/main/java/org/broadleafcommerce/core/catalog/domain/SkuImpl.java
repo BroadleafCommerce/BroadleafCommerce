@@ -54,6 +54,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -208,6 +209,11 @@ public class SkuImpl implements Sku {
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
     @Deprecated
     protected List<Product> allParentProducts = new ArrayList<Product>();
+
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class)
+    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Product product;
     
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
@@ -232,14 +238,31 @@ public class SkuImpl implements Sku {
         this.id = id;
     }
 
+
+    private boolean hasDefaultSku() {
+        return (product != null && product.getDefaultSku() != null && ! getId().equals(product.getDefaultSku().getId()));
+    }
+
+    private Sku lookupDefaultSku() {
+        if (product != null && product.getDefaultSku() != null) {
+            return product.getDefaultSku();
+        } else {
+            return null;
+        }
+    }
+
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSalePrice()
      */
     @XmlElement
     public Money getSalePrice() {
+        if (salePrice == null && hasDefaultSku()) {
+            return lookupDefaultSku().getSalePrice();
+        }
+
     	if (dynamicPrices != null) {
-    		return dynamicPrices.getSalePrice();
+    		dynamicPrices.getSalePrice();
     	}
     	if (
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
@@ -271,6 +294,10 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public Money getRetailPrice() {
+        if (retailPrice == null && hasDefaultSku()) {
+            return lookupDefaultSku().getRetailPrice();
+        }
+
     	if (dynamicPrices != null) {
     		return dynamicPrices.getRetailPrice();
     	}
@@ -304,7 +331,7 @@ public class SkuImpl implements Sku {
      */
     @XmlTransient
     public Money getListPrice() {
-        return new Money(retailPrice);
+        return getRetailPrice();
     }
 
     /*
@@ -323,6 +350,9 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public String getName() {
+        if (name == null && hasDefaultSku()) {
+            return lookupDefaultSku().getName();
+        }
         return name;
     }
 
@@ -340,6 +370,9 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public String getDescription() {
+        if (description == null && hasDefaultSku()) {
+            return lookupDefaultSku().getDescription();
+        }
         return description;
     }
 
@@ -358,6 +391,9 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public String getLongDescription() {
+        if (longDescription == null && hasDefaultSku()) {
+            return lookupDefaultSku().getLongDescription();
+        }
         return longDescription;
     }
 
@@ -377,8 +413,12 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public Boolean isTaxable() {
-        if (taxable == null)
+        if (taxable == null) {
+            if (hasDefaultSku()) {
+                return lookupDefaultSku().isTaxable();
+            }
             return null;
+        }
         return taxable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
@@ -409,8 +449,12 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public Boolean isDiscountable() {
-        if (discountable == null)
+        if (discountable == null) {
+            if (hasDefaultSku()) {
+                return lookupDefaultSku().isDiscountable();
+            }
             return null;
+        }
         return discountable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
@@ -441,8 +485,12 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public Boolean isAvailable() {
-        if (available == null)
+        if (available == null) {
+            if (hasDefaultSku()) {
+                return lookupDefaultSku().isAvailable();
+            }
             return null;
+        }
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
@@ -470,7 +518,11 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public Date getActiveStartDate() {
-        return activeStartDate;
+        if (activeStartDate == null && hasDefaultSku()) {
+            return lookupDefaultSku().getActiveStartDate();
+        } else {
+            return activeStartDate;
+        }
     }
 
     /*
@@ -489,7 +541,11 @@ public class SkuImpl implements Sku {
      */
     @XmlElement
     public Date getActiveEndDate() {
-        return activeEndDate;
+        if (activeEndDate == null && hasDefaultSku()) {
+            return lookupDefaultSku().getActiveEndDate();
+        } else {
+            return activeEndDate;
+        }
     }
 
     /*
@@ -502,7 +558,11 @@ public class SkuImpl implements Sku {
     }
 
     public ProductDimension getDimension() {
-        return dimension;
+        if (dimension == null && hasDefaultSku()) {
+            return lookupDefaultSku().getDimension();
+        } else {
+            return dimension;
+        }
     }
 
     public void setDimension(ProductDimension dimension) {
@@ -510,7 +570,11 @@ public class SkuImpl implements Sku {
     }
 
     public ProductWeight getWeight() {
-        return weight;
+        if (weight == null && hasDefaultSku()) {
+            return lookupDefaultSku().getWeight();
+        } else {
+            return weight;
+        }
     }
 
     public void setWeight(ProductWeight weight) {
@@ -579,6 +643,11 @@ public class SkuImpl implements Sku {
      */
     @XmlTransient
     public Map<String, Media> getSkuMedia() {
+        if (skuMedia == null || skuMedia.isEmpty()) {
+            if (hasDefaultSku()) {
+                return lookupDefaultSku().getSkuMedia();
+            }
+        }
         return skuMedia;
     }
 
@@ -589,6 +658,14 @@ public class SkuImpl implements Sku {
      */
     public void setSkuMedia(Map<String, Media> skuMedia) {
         this.skuMedia = skuMedia;
+    }
+
+    public Product getDefaultProduct() {
+        return product;
+    }
+
+    public void setDefaultProduct(Product product) {
+        this.product = product;
     }
 
     @XmlTransient
@@ -631,10 +708,10 @@ public class SkuImpl implements Sku {
             return id.equals(other.id);
         }
 
-        if (name == null) {
-            if (other.name != null)
+        if (getName() == null) {
+            if (other.getName() != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!getName().equals(other.getName()))
             return false;
         return true;
     }
@@ -643,7 +720,7 @@ public class SkuImpl implements Sku {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
     }
 }

@@ -24,7 +24,9 @@ public class CategoriesProcessor extends AbstractMarkupSubstitutionElementProces
 	@Override
 	protected List<Node> getMarkupSubstitutes(Arguments arguments, Element element) {
 		CatalogService catalogService = CatalogProcessorUtils.getCatalogService(arguments);
-		((Map<String, Object>)arguments.getExpressionEvaluationRoot()).put("ccc", catalogService.findAllCategories());
+		String resultVar = element.getAttributeValueFromNormalizedName("resultvar");
+		Long parentCategory = Long.parseLong(element.getAttributeValueFromNormalizedName("parentcategory"));
+		((Map<String, Object>)arguments.getExpressionEvaluationRoot()).put(resultVar, catalogService.findAllSubCategories(catalogService.findCategoryById(parentCategory)));
 		return new ArrayList<Node>();
 	}
 

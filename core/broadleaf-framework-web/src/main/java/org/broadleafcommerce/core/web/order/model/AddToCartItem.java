@@ -20,43 +20,53 @@ import java.util.Map;
 
 public class AddToCartItem {
 
-    private long productId;
-    private long categoryId;
-    private long skuId;
+    private Long productId;
+    private Long categoryId;
+    private Long skuId;
     private Long orderId;
-    private int quantity;
+    private Integer quantity;
     private Map additionalAttributes;
 
-    public long getSkuId() {
-        return skuId;
-    }
-    public void setSkuId(long skuId) {
-        this.skuId = skuId;
-    }
-    public int getQuantity() {
-        return quantity;
-    }
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-    public long getProductId() {
+    public Long getProductId() {
         return productId;
     }
-    public void setProductId(long productId) {
+
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
-    public long getCategoryId() {
+
+    public Long getCategoryId() {
         return categoryId;
     }
-    public void setCategoryId(long categoryId) {
+
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
+
+    public Long getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
+    }
+
     public Long getOrderId() {
         return orderId;
     }
+
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
     public Map getAdditionalAttributes() {
         return additionalAttributes;
     }

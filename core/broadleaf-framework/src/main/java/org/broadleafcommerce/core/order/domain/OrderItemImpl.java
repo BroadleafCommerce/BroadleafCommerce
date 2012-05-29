@@ -59,6 +59,7 @@ import javax.persistence.TableGenerator;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -164,8 +165,12 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @MapKey(name="value")
+    @MapKey(name="name")
     protected Map<String,OrderItemAttribute> orderItemAttributeMap;
+
+    @Column(name = "SPLIT_PARENT_ITEM_ID")
+    @AdminPresentation(excluded = true)
+    protected Long splitParentItemId;
 
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
@@ -348,9 +353,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     }
     
     public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
-        // TODO: if stacked, add all of the items to the persisted structure and
-        // add just the stacked version
-        // to this collection
         getCandidateItemOffers().add(candidateItemOffer);
     }
     
@@ -403,45 +405,48 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 	
 	public OrderItem clone() {
 		//this is likely an extended class - instantiate from the fully qualified name via reflection
-		OrderItem orderItem;
+		OrderItem clonedOrderItem;
 		try {
-			orderItem = (OrderItem) Class.forName(this.getClass().getName()).newInstance();
+			clonedOrderItem = (OrderItem) Class.forName(this.getClass().getName()).newInstance();
 			try {
-				checkCloneable(orderItem);
+				checkCloneable(clonedOrderItem);
 			} catch (CloneNotSupportedException e) {
-				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + orderItem.getClass().getName(), e);
+				LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedOrderItem.getClass().getName(), e);
 			}
 			if (getCandidateItemOffers() != null) {
 				for (CandidateItemOffer candidate : getCandidateItemOffers()) {
 					CandidateItemOffer clone = candidate.clone();
-					clone.setOrderItem(orderItem);
-					orderItem.getCandidateItemOffers().add(clone);
+					clone.setOrderItem(clonedOrderItem);
+					clonedOrderItem.getCandidateItemOffers().add(clone);
 				}
 			}
             
             if (getOrderItemAttributes() != null) {
+                clonedOrderItem.setOrderItemAttributes(new HashMap<String, OrderItemAttribute>());
+
                 for (OrderItemAttribute attribute : getOrderItemAttributes().values()) {
                     OrderItemAttribute clone = attribute.clone();
-                    clone.setOrderItem(orderItem);
-                    orderItem.getOrderItemAttributes().put(clone.getName(), clone);
+                    clone.setOrderItem(clonedOrderItem);
+                    clonedOrderItem.getOrderItemAttributes().put(clone.getName(), clone);
                 }
             }
             
-			orderItem.setCategory(getCategory());
-			orderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
-			orderItem.setName(getName());
-			orderItem.setOrder(getOrder());
-			orderItem.setOrderItemType(getOrderItemType());
-			orderItem.setPersonalMessage(getPersonalMessage());
-			orderItem.setQuantity(getQuantity());
-			orderItem.setRetailPrice(getRetailPrice());
-			orderItem.setSalePrice(getSalePrice());
-			orderItem.setPrice(getPrice());
+			clonedOrderItem.setCategory(getCategory());
+			clonedOrderItem.setGiftWrapOrderItem(getGiftWrapOrderItem());
+			clonedOrderItem.setName(getName());
+			clonedOrderItem.setOrder(getOrder());
+			clonedOrderItem.setOrderItemType(getOrderItemType());
+			clonedOrderItem.setPersonalMessage(getPersonalMessage());
+			clonedOrderItem.setQuantity(getQuantity());
+			clonedOrderItem.setRetailPrice(getRetailPrice());
+			clonedOrderItem.setSalePrice(getSalePrice());
+			clonedOrderItem.setPrice(getPrice());
+            clonedOrderItem.setSplitParentItemId(getSplitParentItemId());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
  		
- 		return orderItem;
+ 		return clonedOrderItem;
 	}
 
 	public int hashCode() {
@@ -532,5 +537,13 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     public void setTaxable(Boolean taxable) {
         this.itemTaxable = taxable;
+    }
+
+    public Long getSplitParentItemId() {
+        return splitParentItemId;
+    }
+
+    public void setSplitParentItemId(Long splitParentItemId) {
+        this.splitParentItemId = splitParentItemId;
     }
 }

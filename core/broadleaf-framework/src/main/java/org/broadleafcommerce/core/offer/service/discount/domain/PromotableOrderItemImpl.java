@@ -375,7 +375,12 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 				// Item needs to be split.
 				splitItems = new ArrayList<PromotableOrderItem>();
 				PromotableOrderItem firstItem = (PromotableOrderItem) clone();
+
 				PromotableOrderItem secondItem = (PromotableOrderItem) clone();
+                if (getSplitParentItemId() == null) {
+                    firstItem.setSplitParentItemId(delegate.getId());
+                    secondItem.setSplitParentItemId(delegate.getId());
+                }
 				splitItems.add(firstItem);
 				splitItems.add(secondItem);
 				
@@ -451,6 +456,14 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 	public void addCandidateItemOffer(PromotableCandidateItemOffer candidateItemOffer) {
 		delegate.addCandidateItemOffer(candidateItemOffer.getDelegate());
 	}
+
+    public Long getSplitParentItemId() {
+        return delegate.getSplitParentItemId();
+    }
+
+    public void setSplitParentItemId(Long id) {
+        delegate.setSplitParentItemId(id);
+    }
 	
 	public PromotableOrderItem clone() {
 		PromotableOrderItem copy = itemFactory.createPromotableOrderItem((DiscreteOrderItem) delegate.clone(), order);

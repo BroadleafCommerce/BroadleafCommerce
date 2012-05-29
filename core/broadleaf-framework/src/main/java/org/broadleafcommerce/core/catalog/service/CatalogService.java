@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.core.catalog.service;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.service.type.ProductType;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
 public interface CatalogService {
 
@@ -134,5 +135,7 @@ public interface CatalogService {
     public List<Category> findActiveSubCategoriesByCategory(Category category);
 
     public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
-
+    
+    public ProductOption findProductOptionById(Long productOptionId);
+    
 }

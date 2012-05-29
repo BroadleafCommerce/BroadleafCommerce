@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -29,8 +23,6 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -39,6 +31,12 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service("blCartService")
 /*
@@ -174,53 +172,51 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                 // currently we'll just add items
                 for (OrderItem orderItem : anonymousCart.getOrderItems()) {
                     if (orderItem instanceof DiscreteOrderItem) {
-                        orderItem.removeAllAdjustments();
-                        orderItem.removeAllCandidateItemOffers();
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                         if (discreteOrderItem.getSku().getActiveStartDate() != null) {
                             if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
+                                DiscreteOrderItem newItem = (DiscreteOrderItem) discreteOrderItem.clone();
+                                addOrderItemToOrder(customerCart, newItem, false);
                                 mergeCartResponse.getAddedItems().add(orderItem);
                             } else {
                                 mergeCartResponse.getRemovedItems().add(orderItem);
                             }
                         } else {
                             if (discreteOrderItem.getProduct().isActive() && orderItem.getCategory().isActive()) {
-                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
-                                mergeCartResponse.getAddedItems().add(orderItem);
+                                DiscreteOrderItem newItem = (DiscreteOrderItem) discreteOrderItem.clone();
+                                addOrderItemToOrder(customerCart, newItem, false);                                                            mergeCartResponse.getAddedItems().add(orderItem);
                             } else {
                                 mergeCartResponse.getRemovedItems().add(orderItem);
                             }
                         }
                     } else if (orderItem instanceof BundleOrderItem) {
                         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                        orderItem.removeAllAdjustments();
-                        orderItem.removeAllCandidateItemOffers();
                         boolean removeBundle = false;
-                        List<DiscreteOrderItemRequest> discreteOrderItemRequests = new ArrayList<DiscreteOrderItemRequest>();
-                        for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()){
-                            discreteOrderItem.removeAllAdjustments();
-                            discreteOrderItem.removeAllCandidateItemOffers();
-                            DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                            discreteOrderItemRequests.add(itemRequest);
-                            if (discreteOrderItem.getSku().getActiveStartDate() != null) {
-                                if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                                    /*
-                                     * Bundle has an inactive item in it -- remove the whole bundle
-                                     */
-                                    removeBundle = true;
-                                }
-                            } else {
-                                if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
-                                    removeBundle = true;
+                        if (bundleOrderItem.getSku() != null && (! bundleOrderItem.getSku().isActive())) {
+                            removeBundle = true;
+                        } else {
+                            List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
+                            for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()){
+                                DiscreteOrderItem newItem = (DiscreteOrderItem) discreteOrderItem.clone();
+                                discreteOrderItems.add(newItem);
+                                if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                                    if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
+                                        /*
+                                         * Bundle has an inactive item in it -- remove the whole bundle
+                                         */
+                                        removeBundle = true;
+                                    }
+                                } else {
+                                    if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                        removeBundle = true;
+                                    }
                                 }
                             }
                         }
-                        BundleOrderItemRequest bundleOrderItemRequest = createBundleOrderItemRequest(bundleOrderItem, discreteOrderItemRequests);
+
                         if (!removeBundle) {
-                            addBundleItemToOrder(customerCart, bundleOrderItemRequest, priceOrder);
+                            BundleOrderItem newBundleOrderItem = (BundleOrderItem) bundleOrderItem.clone();
+                            addOrderItemToOrder(customerCart, newBundleOrderItem , false);
                             mergeCartResponse.getAddedItems().add(orderItem);
                         } else {
                             mergeCartResponse.getRemovedItems().add(orderItem);
@@ -284,28 +280,38 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         }
                     }
 				} else if (orderItem instanceof BundleOrderItem) {
-					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-					boolean removeBundle = false;
-					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
-							.getDiscreteOrderItems()) {
-                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
-                            if (!discreteOrderItem.getSku().isActive(
-                                    discreteOrderItem.getProduct(),
-                                    orderItem.getCategory())) {
-                                /*
-                                 * Bundle has an inactive item in it -- remove the
-                                 * whole bundle
-                                 */
-                                removeBundle = true;
-                                break;
-                            }
-                        } else {
-                            if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
-                                removeBundle = true;
-                                break;
+                    boolean removeBundle = false;
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    if (bundleOrderItem.getSku() != null) {
+                        if (! bundleOrderItem.getSku().isActive()) {
+                            removeBundle = true;
+                        }
+                    }
+
+					if (removeBundle == false) {
+                        // verify the contained items are still active
+
+                        for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
+                                .getDiscreteOrderItems()) {
+                            if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                                if (!discreteOrderItem.getSku().isActive(
+                                        discreteOrderItem.getProduct(),
+                                        orderItem.getCategory())) {
+                                    /*
+                                     * Bundle has an inactive item in it -- remove the
+                                     * whole bundle
+                                     */
+                                    removeBundle = true;
+                                    break;
+                                }
+                            } else {
+                                if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                    removeBundle = true;
+                                    break;
+                                }
                             }
                         }
-					}
+                    }
 					if (removeBundle) {
 						itemsToRemove.add(orderItem);
 					}
@@ -339,4 +345,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
+
+
 }

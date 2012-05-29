@@ -236,7 +236,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
    	}
 
    	public void setBaseRetailPrice(Money baseRetailPrice) {
-   		this.baseRetailPrice = baseRetailPrice.getAmount();
+   		this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
    	}
 
    	public Money getBaseSalePrice() {

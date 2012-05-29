@@ -184,7 +184,7 @@ public abstract class AbstractCartController {
         Order currentCartOrder = retrieveCartOrder(request, model);
         List<OrderItem> orderItemsAdded = new ArrayList<OrderItem>();
 
-        if (addToCartItem.getQuantity() > 0) {
+        if (addToCartItem.getQuantity() != null && addToCartItem.getQuantity() > 0) {
             try {
                 OrderItem orderItem;
                 if (addToCartItem.getOrderId() != null) {
