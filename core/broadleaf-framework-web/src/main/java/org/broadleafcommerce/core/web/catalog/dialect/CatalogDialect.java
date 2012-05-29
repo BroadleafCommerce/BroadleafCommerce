@@ -22,7 +22,6 @@ public class CatalogDialect extends AbstractDialect {
     public Set<IProcessor> getProcessors() { 
         final Set<IProcessor> processors = new HashSet<IProcessor>(); 
         processors.add(new CategoriesProcessor()); 
-        processors.add(new TestProcessor()); 
         return processors; 
     } 
 
