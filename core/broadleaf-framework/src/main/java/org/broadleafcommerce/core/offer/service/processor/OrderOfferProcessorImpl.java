@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
@@ -51,6 +52,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -498,43 +500,66 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    /**
+     * Appends the item attributes so that items with different attibutes are not merged together
+     * as part of the merge/split logic.
+     *
+     * @param identifier
+     * @param orderItem
+     */
+    protected void addOptionAttributesToIdentifier(StringBuffer identifier, OrderItem orderItem) {
+        if (orderItem.getOrderItemAttributes() != null && orderItem.getOrderItemAttributes().size() > 0) {
+            List<String> valueList = new ArrayList<String>();
+            for (OrderItemAttribute itemAttribute : orderItem.getOrderItemAttributes().values()) {
+                valueList.add(itemAttribute.getName() + "_" + itemAttribute.getValue());
+            }
+            Collections.sort(valueList);
+            identifier.append('_');
+            for (String value : valueList) {
+                identifier.append(value);
+            }
+        }
+    }
+
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier) {
-        String identifier = null;
+        StringBuffer identifier = new StringBuffer();
         if (orderItem.getSplitParentItemId() != null || cartService.getAutomaticallyMergeLikeItems()) {
             if (! cartService.getAutomaticallyMergeLikeItems()) {
-                identifier = String.valueOf(orderItem.getSplitParentItemId());
+                identifier.append(orderItem.getSplitParentItemId());
             } else {
                 if (orderItem instanceof BundleOrderItem) {
                     BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
                     if (bundleOrderItem.getSku() != null) {
-                        identifier = String.valueOf(bundleOrderItem.getSku().getId());
+                        identifier.append(bundleOrderItem.getSku().getId());
                     } else {
                         if (orderItem.getSplitParentItemId() != null) {
-                            identifier = String.valueOf(orderItem.getSplitParentItemId());
+                            identifier.append(orderItem.getSplitParentItemId());
                         } else {
-                            identifier = String.valueOf(orderItem.getId());
+                            identifier.append(orderItem.getId());
                         }
                     }
                 } else if (orderItem instanceof DiscreteOrderItem) {
                     DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                    identifier = String.valueOf(discreteOrderItem.getSku().getId());
+                    identifier.append(discreteOrderItem.getSku().getId());
                 } else {
                     if (orderItem.getSplitParentItemId() != null) {
-                        identifier = String.valueOf(orderItem.getSplitParentItemId());
+                        identifier.append(orderItem.getSplitParentItemId());
                     } else {
-                        identifier = String.valueOf(orderItem.getId());
+                        identifier.append(orderItem.getId());
                     }
                 }
             }
 
-            identifier += '_' + orderItem.getPrice().stringValue();
+            identifier.append('_').append(orderItem.getPrice().stringValue());
             if (extraIdentifier != null) {
-                identifier += '_' + extraIdentifier;
+                identifier.append('_').append(extraIdentifier);
             }
+
+            addOptionAttributesToIdentifier(identifier, orderItem);
         } else {
-            identifier = orderItem.getId().toString();
+            identifier.append(orderItem.getId());
         }
-        return identifier;
+        return identifier.toString();
     }
 
     protected void gatherFulfillmentGroupLinkedDiscreteOrderItem(List<DiscreteOrderItem> itemsToRemove, Map<String, Object[]> gatheredItem, FulfillmentGroupItem fgItem, DiscreteOrderItem orderItem, String extraIdentifier) {
