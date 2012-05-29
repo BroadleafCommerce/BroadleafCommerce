@@ -175,7 +175,7 @@ public class AutoBundleActivity extends BaseActivity {
         bundleOrderItem.setQuantity(numApplications);
         bundleOrderItem.setCategory(productBundle.getDefaultCategory());
         bundleOrderItem.setSku(productBundle.getDefaultSku());
-        bundleOrderItem.setName(productBundle.getDefaultSku().getName());
+        bundleOrderItem.setName(productBundle.getName());
         bundleOrderItem.setProductBundle(productBundle);
         bundleOrderItem.setOrder(order);
 
