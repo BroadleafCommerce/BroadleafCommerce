@@ -955,6 +955,8 @@ public class OrderServiceImpl implements OrderService {
     protected Sku findSkuThatMatchesProductOptions(Product product, Map<String,String> attributeValues) {
         Map<String, String> attributeValuesForSku = new HashMap<String,String>();
         // Verify that required product-option values were set.
+        //TODO: update to use the ProductOptionValues on Sku instead of the sku attribute
+        /*
         if (product.getProductOptions() != null) {
             for (ProductOption productOption : product.getProductOptions()) {
                 if (productOption.getRequired()) {
@@ -966,7 +968,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-
+        */
         if (product.getSkus() != null) {
             for (Sku sku : product.getSkus()) {
                 if (checkSkuForMatch(sku, attributeValuesForSku)) {

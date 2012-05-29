@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionValueType;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
 public interface CatalogService {
@@ -139,6 +138,4 @@ public interface CatalogService {
     
     public ProductOption findProductOptionById(Long productOptionId);
     
-    public Map<ProductOptionValueType, List<ProductOption>> groupProductOptionsByType(List<ProductOption> options);
-
 }

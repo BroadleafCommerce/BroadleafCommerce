@@ -16,10 +16,8 @@
 
 package org.broadleafcommerce.core.catalog.service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +33,6 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionValueType;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.springframework.stereotype.Service;
 
@@ -211,22 +208,6 @@ public class CatalogServiceImpl implements CatalogService {
     
     public ProductOption findProductOptionById(Long productOptionId) {
         return productOptionDao.readProductOptionById(productOptionId);
-    }
-    
-    public Map<ProductOptionValueType, List<ProductOption>> groupProductOptionsByType(List<ProductOption> options) {
-        
-        Map<ProductOptionValueType, List<ProductOption>> result = new HashMap<ProductOptionValueType, List<ProductOption>>();
-        /*
-        for (ProductOption option : options) {
-            List<ProductOption> typeOptions = result.get(option.getType());
-            if (typeOptions == null) {
-                typeOptions = new ArrayList<ProductOption>();
-                result.put(option.getType(), typeOptions);
-            }
-            typeOptions.add(option);
-        }
-        */
-        return result;
     }
     
 }
