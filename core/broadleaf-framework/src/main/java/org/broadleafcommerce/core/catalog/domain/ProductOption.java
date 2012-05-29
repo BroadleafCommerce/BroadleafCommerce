@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * A product option represents a value that is entered to specify more information about
@@ -56,6 +57,9 @@ public interface ProductOption extends Serializable {
 
     /**
      * Returns the option type.   For example, "color", "size", etc.
+     * These are used primarily to determine how the UI should prompt for and
+     * validate the product option.
+     *
      * @return
      */
     public ProductOptionType getType();
@@ -67,28 +71,16 @@ public interface ProductOption extends Serializable {
     public void setType(ProductOptionType type);
 
     /**
-     * Gets the option value.  (e.g. "red")
+     * Gets the option name.  (e.g. "color")
      * @param
      */
-    public String getValue();
+    public String getAttributeName();
 
     /**
-     * Sets the option value.  (e.g. "red")
-     * @param value
+     * Sets the option value.  (e.g. "color")
+     * @param attributeName
      */
-    public void setValue(String value);
-
-    /**
-     * Gets the option value.  (e.g. "Red")
-     * @param
-     */
-    public String getOptionLabel();
-
-    /**
-     * Sets the option value.  (e.g. "Red")
-     * @param label
-     */
-    public void setOptionLabel(String optionLabel);
+    public void setAttributeName(String attributeName);
     
     public Boolean getRequired();
     
@@ -97,5 +89,13 @@ public interface ProductOption extends Serializable {
     public Product getProduct();
 
     public void setProduct(Product product);
+
+    public List<ProductOptionValue> getAllowedValues();
+
+    public void setAllowedValues(List<ProductOptionValue> allowedValues);
+
+    public Long getDisplayOrder();
+
+    public void setDisplayOrder(Long order);
 
 }

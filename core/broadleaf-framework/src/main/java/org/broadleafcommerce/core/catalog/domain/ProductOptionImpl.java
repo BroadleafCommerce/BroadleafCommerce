@@ -1,13 +1,4 @@
 package org.broadleafcommerce.core.catalog.domain;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -17,6 +8,21 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,28 +39,21 @@ public class ProductOptionImpl implements ProductOption {
         name="ProductOptionId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="ProductOptionImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductOptionImpl")
         }
     )
     @Column(name = "PRODUCT_OPTION_ID")
     protected Long id;
     
-    @Column(name = "TYPE")
+    @Column(name = "OPTION_TYPE")
     @AdminPresentation(friendlyName = "Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.ProductOptionType")
     protected String type;
+
     
-    @Column(name = "OPTION_LABEL")
-    @AdminPresentation(friendlyName = "Option Label")
-    protected String optionLabel;
-    
-    @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "Value")
-    protected String value;
+    @Column(name = "ATTRIBUTE_NAME")
+    @AdminPresentation(friendlyName = "Attribute Name")
+    protected String attributeName;
     
     @Column(name = "REQUIRED")
     @AdminPresentation(friendlyName = "Required")
@@ -63,6 +62,15 @@ public class ProductOptionImpl implements ProductOption {
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product;
+
+    @Column(name ="DISPLAY_ORDER")
+    @AdminPresentation(friendlyName = "Display Order")
+    protected Long displayOrder;
+
+    @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value = "displayOrder")
+    protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
     
     @Override
     public Long getId() {
@@ -85,23 +93,13 @@ public class ProductOptionImpl implements ProductOption {
     }
 
     @Override
-    public String getValue() {
-        return value;
+    public String getAttributeName() {
+        return attributeName;
     }
 
     @Override
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String getOptionLabel() {
-        return optionLabel;
-    }
-
-    @Override
-    public void setOptionLabel(String optionLabel) {
-        this.optionLabel = optionLabel;
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
     }
 
     @Override
@@ -120,8 +118,27 @@ public class ProductOptionImpl implements ProductOption {
     }
 
     @Override
-    public void setProduct(Product product){
+    public void setProduct(Product product) {
         this.product = product;
     }
 
+    @Override
+    public List<ProductOptionValue> getAllowedValues() {
+        return allowedValues;
+    }
+
+    @Override
+    public void setAllowedValues(List<ProductOptionValue> allowedValues) {
+        this.allowedValues = allowedValues;
+    }
+
+    @Override
+    public Long getDisplayOrder() {
+        return displayOrder;
+    }
+
+    @Override
+    public void setDisplayOrder(Long displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 }

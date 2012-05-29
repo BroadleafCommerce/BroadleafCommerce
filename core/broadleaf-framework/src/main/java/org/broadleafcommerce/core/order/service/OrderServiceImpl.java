@@ -25,7 +25,9 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -168,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> itemAttributes) throws PricingException {
-        if (orderId == null || skuId == null || quantity == null) {
+        if (orderId == null || (productId == null && skuId == null) || quantity == null) {
             return null;
         }
 
@@ -910,6 +912,39 @@ public class OrderServiceImpl implements OrderService {
         return sku;
     }
 
+    private boolean checkSkuForAttribute(Sku sku, String attributeName, String attributeValue) {
+        if (sku.getSkuAttributes() == null || sku.getSkuAttributes().size() == 0) {
+            for (SkuAttribute skuAttribute : sku.getSkuAttributes()) {
+                if (attributeName.equals(skuAttribute.getName()) && attributeValue.equals(skuAttribute.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValuesForSku) {
+        for (String attributeName : attributeValuesForSku.keySet()) {
+            String attributeValue = attributeValuesForSku.get(attributeName);
+
+            if (sku.getSkuAttributes() == null || sku.getSkuAttributes().size() == 0) {
+                boolean attributeMatchFound = false;
+                for (SkuAttribute skuAttribute : sku.getSkuAttributes()) {
+                    if (attributeName.equals(skuAttribute.getName()) && attributeValue.equals(skuAttribute.getValue())) {
+                        attributeMatchFound = true;
+                        break;
+                    }
+                }
+                if (attributeMatchFound) {
+                    continue;
+                }
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Checks to make sure the correct SKU is still attached to the order.
      * For example, if you have the SKU for a Large, Red T-shirt in the
@@ -918,7 +953,28 @@ public class OrderServiceImpl implements OrderService {
      * be adjusted as well.
      */
     protected Sku findSkuThatMatchesProductOptions(Product product, Map<String,String> attributeValues) {
-        // TODO: Product Options
+        Map<String, String> attributeValuesForSku = new HashMap<String,String>();
+        // Verify that required product-option values were set.
+        if (product.getProductOptions() != null) {
+            for (ProductOption productOption : product.getProductOptions()) {
+                if (productOption.getRequired()) {
+                    if (attributeValues.get(productOption.getAttributeName()) == null) {
+                        throw new IllegalArgumentException("Unable to add to cart.   Not all required options were provided.");
+                    } else {
+                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
+                    }
+                }
+            }
+        }
+
+        if (product.getSkus() != null) {
+            for (Sku sku : product.getSkus()) {
+                if (checkSkuForMatch(sku, attributeValuesForSku)) {
+                    return sku;
+                }
+            }
+        }
+
         return null;
     }
 
