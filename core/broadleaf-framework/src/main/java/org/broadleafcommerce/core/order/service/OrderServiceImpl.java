@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,6 +52,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.OrderServiceException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
@@ -72,6 +65,14 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class OrderServiceImpl implements OrderService {
 
@@ -702,14 +703,13 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Deprecated
     protected DiscreteOrderItemRequest createDiscreteOrderItemRequest(DiscreteOrderItem discreteOrderItem) {
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setCategory(discreteOrderItem.getCategory());
         itemRequest.setProduct(discreteOrderItem.getProduct());
         itemRequest.setQuantity(discreteOrderItem.getQuantity());
         itemRequest.setSku(discreteOrderItem.getSku());
-
+        
         if (discreteOrderItem.getPersonalMessage() != null) {
             PersonalMessage personalMessage = orderItemService.createPersonalMessage();
             try {
@@ -722,11 +722,10 @@ public class OrderServiceImpl implements OrderService {
             }
             itemRequest.setPersonalMessage(personalMessage);
         }
-
+        
         return itemRequest;
     }
 
-    @Deprecated
     protected BundleOrderItemRequest createBundleOrderItemRequest(BundleOrderItem bundleOrderItem, List<DiscreteOrderItemRequest> discreteOrderItemRequests) {
         BundleOrderItemRequest bundleOrderItemRequest = new BundleOrderItemRequest();
         bundleOrderItemRequest.setCategory(bundleOrderItem.getCategory());

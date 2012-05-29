@@ -166,6 +166,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
 
         // add anonymous cart items (make sure they are valid)
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
+            //Order anonymousCart = findOrderById(anonymousCartId);
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
                 if (customerCart == null) {
                     customerCart = createNewCartForCustomer(customer);
@@ -178,14 +179,16 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                         if (discreteOrderItem.getSku().getActiveStartDate() != null) {
                             if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                                addOrderItemToOrder(customerCart, discreteOrderItem.clone(), priceOrder);
+                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
                                 mergeCartResponse.getAddedItems().add(orderItem);
                             } else {
                                 mergeCartResponse.getRemovedItems().add(orderItem);
                             }
                         } else {
                             if (discreteOrderItem.getProduct().isActive() && orderItem.getCategory().isActive()) {
-                                addOrderItemToOrder(customerCart, discreteOrderItem.clone(), priceOrder);
+                                DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                                addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
                                 mergeCartResponse.getAddedItems().add(orderItem);
                             } else {
                                 mergeCartResponse.getRemovedItems().add(orderItem);
@@ -196,9 +199,12 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         orderItem.removeAllAdjustments();
                         orderItem.removeAllCandidateItemOffers();
                         boolean removeBundle = false;
+                        List<DiscreteOrderItemRequest> discreteOrderItemRequests = new ArrayList<DiscreteOrderItemRequest>();
                         for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()){
                             discreteOrderItem.removeAllAdjustments();
                             discreteOrderItem.removeAllCandidateItemOffers();
+                            DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
+                            discreteOrderItemRequests.add(itemRequest);
                             if (discreteOrderItem.getSku().getActiveStartDate() != null) {
                                 if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                                     /*
@@ -212,8 +218,9 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                                 }
                             }
                         }
+                        BundleOrderItemRequest bundleOrderItemRequest = createBundleOrderItemRequest(bundleOrderItem, discreteOrderItemRequests);
                         if (!removeBundle) {
-                            addOrderItemToOrder(customerCart, bundleOrderItem.clone(), priceOrder);
+                            addBundleItemToOrder(customerCart, bundleOrderItemRequest, priceOrder);
                             mergeCartResponse.getAddedItems().add(orderItem);
                         } else {
                             mergeCartResponse.getRemovedItems().add(orderItem);
