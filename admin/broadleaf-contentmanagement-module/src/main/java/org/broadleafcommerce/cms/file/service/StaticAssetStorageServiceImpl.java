@@ -16,18 +16,6 @@
 
 package org.broadleafcommerce.cms.file.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
-import org.broadleafcommerce.cms.file.service.operation.NamedOperationManager;
-import org.broadleafcommerce.openadmin.server.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
@@ -48,6 +36,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
+import org.broadleafcommerce.cms.file.domain.StaticAsset;
+import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
+import org.broadleafcommerce.cms.file.service.operation.NamedOperationManager;
+import org.broadleafcommerce.openadmin.server.domain.SandBox;
+import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Jeff Fischer
@@ -216,8 +216,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
         }
         if (staticAsset == null) {
-            assert sandBox != null;
-            throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
+            if (sandBox == null) {
+                throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the production sandBox.");
+            } else {
+                throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
+            }
         }
         String mimeType = staticAsset.getMimeType();
 
