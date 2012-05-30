@@ -1,5 +1,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.io.Serializable;
+
 /**
  * Stores the values for a given product option.
  *
@@ -7,7 +9,7 @@ package org.broadleafcommerce.core.catalog.domain;
  *
  * Created by bpolster.
  */
-public interface ProductOptionValue {
+public interface ProductOptionValue extends Serializable {
     /**
      * Returns unique identifier of the product option value.
      * @return
@@ -37,13 +39,13 @@ public interface ProductOptionValue {
      * Gets the option value.  (e.g. "red")
      * @param
      */
-    public String getAttributeValue();
+    public String getValue();
 
     /**
      * Sets the option value.  (e.g. "red")
      * @param attributeValue
      */
-    public void setAttributeValue(String attributeValue);
+    public void setValue(String value);
 
     /**
      * Returns the order that the option value should be displayed in.
