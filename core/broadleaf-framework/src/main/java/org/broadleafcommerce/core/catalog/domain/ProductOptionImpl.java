@@ -52,7 +52,7 @@ public class ProductOptionImpl implements ProductOption {
     protected Long id;
     
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName = "Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.ProductOptionValueType")
+    @AdminPresentation(friendlyName = "Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.ProductOptionType")
     protected String type;
     
     @Column(name = "LABEL")
