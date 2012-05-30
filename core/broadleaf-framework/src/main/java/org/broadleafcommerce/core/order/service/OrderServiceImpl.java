@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
@@ -182,6 +181,9 @@ public class OrderServiceImpl implements OrderService {
         requestDTO.setItemAttributes(itemAttributes);
 
         Order order = addItemToOrder(orderId, requestDTO, priceOrder);
+        if (order == null) {
+            return null;
+        }
         return findLastMatchingItem(order, skuId, productId);
     }
 
@@ -534,7 +536,7 @@ public class OrderServiceImpl implements OrderService {
 
     private boolean bundleItemMatches(BundleOrderItem item1, BundleOrderItem item2) {
         if (item1.getSku() != null && item2.getSku() != null) {
-            return item1.getSku().getId().equals(item1.getSku().getId());
+            return item1.getSku().getId().equals(item2.getSku().getId());
         }
 
         // Otherwise, scan the items.
@@ -563,17 +565,14 @@ public class OrderServiceImpl implements OrderService {
             } else {
                 return false;
             }
-
-            // If all of the quantities were consumed, this is a match.
-            return skuMap.isEmpty();
         }
 
-        return false;
+        return skuMap.isEmpty();
     }
 
 
     private OrderItem findLastMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
-        for (int i=(order.getOrderItems().size()-1); i > 0; i--) {
+        for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
             OrderItem currentItem = (order.getOrderItems().get(i));
             if (currentItem instanceof BundleOrderItem) {
                 if (bundleItemMatches((BundleOrderItem) currentItem, itemToFind)) {
@@ -924,6 +923,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValuesForSku) {
+        if (attributeValuesForSku == null || attributeValuesForSku.size() == 0) {
+            return false;
+        }
+
         for (String attributeName : attributeValuesForSku.keySet()) {
             String attributeValue = attributeValuesForSku.get(attributeName);
 
@@ -969,7 +972,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         */
-        if (product.getSkus() != null) {
+        if (product !=null && product.getSkus() != null) {
             for (Sku sku : product.getSkus()) {
                 if (checkSkuForMatch(sku, attributeValuesForSku)) {
                     return sku;
@@ -1031,6 +1034,9 @@ public class OrderServiceImpl implements OrderService {
         Order order = validateOrder(orderId);
         Product product = validateProduct(orderItemRequestDTO.getProductId());
         Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes());
+        if (sku == null) {
+            return null;
+        }
         Category category = determineCategory(product, orderItemRequestDTO.getCategoryId());
 
         if (product == null || ! (product instanceof ProductBundle)) {

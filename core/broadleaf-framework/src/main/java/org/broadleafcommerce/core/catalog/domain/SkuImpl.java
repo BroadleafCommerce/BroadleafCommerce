@@ -92,8 +92,6 @@ import java.util.Map;
 @Table(name="BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable
-@XmlRootElement(name = "sku")
-@XmlAccessorType(XmlAccessType.PROPERTY)
 public class SkuImpl implements Sku {
 	
 	private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -220,12 +218,17 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<SkuAttribute> skuAttributes  = new ArrayList<SkuAttribute>();
+    
+    @ManyToMany(targetEntity = ProductOptionValueImpl.class)
+    @JoinTable(name = "BLC_SKU_OPTION_VALUE_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID", referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    List<ProductOptionValue> productOptionValues;
 
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getId()
      */
-    @XmlElement
     public Long getId() {
         return id;
     }
@@ -255,7 +258,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSalePrice()
      */
-    @XmlElement
     public Money getSalePrice() {
         if (salePrice == null && hasDefaultSku()) {
             return lookupDefaultSku().getSalePrice();
@@ -292,7 +294,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getRetailPrice()
      */
-    @XmlElement
     public Money getRetailPrice() {
         if (retailPrice == null && hasDefaultSku()) {
             return lookupDefaultSku().getRetailPrice();
@@ -329,7 +330,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getListPrice()
      */
-    @XmlTransient
     public Money getListPrice() {
         return getRetailPrice();
     }
@@ -348,7 +348,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getName()
      */
-    @XmlElement
     public String getName() {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
@@ -368,7 +367,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getDescription()
      */
-    @XmlElement
     public String getDescription() {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
@@ -389,7 +387,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getLongDescription()
      */
-    @XmlElement
     public String getLongDescription() {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
@@ -411,7 +408,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isTaxable()
      */
-    @XmlElement
     public Boolean isTaxable() {
         if (taxable == null) {
             if (hasDefaultSku()) {
@@ -425,7 +421,6 @@ public class SkuImpl implements Sku {
     /*
      * This is to facilitate serialization to non-Java clients
      */
-    @XmlTransient
     public Boolean getTaxable() {
         return isTaxable();
     }
@@ -447,7 +442,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isDiscountable()
      */
-    @XmlElement
     public Boolean isDiscountable() {
         if (discountable == null) {
             if (hasDefaultSku()) {
@@ -461,7 +455,6 @@ public class SkuImpl implements Sku {
     /*
      * This is to facilitate serialization to non-Java clients
      */
-    @XmlTransient
     public Boolean getDiscountable() {
         return isDiscountable();
     }
@@ -483,7 +476,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isAvailable()
      */
-    @XmlElement
     public Boolean isAvailable() {
         if (available == null) {
             if (hasDefaultSku()) {
@@ -494,7 +486,6 @@ public class SkuImpl implements Sku {
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    @XmlTransient
     public Boolean getAvailable() {
     	return isAvailable();
     }
@@ -516,7 +507,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveStartDate()
      */
-    @XmlElement
     public Date getActiveStartDate() {
         if (activeStartDate == null && hasDefaultSku()) {
             return lookupDefaultSku().getActiveStartDate();
@@ -539,7 +529,6 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveEndDate()
      */
-    @XmlElement
     public Date getActiveEndDate() {
         if (activeEndDate == null && hasDefaultSku()) {
             return lookupDefaultSku().getActiveEndDate();
@@ -612,7 +601,6 @@ public class SkuImpl implements Sku {
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSkuImages()
      */
     @Deprecated
-    @XmlTransient
     public Map<String, String> getSkuImages() {
         return skuImages;
     }
@@ -641,7 +629,6 @@ public class SkuImpl implements Sku {
      * @see
      * org.broadleafcommerce.core.catalog.domain.Sku#getSkuMedia()
      */
-    @XmlTransient
     public Map<String, Media> getSkuMedia() {
         if (skuMedia == null || skuMedia.isEmpty()) {
             if (hasDefaultSku()) {
@@ -668,7 +655,6 @@ public class SkuImpl implements Sku {
         this.product = product;
     }
 
-    @XmlTransient
     @Deprecated
     public List<Product> getAllParentProducts() {
         return allParentProducts;
@@ -682,10 +668,19 @@ public class SkuImpl implements Sku {
     /**
 	 * @return the skuAttributes
 	 */
-    @XmlTransient
 	public List<SkuAttribute> getSkuAttributes() {
 		return skuAttributes;
 	}
+
+    @Override
+    public List<ProductOptionValue> getProductOptionValues() {
+        return productOptionValues;
+    }
+
+    @Override
+    public void setProductOptionValues(List<ProductOptionValue> productOptionValues) {
+        this.productOptionValues = productOptionValues;
+    }
 
 	/**
 	 * @param skuAttributes the skuAttributes to set
