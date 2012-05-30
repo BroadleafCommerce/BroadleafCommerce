@@ -184,7 +184,8 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         } else {
                             if (discreteOrderItem.getProduct().isActive() && orderItem.getCategory().isActive()) {
                                 DiscreteOrderItem newItem = (DiscreteOrderItem) discreteOrderItem.clone();
-                                addOrderItemToOrder(customerCart, newItem, false);                                                            mergeCartResponse.getAddedItems().add(orderItem);
+                                addOrderItemToOrder(customerCart, newItem, false);
+                                mergeCartResponse.getAddedItems().add(orderItem);
                             } else {
                                 mergeCartResponse.getRemovedItems().add(orderItem);
                             }
