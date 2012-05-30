@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.web.catalog.dialect;
+package org.broadleafcommerce.core.web.dialect.catalog;
 
 import java.util.HashSet;
 import java.util.Set;
