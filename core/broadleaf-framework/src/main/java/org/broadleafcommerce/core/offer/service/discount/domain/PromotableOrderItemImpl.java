@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -31,6 +26,11 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class PromotableOrderItemImpl implements PromotableOrderItem {
 
@@ -45,13 +45,17 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected PromotableItemFactory itemFactory;    
     
     public PromotableOrderItemImpl(DiscreteOrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
-    	this.delegate = (DiscreteOrderItem) orderItem;
+    	this.delegate = orderItem;
     	this.order = order;
     	this.itemFactory = itemFactory;
     }
     
     public DiscreteOrderItem getDelegate() {
     	return delegate;
+    }
+
+    public void setDelegate(DiscreteOrderItem discreteOrderItem) {
+        this.delegate = discreteOrderItem;
     }
     
     public void reset() {

@@ -44,4 +44,6 @@ public interface BundleOrderItemFeePrice {
 
 	public abstract void setReportingCode(String reportingCode);
 
+    public BundleOrderItemFeePrice clone();
+
 }

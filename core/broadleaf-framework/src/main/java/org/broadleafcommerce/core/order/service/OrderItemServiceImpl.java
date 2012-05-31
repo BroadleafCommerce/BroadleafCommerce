@@ -81,6 +81,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
+        for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
+            feePrice.setDiscreteOrderItem(item);
+        }
 
         item.updatePrices();
         item.assignFinalPrice();
@@ -137,7 +140,12 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBundleOrderItemFeePrices(itemRequest.getBundleOrderItemFeePrices());
 
         for (DiscreteOrderItemRequest discreteItemRequest : itemRequest.getDiscreteOrderItems()) {
-            final DiscreteOrderItem discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
+            DiscreteOrderItem discreteOrderItem;
+            if (discreteItemRequest instanceof GiftWrapOrderItemRequest) {
+                discreteOrderItem = createGiftWrapOrderItem((GiftWrapOrderItemRequest) discreteItemRequest);
+            } else {
+                discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
+            }
             discreteOrderItem.setBundleOrderItem(item);
             item.getDiscreteOrderItems().add(discreteOrderItem);
             item.assignFinalPrice();

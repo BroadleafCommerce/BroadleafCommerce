@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -46,6 +39,7 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
@@ -55,6 +49,13 @@ import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitConta
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.compass.core.util.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -572,6 +573,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected void mergeSplitDiscreteOrderItems(PromotableOrder order) throws PricingException {
         //If adjustments are removed - merge split items back together before adding to the cart
         List<PromotableOrderItem> itemsToRemove = new ArrayList<PromotableOrderItem>();
+        List<DiscreteOrderItem> delegatesToRemove = new ArrayList<DiscreteOrderItem>();
         Iterator<PromotableOrderItem> finalItems = order.getDiscountableDiscreteOrderItems().iterator();
         Map<String, PromotableOrderItem> allItems = new HashMap<String, PromotableOrderItem>();
         while (finalItems.hasNext()) {
@@ -609,9 +611,11 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                         mySplits.remove(nextItem);
                     } else {
                         itemsToRemove.add(nextItem);
+                        delegatesToRemove.add(nextItem.getDelegate());
                     }
                 } else {
                     itemsToRemove.add(nextItem);
+                    delegatesToRemove.add(nextItem.getDelegate());
                 }
             }
         }
@@ -629,28 +633,78 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                             cartService.addItemToFulfillmentGroup(delegateItem, targetGroup.getDelegate(), false);
                         }
                     } else {
-                        delegateItem.getBundleOrderItem().getDiscreteOrderItems().add(delegateItem);
+                        delegateItem = (DiscreteOrderItem) cartService.addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
+                    }
+                    myItem.setDelegate(delegateItem);
+                }
+            }
+        }
+
+        //compile a list of any gift wrap items that we're keeping
+        List<GiftWrapOrderItem> giftWrapItems = new ArrayList<GiftWrapOrderItem>();
+        for (DiscreteOrderItem discreteOrderItem : order.getDelegate().getDiscreteOrderItems()) {
+            if (discreteOrderItem instanceof GiftWrapOrderItem) {
+                if (!delegatesToRemove.contains(discreteOrderItem)) {
+                    giftWrapItems.add((GiftWrapOrderItem) discreteOrderItem);
+                } else {
+                    Iterator<OrderItem> wrappedItems = ((GiftWrapOrderItem) discreteOrderItem).getWrappedItems().iterator();
+                    while (wrappedItems.hasNext()) {
+                        OrderItem wrappedItem = wrappedItems.next();
+                        wrappedItem.setGiftWrapOrderItem(null);
+                        wrappedItems.remove();
                     }
                 }
             }
         }
-        for (PromotableOrderItem orderItem : itemsToRemove) {
-            DiscreteOrderItem delegateItem = orderItem.getDelegate();
+
+        for (PromotableOrderItem itemToRemove : itemsToRemove) {
+            DiscreteOrderItem delegateItem = itemToRemove.getDelegate();
+
+            mergeSplitGiftWrapOrderItems(order, giftWrapItems, itemToRemove, delegateItem);
+
             if (delegateItem.getBundleOrderItem() == null) {
-                cartService.removeItemFromOrder(order.getDelegate(), orderItem.getDelegate(), false);
+                cartService.removeItemFromOrder(order.getDelegate(), itemToRemove.getDelegate(), false);
             } else {
-                delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(orderItem.getDelegate());
+                delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(itemToRemove.getDelegate());
+            }
+        }
+    }
+
+    protected void mergeSplitGiftWrapOrderItems(PromotableOrder order, List<GiftWrapOrderItem> giftWrapItems, PromotableOrderItem itemToRemove, DiscreteOrderItem delegateItem) {
+        for (GiftWrapOrderItem giftWrapOrderItem : giftWrapItems) {
+            List<OrderItem> newItems = new ArrayList<OrderItem>();
+            Iterator<OrderItem> wrappedItems = giftWrapOrderItem.getWrappedItems().iterator();
+            boolean foundItems = false;
+            while (wrappedItems.hasNext()) {
+                OrderItem wrappedItem = wrappedItems.next();
+                if (wrappedItem.equals(delegateItem)) {
+                    foundItems = true;
+                    //add in the new wrapped items (split or not)
+                    List<PromotableOrderItem> searchHits = order.searchSplitItems(itemToRemove);
+                    if (!CollectionUtils.isEmpty(searchHits)) {
+                        for (PromotableOrderItem searchHit : searchHits) {
+                            newItems.add(searchHit.getDelegate());
+                            searchHit.getDelegate().setGiftWrapOrderItem(giftWrapOrderItem);
+                        }
+                    }
+                    //eradicate the old wrapped items
+                    delegateItem.setGiftWrapOrderItem(null);
+                    wrappedItems.remove();
+                }
+            }
+            if (foundItems) {
+                giftWrapOrderItem.getWrappedItems().addAll(newItems);
+                orderItemService.saveOrderItem(giftWrapOrderItem);
             }
         }
     }
 
     protected void mergeSplitBundleOrderItems(PromotableOrder order) throws PricingException {
-        //TODO add unit test support for bundles and promotions
-        Map<String, BundleOrderItem> gatheredBundleItems = new HashMap<String, BundleOrderItem>();
         List<BundleOrderItemSplitContainer> bundleContainers = order.getBundleSplitItems();
         for (BundleOrderItemSplitContainer bundleContainer : bundleContainers) {
             PromotableFulfillmentGroup targetGroup = getTargetFulfillmentGroup(order, bundleContainer.getKey());
             List<BundleOrderItem> bundleOrderItems = bundleContainer.getSplitItems();
+            Map<String, BundleOrderItem> gatheredBundleItems = new HashMap<String, BundleOrderItem>();
             for (BundleOrderItem bundleOrderItem : bundleOrderItems) {
                 bundleOrderItem.assignFinalPrice();
                 String hash = bundleOrderItem.getPrice().stringValue();

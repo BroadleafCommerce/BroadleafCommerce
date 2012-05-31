@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -24,14 +32,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -214,6 +214,13 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                 DiscreteOrderItem temp = (DiscreteOrderItem) discreteOrderItem.clone();
                 temp.setBundleOrderItem(orderItem);
                 orderItem.getDiscreteOrderItems().add(temp);
+            }
+        }
+        if (getBundleOrderItemFeePrices() != null) {
+            for (BundleOrderItemFeePrice feePrice : getBundleOrderItemFeePrices()) {
+                BundleOrderItemFeePrice cloneFeePrice = feePrice.clone();
+                cloneFeePrice.setBundleOrderItem(orderItem);
+                orderItem.getBundleOrderItemFeePrices().add(cloneFeePrice);
             }
         }
         if (getBundleOrderItemFeePrices() != null) orderItem.getBundleOrderItemFeePrices().addAll(getBundleOrderItemFeePrices());

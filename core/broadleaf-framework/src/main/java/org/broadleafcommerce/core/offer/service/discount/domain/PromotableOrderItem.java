@@ -87,6 +87,8 @@ public interface PromotableOrderItem {
 	public List<PromotableOrderItem> split();
 	
 	public DiscreteOrderItem getDelegate();
+
+    public void setDelegate(DiscreteOrderItem discreteOrderItem);
 	
 	public void reset();
 	
