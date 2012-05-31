@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
@@ -23,10 +27,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.io.InputStream;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.UnmarshalledParameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterTypeEnum;
 
 public class AlterRGB extends BaseFilter {
 
@@ -63,21 +63,21 @@ public class AlterRGB extends BaseFilter {
         String redApplyFactor = parameterMap.get(key + "-red-apply-factor");
         red.setApplyFactor(redApplyFactor == null ? false : Boolean.valueOf(redApplyFactor));
         red.setName("red");
-        red.setType(ParameterTypeEnum.FLOAT.toString());
+        red.setType(ParameterTypeEnum.INT.toString());
         red.setValue(parameterMap.get(key + "-red-amount"));
 
         UnmarshalledParameter green = new UnmarshalledParameter();
         String greenApplyFactor = parameterMap.get(key + "-green-apply-factor");
         green.setApplyFactor(greenApplyFactor == null ? false : Boolean.valueOf(greenApplyFactor));
         green.setName("green");
-        green.setType(ParameterTypeEnum.FLOAT.toString());
+        green.setType(ParameterTypeEnum.INT.toString());
         green.setValue(parameterMap.get(key + "-green-amount"));
 
         UnmarshalledParameter blue = new UnmarshalledParameter();
         String blueApplyFactor = parameterMap.get(key + "-blue-apply-factor");
         blue.setApplyFactor(blueApplyFactor == null ? false : Boolean.valueOf(blueApplyFactor));
         blue.setName("blue");
-        blue.setType(ParameterTypeEnum.FLOAT.toString());
+        blue.setType(ParameterTypeEnum.INT.toString());
         blue.setValue(parameterMap.get(key + "-blue-amount"));
 
         operation.setParameters(new UnmarshalledParameter[]{red, green, blue});
