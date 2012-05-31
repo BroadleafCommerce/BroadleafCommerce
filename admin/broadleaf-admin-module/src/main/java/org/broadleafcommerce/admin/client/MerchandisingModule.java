@@ -72,8 +72,23 @@ public class MerchandisingModule extends AbstractModule {
 			"org.broadleafcommerce.admin.client.presenter.catalog.product.OneToOneProductSkuPresenter",
 			productPermissions
 		);
+		
+		//TODO: add custom permissions for product options
+		List<String> productOptionPermissions = new ArrayList<String>();
+        productOptionPermissions.add("PERMISSION_CREATE_PRODUCT");
+        productOptionPermissions.add("PERMISSION_UPDATE_PRODUCT");
+        productOptionPermissions.add("PERMISSION_DELETE_PRODUCT");
+        productOptionPermissions.add("PERMISSION_READ_PRODUCT");
+        setSection(
+            BLCMain.getMessageManager().getString("productOptionMainTitle"),
+            "productOption",
+            "org.broadleafcommerce.admin.client.view.catalog.product.ProductOptionView",
+            "productOptionPresenter",
+            "org.broadleafcommerce.admin.client.presenter.catalog.product.ProductOptionPresenter",
+            productOptionPermissions
+        );
 
-		List<String> offerPermissions = new ArrayList<String>();
+        List<String> offerPermissions = new ArrayList<String>();
 		offerPermissions.add("PERMISSION_CREATE_PROMOTION");
 		offerPermissions.add("PERMISSION_UPDATE_PROMOTION");
         offerPermissions.add("PERMISSION_DELETE_PROMOTION");
