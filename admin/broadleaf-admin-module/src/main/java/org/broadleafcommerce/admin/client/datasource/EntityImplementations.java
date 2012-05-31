@@ -32,6 +32,8 @@ public class EntityImplementations {
 	public static final String CROSSSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl";
 	public static final String UPSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl";
 	public static final String PRODUCT_ATTRIBUTE = "org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl";
+	public static final String PRODUCT_OPTION = "org.broadleafcommerce.core.catalog.domain.ProductOptionImpl";
+	public static final String PRODUCT_OPTION_VALUE = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl";
 	public static final String CATEGORY_PRODUCT = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl";
 	public static final String ORDER = "org.broadleafcommerce.core.order.domain.OrderImpl";
 	public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItemImpl";

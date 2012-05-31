@@ -24,6 +24,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridStructureDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridStructureView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureView;
 
@@ -34,6 +36,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 /**
  * 
@@ -49,7 +52,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected DynamicEntityListView listDisplay;
 	protected GridStructureView attributesDisplay;
 	protected GridStructureView allCategoriesDisplay;
-	protected GridStructureView productOptionsDisplay;
+	protected ExpandableGridStructureView productOptionsDisplay;
+	protected ToolStripButton generateSkusButton;
     
 	public OneToOneProductSkuView() {
 		setHeight100();
@@ -120,12 +124,9 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         productOptionsLayout.setBackgroundColor("#eaeaea");
         productOptionsLayout.setOverflow(Overflow.AUTO);
         
-        productOptionsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productOptionsListTitle"), false, true);
-        productOptionsDisplay.getGrid().setDisabled(false);
-        productOptionsDisplay.getGrid().setCanEdit(true);
-        productOptionsDisplay.getGrid().setEditByCell(true);
-        productOptionsDisplay.getGrid().setAutoSaveEdits(true);
-        productOptionsDisplay.getGrid().setSaveByCell(true);
+        productOptionsDisplay = new ExpandableGridStructureView(BLCMain.getMessageManager().getString("productOptionsListTitle"), false, true);
+        generateSkusButton = new ToolStripButton(BLCMain.getMessageManager().getString("generateSkusButtonTitle"));
+        productOptionsDisplay.getToolBar().addButton(generateSkusButton);
         productOptionsLayout.addMember(productOptionsDisplay);
         productOptionsTab.setPane(productOptionsLayout);
 
@@ -191,8 +192,12 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		return allCategoriesDisplay;
 	}
 
-	public GridStructureDisplay getProductOptionsDisplay() {
+	public ExpandableGridStructureDisplay getProductOptionsDisplay() {
 	    return productOptionsDisplay;
+	}
+	
+	public ToolStripButton getGenerateSkusButton() {
+	    return generateSkusButton;
 	}
 
 }

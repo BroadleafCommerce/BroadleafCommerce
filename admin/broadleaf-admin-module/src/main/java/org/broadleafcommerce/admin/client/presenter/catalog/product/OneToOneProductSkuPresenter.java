@@ -32,7 +32,10 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductAttr
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductMediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionValueDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
@@ -51,16 +54,21 @@ import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePr
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
@@ -78,7 +86,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected SubPresentable mediaPresenter;
 	protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
-	protected SubPresentable productOptionsPresenter;
+	protected AssociatedProductOptionPresenter productOptionsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
 	@Override
@@ -129,8 +137,25 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		productAttributePresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
-		//editing is done on a cell-by-cell basis in order to prevent problems with double clicking the group itself
-		((CreateBasedListStructurePresenter)productOptionsPresenter).getRowDoubleClickedHandlerRegistration().removeHandler();
+		
+		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
+                AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        SC.say("Success!");
+                    }
+                    
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                });
+            }
+        });
 	}
 	
 	@Override
@@ -215,14 +240,23 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 				parentCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 			}
 		}));
+		
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionSearchDS", new ProductOptionListDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                EntitySearchDialog productOptionSearchView = new EntitySearchDialog((ListGridDataSource)result, true);
+                library.put("productOptionSearchView", productOptionSearchView);
+            }
+        }));
+
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionValuesDS", new ProductOptionValueDataSourceFactory(), new NullAsyncCallbackAdapter()));
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productOptionsDS", new ProductOptionDataSourceFactory(), new AsyncCallbackAdapter() {
 		    public void onSetupSuccess(DataSource result) {
-		        productOptionsPresenter = new CreateBasedListStructurePresenter(getDisplay().getProductOptionsDisplay(), new String[]{EntityImplementations.PRODUCT}, BLCMain.getMessageManager().getString("categorySearchPrompt"));
-		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"optionLabel", "value", "required"}, new Boolean[]{true, true, true});
-		        productOptionsPresenter.setReadOnly(false);
-		        getDisplay().getProductOptionsDisplay().getGrid().groupBy("type");
+		        productOptionsPresenter = new AssociatedProductOptionPresenter(getDisplay().getProductOptionsDisplay(), (EntitySearchDialog)library.get("productOptionSearchView"), BLCMain.getMessageManager().getString("productOptionSearchPrompt"));
+		        productOptionsPresenter.setDataSource((ListGridDataSource) result, new String[]{"label", "type", "required"}, new Boolean[]{true, true, true});
+		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"value", "displayOrder"}, new Boolean[]{false, false});
 		    }
 		}));
+		
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {

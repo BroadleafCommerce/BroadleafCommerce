@@ -37,7 +37,7 @@ import com.smartgwt.client.data.DataSource;
  * @author Phillip Verheyden
  *
  */
-public class ProductOptionDataSourceFactory implements DataSourceFactory {
+public class ProductOptionValueDataSourceFactory implements DataSourceFactory {
 
     public static ListGridDataSource dataSource = null;
     
@@ -45,9 +45,9 @@ public class ProductOptionDataSourceFactory implements DataSourceFactory {
         if (dataSource == null) {
             operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.FOREIGNKEY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
             PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("products", EntityImplementations.PRODUCT, null));
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("productOption", EntityImplementations.PRODUCT_OPTION, null));
             DataSourceModule[] modules = new DataSourceModule[]{
-                new BasicClientEntityModule(CeilingEntities.PRODUCT_OPTION, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+                new BasicClientEntityModule(CeilingEntities.PRODUCT_OPTION_VALUE, persistencePerspective, AppServices.DYNAMIC_ENTITY)
             };
             dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
             dataSource.buildFields(null, false, cb);

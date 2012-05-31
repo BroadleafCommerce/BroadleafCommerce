@@ -28,6 +28,7 @@ public class CeilingEntities {
 	public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.Product";
 	public static final String PRODUCT_ATTRIBUTE = "org.broadleafcommerce.core.catalog.domain.ProductAttribute";
 	public static final String PRODUCT_OPTION = "org.broadleafcommerce.core.catalog.domain.ProductOption";
+    public static final String PRODUCT_OPTION_VALUE = "org.broadleafcommerce.core.catalog.domain.ProductOptionValue";
 	public static final String ORDER = "org.broadleafcommerce.core.order.domain.Order";
 	public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItem";
 	public static final String FULFILLMENT_GROUP = "org.broadleafcommerce.core.order.domain.FulfillmentGroup";
