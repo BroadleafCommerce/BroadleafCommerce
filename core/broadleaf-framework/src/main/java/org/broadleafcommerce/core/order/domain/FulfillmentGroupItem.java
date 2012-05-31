@@ -50,6 +50,8 @@ public interface FulfillmentGroupItem extends Serializable {
     void setStatus(String status);
     
     public void removeAssociations();
+
+    public FulfillmentGroupItem clone();
     
     /**
      * Gets a list of TaxDetail objects, which are taxes that apply directly to this item.

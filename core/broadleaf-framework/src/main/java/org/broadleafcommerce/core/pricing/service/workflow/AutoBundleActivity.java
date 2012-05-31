@@ -22,11 +22,9 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -34,10 +32,7 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This pricing workflow step will automatically bundle items in the cart.
@@ -64,6 +59,9 @@ public class AutoBundleActivity extends BaseActivity {
 
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
+
+    @Resource(name="blFulfillmentGroupItemDao")
+    protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext)context).getSeedData();
@@ -179,6 +177,18 @@ public class AutoBundleActivity extends BaseActivity {
         bundleOrderItem.setProductBundle(productBundle);
         bundleOrderItem.setOrder(order);
 
+        // make a copy of the fulfillment group items since they will be deleted when the order items are removed
+        Map<Long, FulfillmentGroupItem> skuIdFulfillmentGroupMap = new HashMap<Long, FulfillmentGroupItem>();
+        List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
+                    DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) fulfillmentGroupItem.getOrderItem();
+                    skuIdFulfillmentGroupMap.put(discreteOrderItem.getSku().getId(), fulfillmentGroupItem);
+                }
+            }
+        }
+
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             List<DiscreteOrderItem> itemMatches = new ArrayList<DiscreteOrderItem>();
             int skuMatches = populateItemMatchesForSku(itemMatches, order, unbundledItems, skuBundleItem.getSku().getId());
@@ -188,7 +198,8 @@ public class AutoBundleActivity extends BaseActivity {
                 throw new IllegalArgumentException("Something went wrong creating automatic bundles.  Not enough skus to fulfill bundle requirements for sku id: " + skuBundleItem.getSku().getId());
             }
 
-            // remove-all-items from orderItem
+            // remove-all-items from order
+            // this call also deletes any fulfillment group items that are associated with that order item
             for (DiscreteOrderItem item : itemMatches) {
                 order = cartService.removeItemFromOrder(order, item, false);
             }
@@ -210,6 +221,16 @@ public class AutoBundleActivity extends BaseActivity {
             newSkuBundleItem.setBundleOrderItem(bundleOrderItem);
             newSkuBundleItem.setQuantity(skuBundleItem.getQuantity());
             newSkuBundleItem.setOrder(null);
+
+            // Re-associate fulfillment group item to new skuBundle
+            FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
+            if (fulfillmentGroupItem != null) {
+                FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                newFulfillmentGroupItem.setOrderItem(newSkuBundleItem);
+                newFulfillmentGroupItem.setQuantity(newSkuBundleItem.getQuantity());
+                fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+            }
+
             bundleOrderItem.getDiscreteOrderItems().add(newSkuBundleItem);
 
             if (skuMatches > skusRequired) {
@@ -222,6 +243,15 @@ public class AutoBundleActivity extends BaseActivity {
                 newOrderItem.setOrder(order);
                 newOrderItem.updatePrices();
                 newOrderItem.assignFinalPrice();
+
+                // Re-associate fulfillment group item to newOrderItem
+                if (fulfillmentGroupItem != null) {
+                    FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                    newFulfillmentGroupItem.setOrderItem(newOrderItem);
+                    newFulfillmentGroupItem.setQuantity(newOrderItem.getQuantity());
+                    fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+                }
+
                 order.getOrderItems().add(newOrderItem);
             }
         }

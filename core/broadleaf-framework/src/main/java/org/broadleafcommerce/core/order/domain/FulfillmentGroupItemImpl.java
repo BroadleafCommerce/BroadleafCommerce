@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -38,9 +40,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -51,8 +56,9 @@ import org.hibernate.annotations.Index;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
+public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable {
 
+    private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -161,6 +167,38 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
+    }
+
+    public void checkCloneable(FulfillmentGroupItem fulfillmentGroupItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = fulfillmentGroupItem.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+        }
+    }
+
+    public FulfillmentGroupItem clone() {
+        //this is likely an extended class - instantiate from the fully qualified name via reflection
+        FulfillmentGroupItem clonedFulfillmentGroupItem;
+        try {
+            clonedFulfillmentGroupItem = (FulfillmentGroupItem) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clonedFulfillmentGroupItem);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedFulfillmentGroupItem.getClass().getName(), e);
+            }
+
+            clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
+            clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
+            clonedFulfillmentGroupItem.setQuantity(getQuantity());
+            clonedFulfillmentGroupItem.setStatus(getStatus());
+            clonedFulfillmentGroupItem.setTaxes(getTaxes());
+            clonedFulfillmentGroupItem.setTotalTax(getTotalTax());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clonedFulfillmentGroupItem;
     }
 
     @Override
