@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
@@ -137,5 +138,7 @@ public interface CatalogService {
     public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
     
     public ProductOption findProductOptionById(Long productOptionId);
+    
+    public ProductOptionValue findProductOptionValueById(Long productOptionValueId);
     
 }

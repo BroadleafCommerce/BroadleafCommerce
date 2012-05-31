@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleComparator;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.springframework.stereotype.Service;
@@ -205,9 +206,15 @@ public class CatalogServiceImpl implements CatalogService {
     public Product createProduct(ProductType productType) {
     	return productDao.create(productType);
     }
-    
+
+    @Override
     public ProductOption findProductOptionById(Long productOptionId) {
         return productOptionDao.readProductOptionById(productOptionId);
+    }
+
+    @Override
+    public ProductOptionValue findProductOptionValueById(Long productOptionValueId) {
+        return productOptionDao.readProductOptionValueById(productOptionValueId);
     }
     
 }
