@@ -58,11 +58,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -124,12 +119,12 @@ public class SkuImpl implements Sku {
     protected BigDecimal salePrice;
 
     /** The retail price. */
-    @Column(name = "RETAIL_PRICE", nullable=false, precision=19, scale=5)
+    @Column(name = "RETAIL_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", order=10, group = "SkuImpl_Price", prominent=true, fieldType= SupportedFieldType.MONEY, groupOrder=3)
     protected BigDecimal retailPrice;
 
     /** The name. */
-    @Column(name = "NAME", nullable=false)
+    @Column(name = "NAME")
     @SearchableProperty
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order=1, group = "SkuImpl_Sku_Description", prominent=true, columnWidth="25%", groupOrder=4)
