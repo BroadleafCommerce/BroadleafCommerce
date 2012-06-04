@@ -220,17 +220,7 @@ public class AutoBundleActivity extends BaseActivity {
             newSkuBundleItem.setSkuBundleItem(skuBundleItem);
             newSkuBundleItem.setBundleOrderItem(bundleOrderItem);
             newSkuBundleItem.setQuantity(skuBundleItem.getQuantity());
-            newSkuBundleItem = (DiscreteOrderItem) orderItemDao.save(newSkuBundleItem);
             newSkuBundleItem.setOrder(null);
-
-            // Re-associate fulfillment group item to new skuBundle
-            FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
-            if (fulfillmentGroupItem != null) {
-                FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
-                newFulfillmentGroupItem.setOrderItem(newSkuBundleItem);
-                newFulfillmentGroupItem.setQuantity(newSkuBundleItem.getQuantity());
-                fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
-            }
 
             bundleOrderItem.getDiscreteOrderItems().add(newSkuBundleItem);
 
@@ -246,6 +236,7 @@ public class AutoBundleActivity extends BaseActivity {
                 newOrderItem.assignFinalPrice();
 
                 // Re-associate fulfillment group item to newOrderItem
+                FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
                 if (fulfillmentGroupItem != null) {
                     FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
                     newFulfillmentGroupItem.setOrderItem(newOrderItem);
@@ -261,7 +252,25 @@ public class AutoBundleActivity extends BaseActivity {
         bundleOrderItem.assignFinalPrice();
 
         order.getOrderItems().add(bundleOrderItem);
-        return cartService.save(order, false);
+        order =  cartService.save(order, false);
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            if (orderItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
+                for (DiscreteOrderItem discreteOrderItem : bundleItem.getDiscreteOrderItems()) {
+                    // Re-associate fulfillment group item to newly created skuBundles
+                    FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(discreteOrderItem.getSku().getId());
+                    if (fulfillmentGroupItem != null) {
+                        FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                        newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
+                        newFulfillmentGroupItem.setQuantity(discreteOrderItem.getQuantity());
+                        fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+                    }
+                }
+            }
+        }
+
+        return order;
     }
 
 
