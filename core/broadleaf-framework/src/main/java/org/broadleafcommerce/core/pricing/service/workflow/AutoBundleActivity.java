@@ -220,6 +220,7 @@ public class AutoBundleActivity extends BaseActivity {
             newSkuBundleItem.setSkuBundleItem(skuBundleItem);
             newSkuBundleItem.setBundleOrderItem(bundleOrderItem);
             newSkuBundleItem.setQuantity(skuBundleItem.getQuantity());
+            newSkuBundleItem = (DiscreteOrderItem) orderItemDao.save(newSkuBundleItem);
             newSkuBundleItem.setOrder(null);
 
             // Re-associate fulfillment group item to new skuBundle
