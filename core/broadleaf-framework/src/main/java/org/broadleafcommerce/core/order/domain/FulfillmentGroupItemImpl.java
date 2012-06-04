@@ -192,8 +192,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
             clonedFulfillmentGroupItem.setOrderItem(getOrderItem());
             clonedFulfillmentGroupItem.setQuantity(getQuantity());
             clonedFulfillmentGroupItem.setStatus(getStatus());
-            clonedFulfillmentGroupItem.setTaxes(getTaxes());
-            clonedFulfillmentGroupItem.setTotalTax(getTotalTax());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
