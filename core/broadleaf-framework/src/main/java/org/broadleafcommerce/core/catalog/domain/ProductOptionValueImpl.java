@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,13 +32,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -55,9 +55,9 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Column(name = "PRODUCT_OPTION_VALUE_ID")
     protected Long id;
 
-    @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "Value")
-    protected String value;
+    @Column(name = "ATTRIBUTE_VALUE")
+    @AdminPresentation(friendlyName = "Attribute Value")
+    protected String attributeValue;
 
     @Column(name ="DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "Display Order")
@@ -78,13 +78,13 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     }
 
     @Override
-    public String getValue() {
-        return value;
+    public String getAttributeValue() {
+        return attributeValue;
     }
 
     @Override
-    public void setValue(String value) {
-        this.value = value;
+    public void setAttributeValue(String attributeValue) {
+        this.attributeValue = attributeValue;
     }
 
     @Override

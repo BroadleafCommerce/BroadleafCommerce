@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.order;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -50,6 +45,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractCartController {
 
@@ -182,24 +182,23 @@ public abstract class AbstractCartController {
          */
 
         Order currentCartOrder = retrieveCartOrder(request, model);
-        List<OrderItem> orderItemsAdded = new ArrayList<OrderItem>();
 
         if (addToCartItem.getQuantity() != null && addToCartItem.getQuantity() > 0) {
             try {
-                OrderItem orderItem;
+                Order order;
                 if (addToCartItem.getOrderId() != null) {
-                    orderItem = cartService.addSkuToOrder(addToCartItem.getOrderId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity(), addToCartItem.getAdditionalAttributes());
+                    order = cartService.addItemToOrder(addToCartItem.getOrderId(), addToCartItem, true);
                 }
                 else {
-                    orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity(), addToCartItem.getAdditionalAttributes());
+                    order = cartService.addItemToOrder(currentCartOrder.getId(), addToCartItem, true);
                 }
-                orderItemsAdded.add(orderItem);
+                model.addAttribute("order", order);
             } catch (PricingException e) {
                 LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
             }
         }
 
-        model.addAttribute("orderItemsAdded", orderItemsAdded);
+
 
         if(!ajax) {
             return addItemViewRedirect ? "redirect:" + addItemView : addItemView;

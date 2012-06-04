@@ -16,8 +16,16 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,17 +41,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -67,13 +66,13 @@ public class ProductOptionImpl implements ProductOption {
     @Column(name = "PRODUCT_OPTION_ID")
     protected Long id;
     
-    @Column(name = "TYPE")
+    @Column(name = "OPTION_TYPE")
     @AdminPresentation(friendlyName = "Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.catalog.service.type.ProductOptionType")
     protected String type;
     
-    @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "Label")
-    protected String label;
+    @Column(name = "ATTRIBUTE_NAME")
+    @AdminPresentation(friendlyName = "Attribute Name")
+    protected String attributeName;
 
     @Column(name = "REQUIRED")
     @AdminPresentation(friendlyName = "Required")
@@ -111,13 +110,13 @@ public class ProductOptionImpl implements ProductOption {
     }
     
     @Override
-    public String getLabel() {
-        return label;
+    public String getAttributeName() {
+        return attributeName;
     }
 
     @Override
-    public void setLabel(String label) {
-        this.label = label;
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
     }
 
     @Override

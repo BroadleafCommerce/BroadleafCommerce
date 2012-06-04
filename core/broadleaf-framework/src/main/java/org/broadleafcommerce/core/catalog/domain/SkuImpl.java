@@ -570,6 +570,9 @@ public class SkuImpl implements Sku {
      * @see org.broadleafcommerce.core.catalog.domain.Sku#isActive()
      */
     public boolean isActive() {
+    	if (activeStartDate == null && activeEndDate == null && hasDefaultSku()) {
+    		return lookupDefaultSku().isActive();
+    	}
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("sku, " + id + ", inactive due to date");

@@ -278,6 +278,32 @@ public class CatalogController {
             model.addAttribute("productError", true);
         }
 
+        /*
+            private long productId;
+    private long categoryId;
+    private long skuId;
+    private Long orderId;
+    private int quantity;
+    private Map additionalAttributes;
+         */
+
+        AddToCartItem addItemRequest = new AddToCartItem();
+        addItemRequest.setCategoryId(currentCategory.getId());
+        addItemRequest.setProductId(product.getId());
+        if (product.getDefaultSku() != null) {
+            addItemRequest.setSkuId(product.getDefaultSku().getId());
+        }
+        addItemRequest.setQuantity(1);
+
+        /*if (product.getProductOptions() != null) {
+            addItemRequest.getProductOptions()
+        }
+        for ()
+        addItemRequest.setAdditionalAttributes();
+        addItemRequest.setQuantity(1);
+        addItemRequest.setAddSkuId(product.getDefaultSku().getId());
+        model.addAttribute("addToCartItem", wishlistRequest);   */
+
         WishlistRequest wishlistRequest = new WishlistRequest();
         wishlistRequest.setAddCategoryId(currentCategory.getId());
         wishlistRequest.setAddProductId(product.getId());

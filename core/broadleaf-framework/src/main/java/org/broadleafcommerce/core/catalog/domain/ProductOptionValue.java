@@ -55,13 +55,13 @@ public interface ProductOptionValue extends Serializable {
      * Gets the option value.  (e.g. "red")
      * @param
      */
-    public String getValue();
+    public String getAttributeValue();
 
     /**
      * Sets the option value.  (e.g. "red")
      * @param attributeValue
      */
-    public void setValue(String value);
+    public void setAttributeValue(String attributeValue);
 
     /**
      * Returns the order that the option value should be displayed in.
