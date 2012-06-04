@@ -71,6 +71,10 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
 
     @Column(name = "REPORTING_CODE")
     protected String reportingCode;
+    
+    @Column(name = "FEE_TAXABLE_FLAG")
+    @AdminPresentation(excluded = true)
+    protected Boolean feeTaxable; 
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
@@ -120,6 +124,14 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
 
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
+    }
+    
+    public Boolean isTaxable() {
+        return feeTaxable == null ? true : feeTaxable;
+    }
+
+    public void setTaxable(Boolean taxable) {
+        this.feeTaxable = taxable;
     }
     
     public List<TaxDetail> getTaxes() {

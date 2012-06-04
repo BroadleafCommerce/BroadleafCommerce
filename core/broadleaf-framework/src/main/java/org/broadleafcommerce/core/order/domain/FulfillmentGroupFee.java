@@ -44,6 +44,20 @@ public interface FulfillmentGroupFee extends Serializable {
     public void setReportingCode(String reportingCode);
     
     /**
+     * Returns whether or not this fee is taxable. If this flag is not set, it returns true by default
+     * 
+     * @return the taxable flag. If null, returns true
+     */
+    public Boolean isTaxable();
+
+    /**
+     * Sets whether or not this fee is taxable
+     * 
+     * @param taxable
+     */
+    public void setTaxable(Boolean taxable);
+    
+    /**
      * Gets a list of TaxDetail objects, which are taxes that apply directly to this fee.
      * 
      * @return a list of taxes that apply to this fee

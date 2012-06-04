@@ -199,28 +199,12 @@ public class SimpleTaxModule implements TaxModule {
         return null;
     }
 
-    /**
-     * Returns the value of the contained orderItem's isTaxable method if set.
-     *
-     * Otherwise returns true.
-     */
-    public boolean isItemTaxable(FulfillmentGroupItem item) {
-        boolean isTaxable = true;
-
-        if (item.getOrderItem().isTaxable() != null) {
-            isTaxable = item.getOrderItem().isTaxable();
-        }
-
-        return isTaxable;
+    protected boolean isItemTaxable(FulfillmentGroupItem item) {
+        return item.getOrderItem().isTaxable();
     }
 
-    /**
-     * Returns the value of the taxFees property.
-     *
-     * @return
-     */
-    public boolean isFeeTaxable(FulfillmentGroupFee fee) {
-        return taxFees;
+    protected boolean isFeeTaxable(FulfillmentGroupFee fee) {
+        return fee.isTaxable();
     }
 
 
@@ -380,14 +364,6 @@ public class SimpleTaxModule implements TaxModule {
 
     public void setDefaultFulfillmentGroupTaxRate(Double defaultFulfillmentGroupTaxRate) {
         this.defaultFulfillmentGroupTaxRate = defaultFulfillmentGroupTaxRate;
-    }
-
-    public boolean isTaxFees() {
-        return taxFees;
-    }
-
-    public void setTaxFees(boolean taxFees) {
-        this.taxFees = taxFees;
     }
 
     /**

@@ -131,8 +131,18 @@ public interface OrderItem extends Serializable {
     public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes);
 
 
+    /**
+     * Returns whether or not this item is taxable. If this flag is not set, it returns true by default
+     * 
+     * @return the taxable flag. If null, returns true
+     */
     public Boolean isTaxable();
 
+    /**
+     * Sets whether or not this item is taxable
+     * 
+     * @param taxable
+     */
     public void setTaxable(Boolean taxable);
 
     /**

@@ -526,13 +526,8 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         visitor.visit(this);
     }
 
-
-    /**
-     * Returns true.   Expected to be overridden by subclasses.
-     * @return
-     */
     public Boolean isTaxable() {
-        return itemTaxable;
+        return itemTaxable == null ? true : itemTaxable;
     }
 
     public void setTaxable(Boolean taxable) {
