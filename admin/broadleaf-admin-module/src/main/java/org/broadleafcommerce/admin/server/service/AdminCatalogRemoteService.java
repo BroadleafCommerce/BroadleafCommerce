@@ -45,12 +45,15 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
     protected CatalogService catalogService;
     
     @Override
-    public Boolean generateSkusFromProduct(Long productId) {
+    public Integer generateSkusFromProduct(Long productId) {
         Product product = catalogService.findProductById(productId);
         
         if (product.getProductOptions() == null || product.getProductOptions().size() == 0) {
-            return false;
+            return -1;
         }
+        
+        //TODO: Clear out any Skus that were already there
+        //product.getAllSkus().clear();
         
         List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
         LOG.info("Total number of permutations: " + allPermutations.size());
@@ -66,7 +69,7 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
             catalogService.saveSku(permutatedSku);
         }
         
-        return true;
+        return allPermutations.size();
     }
     
     /**
@@ -84,7 +87,7 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
         }
         
         ProductOption currentOption = options.get(currentTypeIndex);
-        for(ProductOptionValue option : currentOption.getAllowedValues()) {
+        for (ProductOptionValue option : currentOption.getAllowedValues()) {
             List<ProductOptionValue> permutation = new ArrayList<ProductOptionValue>();
             permutation.addAll(currentPermutation);
             permutation.add(option);

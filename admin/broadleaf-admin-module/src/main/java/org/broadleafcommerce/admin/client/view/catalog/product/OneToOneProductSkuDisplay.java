@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.client.view.catalog.product;
 
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.ExpandableGridStructureDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
 
@@ -42,5 +43,7 @@ public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 	public ExpandableGridStructureDisplay getProductOptionsDisplay();
 	
 	public ToolStripButton getGenerateSkusButton();
+	
+	public SubItemDisplay getSkusDisplay();
 
 }

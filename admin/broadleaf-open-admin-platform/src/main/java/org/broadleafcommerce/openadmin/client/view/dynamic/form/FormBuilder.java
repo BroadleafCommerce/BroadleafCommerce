@@ -298,6 +298,7 @@ public class FormBuilder {
 		formItem.setTitle(field.getTitle());
         formItem.setWrapTitle(false);
 		formItem.setRequired(field.getRequired());
+		formItem.setPrompt(field.getPrompt());
 		if (!sections.containsKey(group)) {
 			List<FormItem> temp = new ArrayList<FormItem>();
 			sections.put(group, temp);  

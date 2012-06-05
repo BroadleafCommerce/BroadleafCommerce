@@ -161,4 +161,13 @@ public @interface AdminPresentation {
      * @return whether or not the field should be excluded
      */
     boolean excluded() default false;
+    
+    /**
+     * Helpful tooltip to be displayed when the admin user hovers over the field.
+     * This can be localized by providing a key which will use the GWT
+     * support for i18N.
+     * 
+     */
+    String tooltip() default "";
+    
 }
