@@ -68,7 +68,8 @@ public interface OrderService {
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
     /**
-     * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
+     * @Deprecated 
      *
      * @param order
      * @param itemRequest
@@ -285,11 +286,8 @@ public interface OrderService {
     public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
     /**
-     *
+     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
      * @deprecated
-     * Typically, adding an item to the cart utilizes the:
-     *
-     * addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
      *
      * @param order
      * @param newOrderItem
@@ -300,9 +298,7 @@ public interface OrderService {
 
 
     /**
-     * Typically, adding an item to the cart utilizes the:
-     *
-     * addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
      *
      * @deprecated
      * @param order
@@ -316,8 +312,21 @@ public interface OrderService {
     public Order findOrderByOrderNumber (String orderNumber);
 
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
+    
+	/**
+	 * Not typically used in versions since 1.7.
+	 * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
+	 * 
+	 * @param skuId
+	 * @param productId
+	 * @param categoryId
+	 * @param quantity
+	 * @return
+	 */
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
 
     /**
+     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
      * @deprecated
      * @param order
      * @param itemRequest
@@ -328,6 +337,7 @@ public interface OrderService {
     public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
 
     /**
+     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}     
      * @deprecated
      * @param order
      * @param itemRequest
