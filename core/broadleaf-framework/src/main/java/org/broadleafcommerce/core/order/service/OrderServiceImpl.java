@@ -822,6 +822,7 @@ public class OrderServiceImpl implements OrderService {
                         if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
                             itr.remove();
                             fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                            break;
                         }
                     }
                 }
