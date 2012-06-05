@@ -15,14 +15,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
+import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,8 +25,17 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.List;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,7 +47,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICING_MODEL")
-    // TODO: use new data-driven enum for possible values of BUNDLE, ITEM_SUM
+    @AdminPresentation(friendlyName = "Pricing Model", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.catalog.service.type.ProductBundlePricingModelType")
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
@@ -69,27 +72,29 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @BatchSize(size = 50)
     protected List<SkuBundleItem> skuBundleItems;
 
-    public String getPricingModel() {
-        return pricingModel;
+    @Override
+    public ProductBundlePricingModelType getPricingModel() {
+        return ProductBundlePricingModelType.getInstance(pricingModel);
     }
 
-    public void setPricingModel(String pricingModel) {
-        this.pricingModel = pricingModel;
+    @Override
+    public void setPricingModel(ProductBundlePricingModelType pricingModel) {
+        this.pricingModel = pricingModel == null ? null : pricingModel.getType();
     }
-    
+
     public Money getRetailPrice() {
-        if (getPricingModel().equals("ITEM_SUM")) {
+        if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
             return getBundleItemsRetailPrice();
-        } else if (getPricingModel().equals(("BUNDLE"))) {
+        } else if (ProductBundlePricingModelType.BUNDLE.equals(getPricingModel())) {
             return super.getDefaultSku().getRetailPrice();
         }
         return null;
     }
     
     public Money getSalePrice() {
-        if (getPricingModel().equals("ITEM_SUM")) {
+        if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
             return getBundleItemsSalePrice();
-        } else if (getPricingModel().equals(("BUNDLE"))) {
+        } else if (ProductBundlePricingModelType.BUNDLE.equals(getPricingModel())) {
             return super.getDefaultSku().getSalePrice();
         }
         return null;
