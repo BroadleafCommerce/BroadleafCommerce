@@ -165,7 +165,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 for (ProductOptionValue value : optionValues) {
                     Property optionProperty = new Property();
                     optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());
-                    optionProperty.setValue(value.getValue());
+                    optionProperty.setValue(value.getAttributeValue());
                     entity.addProperty(optionProperty);
                 }
             }
