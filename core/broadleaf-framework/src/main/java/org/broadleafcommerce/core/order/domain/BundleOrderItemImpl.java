@@ -223,7 +223,6 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                 orderItem.getBundleOrderItemFeePrices().add(cloneFeePrice);
             }
         }
-        if (getBundleOrderItemFeePrices() != null) orderItem.getBundleOrderItemFeePrices().addAll(getBundleOrderItemFeePrices());
 
         return orderItem;
     }
