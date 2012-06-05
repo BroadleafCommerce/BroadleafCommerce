@@ -848,7 +848,7 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
                 if (group != null && !group.equals("")) {
-                    //check if the friendly name is an i18N key
+                    //check if the group name is an i18N key
                     try {
                         String val = BLCMain.getMessageManager().getString(group);
                         if (val != null) {
@@ -860,6 +860,20 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
                 Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
+                
+                String tooltip = property.getMetadata().getPresentationAttributes().getTooltip();
+                if (tooltip != null && !group.equals("")) {
+                    //check if the tooltip name is an i18N key
+                    try {
+                        String val = BLCMain.getMessageManager().getString(tooltip);
+                        if (val != null) {
+                            tooltip = val;
+                        }
+                    } catch (MissingResourceException e) {
+                        //do nothing
+                    }
+                }
+                
 				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
 				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
 				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
@@ -1017,6 +1031,9 @@ public class BasicClientEntityModule implements DataSourceModule {
 				}
                 if (groupCollapsed != null) {
                     field.setAttribute("formGroupCollapsed", groupCollapsed);
+                }
+                if (tooltip != null) {
+                    field.setPrompt(tooltip);
                 }
 				if (largeEntry != null) {
 					field.setAttribute("largeEntry", largeEntry);

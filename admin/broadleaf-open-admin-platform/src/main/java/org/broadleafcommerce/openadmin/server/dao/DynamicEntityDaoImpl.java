@@ -590,6 +590,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                                 if (isParentExcluded) {
                                     serverMetadata.getPresentationAttributes().setExcluded(true);
                                 }
+                                if (localMetadata.getPresentationAttributes().getTooltip() != null) {
+                                    serverMetadata.getPresentationAttributes().setTooltip(localMetadata.getPresentationAttributes().getTooltip());
+                                }
                                 if (localMetadata.getPresentationAttributes().getRequiredOverride() != null) {
                                     serverMetadata.getPresentationAttributes().setRequiredOverride(localMetadata.getPresentationAttributes().getRequiredOverride());
                                 }
@@ -665,6 +668,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     }
                     attr.setReadOnly(annot.readOnly());
                     attr.setExcluded(isParentExcluded?true:annot.excluded());
+                    attr.setTooltip(annot.tooltip());
                     attr.setRequiredOverride(annot.requiredOverride()== RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
                     if (annot.validationConfigurations().length != 0) {
                         ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -907,6 +911,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
 				attr.setReadOnly(annot.readOnly());
                 attr.setExcluded(annot.excluded());
+                attr.setTooltip(annot.tooltip());
                 attr.setRequiredOverride(annot.requiredOverride()==RequiredOverride.IGNORED?null:annot.requiredOverride()==RequiredOverride.REQUIRED?true:false);
 				if (annot.validationConfigurations().length != 0) {
 					ValidationConfiguration[] configurations = annot.validationConfigurations();

@@ -50,6 +50,7 @@ public class FieldPresentationAttributes implements IsSerializable, Serializable
 	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
     private Boolean requiredOverride;
     private Boolean excluded;
+    private String tooltip;
 	
 	public String getName() {
 		return name;
@@ -178,6 +179,14 @@ public class FieldPresentationAttributes implements IsSerializable, Serializable
     public void setExcluded(Boolean excluded) {
         this.excluded = excluded;
     }
+    
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
 
     public VisibilityEnum getVisibility() {
         return visibility;
@@ -205,6 +214,7 @@ public class FieldPresentationAttributes implements IsSerializable, Serializable
         attr.readOnly = readOnly;
         attr.requiredOverride = requiredOverride;
         attr.excluded = excluded;
+        attr.tooltip = tooltip;
         for (Map.Entry<String, Map<String, String>> entry : validationConfigurations.entrySet()) {
             Map<String, String> clone = new HashMap<String, String>(entry.getValue().size());
             for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
