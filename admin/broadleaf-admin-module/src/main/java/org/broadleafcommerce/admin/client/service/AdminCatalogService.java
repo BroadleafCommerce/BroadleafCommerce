@@ -25,6 +25,14 @@ import com.google.gwt.user.client.rpc.RemoteService;
  */
 public interface AdminCatalogService extends RemoteService {
     
-    public Boolean generateSkusFromProduct(Long productId);
+    /**
+     * Clear out any Skus that are already attached to the Product
+     * if there were any there and generate a new set of Skus based
+     * on the permutations of ProductOptions attached to this Product
+     * 
+     * @param productId - the Product to generate Skus from
+     * @return the number of generated Skus from the ProductOption permutations
+     */
+    public Integer generateSkusFromProduct(Long productId);
 
 }

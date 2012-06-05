@@ -16,9 +16,12 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -33,6 +36,12 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Override
+    public List<ProductOption> readAllProductOptions() {
+        TypedQuery<ProductOption> query = em.createNamedQuery("BC_READ_ALL_PRODUCT_OPTIONS", ProductOption.class);
+        return query.getResultList();
+    }
 
     @Override
     public ProductOption readProductOptionById(Long id) {

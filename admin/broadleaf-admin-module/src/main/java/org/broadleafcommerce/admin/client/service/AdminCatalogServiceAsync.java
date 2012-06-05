@@ -25,6 +25,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface AdminCatalogServiceAsync {
 
-    public void generateSkusFromProduct(Long productId, AsyncCallback<Boolean> callback);
+    public void generateSkusFromProduct(Long productId, AsyncCallback<Integer> callback);
 
 }
