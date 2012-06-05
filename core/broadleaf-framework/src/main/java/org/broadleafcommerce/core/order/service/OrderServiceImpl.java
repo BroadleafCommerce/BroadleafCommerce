@@ -842,6 +842,15 @@ public class OrderServiceImpl implements OrderService {
                 if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
                     itr.remove();
                     fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                } else if (orderItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
+                            itr.remove();
+                            fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                            break;
+                        }
+                    }
                 }
             }
         }

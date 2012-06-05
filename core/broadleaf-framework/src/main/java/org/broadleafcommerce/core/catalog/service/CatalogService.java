@@ -137,6 +137,8 @@ public interface CatalogService {
 
     public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
     
+    public List<ProductOption> readAllProductOptions();
+    
     public ProductOption findProductOptionById(Long productOptionId);
     
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId);

@@ -208,6 +208,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<ProductOption> readAllProductOptions() {
+        return productOptionDao.readAllProductOptions();
+    }
+    
+    @Override
     public ProductOption findProductOptionById(Long productOptionId) {
         return productOptionDao.readProductOptionById(productOptionId);
     }
