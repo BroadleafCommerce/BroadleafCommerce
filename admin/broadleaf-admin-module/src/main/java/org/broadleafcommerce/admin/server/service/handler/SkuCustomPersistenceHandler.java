@@ -122,9 +122,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 //add this to the built Sku properties
                 properties.put("productOption" + option.getId(), metadata);
             }
-            
-            //Sku name shouldn't be prominent. The only thing in the grid should be the option labels and price info
-            properties.get("name").getPresentationAttributes().setProminent(false);
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Sku.class);
