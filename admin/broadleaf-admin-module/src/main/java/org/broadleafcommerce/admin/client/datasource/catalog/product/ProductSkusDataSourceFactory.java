@@ -39,10 +39,6 @@ import com.smartgwt.client.data.DataSource;
  */
 public class ProductSkusDataSourceFactory implements DataSourceFactory {
 
-    /**
-     * Not declared as static because this needs to be recreated every time the page is loaded, since
-     * the actual fields for the DataSource can change based on adding/removing Product Options
-     */
     protected CustomCriteriaListGridDataSource dataSource = null;
     
     public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
@@ -52,7 +48,12 @@ public class ProductSkusDataSourceFactory implements DataSourceFactory {
         DataSourceModule[] modules = new DataSourceModule[]{
             new SkuBasicClientEntityModule(CeilingEntities.SKU, persistencePerspective, AppServices.DYNAMIC_ENTITY),
         };
-        dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, false, false, false, true);
+        
+        /**
+         * Not declared as static because this needs to be recreated every time the page is loaded, since
+         * the actual fields for the DataSource can change based on adding/removing Product Options
+         */
+        CustomCriteriaListGridDataSource dataSource = new CustomCriteriaListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, true, false, false, false, true);
         dataSource.setCustomCriteria(new String[]{"productSkuList"});
         dataSource.buildFields(null, false, cb);
     }
