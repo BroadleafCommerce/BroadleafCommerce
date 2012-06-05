@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.service.AdminCatalogService;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -44,6 +45,9 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
     
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
+    
     @Override
     public Integer generateSkusFromProduct(Long productId) {
         Product product = catalogService.findProductById(productId);
@@ -52,22 +56,35 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
             return -1;
         }
         
-        //TODO: Clear out any Skus that were already there
-        //product.getAllSkus().clear();
+        /** Cascading deletes for a many-to-many doesn't actually delete the entities
+         * themselves so do it manually. By removing the actual entities themselves,
+         * it will cascade down to the xref and remove it from there as well. However,
+         * since I'm going to actually be dealing with the allSkus list further on,
+         * the transient list needs to get cleared also after deleting the individual Skus
+         */
+        if (product.getAllSkus().size() > 0) {
+            for (Sku sku : product.getAllSkus()) {
+                skuDao.delete(sku);
+            }
+            product.getAllSkus().clear();
+        }
         
         List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
         LOG.info("Total number of permutations: " + allPermutations.size());
         LOG.info(allPermutations);
         
-        //For each permutation, I need them to map to a specific Sku which is derived from the Product's defaultSku
+        //For each permutation, I need them to map to a specific Sku
         for (List<ProductOptionValue> permutation : allPermutations) {
             Sku permutatedSku = catalogService.createSku();
             permutatedSku.setDefaultProduct(product);
-            product.getSkus().add(permutatedSku);
             permutatedSku.setProductOptionValues(permutation);
+            Sku savedSku = catalogService.saveSku(permutatedSku);
             
-            catalogService.saveSku(permutatedSku);
+            //Throw the newly generated Sku into the allSkus list to ensure the xref table is
+            //updated properly
+            product.getAllSkus().add(savedSku);
         }
+        catalogService.saveProduct(product);
         
         return allPermutations.size();
     }
