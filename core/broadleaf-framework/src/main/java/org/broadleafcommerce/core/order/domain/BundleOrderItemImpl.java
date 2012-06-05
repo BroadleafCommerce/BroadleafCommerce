@@ -340,7 +340,13 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                 orderItem.getDiscreteOrderItems().add(temp);
             }
         }
-        if (getBundleOrderItemFeePrices() != null) orderItem.getBundleOrderItemFeePrices().addAll(getBundleOrderItemFeePrices());
+        if (getBundleOrderItemFeePrices() != null) {
+            for (BundleOrderItemFeePrice feePrice : getBundleOrderItemFeePrices()) {
+                BundleOrderItemFeePrice cloneFeePrice = feePrice.clone();
+                cloneFeePrice.setBundleOrderItem(orderItem);
+                orderItem.getBundleOrderItemFeePrices().add(cloneFeePrice);
+            }
+        }
 
         orderItem.setBaseRetailPrice(getBaseRetailPrice());
         orderItem.setBaseSalePrice(getBaseSalePrice());

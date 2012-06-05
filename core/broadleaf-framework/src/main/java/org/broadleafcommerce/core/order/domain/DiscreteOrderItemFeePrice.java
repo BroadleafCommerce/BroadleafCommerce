@@ -40,4 +40,6 @@ public interface DiscreteOrderItemFeePrice {
 
 	public abstract void setReportingCode(String reportingCode);
 
+    public DiscreteOrderItemFeePrice clone();
+
 }

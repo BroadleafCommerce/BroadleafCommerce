@@ -115,6 +115,12 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
+            <artifactId>broadleaf-framework</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-admin-module</artifactId>
         </dependency>
         <dependency>
@@ -162,6 +168,14 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
         </dependency>
     </dependencies>
 </project>

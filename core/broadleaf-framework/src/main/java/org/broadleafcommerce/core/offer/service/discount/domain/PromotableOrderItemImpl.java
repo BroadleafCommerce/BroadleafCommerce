@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 
 import java.math.BigDecimal;
@@ -42,18 +41,22 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected BigDecimal saleAdjustmentPrice;
     protected List<PromotionDiscount> promotionDiscounts = new ArrayList<PromotionDiscount>();
     protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
-    protected OrderItem delegate;
+    protected DiscreteOrderItem delegate;
     protected PromotableOrder order;
     protected PromotableItemFactory itemFactory;    
     
-    public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
+    public PromotableOrderItemImpl(DiscreteOrderItem orderItem, PromotableOrder order, PromotableItemFactory itemFactory) {
     	this.delegate = orderItem;
     	this.order = order;
     	this.itemFactory = itemFactory;
     }
     
-    public OrderItem getDelegate() {
+    public DiscreteOrderItem getDelegate() {
     	return delegate;
+    }
+
+    public void setDelegate(DiscreteOrderItem discreteOrderItem) {
+        this.delegate = discreteOrderItem;
     }
     
     public void reset() {

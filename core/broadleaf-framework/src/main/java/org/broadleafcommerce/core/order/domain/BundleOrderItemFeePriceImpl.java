@@ -16,7 +16,11 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -30,10 +34,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.common.money.Money;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -42,6 +44,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
+    public static final Log LOG = LogFactory.getLog(BundleOrderItemFeePriceImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -112,6 +115,35 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
+    }
+
+    public void checkCloneable(BundleOrderItemFeePrice bundleFeePrice) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = bundleFeePrice.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !bundleFeePrice.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+        }
+    }
+
+    public BundleOrderItemFeePrice clone() {
+        //instantiate from the fully qualified name via reflection
+        BundleOrderItemFeePrice clone;
+        try {
+            clone = (BundleOrderItemFeePrice) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setAmount(getAmount());
+            clone.setName(getName());
+            clone.setReportingCode(getReportingCode());
+            clone.setBundleOrderItem(getBundleOrderItem());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 
     @Override
