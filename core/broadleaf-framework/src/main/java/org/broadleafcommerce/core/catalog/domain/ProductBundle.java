@@ -16,6 +16,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -48,8 +49,8 @@ public interface ProductBundle extends Product, Serializable {
      * ITEM_SUM indicates that the bundle is priced by the sum of the contained items.
      * BUNDLE indicates that the bundle is priced by the price on the bundle itself.
      */
-    public String getPricingModel();
-
+    public ProductBundlePricingModelType getPricingModel();
+    
     /**
      * 
      * @param pricingModel
@@ -58,7 +59,7 @@ public interface ProductBundle extends Product, Serializable {
      *            if this retailPrice and salePrice should come from the default
      *            Sku
      */
-    public void setPricingModel(String pricingModel);
+    public void setPricingModel(ProductBundlePricingModelType pricingModel);
 
     /**
      * @return the sum of the retail prices of the bundle items
