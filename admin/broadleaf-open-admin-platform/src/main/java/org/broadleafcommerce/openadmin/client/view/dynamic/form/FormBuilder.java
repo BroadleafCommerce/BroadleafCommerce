@@ -319,9 +319,7 @@ public class FormBuilder {
             });
         }
         String hint = field.getAttributeAsString("hint");
-        if (hint != null) {
-            formItem.setHint(hint);
-        }
+        formItem.setHint(hint);
 
 		if (!sections.containsKey(group)) {
 			List<FormItem> temp = new ArrayList<FormItem>();

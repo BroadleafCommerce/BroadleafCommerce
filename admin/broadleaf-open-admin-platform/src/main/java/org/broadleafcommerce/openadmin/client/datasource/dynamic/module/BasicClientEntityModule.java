@@ -818,15 +818,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 				if (friendlyName == null || friendlyName.equals("")) {
 					friendlyName = property.getName();
 				} else {
-					//check if the friendly name is an i18N key
-                    try {
-                        String val = BLCMain.getMessageManager().getString(friendlyName);
-                        if (val != null) {
-                            friendlyName = val;
-                        }
-                    } catch (MissingResourceException e) {
-                        //do nothing
-                    }
+					friendlyName = getLocalizedString(friendlyName);
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
                 VisibilityEnum visibility = property.getMetadata().getPresentationAttributes().getVisibility();
