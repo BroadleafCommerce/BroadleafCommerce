@@ -241,7 +241,15 @@ public class AutoBundleActivity extends BaseActivity {
                     FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
                     newFulfillmentGroupItem.setOrderItem(newOrderItem);
                     newFulfillmentGroupItem.setQuantity(newOrderItem.getQuantity());
-                    fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+                    newFulfillmentGroupItem = fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+
+                    //In case this activity is run inside a transaction, we need to set the relationships on the order directly
+                    //these associations may have not been committed yet. This order is used in other activities and will not be reloaded if in a transaction.
+                    for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                        if (newFulfillmentGroupItem.getFulfillmentGroup() != null && fg.getId().equals(newFulfillmentGroupItem.getFulfillmentGroup().getId())) {
+                            fg.addFulfillmentGroupItem(newFulfillmentGroupItem);
+                        }
+                    }
                 }
 
                 order.getOrderItems().add(newOrderItem);
@@ -264,7 +272,15 @@ public class AutoBundleActivity extends BaseActivity {
                         FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
                         newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
                         newFulfillmentGroupItem.setQuantity(discreteOrderItem.getQuantity());
-                        fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+                        newFulfillmentGroupItem = fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
+
+                        //In case this activity is run inside a transaction, we need to set the relationships on the order directly
+                        //these associations may have not been committed yet. This order is used in other activities and will not be reloaded if in a transaction.
+                        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                            if (newFulfillmentGroupItem.getFulfillmentGroup() != null && fg.getId().equals(newFulfillmentGroupItem.getFulfillmentGroup().getId())) {
+                                fg.addFulfillmentGroupItem(newFulfillmentGroupItem);
+                            }
+                        }
                     }
                 }
             }
