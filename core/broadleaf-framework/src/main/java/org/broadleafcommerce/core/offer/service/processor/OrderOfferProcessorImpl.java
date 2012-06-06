@@ -671,8 +671,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     }
                 }
 
-                if (mySplits.contains(nextItem)) {
-                    mySplits.remove(nextItem);
+                if (nextItem.getDelegate().getBundleOrderItem() == null) {
+                    if (mySplits.contains(nextItem)) {
+                        mySplits.remove(nextItem);
+                    } else {
+                        itemsToRemove.add(nextItem);
+                        delegatesToRemove.add(nextItem.getDelegate());
+                    }
                 } else {
                     itemsToRemove.add(nextItem);
                     delegatesToRemove.add(nextItem.getDelegate());
