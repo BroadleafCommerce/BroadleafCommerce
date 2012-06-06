@@ -39,9 +39,6 @@ import java.util.List;
  * @see SkuBundleItem
  */
 public interface ProductBundle extends Product, Serializable {
-    public static final String PRICING_MODEL_ITEM_SUM = "ITEM_SUM";
-    public static final String PRICING_MODEL_BUNDLE = "BUNDLE";
-
 
     /**
      * @return The pricing model for this bundle

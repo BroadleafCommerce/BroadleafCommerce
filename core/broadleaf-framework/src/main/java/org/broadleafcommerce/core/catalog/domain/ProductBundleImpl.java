@@ -163,7 +163,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
             for (SkuBundleItem skuBundleItem : skuBundleItems) {
                 totalNormalPrice = totalNormalPrice.add(skuBundleItem.getSku().getRetailPrice().multiply(skuBundleItem.getQuantity()));
-                if (ProductBundle.PRICING_MODEL_ITEM_SUM.equals(pricingModel)) {
+                if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
                     if (skuBundleItem.getSalePrice() != null) {
                         totalBundlePrice = totalBundlePrice.add(skuBundleItem.getSalePrice().multiply(skuBundleItem.getQuantity()));
                     } else {
@@ -172,7 +172,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
                 }
             }
 
-            if (ProductBundle.PRICING_MODEL_BUNDLE.equals(pricingModel)) {
+            if (ProductBundlePricingModelType.BUNDLE.equals(getPricingModel())) {
                 if (getSalePrice() != null) {
                     totalBundlePrice = getSalePrice();
                 } else {
