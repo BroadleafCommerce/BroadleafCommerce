@@ -309,7 +309,7 @@ public class FormBuilder {
         if (helpText != null && helpText.length() > 0) {
             final String text = helpText;
             FormItemIcon icon = new FormItemIcon();
-            icon.setSrc("[SKIN]/actions/help.png");
+            icon.setSrc(GWT.getModuleBaseURL()+"admin/images/button/help.png");
             formItem.setIcons(icon);
             formItem.addIconClickHandler(new IconClickHandler() {
                 @Override
