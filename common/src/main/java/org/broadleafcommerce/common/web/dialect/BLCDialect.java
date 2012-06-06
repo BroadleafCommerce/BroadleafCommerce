@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.dialect.catalog;
+package org.broadleafcommerce.common.web.dialect;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,11 +22,13 @@ import java.util.Set;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
-public class CatalogDialect extends AbstractDialect {
+public class BLCDialect extends AbstractDialect {
+	
+	private Set<IProcessor> processors = new HashSet<IProcessor>();
 
 	@Override
 	public String getPrefix() {
-		return "blc-catalog";
+		return "blc";
 	}
 
 	@Override
@@ -35,10 +37,12 @@ public class CatalogDialect extends AbstractDialect {
 	}
 	
 	@Override 
-    public Set<IProcessor> getProcessors() { 
-        final Set<IProcessor> processors = new HashSet<IProcessor>(); 
-        processors.add(new CategoriesProcessor()); 
+    public Set<IProcessor> getProcessors() {        
         return processors; 
     } 
+	
+	public void setProcessors(Set<IProcessor> processors) {
+		this.processors = processors;
+	}
 
 }

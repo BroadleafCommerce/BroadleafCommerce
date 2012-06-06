@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.dialect;
+package org.broadleafcommerce.common.web.dialect;
 
 import java.util.Map;
 
