@@ -264,15 +264,14 @@ public class AutoBundleActivity extends BaseActivity {
                         FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
                         newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
                         newFulfillmentGroupItem.setQuantity(discreteOrderItem.getQuantity());
-                        newFulfillmentGroupItem = fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
-                        if (newFulfillmentGroupItem.getFulfillmentGroup() != null) {
-                            order = newFulfillmentGroupItem.getFulfillmentGroup().getOrder();
-                        }
+                        fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
                     }
                 }
             }
         }
 
+        //reload order with new fulfillment group items
+        order = cartService.save(order, false);
         return order;
     }
 
