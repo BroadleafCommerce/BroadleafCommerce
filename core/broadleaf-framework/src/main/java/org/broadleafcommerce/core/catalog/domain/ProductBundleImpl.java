@@ -47,7 +47,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICING_MODEL")
-    @AdminPresentation(friendlyName = "Pricing Model", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.catalog.service.type.ProductBundlePricingModelType")
+    @AdminPresentation(friendlyName = "Pricing Model", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType")
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
