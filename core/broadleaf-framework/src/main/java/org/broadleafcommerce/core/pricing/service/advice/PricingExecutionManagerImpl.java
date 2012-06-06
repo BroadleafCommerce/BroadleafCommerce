@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.pricing.service.advice;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -26,6 +24,8 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Component("blPricingExecutionManager")
 public class PricingExecutionManagerImpl implements PricingExecutionManager, Ordered {
@@ -71,12 +71,16 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
     public Object priceOrder(ProceedingJoinPoint call) throws Throwable {
         clearCache();
         Object returnValue;
+        boolean exceptionOccurred = false;
         try {
             returnValue = call.proceed();
+        } catch (Throwable e) {
+            exceptionOccurred = true;
+            throw e;
         } finally {
             Order orderItem = getLatestItem();
             clearCache();
-            if (orderItem != null) {
+            if (orderItem != null && !exceptionOccurred) {
                 orderItem = pricingService.executePricing(orderItem);
                 orderItem = orderDao.save(orderItem);
                 LOG.debug("Context order priced : order id " + orderItem.getId());
