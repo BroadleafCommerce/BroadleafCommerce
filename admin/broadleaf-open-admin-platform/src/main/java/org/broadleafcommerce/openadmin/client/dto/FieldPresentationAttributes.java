@@ -51,8 +51,10 @@ public class FieldPresentationAttributes implements IsSerializable, Serializable
     private Boolean requiredOverride;
     private Boolean excluded;
     private String tooltip;
+    private String helpText;
+    private String hint;
 	
-	public String getName() {
+    public String getName() {
 		return name;
 	}
 	
@@ -187,6 +189,22 @@ public class FieldPresentationAttributes implements IsSerializable, Serializable
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
     }
+    
+    public String getHelpText() {
+        return helpText;
+    }
+
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
 
     public VisibilityEnum getVisibility() {
         return visibility;
@@ -215,6 +233,8 @@ public class FieldPresentationAttributes implements IsSerializable, Serializable
         attr.requiredOverride = requiredOverride;
         attr.excluded = excluded;
         attr.tooltip = tooltip;
+        attr.helpText = helpText;
+        attr.hint = hint;
         for (Map.Entry<String, Map<String, String>> entry : validationConfigurations.entrySet()) {
             Map<String, String> clone = new HashMap<String, String>(entry.getValue().size());
             for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {

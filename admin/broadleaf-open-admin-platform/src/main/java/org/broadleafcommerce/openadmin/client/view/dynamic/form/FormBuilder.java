@@ -25,11 +25,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.ContentsType;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -39,6 +47,7 @@ import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.form.fields.DateTimeItem;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 import com.smartgwt.client.widgets.form.fields.HeaderItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.IntegerItem;
@@ -47,13 +56,9 @@ import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
+import com.smartgwt.client.widgets.form.fields.events.IconClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.IconClickHandler;
 import com.smartgwt.client.widgets.form.validator.Validator;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 
 /**
  * 
@@ -299,6 +304,25 @@ public class FormBuilder {
         formItem.setWrapTitle(false);
 		formItem.setRequired(field.getRequired());
 		formItem.setPrompt(field.getPrompt());
+
+        String helpText = field.getAttribute("helpText");
+        if (helpText != null && helpText.length() > 0) {
+            final String text = helpText;
+            FormItemIcon icon = new FormItemIcon();
+            icon.setSrc("[SKIN]/actions/help.png");
+            formItem.setIcons(icon);
+            formItem.addIconClickHandler(new IconClickHandler() {
+                @Override
+                public void onIconClick(IconClickEvent event) {
+                    SC.say(text);
+                }
+            });
+        }
+        String hint = field.getAttributeAsString("hint");
+        if (hint != null) {
+            formItem.setHint(hint);
+        }
+
 		if (!sections.containsKey(group)) {
 			List<FormItem> temp = new ArrayList<FormItem>();
 			sections.put(group, temp);  

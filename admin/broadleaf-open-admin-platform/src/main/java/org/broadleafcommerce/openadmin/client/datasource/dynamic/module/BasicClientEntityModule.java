@@ -848,30 +848,24 @@ public class BasicClientEntityModule implements DataSourceModule {
                 }
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
                 if (group != null && !group.equals("")) {
-                    //check if the group name is an i18N key
-                    try {
-                        String val = BLCMain.getMessageManager().getString(group);
-                        if (val != null) {
-                            group = val;
-                        }
-                    } catch (MissingResourceException e) {
-                        //do nothing
-                    }
+                    group = getLocalizedString(group);
                 }
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
                 Boolean groupCollapsed = property.getMetadata().getPresentationAttributes().getGroupCollapsed();
                 
                 String tooltip = property.getMetadata().getPresentationAttributes().getTooltip();
-                if (tooltip != null && !group.equals("")) {
-                    //check if the tooltip name is an i18N key
-                    try {
-                        String val = BLCMain.getMessageManager().getString(tooltip);
-                        if (val != null) {
-                            tooltip = val;
-                        }
-                    } catch (MissingResourceException e) {
-                        //do nothing
-                    }
+                if (tooltip != null && !tooltip.equals("")) {
+                    tooltip = getLocalizedString(tooltip);
+                }
+                
+                String helpText = property.getMetadata().getPresentationAttributes().getHelpText();
+                if (helpText != null && !helpText.equals("")) {
+                    helpText = getLocalizedString(helpText);
+                }
+                
+                String hint = property.getMetadata().getPresentationAttributes().getHint();
+                if (hint != null && !hint.equals("")) {
+                    hint = getLocalizedString(hint);
                 }
                 
 				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
@@ -1035,6 +1029,12 @@ public class BasicClientEntityModule implements DataSourceModule {
                 if (tooltip != null) {
                     field.setPrompt(tooltip);
                 }
+                if (helpText != null) {
+                    field.setAttribute("helpText", helpText);
+                }
+                if (hint != null) {
+                    field.setAttribute("hint", hint);
+                }
 				if (largeEntry != null) {
 					field.setAttribute("largeEntry", largeEntry);
 				}
@@ -1075,6 +1075,27 @@ public class BasicClientEntityModule implements DataSourceModule {
 		}
         dataSource.setAttribute("blcCurrencyCode", metadata.getCurrencyCode(), true);
 	}
+	
+	/**
+	 * Looks up the given value as a key via the MessageManager. If it's not
+	 * found, return the original value passed in
+	 * 
+	 * @return the message for the key specified by <b>value</b> if it exists
+	 * or <b>value</b> if it does not
+	 */
+	public String getLocalizedString(String value) {
+	    String result = value;
+	    try {
+            //check if the value name is an i18N key
+            String val = BLCMain.getMessageManager().getString(result);
+            if (val != null) {
+                result = val;
+            }
+	    } catch (MissingResourceException e) {
+            //do nothing
+        }
+        return result;
+    }
 
 	public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
