@@ -313,48 +313,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
-        /*PersistencePackage savedPackage = null;
-        if (!persistencePackage.getSandBoxInfo().isCommitImmediately()) {
-            try {
-                savedPackage = sandBoxService.saveEntitySandBoxItems(persistencePackage, ChangeType.UPDATE, this, (RecordHelper) myModule);
-            } catch (SandBoxException e) {
-                throw new ServiceException("Unable to update entity to the sandbox: " + persistencePackage.getSandBoxInfo().getSandBox(), e);
-            }
-        } else {
-            savedPackage = persistencePackage;
-        }
 
-        Entity mergedEntity = myModule.update(savedPackage);*/
-        Entity mergedEntity = myModule.update(persistencePackage);
-        //return updateDirtyState(mergedEntity);
-        return mergedEntity;
+        return executeModuleUpdateOperation(myModule, persistencePackage);
     }
 
-    /*@Override
-    public Entity updateDirtyState(Entity mergedEntity) throws ServiceException {
-        try {
-            Map idMetadata = dynamicEntityDao.getIdMetadata(Class.forName(mergedEntity.getType()[0]));
-            Type idType = (Type) idMetadata.get("type");
-            Object id = mergedEntity.findProperty((String) idMetadata.get("name")).getValue();
-            if (Long.class.isAssignableFrom(idType.getReturnedClass())) {
-                id = Long.valueOf(id.toString());
-            }
-            EntitySandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
-            if (item != null) {
-                mergedEntity.setDirty(true);
-                for (org.broadleafcommerce.admin.domain.Property persistentProperty : item.getEntity().getProperties()) {
-                    if (persistentProperty.getIsDirty()) {
-                        Property dtoProperty = mergedEntity.findProperty(persistentProperty.getName());
-                        dtoProperty.setIsDirty(true);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new ServiceException("Unable to evaluate the dirty state for entity: " + mergedEntity.getType()[0], e);
-        }
-
-        return mergedEntity;
-    }*/
+    protected Entity executeModuleUpdateOperation(PersistenceModule persistenceModule, PersistencePackage persistencePackage) throws ServiceException {
+        return persistenceModule.update(persistencePackage);
+    }
 
 	/*
 	 * (non-Javadoc)

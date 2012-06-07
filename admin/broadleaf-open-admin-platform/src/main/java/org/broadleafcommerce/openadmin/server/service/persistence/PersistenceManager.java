@@ -74,6 +74,4 @@ public interface PersistenceManager {
 
 	public abstract void close() throws Exception;
 
-    //public Entity updateDirtyState(Entity mergedEntity) throws ServiceException;
-
 }

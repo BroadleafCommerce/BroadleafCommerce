@@ -55,10 +55,6 @@ public interface SandBoxService {
 
     public void rejectSelectedSandBoxItems(SandBox sandBox, String comment, List<SandBoxItem> sandBoxItems);
 
-    //public PersistencePackage saveEntitySandBoxItems(PersistencePackage persistencePackage, ChangeType changeType, PersistenceManager persistenceManager, RecordHelper helper) throws SandBoxException;
-
-    //public EntitySandBoxItem retrieveSandBoxItemByTemporaryId(Object temporaryId);
-
     public SandBox retrieveApprovalSandBox(SandBox sandBox);
 
     public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) throws Exception;
