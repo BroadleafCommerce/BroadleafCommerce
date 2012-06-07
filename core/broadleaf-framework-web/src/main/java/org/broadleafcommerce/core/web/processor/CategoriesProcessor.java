@@ -26,8 +26,11 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 /**
+ * A Thymeleaf processor that will add the desired categories to the model. It does this by
+ * searching for the parentCategory name and adding up to maxResults subcategories under
+ * the model attribute specified by resultVar
+ * 
  * @author apazzolini
- *
  */
 public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
 
