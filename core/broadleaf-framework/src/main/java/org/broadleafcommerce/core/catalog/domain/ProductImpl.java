@@ -123,10 +123,15 @@ public class ProductImpl implements Product {
     @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "ProductImpl_Product_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
     protected String name;
-
-    /** The description. */
+    
+    @Column(name = "URL")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=2, group = "ProductImpl_Product_Description")
+    protected String url;
+    
+ 
+	/** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Description", order=2, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Description", order=3, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
     protected String description;
 
     /** The long description. */
@@ -134,9 +139,14 @@ public class ProductImpl implements Product {
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @SearchableProperty(name="productDescription")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Long_Description", order=3, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Long_Description", order=4, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
     protected String longDescription;
+    
+    @Column(name = "DISPLAY_TEMPLATE")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=5, group = "ProductImpl_Product_Description")
+    protected String displayTemplate;
 
+    
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Active_Start_Date", order=8, group = "ProductImpl_Active_Date_Range", groupOrder=2)
@@ -150,21 +160,21 @@ public class ProductImpl implements Product {
     /** The product model number */
     @Column(name = "MODEL")
     @SearchableProperty(name="productModel")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=4, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=6, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
     @SearchableProperty(name="productManufacturer")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=5, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=7, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String manufacturer;
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=6, group = "ProductImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=8, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isFeaturedProduct = false;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=7, group = "ProductImpl_Product_Description", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=9, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isMachineSortable = true;
     
     @OneToOne(optional = true, targetEntity = SkuImpl.class)
@@ -582,6 +592,22 @@ public class ProductImpl implements Product {
     public void setProductOptions(List<ProductOption> productOptions) {
         this.productOptions = productOptions;
     }
+    @Override
+    public String getUrl() {
+		return url;
+	}
+    @Override
+	public void setUrl(String url) {
+		this.url = url;
+	}
+    @Override
+	public String getDisplayTemplate() {
+		return displayTemplate;
+	}
+    @Override
+	public void setDisplayTemplate(String displayTemplate) {
+		this.displayTemplate = displayTemplate;
+	}
 
 	@Override
     public int hashCode() {

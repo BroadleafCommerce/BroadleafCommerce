@@ -296,4 +296,12 @@ public interface Product extends Serializable {
 
     public void setProductOptions(List<ProductOption> productOptions);
 
+	String getUrl();
+
+	void setUrl(String url);
+
+	String getDisplayTemplate();
+
+	void setDisplayTemplate(String displayTemplate);
+
 }
