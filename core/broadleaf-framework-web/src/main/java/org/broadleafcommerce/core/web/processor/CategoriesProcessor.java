@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.dialect.catalog;
+package org.broadleafcommerce.core.web.processor;
 
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.dialect.AbstractModelVariableModifierProcessor;
-import org.broadleafcommerce.core.web.dialect.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 /**
+ * A Thymeleaf processor that will add the desired categories to the model. It does this by
+ * searching for the parentCategory name and adding up to maxResults subcategories under
+ * the model attribute specified by resultVar
+ * 
  * @author apazzolini
- *
  */
 public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
 

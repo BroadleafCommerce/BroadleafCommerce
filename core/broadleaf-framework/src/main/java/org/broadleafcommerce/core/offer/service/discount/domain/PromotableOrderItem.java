@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 
 import java.util.List;
 
@@ -86,7 +86,9 @@ public interface PromotableOrderItem {
 	
 	public List<PromotableOrderItem> split();
 	
-	public OrderItem getDelegate();
+	public DiscreteOrderItem getDelegate();
+
+    public void setDelegate(DiscreteOrderItem discreteOrderItem);
 	
 	public void reset();
 	

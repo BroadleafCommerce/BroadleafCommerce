@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -34,6 +36,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
 @Entity
@@ -44,6 +47,7 @@ import java.math.BigDecimal;
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemFeePriceImpl_baseDiscreteOrderItemFreePrice")
 public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice  {
 
+    public static final Log LOG = LogFactory.getLog(DiscreteOrderItemFeePriceImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -106,6 +110,35 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
 
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
+    }
+
+    public void checkCloneable(DiscreteOrderItemFeePrice discreteFeePrice) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = discreteFeePrice.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !discreteFeePrice.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+        }
+    }
+
+    public DiscreteOrderItemFeePrice clone() {
+        //instantiate from the fully qualified name via reflection
+        DiscreteOrderItemFeePrice clone;
+        try {
+            clone = (DiscreteOrderItemFeePrice) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setAmount(getAmount());
+            clone.setName(getName());
+            clone.setReportingCode(getReportingCode());
+            clone.setDiscreteOrderItem(getDiscreteOrderItem());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
     }
 
     @Override

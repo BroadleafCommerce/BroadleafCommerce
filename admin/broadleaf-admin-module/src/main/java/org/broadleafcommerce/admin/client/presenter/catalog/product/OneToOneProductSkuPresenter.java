@@ -34,6 +34,7 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductMedi
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionValueDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductSkusDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
@@ -48,6 +49,7 @@ import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
+import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.MapStructurePresenter;
@@ -66,6 +68,7 @@ import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -87,6 +90,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected SubPresentable productAttributePresenter;
 	protected SubPresentable parentCategoriesPresenter;
 	protected AssociatedProductOptionPresenter productOptionsPresenter;
+	protected SubPresentable skusPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
 	@Override
@@ -103,6 +107,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		productAttributePresenter.load(selectedRecord, dataSource, null);
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
+        skusPresenter.load(selectedRecord, dataSource, null);
 	}
 
     @Override
@@ -137,23 +142,35 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		productAttributePresenter.bind();
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
+		skusPresenter.bind();
 		
 		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
-                AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Boolean>() {
+                SC.confirm(BLCMain.getMessageManager().getString("generateSkusConfirm"), new BooleanCallback() {
                     @Override
-                    public void onSuccess(Boolean result) {
-                        SC.say("Success!");
-                    }
-                    
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        // TODO Auto-generated method stub
-                        
+                    public void execute(Boolean value) {
+                        if (value) {
+                            Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
+                            AppServices.CATALOG.generateSkusFromProduct(productId, new AsyncCallback<Integer>() {
+                                @Override
+                                public void onSuccess(Integer result) {
+                                    //we just finished creating a bunch of Skus, reload the grid
+                                    getDisplay().getSkusDisplay().getGrid().invalidateCache();
+                                    SC.say(result + " " + BLCMain.getMessageManager().getString("skuGenerationSuccess"));
+                                }
+                                
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    SC.say(BLCMain.getMessageManager().getString("skuGenerationFail"));
+                                }
+                            });
+                        } else {
+                            SC.say(BLCMain.getMessageManager().getString("noSkusGenerated"));
+                        }
                     }
                 });
+                
             }
         });
 	}
@@ -256,6 +273,14 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		        productOptionsPresenter.setExpansionDataSource((ListGridDataSource) getPresenterSequenceSetupManager().getDataSource("productOptionValuesDS"), new String[]{"value", "displayOrder"}, new Boolean[]{false, false});
 		    }
 		}));
+		
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                skusPresenter = new SubPresenter(getDisplay().getSkusDisplay());
+                //grid fields are managed by declared prominence on the entity itself
+                skusPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
+            }
+        }));
 		
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override

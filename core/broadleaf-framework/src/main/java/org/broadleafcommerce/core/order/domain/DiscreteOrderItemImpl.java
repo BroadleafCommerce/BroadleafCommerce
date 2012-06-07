@@ -251,7 +251,13 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 	@Override
 	public OrderItem clone() {
 		DiscreteOrderItem orderItem = (DiscreteOrderItem) super.clone();
-		if (getDiscreteOrderItemFeePrices() != null) orderItem.getDiscreteOrderItemFeePrices().addAll(getDiscreteOrderItemFeePrices());
+		if (getDiscreteOrderItemFeePrices() != null) {
+            for (DiscreteOrderItemFeePrice feePrice : getDiscreteOrderItemFeePrices()) {
+                DiscreteOrderItemFeePrice cloneFeePrice = feePrice.clone();
+                cloneFeePrice.setDiscreteOrderItem(orderItem);
+                orderItem.getDiscreteOrderItemFeePrices().add(cloneFeePrice);
+            }
+        }
 		if (getAdditionalAttributes() != null) orderItem.getAdditionalAttributes().putAll(getAdditionalAttributes());
 		orderItem.setBaseRetailPrice(getBaseRetailPrice());
 		orderItem.setBaseSalePrice(getBaseSalePrice());

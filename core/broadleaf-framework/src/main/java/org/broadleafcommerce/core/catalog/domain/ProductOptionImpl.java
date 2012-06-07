@@ -71,8 +71,12 @@ public class ProductOptionImpl implements ProductOption {
     protected String type;
     
     @Column(name = "ATTRIBUTE_NAME")
-    @AdminPresentation(friendlyName = "Attribute Name")
+    @AdminPresentation(friendlyName = "Attribute Name", tooltip="The attribute name that will appear in the order item attributes for this option")
     protected String attributeName;
+    
+    @Column(name = "LABEL")
+    @AdminPresentation(friendlyName = "Label", tooltip="Text to display for the set of option values")
+    protected String label;
 
     @Column(name = "REQUIRED")
     @AdminPresentation(friendlyName = "Required")
@@ -117,6 +121,16 @@ public class ProductOptionImpl implements ProductOption {
     @Override
     public void setAttributeName(String attributeName) {
         this.attributeName = attributeName;
+    }
+    
+    @Override
+    public String getLabel() {
+        return label;
+    }
+    
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     @Override

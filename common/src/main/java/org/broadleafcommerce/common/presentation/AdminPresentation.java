@@ -161,4 +161,35 @@ public @interface AdminPresentation {
      * @return whether or not the field should be excluded
      */
     boolean excluded() default false;
+    
+    /**
+     * Helpful tooltip to be displayed when the admin user hovers over the field.
+     * This can be localized by providing a key which will use the GWT
+     * support for i18N.
+     * 
+     */
+    String tooltip() default "";
+    
+    /**
+     * On the form for this entity, this will show a question
+     * mark icon next to the field. When the user clicks on the icon, whatever
+     * HTML that is specified in this helpText is shown in a popup.
+     * 
+     * For i18n support, this can also be a key to a localized version of the text
+     * 
+     * Reference implementation: http://www.smartclient.com/smartgwt/showcase/#form_details_hints
+     * 
+     */
+    String helpText() default "";
+    
+    /**
+     * Text to display immediately to the right of a form field. For instance, if the user needs
+     * to put in a date, the hint could be the format the date needs to be in like 'MM/YYYY'.
+     * 
+     * For i18n support, this can also be a key to a localized version of the text
+     * 
+     * Reference implementation: http://www.smartclient.com/smartgwt/showcase/#form_details_hints
+     */
+    String hint() default "";
+    
 }

@@ -16,16 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import javax.persistence.EntityManager;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +42,16 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import javax.persistence.EntityManager;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
@@ -342,7 +342,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             EntitySandBoxItem item = sandBoxService.retrieveSandBoxItemByTemporaryId(id);
             if (item != null) {
                 mergedEntity.setDirty(true);
-                for (org.broadleafcommerce.openadmin.server.domain.Property persistentProperty : item.getEntity().getProperties()) {
+                for (org.broadleafcommerce.admin.domain.Property persistentProperty : item.getEntity().getProperties()) {
                     if (persistentProperty.getIsDirty()) {
                         Property dtoProperty = mergedEntity.findProperty(persistentProperty.getName());
                         dtoProperty.setIsDirty(true);

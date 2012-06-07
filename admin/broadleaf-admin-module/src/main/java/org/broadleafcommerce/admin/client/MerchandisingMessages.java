@@ -79,10 +79,16 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String productOptionsTabTitle();
     public String productOptionSearchPrompt();
     public String generateSkusButtonTitle();
+    public String generateSkusConfirm();
+    public String noSkusGenerated();
+    public String skuGenerationFail();
+    public String skuGenerationSuccess();
     public String productOptionMainTitle();
     public String productOptionListTitle();
     public String productOptionDetailsTitle();
     public String productOptionValuesTitle();
     public String newProductOptionValue();
+    public String skusTabTitle();
+    public String skusListTitle();
     
 }

@@ -21,6 +21,8 @@ import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 import org.broadleafcommerce.openadmin.client.view.TabSet;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.SubItemView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormView;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
@@ -54,6 +56,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected GridStructureView allCategoriesDisplay;
 	protected ExpandableGridStructureView productOptionsDisplay;
 	protected ToolStripButton generateSkusButton;
+	protected SubItemView skusDisplay;
     
 	public OneToOneProductSkuView() {
 		setHeight100();
@@ -150,11 +153,17 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         
         categoriesTab.setPane(categoriesLayout);
         
+        Tab skusTab = new Tab(BLCMain.getMessageManager().getString("skusTabTitle"));
+        skusTab.setID("skusTab");
+        skusDisplay = new SubItemView(BLCMain.getMessageManager().getString("skusListTitle"), false, true);
+        skusTab.setPane(skusDisplay);
+        
         topTabSet.addTab(detailsTab);
         topTabSet.addTab(crossSaleTab);
         topTabSet.addTab(mediaTab);
         topTabSet.addTab(categoriesTab);
         topTabSet.addTab(productOptionsTab);
+        topTabSet.addTab(skusTab);
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
@@ -199,5 +208,9 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	public ToolStripButton getGenerateSkusButton() {
 	    return generateSkusButton;
 	}
+	
+	public SubItemDisplay getSkusDisplay() {
+        return skusDisplay;
+    }
 
 }
