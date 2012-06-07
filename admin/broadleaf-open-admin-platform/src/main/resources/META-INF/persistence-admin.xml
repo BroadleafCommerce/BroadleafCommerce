@@ -43,18 +43,18 @@
 	
 	<!--<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
         <mapping-file>config/bc/jpa/domain/SandBoxIdGeneration.orm.xml</mapping-file>
-		<class>org.broadleafcommerce.openadmin.server.domain.AdditionalForeignKeyImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.EntityImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.ForeignKeyImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.JoinStructureImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.MapStructureImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.OperationTypesImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveItemImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.PropertyImpl</class>
-		<class>org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructureImpl</class
+		<class>org.broadleafcommerce.admin.domain.AdditionalForeignKeyImpl</class>
+		<class>org.broadleafcommerce.admin.domain.EntityImpl</class>
+		<class>org.broadleafcommerce.admin.domain.ForeignKeyImpl</class>
+		<class>org.broadleafcommerce.admin.domain.JoinStructureImpl</class>
+		<class>org.broadleafcommerce.admin.domain.MapStructureImpl</class>
+		<class>org.broadleafcommerce.admin.domain.OperationTypesImpl</class>
+		<class>org.broadleafcommerce.admin.domain.PersistencePerspectiveImpl</class>
+		<class>org.broadleafcommerce.admin.domain.PersistencePerspectiveItemImpl</class>
+		<class>org.broadleafcommerce.admin.domain.PropertyImpl</class>
+		<class>org.broadleafcommerce.admin.domain.SimpleValueMapStructureImpl</class
 		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
-        <class>org.broadleafcommerce.openadmin.server.domain.SandBoxIdGenerationImpl</class>
+        <class>org.broadleafcommerce.admin.domain.SandBoxIdGenerationImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="false"/>

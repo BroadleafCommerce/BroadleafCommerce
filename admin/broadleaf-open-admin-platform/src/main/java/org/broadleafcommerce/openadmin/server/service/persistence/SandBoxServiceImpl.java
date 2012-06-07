@@ -102,13 +102,13 @@ public class SandBoxServiceImpl implements SandBoxService {
                     item = createSandBoxItemFromDto(sandBox, persistencePackage, changeType, primaryKey);
                     sandBox.getSandBoxItems().add(item);
                 } else {
-                    List<org.broadleafcommerce.openadmin.server.domain.Property> savedProperties = item.getEntity().getProperties();
+                    List<org.broadleafcommerce.admin.domain.Property> savedProperties = item.getEntity().getProperties();
                     for (final Property property : persistencePackage.getEntity().getProperties()) {
                         if (property.getIsDirty()) {
-                            org.broadleafcommerce.openadmin.server.domain.Property matchedProperty = (org.broadleafcommerce.openadmin.server.domain.Property) org.apache.commons.collections.CollectionUtils.find(savedProperties, new Predicate() {
+                            org.broadleafcommerce.admin.domain.Property matchedProperty = (org.broadleafcommerce.admin.domain.Property) org.apache.commons.collections.CollectionUtils.find(savedProperties, new Predicate() {
                                 @Override
                                 public boolean evaluate(Object o) {
-                                    return ((org.broadleafcommerce.openadmin.server.domain.Property) o).getName().equals(property.getName());
+                                    return ((org.broadleafcommerce.admin.domain.Property) o).getName().equals(property.getName());
                                 }
                             });
                             if (matchedProperty == null) {
@@ -183,7 +183,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         PersistencePackage pkg = new PersistencePackage();
         pkg.setCeilingEntityFullyQualifiedClassname(sandBoxItem.getCeilingEntityFullyQualifiedClassname());
         pkg.setCustomCriteria(getSplitArray(sandBoxItem.getCustomCriteria(),","));
-        org.broadleafcommerce.openadmin.server.domain.Entity persistentEntity = sandBoxItem.getEntity();
+        org.broadleafcommerce.admin.domain.Entity persistentEntity = sandBoxItem.getEntity();
         Entity dtoEntity = new Entity();
         pkg.setEntity(dtoEntity);
         dtoEntity.setType(getSplitArray(persistentEntity.getType(),","));
@@ -194,8 +194,8 @@ public class SandBoxServiceImpl implements SandBoxService {
         info.setCommitImmediately(false);
         PersistencePerspective dtoPersistencePerspective = new PersistencePerspective();
         pkg.setPersistencePerspective(dtoPersistencePerspective);
-        org.broadleafcommerce.openadmin.server.domain.PersistencePerspective persistentPersistencePerspective = sandBoxItem.getPersistencePerspective();
-        List<org.broadleafcommerce.openadmin.server.domain.ForeignKey> persistenceForeignKeyList = persistentPersistencePerspective.getAdditionalForeignKeys();
+        org.broadleafcommerce.admin.domain.PersistencePerspective persistentPersistencePerspective = sandBoxItem.getPersistencePerspective();
+        List<org.broadleafcommerce.admin.domain.ForeignKey> persistenceForeignKeyList = persistentPersistencePerspective.getAdditionalForeignKeys();
         ForeignKey[] dtoForeignKeyList = new ForeignKey[persistenceForeignKeyList.size()];
         for (int j=0;j<dtoForeignKeyList.length;j++) {
             ForeignKey dtoForeignKey = new ForeignKey();
@@ -221,12 +221,12 @@ public class SandBoxServiceImpl implements SandBoxService {
         dtoPersistencePerspective.setPopulateToOneFields(persistentPersistencePerspective.getPopulateToOneFields());
         final Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> dtoPersistencePerspectiveItemMap = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
         dtoPersistencePerspective.setPersistencePerspectiveItems(dtoPersistencePerspectiveItemMap);
-        Map<PersistencePerspectiveItemType, org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveItem> persistentPersistencePerspectiveItemMap = persistentPersistencePerspective.getPersistencePerspectiveItems();
+        Map<PersistencePerspectiveItemType, org.broadleafcommerce.admin.domain.PersistencePerspectiveItem> persistentPersistencePerspectiveItemMap = persistentPersistencePerspective.getPersistencePerspectiveItems();
         for (final PersistencePerspectiveItemType perspectiveItemType : persistentPersistencePerspectiveItemMap.keySet()) {
-            org.broadleafcommerce.openadmin.server.domain.PersistencePerspectiveItem persistentPersistencePerspectiveItem = persistentPersistencePerspectiveItemMap.get(perspectiveItemType);
+            org.broadleafcommerce.admin.domain.PersistencePerspectiveItem persistentPersistencePerspectiveItem = persistentPersistencePerspectiveItemMap.get(perspectiveItemType);
             org.broadleafcommerce.openadmin.server.domain.visitor.PersistencePerspectiveItemVisitor visitor = new org.broadleafcommerce.openadmin.server.domain.visitor.PersistencePerspectiveItemVisitorAdapter() {
                 @Override
-                public void visit(org.broadleafcommerce.openadmin.server.domain.ForeignKey persistentForeignKey) {
+                public void visit(org.broadleafcommerce.admin.domain.ForeignKey persistentForeignKey) {
                     ForeignKey dtoForeignKey = new ForeignKey();
                     dtoForeignKey.setCurrentValue(persistentForeignKey.getCurrentValue());
                     dtoForeignKey.setDataSourceName(persistentForeignKey.getDataSourceName());
@@ -238,7 +238,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 }
 
                 @Override
-                public void visit(org.broadleafcommerce.openadmin.server.domain.JoinStructure persistentJoinStructure) {
+                public void visit(org.broadleafcommerce.admin.domain.JoinStructure persistentJoinStructure) {
                     JoinStructure dtoJoinStructure = new JoinStructure();
                     dtoJoinStructure.setInverse(persistentJoinStructure.getInverse());
                     dtoJoinStructure.setJoinStructureEntityClassname(persistentJoinStructure.getJoinStructureEntityClassname());
@@ -253,7 +253,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 }
 
                 @Override
-                public void visit(org.broadleafcommerce.openadmin.server.domain.MapStructure persistentMapStructure) {
+                public void visit(org.broadleafcommerce.admin.domain.MapStructure persistentMapStructure) {
                     MapStructure dtoMapStructure = new MapStructure();
                     dtoMapStructure.setDeleteValueEntity(persistentMapStructure.getDeleteValueEntity());
                     dtoMapStructure.setKeyClassName(persistentMapStructure.getKeyClassName());
@@ -265,7 +265,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 }
 
                 @Override
-                public void visit(org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructure persistentSimpleValueMapStructure) {
+                public void visit(org.broadleafcommerce.admin.domain.SimpleValueMapStructure persistentSimpleValueMapStructure) {
                     SimpleValueMapStructure dtoSimpleValueMapStructure = new SimpleValueMapStructure();
                     dtoSimpleValueMapStructure.setValuePropertyFriendlyName(persistentSimpleValueMapStructure.getValuePropertyFriendlyName());
                     dtoSimpleValueMapStructure.setValuePropertyName(persistentSimpleValueMapStructure.getValuePropertyName());
@@ -281,7 +281,7 @@ public class SandBoxServiceImpl implements SandBoxService {
             persistentPersistencePerspectiveItem.accept(visitor);
         }
         Property[] dtoPropertyList = new Property[persistentEntity.getProperties().size()];
-        List<org.broadleafcommerce.openadmin.server.domain.Property> persistentPropertyList = persistentEntity.getProperties();
+        List<org.broadleafcommerce.admin.domain.Property> persistentPropertyList = persistentEntity.getProperties();
         Map idMetadata = getIdMetadata(Class.forName(dtoEntity.getType()[0]));
         String primaryKeyProperty = (String) idMetadata.get("name");
         for (int j=0;j<dtoPropertyList.length;j++) {
@@ -293,7 +293,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         return pkg;
     }
 
-    protected Property createDtoProperty(org.broadleafcommerce.openadmin.server.domain.Property persistentProperty, String primaryKeyProperty, Object primaryKey) {
+    protected Property createDtoProperty(org.broadleafcommerce.admin.domain.Property persistentProperty, String primaryKeyProperty, Object primaryKey) {
         Property property = new Property();
         property.setDisplayValue(persistentProperty.getDisplayValue());
         property.setIsDirty(persistentProperty.getIsDirty());
@@ -332,11 +332,11 @@ public class SandBoxServiceImpl implements SandBoxService {
             temporaryId = sandBoxIdGenerationService.findNextId("org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService");
         }
         sandBoxItem.setTemporaryId(temporaryId);
-		org.broadleafcommerce.openadmin.server.domain.Entity persistentEntity = new EntityImpl();
+		org.broadleafcommerce.admin.domain.Entity persistentEntity = new EntityImpl();
 		sandBoxItem.setEntity(persistentEntity);
 		persistentEntity.setType(StringUtils.join(dtoEntity.getType(), ','));
 		for (Property dtoProperty : dtoEntity.getProperties()){
-			org.broadleafcommerce.openadmin.server.domain.Property persistentProperty = new PropertyImpl();
+			org.broadleafcommerce.admin.domain.Property persistentProperty = new PropertyImpl();
 			persistentEntity.getProperties().add(persistentProperty);
 			persistentProperty.setDisplayValue(dtoProperty.getDisplayValue());
 			persistentProperty.setEntity(persistentEntity);
@@ -345,10 +345,10 @@ public class SandBoxServiceImpl implements SandBoxService {
 			persistentProperty.setIsDirty(dtoProperty.getIsDirty());
             persistentProperty.setSecondaryType(dtoProperty.getMetadata().getSecondaryType());
 		}
-		final org.broadleafcommerce.openadmin.server.domain.PersistencePerspective persistentPersistencePerspective = new PersistencePerspectiveImpl();
+		final org.broadleafcommerce.admin.domain.PersistencePerspective persistentPersistencePerspective = new PersistencePerspectiveImpl();
 		sandBoxItem.setPersistencePerspective(persistentPersistencePerspective);
 		for (ForeignKey dtoForeignKey : dtoPersistencePerspective.getAdditionalForeignKeys()) {
-			org.broadleafcommerce.openadmin.server.domain.ForeignKey persistentForeignKey = new AdditionalForeignKeyImpl();
+			org.broadleafcommerce.admin.domain.ForeignKey persistentForeignKey = new AdditionalForeignKeyImpl();
 			persistentPersistencePerspective.getAdditionalForeignKeys().add(persistentForeignKey);
 			persistentForeignKey.setCurrentValue(dtoForeignKey.getCurrentValue());
 			persistentForeignKey.setDataSourceName(dtoForeignKey.getDataSourceName());
@@ -362,7 +362,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 		persistentPersistencePerspective.setPopulateToOneFields(dtoPersistencePerspective.getPopulateToOneFields());
 		persistentPersistencePerspective.setExcludeFields(StringUtils.join(dtoPersistencePerspective.getExcludeFields(), ','));
 		persistentPersistencePerspective.setIncludeFields(StringUtils.join(dtoPersistencePerspective.getIncludeFields(), ','));
-		org.broadleafcommerce.openadmin.server.domain.OperationTypes persistentOperationTypes = new OperationTypesImpl();
+		org.broadleafcommerce.admin.domain.OperationTypes persistentOperationTypes = new OperationTypesImpl();
 		persistentPersistencePerspective.setOperationTypes(persistentOperationTypes);
 		persistentOperationTypes.setAddType(dtoPersistencePerspective.getOperationTypes().getAddType());
 		persistentOperationTypes.setFetchType(dtoPersistencePerspective.getOperationTypes().getFetchType());
@@ -375,7 +375,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 				@Override
 				public void visit(JoinStructure dtoJoinStructure) {
-					org.broadleafcommerce.openadmin.server.domain.JoinStructure persistentJoinStructure = new JoinStructureImpl();
+					org.broadleafcommerce.admin.domain.JoinStructure persistentJoinStructure = new JoinStructureImpl();
 					persistentJoinStructure.setInverse(dtoJoinStructure.getInverse());
 					persistentJoinStructure.setJoinStructureEntityClassname(dtoJoinStructure.getJoinStructureEntityClassname());
 					persistentJoinStructure.setLinkedIdProperty(dtoJoinStructure.getLinkedIdProperty());
@@ -390,7 +390,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 				@Override
 				public void visit(MapStructure dtoMapStructure) {
-					org.broadleafcommerce.openadmin.server.domain.MapStructure persistentMapStructure = new MapStructureImpl();
+					org.broadleafcommerce.admin.domain.MapStructure persistentMapStructure = new MapStructureImpl();
 					persistentMapStructure.setDeleteValueEntity(dtoMapStructure.getDeleteValueEntity());
 					persistentMapStructure.setKeyClassName(dtoMapStructure.getKeyClassName());
 					persistentMapStructure.setKeyPropertyFriendlyName(dtoMapStructure.getKeyPropertyFriendlyName());
@@ -402,7 +402,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
 				@Override
 				public void visit(SimpleValueMapStructure dtoSimpleValueMapStructure) {
-					org.broadleafcommerce.openadmin.server.domain.SimpleValueMapStructure persistentSimpleValueMapStructure = new SimpleValueMapStructureImpl();
+					org.broadleafcommerce.admin.domain.SimpleValueMapStructure persistentSimpleValueMapStructure = new SimpleValueMapStructureImpl();
 					persistentSimpleValueMapStructure.setDeleteValueEntity(dtoSimpleValueMapStructure.getDeleteValueEntity());
 					persistentSimpleValueMapStructure.setKeyClassName(dtoSimpleValueMapStructure.getKeyClassName());
 					persistentSimpleValueMapStructure.setKeyPropertyFriendlyName(dtoSimpleValueMapStructure.getKeyPropertyFriendlyName());
@@ -416,7 +416,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 				
 				@Override
 				public void visit(ForeignKey dtoForeignKey) {
-					org.broadleafcommerce.openadmin.server.domain.ForeignKey persistentForeignKey = new ForeignKeyImpl();
+					org.broadleafcommerce.admin.domain.ForeignKey persistentForeignKey = new ForeignKeyImpl();
 					persistentForeignKey.setCurrentValue(dtoForeignKey.getCurrentValue());
 					persistentForeignKey.setDataSourceName(dtoForeignKey.getDataSourceName());
 					persistentForeignKey.setDisplayValueProperty(dtoForeignKey.getDisplayValueProperty());
