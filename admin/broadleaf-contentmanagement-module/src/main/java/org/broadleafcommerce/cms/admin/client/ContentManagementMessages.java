@@ -91,5 +91,12 @@ public interface ContentManagementMessages extends ConstantsWithLookup {
     public String StructuredContentCustomPersistenceHandler_Description();
     public String StructuredContentCustomPersistenceHandler_Locked_Details();
     public String StructuredContentCustomPersistenceHandler_Rules();
-    
+    public String redirectUrlPermissions();
+    public String newURLRedirectTitle();
+    public String URLHandlerImpl_friendyName();
+    public String URLHandlerImpl_redirectType();
+    public String URLHandlerImpl_newURL();
+    public String URLHandlerImpl_incomingURL();
+    public String URLHandlerImpl_ID();
+
 }
