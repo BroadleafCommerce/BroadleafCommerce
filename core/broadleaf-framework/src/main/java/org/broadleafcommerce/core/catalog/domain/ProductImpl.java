@@ -172,10 +172,6 @@ public class ProductImpl implements Product {
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=8, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isFeaturedProduct = false;
-
-    @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=9, group = "ProductImpl_Product_Description", prominent=false)
-    protected boolean isMachineSortable = true;
     
     @OneToOne(optional = true, targetEntity = SkuImpl.class)
     @JoinColumn(name = "DEFAULT_SKU_ID")
@@ -407,14 +403,6 @@ public class ProductImpl implements Product {
 
     public void setFeaturedProduct(boolean isFeaturedProduct) {
         this.isFeaturedProduct = isFeaturedProduct;
-    }
-
-    public boolean isMachineSortable() {
-        return isMachineSortable;
-    }
-
-    public void setMachineSortable(boolean isMachineSortable) {
-        this.isMachineSortable = isMachineSortable;
     }
 
     public Sku getDefaultSku() {

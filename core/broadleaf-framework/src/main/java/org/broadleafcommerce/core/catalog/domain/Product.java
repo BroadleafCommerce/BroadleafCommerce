@@ -275,10 +275,6 @@ public interface Product extends Serializable {
      * @param isFeaturedProduct
      */
     void setFeaturedProduct(boolean isFeaturedProduct);
-
-    boolean isMachineSortable();
-
-    void setMachineSortable(boolean isMachineSortable);
     
     public Sku getDefaultSku();
 

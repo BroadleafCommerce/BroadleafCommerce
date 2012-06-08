@@ -181,6 +181,11 @@ public class SkuImpl implements Sku {
     
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
+    
+
+    @Column(name = "IS_MACHINE_SORTABLE")
+    @AdminPresentation(friendlyName = "SkuImpl_Is_Product_Machine_Sortable", order=9, group = "SkuImpl_Product_Description", prominent=false)
+    protected Boolean isMachineSortable = true;
 	
     /** The sku images. */
     @CollectionOfElements
@@ -696,6 +701,17 @@ public class SkuImpl implements Sku {
 	public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
 		this.skuAttributes = skuAttributes;
 	}
+	
+    public Boolean isMachineSortable() {
+    	 if (isMachineSortable == null && hasDefaultSku()) {
+             return lookupDefaultSku().isMachineSortable();
+         }
+        return isMachineSortable;
+    }
+
+    public void setMachineSortable(Boolean isMachineSortable) {
+        this.isMachineSortable = isMachineSortable;
+    }	
 
 	@Override
     public boolean equals(Object obj) {
