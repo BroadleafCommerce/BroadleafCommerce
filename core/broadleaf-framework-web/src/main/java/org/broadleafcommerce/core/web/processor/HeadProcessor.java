@@ -30,7 +30,7 @@ import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
  * <ul>
  * 	<li><b>pageTitle</b> - The title of the page</li>
  * 	<li><b>additionalCss</b> - An additional, page specific CSS file to include</li>
- * 
+ * </ul>
  * 
  * @author apazzolini
  */
