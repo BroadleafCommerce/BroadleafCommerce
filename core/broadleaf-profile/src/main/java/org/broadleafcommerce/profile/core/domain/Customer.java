@@ -17,6 +17,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -94,5 +95,9 @@ public interface Customer extends Serializable {
     public Locale getCustomerLocale();
 
     public void setCustomerLocale(Locale customerLocale);
+    
+    List<CustomerAttribute> getCustomerAttributes();
+
+	void setCustomerAttributes(List<CustomerAttribute> customerAttributes);    
     
 }

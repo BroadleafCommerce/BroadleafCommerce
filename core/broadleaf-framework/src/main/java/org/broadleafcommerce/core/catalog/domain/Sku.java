@@ -254,5 +254,9 @@ public interface Sku extends Serializable {
      * @return whether or not the product is on sale
      */
 	public boolean isOnSale();
+	
+    public Boolean isMachineSortable();
+
+    public void setMachineSortable(Boolean isMachineSortable);
 
 }

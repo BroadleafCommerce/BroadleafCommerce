@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,6 +29,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -37,8 +42,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
 @Entity
@@ -106,6 +113,12 @@ public class CustomerImpl implements Customer {
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale", group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
+    
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();    
 
     @Transient
     protected String unencodedPassword;
@@ -278,7 +291,15 @@ public class CustomerImpl implements Customer {
         this.customerLocale = customerLocale;
     }
 
-    @Override
+    public List<CustomerAttribute> getCustomerAttributes() {
+		return customerAttributes;
+	}
+
+	public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
+		this.customerAttributes = customerAttributes;
+	}
+
+	@Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
