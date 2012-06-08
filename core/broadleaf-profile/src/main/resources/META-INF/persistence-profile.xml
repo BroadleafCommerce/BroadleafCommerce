@@ -19,6 +19,7 @@
         <class>org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CountryImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerAddressImpl</class>
+        <class>org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl</class>        
         <class>org.broadleafcommerce.profile.core.domain.CustomerImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CustomerRoleImpl</class>
