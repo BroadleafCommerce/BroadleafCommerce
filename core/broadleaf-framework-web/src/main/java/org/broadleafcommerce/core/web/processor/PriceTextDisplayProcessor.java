@@ -26,7 +26,7 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
  * A Thymeleaf processor that renders a Money object according to the currently set locale options.
  * For example, when rendering "6.99" in a US locale, the output text would be "$6.99".
  * When viewing in France for example, you might see "6,99 (US)$". Alternatively, if currency conversion
- * was enabled, you may see "5,59 €"
+ * was enabled, you may see "5,59 (euro-symbol)"
  * 
  * @author apazzolini
  */
