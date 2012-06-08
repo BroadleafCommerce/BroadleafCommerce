@@ -40,8 +40,6 @@
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-            <!--<property name="hibernate.ejb.event.post-load" value="org.hibernate.ejb.event.EJB3PostLoadEventListener,org.broadleafcommerce.openadmin.server.changeset.ChangeSetListener" />
-            <property name="org.hibernate.envers.audit_strategy" value="org.broadleafcommerce.openadmin.server.changeset.ValidityAuditStrategy" />-->
         </properties>
 	</persistence-unit>
 </persistence>
