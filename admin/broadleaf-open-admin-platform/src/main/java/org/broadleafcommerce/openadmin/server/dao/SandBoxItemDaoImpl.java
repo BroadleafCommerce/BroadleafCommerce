@@ -54,7 +54,6 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
        return em.find(SandBoxItemImpl.class, id);
     }
 
-
     @Override
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(SandBox sandBox, SandBoxItemType type, Long tempItemId) {
         Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID");
@@ -98,5 +97,13 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         Query query = em.createNamedQuery("BC_READ_ALL_SANDBOX_ITEMS");
         query.setParameter("sandboxId", sandBox.getId());
         return query.getResultList();
+    }
+
+    @Override
+    public void delete(SandBoxItem sandBoxItem) {
+        if (!em.contains(sandBoxItem)) {
+            sandBoxItem = retrieveById(sandBoxItem.getId());
+        }
+        em.remove(sandBoxItem);
     }
 }

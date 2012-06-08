@@ -35,4 +35,6 @@ public interface SandBoxItemDao {
 
     public List<SandBoxItem> retrieveSandBoxItemsForSandbox(SandBox sandBox);
 
+    public void delete(SandBoxItem sandBoxItem);
+
 }
