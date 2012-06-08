@@ -199,4 +199,6 @@ public interface CategoryDao {
      * @param currentDateResolution the value in milliseconds for how long the current date/time is cached
      */
 	public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
+	@Nonnull
+	Category findCategoryByURI(String uri);
 }

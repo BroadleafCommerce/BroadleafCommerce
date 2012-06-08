@@ -25,6 +25,7 @@ import javax.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
 
+import org.broadleafcommerce.cms.url.URLHandler;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -200,5 +201,24 @@ public class CategoryDaoImpl implements CategoryDao {
 	public void setCurrentDateResolution(Long currentDateResolution) {
 		this.currentDateResolution = currentDateResolution;
 	}
-    
+	@Override
+	public Category findCategoryByURI(String uri) {
+		
+	
+			Query query;
+
+			query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
+			query.setParameter("url", uri);
+
+			@SuppressWarnings("unchecked")
+			List<Category> results = (List<Category>) query.getResultList();
+			if (results != null && !results.isEmpty()) {
+				return results.get(0);
+			 
+			} else {
+				return null;
+			}
+
+	}
+
 }

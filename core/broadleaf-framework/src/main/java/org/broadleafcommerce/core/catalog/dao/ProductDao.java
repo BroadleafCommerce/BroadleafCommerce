@@ -189,4 +189,6 @@ public interface ProductDao {
      */
     List<ProductBundle> readAutomaticProductBundles();
 
+	Product findProductByURI(String key);
+
 }

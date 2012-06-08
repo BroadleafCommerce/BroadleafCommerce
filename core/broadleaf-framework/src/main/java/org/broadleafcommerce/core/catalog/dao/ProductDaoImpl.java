@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
@@ -29,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
@@ -232,6 +234,22 @@ public class ProductDaoImpl implements ProductDao {
 
 	public void setCurrentDateResolution(Long currentDateResolution) {
 		this.currentDateResolution = currentDateResolution;
+	}
+    @Override
+	public Product findProductByURI(String uri) {
+	Query query;
+
+	query = em.createNamedQuery("BC_READ_PRODUCT_OUTGOING_URL");
+	query.setParameter("url", uri);
+
+	@SuppressWarnings("unchecked")
+	List<Product> results = (List<Product>) query.getResultList();
+	if (results != null && !results.isEmpty()) {
+		return results.get(0);
+	 
+	} else {
+		return null;
+	}
 	}
     
 }
