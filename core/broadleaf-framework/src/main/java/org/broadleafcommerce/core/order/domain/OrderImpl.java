@@ -53,6 +53,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -373,6 +374,17 @@ public class OrderImpl implements Order {
             }
         }
         return discreteOrderItems;
+    }
+    
+    @Override
+    public boolean containsSku(Sku sku) {
+    	for (DiscreteOrderItem discreteOrderItem : getDiscreteOrderItems()) {
+    		if (discreteOrderItem.getSku() != null && discreteOrderItem.getSku().equals(sku)) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     public List<OfferCode> getAddedOfferCodes() {

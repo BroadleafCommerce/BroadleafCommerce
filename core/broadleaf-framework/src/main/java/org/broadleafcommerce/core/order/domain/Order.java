@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -135,6 +136,15 @@ public interface Order extends Serializable {
     public List<OrderAdjustment> getOrderAdjustments();
 
     public List<DiscreteOrderItem> getDiscreteOrderItems();
+    
+    /**
+     * Checks the DiscreteOrderItems in the cart and returns whether or not the given SKU was found.
+     * The equality of the SKUs is based on the .equals() method in SkuImpl
+     * 
+     * @param sku The sku to check for
+     * @return whether or not the given SKU exists in the cart
+     */
+	public boolean containsSku(Sku sku);
 
     public List<OfferCode> getAddedOfferCodes();
 
@@ -198,5 +208,6 @@ public interface Order extends Serializable {
      * @param orderAttributes
      */
     public void setOrderAttributes(Map<String,OrderAttribute> orderAttributes);
+
 
 }
