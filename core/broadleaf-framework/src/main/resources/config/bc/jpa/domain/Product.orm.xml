@@ -60,5 +60,11 @@
 		ORDER BY categoryProduct.displayOrder
 		</query>
 	</named-query>
-
+    <named-query name="BC_READ_PRODUCT_OUTGOING_URL" >
+		<query>SELECT product
+               FROM org.broadleafcommerce.core.catalog.domain.Product product
+               WHERE
+                 product.url = :url 
+		</query>
+	</named-query>
 </entity-mappings>

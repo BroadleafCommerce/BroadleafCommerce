@@ -106,6 +106,23 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 			approverSandBoxPermissions
 		);
 
+		
+
+		List<String> redirectUrlPermissions = new ArrayList<String>();
+		redirectUrlPermissions.add("PERMISSION_CREATE_PROMOTION");
+		redirectUrlPermissions.add("PERMISSION_UPDATE_PROMOTION");
+		redirectUrlPermissions.add("PERMISSION_DELETE_PROMOTION");
+        redirectUrlPermissions.add("PERMISSION_READ_PROMOTION");
+		setSection(
+            BLCMain.getMessageManager().getString("redirectUrlPermissions"),
+			"urlRedirect",
+			"org.broadleafcommerce.cms.admin.client.view.urlRedirect.UrlRedirectView",
+			"urlRedirectPresenter",
+			"org.broadleafcommerce.cms.admin.client.presenter.urlRedirect.UrlRedirectPresenter",
+			redirectUrlPermissions
+		);
+
+        
         setHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextFullFeatured.html");
         setBasicHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextBasic.html");
         registerModule();

@@ -13,5 +13,7 @@
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentType" class="org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate" class="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentRule" class="org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.common.url.URLHandler" class="org.broadleafcommerce.cms.url.URLHandlerImpl" scope="prototype"/>
+ 
 
 </beans>

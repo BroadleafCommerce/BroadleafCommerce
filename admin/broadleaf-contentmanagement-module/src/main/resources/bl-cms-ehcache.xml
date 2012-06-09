@@ -45,7 +45,11 @@
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
-
+    <cache name="blcUrlCache"
+        maxElementsInMemory="5000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
     <!-- If using message based cache-eviction, then the cmsPageCache can be set to eternal. -->
     <!--
         <cache name="cmsPageCache"

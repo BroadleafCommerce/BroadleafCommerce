@@ -157,26 +157,6 @@
         </property>
     </bean>
 
-    <bean id="blPageURLProcessor" class="org.broadleafcommerce.cms.web.PageURLProcessor"/>
 
-    <bean id="blProcessURLFilter" class="org.broadleafcommerce.cms.web.BroadleafProcessURLFilter">
-        <property name="urlProcessorList">
-            <list>
-                <ref bean="blPageURLProcessor"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="broadleafApplicationFilterChain" class="org.springframework.security.web.FilterChainProxy">
-        <property name="filterChainMap">
-            <util:map map-class="java.util.LinkedHashMap">
-                <entry key="/**">
-                    <list>
-                        <ref bean="blProcessURLFilter"/>
-                    </list>
-                </entry>
-            </util:map>
-        </property>
-    </bean>
 
 </beans>
