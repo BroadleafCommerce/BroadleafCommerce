@@ -40,30 +40,5 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
-	
-	<!--<persistence-unit name="blSandboxPU" transaction-type="RESOURCE_LOCAL">
-        <mapping-file>config/bc/jpa/domain/SandBoxIdGeneration.orm.xml</mapping-file>
-		<class>org.broadleafcommerce.admin.domain.AdditionalForeignKeyImpl</class>
-		<class>org.broadleafcommerce.admin.domain.EntityImpl</class>
-		<class>org.broadleafcommerce.admin.domain.ForeignKeyImpl</class>
-		<class>org.broadleafcommerce.admin.domain.JoinStructureImpl</class>
-		<class>org.broadleafcommerce.admin.domain.MapStructureImpl</class>
-		<class>org.broadleafcommerce.admin.domain.OperationTypesImpl</class>
-		<class>org.broadleafcommerce.admin.domain.PersistencePerspectiveImpl</class>
-		<class>org.broadleafcommerce.admin.domain.PersistencePerspectiveItemImpl</class>
-		<class>org.broadleafcommerce.admin.domain.PropertyImpl</class>
-		<class>org.broadleafcommerce.admin.domain.SimpleValueMapStructureImpl</class
-		<class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
-        <class>org.broadleafcommerce.admin.domain.SandBoxIdGenerationImpl</class>
-		<exclude-unlisted-classes/>
-		<properties>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.connection.autocommit" value="false"/>
-            <property name="hibernate.cache.use_second_level_cache" value="false"/>
-            <property name="hibernate.cache.use_query_cache" value="false"/>
-            <property name="hibernate.archive.autodetection" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-        </properties>
-	</persistence-unit>-->
+
 </persistence>
