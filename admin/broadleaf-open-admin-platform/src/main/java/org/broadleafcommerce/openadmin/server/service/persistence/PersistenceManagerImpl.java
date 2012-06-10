@@ -251,7 +251,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                 }
                 Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
-                return response;
+                return postUpdate(response);
             }
         }
         Entity entity = persistencePackage.getEntity();
@@ -262,12 +262,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
-
-        return executeModuleUpdateOperation(myModule, persistencePackage);
+        Entity response = myModule.update(persistencePackage);
+        return postUpdate(response);
     }
 
-    protected Entity executeModuleUpdateOperation(PersistenceModule persistenceModule, PersistencePackage persistencePackage) throws ServiceException {
-        return persistenceModule.update(persistencePackage);
+    protected Entity postUpdate(Entity entity) throws ServiceException {
+        //do nothing
+        return entity;
     }
 
 	/*
