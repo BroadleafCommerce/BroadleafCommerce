@@ -38,6 +38,14 @@
             </list>
         </property>
     </bean>
+
+    <!--Additional listeners are added in the cms contentClient applicationContext -->
+    <bean id="blSandboxItemListeners" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 	
 	<!--<bean id="blSandBoxEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="jpaVendorAdapter">
