@@ -15,7 +15,7 @@
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl</class>
         <exclude-unlisted-classes/>
         <properties>
-            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
             <property name="hibernate.connection.autocommit" value="false"/>
             <property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>

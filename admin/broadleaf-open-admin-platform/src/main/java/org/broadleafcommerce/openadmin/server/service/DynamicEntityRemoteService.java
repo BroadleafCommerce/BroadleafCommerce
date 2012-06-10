@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +33,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -57,6 +58,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         this.applicationContext = applicationContext;
     }
 
+    @Transactional("blTransactionManager")
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -85,6 +87,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
+    @Transactional("blTransactionManager")
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -141,6 +144,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
+    @Transactional("blTransactionManager")
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -168,6 +172,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
+    @Transactional("blTransactionManager")
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -195,6 +200,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
+    @Transactional("blTransactionManager")
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 

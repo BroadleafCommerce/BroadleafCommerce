@@ -16,11 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import java.util.HashMap;
+import org.hibernate.ejb.Ejb3Configuration;
 
 import javax.persistence.spi.PersistenceUnitInfo;
-
-import org.hibernate.ejb.Ejb3Configuration;
+import java.util.HashMap;
 
 /**
  * 
@@ -30,12 +29,9 @@ import org.hibernate.ejb.Ejb3Configuration;
 public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
 
 	private Ejb3Configuration configuration = null;
-	
+
 	protected PersistenceUnitInfo persistenceUnitInfo;
-	
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDao#getConfiguration()
-	 */
+
 	public Ejb3Configuration getConfiguration() {
 		synchronized(this) {
 			if (configuration == null) {

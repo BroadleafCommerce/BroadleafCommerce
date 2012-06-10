@@ -62,5 +62,4 @@ public @interface AdminPresentationClass {
      */
     String ceilingDisplayEntity() default "";
 
-    WorkflowEnabledEnum workflowEnabled() default WorkflowEnabledEnum.NOT_SPECIFIED;
 }

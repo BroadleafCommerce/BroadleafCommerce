@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
@@ -43,13 +37,23 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
  * @author jfischer
  *
  */
+@Component("blJoinStructurePersistenceModule")
+@Scope("prototype")
 public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 	
 	private static final Log LOG = LogFactory.getLog(JoinStructurePersistenceModule.class);

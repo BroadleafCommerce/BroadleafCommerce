@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
@@ -34,11 +35,13 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -76,44 +79,60 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource(name="blEmailService")
     protected EmailService emailService;
 
-    // Variables to set via external configuration.
-    protected int tokenExpiredMinutes = 30;
+    @Resource(name="blSendAdminResetPasswordEmail")
     protected EmailInfo resetPasswordEmailInfo;
+
+    @Resource(name="blSendAdminUsernameEmailInfo")
     protected EmailInfo sendUsernameEmailInfo;
+
+    // Variables to set via external configuration.
+    @Value("${tokenExpiredMinutes}")
+    protected int tokenExpiredMinutes = 30;
+
+    @Value("${resetPasswordURL}")
     protected String resetPasswordURL;
 
+    @Transactional("blTransactionManager")
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
     }
 
+    @Transactional("blTransactionManager")
     public void deleteAdminRole(AdminRole role) {
         adminRoleDao.deleteAdminRole(role);
     }
 
+    @Transactional("blTransactionManager")
     public void deleteAdminUser(AdminUser user) {
         adminUserDao.deleteAdminUser(user);
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminPermission readAdminPermissionById(Long id) {
         return adminPermissionDao.readAdminPermissionById(id);
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminRole readAdminRoleById(Long id) {
         return adminRoleDao.readAdminRoleById(id);
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminUser readAdminUserById(Long id) {
         return adminUserDao.readAdminUserById(id);
     }
 
+    @Transactional("blTransactionManager")
     public AdminPermission saveAdminPermission(AdminPermission permission) {
         return adminPermissionDao.saveAdminPermission(permission);
     }
 
+    @Transactional("blTransactionManager")
     public AdminRole saveAdminRole(AdminRole role) {
         return adminRoleDao.saveAdminRole(role);
     }
 
+    @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
     	if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
@@ -121,6 +140,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return adminUserDao.saveAdminUser(user);
     }
 
+    @Transactional("blTransactionManager")
     public AdminUser changePassword(PasswordChange passwordChange) {
     	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -132,30 +152,37 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return user;
     }
 
+    @Transactional("blTransactionManager")
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         return adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
     }
 
+    @Transactional("blTransactionManager")
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         return adminPermissionDao.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName);
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminUser readAdminUserByUserName(String userName) {
         return adminUserDao.readAdminUserByUserName(userName);
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public List<AdminUser> readAllAdminUsers() {
         return adminUserDao.readAllAdminUsers();
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public List<AdminRole> readAllAdminRoles() {
         return adminRoleDao.readAllAdminRoles();
     }
 
+    @Transactional(value="blTransactionManager", readOnly = true)
     public List<AdminPermission> readAllAdminPermissions() {
         return adminPermissionDao.readAllAdminPermissions();
     }
 
+    @Transactional("blTransactionManager")
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
         GenericResponse response = new GenericResponse();
         List<AdminUser> users = null;
@@ -184,6 +211,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return response;
     }
 
+    @Transactional("blTransactionManager")
     public GenericResponse sendResetPasswordNotification(String username) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
@@ -207,7 +235,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("token", token);
             String resetPasswordUrl = getResetPasswordURL();
-            if (resetPasswordUrl != null) {
+            if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
                     resetPasswordUrl=resetPasswordUrl+"&token="+token;
                 } else {
@@ -220,34 +248,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
         return response;
     }
-    
-    private void checkUser(AdminUser user, GenericResponse response) {
-        if (user == null) {
-            response.addErrorCode("invalidUser");
-        } else if (user.getEmail() == null || "".equals(user.getEmail())) {
-            response.addErrorCode("emailNotFound");
-        } else if (user.getActiveStatusFlag() == null || ! user.getActiveStatusFlag()) {
-            response.addErrorCode("inactiveUser");
-        }
-    }
-    
-    private void checkPassword(String password, String confirmPassword, GenericResponse response) {
-        if (password == null || confirmPassword == null || "".equals(password) || "".equals(confirmPassword)) {
-            response.addErrorCode("invalidPassword");
-        } else if (! password.equals(confirmPassword)) {
-            response.addErrorCode("passwordMismatch");
-        }
-    }
 
-    private boolean isTokenExpired(ForgotPasswordSecurityToken fpst) {
-        Date now = SystemTime.asDate();
-        long currentTimeInMillis = now.getTime();
-        long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
-        long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
-        return minutesSinceSave > tokenExpiredMinutes;
-    }
-    
-    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {        
+    @Transactional("blTransactionManager")
+    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
         if (username != null) {
@@ -258,7 +261,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         if (token == null || "".equals(token)) {
             response.addErrorCode("invalidToken");
         }
-        
+
         ForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
@@ -271,15 +274,41 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
                 response.addErrorCode("tokenExpired");
             }
         }
-        
+
         if (! response.getHasErrors()) {
-            user.setUnencodedPassword(password);            
+            user.setUnencodedPassword(password);
             saveAdminUser(user);
             fpst.setTokenUsedFlag(true);
             forgotPasswordSecurityTokenDao.saveToken(fpst);
         }
-        
+
         return response;
+    }
+    
+    protected void checkUser(AdminUser user, GenericResponse response) {
+        if (user == null) {
+            response.addErrorCode("invalidUser");
+        } else if (user.getEmail() == null || "".equals(user.getEmail())) {
+            response.addErrorCode("emailNotFound");
+        } else if (user.getActiveStatusFlag() == null || ! user.getActiveStatusFlag()) {
+            response.addErrorCode("inactiveUser");
+        }
+    }
+    
+    protected void checkPassword(String password, String confirmPassword, GenericResponse response) {
+        if (password == null || confirmPassword == null || "".equals(password) || "".equals(confirmPassword)) {
+            response.addErrorCode("invalidPassword");
+        } else if (! password.equals(confirmPassword)) {
+            response.addErrorCode("passwordMismatch");
+        }
+    }
+
+    protected boolean isTokenExpired(ForgotPasswordSecurityToken fpst) {
+        Date now = SystemTime.asDate();
+        long currentTimeInMillis = now.getTime();
+        long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
+        long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
+        return minutesSinceSave > tokenExpiredMinutes;
     }
 
     public int getTokenExpiredMinutes() {

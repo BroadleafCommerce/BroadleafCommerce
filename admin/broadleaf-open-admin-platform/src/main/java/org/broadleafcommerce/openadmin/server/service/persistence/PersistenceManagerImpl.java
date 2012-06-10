@@ -40,9 +40,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -53,29 +58,42 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+@Component("blPersistenceManager")
+@Scope("prototype")
 public class PersistenceManagerImpl implements InspectHelper, PersistenceManager, ApplicationContextAware {
 
 	private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
 
-	protected SandBoxService sandBoxService;
+    @Resource(name="blDynamicEntityDao")
 	protected DynamicEntityDao dynamicEntityDao;
+
+    @Resource(name="blCustomPersistenceHandlers")
 	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
+
+    @Resource(name="blCustomPersistenceHandlerFilters")
     protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<CustomPersistenceHandlerFilter>();
-	protected PersistenceModule[] modules;
-	protected Map<TargetModeType, String> targetEntityManagers = new HashMap<TargetModeType, String>();
-	protected TargetModeType targetMode;
-	private ApplicationContext applicationContext;
+
+    @Resource(name="blTargetEntityManagers")
+	protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
+
+    @Resource(name="blAdminSecurityRemoteService")
     protected AdminSecurityServiceRemote adminRemoteSecurityService;
 
-	public PersistenceManagerImpl(PersistenceModule[] modules) {
-		this.modules = modules;
-		for (PersistenceModule module : modules) {
-			module.setPersistenceManager(this);
-		}
-	}
+    @Resource(name="blPersistenceModules")
+    protected PersistenceModule[] modules;
+
+    protected TargetModeType targetMode;
+    private ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void postConstruct() {
+        for (PersistenceModule module : modules) {
+            module.setPersistenceManager(this);
+        }
+    }
 
 	public void close() throws Exception {
-		Object temp = applicationContext.getBean("&" + targetEntityManagers.get(targetMode));
+		Object temp = applicationContext.getBean("&" + targetEntityManagers.get(targetMode.getType()));
 		if (temp instanceof SandBoxEntityManagerPoolFactoryBean) {
 			((SandBoxEntityManagerPoolFactoryBean) temp).returnObject(dynamicEntityDao.getStandardEntityManager());
 		}
@@ -86,53 +104,22 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		this.applicationContext = applicationContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
-	 */
 	@Override
 	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
 		return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getPolymorphicEntities(java.lang.String)
-	 */
 	@Override
 	public Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException {
 		Class<?>[] entities = getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
 		return entities;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getSimpleMergedProperties(java.lang.String,
-	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-	 * org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao,
-	 * java.lang.Class)
-	 */
 	@Override
 	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getMergedClassMetadata(java.lang.Class, java.util.Map)
-	 */
 	@Override
 	public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {
 		ClassMetadata classMetadata = new ClassMetadata();
@@ -188,15 +175,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return classMetadata;
 	}
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see
-      * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-      * #inspect(java.lang.String,
-      * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-      * java.lang.String[], java.util.Map)
-      */
 	@Override
 	public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
 		// check to see if there is a custom handler registered
@@ -224,16 +202,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #fetch(java.lang.String,
-	 * com.anasoft.os.daofusion.cto.client.CriteriaTransferObject,
-	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-	 * java.lang.String[])
-	 */
 	@Override
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         //check to see if there is a custom handler registered
@@ -251,15 +219,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return myModule.fetch(persistencePackage, cto);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #add(java.lang.String, org.broadleafcommerce.openadmin.client.dto.Entity,
-	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-	 * java.lang.String[])
-	 */
 	@Override
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered
@@ -277,16 +236,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return myModule.add(persistencePackage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #update(org.broadleafcommerce.openadmin.client.dto.Entity,
-	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-	 * org.broadleafcommerce.openadmin.client.dto.SandBoxInfo,
-	 * java.lang.String[])
-	 */
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered
@@ -375,102 +324,34 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return myModule;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getSandBoxService()
-	 */
-	@Override
-	public SandBoxService getSandBoxService() {
-		return sandBoxService;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #setSandBoxService(org.broadleafcommerce.openadmin.server.service.
-	 * SandBoxService)
-	 */
-	@Override
-	public void setSandBoxService(SandBoxService sandBoxService) {
-		this.sandBoxService = sandBoxService;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getDynamicEntityDao()
-	 */
 	@Override
 	public DynamicEntityDao getDynamicEntityDao() {
 		return dynamicEntityDao;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #setDynamicEntityDao(org.broadleafcommerce.openadmin.server.dao.
-	 * DynamicEntityDao)
-	 */
 	@Override
 	public void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao) {
 		this.dynamicEntityDao = dynamicEntityDao;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getTargetEntityManagers()
-	 */
 	@Override
-	public Map<TargetModeType, String> getTargetEntityManagers() {
+	public Map<String, String> getTargetEntityManagers() {
 		return targetEntityManagers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #setTargetEntityManagers(java.util.Map)
-	 */
 	@Override
-	public void setTargetEntityManagers(Map<TargetModeType, String> targetEntityManagers) {
+	public void setTargetEntityManagers(Map<String, String> targetEntityManagers) {
 		this.targetEntityManagers = targetEntityManagers;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getTargetMode()
-	 */
 	@Override
 	public TargetModeType getTargetMode() {
 		return targetMode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #setTargetMode(java.lang.String)
-	 */
 	@Override
 	public void setTargetMode(TargetModeType targetMode) {
-		String targetManagerRef = targetEntityManagers.get(targetMode);
+		String targetManagerRef = targetEntityManagers.get(targetMode.getType());
 		EntityManager targetManager = (EntityManager) applicationContext.getBean(targetManagerRef);
 		if (targetManager == null) {
 			throw new RuntimeException("Unable to find a target entity manager registered with the key: " + targetMode + ". Did you add an entity manager with this key to the targetEntityManagers property?");
@@ -479,13 +360,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		this.targetMode = targetMode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #getCustomPersistenceHandlers()
-	 */
 	@Override
 	public List<CustomPersistenceHandler> getCustomPersistenceHandlers() {
         List<CustomPersistenceHandler> cloned = new ArrayList<CustomPersistenceHandler>();
@@ -504,13 +378,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 		return cloned;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #setCustomPersistenceHandlers(java.util.List)
-	 */
 	@Override
 	public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
 		this.customPersistenceHandlers = customPersistenceHandlers;
@@ -530,5 +397,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     public void setCustomPersistenceHandlerFilters(List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters) {
         this.customPersistenceHandlerFilters = customPersistenceHandlerFilters;
+    }
+
+    public PersistenceModule[] getModules() {
+        return modules;
+    }
+
+    public void setModules(PersistenceModule[] modules) {
+        this.modules = modules;
     }
 }

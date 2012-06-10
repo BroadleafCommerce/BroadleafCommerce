@@ -16,29 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -70,18 +47,44 @@ import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.Column;
-import org.hibernate.mapping.Component;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 
  * @author jfischer
  *
  */
+@Component("blDynamicEntityDao")
+@Scope("prototype")
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
@@ -90,8 +93,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected static final Map POLYMORPHIC_ENTITY_CACHE = new LRUMap(1000);
 	
     protected EntityManager standardEntityManager;
+
+    @Resource(name="blEJB3ConfigurationDao")
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
+
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blMetadataOverrides")
     protected Map<String, Map<String, Map<String, FieldMetadata>>> fieldMetadataOverrides;
 
 	@Override
@@ -1540,7 +1549,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             property = persistentClass.getProperty(prefix + propertyName);
         }
         @SuppressWarnings("unchecked")
-		Iterator<Property> componentPropertyIterator = ((Component) property.getValue()).getPropertyIterator();
+		Iterator<Property> componentPropertyIterator = ((org.hibernate.mapping.Component) property.getValue()).getPropertyIterator();
         List<Property> componentPropertyList = new ArrayList<Property>();
         while(componentPropertyIterator.hasNext()) {
             componentPropertyList.add(componentPropertyIterator.next());

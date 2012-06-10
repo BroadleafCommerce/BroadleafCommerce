@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     
     private static final Log LOG = LogFactory.getLog(SandBoxServiceImpl.class);
 
+    @Resource(name="blSandboxItemListeners")
     protected List<SandBoxItemListener> sandboxItemListeners = new ArrayList<SandBoxItemListener>();
 
     @Resource
@@ -54,11 +56,13 @@ public class SandBoxServiceImpl implements SandBoxService {
     protected AdminSecurityService adminSecurityService;
 
     @Override
+    @Transactional(value="blTransactionManager", readOnly = true)
     public SandBox retrieveSandboxById(Long sandboxId) {
         return sandBoxDao.retrieve(sandboxId);
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {
         SandBox userSandbox;
         if (adminUser.getOverrideSandBox() != null) {
@@ -74,11 +78,13 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
         promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(sandBoxItemDao.retrieveSandBoxItemsForSandbox(fromSandBox)));
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void promoteSelectedItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         SandBox destinationSandBox = determineNextSandBox(fromSandBox);
         SandBoxAction action = createSandBoxAction(SandBoxActionType.PROMOTE, comment);
@@ -106,6 +112,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void revertAllSandBoxItems(SandBox originalSandBox, SandBox sandBox) {
          List<SandBoxItem> items = new ArrayList<SandBoxItem>();
          List<SandBoxItem> sandBoxItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox);
@@ -118,6 +125,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void revertSelectedSandBoxItems(SandBox fromSandBox, List<SandBoxItem> sandBoxItems) {
         for (SandBoxItem item : sandBoxItems) {
             if (item.getArchivedFlag()) {
@@ -140,6 +148,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment) {        
         List<SandBoxItem> items = new ArrayList<SandBoxItem>();
         List<SandBoxItem> currentItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox);
@@ -152,6 +161,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void rejectSelectedSandBoxItems(SandBox fromSandBox, String comment, List<SandBoxItem> sandBoxItems) {
         for (SandBoxItem item : sandBoxItems) {
             if (item.getOriginalSandBoxId() == null) {
@@ -225,6 +235,7 @@ public class SandBoxServiceImpl implements SandBoxService {
         throw new IllegalArgumentException("Unable to determine next sandbox for " + sandBox);
     }
 
+    @Transactional("blTransactionManager")
     public SandBox retrieveApprovalSandBox(SandBox sandBox) {
         final String APPROVAL_SANDBOX_NAME = "Approval";
         SandBox approvalSandbox = retrieveSandBox(sandBox.getSite(), APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
@@ -237,10 +248,12 @@ public class SandBoxServiceImpl implements SandBoxService {
         return approvalSandbox;
     }
 
+    @Transactional("blTransactionManager")
     public synchronized SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
         return sandBoxDao.createSandBox(site, sandBoxName, sandBoxType);
     }
 
+    @Transactional("blTransactionManager")
     public SandBox retrieveSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
         return sandBoxDao.retrieveNamedSandBox(site, sandBoxType, sandBoxName);
     }

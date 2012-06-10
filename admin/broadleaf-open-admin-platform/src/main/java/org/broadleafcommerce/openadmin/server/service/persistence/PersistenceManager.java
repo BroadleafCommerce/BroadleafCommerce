@@ -52,17 +52,13 @@ public interface PersistenceManager {
 
 	public abstract void remove(PersistencePackage persistencePackage) throws ServiceException;
 
-	public abstract SandBoxService getSandBoxService();
-
-	public abstract void setSandBoxService(SandBoxService sandBoxService);
-
 	public abstract DynamicEntityDao getDynamicEntityDao();
 
 	public abstract void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao);
 
-	public abstract Map<TargetModeType, String> getTargetEntityManagers();
+	public abstract Map<String, String> getTargetEntityManagers();
 
-	public abstract void setTargetEntityManagers(Map<TargetModeType, String> targetEntityManagers);
+	public abstract void setTargetEntityManagers(Map<String, String> targetEntityManagers);
 
 	public abstract TargetModeType getTargetMode();
 

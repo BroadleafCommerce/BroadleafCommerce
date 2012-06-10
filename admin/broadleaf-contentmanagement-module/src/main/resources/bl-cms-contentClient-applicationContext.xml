@@ -85,15 +85,15 @@
 		</property>
 	</bean>
 
-    <bean id="blSandBoxService" class="org.broadleafcommerce.openadmin.server.service.persistence.SandBoxServiceImpl">
-		<property name="sandboxItemListeners">
-			<list>
-				<ref bean="blPageService"/>
+    <bean id="blSandboxItemListeners" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageService"/>
                 <ref bean="blStructuredContentService"/>
                 <ref bean="blStaticAssetService"/>
-			</list>
-		</property>
-	</bean>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blContentDefaultRuleProcessor" class="org.broadleafcommerce.cms.structure.service.StructuredContentDefaultRuleProcessor">
         <property name="contextClassNames">

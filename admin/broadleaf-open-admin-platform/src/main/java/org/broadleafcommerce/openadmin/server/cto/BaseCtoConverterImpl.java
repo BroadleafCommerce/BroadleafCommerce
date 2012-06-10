@@ -16,22 +16,26 @@
 
 package org.broadleafcommerce.openadmin.server.cto;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.cto.server.FilterAndSortMapping;
 import com.anasoft.os.daofusion.cto.server.FilterValueConverter;
 import com.anasoft.os.daofusion.cto.server.NestedPropertyCriteriaBasedConverter;
 import com.anasoft.os.daofusion.util.FilterValueConverters;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 
  * @author jfischer
  *
  */
+@Component("blBaseCtoConverter")
+@Scope("prototype")
 public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter implements BaseCtoConverter {
 	
 	public static final FilterValueConverter<Long> NULL_AWARE_LONG = new FilterValueConverter<Long>() {

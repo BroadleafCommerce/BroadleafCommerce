@@ -26,8 +26,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -43,7 +41,6 @@ public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity {
     @Resource(name="blOfferAuditDao")
     private OfferAuditDao offerAuditDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public ProcessContext execute(ProcessContext context) throws Exception {
         Map<Long,Long> offerIdToAllowedUsesMap = new HashMap<Long,Long>();
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
