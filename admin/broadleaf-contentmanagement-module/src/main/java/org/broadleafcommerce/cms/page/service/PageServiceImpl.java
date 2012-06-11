@@ -41,6 +41,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.Criteria;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -68,6 +69,9 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
+
+    @Value("${automatically.approve.pages}")
+    protected boolean automaticallyApproveAndPromotePages=true;
     
     protected Cache pageCache;
 
@@ -112,6 +116,16 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
      */
     @Override
     public Page addPage(Page page, SandBox destinationSandbox) {
+
+        if (automaticallyApproveAndPromotePages) {
+            if (destinationSandbox != null && destinationSandbox.getSite() != null) {
+                destinationSandbox = destinationSandbox.getSite().getProductionSandbox();
+            } else {
+                // Null means production for single-site installations.
+                destinationSandbox = null;
+            }
+        }
+
         page.setSandbox(destinationSandbox);
         page.setArchivedFlag(false);
         page.setDeletedFlag(false);
@@ -159,18 +173,29 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
             throw new IllegalArgumentException("Unable to update a locked record");
         }
 
+        if (automaticallyApproveAndPromotePages) {
+            if (destSandbox != null && destSandbox.getSite() != null) {
+                destSandbox = destSandbox.getSite().getProductionSandbox();
+            } else {
+                // Null means production for single-site installations.
+                destSandbox = null;
+            }
+        }
+
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
             if (page.getDeletedFlag()) {
                 SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(page.getSandbox(), SandBoxItemType.PAGE, page.getId());
-                if (page.getOriginalPageId() == null) {
+                if (page.getOriginalPageId() == null && item != null) {
                     // This page was added in this sandbox and now needs to be deleted.
                     item.setArchivedFlag(true);
                     page.setArchivedFlag(true);
-                } else {
+                } else if (item != null) {
                     // This page was being updated but now is being deleted - so change the
                     // sandbox operation type to deleted
                     item.setSandBoxOperationType(SandBoxOperationType.DELETE);
                     sandBoxItemDao.updateSandBoxItem(item);
+                } else if (automaticallyApproveAndPromotePages) {
+                    page.setArchivedFlag(true);
                 }
 
             }
@@ -517,5 +542,13 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
 
     public void setArchivedPageListeners(List<ArchivedPagePublisher> archivedPageListeners) {
         this.archivedPageListeners = archivedPageListeners;
+    }
+
+    public boolean isAutomaticallyApproveAndPromotePages() {
+        return automaticallyApproveAndPromotePages;
+    }
+
+    public void setAutomaticallyApproveAndPromotePages(boolean automaticallyApproveAndPromotePages) {
+        this.automaticallyApproveAndPromotePages = automaticallyApproveAndPromotePages;
     }
 }

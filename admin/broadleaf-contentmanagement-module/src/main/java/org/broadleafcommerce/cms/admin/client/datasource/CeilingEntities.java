@@ -32,12 +32,12 @@ public class CeilingEntities {
     public static final String STRUCTUREDCONTENT = "org.broadleafcommerce.cms.structure.domain.StructuredContent";
     public static final String STRUCTUREDCONTENTTYPE = "org.broadleafcommerce.cms.structure.domain.StructuredContentType";
     public static final String STRUCTUREDCONTENTFIELDTEMPLATE = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplate";
-    public static final String SANDBOXITEM = "org.broadleafcommerce.openadmin.server.domain.SandBoxItem";
     public static final String CUSTOMER = "org.broadleafcommerce.profile.core.domain.Customer";
     public static final String TIMEDTO = "org.broadleafcommerce.common.TimeDTO";
     public static final String REQUESTDTO = "org.broadleafcommerce.common.RequestDTOImpl";
     public static final String ORDER_ITEM = "org.broadleafcommerce.core.order.domain.OrderItem";
     public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.Product";
     public static final String STRUCTUREDCONTENTITEMCRITERIA = "org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria";
+    public static final String SANDBOXITEM = "org.broadleafcommerce.openadmin.server.domain.SandBoxItem";
 
 }

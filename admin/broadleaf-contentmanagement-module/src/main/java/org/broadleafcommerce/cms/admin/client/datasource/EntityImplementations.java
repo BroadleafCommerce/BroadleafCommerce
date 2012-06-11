@@ -29,7 +29,7 @@ public class EntityImplementations {
     public static final String STRUCTUREDCONTENTTYPEIMPL = "org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl";
     public static final String STRUCTUREDCONTENTFIELDTEMPLATEIMPL = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl";
     public static final String LOCALEIMPL = "org.broadleafcommerce.common.locale.domain.LocaleImpl";
-    public static final String SANDBOXIMPL = "org.broadleafcommerce.common.sandbox.domain.SandBoxImpl";
     public static final String STRUCTUREDCONTENTIMPL = "org.broadleafcommerce.cms.structure.domain.StructuredContentImpl";
+    public static final String SANDBOXIMPL = "org.broadleafcommerce.common.sandbox.domain.SandBoxImpl";
 
 }

@@ -84,30 +84,6 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 			structuredContentPermissions
 		);
 
-        List<String> userSandBoxPermissions = new ArrayList<String>();
-		userSandBoxPermissions.add("PERMISSION_ALL_USER_SANDBOX");
-        setSection(
-            BLCMain.getMessageManager().getString("userSandBoxTitle"),
-			"userSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.MySandBoxView",
-			"userSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.MySandBoxPresenter",
-			userSandBoxPermissions
-		);
-
-        List<String> approverSandBoxPermissions = new ArrayList<String>();
-		approverSandBoxPermissions.add("PERMISSION_ALL_APPROVER_SANDBOX");
-        setSection(
-            BLCMain.getMessageManager().getString("approverSandBoxTitle"),
-			"approverSandBox",
-			"org.broadleafcommerce.cms.admin.client.view.sandbox.SandBoxView",
-			"approverSandBoxPresenter",
-			"org.broadleafcommerce.cms.admin.client.presenter.sandbox.SandBoxPresenter",
-			approverSandBoxPermissions
-		);
-
-		
-
 		List<String> redirectUrlPermissions = new ArrayList<String>();
 		redirectUrlPermissions.add("PERMISSION_CREATE_PROMOTION");
 		redirectUrlPermissions.add("PERMISSION_UPDATE_PROMOTION");

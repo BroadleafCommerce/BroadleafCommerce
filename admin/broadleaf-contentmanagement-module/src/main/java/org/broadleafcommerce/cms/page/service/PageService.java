@@ -147,4 +147,7 @@ public interface PageService {
 
     void setArchivedPageListeners(List<ArchivedPagePublisher> archivedPageListeners);
 
+    public boolean isAutomaticallyApproveAndPromotePages();
+
+    public void setAutomaticallyApproveAndPromotePages(boolean automaticallyApproveAndPromotePages);
 }

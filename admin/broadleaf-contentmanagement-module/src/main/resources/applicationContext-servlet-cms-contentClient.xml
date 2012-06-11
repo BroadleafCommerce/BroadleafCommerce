@@ -17,7 +17,7 @@
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
    		<property name="propertyLocations">
    			<set>
-   				<value>classpath:config/bc/</value>
+   				<value>classpath:config/bc/cms/</value>
    			</set>
    		</property>
    		<property name="environments">

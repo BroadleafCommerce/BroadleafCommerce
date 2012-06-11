@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
@@ -44,6 +41,9 @@ import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -181,27 +181,36 @@ public class BLCMain implements EntryPoint {
                             builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
                             Window.open(builder.buildString(), "_self", null);
                         } else {
-                            SC.logWarn("Admin user found. Loading interface...");
-                            java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user found. Loading interface...");;
-                            setCurrentModuleKey(requestedModuleKey);
+                            AppServices.UTILITY.getWorkflowEnabled(new AbstractCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean result) {
+                                    if (!result) {
+                                        modules.remove("BLCSandBox");
+                                    }
 
-                            if (currentModuleKey == null) {
-                                SC.say(getMessageManager().getString("noModulesAuthorized"));
-                                return;
-                            }
+                                    SC.logWarn("Admin user found. Loading interface...");
+                                    java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user found. Loading interface...");;
+                                    setCurrentModuleKey(requestedModuleKey);
 
-                            setCurrentPageKey(requestedPageKey);
+                                    if (currentModuleKey == null) {
+                                        SC.say(getMessageManager().getString("noModulesAuthorized"));
+                                        return;
+                                    }
 
-                            if (currentPageKey == null) {
-                                SC.say(getMessageManager().getString("noAuthorizedPages"));
-                                return;
-                            }
+                                    setCurrentPageKey(requestedPageKey);
 
-                            modules.get(currentModuleKey).preDraw();
-                            MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
-                            MASTERVIEW.draw();
-                            AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
-                            modules.get(currentModuleKey).postDraw();
+                                    if (currentPageKey == null) {
+                                        SC.say(getMessageManager().getString("noAuthorizedPages"));
+                                        return;
+                                    }
+
+                                    modules.get(currentModuleKey).preDraw();
+                                    MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
+                                    MASTERVIEW.draw();
+                                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
+                                    modules.get(currentModuleKey).postDraw();
+                                }
+                            });
                         }
                         if (postLaunch != null) {
                             postLaunch.onLaunched();

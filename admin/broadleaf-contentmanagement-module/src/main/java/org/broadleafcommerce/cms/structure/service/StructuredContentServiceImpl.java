@@ -43,6 +43,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.Criteria;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -74,7 +75,11 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
-    private List<StructuredContentRuleProcessor> contentRuleProcessors;
+    @Resource(name="blContentRuleProcessors")
+    protected List<StructuredContentRuleProcessor> contentRuleProcessors;
+
+    @Value("${automatically.approve.structured.content}")
+    protected boolean automaticallyApproveAndPromoteStructuredContent=true;
 
     protected Cache structuredContentCache;
 
@@ -118,6 +123,15 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
     @Override
     public StructuredContent addStructuredContent(StructuredContent content, SandBox destinationSandbox) {
+        if (automaticallyApproveAndPromoteStructuredContent) {
+            if (destinationSandbox != null && destinationSandbox.getSite() != null) {
+                destinationSandbox = destinationSandbox.getSite().getProductionSandbox();
+            } else {
+                // Null means production for single-site installations.
+                destinationSandbox = null;
+            }
+        }
+
         content.setSandbox(destinationSandbox);
         content.setArchivedFlag(false);
         content.setDeletedFlag(false);
@@ -134,19 +148,29 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
             throw new IllegalArgumentException("Unable to update a locked record");
         }
 
-        if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
+        if (automaticallyApproveAndPromoteStructuredContent) {
+            if (destSandbox != null && destSandbox.getSite() != null) {
+                destSandbox = destSandbox.getSite().getProductionSandbox();
+            } else {
+                // Null means production for single-site installations.
+                destSandbox = null;
+            }
+        }
 
+        if (checkForSandboxMatch(content.getSandbox(), destSandbox)) {
             if (content.getDeletedFlag()) {
                 SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(content.getSandbox(), SandBoxItemType.STRUCTURED_CONTENT, content.getId());
-                if (content.getOriginalItemId() == null) {
+                if (content.getOriginalItemId() == null && item != null) {
                     // This page was added in this sandbox and now needs to be deleted.
                     content.setArchivedFlag(true);
                     item.setArchivedFlag(true);
-                } else {
+                } else if (item != null) {
                     // This page was being updated but now is being deleted - so change the
                     // sandbox operation type to deleted
                     item.setSandBoxOperationType(SandBoxOperationType.DELETE);
                     sandBoxItemDao.updateSandBoxItem(item);
+                } else if (automaticallyApproveAndPromoteStructuredContent) {
+                    content.setArchivedFlag(true);
                 }
 
             }
@@ -702,5 +726,13 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
     public void setArchivedStructuredContentListeners(List<ArchivedStructuredContentPublisher> archivedStructuredContentListeners) {
         this.archivedStructuredContentListeners = archivedStructuredContentListeners;
+    }
+
+    public boolean isAutomaticallyApproveAndPromoteStructuredContent() {
+        return automaticallyApproveAndPromoteStructuredContent;
+    }
+
+    public void setAutomaticallyApproveAndPromoteStructuredContent(boolean automaticallyApproveAndPromoteStructuredContent) {
+        this.automaticallyApproveAndPromoteStructuredContent = automaticallyApproveAndPromoteStructuredContent;
     }
 }

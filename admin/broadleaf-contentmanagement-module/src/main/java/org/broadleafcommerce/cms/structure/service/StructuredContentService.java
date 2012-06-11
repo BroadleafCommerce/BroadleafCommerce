@@ -245,4 +245,8 @@ public interface StructuredContentService extends SandBoxItemListener {
      */
     public void removeItemFromCache(String nameKey, String typeKey);
 
+    public boolean isAutomaticallyApproveAndPromoteStructuredContent();
+
+    public void setAutomaticallyApproveAndPromoteStructuredContent(boolean automaticallyApproveAndPromoteStructuredContent);
+
 }

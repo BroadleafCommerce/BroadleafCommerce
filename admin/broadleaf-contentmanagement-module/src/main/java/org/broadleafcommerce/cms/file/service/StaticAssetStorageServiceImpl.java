@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PreDestroy;
@@ -184,6 +185,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return staticAsset;
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
+    @Override
     public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
         StaticAsset staticAsset = findStaticAsset(fullUrl, sandBox);
         if (staticAsset == null) {
@@ -246,31 +249,37 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return model;
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public StaticAssetStorage findStaticAssetStorageById(Long id) {
         return staticAssetStorageDao.readStaticAssetStorageById(id);
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public StaticAssetStorage create() {
         return staticAssetStorageDao.create();
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public StaticAssetStorage readStaticAssetStorageByStaticAssetId(Long id) {
         return staticAssetStorageDao.readStaticAssetStorageByStaticAssetId(id);
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public StaticAssetStorage save(StaticAssetStorage assetStorage) {
         return staticAssetStorageDao.save(assetStorage);
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public void delete(StaticAssetStorage assetStorage) {
         staticAssetStorageDao.delete(assetStorage);
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public Blob createBlob(MultipartFile uploadedFile) throws IOException {
         return staticAssetStorageDao.createBlob(uploadedFile);

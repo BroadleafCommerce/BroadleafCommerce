@@ -16,11 +16,7 @@
 
 package org.broadleafcommerce.cms.file.service;
 
-import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.tools.view.ImportSupport;
@@ -35,7 +31,13 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.hibernate.Criteria;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -44,11 +46,17 @@ import org.springframework.stereotype.Service;
 public class StaticAssetServiceImpl extends AbstractContentService implements StaticAssetService {
 
     private static final Log LOG = LogFactory.getLog(StaticAssetServiceImpl.class);
-    
+
+    @Value("${asset.server.url.prefix}")
     protected String staticAssetUrlPrefix;
+
+    @Value("${asset.server.url.prefix.internal}")
     protected String staticAssetEnvironmentUrlPrefix;
+
+    @Value("${asset.server.url.prefix.secure}")
     protected String staticAssetEnvironmentSecureUrlPrefix;
 
+    @Value("${automatically.approve.static.assets}")
     protected boolean automaticallyApproveAndPromoteStaticAssets=true;
 
     @Resource(name="blStaticAssetDao")
@@ -164,28 +172,24 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         return (src == null && dest == null);
     }
 
-    // Returns true if the dest sandbox is production.
-    private boolean checkForProductionSandbox(SandBox dest) {
-        boolean productionSandbox = false;
-
-        if (dest == null) {
-            productionSandbox = true;
-        } else {
-            if (dest.getSite() != null && dest.getSite().getProductionSandbox() != null && dest.getSite().getProductionSandbox().getId() != null) {
-                productionSandbox = dest.getSite().getProductionSandbox().getId().equals(dest.getId());
-            }
-        }
-
-        return productionSandbox;
-    }
+//    // Returns true if the dest sandbox is production.
+//    private boolean checkForProductionSandbox(SandBox dest) {
+//        boolean productionSandbox = false;
+//
+//        if (dest == null) {
+//            productionSandbox = true;
+//        } else {
+//            if (dest.getSite() != null && dest.getSite().getProductionSandbox() != null && dest.getSite().getProductionSandbox().getId() != null) {
+//                productionSandbox = dest.getSite().getProductionSandbox().getId().equals(dest.getId());
+//            }
+//        }
+//
+//        return productionSandbox;
+//    }
 
     // Returns true if the dest sandbox is production.
     private boolean isProductionSandBox(SandBox dest) {
-        if (dest == null) {
-            return true;
-        } else {
-            return SandBoxType.PRODUCTION.equals(dest.getSandBoxType());
-        }
+        return dest == null || SandBoxType.PRODUCTION.equals(dest.getSandBoxType());
     }
 
     @Override
@@ -294,8 +298,8 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     }
 
     public String getStaticAssetEnvironmentSecureUrlPrefix() {
-        if (staticAssetEnvironmentSecureUrlPrefix == null) {
-            if (staticAssetEnvironmentUrlPrefix != null && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
+        if (StringUtils.isEmpty(staticAssetEnvironmentSecureUrlPrefix)) {
+            if (!StringUtils.isEmpty(staticAssetEnvironmentUrlPrefix) && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
                 staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentUrlPrefix.replace("http:", "https:");
             }
         }

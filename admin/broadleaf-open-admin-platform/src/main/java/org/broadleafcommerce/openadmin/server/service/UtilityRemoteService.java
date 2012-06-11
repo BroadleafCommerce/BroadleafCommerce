@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.client.service.UtilityService;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,15 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     private ApplicationContext applicationContext;
     protected String storeFrontWebAppPrefix;
     protected String assetServerUrlPrefix;
+
+    @Value("${automatically.approve.static.assets}")
+    protected boolean automaticallyApproveAndPromoteStaticAssets=true;
+
+    @Value("${automatically.approve.pages}")
+    protected boolean automaticallyApproveAndPromotePages=true;
+
+    @Value("${automatically.approve.structured.content}")
+    protected boolean automaticallyApproveAndPromoteStructuredContent=true;
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
@@ -83,6 +93,11 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     @Override
     public String[] getAllItems() throws ServiceException, ApplicationSecurityException {
         return new String[] {getWebAppContext(), storeFrontWebAppPrefix, assetServerUrlPrefix, exploitProtectionService.getCSRFToken()};
+    }
+
+    @Override
+    public Boolean getWorkflowEnabled() throws ServiceException, ApplicationSecurityException {
+        return !automaticallyApproveAndPromotePages || !automaticallyApproveAndPromoteStaticAssets || !automaticallyApproveAndPromoteStructuredContent;
     }
 
 }

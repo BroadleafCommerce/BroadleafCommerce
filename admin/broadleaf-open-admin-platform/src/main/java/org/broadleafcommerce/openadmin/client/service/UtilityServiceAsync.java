@@ -32,4 +32,6 @@ public interface UtilityServiceAsync {
     void getAssetServerUrlPrefix(AsyncCallback<String> cb);
 
     void getAllItems(AsyncCallback<String[]> cb);
+
+    void getWorkflowEnabled(AsyncCallback<Boolean> cb);
 }
