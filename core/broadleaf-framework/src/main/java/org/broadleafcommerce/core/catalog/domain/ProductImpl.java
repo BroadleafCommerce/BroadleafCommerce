@@ -16,13 +16,32 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javassist.expr.NewArray;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
+import org.compass.annotations.SupportUnmarshall;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,30 +62,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableId;
-import org.compass.annotations.SearchableProperty;
-import org.compass.annotations.SupportUnmarshall;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -256,6 +257,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -264,6 +266,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -272,6 +275,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
      */
+    @Override
     public String getName() {
         if (name == null) {
             if (getDefaultSku() != null) {
@@ -286,6 +290,7 @@ public class ProductImpl implements Product {
      * @see
      * org.broadleafcommerce.core.catalog.domain.Product#setName(java.lang.String)
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -294,6 +299,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getDescription()
      */
+    @Override
     public String getDescription() {
         if (description == null) {
             if (getDefaultSku() != null) {
@@ -309,6 +315,7 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.core.catalog.domain.Product#setDescription(java.lang
      * .String)
      */
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -317,6 +324,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getLongDescription()
      */
+    @Override
     public String getLongDescription() {
         if (longDescription == null) {
             if (getDefaultSku() != null) {
@@ -332,6 +340,7 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.core.catalog.domain.Product#setLongDescription(java.
      * lang.String)
      */
+    @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
@@ -340,6 +349,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveStartDate()
      */
+    @Override
     public Date getActiveStartDate() {
         return activeStartDate;
     }
@@ -350,6 +360,7 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.core.catalog.domain.Product#setActiveStartDate(java.
      * util.Date)
      */
+    @Override
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
@@ -358,6 +369,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveEndDate()
      */
+    @Override
     public Date getActiveEndDate() {
         return activeEndDate;
     }
@@ -368,6 +380,7 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.core.catalog.domain.Product#setActiveEndDate(java.util
      * .Date)
      */
+    @Override
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
@@ -376,6 +389,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#isActive()
      */
+    @Override
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
@@ -385,56 +399,57 @@ public class ProductImpl implements Product {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
+    @Override
     public String getModel() {
         return model;
     }
 
+    @Override
     public void setModel(String model) {
         this.model = model;
     }
 
+    @Override
     public String getManufacturer() {
         return manufacturer;
     }
 
+    @Override
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
 
+    @Override
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
 
+    @Override
     public void setFeaturedProduct(boolean isFeaturedProduct) {
         this.isFeaturedProduct = isFeaturedProduct;
     }
 
+    @Override
     public Sku getDefaultSku() {
 		return sku;
 	}
 
+    @Override
 	public void setDefaultSku(Sku defaultSku) {
 		this.sku = defaultSku;
 	}
 
-	/**
-	 * @return the promoMessage
-	 */
+    @Override
     public String getPromoMessage() {
 		return promoMessage;
 	}
 
-	/**
-	 * @param promoMessage the promoMessage to set
-	 */
+    @Override
 	public void setPromoMessage(String promoMessage) {
 		this.promoMessage = promoMessage;
 	}
 	
-    /**
-     * Gets the all skus.
-     * @return the all skus
-     */
+    @Override
 	public List<Sku> getAllSkus() {
         return allSkus;
     }
@@ -443,6 +458,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getSkus()
      */
+    @Override
 	public List<Sku> getSkus() {
         if (skus.size() == 0) {
             List<Sku> allSkus = getAllSkus();
@@ -460,6 +476,7 @@ public class ProductImpl implements Product {
      * @see
      * org.broadleafcommerce.core.catalog.domain.Product#setAllSkus(java.util.List)
      */
+    @Override
     public void setAllSkus(List<Sku> skus) {
         this.allSkus.clear();
         for(Sku sku : skus){
@@ -509,14 +526,17 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getDefaultCategory()
      */
+    @Override
     public Category getDefaultCategory() {
         return defaultCategory;
     }
 
+    @Override
     public Map<String, Media> getProductMedia() {
         return productMedia;
     }
 
+    @Override
     public void setProductMedia(Map<String, Media> productMedia) {
         this.productMedia.clear();
     	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
@@ -529,14 +549,17 @@ public class ProductImpl implements Product {
      * @seeorg.broadleafcommerce.core.catalog.domain.Product#setDefaultCategory(org.
      * broadleafcommerce.catalog.domain.Category)
      */
+    @Override
     public void setDefaultCategory(Category defaultCategory) {
         this.defaultCategory = defaultCategory;
     }
 
+    @Override
     public List<Category> getAllParentCategories() {
         return allParentCategories;
     }
 
+    @Override
     public void setAllParentCategories(List<Category> allParentCategories) {    	
         this.allParentCategories.clear();
         for(Category category : allParentCategories){
@@ -544,10 +567,97 @@ public class ProductImpl implements Product {
         }
     }
 
+    @Override
+    public ProductDimension getDimension() {
+        return getDefaultSku().getDimension();
+    }
+
+    @Override
+    public void setDimension(ProductDimension dimension) {
+        getDefaultSku().setDimension(dimension);
+    }
+
+    @Override
+    public BigDecimal getWidth() {
+        return getDefaultSku().getDimension().getWidth();
+    }
+
+    @Override
+    public void setWidth(BigDecimal width) {
+        getDefaultSku().getDimension().setWidth(width);
+    }
+
+    @Override
+    public BigDecimal getHeight() {
+        return getDefaultSku().getDimension().getHeight();
+    }
+
+    @Override
+    public void setHeight(BigDecimal height) {
+        getDefaultSku().getDimension().setHeight(height);
+    }
+
+    @Override
+    public BigDecimal getDepth() {
+        return getDefaultSku().getDimension().getDepth();
+    }
+
+    @Override
+    public void setDepth(BigDecimal depth) {
+        getDefaultSku().getDimension().setDepth(depth);
+    }
+    
+    @Override
+    public BigDecimal getGirth() {
+        return getDefaultSku().getDimension().getGirth();
+    }
+
+    @Override
+    public void setGirth(BigDecimal girth) {
+        getDefaultSku().getDimension().setGirth(girth);
+    }
+
+    @Override
+    public ContainerSizeType getSize() {
+        return getDefaultSku().getDimension().getSize();
+    }
+
+    @Override
+    public void setSize(ContainerSizeType size) {
+        getDefaultSku().getDimension().setSize(size);
+    }
+
+    @Override
+    public ContainerShapeType getContainer() {
+        return getDefaultSku().getDimension().getContainer();
+    }
+
+    @Override
+    public void setContainer(ContainerShapeType container) {
+        getDefaultSku().getDimension().setContainer(container);
+    }
+
+    @Override
+    public String getDimensionString() {
+        return getDefaultSku().getDimension().getDimensionString();
+    }
+
+    @Override
+    public ProductWeight getWeight() {
+        return getDefaultSku().getWeight();
+    }
+
+    @Override
+    public void setWeight(ProductWeight weight) {
+        getDefaultSku().setWeight(weight);
+    }
+
+    @Override
     public List<RelatedProduct> getCrossSaleProducts() {
         return crossSaleProducts;
     }
 
+    @Override
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts.clear();
         for(RelatedProduct relatedProduct : crossSaleProducts){
@@ -555,10 +665,12 @@ public class ProductImpl implements Product {
         }    	
     }
 
+    @Override
     public List<RelatedProduct> getUpSaleProducts() {
         return upSaleProducts;
     }
 
+    @Override
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){
@@ -567,10 +679,12 @@ public class ProductImpl implements Product {
         this.upSaleProducts = upSaleProducts;
     }
 
+    @Override
     public List<ProductAttribute> getProductAttributes() {
 		return productAttributes;
 	}
 
+    @Override
 	public void setProductAttributes(List<ProductAttribute> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
@@ -584,6 +698,7 @@ public class ProductImpl implements Product {
     public void setProductOptions(List<ProductOption> productOptions) {
         this.productOptions = productOptions;
     }
+    
     @Override
     public String getUrl() {
     	if (url == null) {
@@ -592,14 +707,17 @@ public class ProductImpl implements Product {
     		return url;
     	}
 	}
+    
     @Override
 	public void setUrl(String url) {
 		this.url = url;
 	}
+    
     @Override
 	public String getDisplayTemplate() {
 		return displayTemplate;
 	}
+    
     @Override
 	public void setDisplayTemplate(String displayTemplate) {
 		this.displayTemplate = displayTemplate;

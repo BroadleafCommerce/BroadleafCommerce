@@ -17,10 +17,13 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
 
 /**
@@ -42,56 +45,56 @@ public interface Product extends Serializable {
      *
      * @return the id of the Product
      */
-    Long getId();
+    public Long getId();
 
     /**
      * Sets the id of the Product.
      *
      * @param id - the id of the product
      */
-    void setId(Long id);
+    public void setId(Long id);
 
     /**
      * Returns the name of the product that is used for display purposes.
      *
      * @return the name of the product
      */
-    String getName();
+    public String getName();
 
     /**
      * Sets the name of the product that is used for display purposes.
      *
      * @param name - the name of the Product
      */
-    void setName(String name);
+    public void setName(String name);
 
     /**
      * Returns a brief description of the product that is used for display.
      *
      * @return a brief description of the product
      */
-    String getDescription();
+    public String getDescription();
 
     /**
      * Sets a brief description of the product that is used for display.
      *
      * @param description - a brief description of the product
      */
-    void setDescription(String description);
+    public void setDescription(String description);
 
     /**
      * Returns a long description of the product that is used for display.
      *
      * @return a long description of the product
      */
-    String getLongDescription();
+    public String getLongDescription();
 
     /**
      * Sets a long description of the product that is used for display.
      *
      * @param longDescription the long description
      */
-    void setLongDescription(String longDescription);
+    public void setLongDescription(String longDescription);
 
     /**
      * Returns the first date a product will be available that is used to determine whether
@@ -99,7 +102,7 @@ public interface Product extends Serializable {
      *
      * @return the first date the product will be available
      */
-    Date getActiveStartDate();
+    public Date getActiveStartDate();
 
     /**
      * Sets the first date a product will be available that is used to determine whether
@@ -107,7 +110,7 @@ public interface Product extends Serializable {
      *
      * @param activeStartDate - the first day the product is available
      */
-    void setActiveStartDate(Date activeStartDate);
+    public void setActiveStartDate(Date activeStartDate);
 
     /**
      * Returns the last date a product will be available that is used to determine whether
@@ -115,7 +118,7 @@ public interface Product extends Serializable {
      *
      * @return the last day the product is available
      */
-    Date getActiveEndDate();
+    public Date getActiveEndDate();
 
     /**
      * Sets the last date a product will be available that is used to determine whether
@@ -123,30 +126,30 @@ public interface Product extends Serializable {
      *
      * @param activeEndDate - the last day the product is available
      */
-    void setActiveEndDate(Date activeEndDate);
+    public void setActiveEndDate(Date activeEndDate);
 
     /**
      * Returns a boolean that indicates if the product is currently active.
      *
      * @return a boolean indicates if the product is active.
      */
-    boolean isActive();
+    public boolean isActive();
 
     /**
      * Returns a list of {@link Sku}s that are part of this product.
      *
      * @return a list of {@link Sku}s associated with this product
      */
-    List<Sku> getSkus();
+    public List<Sku> getSkus();
 
     /**
      * Sets the {@link Sku}s that are to be associated with this product.
      *
      * @param skus - a List of {@link Sku}s to associate with this product.
      */
-    void setAllSkus(List<Sku> skus);
+    public void setAllSkus(List<Sku> skus);
 
-    List<Sku> getAllSkus();
+    public List<Sku> getAllSkus();
     
     /**
      * Returns a map of key/value pairs that associate the image name (key) with the URL to the image (value)
@@ -180,109 +183,304 @@ public interface Product extends Serializable {
      *
      * @return a map of product media
      */
-    Map<String, Media> getProductMedia();
+    public Map<String, Media> getProductMedia();
 
     /**
      * Sets the product media map.
      *
      * @param productMedia - a map of product images
      */
-    void setProductMedia(Map<String, Media> productMedia);
+    public void setProductMedia(Map<String, Media> productMedia);
 
     /**
      * Returns all parent {@link Category}(s) this product is associated with.
      *
      * @return the all parent categories for this product
      */
-    List<Category> getAllParentCategories();
+    public List<Category> getAllParentCategories();
 
     /**
      * Sets all parent {@link Category}s this product is associated with.
      *
      * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
      */
-    void setAllParentCategories(List<Category> allParentCategories);
+    public void setAllParentCategories(List<Category> allParentCategories);
      
     /**
      * Returns the default {@link Category} this product is associated with.
      *
      */
-    Category getDefaultCategory();
+    public Category getDefaultCategory();
 
     /**
      * Sets the default {@link Category} to associate this product with.
      *
      * @param defaultCategory - the default {@link Category} to associate this product with
      */
-    void setDefaultCategory(Category defaultCategory);
+    public void setDefaultCategory(Category defaultCategory);
 
     /**
      * Returns the model number of the product
      * @return the model number
      */
-    String getModel();
+    public String getModel();
 
     /**
      * Sets the model number of the product
      * @param model
      */
-    void setModel(String model);
+    public void setModel(String model);
 
     /**
      * Returns the manufacture name for this product
      * @return the manufacture name
      */
-    String getManufacturer();
+    public String getManufacturer();
 
     /**
      * Sets the manufacture for this product
      * @param manufacturer
      */
-    void setManufacturer(String manufacturer);
+    public void setManufacturer(String manufacturer);
+    
+    /**
+     * Returns the {@link ProductDimension} for this product
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return a ProductDimensions object
+     * 
+     */
+    public ProductDimension getDimension();
+
+    /**
+     * Sets the {@link ProductDimension} for this product
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param dimension
+     * 
+     */
+    public void setDimension(ProductDimension dimension);
+
+    /**
+     * Returns the dimension width
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return width dimension of the product
+     * 
+     */
+    public BigDecimal getWidth();
+
+    /**
+     * Sets the dimension width
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param width
+     * 
+     */
+    public void setWidth(BigDecimal width);
+
+    /**
+     * Returns the dimension height
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return height dimension of the product
+     * 
+     */
+    public BigDecimal getHeight();
+
+    /**
+     * Sets the dimension height
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param height
+     * 
+     */
+    public void setHeight(BigDecimal height);
+
+    /**
+     * Returns the dimension depth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return width depth of the product
+     * 
+     */
+    public BigDecimal getDepth();
+
+    /**
+     * Sets the dimension depth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param depth
+     */
+    public void setDepth(BigDecimal depth);
+    
+    /**
+     * Gets the dimension girth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return the dimension girth
+     */
+    public BigDecimal getGirth();
+    
+    /**
+     * Sets the dimension girth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param girth
+     */
+    public void setGirth(BigDecimal girth);
+
+    /**
+     * Returns the dimension container size
+     * 
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return dimension container size
+     */
+    public ContainerSizeType getSize();
+
+    /**
+     * Sets the dimension container size
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param size
+     */
+    public void setSize(ContainerSizeType size);
+
+    /**
+     * Gets the dimension container shape
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return dimension container shape
+     */
+    public ContainerShapeType getContainer();
+
+    /**
+     * Sets the dimension container shape
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param container
+     */
+    public void setContainer(ContainerShapeType container);
+
+    /**
+     * Returns a String representation of the dimension
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return a dimension String
+     */
+    public String getDimensionString();
+
+    /**
+     * Returns the weight of the product
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return weight of product
+     */
+    public ProductWeight getWeight();
+
+    /**
+     * Sets the product weight
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param weight
+     */
+    public void setWeight(ProductWeight weight);
 
     /**
      * Returns a List of this product's related Cross Sales
      * @return
      */
-    List<RelatedProduct> getCrossSaleProducts();
+    public List<RelatedProduct> getCrossSaleProducts();
 
     /**
      * Sets the related Cross Sales
      * @param crossSaleProducts
      */
-    void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
+    public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
 
     /**
      * Returns a List of this product's related Up Sales
      * @return
      */
-    List<RelatedProduct> getUpSaleProducts();
+    public List<RelatedProduct> getUpSaleProducts();
 
     /**
      * Sets the related Up Sales
      * @param upSaleProducts
      */
-    void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
+    public void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
 
     /**
      * Returns whether or not the product is featured
      * @return isFeaturedProduct as Boolean
      */
-    boolean isFeaturedProduct();
+    public boolean isFeaturedProduct();
 
     /**
      * Sets whether or not the product is featured
      * @param isFeaturedProduct
      */
-    void setFeaturedProduct(boolean isFeaturedProduct);
+    public void setFeaturedProduct(boolean isFeaturedProduct);
     
     public Sku getDefaultSku();
 
 	public void setDefaultSku(Sku defaultSku);	
     
-    List<ProductAttribute> getProductAttributes();
+	public List<ProductAttribute> getProductAttributes();
 
-	void setProductAttributes(List<ProductAttribute> productAttributes);
+	public void setProductAttributes(List<ProductAttribute> productAttributes);
 	
 	public String getPromoMessage();
 
@@ -302,28 +500,28 @@ public interface Product extends Serializable {
      * @see org.broadleafcommerce.core.web.catalog.ProductHandlerMapping
      * @return
      */
-	String getUrl();
+    public String getUrl();
 
 	/**
 	 * Sets the URL that a customer could type in to reach this product.
 	 * 
 	 * @param url
 	 */
-	void setUrl(String url);
+	public void setUrl(String url);
 	
 	/**
 	 * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
 	 * this product by taking the {@link Product.getName()} and removing special characters and replacing
 	 * dashes with spaces.
 	 */	
-	String getUrlKey();
+	public String getUrlKey();
 
 	/**
 	 * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a 
 	 * unique url-fragment for this product by taking the {@link Product.getName()} and removing special characters and replacing
 	 * dashes with spaces.
 	 */
-	void setUrlKey(String url);
+	public void setUrlKey(String url);
 
 	/**
 	 * Returns the name of a display template that is used to render this product.   Most implementations have a default
@@ -331,19 +529,19 @@ public interface Product extends Serializable {
 	 * 
 	 * @return
 	 */
-	String getDisplayTemplate();
+	public String getDisplayTemplate();
 
 	/**
 	 * Sets the name of a display template that is used to render this product.   Most implementations have a default
 	 * template for all products.    This allows for the user to define a specific template to be used by this product.
 	 * @param displayTemplate
 	 */
-	void setDisplayTemplate(String displayTemplate);
+	public void setDisplayTemplate(String displayTemplate);
 	
 	/**
 	 * Generates a URL that can be used to access the product.  
 	 * Builds the url by combining the url of the default category with the getUrlKey() of this product.
 	 */
-	String getGeneratedUrl();
+	public String getGeneratedUrl();
 
 }
