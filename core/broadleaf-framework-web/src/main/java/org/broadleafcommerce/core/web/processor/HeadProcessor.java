@@ -16,12 +16,14 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import java.util.Map;
-
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.processor.element.AbstractFragmentElementProcessor;
+import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
+
+import java.util.Map;
 
 /**
  * A Thymeleaf processor that will include the standard head element. It will also set the
@@ -53,7 +55,19 @@ public class HeadProcessor extends AbstractFragmentElementProcessor {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected AbstractFragmentSpec getFragmentSpec(Arguments arguments, Element element) {
-		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", element.getAttributeValue("pageTitle"));
+		// The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
+		// to its text value if the expression wasn't able to be processed. This will allow things like
+		// pageTitle="Hello this is a string"
+		// as well as expressions like
+		// pageTitle="${'Hello this is a ' + product.name}"
+		
+		String pageTitle = element.getAttributeValue("pageTitle");
+		try {
+			pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+		} catch (TemplateProcessingException e) {
+			// Do nothing
+		}
+		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
         return new CompleteTemplateFragmentSpec("partials/head");
 	}
