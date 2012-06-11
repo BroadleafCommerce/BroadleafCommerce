@@ -173,11 +173,11 @@ public class SkuImpl implements Sku {
     
     /** The product dimensions **/
     @Embedded
-    protected ProductDimension dimension = new ProductDimension();
+    protected Dimension dimension = new Dimension();
 
     /** The product weight **/
     @Embedded
-    protected ProductWeight weight = new ProductWeight();
+    protected Weight weight = new Weight();
     
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
@@ -556,7 +556,7 @@ public class SkuImpl implements Sku {
         this.activeEndDate = activeEndDate;
     }
 
-    public ProductDimension getDimension() {
+    public Dimension getDimension() {
         if (dimension == null && hasDefaultSku()) {
             return lookupDefaultSku().getDimension();
         } else {
@@ -564,11 +564,11 @@ public class SkuImpl implements Sku {
         }
     }
 
-    public void setDimension(ProductDimension dimension) {
+    public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
-    public ProductWeight getWeight() {
+    public Weight getWeight() {
         if (weight == null && hasDefaultSku()) {
             return lookupDefaultSku().getWeight();
         } else {
@@ -576,7 +576,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    public void setWeight(ProductWeight weight) {
+    public void setWeight(Weight weight) {
         this.weight = weight;
     }
 

@@ -31,7 +31,7 @@ import java.math.BigDecimal;
  *
  */
 @Embeddable
-public class ProductWeight implements Serializable {
+public class Weight implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.ProductDataProvider;
 import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductWeight;
+import org.broadleafcommerce.core.catalog.domain.Weight;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;

@@ -244,7 +244,7 @@ public interface Product extends Serializable {
     public void setManufacturer(String manufacturer);
     
     /**
-     * Returns the {@link ProductDimension} for this product
+     * Returns the {@link Dimension} for this product
      * <br />
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
@@ -253,10 +253,10 @@ public interface Product extends Serializable {
      * @return a ProductDimensions object
      * 
      */
-    public ProductDimension getDimension();
+    public Dimension getDimension();
 
     /**
-     * Sets the {@link ProductDimension} for this product
+     * Sets the {@link Dimension} for this product
      * <br />
      * <br />
      * <b>Note:</b> this is a convenience method that merely serves as
@@ -265,7 +265,7 @@ public interface Product extends Serializable {
      * @param dimension
      * 
      */
-    public void setDimension(ProductDimension dimension);
+    public void setDimension(Dimension dimension);
 
     /**
      * Returns the dimension width
@@ -425,7 +425,7 @@ public interface Product extends Serializable {
      * 
      * @return weight of product
      */
-    public ProductWeight getWeight();
+    public Weight getWeight();
 
     /**
      * Sets the product weight
@@ -436,7 +436,7 @@ public interface Product extends Serializable {
      * 
      * @param weight
      */
-    public void setWeight(ProductWeight weight);
+    public void setWeight(Weight weight);
 
     /**
      * Returns a List of this product's related Cross Sales

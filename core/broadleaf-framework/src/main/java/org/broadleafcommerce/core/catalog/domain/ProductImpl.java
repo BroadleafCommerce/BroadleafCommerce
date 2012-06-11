@@ -568,12 +568,12 @@ public class ProductImpl implements Product {
     }
 
     @Override
-    public ProductDimension getDimension() {
+    public Dimension getDimension() {
         return getDefaultSku().getDimension();
     }
 
     @Override
-    public void setDimension(ProductDimension dimension) {
+    public void setDimension(Dimension dimension) {
         getDefaultSku().setDimension(dimension);
     }
 
@@ -643,12 +643,12 @@ public class ProductImpl implements Product {
     }
 
     @Override
-    public ProductWeight getWeight() {
+    public Weight getWeight() {
         return getDefaultSku().getWeight();
     }
 
     @Override
-    public void setWeight(ProductWeight weight) {
+    public void setWeight(Weight weight) {
         getDefaultSku().setWeight(weight);
     }
 
