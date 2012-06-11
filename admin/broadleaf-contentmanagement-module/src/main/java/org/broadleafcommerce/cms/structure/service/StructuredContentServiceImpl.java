@@ -19,7 +19,9 @@ package org.broadleafcommerce.cms.structure.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AbstractContentService;
@@ -37,16 +39,17 @@ import org.broadleafcommerce.cms.structure.message.ArchivedStructuredContentPubl
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -278,7 +281,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         for (String fieldKey : sc.getStructuredContentFields().keySet()) {
             StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
             String originalValue = scf.getValue();
-            if (envPrefix != null && originalValue != null && originalValue.contains(cmsPrefix)) {
+            if (StringUtils.isNotBlank(envPrefix) && StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
                 if (originalValue.startsWith("/")) {
                     originalValue = originalValue.substring(1);
                 }
