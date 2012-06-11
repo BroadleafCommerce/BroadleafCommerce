@@ -166,16 +166,6 @@ public class CatalogTest extends BaseTest {
 
         assert foundSku == true;
 
-        foundProduct = false;
-        List<Product> findProducts = productDao.readProductsBySku(newProduct.getSkus().get(0).getId());
-        for (Product findProduct : findProducts) {
-            if (findProduct.getId().equals(newProduct.getId())) {
-                foundProduct = true;
-            }
-        }
-
-        assert foundProduct == true;
-
     }
 
     @Test

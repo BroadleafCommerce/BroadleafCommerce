@@ -19,13 +19,13 @@ package org.broadleafcommerce.core.util.demo;
 import org.broadleafcommerce.core.catalog.dao.CategoryXrefDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.util.List;
 import java.util.Random;
 
@@ -57,8 +57,8 @@ public class CatalogMultiplierImpl implements CatalogMultiplier {
                     em.detach(attribute);
                     attribute.setId(null);
                 }
-                ProductSku derivedProduct = (ProductSku) product;
-                Sku sku = derivedProduct.getSku();
+                Product derivedProduct = (Product) product;
+                Sku sku = derivedProduct.getDefaultSku();
                 em.detach(sku);
                 sku.setId(null);
                 String skuName = sku.getName();
@@ -68,7 +68,7 @@ public class CatalogMultiplierImpl implements CatalogMultiplier {
                 }
                 sku.setName(skuName + '_' + j);
                 sku = catalogService.saveSku(sku);
-                derivedProduct.setSku(sku);
+                derivedProduct.setDefaultSku(sku);
                 product.getAllSkus().clear();
                 product.getAllSkus().add(sku);
                 product.getAllParentCategories().size();

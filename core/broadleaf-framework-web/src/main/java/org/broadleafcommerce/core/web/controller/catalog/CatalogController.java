@@ -19,10 +19,10 @@ package org.broadleafcommerce.core.web.controller.catalog;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.CartService;
@@ -34,7 +34,6 @@ import org.broadleafcommerce.core.web.catalog.CatalogSort;
 import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.broadleafcommerce.core.web.order.model.WishlistRequest;
 import org.broadleafcommerce.core.web.search.SearchFilterUtil;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
@@ -48,6 +47,7 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -33,7 +33,6 @@
         <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductImpl</class>
-        <class>org.broadleafcommerce.core.catalog.domain.ProductSkuImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
