@@ -187,8 +187,17 @@ public interface ProductDao {
      *
      * @return
      */
-    List<ProductBundle> readAutomaticProductBundles();
+    public List<ProductBundle> readAutomaticProductBundles();
 
-	Product findProductByURI(String key);
+    /**
+     * Look up a product that matches the given URI
+     * 
+     * @param uri - the relative URL to look up the Product by
+     * @return A single Product that matches the given URI. In the case where multiple
+     * Products match the given URI key, this returns the first Product in the list. If no
+     * matches are found, return null
+     * 
+     */
+	public Product findProductByURI(String uri);
 
 }

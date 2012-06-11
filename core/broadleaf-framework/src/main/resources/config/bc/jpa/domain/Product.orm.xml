@@ -43,8 +43,6 @@
    		AND (productBundle.activeEndDate &gt; :currentDate OR productBundle.activeEndDate = null)</query>
    	</named-query>
 
-
-
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
 		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
@@ -60,11 +58,13 @@
 		ORDER BY categoryProduct.displayOrder
 		</query>
 	</named-query>
-    <named-query name="BC_READ_PRODUCT_OUTGOING_URL" >
+	
+    <named-query name="BC_READ_PRODUCTS_BY_OUTGOING_URL" >
 		<query>SELECT product
                FROM org.broadleafcommerce.core.catalog.domain.Product product
                WHERE
                  product.url = :url 
 		</query>
 	</named-query>
+	
 </entity-mappings>
