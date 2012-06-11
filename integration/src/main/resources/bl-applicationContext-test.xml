@@ -77,6 +77,8 @@
 		<property name="propertyLocations">
 			<set>
 				<value>classpath:config/bc/</value>
+                <value>classpath:config/bc/admin/</value>
+                <value>classpath:config/bc/cms/</value>
 			</set>
 		</property>
 		<property name="environments">
