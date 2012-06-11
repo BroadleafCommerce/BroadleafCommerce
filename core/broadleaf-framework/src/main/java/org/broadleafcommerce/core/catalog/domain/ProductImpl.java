@@ -41,7 +41,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,7 +52,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -117,50 +115,18 @@ public class ProductImpl implements Product {
     @SearchableId
     @AdminPresentation(friendlyName = "ProductImpl_Product_ID", group = "ProductImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-
-    /** The name. */
-    @Column(name = "NAME")
-    @SearchableProperty(name="productName")
-    @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
-    protected String name;
     
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO")
     protected String url;
-    
+
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO")
     protected String urlKey;
-    
- 
-	/** The description. */
-    @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Description", order=3, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
-    protected String description;
 
-    /** The long description. */
-    @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @SearchableProperty(name="productDescription")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Long_Description", order=4, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
-    protected String longDescription;
-    
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=5, group = "ProductImpl_Product_Description")
     protected String displayTemplate;
-
-    
-    /** The active start date. */
-    @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Active_Start_Date", order=8, group = "ProductImpl_Active_Date_Range", groupOrder=2)
-    protected Date activeStartDate;
-
-    /** The active end date. */
-    @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Active_End_Date", order=9, group = "ProductImpl_Active_Date_Range", groupOrder=2)
-    protected Date activeEndDate;
 
     /** The product model number */
     @Column(name = "MODEL")
@@ -277,12 +243,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public String getName() {
-        if (name == null) {
-            if (getDefaultSku() != null) {
-                return getDefaultSku().getName();
-            }
-        }
-        return name;
+        return getDefaultSku().getName();
     }
 
     /*
@@ -292,7 +253,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public void setName(String name) {
-        this.name = name;
+        getDefaultSku().setName(name);
     }
 
     /*
@@ -301,12 +262,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public String getDescription() {
-        if (description == null) {
-            if (getDefaultSku() != null) {
-                return getDefaultSku().getDescription();
-            }
-        }
-        return description;
+        return getDefaultSku().getDescription();
     }
 
     /*
@@ -317,7 +273,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public void setDescription(String description) {
-        this.description = description;
+        getDefaultSku().setDescription(description);
     }
 
     /*
@@ -326,12 +282,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public String getLongDescription() {
-        if (longDescription == null) {
-            if (getDefaultSku() != null) {
-                return getDefaultSku().getLongDescription();
-            }
-        }
-        return longDescription;
+        return getDefaultSku().getLongDescription();
     }
 
     /*
@@ -342,7 +293,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+        getDefaultSku().setLongDescription(longDescription);
     }
 
     /*
@@ -351,7 +302,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public Date getActiveStartDate() {
-        return activeStartDate;
+        return getDefaultSku().getActiveStartDate();
     }
 
     /*
@@ -362,7 +313,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate = activeStartDate;
+        getDefaultSku().setActiveStartDate(activeStartDate);
     }
 
     /*
@@ -371,7 +322,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public Date getActiveEndDate() {
-        return activeEndDate;
+        return getDefaultSku().getActiveEndDate();
     }
 
     /*
@@ -382,7 +333,7 @@ public class ProductImpl implements Product {
      */
     @Override
     public void setActiveEndDate(Date activeEndDate) {
-        this.activeEndDate = activeEndDate;
+        getDefaultSku().setActiveEndDate(activeEndDate);
     }
 
     /*
@@ -727,7 +678,6 @@ public class ProductImpl implements Product {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((skus == null) ? 0 : skus.hashCode());
         return result;
     }
@@ -746,11 +696,6 @@ public class ProductImpl implements Product {
             return id.equals(other.id);
         }
 
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
         if (skus == null) {
             if (other.skus != null)
                 return false;

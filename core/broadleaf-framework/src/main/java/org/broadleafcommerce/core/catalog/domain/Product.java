@@ -56,42 +56,66 @@ public interface Product extends Serializable {
 
     /**
      * Returns the name of the product that is used for display purposes.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return the name of the product
      */
     public String getName();
 
     /**
      * Sets the name of the product that is used for display purposes.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param name - the name of the Product
      */
     public void setName(String name);
 
     /**
      * Returns a brief description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return a brief description of the product
      */
     public String getDescription();
 
     /**
      * Sets a brief description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param description - a brief description of the product
      */
     public void setDescription(String description);
 
     /**
      * Returns a long description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return a long description of the product
      */
     public String getLongDescription();
 
     /**
      * Sets a long description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param longDescription the long description
      */
     public void setLongDescription(String longDescription);
@@ -99,7 +123,11 @@ public interface Product extends Serializable {
     /**
      * Returns the first date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return the first date the product will be available
      */
     public Date getActiveStartDate();
@@ -107,7 +135,11 @@ public interface Product extends Serializable {
     /**
      * Sets the first date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param activeStartDate - the first day the product is available
      */
     public void setActiveStartDate(Date activeStartDate);
@@ -115,7 +147,11 @@ public interface Product extends Serializable {
     /**
      * Returns the last date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return the last day the product is available
      */
     public Date getActiveEndDate();
@@ -123,14 +159,22 @@ public interface Product extends Serializable {
     /**
      * Sets the last date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param activeEndDate - the last day the product is available
      */
     public void setActiveEndDate(Date activeEndDate);
 
     /**
      * Returns a boolean that indicates if the product is currently active.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return a boolean indicates if the product is active.
      */
     public boolean isActive();

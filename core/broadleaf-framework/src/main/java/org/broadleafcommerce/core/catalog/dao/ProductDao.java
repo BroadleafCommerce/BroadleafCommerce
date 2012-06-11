@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
  * {@code ProductDao} provides persistence access to {@code Product} instances
  *
  * @see Product
- * @see ProductSku
  * @author Jeff Fischer
  */
 public interface ProductDao {
