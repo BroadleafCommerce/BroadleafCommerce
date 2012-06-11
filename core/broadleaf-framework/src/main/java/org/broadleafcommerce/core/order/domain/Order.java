@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -32,6 +27,11 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public interface Order extends Serializable {
 
@@ -208,6 +208,15 @@ public interface Order extends Serializable {
      * @param orderAttributes
      */
     public void setOrderAttributes(Map<String,OrderAttribute> orderAttributes);
+    
+    /**
+     * This method returns the total number of items in this order. It iterates through all of the
+     * discrete order items and sums up the quantity. This method is useful for display to the customer
+     * the current number of "physical" items in the cart
+     * 
+     * @return the number of items in the order
+     */
+    public Integer getItemCount();
 
 
 }
