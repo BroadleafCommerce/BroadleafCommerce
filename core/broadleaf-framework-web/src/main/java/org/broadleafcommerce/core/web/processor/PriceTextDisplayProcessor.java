@@ -48,6 +48,10 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
 	@Override
 	protected String getText(Arguments arguments, Element element, String attributeName) {
 		Money price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		return "$" + price.getAmount().toString();
+		if (price == null || price.isZero()) {
+			return "$0.00";
+		} else {
+			return "$" + price.getAmount().toString();
+		}
 	}
 }
