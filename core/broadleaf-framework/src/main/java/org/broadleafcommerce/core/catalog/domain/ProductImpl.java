@@ -242,6 +242,7 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
      */
     @Override
+    @SearchableProperty(name = "productName")
     public String getName() {
         return getDefaultSku().getName();
     }
@@ -261,6 +262,7 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getDescription()
      */
     @Override
+    @SearchableProperty(name = "productDescription")
     public String getDescription() {
         return getDefaultSku().getDescription();
     }
@@ -281,6 +283,7 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getLongDescription()
      */
     @Override
+    @SearchableProperty(name = "productLongDescription")
     public String getLongDescription() {
         return getDefaultSku().getLongDescription();
     }
