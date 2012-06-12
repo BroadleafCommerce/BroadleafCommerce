@@ -144,10 +144,10 @@ public class ProductImpl implements Product {
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=8, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = true, targetEntity = SkuImpl.class)
+    @OneToOne(optional = false, targetEntity = SkuImpl.class)
     @JoinColumn(name = "DEFAULT_SKU_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected Sku sku;
+    protected Sku defaultSku;
     
     /** The skus. */
     @Transient
@@ -382,12 +382,12 @@ public class ProductImpl implements Product {
 
     @Override
     public Sku getDefaultSku() {
-		return sku;
+		return defaultSku;
 	}
 
     @Override
 	public void setDefaultSku(Sku defaultSku) {
-		this.sku = defaultSku;
+		this.defaultSku = defaultSku;
 	}
 
     @Override
