@@ -219,130 +219,70 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getId()
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#setId(java.lang.Long)
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
-     */
     @Override
     @SearchableProperty(name = "productName")
     public String getName() {
         return getDefaultSku().getName();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setName(java.lang.String)
-     */
     @Override
     public void setName(String name) {
         getDefaultSku().setName(name);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getDescription()
-     */
     @Override
     @SearchableProperty(name = "productDescription")
     public String getDescription() {
         return getDefaultSku().getDescription();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setDescription(java.lang
-     * .String)
-     */
     @Override
     public void setDescription(String description) {
         getDefaultSku().setDescription(description);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getLongDescription()
-     */
     @Override
     @SearchableProperty(name = "productLongDescription")
     public String getLongDescription() {
         return getDefaultSku().getLongDescription();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setLongDescription(java.
-     * lang.String)
-     */
+
     @Override
     public void setLongDescription(String longDescription) {
         getDefaultSku().setLongDescription(longDescription);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveStartDate()
-     */
     @Override
     public Date getActiveStartDate() {
         return getDefaultSku().getActiveStartDate();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setActiveStartDate(java.
-     * util.Date)
-     */
     @Override
     public void setActiveStartDate(Date activeStartDate) {
         getDefaultSku().setActiveStartDate(activeStartDate);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveEndDate()
-     */
     @Override
     public Date getActiveEndDate() {
         return getDefaultSku().getActiveEndDate();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setActiveEndDate(java.util
-     * .Date)
-     */
     @Override
     public void setActiveEndDate(Date activeEndDate) {
         getDefaultSku().setActiveEndDate(activeEndDate);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#isActive()
-     */
     @Override
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
@@ -408,10 +348,6 @@ public class ProductImpl implements Product {
         return allSkus;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getSkus()
-     */
     @Override
 	public List<Sku> getSkus() {
         if (skus.size() == 0) {
@@ -425,11 +361,6 @@ public class ProductImpl implements Product {
         return skus;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setAllSkus(java.util.List)
-     */
     @Override
     public void setAllSkus(List<Sku> skus) {
         this.allSkus.clear();
@@ -439,32 +370,16 @@ public class ProductImpl implements Product {
         //this.skus.clear();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getProductImages()
-     */
     @Deprecated
     public Map<String, String> getProductImages() {
         return productImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#getProductImage(java.lang
-     * .String)
-     */
     @Deprecated
     public String getProductImage(String imageKey) {
         return productImages.get(imageKey);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setProductImages(java.util
-     * .Map)
-     */
     @Deprecated
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
@@ -476,10 +391,6 @@ public class ProductImpl implements Product {
     	}
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getDefaultCategory()
-     */
     @Override
     public Category getDefaultCategory() {
         return defaultCategory;
@@ -498,11 +409,6 @@ public class ProductImpl implements Product {
     	}
     }
 
-    /*
-     * (non-Javadoc)
-     * @seeorg.broadleafcommerce.core.catalog.domain.Product#setDefaultCategory(org.
-     * broadleafcommerce.catalog.domain.Category)
-     */
     @Override
     public void setDefaultCategory(Category defaultCategory) {
         this.defaultCategory = defaultCategory;
