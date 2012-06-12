@@ -191,6 +191,7 @@ public class ProductImpl implements Product {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @Deprecated
     protected Map<String, Media> productMedia = new HashMap<String , Media>();
 
     /** The default category. */
@@ -397,16 +398,28 @@ public class ProductImpl implements Product {
     }
 
     @Override
+    @Deprecated
     public Map<String, Media> getProductMedia() {
         return productMedia;
     }
 
     @Override
+    @Deprecated
     public void setProductMedia(Map<String, Media> productMedia) {
         this.productMedia.clear();
     	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
     		this.productMedia.put(me.getKey(), me.getValue());
     	}
+    }
+
+    @Override
+    public Map<String, Media> getMedia() {
+        return getDefaultSku().getSkuMedia();
+    }
+
+    @Override
+    public void setMedia(Map<String, Media> media) {
+        getDefaultSku().setSkuMedia(media);
     }
 
     @Override

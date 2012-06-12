@@ -227,6 +227,7 @@ public interface Product extends Serializable {
      *
      * @return a map of product media
      */
+    @Deprecated
     public Map<String, Media> getProductMedia();
 
     /**
@@ -234,7 +235,26 @@ public interface Product extends Serializable {
      *
      * @param productMedia - a map of product images
      */
+    @Deprecated
     public void setProductMedia(Map<String, Media> productMedia);
+
+    /**
+     * Gets the media for this product. This serves as a pass-through to
+     * the {@link getDefaultSku()} media
+     * 
+     * @return the Media for the default Sku associated with this Product
+     * @see Sku
+     */
+    public Map<String, Media> getMedia();
+
+    /**
+     * Gets the media for this product. This serves as a pass-through to
+     * the {@link getDefaultSku()} media
+     * 
+     * @param media Media map to set on the default Sku associated with this Product
+     * @see Sku
+     */
+    public void setMedia(Map<String, Media> media);
 
     /**
      * Returns all parent {@link Category}(s) this product is associated with.
