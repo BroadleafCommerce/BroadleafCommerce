@@ -18,16 +18,16 @@ package org.broadleafcommerce.openadmin.workaround;
 
 import org.apache.tools.ant.taskdefs.Javac;
 import org.eclipse.jdt.core.JDTCompilerAdapter;
-
+@Deprecated
 public class JDTCompiler15 extends JDTCompilerAdapter {
 
 	@Override
 	public void setJavac(Javac attributes) {
 		if (attributes.getTarget() == null) {
-		      attributes.setTarget("1.5");
+		      attributes.setTarget("1.6");
 		    }
 		    if (attributes.getSource() == null) {
-		      attributes.setSource("1.5");
+		      attributes.setSource("1.6");
 		    }
 		    super.setJavac(attributes);
 	}

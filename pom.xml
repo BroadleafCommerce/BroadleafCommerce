@@ -49,8 +49,18 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+         <repositories>
+            <repository>
+			<id>smartclient</id>
+			<name>smartclient.com</name>
+			<url>http://www.smartclient.com/maven2</url>
+		</repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gwt.version>2.4.0</gwt.version>
+        <smartgwt.version>2.5</smartgwt.version>
+   
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -118,7 +128,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
-                    <version>2.1.0-1</version>
+                    <version>${gwt.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -867,19 +877,19 @@
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-servlet</artifactId>
-                <version>2.1.1</version>
+                <version>${gwt.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>
-                <version>2.1.1</version>
+                <version>${gwt.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-dev</artifactId>
-                <version>2.1.1</version>
+                  <version>${gwt.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -891,13 +901,13 @@
             <dependency>
                 <groupId>com.smartgwt</groupId>
                 <artifactId>smartgwt</artifactId>
-                <version>2.4</version>
+                <version>${smartgwt.version}-patch</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.smartgwt</groupId>
                 <artifactId>smartgwt-skins</artifactId>
-                <version>2.4</version>
+                <version>${smartgwt.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
