@@ -35,12 +35,10 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerFilter;
-import org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
@@ -83,7 +81,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     protected PersistenceModule[] modules;
 
     protected TargetModeType targetMode;
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
     @PostConstruct
     public void postConstruct() {
@@ -93,10 +91,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
 	public void close() throws Exception {
-		Object temp = applicationContext.getBean("&" + targetEntityManagers.get(targetMode.getType()));
-		if (temp instanceof SandBoxEntityManagerPoolFactoryBean) {
-			((SandBoxEntityManagerPoolFactoryBean) temp).returnObject(dynamicEntityDao.getStandardEntityManager());
-		}
+        //do nothing
 	}
 
 	@Override
@@ -233,8 +228,14 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
-		return myModule.add(persistencePackage);
+		Entity response = myModule.add(persistencePackage);
+        return postAdd(response);
 	}
+
+    protected Entity postAdd(Entity entity) throws ServiceException {
+        //do nothing
+        return entity;
+    }
 
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
@@ -271,15 +272,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return entity;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager
-	 * #remove(org.broadleafcommerce.openadmin.client.dto.Entity,
-	 * org.broadleafcommerce.openadmin.client.dto.PersistencePerspective,
-	 * java.lang.String[])
-	 */
 	@Override
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
         //check to see if there is a custom handler registered

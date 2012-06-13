@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.admin.client.datasource.catalog.product.module;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -42,6 +38,10 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
 import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -135,37 +135,37 @@ public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
 	}
 
 	@Override
-	public void buildFields(String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
-			public void onSuccess(DynamicResultSet result) {
-				super.onSuccess(result);
-				ClassMetadata metadata = result.getClassMetaData();
-				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
-				
-				//Add a hidden field to store the polymorphic type for this entity
-				DataSourceField typeField = new DataSourceTextField("_type");
-				typeField.setCanEdit(false);
-				typeField.setHidden(true);
-				typeField.setAttribute("permanentlyHidden", true);
-				dataSource.addField(typeField);
-				
-				dataSource.getField("sku.name").setHidden(true);
-				dataSource.getField("sku.name").setAttribute("permanentlyHidden", true);
-				dataSource.getField("sku.activeStartDate").setHidden(true);
-				dataSource.getField("sku.activeStartDate").setAttribute("permanentlyHidden", true);
-				dataSource.getField("sku.activeEndDate").setHidden(true);
-				dataSource.getField("sku.activeEndDate").setAttribute("permanentlyHidden", true);
-				dataSource.getField("sku.description").setHidden(true);
-				dataSource.getField("sku.description").setAttribute("permanentlyHidden", true);
-				dataSource.getField("sku.longDescription").setHidden(true);
-				dataSource.getField("sku.longDescription").setAttribute("permanentlyHidden", true);
-				dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
-				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
-				
-				cb.onSuccess(dataSource);
-			}
-			
-		});
+	public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
+        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
+            public void onSuccess(DynamicResultSet result) {
+                super.onSuccess(result);
+                ClassMetadata metadata = result.getClassMetaData();
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
+
+                //Add a hidden field to store the polymorphic type for this entity
+                DataSourceField typeField = new DataSourceTextField("_type");
+                typeField.setCanEdit(false);
+                typeField.setHidden(true);
+                typeField.setAttribute("permanentlyHidden", true);
+                dataSource.addField(typeField);
+
+                dataSource.getField("sku.name").setHidden(true);
+                dataSource.getField("sku.name").setAttribute("permanentlyHidden", true);
+                dataSource.getField("sku.activeStartDate").setHidden(true);
+                dataSource.getField("sku.activeStartDate").setAttribute("permanentlyHidden", true);
+                dataSource.getField("sku.activeEndDate").setHidden(true);
+                dataSource.getField("sku.activeEndDate").setAttribute("permanentlyHidden", true);
+                dataSource.getField("sku.description").setHidden(true);
+                dataSource.getField("sku.description").setAttribute("permanentlyHidden", true);
+                dataSource.getField("sku.longDescription").setHidden(true);
+                dataSource.getField("sku.longDescription").setAttribute("permanentlyHidden", true);
+                dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
+                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
+
+                cb.onSuccess(dataSource);
+            }
+
+        });
 	}
 
 	

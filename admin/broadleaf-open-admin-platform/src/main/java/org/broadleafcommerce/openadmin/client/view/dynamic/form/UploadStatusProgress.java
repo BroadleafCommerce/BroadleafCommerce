@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.client.view.dynamic.form.upload;
+package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,13 +27,14 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
  * @author jfischer
  *
  */
-public class UploadStatusProgress extends Progressbar {
+public class UploadStatusProgress extends Progressbar implements Progress {
 
 	private int barValue;
 	private Timer timer;
 	private boolean isActive = false;
 	private Double current = 1D;
     private String callbackName;
+    private ServerProcessProgressWindow window;
 
 	public UploadStatusProgress(Integer height) {
 		this(null, height);
@@ -45,9 +46,8 @@ public class UploadStatusProgress extends Progressbar {
 		if (width != null) setWidth(width);
         setVertical(false);
         setTitle("test");
-        timer = new Timer() {  
+        timer = new Timer() {
             public void run() {
-            	//asymptote calculation
                 AppServices.UPLOAD.getPercentUploadComplete(callbackName, BLCMain.csrfToken, new AsyncCallback<Double>() {
                     @Override
                     public void onFailure(Throwable caught) {
@@ -62,12 +62,12 @@ public class UploadStatusProgress extends Progressbar {
                             schedule(3000);
                     }
                 });
-            }  
+            }
         };
         setOpacity(50);
 	}
-	
-	public void startProgress() {
+
+    public void startProgress() {
 		isActive = true;
 		barValue = 0;  
 		current = 1D;
@@ -117,4 +117,9 @@ public class UploadStatusProgress extends Progressbar {
 		}
 		
 	}
+
+    @Override
+    public void setDisplay(ServerProcessProgressWindow window) {
+        this.window = window;
+    }
 }

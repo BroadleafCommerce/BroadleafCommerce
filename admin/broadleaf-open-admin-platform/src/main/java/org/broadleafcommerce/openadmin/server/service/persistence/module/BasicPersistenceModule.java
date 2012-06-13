@@ -21,7 +21,6 @@ import com.anasoft.os.daofusion.criteria.AssociationPathElement;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,8 +40,6 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
-import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
-import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -474,11 +471,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 primaryKey = getPrimaryKey(entity, mergedProperties);
             }
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            SandBoxContext context = SandBoxContext.getSandBoxContext();
-            if (context != null && context.getSandBoxMode() != SandBoxMode.IMMEDIATE_COMMIT) {
-                //clone the instance to disconnect it from its session
-                instance = (Serializable) SerializationUtils.clone(instance);
-            }
             instance = createPopulatedInstance(instance, entity, mergedProperties, false);
             instance = persistenceManager.getDynamicEntityDao().merge(instance);
 

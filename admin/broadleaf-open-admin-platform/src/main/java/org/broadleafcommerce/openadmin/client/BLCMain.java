@@ -21,18 +21,19 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.Window;
 import com.smartgwt.client.core.KeyIdentifier;
 import com.smartgwt.client.util.KeyCallback;
 import com.smartgwt.client.util.Page;
 import com.smartgwt.client.util.SC;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
-import org.broadleafcommerce.openadmin.client.security.AdminUser;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
-import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
+import org.broadleafcommerce.openadmin.client.setup.PreProcessStatus;
+import org.broadleafcommerce.openadmin.client.setup.PreProcessor;
+import org.broadleafcommerce.openadmin.client.setup.UrlStructurePreProcessor;
+import org.broadleafcommerce.openadmin.client.setup.UserSecurityPreProcessor;
+import org.broadleafcommerce.openadmin.client.setup.WorkflowEnabledPreProcessor;
 import org.broadleafcommerce.openadmin.client.view.MasterView;
 import org.broadleafcommerce.openadmin.client.view.ProgressWindow;
 import org.broadleafcommerce.openadmin.client.view.SimpleProgress;
@@ -41,8 +42,11 @@ import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntityEditDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.PolymorphicTypeSelectionDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFactory;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,6 +61,8 @@ public class BLCMain implements EntryPoint {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
 	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
+    private static List<PreProcessor> preProcessors = new ArrayList<PreProcessor>(10);
+    public static final ServerProcessProgressWindow progressWindow = new ServerProcessProgressWindow();
 
     public static String csrfToken;
     public static String webAppContext;
@@ -74,16 +80,25 @@ public class BLCMain implements EntryPoint {
     public static String currentPageKey;
     public static String currentViewKey;
     public static PostLaunch postLaunch = null;
+    public static boolean workflowEnabled = false;
 	
 	public static final boolean DEBUG = true;
 	
 	public static void addModule(Module module) {
 		modules.put(module.getModuleKey(), module);
 	}
+
+    public static void removeModule(String moduleKey) {
+        modules.remove(moduleKey);
+    }
 	
 	public static Module getModule(String moduleKey) {
 		return modules.get(moduleKey);
 	}
+
+    public static void addPreProcessor(PreProcessor preProcessor) {
+        preProcessors.add(preProcessor);
+    }
 	
 	public static void setSplashWindow(SplashView splashWindow) {
 		SPLASH_PROGRESS = splashWindow;
@@ -156,71 +171,57 @@ public class BLCMain implements EntryPoint {
     }
 	
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
-        SC.logWarn("Retrieving web app context...");
-        java.util.logging.Logger.getLogger(BLCMain.class.toString()).info("Retrieving web app context...");;
-        AppServices.UTILITY.getAllItems(new AbstractCallback<String[]>() {
+        adminContext = GWT.getModuleBaseURL();
+        if (!preProcessors.isEmpty()) {
+            executePreProcessors(0, requestedModuleKey, requestedPageKey);
+        } else {
+            if (postLaunch != null) {
+                postLaunch.onLaunched();
+            }
+            finalizeCurrentState(requestedModuleKey, requestedPageKey);
+        }
+	}
+
+    private static void executePreProcessors(final int count, final String requestedModuleKey, final String requestedPageKey) {
+        PreProcessor preProcessor = preProcessors.get(count);
+        preProcessor.preProcess(progressWindow, new PreProcessStatus() {
             @Override
-            public void onSuccess(String[] result) {
-                webAppContext = result[0];
-                if (result[1] != null) {
-                    storeFrontWebAppPrefix = result[1];
+            public void complete() {
+                int temp = count + 1;
+                if (temp < preProcessors.size()) {
+                    executePreProcessors(temp, requestedModuleKey, requestedPageKey);
                 } else {
-                    storeFrontWebAppPrefix = webAppContext;
-                }
-                assetServerUrlPrefix = result[2];
-                csrfToken = result[3];
-                AppServices.SECURITY.getAdminUser(new AbstractCallback<AdminUser>() {
-                    @Override
-                    public void onSuccess(AdminUser result) {
-                        SecurityManager.USER = result;
-                        if (result == null) {
-                            SC.logWarn("Admin user not found. Logging out...");
-                            java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user not found. Logging out...");;
-                            UrlBuilder builder = Window.Location.createUrlBuilder();
-                            builder.setPath(BLCMain.webAppContext + "/adminLogout.htm");
-                            builder.setParameter("time", String.valueOf(System.currentTimeMillis()));
-                            Window.open(builder.buildString(), "_self", null);
-                        } else {
-                            AppServices.UTILITY.getWorkflowEnabled(new AbstractCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean result) {
-                                    if (!result) {
-                                        modules.remove("BLCSandBox");
-                                    }
-
-                                    SC.logWarn("Admin user found. Loading interface...");
-                                    java.util.logging.Logger.getLogger(getClass().toString()).warning("Admin user found. Loading interface...");;
-                                    setCurrentModuleKey(requestedModuleKey);
-
-                                    if (currentModuleKey == null) {
-                                        SC.say(getMessageManager().getString("noModulesAuthorized"));
-                                        return;
-                                    }
-
-                                    setCurrentPageKey(requestedPageKey);
-
-                                    if (currentPageKey == null) {
-                                        SC.say(getMessageManager().getString("noAuthorizedPages"));
-                                        return;
-                                    }
-
-                                    modules.get(currentModuleKey).preDraw();
-                                    MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
-                                    MASTERVIEW.draw();
-                                    AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
-                                    modules.get(currentModuleKey).postDraw();
-                                }
-                            });
-                        }
-                        if (postLaunch != null) {
-                            postLaunch.onLaunched();
-                        }
+                    if (postLaunch != null) {
+                        postLaunch.onLaunched();
                     }
-                });
+                    finalizeCurrentState(requestedModuleKey, requestedPageKey);
+                }
             }
         });
-        adminContext = GWT.getModuleBaseURL();
-	}
+    }
+
+    private static void finalizeCurrentState(final String requestedModuleKey, final String requestedPageKey) {
+        java.util.logging.Logger.getLogger(BLCMain.class.getName()).info("Admin user found. Loading interface...");
+        setCurrentModuleKey(requestedModuleKey);
+
+        if (currentModuleKey == null) {
+            SC.say(getMessageManager().getString("noModulesAuthorized"));
+            return;
+        }
+
+        setCurrentPageKey(requestedPageKey);
+
+        if (currentPageKey == null) {
+            SC.say(getMessageManager().getString("noAuthorizedPages"));
+            return;
+        }
+
+        modules.get(currentModuleKey).preDraw();
+        MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
+        MASTERVIEW.draw();
+        AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
+        modules.get(currentModuleKey).postDraw();
+    }
 
 	public void onModuleLoad() {
 		if (!GWT.isScript()) { 
@@ -236,6 +237,10 @@ public class BLCMain implements EntryPoint {
         NumericTypeFactory.registerNumericSimpleType("localDecimal", NumberFormat.getDecimalFormat(), SupportedFieldType.DECIMAL);
         NumericTypeFactory.registerNumericSimpleType("localMoneyDecimal", NumberFormat.getDecimalFormat(), SupportedFieldType.MONEY);
         NumericTypeFactory.registerNumericSimpleType("localCurrency", NumberFormat.getCurrencyFormat(), SupportedFieldType.MONEY);
+
+        addPreProcessor(new UrlStructurePreProcessor());
+        addPreProcessor(new UserSecurityPreProcessor());
+        addPreProcessor(new WorkflowEnabledPreProcessor());
 	}
 
     public static MessageManager getMessageManager() {

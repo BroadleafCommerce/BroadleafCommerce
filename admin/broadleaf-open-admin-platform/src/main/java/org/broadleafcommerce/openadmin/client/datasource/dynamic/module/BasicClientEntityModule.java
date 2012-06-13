@@ -16,42 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
-
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.security.SecurityManager;
-import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
-import org.broadleafcommerce.openadmin.client.service.AppServices;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -85,6 +49,41 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.client.dto.OperationType;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.service.AbstractCallback;
+import org.broadleafcommerce.openadmin.client.service.AppServices;
+import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.openadmin.client.validation.ValidationFactoryManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormHiddenEnum;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Set;
 
 /**
  * 
@@ -691,44 +690,44 @@ public class BasicClientEntityModule implements DataSourceModule {
 	}
     
     public void buildFields(final String[] customCriteria, final Boolean overrideFieldSort, final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
-			
-			@Override
-			protected void onOtherException(Throwable exception) {
-				super.onOtherException(exception);
-                if (cb != null) {
-				    cb.onFailure(exception);
-                }
-			}
+        AppServices.DYNAMIC_ENTITY.inspect(new PersistencePackage(ceilingEntityFullyQualifiedClassname, null, persistencePerspective, customCriteria, BLCMain.csrfToken), new AbstractCallback<DynamicResultSet>() {
 
-			@Override
-			protected void onSecurityException(ApplicationSecurityException exception) {
-				super.onSecurityException(exception);
+            @Override
+            protected void onOtherException(Throwable exception) {
+                super.onOtherException(exception);
                 if (cb != null) {
-				    cb.onFailure(exception);
+                    cb.onFailure(exception);
                 }
-			}
+            }
 
-			public void onSuccess(DynamicResultSet result) {
-				super.onSuccess(result);
-				ClassMetadata metadata = result.getClassMetaData();
-				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
-				
-				//Add a hidden field to store the polymorphic type for this entity
-				DataSourceField typeField = new DataSourceTextField("_type");
-				typeField.setCanEdit(false);
-				typeField.setHidden(true);
-				typeField.setAttribute("permanentlyHidden", true);
-				dataSource.addField(typeField);
+            @Override
+            protected void onSecurityException(ApplicationSecurityException exception) {
+                super.onSecurityException(exception);
+                if (cb != null) {
+                    cb.onFailure(exception);
+                }
+            }
+
+            public void onSuccess(DynamicResultSet result) {
+                super.onSuccess(result);
+                ClassMetadata metadata = result.getClassMetaData();
+                filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE}, overrideFieldSort);
+
+                //Add a hidden field to store the polymorphic type for this entity
+                DataSourceField typeField = new DataSourceTextField("_type");
+                typeField.setCanEdit(false);
+                typeField.setHidden(true);
+                typeField.setAttribute("permanentlyHidden", true);
+                dataSource.addField(typeField);
                 dataSource.setPolymorphicEntityTree(metadata.getPolymorphicEntities());
-				dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
+                dataSource.setDefaultNewEntityFullyQualifiedClassname(dataSource.getPolymorphicEntities().keySet().iterator().next());
 
                 if (cb != null) {
-				    cb.onSuccess(dataSource);
+                    cb.onSuccess(dataSource);
                 }
-			}
-			
-		});
+            }
+
+        });
 	}
     
     protected OperatorId[] getBasicIdOperators() {

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.client.view.dynamic.form.upload;
+package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.smartgwt.client.widgets.Progressbar;
 import com.smartgwt.client.widgets.Window;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.view.Stoppable;
@@ -25,21 +26,20 @@ import org.broadleafcommerce.openadmin.client.view.Stoppable;
  * @author jfischer
  *
  */
-public class UploadProgressWindow extends Window implements Stoppable {
+public class ServerProcessProgressWindow extends Window implements Stoppable {
 
-	private UploadStatusProgress progressBar;
+	private Progress progressBar;
+    private String titleKey;
 
-	public UploadProgressWindow() {
-    	setWidth(360);  
-    	setHeight(52);  
-    	setShowMinimizeButton(false);  
-    	setIsModal(true);   
-    	centerInPage();
-    	setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
-    	setShowCloseButton(false);
-    	progressBar = new UploadStatusProgress(24);
-    	addItem(progressBar);
-	}
+    public ServerProcessProgressWindow() {
+        setWidth(360);
+        setHeight(52);
+        setShowMinimizeButton(false);
+        setIsModal(true);
+        centerInPage();
+        setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
+        setShowCloseButton(false);
+    }
 
 	public void startProgress() {
 		show();
@@ -58,7 +58,25 @@ public class UploadProgressWindow extends Window implements Stoppable {
 		return progressBar.isActive();
 	}
 
-    public UploadStatusProgress getProgressBar() {
+    public Progress getProgressBar() {
         return progressBar;
+    }
+
+    public void setProgressBar(Progress progressBar) {
+        if (this.progressBar != null) {
+            removeItem((Progressbar) this.progressBar);
+        }
+        this.progressBar = progressBar;
+        addItem((Progressbar) progressBar);
+        progressBar.setDisplay(this);
+    }
+
+    public String getTitleKey() {
+        return titleKey;
+    }
+
+    public void setTitleKey(String titleKey) {
+        this.titleKey = titleKey;
+        setTitle(BLCMain.getMessageManager().getString(titleKey));
     }
 }

@@ -34,11 +34,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/29/11
- * Time: 11:50 AM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 @Component("blAdminSandBoxFilter")
 public class AdminSandBoxFilter extends OncePerRequestFilter {

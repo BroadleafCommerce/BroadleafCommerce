@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.Map;
-import java.util.logging.Level;
-
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -49,7 +46,11 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadProgressWindow;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.UploadStatusProgress;
+
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * 
@@ -58,7 +59,11 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.upload.UploadPro
  */
 public class FileUploadDialog extends Window {
 
-    private static final UploadProgressWindow uploadProgressWindow = new UploadProgressWindow();
+    private static final ServerProcessProgressWindow uploadProgressWindow = new ServerProcessProgressWindow();
+    static {
+        UploadStatusProgress progressBar = new UploadStatusProgress(24);
+        uploadProgressWindow.setProgressBar(progressBar);
+    }
 
 	protected DynamicForm dynamicForm;
 	protected ItemEditedHandler handler;
@@ -141,7 +146,7 @@ public class FileUploadDialog extends Window {
                             }
                         }
                     });
-                    uploadProgressWindow.getProgressBar().setCallbackName(callbackName);
+                    ((UploadStatusProgress) uploadProgressWindow.getProgressBar()).setCallbackName(callbackName);
                     uploadProgressWindow.startProgress();
                     dynamicForm.setAction("cms.upload.service?callbackName=" + callbackName);
                     dynamicForm.getField("callbackName").setValue(callbackName);

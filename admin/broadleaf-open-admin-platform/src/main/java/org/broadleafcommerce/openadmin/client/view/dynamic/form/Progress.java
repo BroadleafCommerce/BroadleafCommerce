@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.service.persistence.entitymanager;
-
-import org.hibernate.ejb.HibernateEntityManager;
+package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/2/11
- * Time: 4:53 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
-public interface DualEntityManager {
+public interface Progress {
 
-    public HibernateEntityManager getStandardManager();
-
-    public HibernateEntityManager getSandboxManager();
-
+    public void startProgress();
+    public void stopProgress();
+    public Boolean isActive();
+    public void setDisplay(ServerProcessProgressWindow window);
 }

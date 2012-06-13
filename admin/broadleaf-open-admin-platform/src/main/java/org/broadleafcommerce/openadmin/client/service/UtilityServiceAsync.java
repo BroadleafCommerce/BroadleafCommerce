@@ -33,5 +33,5 @@ public interface UtilityServiceAsync {
 
     void getAllItems(AsyncCallback<String[]> cb);
 
-    void getWorkflowEnabled(AsyncCallback<Boolean> cb);
+    void getWorkflowEnabled(String[] qualifiers, AsyncCallback<Boolean> cb);
 }

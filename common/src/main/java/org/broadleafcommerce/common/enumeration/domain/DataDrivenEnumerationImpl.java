@@ -1,5 +1,11 @@
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,12 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -34,10 +34,10 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     protected Long id;
     
     @OneToOne(targetEntity = DataDrivenEnumerationImpl.class)
-    @JoinColumn(name = "TYPE")
+    @JoinColumn(name = "ENUM_TYPE")
     protected DataDrivenEnumeration type;
     
-    @Column(name = "KEY")
+    @Column(name = "ENUM_KEY")
     @Index(name = "KEY_INDEX", columnNames = {"KEY"})
     protected String key;
     

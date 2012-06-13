@@ -80,46 +80,5 @@
             <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
         </property>
     </bean>
-			        
-	<!--<bean id="sandBoxEntityManagerPool" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.SandBoxEntityManagerPoolFactoryBean">
-        <property name="sandboxPool">
-            <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.KeyedEntityManagerPool">
-                <constructor-arg>
-                   <bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.pool.DefaultEntityManagerPool">
-                       <property name="mySharedEntityManagerBeanRef" value="sandBoxEntityManager"/>
-                       <property name="maxActive" value="5"/>
-                       <property name="minIdle" value="1"/>
-                       <property name="timeBetweenEvictionRunsMillis" value="10000"/>
-                   </bean>
-                </constructor-arg>
-                <property name="maxActive" value="1"/>
-                <property name="minIdle" value="0"/>
-                <property name="minEvictableIdleTimeMillis" value="60000000"/>
-                <property name="timeBetweenEvictionRunsMillis" value="10000"/>
-                <property name="maxTotal" value="5"/>
-            </bean>
-        </property>
-	</bean>
-	
-	<bean id="sandBoxEntityManager" class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.SandBoxSharedEntityManagerBean" scope="prototype">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="sandBoxEntityManagerFactory">
-        	<bean class="org.broadleafcommerce.openadmin.server.service.persistence.entitymanager.ClonedLocalContainerEntityManagerFactoryBean">
-				<property name="jpaVendorAdapter">
-					<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-				</property>
-				<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
-				<property name="persistenceUnitName" value="blMySandBoxPU"/>
-				<property name="clonePersistenceUnitName" value="blPU"/>
-				<property name="dataSource">
-                    <bean id="sandBoxDataSource" class="org.broadleafcommerce.openadmin.server.service.persistence.datasource.SandBoxDataSource" destroy-method="close" scope="prototype">
-                        <property name="maxActive" value="3"/>
-                        <property name="minIdle" value="1"/>
-                        <property name="timeBetweenEvictionRunsMillis" value="10000"/>
-                    </bean>
-                </property>
-			</bean>
-        </property>
-        <property name="cleaner" ref="blHibernateCleaner"/>
-    </bean>-->
+
 </beans>

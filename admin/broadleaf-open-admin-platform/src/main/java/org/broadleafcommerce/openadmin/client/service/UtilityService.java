@@ -92,11 +92,13 @@ public interface UtilityService extends RemoteService {
 
     /**
      * Check if any items are enabled for workflow (catalog, assets, pages, or structured content)
+     * Can accept additional qualification data for implementations that support.
      *
+     * @param qualifiers additional data useful for making a determination
      * @return Whether or not any items are enabled for workflow.
      * @throws org.broadleafcommerce.openadmin.client.service.ServiceException
      * @throws com.gwtincubator.security.exception.ApplicationSecurityException
      */
-    public Boolean getWorkflowEnabled() throws ServiceException, ApplicationSecurityException;
+    public Boolean getWorkflowEnabled(String[] qualifiers) throws ServiceException, ApplicationSecurityException;
     
 }

@@ -18,13 +18,15 @@ package org.broadleafcommerce.openadmin.client.view;
 
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.Progressbar;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.Progress;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class SimpleProgress extends Progressbar {
+public class SimpleProgress extends Progressbar implements Progress {
 	
 	private int barValue;
 	private Timer timer;
@@ -124,4 +126,9 @@ public class SimpleProgress extends Progressbar {
 		}
 		
 	}
+
+    @Override
+    public void setDisplay(ServerProcessProgressWindow window) {
+        //do nothing
+    }
 }

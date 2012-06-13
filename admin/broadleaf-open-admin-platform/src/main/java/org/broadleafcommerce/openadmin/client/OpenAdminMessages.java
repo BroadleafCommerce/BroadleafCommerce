@@ -114,4 +114,8 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String noModulesAuthorized();
     public String noAuthorizedPages();
     public String insufficientPrivileges();
+
+    public String urlStructurePreProcessTitle();
+    public String userSecurityPreProcessTitle();
+    public String workflowEnabledPreProcessTitle();
 }
