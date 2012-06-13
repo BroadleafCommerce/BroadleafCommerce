@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao {
     protected EntityConfiguration entityConfiguration;
 
     public User readUserByUsername(String username) {
-        Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");
+        Query query = em.createNamedQuery("BC_READ_USER_BY_USER_NAME");
         query.setParameter("username", username);
         @SuppressWarnings("unchecked")
 		List<User> users = query.getResultList();
