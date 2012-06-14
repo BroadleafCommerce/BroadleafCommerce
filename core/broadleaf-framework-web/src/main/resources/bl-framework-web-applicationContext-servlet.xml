@@ -13,7 +13,7 @@
 
 	<aop:config/>
 	
-	<bean id="blCartControllerREST" class="org.broadleafcommerce.core.web.controller.order.CartControllerREST">
+	<bean id="blCartControllerREST" class="org.broadleafcommerce.core.web.controller.cart.DefaultCartControllerRest">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="../currentCart.htm"/>

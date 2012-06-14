@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
+import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
@@ -34,6 +35,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,12 +55,19 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
+    
+    @Resource(name = "blNullOrderFactory")
+    protected NullOrderFactory nullOrderFactory;
 
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
 
     public Order createNewCartForCustomer(Customer customer) {
         return orderDao.createNewCartForCustomer(customer);
+    }
+    
+    public Order getNullOrder() {
+    	return nullOrderFactory.getNullOrder();
     }
 
     public Order findCartForCustomer(Customer customer) {

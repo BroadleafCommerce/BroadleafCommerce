@@ -16,16 +16,14 @@
 
 package org.broadleafcommerce.core.web.search;
 
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.lang.ArrayUtils;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Product;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
-import org.apache.commons.lang.ArrayUtils;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.web.catalog.taglib.SearchFilterItemTag;
-import org.broadleafcommerce.core.web.catalog.taglib.SearchFilterTag;
-import org.broadleafcommerce.common.money.Money;
 
 /**
  * SearchFilterUtil exposes a simple static method for filtering out products that do not match the

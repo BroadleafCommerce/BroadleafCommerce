@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.search.domain;
+package org.broadleafcommerce.core.web.controller.account;
 
-public class SearchQuery {
+import org.broadleafcommerce.core.web.controller.BroadleafAbstractController;
 
-	private String queryString;
-	
-	public SearchQuery() { }
-	public SearchQuery(String queryString) {
-		setQueryString(queryString);
-	}
 
-	public String getQueryString() {
-		return queryString;
-	}
+/**
+ * An abstract controller that provides convenience methods and resource declarations for its children. 
+ * 
+ * Operations that are shared between controllers that deal with the cart belong here.
+ * 
+ * @author apazzolini
+ */
+public abstract class AbstractAccountController extends BroadleafAbstractController {
 
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
 }

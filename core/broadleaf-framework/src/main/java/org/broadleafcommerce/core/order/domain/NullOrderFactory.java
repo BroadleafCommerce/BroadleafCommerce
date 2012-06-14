@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.search.domain;
+package org.broadleafcommerce.core.order.domain;
 
-public class SearchQuery {
-
-	private String queryString;
+/**
+ * <p>Generates a shared, static instance of NullOrderImpl.</p>
+ * 
+ * @see org.broadleafcommerce.core.order.domain.NullOrderImpl
+ * @author apazzolini
+ */
+public interface NullOrderFactory {
 	
-	public SearchQuery() { }
-	public SearchQuery(String queryString) {
-		setQueryString(queryString);
-	}
-
-	public String getQueryString() {
-		return queryString;
-	}
-
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
+	public Order getNullOrder();
+	
 }

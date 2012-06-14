@@ -216,7 +216,7 @@ public interface Order extends Serializable {
      * 
      * @return the number of items in the order
      */
-    public Integer getItemCount();
+    public int getItemCount();
 
 
 }

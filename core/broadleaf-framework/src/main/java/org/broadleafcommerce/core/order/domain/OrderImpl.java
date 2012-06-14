@@ -478,7 +478,7 @@ public class OrderImpl implements Order {
     }
 	
 	@Override
-	public Integer getItemCount() {
+	public int getItemCount() {
 		int count = 0;
 		for (DiscreteOrderItem doi : getDiscreteOrderItems()) {
 			count += doi.getQuantity();

@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.controller.order;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.web.order.model.AddToCartItem;
-import org.broadleafcommerce.core.web.order.model.CartSummary;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
+package org.broadleafcommerce.core.web.controller.cart;
 
 
-@Controller("blCartControllerREST")
-@SessionAttributes("cartSummary")
-public class CartControllerREST extends AbstractCartController {
 
+//@Controller("blCartControllerREST")
+//@SessionAttributes("cartSummary")
+public class DefaultCartControllerRest extends DefaultCartController {
+
+	/*
     @RequestMapping(value = "currentCart", method = RequestMethod.GET)
     public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
     	return super.viewCart(model, request);
@@ -62,4 +49,5 @@ public class CartControllerREST extends AbstractCartController {
         cartSummary.setPromoCode(promoCode);
     	return super.addPromoCode(cartSummary, model, request);
     }
+    */
 }

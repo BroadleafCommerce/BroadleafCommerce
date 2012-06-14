@@ -26,8 +26,8 @@ import org.springframework.validation.Validator;
 @Component("blCheckoutFormValidator")
 public class CheckoutFormValidator implements Validator {
 
-    @SuppressWarnings("unchecked")
-    public boolean supports(Class clazz) {
+    @SuppressWarnings("rawtypes")
+	public boolean supports(Class clazz) {
         return clazz.equals(CheckoutForm.class);
     }
 

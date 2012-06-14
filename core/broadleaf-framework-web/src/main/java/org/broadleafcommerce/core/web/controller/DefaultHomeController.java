@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.search.domain;
+package org.broadleafcommerce.core.web.controller;
 
-public class SearchQuery {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-	private String queryString;
+/**
+ * The controller responsible for rendering the home template
+ * 
+ * @author apazzolini
+ */
+public class DefaultHomeController extends BroadleafAbstractController {
 	
-	public SearchQuery() { }
-	public SearchQuery(String queryString) {
-		setQueryString(queryString);
+	public String home(HttpServletRequest request, HttpServletResponse response) {
+		return "index";
 	}
 
-	public String getQueryString() {
-		return queryString;
-	}
-
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
 }

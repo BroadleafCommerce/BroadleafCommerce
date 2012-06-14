@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.search.domain;
+package org.broadleafcommerce.core.order.domain;
 
-public class SearchQuery {
+import org.springframework.stereotype.Service;
 
-	private String queryString;
+/**
+ * @see org.broadleafcommerce.core.order.domain.NullOrderFactory
+ * @author apazzolini
+ */
+@Service("blNullOrderFactory")
+public class NullOrderFactoryImpl implements NullOrderFactory {
 	
-	public SearchQuery() { }
-	public SearchQuery(String queryString) {
-		setQueryString(queryString);
+	protected static final Order NULL_ORDER = new NullOrderImpl();
+
+	@Override
+	public Order getNullOrder() {
+		return NULL_ORDER;
 	}
 
-	public String getQueryString() {
-		return queryString;
-	}
-
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
 }

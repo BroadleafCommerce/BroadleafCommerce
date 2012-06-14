@@ -75,4 +75,9 @@ public interface CartService extends OrderService {
     boolean isDeleteEmptyNamedOrders();
 
     void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
+
+    /**
+     * @return a shared, static, unmodifiable NullOrder
+     */
+	public Order getNullOrder();
 }
