@@ -17,6 +17,9 @@
 package org.broadleafcommerce.core.payment.service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.core.order.domain.Order;
@@ -25,6 +28,7 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponseImpl;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.payment.service.workflow.PaymentSeed;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
@@ -72,6 +76,18 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
 
     public CompositePaymentResponse executePayment(Order order) throws PaymentException {
         return executePayment(order, null);
+    }
+
+    //This convenience method is utilized for those implementations that are not storing secure information (credit card information), such as PayPal and Braintree
+    //It will construct a PaymentInfo based on the implementation of PaymentInfoFactory with an empty Referenced and pass it to the workflow.
+    public CompositePaymentResponse executePaymentForGateway(Order order, PaymentInfoFactory paymentInfoFactory) throws PaymentException {
+        Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+        PaymentInfo paymentInfo = paymentInfoFactory.constructPaymentInfo(order);
+        payments.put(paymentInfo, paymentInfo.createEmptyReferenced());
+
+        order.getPaymentInfos().add(paymentInfo);
+
+        return executePayment(order, payments);
     }
 
     public SequenceProcessor getPaymentWorkflow() {
