@@ -3,7 +3,9 @@ package org.broadleafcommerce.core.web.controller.cart;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.ui.Model;
@@ -52,6 +54,35 @@ public class DefaultCartController extends AbstractCartController {
 			sendRedirect(request, response, "/cart");
 		}
 		
+		return null;
+	}
+	
+	public Map<String, Object> updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
+			Long orderItemId,
+			Integer newQuantity) throws IOException, PricingException, ItemNotFoundException {
+		Customer customer = customerState.getCustomer(request);
+		Order cart = cartService.findCartForCustomer(customer);
+		
+		OrderItem orderItem = null;
+		for (DiscreteOrderItem doi : cart.getDiscreteOrderItems()) {
+			if (doi.getId().equals(orderItemId)) {
+				orderItem = doi;
+			}
+		}
+		
+		orderItem.setQuantity(newQuantity);
+		cartService.updateItemQuantity(cart, orderItem);
+		cart = cartService.save(cart, true);
+		
+		Map<String, Object> responseMap = new HashMap<String, Object>();
+		responseMap.put("cartItemCount", String.valueOf(cart.getItemCount()));
+		
+		if (isAjaxRequest(request)) {
+			return responseMap;
+		} else {
+			sendRedirect(request, response, "/cart");
+		}
+			
 		return null;
 	}
 	
