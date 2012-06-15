@@ -231,25 +231,15 @@ public class SkuImpl implements Sku {
     @BatchSize(size = 50)
     List<ProductOptionValue> productOptionValues;
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getId()
-     */
+    @Override
     public Long getId() {
         return id;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#setId(java.lang.Long)
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isOnSale()
-     */
     @Override
     public boolean isOnSale() {
     	Money retailPrice = getRetailPrice();
@@ -269,10 +259,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getSalePrice()
-     */
+    @Override
     public Money getSalePrice() {
         if (salePrice == null && hasDefaultSku()) {
             return lookupDefaultSku().getSalePrice();
@@ -296,19 +283,12 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setSalePrice(org.broadleafcommerce.util.money.Money)
-     */
+    @Override
     public void setSalePrice(Money salePrice) {
         this.salePrice = Money.toAmount(salePrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getRetailPrice()
-     */
+    @Override
     public Money getRetailPrice() {
         if (retailPrice == null && hasDefaultSku()) {
             return lookupDefaultSku().getRetailPrice();
@@ -331,38 +311,22 @@ public class SkuImpl implements Sku {
         return retailPrice == null ? null : new Money(retailPrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setRetailPrice(org.broadleafcommerce
-     * .util.money.Money)
-     */
+    @Override
     public void setRetailPrice(Money retailPrice) {
         this.retailPrice = Money.toAmount(retailPrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getListPrice()
-     */
+    @Override
     public Money getListPrice() {
         return getRetailPrice();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setListPrice(org.broadleafcommerce
-     * .util.money.Money)
-     */
+    @Override
     public void setListPrice(Money listPrice) {
         this.retailPrice = Money.toAmount(listPrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getName()
-     */
+    @Override
     public String getName() {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
@@ -370,18 +334,12 @@ public class SkuImpl implements Sku {
         return name;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#setName(java.lang.String)
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getDescription()
-     */
+    @Override
     public String getDescription() {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
@@ -389,19 +347,12 @@ public class SkuImpl implements Sku {
         return description;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setDescription(java.lang.String)
-     */
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getLongDescription()
-     */
+    @Override
     public String getLongDescription() {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
@@ -409,20 +360,12 @@ public class SkuImpl implements Sku {
         return longDescription;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setLongDescription(java.lang
-     * .String)
-     */
+    @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isTaxable()
-     */
+    @Override
     public Boolean isTaxable() {
         if (taxable == null) {
             if (hasDefaultSku()) {
@@ -433,18 +376,12 @@ public class SkuImpl implements Sku {
         return taxable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    /*
-     * This is to facilitate serialization to non-Java clients
-     */
+    @Override
     public Boolean getTaxable() {
         return isTaxable();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setTaxable(java.lang.Boolean)
-     */
+    @Override
     public void setTaxable(Boolean taxable) {
         if (taxable == null) {
             this.taxable = null;
@@ -453,10 +390,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isDiscountable()
-     */
+    @Override
     public Boolean isDiscountable() {
         if (discountable == null) {
             if (hasDefaultSku()) {
@@ -474,11 +408,7 @@ public class SkuImpl implements Sku {
         return isDiscountable();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setDiscountable(java.lang.Boolean)
-     */
+    @Override
     public void setDiscountable(Boolean discountable) {
         if (discountable == null) {
             this.discountable = null;
@@ -487,10 +417,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isAvailable()
-     */
+    @Override
     public Boolean isAvailable() {
         if (available == null) {
             if (hasDefaultSku()) {
@@ -501,15 +428,12 @@ public class SkuImpl implements Sku {
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
+    @Override
     public Boolean getAvailable() {
     	return isAvailable();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setAvailable(java.lang.Boolean)
-     */
+    @Override
     public void setAvailable(Boolean available) {
         if (available == null) {
             this.available = null;
@@ -518,10 +442,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveStartDate()
-     */
+    @Override
     public Date getActiveStartDate() {
         if (activeStartDate == null && hasDefaultSku()) {
             return lookupDefaultSku().getActiveStartDate();
@@ -530,20 +451,12 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setActiveStartDate(java.util
-     * .Date)
-     */
+    @Override
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveEndDate()
-     */
+    @Override
     public Date getActiveEndDate() {
         if (activeEndDate == null && hasDefaultSku()) {
             return lookupDefaultSku().getActiveEndDate();
@@ -552,15 +465,12 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setActiveEndDate(java.util.Date)
-     */
+    @Override
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
+    @Override
     public Dimension getDimension() {
         if (dimension == null && hasDefaultSku()) {
             return lookupDefaultSku().getDimension();
@@ -569,10 +479,12 @@ public class SkuImpl implements Sku {
         }
     }
 
+    @Override
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
+    @Override
     public Weight getWeight() {
         if (weight == null && hasDefaultSku()) {
             return lookupDefaultSku().getWeight();
@@ -581,14 +493,12 @@ public class SkuImpl implements Sku {
         }
     }
 
+    @Override
     public void setWeight(Weight weight) {
         this.weight = weight;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isActive()
-     */
+    @Override
     public boolean isActive() {
     	if (activeStartDate == null && activeEndDate == null && hasDefaultSku()) {
     		return lookupDefaultSku().isActive();
@@ -601,6 +511,7 @@ public class SkuImpl implements Sku {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
+    @Override
     public boolean isActive(Product product, Category category) {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
@@ -613,40 +524,26 @@ public class SkuImpl implements Sku {
         }
         return this.isActive() && product.isActive() && category.isActive();
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getSkuImages()
-     */
+
+    @Override
     @Deprecated
     public Map<String, String> getSkuImages() {
         return skuImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#getSkuImage(java.lang.String)
-     */
+    @Override
     @Deprecated
     public String getSkuImage(String imageKey) {
         return skuImages.get(imageKey);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#setSkuImages(java.util.Map)
-     */
+    @Override
     @Deprecated
     public void setSkuImages(Map<String, String> skuImages) {
         this.skuImages = skuImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#getSkuMedia()
-     */
+    @Override
     public Map<String, Media> getSkuMedia() {
         if (skuMedia == null || skuMedia.isEmpty()) {
             if (hasDefaultSku()) {
@@ -656,26 +553,32 @@ public class SkuImpl implements Sku {
         return skuMedia;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#getSkuImage(java.util.Map)
-     */
+    @Override
     public void setSkuMedia(Map<String, Media> skuMedia) {
         this.skuMedia = skuMedia;
     }
 
+    @Override
     public Product getDefaultProduct() {
         return defaultProduct;
     }
 
+    @Override
     public void setDefaultProduct(Product defaultProduct) {
         this.defaultProduct = defaultProduct;
     }
+    
+    @Override
+    public Product getProduct() {
+        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product;
+    }
 
-    /**
-	 * @return the skuAttributes
-	 */
+    @Override
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+    
+    @Override
 	public List<SkuAttribute> getSkuAttributes() {
 		return skuAttributes;
 	}
@@ -690,13 +593,12 @@ public class SkuImpl implements Sku {
         this.productOptionValues = productOptionValues;
     }
 
-	/**
-	 * @param skuAttributes the skuAttributes to set
-	 */
+    @Override
 	public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
 		this.skuAttributes = skuAttributes;
 	}
-	
+
+    @Override
     public Boolean isMachineSortable() {
     	 if (isMachineSortable == null && hasDefaultSku()) {
              return lookupDefaultSku().isMachineSortable();
@@ -704,6 +606,7 @@ public class SkuImpl implements Sku {
         return isMachineSortable;
     }
 
+    @Override
     public void setMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
     }	
@@ -737,4 +640,5 @@ public class SkuImpl implements Sku {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
     }
+    
 }
