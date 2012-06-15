@@ -230,6 +230,10 @@
             <artifactId>spring-security-taglibs</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+        </dependency>
+        <dependency>
             <groupId>opensymphony</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
