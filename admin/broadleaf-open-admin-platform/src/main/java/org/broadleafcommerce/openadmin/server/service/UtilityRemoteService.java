@@ -48,8 +48,8 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    //@Resource(name="blDynamicEntityDao")
-    //protected DynamicEntityDao dynamicEntityDao;
+    @Resource(name="blDynamicEntityDao")
+    protected DynamicEntityDao dynamicEntityDao;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -97,7 +97,7 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     @Override
     public void initializeEJB3Configuration() throws ServiceException, ApplicationSecurityException {
-      //  dynamicEntityDao.getPersistentClass(AdminUser.class.getName());
+        dynamicEntityDao.getPersistentClass(AdminUser.class.getName());
     }
 
 }

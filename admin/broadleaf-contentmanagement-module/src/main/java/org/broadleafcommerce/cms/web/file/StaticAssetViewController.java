@@ -16,20 +16,21 @@
 
 package org.broadleafcommerce.cms.web.file;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
+import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by jfischer
@@ -45,8 +46,8 @@ public class StaticAssetViewController extends AbstractController {
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
 
-    @Resource(name="blSandBoxService")
-    protected SandBoxService sandBoxService;
+    @Resource(name="blSandBoxDao")
+    protected SandBoxDao sandBoxDao;
 
     protected Map<String, String> convertParameterMap(Map<String, String[]> parameterMap) {
         Map<String, String> convertedMap = new LinkedHashMap<String, String>(parameterMap.size());
@@ -80,7 +81,7 @@ public class StaticAssetViewController extends AbstractController {
            }
            SandBox sandBox = null;
            if (sandBoxId != null) {
-               sandBox = sandBoxService.retrieveSandboxById(sandBoxId);
+               sandBox = sandBoxDao.retrieve(sandBoxId);
            }
            Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, sandBox, convertParameterMap(request.getParameterMap()));
     

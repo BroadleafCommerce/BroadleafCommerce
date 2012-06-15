@@ -7,13 +7,16 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>
-    <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
+    <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>    
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.server.dao"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.server.service.artifact">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
+    </context:component-scan>
     
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
     
     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-		<property name="entityContexts">
+		<property name="entityContexts"> 
 			<list>
 				<value>classpath:bl-open-admin-applicationContext-entity.xml</value>
 			</list>

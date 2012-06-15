@@ -60,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
+ * formally component name "blProcessURLFilter"
  * 
  * This filter sets up the CMS system by setting the current sandbox, locale, time of day, and languageCode
  * that used by content items.
@@ -75,7 +76,6 @@ import java.util.concurrent.TimeUnit;
  *
  * @author bpolster
  */
-@Component("blProcessURLFilter")
 public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private final Log LOG = LogFactory.getLog(BroadleafProcessURLFilter.class);
 
