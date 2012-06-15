@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.page.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AbstractContentService;
@@ -28,23 +29,25 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.dto.NullPageDTO;
 import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +79,8 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     protected Cache pageCache;
 
     protected List<ArchivedPagePublisher> archivedPageListeners;
+    
+    private PageDTO NULL_PAGE = new NullPageDTO();
 
     /**
      * Returns the page with the passed in id.
@@ -341,12 +346,20 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("No match found for passed in URI, locale, and sandbox.  Key = " + key);
                     }
+                    addPageToCache(NULL_PAGE, key);
                     productionPageDTO = null;
                 }
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Production page found in cache.  Key = " + key);
-                }                
+            	if (productionPageDTO instanceof NullPageDTO) {
+            		productionPageDTO = null;
+            		if (LOG.isTraceEnabled()) {
+	                    LOG.trace("Null production page found in cache for key = " + key);
+	                }
+            	} else {
+	                if (LOG.isTraceEnabled()) {
+	                    LOG.trace("Production page found in cache for key = " + key);
+	                }
+            	}
             }
             
             // If the request is from a non-production SandBox, we need to check to see if the SandBox has an override 

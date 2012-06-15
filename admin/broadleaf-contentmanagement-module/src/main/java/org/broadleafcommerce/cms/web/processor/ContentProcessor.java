@@ -28,12 +28,12 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.cms.web.BroadleafProcessURLFilter;
-import org.broadleafcommerce.cms.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
@@ -123,16 +123,16 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 		initServices(arguments);
 				
 		IWebContext context = (IWebContext) arguments.getContext();		
-		HttpServletRequest request = context.getHttpServletRequest();		
+		HttpServletRequest request = context.getHttpServletRequest();	
+		BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
 		
         Map<String, Object> mvelParameters = buildMvelParameters(request);
-        SandBox currentSandbox = (SandBox) request.getAttribute(BroadleafProcessURLFilter.SANDBOX_VAR);
+        SandBox currentSandbox = blcContext.getSandbox();
 
         List<StructuredContentDTO> contentItems;
         StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
-        assert(contentName != null && !"".equals(contentName) && structuredContentType != null);
 
-        Locale locale = (Locale) request.getAttribute(BroadleafProcessURLFilter.LOCALE_VAR);
+        Locale locale = blcContext.getLocale();
 	        
 
         if (structuredContentType == null) {

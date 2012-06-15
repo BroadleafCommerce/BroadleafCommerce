@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -29,6 +30,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
+ * @deprecated.   Should now use PageHandlerMapping
  * Based on the passed in request, this processor determines if a CMS managed page exists
  * that matches the passed in URL.
  *

@@ -52,8 +52,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Controller
-@RequestMapping("/store")
+/**
+ * CatalogController can be used to direct to category or product pages based on the urlKey of the category.
+ * 
+ * The approach used for Category SEOs and Breadcrumbs may not be performant for large catalogs.   This 
+ * approach is being deprecated in favor of the one used by CategoryHandlerMapping and CategoryController.
+ * 
+ * @author bpolster
+ * @see org.broadleafcommerce.core.web.ProductHandlerMapping
+ * @see org.broadleafcommerce.core.web.CategoryHandlerMapping
+ * @see org.broadleafcommerce.core.web.ProductController
+ * @see org.broadleafcommerce.core.web.CategoryController
+ */
+@Deprecated
 public class CatalogController {
 
 	//TODO Instead of mixing and matching - we should prob be autowiring all the dependencies for this controller.
@@ -71,7 +82,6 @@ public class CatalogController {
     private String rootCategoryName;
     private String categoryTemplatePrefix;
 
-    @RequestMapping(method =  {RequestMethod.GET})
     public String viewCatalog(ModelMap model, HttpServletRequest request) {
         return showCatalog(model, request, null);
     }
@@ -133,7 +143,6 @@ public class CatalogController {
         return view;
     }
 
-    @RequestMapping(method =  {RequestMethod.POST})
     public String sortCatalog (ModelMap model, HttpServletRequest request, @ModelAttribute CatalogSort catalogSort) {
         return showCatalog(model, request, catalogSort);
     }

@@ -25,7 +25,7 @@ import javax.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
 
-import org.broadleafcommerce.cms.url.URLHandler;
+import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;

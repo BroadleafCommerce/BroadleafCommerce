@@ -286,14 +286,14 @@ public abstract class AbstractCartController {
         return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
 
-    @RequestMapping(params="checkout", method = RequestMethod.POST)
+    @RequestMapping(value = "/checkout.htm", params="checkout", method = RequestMethod.POST)
     public String checkout(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
         updateFulfillmentGroups(cartSummary, currentCartOrder);
         return "redirect:/checkout/checkout.htm";
     }
 
-    @RequestMapping(params="updateShipping=performUpdate", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateShipping.htm", params="updateShipping=performUpdate", method = RequestMethod.POST)
     public String updateShipping (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
         cartSummary = createFulfillmentGroup(cartSummary, cartSummary.getFulfillmentGroup().getMethod(), cartSummary.getFulfillmentGroup().getService(), currentCartOrder);

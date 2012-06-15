@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.url;
+package org.broadleafcommerce.cms.url.dao;
 
 import java.util.List;
 
@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -40,7 +41,7 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
 
 
 	@Override
-	public URLHandler findPageByURI(String uri) {
+	public URLHandler findURLHandlerByURI(String uri) {
 		
 		
 			Query query;

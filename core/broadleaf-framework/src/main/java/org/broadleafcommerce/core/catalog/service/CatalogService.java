@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -142,5 +144,23 @@ public interface CatalogService {
     public ProductOption findProductOptionById(Long productOptionId);
     
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId);
+    
+    /**
+     * Returns a category associated with the passed in URI or null if no Category is
+     * mapped to this URI.
+     * 
+     * @param uri
+     * @return
+     */
+    public Category findCategoryByURI(String uri);
+    
+    /**
+     * Returns a product associated with the passed in URI or null if no Product is
+     * mapped to this URI.
+     * 
+     * @param uri
+     * @return
+     */    
+    public Product findProductByURI(String uri);
     
 }

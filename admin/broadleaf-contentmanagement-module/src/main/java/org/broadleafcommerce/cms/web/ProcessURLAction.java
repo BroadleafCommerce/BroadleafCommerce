@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.web;
 
 /**
+ * @deprecated in favor of Spring MVC mechanisms (@see PageHandlerMapping)
  * Enum that indicates the action to take when processing a URL.
  * <ul>
  *     <li>PAGE - indicates that the URL will be handled as a CMS managed page</li>

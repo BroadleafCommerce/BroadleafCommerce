@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.web;
+package org.broadleafcommerce.common.web;
 
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class BroadleafRequestContext {
     private HttpServletResponse response;
     private SandBox sandbox;
     private Locale locale;
-    private String requestURIWithoutContext;
+    private Site site;
 
     public HttpServletRequest getRequest() {
         return request;
@@ -58,7 +59,15 @@ public class BroadleafRequestContext {
         this.response = response;
     }
 
-    public SandBox getSandbox() {
+    public Site getSite() {
+		return site;
+	}
+
+	public void setSite(Site site) {
+		this.site = site;
+	}
+
+	public SandBox getSandbox() {
         return sandbox;
     }
 
@@ -75,11 +84,11 @@ public class BroadleafRequestContext {
     }
 
     public String getRequestURIWithoutContext() {
-        return requestURIWithoutContext;
-    }
-
-    public void setRequestURIWithoutContext(String requestURIWithoutContext) {
-        this.requestURIWithoutContext = requestURIWithoutContext;
+    	if (request.getContextPath() != null) {
+    		return request.getRequestURI().substring(request.getContextPath().length());
+    	} else {
+    		return request.getRequestURI();
+    	}
     }
     
     public boolean isSecure() {
