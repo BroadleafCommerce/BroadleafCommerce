@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.controller;
+package org.broadleafcommerce.common.web.controller;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,32 +32,6 @@ import java.io.IOException;
  */
 public abstract class BroadleafAbstractController {
 	
-    @Resource(name="blCartService")
-    protected CartService cartService;
-    
-    @Resource(name="blCustomerState")
-    protected CustomerState customerState;
-    
-    /**
-     * This will ensure that the cart for the current customer (or a shared, empty cart if the customer has
-     * not yet added anything) is on the model for every controller that extends this controller.
-     * 
-     * @param request
-     * @return The cart (potentially a shared, "null" cart) for the current customer
-     */
-    @ModelAttribute(value = "cart")
-    protected Order getCart(HttpServletRequest request) {
-    	Customer customer = customerState.getCustomer(request);
-    	Order cart = cartService.findCartForCustomer(customer);
-    	
-    	// FIXME: This should create a "NULL" cart instead
-    	if (cart == null) { 
-    		cart = cartService.getNullOrder();
-    	}
-    	
-    	return cart;
-    }
-    
 	/**
 	 * A helper method that takes care of concatenating the current request context
 	 * to the desired path to forward the user to

@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.controller.BroadleafAbstractController;
 
 import javax.annotation.Resource;
 

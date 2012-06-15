@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.controller.account;
+package org.broadleafcommerce.core.web.order;
 
-import org.broadleafcommerce.core.web.controller.BroadleafAbstractController;
-import org.springframework.ui.Model;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.web.order.security.CartStateFilter;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-/**
- * The controller responsible for registering a customer
- * 
- * @author apazzolini
- */
-public class DefaultRegisterController extends BroadleafAbstractController {
-	
-	public String register(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender("register", request, model);
-	}
+@Component("blCartState")
+public class CartState {
+
+    public static Order getCart(HttpServletRequest request) {
+        return (Order) request.getAttribute(CartStateFilter.getCartRequestAttributeName());
+    }
 
 }

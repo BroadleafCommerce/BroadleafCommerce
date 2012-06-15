@@ -16,16 +16,6 @@
 
 package org.broadleafcommerce.core.web.order.security;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -35,6 +25,16 @@ import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("blCartStateFilter")
 /**
@@ -68,7 +68,7 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 		   	Order cart = cartService.findCartForCustomer(customer);
 	    	
 	    	if (cart == null) { 
-	    		cart = cartService.createNewCartForCustomer(customer);
+	    		cart = cartService.getNullOrder();
 	    	}
 
 	    	request.setAttribute(cartRequestAttributeName, cart);

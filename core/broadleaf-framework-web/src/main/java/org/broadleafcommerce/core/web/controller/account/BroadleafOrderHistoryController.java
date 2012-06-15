@@ -18,16 +18,17 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-public class DefaultOrderHistoryController extends AbstractAccountController {
+public class BroadleafOrderHistoryController extends AbstractAccountController {
 
     public String viewOrderHistory(Model model, HttpServletRequest request) {
-        List<Order> orders = cartService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.SUBMITTED);
+        List<Order> orders = cartService.findOrdersForCustomer(CustomerState.getCustomer(request), OrderStatus.SUBMITTED);
         model.addAttribute("orderList", orders);
         return "orderHistory";
     }

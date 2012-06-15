@@ -16,12 +16,17 @@
 
 package org.broadleafcommerce.profile.web.core;
 
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
+@Component("blCustomerState")
+public class CustomerState {
 
-public interface CustomerState {
-
-	public Customer getCustomer(HttpServletRequest request);
+    public static Customer getCustomer(HttpServletRequest request) {
+        return (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
+    }
 
 }

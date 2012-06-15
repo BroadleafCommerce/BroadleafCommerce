@@ -68,6 +68,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import javax.annotation.Resource;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -440,10 +441,16 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getOrderItems().contains(item)) {
             throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
         }
-        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
-        itemFromOrder.setQuantity(item.getQuantity());
-        order = updateOrder(order, priceOrder);
-
+        
+        if (item.getQuantity() == 0) {
+        	removeItemFromOrder(order, item);
+        } else if (item.getQuantity() < 0) {
+        	throw new IllegalArgumentException("Quantity cannot be negative");
+        } else {
+	        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
+	        itemFromOrder.setQuantity(item.getQuantity());
+	        order = updateOrder(order, priceOrder);
+        } 
     }
 
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
@@ -1055,6 +1062,10 @@ public class OrderServiceImpl implements OrderService {
             LOG.debug("Not adding item to order because quantity is zero.");
             return null;
         }
+        
+    	if (orderItemRequestDTO.getQuantity() < 0) {
+    		throw new IllegalArgumentException("Quantity cannot be negative");
+    	}
 
         Order order = validateOrder(orderId);
         Product product = validateProduct(orderItemRequestDTO.getProductId());

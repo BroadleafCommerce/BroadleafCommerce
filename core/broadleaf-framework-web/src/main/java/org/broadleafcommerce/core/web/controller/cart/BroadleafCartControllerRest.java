@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.web.controller.cart;
 
 //@Controller("blCartControllerREST")
 //@SessionAttributes("cartSummary")
-public class DefaultCartControllerRest extends DefaultCartController {
+public class BroadleafCartControllerRest extends BroadleafCartController {
 
 	/*
     @RequestMapping(value = "currentCart", method = RequestMethod.GET)

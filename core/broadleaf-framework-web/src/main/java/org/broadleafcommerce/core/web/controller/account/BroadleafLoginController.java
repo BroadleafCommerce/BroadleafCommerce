@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.controller;
+package org.broadleafcommerce.core.web.controller.account;
+
+import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The controller responsible for rendering the home template
+ * The controller responsible for all actions involving logging a customer in
  * 
  * @author apazzolini
  */
-public class DefaultHomeController extends BroadleafAbstractController {
+public class BroadleafLoginController extends BroadleafAbstractController {
 	
-	public String home(HttpServletRequest request, HttpServletResponse response) {
-		return "index";
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+		return ajaxRender("login", request, model);
 	}
 
 }

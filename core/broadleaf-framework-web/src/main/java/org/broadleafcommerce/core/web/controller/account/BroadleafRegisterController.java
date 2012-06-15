@@ -16,21 +16,21 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.broadleafcommerce.core.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The controller responsible for all actions involving logging a customer in
+ * The controller responsible for registering a customer
  * 
  * @author apazzolini
  */
-public class DefaultLoginController extends BroadleafAbstractController {
+public class BroadleafRegisterController extends BroadleafAbstractController {
 	
-	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender("login", request, model);
+	public String register(HttpServletRequest request, HttpServletResponse response, Model model) {
+		return ajaxRender("register", request, model);
 	}
 
 }

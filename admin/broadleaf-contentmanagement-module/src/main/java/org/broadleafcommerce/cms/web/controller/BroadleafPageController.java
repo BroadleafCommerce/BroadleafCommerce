@@ -1,11 +1,13 @@
-package org.broadleafcommerce.cms.web;
+package org.broadleafcommerce.cms.web.controller;
+
+import org.broadleafcommerce.cms.page.dto.PageDTO;
+import org.broadleafcommerce.cms.web.PageHandlerMapping;
+import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.broadleafcommerce.cms.page.dto.PageDTO;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * This class works in combination with the PageHandlerMapping which finds a page based upon
@@ -13,13 +15,11 @@ import org.springframework.web.servlet.mvc.Controller;
  *
  * @author bpolster
  */
-public class PageController implements Controller {	
-    private static String MODEL_ATTRIBUTE_NAME="page";    
+public class BroadleafPageController extends BroadleafAbstractController implements Controller {	
+    protected static String MODEL_ATTRIBUTE_NAME="page";    
 
 	@Override
-	public ModelAndView handleRequest(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView model = new ModelAndView();
 		PageDTO page = (PageDTO) request.getAttribute(PageHandlerMapping.PAGE_ATTRIBUTE_NAME);
 		assert page != null;

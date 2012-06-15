@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Handles searching the catalog for a given search term.
  */
-public class DefaultSearchController extends AbstractCatalogController {
+public class BroadleafSearchController extends AbstractCatalogController {
 
 	@Resource(name = "blSearchService")
     protected SearchService searchService;

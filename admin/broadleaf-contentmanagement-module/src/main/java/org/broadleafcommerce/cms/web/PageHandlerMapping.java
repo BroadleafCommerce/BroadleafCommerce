@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.cms.web.controller.BroadleafPageController;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
@@ -19,7 +20,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
  * @author bpolster
  * @since 2.0
  * @see org.broadleafcommerce.cms.page.domain.Page
- * @see PageController
+ * @see BroadleafPageController
  */
 public class PageHandlerMapping extends BLCAbstractHandlerMapping {
 	
