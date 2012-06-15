@@ -193,11 +193,8 @@ public interface ProductDao {
      * Look up a product that matches the given URI
      * 
      * @param uri - the relative URL to look up the Product by
-     * @return A single Product that matches the given URI. In the case where multiple
-     * Products match the given URI key, this returns the first Product in the list. If no
-     * matches are found, return null
+     * @return List of products that match the passed in URI.
      * 
      */
-	public Product findProductByURI(String uri);
-
+	List<Product> findProductByURI(String key);
 }

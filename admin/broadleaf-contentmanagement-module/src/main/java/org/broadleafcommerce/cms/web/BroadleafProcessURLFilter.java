@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
+ * 
  * This filter sets up the CMS system by setting the current sandbox, locale, time of day, and languageCode
  * that used by content items.
  * <p/>

@@ -21,6 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.client.service.UtilityService;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -45,6 +47,9 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
+
+    //@Resource(name="blDynamicEntityDao")
+    //protected DynamicEntityDao dynamicEntityDao;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -88,6 +93,11 @@ public class UtilityRemoteService implements ApplicationContextAware, UtilitySer
     @Override
     public Boolean getWorkflowEnabled(String[] qualifiers) throws ServiceException, ApplicationSecurityException {
         return false;
+    }
+
+    @Override
+    public void initializeEJB3Configuration() throws ServiceException, ApplicationSecurityException {
+      //  dynamicEntityDao.getPersistentClass(AdminUser.class.getName());
     }
 
 }

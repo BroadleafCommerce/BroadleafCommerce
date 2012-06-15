@@ -292,12 +292,58 @@ public interface Product extends Serializable {
 
     public void setProductOptions(List<ProductOption> productOptions);
 
+    /**
+     * A product can have a designated URL.   When set, the ProductHandlerMapping will check for this
+     * URL and forward this user to the {@link #getDisplayTemplate()}. 
+     * 
+     * Alternatively, most sites will rely on the {@link Product#getGeneratedUrl()} to define the
+     * url for a product page. 
+     * 
+     * @see org.broadleafcommerce.core.web.catalog.ProductHandlerMapping
+     * @return
+     */
 	String getUrl();
 
+	/**
+	 * Sets the URL that a customer could type in to reach this product.
+	 * 
+	 * @param url
+	 */
 	void setUrl(String url);
+	
+	/**
+	 * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
+	 * this product by taking the {@link Product.getName()} and removing special characters and replacing
+	 * dashes with spaces.
+	 */	
+	String getUrlKey();
 
+	/**
+	 * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a 
+	 * unique url-fragment for this product by taking the {@link Product.getName()} and removing special characters and replacing
+	 * dashes with spaces.
+	 */
+	void setUrlKey(String url);
+
+	/**
+	 * Returns the name of a display template that is used to render this product.   Most implementations have a default
+	 * template for all products.    This allows for the user to define a specific template to be used by this product.
+	 * 
+	 * @return
+	 */
 	String getDisplayTemplate();
 
+	/**
+	 * Sets the name of a display template that is used to render this product.   Most implementations have a default
+	 * template for all products.    This allows for the user to define a specific template to be used by this product.
+	 * @param displayTemplate
+	 */
 	void setDisplayTemplate(String displayTemplate);
+	
+	/**
+	 * Generates a URL that can be used to access the product.  
+	 * Builds the url by combining the url of the default category with the getUrlKey() of this product.
+	 */
+	String getGeneratedUrl();
 
 }

@@ -100,5 +100,12 @@ public interface UtilityService extends RemoteService {
      * @throws com.gwtincubator.security.exception.ApplicationSecurityException
      */
     public Boolean getWorkflowEnabled(String[] qualifiers) throws ServiceException, ApplicationSecurityException;
+
+    /**
+     * Initizialize Hibernate EJB3Configuration. This is a one-time cost.
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    public void initializeEJB3Configuration() throws ServiceException, ApplicationSecurityException;
     
 }

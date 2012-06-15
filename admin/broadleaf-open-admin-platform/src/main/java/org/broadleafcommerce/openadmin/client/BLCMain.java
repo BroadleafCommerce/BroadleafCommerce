@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.callback.PostLaunch;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.setup.AppController;
+import org.broadleafcommerce.openadmin.client.setup.EJB3ConfigurationPreProcessor;
 import org.broadleafcommerce.openadmin.client.setup.PreProcessStatus;
 import org.broadleafcommerce.openadmin.client.setup.PreProcessor;
 import org.broadleafcommerce.openadmin.client.setup.UrlStructurePreProcessor;
@@ -240,6 +241,7 @@ public class BLCMain implements EntryPoint {
 
         addPreProcessor(new UrlStructurePreProcessor());
         addPreProcessor(new UserSecurityPreProcessor());
+        addPreProcessor(new EJB3ConfigurationPreProcessor());
         addPreProcessor(new WorkflowEnabledPreProcessor());
 	}
 

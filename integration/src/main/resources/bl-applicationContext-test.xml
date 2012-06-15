@@ -10,8 +10,10 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
+	<context:component-scan base-package="org.broadleafcommerce.common.web"/>
+	<context:component-scan base-package="org.broadleafcommerce.core.web"/>	
 	<context:component-scan base-package="org.broadleafcommerce.profile.web"/>
-	<context:component-scan base-package="org.broadleafcommerce.core.web"/>
+
 
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">

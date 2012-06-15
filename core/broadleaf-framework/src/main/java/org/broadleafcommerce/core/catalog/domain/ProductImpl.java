@@ -125,8 +125,12 @@ public class ProductImpl implements Product {
     protected String name;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=2, group = "ProductImpl_Product_Description")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO")
     protected String url;
+    
+    @Column(name = "URL_KEY")
+    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO")
+    protected String urlKey;
     
  
 	/** The description. */
@@ -582,7 +586,11 @@ public class ProductImpl implements Product {
     }
     @Override
     public String getUrl() {
-		return url;
+    	if (url == null) {
+    		return getGeneratedUrl();
+    	} else {
+    		return url;
+    	}
 	}
     @Override
 	public void setUrl(String url) {
@@ -632,5 +640,37 @@ public class ProductImpl implements Product {
             return false;
         return true;
     }
+
+	@Override
+	public String getUrlKey() {
+		if (urlKey != null) {
+			return urlKey;
+		} else {
+			if (getName() != null) {
+				String returnKey = getName().toLowerCase();
+				returnKey = returnKey.replaceAll(" ","-");
+				return returnKey.replaceAll("[^A-Za-z0-9/-]", "");
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setUrlKey(String urlKey) {
+		this.urlKey = urlKey;
+	}
+
+	@Override
+	public String getGeneratedUrl() {		
+		if (getDefaultCategory() != null && getDefaultCategory().getGeneratedUrl() != null) {
+			String generatedUrl = getDefaultCategory().getGeneratedUrl();
+			if (generatedUrl.endsWith("//")) {
+				return generatedUrl + getUrlKey();
+			} else {
+				return generatedUrl + "//" + getUrlKey();
+			}						
+		}
+		return null;
+	}
 
 }

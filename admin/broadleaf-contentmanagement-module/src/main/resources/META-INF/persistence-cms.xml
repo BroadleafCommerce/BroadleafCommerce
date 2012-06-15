@@ -27,7 +27,7 @@
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.CriteriaStructuredContentXref</class>
-        <class>org.broadleafcommerce.cms.url.URLHandlerImpl</class>
+        <class>org.broadleafcommerce.cms.url.domain.URLHandlerImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

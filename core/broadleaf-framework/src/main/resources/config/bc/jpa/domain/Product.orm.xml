@@ -63,7 +63,7 @@
 		<query>SELECT product
                FROM org.broadleafcommerce.core.catalog.domain.Product product
                WHERE
-                 product.url = :url 
+                 (product.url = :url) OR (product.urlKey = :urlKey) 
 		</query>
 	</named-query>
 	

@@ -127,7 +127,7 @@ public interface Category extends Serializable {
      * Gets the url key. The url key is used as part of SEO url generation for this
      * category. Each segment of the url leading to a category is comprised of the url
      * keys of the various associated categories in a hierarchy leading to this one. If
-     * the url key is null, the the name for the category is returned.
+     * the url key is null, the the name for the category formatted with dashes for spaces.
      * 
      * @return the url key for this category to appear in the SEO url
      */

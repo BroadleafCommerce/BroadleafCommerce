@@ -6,7 +6,7 @@
 
     <named-query name="BC_READ_OUTGOING_URL" >
 		<query>SELECT page
-               FROM org.broadleafcommerce.cms.url.URLHandlerImpl page
+               FROM org.broadleafcommerce.cms.url.domain.URLHandlerImpl page
                WHERE
                  page.incomingURL = :incomingURL 
 		</query>

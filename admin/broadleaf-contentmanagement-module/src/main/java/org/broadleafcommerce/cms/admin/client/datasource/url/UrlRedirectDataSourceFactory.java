@@ -15,7 +15,7 @@ public class UrlRedirectDataSourceFactory extends SimpleDataSourceFactory{
 
     public UrlRedirectDataSourceFactory()  {
         // For non-BLC this would be super("AdminPermissionImpl")
-        super("org.broadleafcommerce.cms.url.URLHandlerImpl");
+        super("org.broadleafcommerce.cms.url.domain.URLHandlerImpl");
     }
 
     public PersistencePerspective setupPersistencePerspective(PersistencePerspective persistencePerspective) {

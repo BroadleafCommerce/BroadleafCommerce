@@ -20,6 +20,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
+ * @deprecated
+ * 
  * This interface is intended for use by processors that will determine whether a given URL
  * requires special treatment.
  *

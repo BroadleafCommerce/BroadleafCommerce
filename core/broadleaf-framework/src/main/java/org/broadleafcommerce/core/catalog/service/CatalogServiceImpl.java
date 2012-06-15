@@ -221,5 +221,37 @@ public class CatalogServiceImpl implements CatalogService {
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId) {
         return productOptionDao.readProductOptionValueById(productOptionValueId);
     }
+
+	@Override
+	public Category findCategoryByURI(String uri) {
+		return categoryDao.findCategoryByURI(uri);
+	}
+
+	@Override
+	public Product findProductByURI(String uri) {
+		List<Product> products = productDao.findProductByURI(uri);
+		if (products == null || products.size() == 0) {
+			return null;
+		} else if (products.size() == 1) {
+			return products.get(0);
+		} else {
+			// First check for a direct hit on the url
+			for(Product product : products) {
+				if (uri.equals(product.getUrl())) {
+					return product;
+				}
+			}
+			
+			for(Product product : products) {
+				// Next check for a direct hit on the generated URL.
+				if (uri.equals(product.getGeneratedUrl())) {
+					return product;
+				}
+			}
+			
+			// Otherwise, return the first product
+			return products.get(0);
+		}
+	}
     
 }

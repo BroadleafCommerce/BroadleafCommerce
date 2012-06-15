@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.url;
+package org.broadleafcommerce.cms.url.service;
+
+import org.broadleafcommerce.cms.url.domain.URLHandler;
 
 
 /**
- * Created by ppatel.
+ * Created by bpolster.
  */
-public interface URLHandlerDao {
+public interface URLHandlerService {
 
-
-    public URLHandler findPageByURI(String uri);
+	/**
+	 * Checks the passed in URL to determine if there is a matching URLHandler.
+	 * Returns null if no handler was found.
+	 * 
+	 * @param uri
+	 * @return
+	 */
+    public URLHandler findURLHandlerByURI(String uri);
 
 }

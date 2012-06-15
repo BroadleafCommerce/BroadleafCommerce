@@ -34,4 +34,6 @@ public interface UtilityServiceAsync {
     void getAllItems(AsyncCallback<String[]> cb);
 
     void getWorkflowEnabled(String[] qualifiers, AsyncCallback<Boolean> cb);
+
+    void initializeEJB3Configuration(AsyncCallback<Void> async);
 }

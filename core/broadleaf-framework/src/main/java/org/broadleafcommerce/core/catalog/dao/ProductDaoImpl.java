@@ -226,23 +226,7 @@ public class ProductDaoImpl implements ProductDao {
         query.setParameter("autoBundle", Boolean.TRUE);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
-    }
-    
-    @Override
-    public Product findProductByURI(String uri) {
-        Query query;
-    
-        query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
-        query.setParameter("url", uri);
-    
-        @SuppressWarnings("unchecked")
-        List<Product> results = (List<Product>) query.getResultList();
-        if (results != null && !results.isEmpty()) {
-            return results.get(0);
-        } else {
-            return null;
-        }
-    }
+    }       
     
     public Long getCurrentDateResolution() {
 		return currentDateResolution;
@@ -251,5 +235,19 @@ public class ProductDaoImpl implements ProductDao {
 	public void setCurrentDateResolution(Long currentDateResolution) {
 		this.currentDateResolution = currentDateResolution;
 	}
-    
+
+	@Override
+	public List<Product> findProductByURI(String uri) {
+		
+		String urlKey = uri.substring(uri.lastIndexOf('/'));		
+		Query query;
+	
+		query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
+		query.setParameter("url", uri);
+		query.setParameter("urlKey", urlKey);
+	
+		@SuppressWarnings("unchecked")
+		List<Product> results = (List<Product>) query.getResultList();
+		return results;
+	}
 }

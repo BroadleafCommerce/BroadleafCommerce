@@ -1,4 +1,4 @@
-package org.broadleafcommerce.cms.url;
+package org.broadleafcommerce.cms.url.type;
 
 import java.io.Serializable;
 import java.util.HashMap;
