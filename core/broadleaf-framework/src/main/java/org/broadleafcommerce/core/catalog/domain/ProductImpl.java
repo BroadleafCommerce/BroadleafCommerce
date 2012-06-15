@@ -168,8 +168,7 @@ public class ProductImpl implements Product {
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     /** The all skus. */
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Sku> allSkus = new ArrayList<Sku>();

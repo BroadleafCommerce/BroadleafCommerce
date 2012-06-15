@@ -16,32 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -66,6 +40,32 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -181,7 +181,6 @@ public class SkuImpl implements Sku {
     
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
-    
 
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "SkuImpl_Is_Product_Machine_Sortable", order=9, group = "SkuImpl_Product_Description", prominent=false)
@@ -203,14 +202,20 @@ public class SkuImpl implements Sku {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
+    
+    /**
+     * This will be non-null if and only if this Sku is the default Sku for a Product
+     */
+    @OneToOne(optional=true, targetEntity=ProductImpl.class, mappedBy="defaultSku")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Product defaultProduct;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
-    @Deprecated
-    protected List<Product> allParentProducts = new ArrayList<Product>();
-
+    /**
+     * This relationship will be non-null if and only if this Sku is contained in the list of
+     * additional Skus for a Product (for Skus based on ProductOptions)
+     */
     @ManyToOne(optional = true, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_SKU_DFLT_PROD_XREF", joinColumns = @JoinColumn(name = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID"))
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Product product;
     
@@ -661,21 +666,11 @@ public class SkuImpl implements Sku {
     }
 
     public Product getDefaultProduct() {
-        return product;
+        return defaultProduct;
     }
 
-    public void setDefaultProduct(Product product) {
-        this.product = product;
-    }
-
-    @Deprecated
-    public List<Product> getAllParentProducts() {
-        return allParentProducts;
-    }
-
-    @Deprecated
-    public void setAllParentProducts(List<Product> allParentProducts) {
-        this.allParentProducts = allParentProducts;
+    public void setDefaultProduct(Product defaultProduct) {
+        this.defaultProduct = defaultProduct;
     }
 
     /**
