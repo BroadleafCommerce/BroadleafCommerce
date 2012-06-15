@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.media.domain.Media;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.media.domain.Media;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -50,21 +51,35 @@ public interface Sku extends Serializable {
 
     /**
      * Returns the Sale Price of the Sku.  The Sale Price is the standard price the vendor sells
-     * this item for.
+     * this item for.  If {@link SkuPricingConsiderationContext} is set, this uses the DynamicSkuPricingService
+     * to calculate what this should actually be rather than use the property itself
+     * 
+     * @see SkuPricingConsiderationContext, DynamicSkuPricingService
      */
     public Money getSalePrice();
 
     /**
      * Sets the the Sale Price of the Sku.  The Sale Price is the standard price the vendor sells
-     * this item for.
+     * this item for. This price will automatically be overridden if your system is utilizing
+     * the DynamicSkuPricingService.
      */
     public void setSalePrice(Money salePrice);
 
     /**
-     * Returns the Retail Price of the Sku.  The Retail Price is the MSRP of the sku.
+     * Returns the Retail Price of the Sku.  The Retail Price is the MSRP of the sku. If {@link SkuPricingConsiderationContext}
+     * is set, this uses the DynamicSkuPricingService to calculate what this should actually be rather than use the property
+     * itself
+     * 
+     * @see SkuPricingConsiderationContext, DynamicSkuPricingService
      */
     public Money getRetailPrice();
 
+    /**
+     * Sets the retail price for the Sku. This price will automatically be overridden if your system is utilizing
+     * the DynamicSkuPricingService.
+     * 
+     * @param retail price for the Sku
+     */
     public void setRetailPrice(Money retailPrice);
 
     /**
@@ -116,6 +131,11 @@ public interface Sku extends Serializable {
     public Boolean isTaxable();
 
     /**
+     * Convenience that passes through to isTaxable
+     */
+    public Boolean getTaxable();
+
+    /**
      * Sets the whether the Sku qualifies for taxes or not.  This field is used by the pricing engine
      * to calculate taxes.
      */
@@ -138,6 +158,11 @@ public interface Sku extends Serializable {
      */
     public Boolean isAvailable();
 
+    /**
+     * Convenience that passes through to isAvailable
+     */
+    public Boolean getAvailable();
+    
     /**
      * Sets the whether the Sku is available.
      */
@@ -167,12 +192,32 @@ public interface Sku extends Serializable {
      */
     public void setActiveEndDate(Date activeEndDate);
 
+    /**
+     * Get the dimensions for this Sku
+     * 
+     * @return this Sku's embedded Weight
+     */
     public Dimension getDimension();
 
+    /**
+     * Sets the embedded Dimension for this Sku
+     * 
+     * @param dimension
+     */
     public void setDimension(Dimension dimension);
 
+    /**
+     * Gets the embedded Weight for this Sku
+     * 
+     * @return this Sku's embedded Weight
+     */
     public Weight getWeight();
 
+    /**
+     * Sets the embedded Weight for this Sku
+     * 
+     * @param weight
+     */
     public void setWeight(Weight weight);
     
     /**
@@ -215,19 +260,98 @@ public interface Sku extends Serializable {
      */
     public void setSkuMedia(Map<String, Media> skuMedia);
 
+    /**
+     * Returns whether or not this Sku, the given Product and the given Category are all active
+     * 
+     * @param product - Product that should be active
+     * @param category - Category that should be active
+     * @return <b>true</b> if this Sku, <code>product</code> and <code>category</code> are all active
+     * <b>false</b> otherwise
+     */
     public boolean isActive(Product product, Category category);
-    
-    List<SkuAttribute> getSkuAttributes();
 
-	void setSkuAttributes(List<SkuAttribute> skuAttributes);
-	
+    /**
+     * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
+     * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link getProductOptionValues()}
+     * and {@link setProductOptionValues()}
+     * 
+     * @return the attributes for this Sku
+     */
+    public List<SkuAttribute> getSkuAttributes();
+
+    /**
+     * Sets the denormalized set of key-value pairs on a Sku
+     * 
+     * @param skuAttributes
+     */
+    public void setSkuAttributes(List<SkuAttribute> skuAttributes);
+
+    /**
+     * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
+     * inventory, price and image information for a "Blue" "Extra-Large" shirt
+     * 
+     * @return the ProductOptionValues for this Sku
+     * @see {@link ProductOptionValue}, {@link ProductOption}
+     */
 	public List<ProductOptionValue> getProductOptionValues();
 
+	/**
+	 * Sets the ProductOptionValues that should be mapped to this Sku
+	 * 
+	 * @param productOptionValues
+	 * @see {@link ProductOptionValue}, {@link ProductOption}
+	 */
     public void setProductOptionValues(List<ProductOptionValue> productOptionValues);
 
-    Product getDefaultProduct();
+    /**
+     * This will be a value if and only if this Sku is the defaultSku of a Product (and thus has a @OneToOne relationship with a Product).
+     * The mapping for this is actually done at the Product level with a foreign key to Sku; this exists for convenience to get the reverse relationship
+     * 
+     * @return The associated Product if this Sku is a defaultSku, <b>null</b> otherwise
+     * @see #getProduct()
+     */
+    public Product getDefaultProduct();
 
-    void setDefaultProduct(Product product);
+    /**
+     * The relationship for a Product's default Sku (and thus a Sku's default Product) is actually maintained
+     * on the Product entity as a foreign key to Sku.  Because of this, there are probably very few circumstances
+     * that you would actually want to change this from the Sku perspective instead of the Product perspective.
+     * <br />
+     * <br />
+     * If you are looking for a way to simply associate a Sku to a Product, the correct way would be to call
+     * {@link #setProduct(Product)} or {@link Product#setSkus(List<Sku>)} which would then cause this Sku to show up in the list of Skus for
+     * the given Product
+     * 
+     * @param product
+     */
+    public void setDefaultProduct(Product product);
+
+    /**
+     * This will return the correct Product association that is being used on the Sku. If this Sku is a default Sku
+     * for a Product (as in, {@link #getDefaultProduct()} != null) than this will return {@link #getDefaultProduct()}. If this is not
+     * a default Sku for a Product, this will return the @ManyToOne Product relationship created by adding this Sku to a Product's
+     * list of Skus, or using {@link setProduct(Product)}.
+     * <br />
+     * <br />
+     * In some implementations, it might make sense to have both the @OneToOne association set ({@link Product#setDefaultSku(Sku)})
+     * as well as the @ManyToOne association set ({@link #setProduct(Product)}). In this case, This method would only return
+     * the result of {@link #getDefaultProduct()}.  However, the @OneToOne and @ManyToOne association should never actually
+     * refer to different Products, and would represent an error state. If you require this, consider subclassing and using
+     * your own @ManyToMany relationship between Product and Sku. If you are trying to model bundles, consider using a {@link ProductBundle}
+     * and subsequent {@link SkuBundleItem}s.
+     * 
+     * @return {@link #getDefaultProduct()} if {@link #getDefaultProduct()} is non-null, the @ManyToOne Product association otherwise. If no
+     * relationship is set, returns null
+     */
+    public Product getProduct();
+
+    /**
+     * Associates a Sku to a given Product. This will then show up in the list returned by {@link Product#getSkus()}
+     * 
+     * @param product - Product to associate this Sku to
+     * @see Product#getSkus()
+     */
+    public void setProduct(Product product);
 
     /**
      * A product is on sale provided the sale price is not null, non-zero, and less than the retail price
@@ -235,9 +359,19 @@ public interface Sku extends Serializable {
      * @return whether or not the product is on sale
      */
 	public boolean isOnSale();
-	
+
+	/**
+	 * Whether this Sku can be sorted by a machine
+	 * 
+	 * @return <b>true</b> if this Sku can be sorted by a machine
+	 */
     public Boolean isMachineSortable();
 
+    /**
+     * Sets whether or not this Sku can be sorted by a machine
+     * 
+     * @param isMachineSortable
+     */
     public void setMachineSortable(Boolean isMachineSortable);
 
 }
