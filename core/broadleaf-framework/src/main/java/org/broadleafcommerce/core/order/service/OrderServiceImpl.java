@@ -436,6 +436,20 @@ public class OrderServiceImpl implements OrderService {
     public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
     	updateItemQuantity(order, item, true);
     }
+    
+    public void updateItemQuantity(Order order, OrderItemRequestDTO item) throws ItemNotFoundException, PricingException {
+    	OrderItem orderItem = null;
+		for (DiscreteOrderItem doi : order.getDiscreteOrderItems()) {
+			if (doi.getId().equals(item.getOrderItemId())) {
+				orderItem = doi;
+			}
+		}
+		
+		orderItem.setQuantity(item.getQuantity());
+		
+    	updateItemQuantity(order, orderItem, true);
+    }
+    
 
     public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException {
         if (!order.getOrderItems().contains(item)) {

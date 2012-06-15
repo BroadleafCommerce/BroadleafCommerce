@@ -174,6 +174,18 @@ public interface OrderService {
      * @throws PricingException
      */
     public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException;
+    
+    /**
+     * From the given OrderItemRequestDTO object, this will look through the order's DiscreteOrderItems
+     * to find the item with the matching orderItemId and update this item's quantity with the value of 
+     * the quantity field in the OrderItemRequestDTO.
+     * 
+     * @param order
+     * @param item
+     * @throws ItemNotFoundException
+     * @throws PricingException
+     */
+	public void updateItemQuantity(Order order, OrderItemRequestDTO item) throws ItemNotFoundException, PricingException;
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
     
@@ -442,5 +454,6 @@ public interface OrderService {
      * @param automaticallyMergeLikeItems
      */
     void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
+
 
 }

@@ -33,6 +33,7 @@ public class OrderItemRequestDTO {
     private Long skuId;
     private Long categoryId;
     private Long productId;
+    private Long orderItemId;
     private Integer quantity;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
 
@@ -75,4 +76,13 @@ public class OrderItemRequestDTO {
     public void setItemAttributes(Map<String, String> itemAttributes) {
         this.itemAttributes = itemAttributes;
     }
+    
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
 }
