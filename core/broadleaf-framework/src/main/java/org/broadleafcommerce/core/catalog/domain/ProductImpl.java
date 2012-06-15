@@ -171,7 +171,7 @@ public class ProductImpl implements Product {
     @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<Sku> allSkus = new ArrayList<Sku>();
+    protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     /** The product images. */
     @CollectionOfElements
@@ -345,14 +345,17 @@ public class ProductImpl implements Product {
 	
     @Override
 	public List<Sku> getAllSkus() {
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(getDefaultSku());
+        allSkus.addAll(additionalSkus);
         return allSkus;
     }
 
     @Override
 	public List<Sku> getSkus() {
         if (skus.size() == 0) {
-            List<Sku> allSkus = getAllSkus();
-            for (Sku sku : allSkus) {
+            List<Sku> additionalSkus = getAdditionalSkus();
+            for (Sku sku : additionalSkus) {
                 if (sku.isActive()) {
                     skus.add(sku);
                 }
@@ -362,10 +365,15 @@ public class ProductImpl implements Product {
     }
 
     @Override
-    public void setAllSkus(List<Sku> skus) {
-        this.allSkus.clear();
+    public List<Sku> getAdditionalSkus() {
+        return additionalSkus;
+    }
+
+    @Override
+    public void setAdditionalSkus(List<Sku> skus) {
+        this.additionalSkus.clear();
         for(Sku sku : skus){
-        	this.allSkus.add(sku);
+        	this.additionalSkus.add(sku);
         }
         //this.skus.clear();
     }

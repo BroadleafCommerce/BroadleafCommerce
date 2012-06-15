@@ -178,21 +178,69 @@ public interface Product extends Serializable {
      * @return a boolean indicates if the product is active.
      */
     public boolean isActive();
+    
+    /**
+     * Gets the default {@link Sku} associated with this Product. A Product is
+     * required to have a default Sku which holds specific information about the Product
+     * like weight, dimensions, price, etc.  Many of the Product attributes that
+     * have getters and setters on Product are actually pass-through to the default Sku.
+     * <br />
+     * <br />
+     * Products can also have multiple Skus associated with it that are represented by
+     * {@link ProductOption}s. For instance, a large, blue shirt. For more information on
+     * that relationship see {@link #getAdditionalSkus()}.
+     * 
+     * @return the default Sku for this Product
+     */
+    public Sku getDefaultSku();
 
     /**
-     * Returns a list of {@link Sku}s that are part of this product.
+     * Sets the default Sku for this Product.
+     * 
+     * @param defaultSku - the Sku that should be the default for this Product
+     */
+    public void setDefaultSku(Sku defaultSku);
+    
+    /**
+     * Returns a list of {@link Sku}s filtered by whether the Skus are active or not.
+     * This list does not contain the {@link #getDefaultSku()} and filters by {@link Sku#isActive()}.
      *
-     * @return a list of {@link Sku}s associated with this product
+     * @return a list of active Skus from {@link #getAdditionalSkus()} for this Product
      */
     public List<Sku> getSkus();
 
     /**
-     * Sets the {@link Sku}s that are to be associated with this product.
-     *
-     * @param skus - a List of {@link Sku}s to associate with this product.
+     * Gets all the additional Skus associated with this Product. For instance, if this
+     * Product represented a T-shirt and you could pick the size of the T-shirt as a
+     * {@link ProductOption} (like "small", "medium", "large") this would return 3 Skus
+     * if you had different inventory or price constraints on each {@link ProductOptionValue}.
+     * <br />
+     * <br />
+     * This list does not take into account whether any of these additional Skus are active or not, nor
+     * does it contain the {@link #getDefaultSku()} for this Product.  For this functionality, see
+     * {@link #getSkus()} and {@link #getAllSkus()}, respectively.
+     * 
+     * @return the additional Skus for this Product
+     * @see {@link ProductOption}, {@link ProductOptionValue}
      */
-    public void setAllSkus(List<Sku> skus);
+    public List<Sku> getAdditionalSkus();
 
+    /**
+     * Sets the additional Skus associated to this Product. These additional Skus should
+     * come from {@link ProductOptionValue}s and are used in instance where you need to track inventory
+     * or change pricing on a per-option value basis.
+     *
+     * @param skus - a List of {@link Sku}s to associate with this Product, usually based off of {@link ProductOption}s
+     * @see {@link #getAdditionalSkus()}, {@link ProductOption}, {@link ProductOptionValue}
+     */
+    public void setAdditionalSkus(List<Sku> skus);
+
+    /**
+     * Returns all the {@link Sku}s that are associated with this Product (including {@link #getDefaultSku()})
+     * regardless of whether or not the {@link Sku}s are active or not 
+     * 
+     * @return all the Skus associated to this Product
+     */
     public List<Sku> getAllSkus();
     
     /**
@@ -202,7 +250,7 @@ public interface Product extends Serializable {
      * @return a map of product images
      */
     @Deprecated
-    Map<String, String> getProductImages();
+    public Map<String, String> getProductImages();
 
     /**
      * Returns a string URL to an image given the string key passed in for this product.
@@ -212,7 +260,7 @@ public interface Product extends Serializable {
      * @return a URL to the image associated witht he key passed in.
      */
     @Deprecated
-    String getProductImage(String imageKey);
+    public String getProductImage(String imageKey);
 
     /**
      * Sets the product images map. This method is deprecated. Use setProductMedia instead.
@@ -220,7 +268,7 @@ public interface Product extends Serializable {
      * @param productImages - a map of product images
      */
     @Deprecated
-    void setProductImages(Map<String, String> productImages);
+    public void setProductImages(Map<String, String> productImages);
 
     /**
      * Returns a map of key/value pairs that associate the media name (key) with the Media object(value)
@@ -537,21 +585,54 @@ public interface Product extends Serializable {
      * @param isFeaturedProduct
      */
     public void setFeaturedProduct(boolean isFeaturedProduct);
-    
-    public Sku getDefaultSku();
 
-	public void setDefaultSku(Sku defaultSku);	
-    
+    /**
+     * Generic key-value pair of attributes to associate to this Product for maximum
+     * extensibility.
+     * 
+     * @return the attributes for this Product
+     */
 	public List<ProductAttribute> getProductAttributes();
 
+	/**
+	 * Sets a generic list of key-value pairs for Product
+	 * @param productAttributes
+	 */
 	public void setProductAttributes(List<ProductAttribute> productAttributes);
-	
+
+	/**
+	 * Gets the promotional message for this Product. For instance, this could be a limited-time
+	 * Product
+	 * 
+	 * @return the Product's promotional message
+	 */
 	public String getPromoMessage();
 
+	/**
+	 * Sets the promotional message for this Product
+	 * 
+	 * @param promoMessage
+	 */
 	public void setPromoMessage(String promoMessage);
-	
+
+	/**
+	 * The available {@link ProductOption}s for this Product.  For instance, if this
+	 * Product is a T-Shirt, you might be able to specify a size and color. This would
+	 * be modeled by 2 {@link ProductOption}s, each that could have multiple {@link ProductOptionValue}s 
+	 * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
+	 * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
+	 * off of the {@link ProductOptionValue}s
+	 * 
+	 * @return the {@link ProductOption}s for this Product
+	 * @see Product#getAdditionalSkus(), {@link ProductOption}, {@link ProductOptionValue}
+	 */
     public List<ProductOption> getProductOptions();
 
+    /**
+     * Sets the list of available ProductOptions for this Product
+     * 
+     * @param productOptions
+     */
     public void setProductOptions(List<ProductOption> productOptions);
 
     /**
