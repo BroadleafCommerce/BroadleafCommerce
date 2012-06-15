@@ -210,7 +210,7 @@ public class SkuImpl implements Sku {
     protected List<Product> allParentProducts = new ArrayList<Product>();
 
     @ManyToOne(optional = true, targetEntity = ProductImpl.class)
-    @JoinColumn(name = "DEFAULT_PRODUCT_ID")
+    @JoinTable(name = "BLC_SKU_DFLT_PROD_XREF", joinColumns = @JoinColumn(name = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Product product;
     
