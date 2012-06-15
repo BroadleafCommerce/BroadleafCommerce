@@ -13,7 +13,7 @@
 	</named-query>
 	
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_SKU" >
-		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product, IN(product.allSkus) sku
+		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product, IN(product.additionalSkus) sku
 		WHERE sku.id = :skuId
 		AND product.defaultSku.activeStartDate &lt;= :currentDate
 		AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate = null)</query>
