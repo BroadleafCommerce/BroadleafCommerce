@@ -22,13 +22,15 @@ import org.broadleafcommerce.openadmin.client.service.AppServices;
 import org.broadleafcommerce.openadmin.client.view.SimpleProgress;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
+import java.util.Map;
+
 /**
  * @author Jeff Fischer
  */
 public class WorkflowEnabledPreProcessor implements PreProcessor {
 
     @Override
-    public void preProcess(final ServerProcessProgressWindow progressWindow, final PreProcessStatus cb) {
+    public void preProcess(final ServerProcessProgressWindow progressWindow, Map<String, String> piplineSeed, final PreProcessStatus cb) {
         SimpleProgress progress = new SimpleProgress(24);
         progressWindow.setProgressBar(progress);
         progressWindow.setTitleKey("workflowEnabledPreProcessTitle");

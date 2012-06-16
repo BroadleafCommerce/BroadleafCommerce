@@ -18,11 +18,13 @@ package org.broadleafcommerce.openadmin.client.setup;
 
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
+import java.util.Map;
+
 /**
  * @author Jeff Fischer
  */
 public interface PreProcessor {
 
-    public void preProcess(final ServerProcessProgressWindow progressWindow, final PreProcessStatus cb);
+    public void preProcess(final ServerProcessProgressWindow progressWindow, final Map<String, String> piplineSeed, final PreProcessStatus cb);
 
 }
