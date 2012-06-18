@@ -195,7 +195,12 @@ public interface Product extends Serializable {
     public Sku getDefaultSku();
 
     /**
-     * Sets the default Sku for this Product.
+     * Sets the default Sku for this Product
+     * <br />
+     * <br />
+     * Note: this operation is cascaded with CascadeType.ALL which saves from having to persist the Product
+     * in 2 operations: first persist the Sku and then take the merged Sku, set it as this Product's default
+     * Sku, and then persist this Product.
      * 
      * @param defaultSku - the Sku that should be the default for this Product
      */
