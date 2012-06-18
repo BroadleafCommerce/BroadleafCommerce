@@ -16,20 +16,23 @@
 
 package org.broadleafcommerce.cms.structure.dao;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +56,12 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public StructuredContent findStructuredContentById(Long contentId) {
-        return (StructuredContent) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.structure.domain.StructuredContent"), contentId);
+        return (StructuredContent) em.find(StructuredContentImpl.class, contentId);
     }
 
     @Override
     public StructuredContentType findStructuredContentTypeById(Long contentTypeId) {
-        return (StructuredContentType) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.structure.domain.StructuredContentType"), contentTypeId);
+        return (StructuredContentType) em.find(StructuredContentTypeImpl.class, contentTypeId);
     }
 
     @Override

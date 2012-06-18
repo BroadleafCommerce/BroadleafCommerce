@@ -16,25 +16,25 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import javax.annotation.Nonnull;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
 import java.util.Date;
 import java.util.List;
 
-import org.broadleafcommerce.cms.url.domain.URLHandler;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 /**
- *
+ * 
  * @author Jeff Fischer
  */
 @Repository("blCategoryDao")
@@ -56,7 +56,7 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category readCategoryById(Long categoryId) {
-        return (Category) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.Category"), categoryId);
+        return (Category) em.find(CategoryImpl.class, categoryId);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setParameter("categoryName", categoryName);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        return (Category)query.getSingleResult();
+        return (Category) query.getSingleResult();
     }
 
     @Override
@@ -102,9 +102,8 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
-        return  query.getResultList();
+        return query.getResultList();
     }
-
 
     @Override
     public List<Product> readAllProducts() {
@@ -141,7 +140,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-        synchronized(this) {
+        synchronized (this) {
             Date now = SystemTime.asDate();
             if (now.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
                 currentDate = new Date(now.getTime());
@@ -163,7 +162,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         Date myDate;
         Long myCurrentDateResolution = currentDateResolution;
-        synchronized(this) {
+        synchronized (this) {
             Date now = SystemTime.asDate();
             if (now.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
                 currentDate = new Date(now.getTime());
@@ -182,11 +181,11 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
-    public void delete(Category category){
-    	if (!em.contains(category)) {
-    		category = readCategoryById(category.getId());
-    	}
-        em.remove(category);    	
+    public void delete(Category category) {
+        if (!em.contains(category)) {
+            category = readCategoryById(category.getId());
+        }
+        em.remove(category);
     }
 
     @Override
@@ -195,30 +194,27 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     public Long getCurrentDateResolution() {
-		return currentDateResolution;
-	}
+        return currentDateResolution;
+    }
 
-	public void setCurrentDateResolution(Long currentDateResolution) {
-		this.currentDateResolution = currentDateResolution;
-	}
-	@Override
-	public Category findCategoryByURI(String uri) {
-		
-	
-			Query query;
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
+    }
 
-			query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
-			query.setParameter("url", uri);
+    @Override
+    public Category findCategoryByURI(String uri) {
+        Query query;
+        query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
+        query.setParameter("url", uri);
 
-			@SuppressWarnings("unchecked")
-			List<Category> results = (List<Category>) query.getResultList();
-			if (results != null && !results.isEmpty()) {
-				return results.get(0);
-			 
-			} else {
-				return null;
-			}
+        @SuppressWarnings("unchecked")
+        List<Category> results = (List<Category>) query.getResultList();
+        if (results != null && !results.isEmpty()) {
+            return results.get(0);
 
-	}
+        } else {
+            return null;
+        }
+    }
 
 }

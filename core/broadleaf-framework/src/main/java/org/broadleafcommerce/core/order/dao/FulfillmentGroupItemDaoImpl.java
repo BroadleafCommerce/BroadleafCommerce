@@ -16,17 +16,18 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blFulfillmentGroupItemDao")
 public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
@@ -49,7 +50,7 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
     }
 
     public FulfillmentGroupItem readFulfillmentGroupItemById(final Long fulfillmentGroupItemId) {
-        return (FulfillmentGroupItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.order.domain.FulfillmentGroupItem"), fulfillmentGroupItemId);
+        return (FulfillmentGroupItem) em.find(FulfillmentGroupItemImpl.class, fulfillmentGroupItemId);
     }
 
     @SuppressWarnings("unchecked")

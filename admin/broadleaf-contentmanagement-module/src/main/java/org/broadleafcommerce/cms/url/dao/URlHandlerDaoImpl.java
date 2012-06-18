@@ -39,29 +39,19 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
 	@Resource(name = "blEntityConfiguration")
 	protected EntityConfiguration entityConfiguration;
 
-
 	@Override
 	public URLHandler findURLHandlerByURI(String uri) {
-		
-		
-			Query query;
+        Query query;
+        query = em.createNamedQuery("BC_READ_OUTGOING_URL");
+        query.setParameter("incomingURL", uri);
 
-			query = em.createNamedQuery("BC_READ_OUTGOING_URL");
-			query.setParameter("incomingURL", uri);
-
-			@SuppressWarnings("unchecked")
-			List<URLHandler> results = (List<URLHandler>) query.getResultList();
-			if (results != null && !results.isEmpty()) {
-				 return results.get(0);
-			 
-			} else {
-				return null;
-			}
-		
-			
-		
+        @SuppressWarnings("unchecked")
+        List<URLHandler> results = (List<URLHandler>) query.getResultList();
+        if (results != null && !results.isEmpty()) {
+            return results.get(0);
+        } else {
+            return null;
+        }
 	}
-
-
 
 }

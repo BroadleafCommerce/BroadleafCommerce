@@ -16,17 +16,19 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blProductOptionDao")
 public class ProductOptionDaoImpl implements ProductOptionDao {
@@ -45,12 +47,12 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     @Override
     public ProductOption readProductOptionById(Long id) {
-        return (ProductOption) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.ProductOption"), id);
+        return (ProductOption) em.find(ProductOptionImpl.class, id);
     }
 
     @Override
     public ProductOptionValue readProductOptionValueById(Long id) {
-        return (ProductOptionValue) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.ProductOptionValue"), id);
+        return (ProductOptionValue) em.find(ProductOptionValueImpl.class, id);
     }
 
 }
