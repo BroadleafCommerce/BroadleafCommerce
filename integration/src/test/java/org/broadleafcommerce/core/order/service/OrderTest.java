@@ -523,40 +523,35 @@ public class OrderTest extends OrderBaseTest {
         Category category = new CategoryImpl();
         category.setName("Pants");
         category = catalogService.saveCategory(category);
-        Product newProduct = new ProductImpl();
-
+        
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-        newProduct.setActiveStartDate(activeStartCal.getTime());
-
+        
+        Sku newDefaultSku = new SkuImpl();
+        newDefaultSku.setName("Leather Pants");
+        newDefaultSku.setRetailPrice(new Money(44.99));
+        newDefaultSku.setActiveStartDate(activeStartCal.getTime());
+        newDefaultSku.setDiscountable(true);
+        newDefaultSku = catalogService.saveSku(newDefaultSku);
+        
+        Product newProduct = new ProductImpl();
         newProduct.setDefaultCategory(category);
-        newProduct.setName("Leather Pants");
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Sku newSku = new SkuImpl();
-        newSku.setName("Red Leather Pants");
-        newSku.setRetailPrice(new Money(44.99));
-        newSku.setActiveStartDate(activeStartCal.getTime());
-        newSku.setDiscountable(true);
-        newSku = catalogService.saveSku(newSku);
-        List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
+        newProduct.setDefaultSku(newDefaultSku);
         newProduct = catalogService.saveProduct(newProduct);
 
         Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
 
-        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
                 newProduct.getId(), category.getId(), 2);
-        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
                 newProduct.getId(), category.getId(), null);
         OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                newProduct.getId(), category.getId(), 2);
-        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
                 null, category.getId(), 2);
-        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newDefaultSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
+                null, category.getId(), 2);
+        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
                 newProduct.getId(), null, 2);
     	
         assert orderItem != null;
@@ -616,45 +611,39 @@ public class OrderTest extends OrderBaseTest {
     @Transactional
     public void testCreateNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-
         Category category = new CategoryImpl();
         category.setName("Pants");
         category.setActiveStartDate(activeStartCal.getTime());
         category = catalogService.saveCategory(category);
+        
+        Sku newDefaultSku = new SkuImpl();
+        newDefaultSku.setName("Leather Pants");
+        newDefaultSku.setRetailPrice(new Money(44.99));
+        newDefaultSku.setActiveStartDate(activeStartCal.getTime());
+        newDefaultSku.setDiscountable(true);
+        newDefaultSku = catalogService.saveSku(newDefaultSku);
+        
         Product newProduct = new ProductImpl();
-
-        newProduct.setActiveStartDate(activeStartCal.getTime());
-
         newProduct.setDefaultCategory(category);
-        newProduct.setName("Leather Pants");
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Sku newSku = new SkuImpl();
-        newSku.setName("Red Leather Pants");
-        newSku.setRetailPrice(new Money(44.99));
-        newSku.setActiveStartDate(activeStartCal.getTime());
-        newSku.setDiscountable(true);
-        newSku = catalogService.saveSku(newSku);
-        List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
-        newProduct = catalogService.saveProduct(newProduct);
+        newProduct.setDefaultSku(newDefaultSku);
+        newProduct = catalogService.saveProduct(newProduct);        
 
         Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
 
-        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
                 newProduct.getId(), category.getId(), 2);
-        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
                 newProduct.getId(), category.getId(), null);
         OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                newProduct.getId(), category.getId(), 2);
-        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
                 null, category.getId(), 2);
-        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newDefaultSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
+                null, category.getId(), 2);
+        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
                 newProduct.getId(), null, 2);
         
         assert orderItem != null;

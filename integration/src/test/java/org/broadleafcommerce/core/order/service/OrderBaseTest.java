@@ -51,14 +51,12 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     public Order setUpNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
 
-        Sku newSku = addTestSku("Small Cube Box", "Cube Box", "Boxes");
-
         Order order = orderService.createNamedOrderForCustomer("Boxes Named Order", customer);
         
-        Product newProduct = newSku.getAllParentProducts().get(0);
+        Product newProduct = addTestProduct("Cube Box", "Boxes");        
         Category newCategory = newProduct.getDefaultCategory();
 
-        orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2);
     	
         return order;
@@ -69,15 +67,14 @@ public class OrderBaseTest extends CommonSetupBaseTest {
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        Sku newSku = addTestSku("Small Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Small Red Plastic Crate", "Plastic Crate", "Crates", false);
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newInactiveProduct = addTestProduct("Plastic Crate", "Crates", false);
         
-        Product newProduct = newSku.getAllParentProducts().get(0);
         Category newCategory = newProduct.getDefaultCategory();
 
-        orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2);
-        orderService.addSkuToOrder(order.getId(), newInactiveSku.getId(),
+        orderService.addSkuToOrder(order.getId(), newInactiveProduct.getDefaultSku().getId(),
         		newProduct.getId(), newCategory.getId(), 2);
     	
         orderService.addBundleItemToOrder(order, createBundleOrderItemRequest());
@@ -91,20 +88,19 @@ public class OrderBaseTest extends CommonSetupBaseTest {
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        Sku newSku = addTestSku("Small Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Small Red Plastic Crate", "Plastic Crate", "Crates");
-        Sku giftWrapSku = addTestSku("Gift Box", "Gift Box", "Gift Wraps");
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newInactiveProduct = addTestProduct("Plastic Crate", "Crates");
+        Product giftWrapProduct = addTestProduct("Gift Box", "Gift Wraps");
 
-        Product newProduct = newSku.getAllParentProducts().get(0);
         Category newCategory = newProduct.getDefaultCategory();
 
         List<OrderItem> addedItems = new ArrayList<OrderItem>();
-        addedItems.add(orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        addedItems.add(orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2));
-        addedItems.add(orderService.addSkuToOrder(order.getId(), newInactiveSku.getId(),
+        addedItems.add(orderService.addSkuToOrder(order.getId(), newInactiveProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2));
 
-        orderService.addGiftWrapItemToOrder(order, createGiftWrapOrderItemRequest(giftWrapSku, 1, addedItems));
+        orderService.addGiftWrapItemToOrder(order, createGiftWrapOrderItemRequest(giftWrapProduct, giftWrapProduct.getDefaultSku(), 1, addedItems));
 
         return order;
     }
@@ -114,36 +110,34 @@ public class OrderBaseTest extends CommonSetupBaseTest {
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        Sku newSku = addTestSku("Small Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Small Red Plastic Crate", "Plastic Crate", "Crates", false);
-        Sku giftWrapSku = addTestSku("Gift Box", "Gift Box", "Gift Wraps");
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newInactiveProduct = addTestProduct("Plastic Crate", "Crates", false);
+        Product giftWrapProduct = addTestProduct("Gift Box", "Gift Wraps");
 
-        Product newProduct = newSku.getAllParentProducts().get(0);
         Category newCategory = newProduct.getDefaultCategory();
 
         List<OrderItem> addedItems = new ArrayList<OrderItem>();
-        addedItems.add(orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        addedItems.add(orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2));
-        addedItems.add(orderService.addSkuToOrder(order.getId(), newInactiveSku.getId(),
+        addedItems.add(orderService.addSkuToOrder(order.getId(), newInactiveProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2));
 
-        orderService.addGiftWrapItemToOrder(order, createGiftWrapOrderItemRequest(giftWrapSku, 1, addedItems));
+        orderService.addGiftWrapItemToOrder(order, createGiftWrapOrderItemRequest(giftWrapProduct, giftWrapProduct.getDefaultSku(), 1, addedItems));
 
         return order;
     }
     
     public Order initializeExistingCartWithInactiveSkuAndInactiveBundle(Customer customer) throws PricingException {
-        Sku newSku = addTestSku("Large Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Large Red Plastic Crate", "Plastic Crate", "Crates", false);
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newInactiveProduct = addTestProduct("Plastic Crate", "Crates", false);
         
-        Product newProduct = newSku.getAllParentProducts().get(0);
         Category newCategory = newProduct.getDefaultCategory();
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
         		newProduct.getId(), newCategory.getId(), 2);
-        orderService.addSkuToOrder(order.getId(), newInactiveSku.getId(),
+        orderService.addSkuToOrder(order.getId(), newInactiveProduct.getDefaultSku().getId(),
         		newProduct.getId(), newCategory.getId(), 2);
         
         orderService.addBundleItemToOrder(order, createBundleOrderItemRequest());
@@ -153,32 +147,31 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     }
 
     public Order initializeExistingCart(Customer customer) throws PricingException {
-    	Sku newSku = addTestSku("Large Plastic Crate", "Plastic Crate", "Crates");
-    	Sku newOtherSku = addTestSku("Large Red Plastic Crate", "Plastic Crate", "Crates");
+    	Product newProduct = addTestProduct("Plastic Crate", "Crates");
+    	Product newOtherProduct = addTestProduct("Plastic Crate", "Crates");
     	
-    	Product newProduct = newSku.getAllParentProducts().get(0);
     	Category newCategory = newProduct.getDefaultCategory();
     	
     	Order order = cartService.createNewCartForCustomer(customer);
     	
-    	orderService.addSkuToOrder(order.getId(), newSku.getId(),
+    	orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
     			newProduct.getId(), newCategory.getId(), 2);
-    	orderService.addSkuToOrder(order.getId(), newOtherSku.getId(),
+    	orderService.addSkuToOrder(order.getId(), newOtherProduct.getDefaultSku().getId(),
     			newProduct.getId(), newCategory.getId(), 2);
     	
     	return order;
     }
     
     public BundleOrderItemRequest createBundleOrderItemRequest() {
-        Sku screwSku = addTestSku("Screw", "Bookshelf", "Components");
-        Sku shelfSku = addTestSku("Shelf", "Bookshelf", "Components");
-        Sku bracketsSku = addTestSku("Brackets", "Bookshelf", "Components");
-        Category category = screwSku.getAllParentProducts().get(0).getDefaultCategory();
+        Product screwProduct = addTestProduct("Bookshelf", "Components");
+        Product shelfProduct = addTestProduct("Bookshelf", "Components");
+        Product bracketsProduct = addTestProduct("Bookshelf", "Components");
+        Category category = screwProduct.getDefaultCategory();
         
         List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-        discreteOrderItems.add(createDiscreteOrderItemRequest(screwSku, 20));
-        discreteOrderItems.add(createDiscreteOrderItemRequest(shelfSku, 3));
-        discreteOrderItems.add(createDiscreteOrderItemRequest(bracketsSku, 6));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(screwProduct, screwProduct.getDefaultSku(), 20));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(shelfProduct, shelfProduct.getDefaultSku(), 3));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(bracketsProduct, bracketsProduct.getDefaultSku(), 6));
         
         BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
         itemRequest.setCategory(category);
@@ -189,15 +182,15 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     }
     
     public BundleOrderItemRequest createBundleOrderItemRequestWithInactiveSku() {
-    	Sku drawerSku = addTestSku("Drawer", "Drawer System", "Systems");
-    	Sku nailsSku = addTestSku("Nails", "Drawer System", "Systems");
-    	Sku tracksSku = addTestSku("Tracks", "Drawer System", "Systems", false);
-    	Category category = drawerSku.getAllParentProducts().get(0).getDefaultCategory();
+    	Product drawerProduct = addTestProduct("Drawer System", "Systems");
+    	Product nailsProduct = addTestProduct("Drawer System", "Systems");
+    	Product tracksProduct = addTestProduct("Drawer System", "Systems", false);
+    	Category category = drawerProduct.getDefaultCategory();
     	
     	List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(drawerSku, 20));
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(nailsSku, 3));
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(tracksSku, 6));
+    	discreteOrderItems.add(createDiscreteOrderItemRequest(drawerProduct, drawerProduct.getDefaultSku(), 20));
+    	discreteOrderItems.add(createDiscreteOrderItemRequest(nailsProduct, nailsProduct.getDefaultSku(), 3));
+    	discreteOrderItems.add(createDiscreteOrderItemRequest(tracksProduct, tracksProduct.getDefaultSku(), 6));
     	
     	BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
     	itemRequest.setCategory(category);
@@ -207,8 +200,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     	return itemRequest;
     }
     
-    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Sku sku, int quantity) {
-    	Product product = sku.getAllParentProducts().get(0);
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Product product, Sku sku, int quantity) {
     	DiscreteOrderItemRequest request = new DiscreteOrderItemRequest();
         request.setSku(sku);
         request.setQuantity(quantity);
@@ -217,8 +209,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
         return request;
     }
 
-    public GiftWrapOrderItemRequest createGiftWrapOrderItemRequest(Sku sku, int quantity, List<OrderItem> wrappedItems) {
-        Product product = sku.getAllParentProducts().get(0);
+    public GiftWrapOrderItemRequest createGiftWrapOrderItemRequest(Product product, Sku sku, int quantity, List<OrderItem> wrappedItems) {
         GiftWrapOrderItemRequest request = new GiftWrapOrderItemRequest();
         request.setSku(sku);
         request.setQuantity(quantity);
@@ -234,15 +225,15 @@ public class OrderBaseTest extends CommonSetupBaseTest {
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        Sku newSku = addTestSku("Small Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Small Red Plastic Crate", "Plastic Crate", "Crates", false);
-        Sku giftWrapSku = addTestSku("Gift Box", "Gift Box", "Gift Wraps");
-        Category category = newSku.getAllParentProducts().get(0).getDefaultCategory();
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newInactiveProduct = addTestProduct("Plastic Crate", "Crates", false);
+        Product giftWrapProduct = addTestProduct("Gift Box", "Gift Wraps");
+        Category category = newProduct.getDefaultCategory();
 
         List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-        discreteOrderItems.add(createDiscreteOrderItemRequest(newSku, 1));
-        discreteOrderItems.add(createDiscreteOrderItemRequest(newInactiveSku, 1));
-        discreteOrderItems.add(createGiftWrapOrderItemRequest(giftWrapSku, 1, new ArrayList<OrderItem>()));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(newProduct, newProduct.getDefaultSku(), 1));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(newInactiveProduct, newInactiveProduct.getDefaultSku(), 1));
+        discreteOrderItems.add(createGiftWrapOrderItemRequest(giftWrapProduct, giftWrapProduct.getDefaultSku(), 1, new ArrayList<OrderItem>()));
 
         BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
         itemRequest.setCategory(category);
@@ -296,15 +287,15 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     }
 
     protected BundleOrderItemRequest createBundleOrderItemRequestWithGiftWrap() {
-        Sku newSku = addTestSku("Small Plastic Crate", "Plastic Crate", "Crates");
-        Sku newActiveSku = addTestSku("Small Red Plastic Crate", "Plastic Crate", "Crates");
-        Sku giftWrapSku = addTestSku("Gift Box", "Gift Box", "Gift Wraps");
-        Category category = newSku.getAllParentProducts().get(0).getDefaultCategory();
+        Product newProduct = addTestProduct("Plastic Crate", "Crates");
+        Product newActiveProduct = addTestProduct("Plastic Crate", "Crates");
+        Product giftWrapProduct = addTestProduct("Gift Box", "Gift Wraps");
+        Category category = newProduct.getDefaultCategory();
 
         List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-        discreteOrderItems.add(createDiscreteOrderItemRequest(newSku, 1));
-        discreteOrderItems.add(createDiscreteOrderItemRequest(newActiveSku, 1));
-        discreteOrderItems.add(createGiftWrapOrderItemRequest(giftWrapSku, 1, new ArrayList<OrderItem>()));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(newProduct, newProduct.getDefaultSku(), 1));
+        discreteOrderItems.add(createDiscreteOrderItemRequest(newActiveProduct, newActiveProduct.getDefaultSku(), 1));
+        discreteOrderItems.add(createGiftWrapOrderItemRequest(giftWrapProduct, giftWrapProduct.getDefaultSku(), 1, new ArrayList<OrderItem>()));
 
         BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
         itemRequest.setCategory(category);
@@ -319,16 +310,15 @@ public class OrderBaseTest extends CommonSetupBaseTest {
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        Sku newSku = addTestSku("Small Plastic Bowl", "Plastic Bowl", "Bowls");
-        Sku newActiveSku = addTestSku("Small Red Plastic Bowl", "Plastic Bowl", "Bowls");
+        Product newProduct = addTestProduct("Plastic Bowl", "Bowls");
+        Product newActiveProduct = addTestProduct("Plastic Bowl", "Bowls");
 
-        Product newProduct = newSku.getAllParentProducts().get(0);
         Category newCategory = newProduct.getDefaultCategory();
 
         List<OrderItem> addedItems = new ArrayList<OrderItem>();
-        addedItems.add(orderService.addSkuToOrder(order.getId(), newSku.getId(),
+        addedItems.add(orderService.addSkuToOrder(order.getId(), newProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2));
-        addedItems.add(orderService.addSkuToOrder(order.getId(), newActiveSku.getId(),
+        addedItems.add(orderService.addSkuToOrder(order.getId(), newActiveProduct.getDefaultSku().getId(),
                 newProduct.getId(), newCategory.getId(), 2));
 
         BundleOrderItem newBundle = (BundleOrderItem) orderService.addBundleItemToOrder(order, createBundleOrderItemRequestWithGiftWrap());

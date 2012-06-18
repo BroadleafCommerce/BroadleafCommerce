@@ -587,14 +587,13 @@ public class OfferTest extends CommonSetupBaseTest {
             sku.setSalePrice(null);
         }
         sku.setDiscountable(isDiscountable);
-
+        sku.setName("test");
         sku = catalogService.saveSku(sku);
 
         item.setSku(sku);
         item.setQuantity(quantity);
         Product product = new ProductImpl();
-        product.setName("test");
-        product.getSkus().add(sku);
+        product.setDefaultSku(sku);
 
         product = catalogService.saveProduct(product);
 

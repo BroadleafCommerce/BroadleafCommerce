@@ -16,10 +16,12 @@
 
 package org.broadleafcommerce.core.order.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.FulfillmentGroupDataProvider;

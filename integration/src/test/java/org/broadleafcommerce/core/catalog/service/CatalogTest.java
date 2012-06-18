@@ -69,6 +69,9 @@ public class CatalogTest extends BaseTest {
         assert category3.getAllParentCategories().size() == 2;
         
         Product newProduct = new ProductImpl();
+        Sku newDefaultSku = new SkuImpl();
+        newDefaultSku = catalogService.saveSku(newDefaultSku);
+        newProduct.setDefaultSku(newDefaultSku);
 
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
@@ -135,7 +138,7 @@ public class CatalogTest extends BaseTest {
         newSku = catalogService.saveSku(newSku);
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
+        newProduct.setAdditionalSkus(allSkus);
         newProduct = catalogService.saveProduct(newProduct);
         Long skuId = newProduct.getSkus().get(0).getId();
 
