@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  * user.  It also allows us to override the role names (GrantedAuthorities) that come from LDAP with
  * names that may be more suitable for Broadleaf.
  *
- * See the
+ *
  *
  * @author Kelly Tisdell
  *

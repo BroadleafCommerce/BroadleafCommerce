@@ -29,7 +29,7 @@ import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -94,7 +94,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         if (ctx != null) {
             Authentication auth = ctx.getAuthentication();
             if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
-                User temp = (User) auth.getPrincipal();
+                UserDetails temp = (UserDetails) auth.getPrincipal();
 
                 return securityService.readAdminUserByUserName(temp.getUsername());
             }
