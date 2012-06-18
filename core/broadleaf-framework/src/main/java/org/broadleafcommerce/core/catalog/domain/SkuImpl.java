@@ -16,32 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -66,6 +40,32 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -173,15 +173,14 @@ public class SkuImpl implements Sku {
     
     /** The product dimensions **/
     @Embedded
-    protected ProductDimension dimension = new ProductDimension();
+    protected Dimension dimension = new Dimension();
 
     /** The product weight **/
     @Embedded
-    protected ProductWeight weight = new ProductWeight();
+    protected Weight weight = new Weight();
     
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
-    
 
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "SkuImpl_Is_Product_Machine_Sortable", order=9, group = "SkuImpl_Product_Description", prominent=false)
@@ -203,14 +202,20 @@ public class SkuImpl implements Sku {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
+    
+    /**
+     * This will be non-null if and only if this Sku is the default Sku for a Product
+     */
+    @OneToOne(optional=true, targetEntity=ProductImpl.class, mappedBy="defaultSku")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Product defaultProduct;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
-    @Deprecated
-    protected List<Product> allParentProducts = new ArrayList<Product>();
-
+    /**
+     * This relationship will be non-null if and only if this Sku is contained in the list of
+     * additional Skus for a Product (for Skus based on ProductOptions)
+     */
     @ManyToOne(optional = true, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_SKU_DFLT_PROD_XREF", joinColumns = @JoinColumn(name = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID"))
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Product product;
     
@@ -226,25 +231,15 @@ public class SkuImpl implements Sku {
     @BatchSize(size = 50)
     List<ProductOptionValue> productOptionValues;
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getId()
-     */
+    @Override
     public Long getId() {
         return id;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#setId(java.lang.Long)
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isOnSale()
-     */
     @Override
     public boolean isOnSale() {
     	Money retailPrice = getRetailPrice();
@@ -264,10 +259,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getSalePrice()
-     */
+    @Override
     public Money getSalePrice() {
         if (salePrice == null && hasDefaultSku()) {
             return lookupDefaultSku().getSalePrice();
@@ -291,19 +283,12 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setSalePrice(org.broadleafcommerce.util.money.Money)
-     */
+    @Override
     public void setSalePrice(Money salePrice) {
         this.salePrice = Money.toAmount(salePrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getRetailPrice()
-     */
+    @Override
     public Money getRetailPrice() {
         if (retailPrice == null && hasDefaultSku()) {
             return lookupDefaultSku().getRetailPrice();
@@ -326,38 +311,22 @@ public class SkuImpl implements Sku {
         return retailPrice == null ? null : new Money(retailPrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setRetailPrice(org.broadleafcommerce
-     * .util.money.Money)
-     */
+    @Override
     public void setRetailPrice(Money retailPrice) {
         this.retailPrice = Money.toAmount(retailPrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getListPrice()
-     */
+    @Override
     public Money getListPrice() {
         return getRetailPrice();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setListPrice(org.broadleafcommerce
-     * .util.money.Money)
-     */
+    @Override
     public void setListPrice(Money listPrice) {
         this.retailPrice = Money.toAmount(listPrice);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getName()
-     */
+    @Override
     public String getName() {
         if (name == null && hasDefaultSku()) {
             return lookupDefaultSku().getName();
@@ -365,18 +334,12 @@ public class SkuImpl implements Sku {
         return name;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#setName(java.lang.String)
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getDescription()
-     */
+    @Override
     public String getDescription() {
         if (description == null && hasDefaultSku()) {
             return lookupDefaultSku().getDescription();
@@ -384,19 +347,12 @@ public class SkuImpl implements Sku {
         return description;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setDescription(java.lang.String)
-     */
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getLongDescription()
-     */
+    @Override
     public String getLongDescription() {
         if (longDescription == null && hasDefaultSku()) {
             return lookupDefaultSku().getLongDescription();
@@ -404,20 +360,12 @@ public class SkuImpl implements Sku {
         return longDescription;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setLongDescription(java.lang
-     * .String)
-     */
+    @Override
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isTaxable()
-     */
+    @Override
     public Boolean isTaxable() {
         if (taxable == null) {
             if (hasDefaultSku()) {
@@ -428,18 +376,12 @@ public class SkuImpl implements Sku {
         return taxable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    /*
-     * This is to facilitate serialization to non-Java clients
-     */
+    @Override
     public Boolean getTaxable() {
         return isTaxable();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setTaxable(java.lang.Boolean)
-     */
+    @Override
     public void setTaxable(Boolean taxable) {
         if (taxable == null) {
             this.taxable = null;
@@ -448,10 +390,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isDiscountable()
-     */
+    @Override
     public Boolean isDiscountable() {
         if (discountable == null) {
             if (hasDefaultSku()) {
@@ -469,11 +408,7 @@ public class SkuImpl implements Sku {
         return isDiscountable();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setDiscountable(java.lang.Boolean)
-     */
+    @Override
     public void setDiscountable(Boolean discountable) {
         if (discountable == null) {
             this.discountable = null;
@@ -482,10 +417,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isAvailable()
-     */
+    @Override
     public Boolean isAvailable() {
         if (available == null) {
             if (hasDefaultSku()) {
@@ -496,15 +428,12 @@ public class SkuImpl implements Sku {
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
+    @Override
     public Boolean getAvailable() {
     	return isAvailable();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setAvailable(java.lang.Boolean)
-     */
+    @Override
     public void setAvailable(Boolean available) {
         if (available == null) {
             this.available = null;
@@ -513,10 +442,7 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveStartDate()
-     */
+    @Override
     public Date getActiveStartDate() {
         if (activeStartDate == null && hasDefaultSku()) {
             return lookupDefaultSku().getActiveStartDate();
@@ -525,20 +451,12 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setActiveStartDate(java.util
-     * .Date)
-     */
+    @Override
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getActiveEndDate()
-     */
+    @Override
     public Date getActiveEndDate() {
         if (activeEndDate == null && hasDefaultSku()) {
             return lookupDefaultSku().getActiveEndDate();
@@ -547,16 +465,13 @@ public class SkuImpl implements Sku {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#setActiveEndDate(java.util.Date)
-     */
+    @Override
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
-    public ProductDimension getDimension() {
+    @Override
+    public Dimension getDimension() {
         if (dimension == null && hasDefaultSku()) {
             return lookupDefaultSku().getDimension();
         } else {
@@ -564,11 +479,13 @@ public class SkuImpl implements Sku {
         }
     }
 
-    public void setDimension(ProductDimension dimension) {
+    @Override
+    public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
-    public ProductWeight getWeight() {
+    @Override
+    public Weight getWeight() {
         if (weight == null && hasDefaultSku()) {
             return lookupDefaultSku().getWeight();
         } else {
@@ -576,14 +493,12 @@ public class SkuImpl implements Sku {
         }
     }
 
-    public void setWeight(ProductWeight weight) {
+    @Override
+    public void setWeight(Weight weight) {
         this.weight = weight;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#isActive()
-     */
+    @Override
     public boolean isActive() {
     	if (activeStartDate == null && activeEndDate == null && hasDefaultSku()) {
     		return lookupDefaultSku().isActive();
@@ -596,6 +511,7 @@ public class SkuImpl implements Sku {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
+    @Override
     public boolean isActive(Product product, Category category) {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
@@ -608,40 +524,26 @@ public class SkuImpl implements Sku {
         }
         return this.isActive() && product.isActive() && category.isActive();
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#getSkuImages()
-     */
+
+    @Override
     @Deprecated
     public Map<String, String> getSkuImages() {
         return skuImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#getSkuImage(java.lang.String)
-     */
+    @Override
     @Deprecated
     public String getSkuImage(String imageKey) {
         return skuImages.get(imageKey);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Sku#setSkuImages(java.util.Map)
-     */
+    @Override
     @Deprecated
     public void setSkuImages(Map<String, String> skuImages) {
         this.skuImages = skuImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#getSkuMedia()
-     */
+    @Override
     public Map<String, Media> getSkuMedia() {
         if (skuMedia == null || skuMedia.isEmpty()) {
             if (hasDefaultSku()) {
@@ -651,36 +553,32 @@ public class SkuImpl implements Sku {
         return skuMedia;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Sku#getSkuImage(java.util.Map)
-     */
+    @Override
     public void setSkuMedia(Map<String, Media> skuMedia) {
         this.skuMedia = skuMedia;
     }
 
+    @Override
     public Product getDefaultProduct() {
-        return product;
+        return defaultProduct;
     }
 
-    public void setDefaultProduct(Product product) {
+    @Override
+    public void setDefaultProduct(Product defaultProduct) {
+        this.defaultProduct = defaultProduct;
+    }
+    
+    @Override
+    public Product getProduct() {
+        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product;
+    }
+
+    @Override
+    public void setProduct(Product product) {
         this.product = product;
     }
-
-    @Deprecated
-    public List<Product> getAllParentProducts() {
-        return allParentProducts;
-    }
-
-    @Deprecated
-    public void setAllParentProducts(List<Product> allParentProducts) {
-        this.allParentProducts = allParentProducts;
-    }
-
-    /**
-	 * @return the skuAttributes
-	 */
+    
+    @Override
 	public List<SkuAttribute> getSkuAttributes() {
 		return skuAttributes;
 	}
@@ -695,13 +593,12 @@ public class SkuImpl implements Sku {
         this.productOptionValues = productOptionValues;
     }
 
-	/**
-	 * @param skuAttributes the skuAttributes to set
-	 */
+    @Override
 	public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
 		this.skuAttributes = skuAttributes;
 	}
-	
+
+    @Override
     public Boolean isMachineSortable() {
     	 if (isMachineSortable == null && hasDefaultSku()) {
              return lookupDefaultSku().isMachineSortable();
@@ -709,6 +606,7 @@ public class SkuImpl implements Sku {
         return isMachineSortable;
     }
 
+    @Override
     public void setMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
     }	
@@ -742,4 +640,5 @@ public class SkuImpl implements Sku {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
     }
+    
 }

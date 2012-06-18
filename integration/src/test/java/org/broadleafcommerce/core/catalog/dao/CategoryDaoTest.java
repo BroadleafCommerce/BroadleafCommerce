@@ -16,22 +16,23 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.catalog.CategoryDaoDataProvider;
-import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryDaoTest extends BaseTest {
 
@@ -45,10 +46,14 @@ public class CategoryDaoTest extends BaseTest {
     public void testSetFeaturedProducts(Category category) {
         category = catalogService.saveCategory(category);
 
+        Sku sku = new SkuImpl();
+        sku.setDescription("This thing will change your life");
+        sku.setName("Test Product");
+        catalogService.saveSku(sku);
+        
         Product product = new ProductImpl();
         product.setModel("KGX200");
-        product.setDescription("This thing will change your life");
-        product.setName("Test Product");
+        product.setDefaultSku(sku);
         product = catalogService.saveProduct(product);
 
         FeaturedProduct featuredProduct = new FeaturedProductImpl();

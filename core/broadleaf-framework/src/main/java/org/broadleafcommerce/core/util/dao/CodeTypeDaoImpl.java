@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.util.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.util.domain.CodeType;
+import org.broadleafcommerce.core.util.domain.CodeTypeImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.util.domain.CodeType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 
 @Repository("blCodeTypeDao")
@@ -49,7 +50,7 @@ public class CodeTypeDaoImpl implements CodeTypeDao {
 
     public void delete(CodeType codeType) {
     	if (!em.contains(codeType)) {
-        	codeType = (CodeType) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.util.domain.CodeType"), codeType.getId());
+        	codeType = (CodeType) em.find(CodeTypeImpl.class, codeType.getId());
     	}
         em.remove(codeType);
     }

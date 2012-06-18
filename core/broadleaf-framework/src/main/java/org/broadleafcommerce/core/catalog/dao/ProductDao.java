@@ -18,18 +18,17 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
-import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code ProductDao} provides persistence access to {@code Product} instances
  *
  * @see Product
- * @see ProductSku
  * @author Jeff Fischer
  */
 public interface ProductDao {
@@ -106,50 +105,6 @@ public interface ProductDao {
      */
     @Nonnull
     public List<Product> readProductsByCategory(@Nonnull Long categoryId, @Nonnull int limit, @Nonnull int offset);
-
-    /**
-     * Find all the products related to the passed in sku
-     *
-     * @param skuId the primary key of the sku to whom the resulting product list should be related
-     * @return the list of products qualified for the sku. Use this method if your product domain
-     * is modelled with a ManyToMany relationship between {@code Product} and {@code Sku}.
-     */
-    @Nonnull
-    public List<Product> readProductsBySku(@Nonnull Long skuId);
-
-    /**
-     * Find all products whose start and end dates are before and after the passed in
-     * date and who are related to the given sku. Use this method if your product domain
-     * is modelled with a ManyToMany relationship between {@code Product} and {@code Sku}.
-     *
-     * @param skuId the primary key of the sku to whom the resulting product list should be related
-     * @param currentDate the date for which the products should be checked against to determine their active state
-     * @return the list of products qualified for the sku and date
-     */
-    @Nonnull
-    public List<Product> readActiveProductsBySku(@Nonnull Long skuId, @Nonnull Date currentDate);
-
-    /**
-     * Find all the {@code ProductSku} instances related to the passed in sku. Use this method if your
-     * product domain is modelled with a OneToOne relationship between {@code Product} and {@code Sku}.
-     *
-     * @param skuId the primary key of the sku to whom the resulting {@code ProductSku} list should be related
-     * @return the list of {@code ProductSku} instances qualified for the sku
-     */
-    @Nonnull
-    public List<ProductSku> readProductsBySkuOneToOne(@Nonnull Long skuId);
-
-    /**
-     * Find all the {@code ProductSku} instances whose start and end dates are before and after the passed in
-     * date and who are related to the given sku. Use this method if your product domain is modelled
-     * with a OneToOne relationship between {@code Product} and {@code Sku}.
-     *
-     * @param skuId the primary key of the sku to whom the resulting {@code ProductSku} list should be related
-     * @param currentDate the date for which the {@code ProductSku} instances should be checked against to determine their active state
-     * @return the list of {@code ProductSku} instances qualifed for the sku and date
-     */
-    @Nonnull
-    public List<ProductSku> readActiveProductsBySkuOneToOne(@Nonnull Long skuId, @Nonnull Date currentDate);
 
     /**
      * Remove the passed in product instance from the datastore

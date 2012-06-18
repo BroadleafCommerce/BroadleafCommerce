@@ -16,19 +16,19 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blFulfillmentGroupDao")
 public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
@@ -44,7 +44,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     }
 
     public FulfillmentGroup readFulfillmentGroupById(final Long fulfillmentGroupId) {
-        return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.order.domain.FulfillmentGroup"), fulfillmentGroupId);
+        return (FulfillmentGroup) em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
     }
 
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(final Order order) {

@@ -16,14 +16,16 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import java.util.List;
 
 /**
@@ -47,7 +49,7 @@ public class SkuDaoImpl implements SkuDao {
 
     @Override
     public Sku readSkuById(Long skuId) {
-        return (Sku) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.Sku"), skuId);
+        return (Sku) em.find(SkuImpl.class, skuId);
     }
 
     @Override

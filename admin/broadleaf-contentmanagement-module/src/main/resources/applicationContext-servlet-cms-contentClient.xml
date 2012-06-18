@@ -22,10 +22,12 @@
    		</property>
    		<property name="environments">
    			<set>
-   				<value>production</value>
-   				<value>staging</value>
-   				<value>integration</value>
-   				<value>development</value>
+                   <value>production</value>
+                   <value>staging</value>
+                   <value>integrationQA</value>
+                   <value>integrationDev</value>
+                   <value>development</value>
+                   <value>local</value>
    			</set>
    		</property>
    		<property name="defaultEnvironment" value="development"/>

@@ -16,8 +16,9 @@
 
 package org.broadleafcommerce.core.marketing.dao;
 
-import org.broadleafcommerce.core.marketing.domain.TargetContent;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.marketing.domain.TargetContent;
+import org.broadleafcommerce.core.marketing.domain.TargetContentImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 @Repository("blTargetContentDao")
@@ -68,7 +70,7 @@ public class TargetContentDaoImpl implements TargetContentDao {
     }
 
     public TargetContent readTargetContentById(Long targetContentId) {
-        return (TargetContent) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.marketing.domain.TargetContent"), targetContentId);
+        return (TargetContent) em.find(TargetContentImpl.class, targetContentId);
     }
 
     @SuppressWarnings("unchecked")

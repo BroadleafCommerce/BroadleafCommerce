@@ -16,17 +16,18 @@
 
 package org.broadleafcommerce.core.pricing.dao;
 
-import java.math.BigDecimal;
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.pricing.domain.ShippingRate;
+import org.broadleafcommerce.core.pricing.domain.ShippingRateImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Repository("blShippingRatesDao")
 public class ShippingRateDaoImpl implements ShippingRateDao {
@@ -42,7 +43,7 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
     }
 
     public ShippingRate readShippingRateById(Long id) {
-        return (ShippingRate) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.pricing.domain.ShippingRate"), id);
+        return (ShippingRate) em.find(ShippingRateImpl.class, id);
     }
 
     @SuppressWarnings("unchecked")

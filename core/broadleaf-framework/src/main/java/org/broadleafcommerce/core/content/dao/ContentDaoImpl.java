@@ -16,19 +16,20 @@
 
 package org.broadleafcommerce.core.content.dao;
 
-import java.util.Date;
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
+import org.broadleafcommerce.core.content.domain.Content;
+import org.broadleafcommerce.core.content.domain.ContentImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
-import org.broadleafcommerce.core.content.domain.Content;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
+import java.util.Date;
+import java.util.List;
 
 /**
 *
@@ -76,7 +77,7 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
      * @see org.broadleafcommerce.core.content.dao.ContentDao#readContentById(java.lang.Long)
      */
     public Content readContentById(Integer id) {
-        return (Content) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.content.domain.Content"), id);
+        return (Content) em.find(ContentImpl.class, id);
     }
 
     /* (non-Javadoc)

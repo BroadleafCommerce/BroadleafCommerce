@@ -18,6 +18,7 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 @Repository("blCountryDao")
@@ -37,7 +39,7 @@ public class CountryDaoImpl implements CountryDao {
     protected EntityConfiguration entityConfiguration;
 
     public Country findCountryByAbbreviation(String abbreviation) {
-        return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.Country"), abbreviation);
+        return (Country) em.find(CountryImpl.class, abbreviation);
     }
 
     @SuppressWarnings("unchecked")

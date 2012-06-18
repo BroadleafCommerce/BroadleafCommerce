@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -37,7 +38,7 @@ public class CustomerDaoImpl implements CustomerDao {
     protected EntityConfiguration entityConfiguration;
 
     public Customer readCustomerById(Long id) {
-        return (Customer) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.Customer"), id);
+        return (Customer) em.find(CustomerImpl.class, id);
     }
 
     public Customer readCustomerByUsername(String username) {

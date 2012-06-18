@@ -55,7 +55,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     public OfferAudit readAuditById(final Long offerAuditId) {
-        return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(OfferAudit.class.getName()), offerAuditId);
+        return (OfferAudit) em.find(OfferAuditImpl.class, offerAuditId);
     }
 
     public Long countUsesByCustomer(Long customerId, Long offerId) {

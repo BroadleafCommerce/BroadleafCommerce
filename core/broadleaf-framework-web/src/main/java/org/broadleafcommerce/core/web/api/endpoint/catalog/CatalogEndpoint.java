@@ -162,7 +162,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
                                                @PathParam("id") Long id,
                                                @QueryParam("limit") @DefaultValue("20") int limit,
                                                @QueryParam("offset") @DefaultValue("0") int offset,
-                                               @QueryParam("active") @DefaultValue("false") boolean active) {
+                                               @QueryParam("active") @DefaultValue("true") boolean active) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories;
@@ -227,7 +227,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
                                                         @PathParam("id") Long id,
                                                         @QueryParam("limit") @DefaultValue("20") int limit,
                                                         @QueryParam("offset") @DefaultValue("0") int offset,
-                                                        @QueryParam("activeOnly") @DefaultValue("false") boolean activeOnly) {
+                                                        @QueryParam("activeOnly") @DefaultValue("true") boolean activeOnly) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Product> products;

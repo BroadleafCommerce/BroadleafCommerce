@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 
 public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
 
+    private Long defaultFulfillmentGroupOrderId;
     private Long orderId;
     private Long defaultFulfillmentGroupId;
     private Long fulfillmentGroupId;
@@ -69,16 +70,16 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
         assert newFG.getId() == null;
         fulfillmentGroup = fulfillmentGroupService.save(newFG);
         assert fulfillmentGroup.getId() != null;
-        orderId = salesOrder.getId();
+        defaultFulfillmentGroupOrderId = salesOrder.getId();
         defaultFulfillmentGroupId = fulfillmentGroup.getId();
     }
 
     @Test(groups = { "readDefaultFulfillmentGroupForOrder" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
     @Transactional
     public void readDefaultFulfillmentGroupForOrder() {
-        Order order = orderDao.readOrderById(orderId);
+        Order order = orderDao.readOrderById(defaultFulfillmentGroupOrderId);
         assert order != null;
-        assert order.getId() == orderId;
+        assert order.getId() == defaultFulfillmentGroupOrderId;
         FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
         assert fg.getId() != null;
         assert fg.getId().equals(defaultFulfillmentGroupId);

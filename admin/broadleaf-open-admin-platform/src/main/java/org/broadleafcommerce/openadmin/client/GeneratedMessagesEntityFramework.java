@@ -64,7 +64,6 @@ public interface GeneratedMessagesEntityFramework extends ConstantsWithLookup {
     public String ProductImpl_Is_Featured_Product();
     public String ProductImpl_Is_Product_Machine_Sortable();
     public String ProductImpl_Product_Default_Category();
-    public String ProductSkuImpl_skuProduct();
     public String ProductWeight_Product_Weight();
     public String ProductWeight_Product_Weight_Units();
     public String SkuImpl_Sku_ID();

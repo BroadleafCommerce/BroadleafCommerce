@@ -18,7 +18,9 @@ package org.broadleafcommerce.cms.page.dao;
 
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -31,6 +33,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,12 +57,12 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public Page readPageById(Long id) {
-        return (Page) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.Page"), id);
+        return (Page) em.find(PageImpl.class, id);
     }
 
     @Override
     public PageTemplate readPageTemplateById(Long id) {
-        return (PageTemplate) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.page.domain.PageTemplate"), id);
+        return (PageTemplate) em.find(PageTemplateImpl.class, id);
     }
 
     @Override

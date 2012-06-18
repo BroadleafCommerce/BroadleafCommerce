@@ -17,9 +17,10 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
+import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import java.util.List;
 
 /**
@@ -48,7 +50,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAsset readStaticAssetById(Long id) {
-        return (StaticAsset) em.find(entityConfiguration.lookupEntityClass(StaticAsset.class.getName()), id);
+        return (StaticAsset) em.find(StaticAssetImpl.class, id);
     }
 
     @Override

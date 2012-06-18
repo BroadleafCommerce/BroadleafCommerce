@@ -16,13 +16,7 @@
 
 package org.broadleafcommerce.test;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -38,7 +32,6 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.domain.ShippingRateImpl;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -52,6 +45,11 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
+
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
 
 public abstract class CommonSetupBaseTest extends BaseTest {
     
@@ -177,49 +175,38 @@ public abstract class CommonSetupBaseTest extends BaseTest {
         return customer;
     }
     
-    public Sku addTestSku(String skuName, String productName, String categoryName) {
-    	return addTestSku(skuName, productName, categoryName, true);
+    public Product addTestProduct(String productName, String categoryName) {
+    	return addTestProduct(productName, categoryName, true);
     }
     
-    public Sku addTestSku(String skuName, String productName, String categoryName, boolean active) {
+    public Product addTestProduct(String productName, String categoryName, boolean active) {
     	Calendar activeStartCal = Calendar.getInstance();
     	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-
+        
+        Calendar activeEndCal = Calendar.getInstance();
+        activeEndCal.add(Calendar.DAY_OF_YEAR, -1);
+        
     	Category category = new CategoryImpl();
         category.setName(categoryName);
         category.setActiveStartDate(activeStartCal.getTime());
         category = catalogService.saveCategory(category);
-        Product newProduct = new ProductImpl();
-
-        Calendar activeEndCal = Calendar.getInstance();
-        activeEndCal.add(Calendar.DAY_OF_YEAR, -1);
-        newProduct.setActiveStartDate(activeStartCal.getTime());
-        
-        newProduct.setDefaultCategory(category);
-        newProduct.setName(productName);
-        newProduct = catalogService.saveProduct(newProduct);
-
-        List<Product> products = new ArrayList<Product>();
-        products.add(newProduct);
         
         Sku newSku = new SkuImpl();
-        newSku.setName(skuName);
+        newSku.setName(productName);
         newSku.setRetailPrice(new Money(44.99));
-        newSku.setActiveStartDate(activeStartCal.getTime());
-        
+        newSku.setActiveStartDate(activeStartCal.getTime());  
         if (!active) {
-        	newSku.setActiveEndDate(activeEndCal.getTime());
+            newSku.setActiveEndDate(activeEndCal.getTime());
         }
         newSku.setDiscountable(true);
         newSku = catalogService.saveSku(newSku);
-        newSku.setAllParentProducts(products);
         
-        List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
+        Product newProduct = new ProductImpl();
+        newProduct.setDefaultCategory(category);
+        newProduct.setDefaultSku(newSku);
         newProduct = catalogService.saveProduct(newProduct);
 
-        return newSku;
+        return newProduct;
     }
 
     public void createShippingRates() {

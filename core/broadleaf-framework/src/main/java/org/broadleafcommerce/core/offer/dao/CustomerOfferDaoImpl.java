@@ -16,17 +16,18 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.offer.domain.CustomerOffer;
+import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.offer.domain.CustomerOffer;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blCustomerOfferDao")
 public class CustomerOfferDaoImpl implements CustomerOfferDao {
@@ -53,7 +54,7 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     }
 
     public CustomerOffer readCustomerOfferById(final Long customerOfferId) {
-        return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(CustomerOffer.class.getName()), customerOfferId);
+        return (CustomerOffer) em.find(CustomerOfferImpl.class, customerOfferId);
     }
 
     @SuppressWarnings("unchecked")

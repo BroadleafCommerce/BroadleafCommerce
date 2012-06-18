@@ -16,17 +16,18 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.User;
+import org.broadleafcommerce.profile.core.domain.UserImpl;
+import org.broadleafcommerce.profile.core.domain.UserRole;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.User;
-import org.broadleafcommerce.profile.core.domain.UserRole;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blUserDao")
 public class UserDaoImpl implements UserDao {
@@ -65,6 +66,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     public User readUserById(Long id) {
-        return (User) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.User"), id);
+        return (User) em.find(UserImpl.class, id);
     }
 }

@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.CustomerPhone;
+import org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.CustomerPhone;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blCustomerPhoneDao")
 public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
@@ -48,7 +49,7 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     }
 
     public CustomerPhone readCustomerPhoneById(Long customerPhoneId) {
-        return (CustomerPhone) em.find(entityConfiguration.lookupEntityClass(CustomerPhone.class.getName()), customerPhoneId);
+        return (CustomerPhone) em.find(CustomerPhoneImpl.class, customerPhoneId);
     }
 
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId) {

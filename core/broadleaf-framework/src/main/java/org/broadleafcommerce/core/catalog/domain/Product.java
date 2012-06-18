@@ -17,10 +17,13 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
 
 /**
@@ -42,111 +45,212 @@ public interface Product extends Serializable {
      *
      * @return the id of the Product
      */
-    Long getId();
+    public Long getId();
 
     /**
      * Sets the id of the Product.
      *
      * @param id - the id of the product
      */
-    void setId(Long id);
+    public void setId(Long id);
 
     /**
      * Returns the name of the product that is used for display purposes.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return the name of the product
      */
-    String getName();
+    public String getName();
 
     /**
      * Sets the name of the product that is used for display purposes.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param name - the name of the Product
      */
-    void setName(String name);
+    public void setName(String name);
 
     /**
      * Returns a brief description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return a brief description of the product
      */
-    String getDescription();
+    public String getDescription();
 
     /**
      * Sets a brief description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param description - a brief description of the product
      */
-    void setDescription(String description);
+    public void setDescription(String description);
 
     /**
      * Returns a long description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return a long description of the product
      */
-    String getLongDescription();
+    public String getLongDescription();
 
     /**
      * Sets a long description of the product that is used for display.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param longDescription the long description
      */
-    void setLongDescription(String longDescription);
+    public void setLongDescription(String longDescription);
 
     /**
      * Returns the first date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return the first date the product will be available
      */
-    Date getActiveStartDate();
+    public Date getActiveStartDate();
 
     /**
      * Sets the first date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param activeStartDate - the first day the product is available
      */
-    void setActiveStartDate(Date activeStartDate);
+    public void setActiveStartDate(Date activeStartDate);
 
     /**
      * Returns the last date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return the last day the product is available
      */
-    Date getActiveEndDate();
+    public Date getActiveEndDate();
 
     /**
      * Sets the last date a product will be available that is used to determine whether
      * to display the product.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @param activeEndDate - the last day the product is available
      */
-    void setActiveEndDate(Date activeEndDate);
+    public void setActiveEndDate(Date activeEndDate);
 
     /**
      * Returns a boolean that indicates if the product is currently active.
-     *
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
      * @return a boolean indicates if the product is active.
      */
-    boolean isActive();
+    public boolean isActive();
+    
+    /**
+     * Gets the default {@link Sku} associated with this Product. A Product is
+     * required to have a default Sku which holds specific information about the Product
+     * like weight, dimensions, price, etc.  Many of the Product attributes that
+     * have getters and setters on Product are actually pass-through to the default Sku.
+     * <br />
+     * <br />
+     * Products can also have multiple Skus associated with it that are represented by
+     * {@link ProductOption}s. For instance, a large, blue shirt. For more information on
+     * that relationship see {@link #getAdditionalSkus()}.
+     * 
+     * @return the default Sku for this Product
+     */
+    public Sku getDefaultSku();
 
     /**
-     * Returns a list of {@link Sku}s that are part of this product.
-     *
-     * @return a list of {@link Sku}s associated with this product
+     * Sets the default Sku for this Product
+     * <br />
+     * <br />
+     * Note: this operation is cascaded with CascadeType.ALL which saves from having to persist the Product
+     * in 2 operations: first persist the Sku and then take the merged Sku, set it as this Product's default
+     * Sku, and then persist this Product.
+     * 
+     * @param defaultSku - the Sku that should be the default for this Product
      */
-    List<Sku> getSkus();
+    public void setDefaultSku(Sku defaultSku);
+    
+    /**
+     * Returns a list of {@link Sku}s filtered by whether the Skus are active or not.
+     * This list does not contain the {@link #getDefaultSku()} and filters by {@link Sku#isActive()}.
+     *
+     * @return a list of active Skus from {@link #getAdditionalSkus()} for this Product
+     */
+    public List<Sku> getSkus();
 
     /**
-     * Sets the {@link Sku}s that are to be associated with this product.
-     *
-     * @param skus - a List of {@link Sku}s to associate with this product.
+     * Gets all the additional Skus associated with this Product. For instance, if this
+     * Product represented a T-shirt and you could pick the size of the T-shirt as a
+     * {@link ProductOption} (like "small", "medium", "large") this would return 3 Skus
+     * if you had different inventory or price constraints on each {@link ProductOptionValue}.
+     * <br />
+     * <br />
+     * This list does not take into account whether any of these additional Skus are active or not, nor
+     * does it contain the {@link #getDefaultSku()} for this Product.  For this functionality, see
+     * {@link #getSkus()} and {@link #getAllSkus()}, respectively.
+     * 
+     * @return the additional Skus for this Product
+     * @see {@link ProductOption}, {@link ProductOptionValue}
      */
-    void setAllSkus(List<Sku> skus);
+    public List<Sku> getAdditionalSkus();
 
-    List<Sku> getAllSkus();
+    /**
+     * Sets the additional Skus associated to this Product. These additional Skus should
+     * come from {@link ProductOptionValue}s and are used in instance where you need to track inventory
+     * or change pricing on a per-option value basis.
+     *
+     * @param skus - a List of {@link Sku}s to associate with this Product, usually based off of {@link ProductOption}s
+     * @see {@link #getAdditionalSkus()}, {@link ProductOption}, {@link ProductOptionValue}
+     */
+    public void setAdditionalSkus(List<Sku> skus);
+
+    /**
+     * Returns all the {@link Sku}s that are associated with this Product (including {@link #getDefaultSku()})
+     * regardless of whether or not the {@link Sku}s are active or not
+     * <br />
+     * <br />
+     * Note: in the event that the default Sku was added to the list of {@link #getAdditionalSkus()}, it is filtered out
+     * so that only a single instance of {@link #getDefaultSku()} is contained in the resulting list
+     * 
+     * @return all the Skus associated to this Product
+     */
+    public List<Sku> getAllSkus();
     
     /**
      * Returns a map of key/value pairs that associate the image name (key) with the URL to the image (value)
@@ -155,7 +259,7 @@ public interface Product extends Serializable {
      * @return a map of product images
      */
     @Deprecated
-    Map<String, String> getProductImages();
+    public Map<String, String> getProductImages();
 
     /**
      * Returns a string URL to an image given the string key passed in for this product.
@@ -165,7 +269,7 @@ public interface Product extends Serializable {
      * @return a URL to the image associated witht he key passed in.
      */
     @Deprecated
-    String getProductImage(String imageKey);
+    public String getProductImage(String imageKey);
 
     /**
      * Sets the product images map. This method is deprecated. Use setProductMedia instead.
@@ -173,123 +277,380 @@ public interface Product extends Serializable {
      * @param productImages - a map of product images
      */
     @Deprecated
-    void setProductImages(Map<String, String> productImages);
+    public void setProductImages(Map<String, String> productImages);
 
     /**
      * Returns a map of key/value pairs that associate the media name (key) with the Media object(value)
      *
      * @return a map of product media
      */
-    Map<String, Media> getProductMedia();
+    @Deprecated
+    public Map<String, Media> getProductMedia();
 
     /**
      * Sets the product media map.
      *
      * @param productMedia - a map of product images
      */
-    void setProductMedia(Map<String, Media> productMedia);
+    @Deprecated
+    public void setProductMedia(Map<String, Media> productMedia);
+
+    /**
+     * Gets the media for this product. This serves as a pass-through to
+     * the {@link getDefaultSku()} media
+     * 
+     * @return the Media for the default Sku associated with this Product
+     * @see Sku
+     */
+    public Map<String, Media> getMedia();
+
+    /**
+     * Gets the media for this product. This serves as a pass-through to
+     * the {@link getDefaultSku()} media
+     * 
+     * @param media Media map to set on the default Sku associated with this Product
+     * @see Sku
+     */
+    public void setMedia(Map<String, Media> media);
+
+    /**
+     * Convenience method for returning all of the media associated with this Product by adding
+     * all the media in {@link #getDefaultSku()} as well as all the media in the Skus represented by
+     * {@link #getAdditionalSkus()}
+     * 
+     * @return all of the Media for all of the Skus for this Product
+     */
+    public Map<String, Media> getAllSkuMedia();
 
     /**
      * Returns all parent {@link Category}(s) this product is associated with.
      *
      * @return the all parent categories for this product
      */
-    List<Category> getAllParentCategories();
+    public List<Category> getAllParentCategories();
 
     /**
      * Sets all parent {@link Category}s this product is associated with.
      *
      * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
      */
-    void setAllParentCategories(List<Category> allParentCategories);
+    public void setAllParentCategories(List<Category> allParentCategories);
      
     /**
      * Returns the default {@link Category} this product is associated with.
      *
      */
-    Category getDefaultCategory();
+    public Category getDefaultCategory();
 
     /**
      * Sets the default {@link Category} to associate this product with.
      *
      * @param defaultCategory - the default {@link Category} to associate this product with
      */
-    void setDefaultCategory(Category defaultCategory);
+    public void setDefaultCategory(Category defaultCategory);
 
     /**
      * Returns the model number of the product
      * @return the model number
      */
-    String getModel();
+    public String getModel();
 
     /**
      * Sets the model number of the product
      * @param model
      */
-    void setModel(String model);
+    public void setModel(String model);
 
     /**
      * Returns the manufacture name for this product
      * @return the manufacture name
      */
-    String getManufacturer();
+    public String getManufacturer();
 
     /**
      * Sets the manufacture for this product
      * @param manufacturer
      */
-    void setManufacturer(String manufacturer);
+    public void setManufacturer(String manufacturer);
+    
+    /**
+     * Returns the {@link Dimension} for this product
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return a ProductDimensions object
+     * 
+     */
+    public Dimension getDimension();
+
+    /**
+     * Sets the {@link Dimension} for this product
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param dimension
+     * 
+     */
+    public void setDimension(Dimension dimension);
+
+    /**
+     * Returns the dimension width
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return width dimension of the product
+     * 
+     */
+    public BigDecimal getWidth();
+
+    /**
+     * Sets the dimension width
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param width
+     * 
+     */
+    public void setWidth(BigDecimal width);
+
+    /**
+     * Returns the dimension height
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return height dimension of the product
+     * 
+     */
+    public BigDecimal getHeight();
+
+    /**
+     * Sets the dimension height
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param height
+     * 
+     */
+    public void setHeight(BigDecimal height);
+
+    /**
+     * Returns the dimension depth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return width depth of the product
+     * 
+     */
+    public BigDecimal getDepth();
+
+    /**
+     * Sets the dimension depth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param depth
+     */
+    public void setDepth(BigDecimal depth);
+    
+    /**
+     * Gets the dimension girth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return the dimension girth
+     */
+    public BigDecimal getGirth();
+    
+    /**
+     * Sets the dimension girth
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param girth
+     */
+    public void setGirth(BigDecimal girth);
+
+    /**
+     * Returns the dimension container size
+     * 
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return dimension container size
+     */
+    public ContainerSizeType getSize();
+
+    /**
+     * Sets the dimension container size
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param size
+     */
+    public void setSize(ContainerSizeType size);
+
+    /**
+     * Gets the dimension container shape
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return dimension container shape
+     */
+    public ContainerShapeType getContainer();
+
+    /**
+     * Sets the dimension container shape
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param container
+     */
+    public void setContainer(ContainerShapeType container);
+
+    /**
+     * Returns a String representation of the dimension
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return a dimension String
+     */
+    public String getDimensionString();
+
+    /**
+     * Returns the weight of the product
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @return weight of product
+     */
+    public Weight getWeight();
+
+    /**
+     * Sets the product weight
+     * <br />
+     * <br />
+     * <b>Note:</b> this is a convenience method that merely serves as
+     * a pass-through to the same method via {@link getDefaultSku()}
+     * 
+     * @param weight
+     */
+    public void setWeight(Weight weight);
 
     /**
      * Returns a List of this product's related Cross Sales
      * @return
      */
-    List<RelatedProduct> getCrossSaleProducts();
+    public List<RelatedProduct> getCrossSaleProducts();
 
     /**
      * Sets the related Cross Sales
      * @param crossSaleProducts
      */
-    void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
+    public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
 
     /**
      * Returns a List of this product's related Up Sales
      * @return
      */
-    List<RelatedProduct> getUpSaleProducts();
+    public List<RelatedProduct> getUpSaleProducts();
 
     /**
      * Sets the related Up Sales
      * @param upSaleProducts
      */
-    void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
+    public void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
 
     /**
      * Returns whether or not the product is featured
      * @return isFeaturedProduct as Boolean
      */
-    boolean isFeaturedProduct();
+    public boolean isFeaturedProduct();
 
     /**
      * Sets whether or not the product is featured
      * @param isFeaturedProduct
      */
-    void setFeaturedProduct(boolean isFeaturedProduct);
-    
-    public Sku getDefaultSku();
+    public void setFeaturedProduct(boolean isFeaturedProduct);
 
-	public void setDefaultSku(Sku defaultSku);	
-    
-    List<ProductAttribute> getProductAttributes();
+    /**
+     * Generic key-value pair of attributes to associate to this Product for maximum
+     * extensibility.
+     * 
+     * @return the attributes for this Product
+     */
+	public List<ProductAttribute> getProductAttributes();
 
-	void setProductAttributes(List<ProductAttribute> productAttributes);
-	
+	/**
+	 * Sets a generic list of key-value pairs for Product
+	 * @param productAttributes
+	 */
+	public void setProductAttributes(List<ProductAttribute> productAttributes);
+
+	/**
+	 * Gets the promotional message for this Product. For instance, this could be a limited-time
+	 * Product
+	 * 
+	 * @return the Product's promotional message
+	 */
 	public String getPromoMessage();
 
+	/**
+	 * Sets the promotional message for this Product
+	 * 
+	 * @param promoMessage
+	 */
 	public void setPromoMessage(String promoMessage);
-	
+
+	/**
+	 * The available {@link ProductOption}s for this Product.  For instance, if this
+	 * Product is a T-Shirt, you might be able to specify a size and color. This would
+	 * be modeled by 2 {@link ProductOption}s, each that could have multiple {@link ProductOptionValue}s 
+	 * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
+	 * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
+	 * off of the {@link ProductOptionValue}s
+	 * 
+	 * @return the {@link ProductOption}s for this Product
+	 * @see Product#getAdditionalSkus(), {@link ProductOption}, {@link ProductOptionValue}
+	 */
     public List<ProductOption> getProductOptions();
 
+    /**
+     * Sets the list of available ProductOptions for this Product
+     * 
+     * @param productOptions
+     */
     public void setProductOptions(List<ProductOption> productOptions);
 
     /**
@@ -302,28 +663,28 @@ public interface Product extends Serializable {
      * @see org.broadleafcommerce.core.web.catalog.ProductHandlerMapping
      * @return
      */
-	String getUrl();
+    public String getUrl();
 
 	/**
 	 * Sets the URL that a customer could type in to reach this product.
 	 * 
 	 * @param url
 	 */
-	void setUrl(String url);
+	public void setUrl(String url);
 	
 	/**
 	 * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
 	 * this product by taking the {@link Product.getName()} and removing special characters and replacing
 	 * dashes with spaces.
 	 */	
-	String getUrlKey();
+	public String getUrlKey();
 
 	/**
 	 * Sets a url-fragment to be used with this product.  By default, the system will attempt to create a 
 	 * unique url-fragment for this product by taking the {@link Product.getName()} and removing special characters and replacing
 	 * dashes with spaces.
 	 */
-	void setUrlKey(String url);
+	public void setUrlKey(String url);
 
 	/**
 	 * Returns the name of a display template that is used to render this product.   Most implementations have a default
@@ -331,19 +692,19 @@ public interface Product extends Serializable {
 	 * 
 	 * @return
 	 */
-	String getDisplayTemplate();
+	public String getDisplayTemplate();
 
 	/**
 	 * Sets the name of a display template that is used to render this product.   Most implementations have a default
 	 * template for all products.    This allows for the user to define a specific template to be used by this product.
 	 * @param displayTemplate
 	 */
-	void setDisplayTemplate(String displayTemplate);
+	public void setDisplayTemplate(String displayTemplate);
 	
 	/**
 	 * Generates a URL that can be used to access the product.  
 	 * Builds the url by combining the url of the default category with the getUrlKey() of this product.
 	 */
-	String getGeneratedUrl();
+	public String getGeneratedUrl();
 
 }
