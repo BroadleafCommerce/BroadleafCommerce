@@ -237,7 +237,11 @@ public interface Product extends Serializable {
 
     /**
      * Returns all the {@link Sku}s that are associated with this Product (including {@link #getDefaultSku()})
-     * regardless of whether or not the {@link Sku}s are active or not 
+     * regardless of whether or not the {@link Sku}s are active or not
+     * <br />
+     * <br />
+     * Note: in the event that the default Sku was added to the list of {@link #getAdditionalSkus()}, it is filtered out
+     * so that only a single instance of {@link #getDefaultSku()} is contained in the resulting list
      * 
      * @return all the Skus associated to this Product
      */
@@ -303,6 +307,15 @@ public interface Product extends Serializable {
      * @see Sku
      */
     public void setMedia(Map<String, Media> media);
+
+    /**
+     * Convenience method for returning all of the media associated with this Product by adding
+     * all the media in {@link #getDefaultSku()} as well as all the media in the Skus represented by
+     * {@link #getAdditionalSkus()}
+     * 
+     * @return all of the Media for all of the Skus for this Product
+     */
+    public Map<String, Media> getAllSkuMedia();
 
     /**
      * Returns all parent {@link Category}(s) this product is associated with.

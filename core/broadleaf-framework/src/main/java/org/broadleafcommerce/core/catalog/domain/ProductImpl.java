@@ -347,7 +347,11 @@ public class ProductImpl implements Product {
 	public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        allSkus.addAll(additionalSkus);
+        for (Sku additionalSku : additionalSkus) {
+            if (additionalSku.getId() != getDefaultSku().getId()) {
+                allSkus.add(additionalSku);
+            }
+        }
         return allSkus;
     }
 
@@ -427,6 +431,18 @@ public class ProductImpl implements Product {
     @Override
     public void setMedia(Map<String, Media> media) {
         getDefaultSku().setSkuMedia(media);
+    }
+    
+    @Override
+    public Map<String, Media> getAllSkuMedia() {
+        Map<String, Media> result = new HashMap<String, Media>();
+        result.putAll(getMedia());
+        for (Sku additionalSku : getAdditionalSkus()) {
+            if (additionalSku.getId() != getDefaultSku().getId()) {
+                result.putAll(additionalSku.getSkuMedia());
+            }
+        }
+        return result;
     }
 
     @Override
