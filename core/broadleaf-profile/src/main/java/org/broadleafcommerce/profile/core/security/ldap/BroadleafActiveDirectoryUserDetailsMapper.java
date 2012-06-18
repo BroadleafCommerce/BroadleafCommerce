@@ -108,7 +108,7 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
     }
 
     @Override
-    @Transactional
+    @Transactional("blTransactionManager")
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
         Collection<GrantedAuthority> newAuthorities = new HashSet<GrantedAuthority>();
 
@@ -130,13 +130,17 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
             newAuthorities.addAll(authorities);
         }
 
-        String email = (String)ctx.getObjectAttribute("mail");
-
-        UserDetails userDetails;
-        if (useEmailAddressAsUsername && email != null) {
-            userDetails = super.mapUserFromContext(ctx, email, newAuthorities);
+        UserDetails userDetails = null;
+        if (useEmailAddressAsUsername) {
+            String email = (String)ctx.getObjectAttribute("mail");
+            if (email != null) {
+                userDetails = super.mapUserFromContext(ctx, email, newAuthorities);
+            }
         }
-        userDetails = super.mapUserFromContext(ctx, username, newAuthorities);
+
+        if (userDetails == null) {
+            userDetails = super.mapUserFromContext(ctx, username, newAuthorities);
+        }
 
         provisionUser(ctx, userDetails);
 
