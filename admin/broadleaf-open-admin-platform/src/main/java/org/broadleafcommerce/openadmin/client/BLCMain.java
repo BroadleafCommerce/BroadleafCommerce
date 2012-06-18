@@ -46,6 +46,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFacto
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +175,10 @@ public class BLCMain implements EntryPoint {
 	public static void drawCurrentState(final String requestedModuleKey, final String requestedPageKey) {
         adminContext = GWT.getModuleBaseURL();
         if (!preProcessors.isEmpty()) {
-            executePreProcessors(0, requestedModuleKey, requestedPageKey);
+            Map<String, String> pipelineSeed = new HashMap<String, String>();
+            pipelineSeed.put("requestedModuleKey", requestedModuleKey);
+            pipelineSeed.put("requestedPageKey", requestedPageKey);
+            executePreProcessors(0, pipelineSeed);
         } else {
             if (postLaunch != null) {
                 postLaunch.onLaunched();
@@ -183,19 +187,19 @@ public class BLCMain implements EntryPoint {
         }
 	}
 
-    private static void executePreProcessors(final int count, final String requestedModuleKey, final String requestedPageKey) {
+    private static void executePreProcessors(final int count, final Map<String, String> pipelineSeed) {
         PreProcessor preProcessor = preProcessors.get(count);
-        preProcessor.preProcess(progressWindow, new PreProcessStatus() {
+        preProcessor.preProcess(progressWindow, pipelineSeed, new PreProcessStatus() {
             @Override
             public void complete() {
                 int temp = count + 1;
                 if (temp < preProcessors.size()) {
-                    executePreProcessors(temp, requestedModuleKey, requestedPageKey);
+                    executePreProcessors(temp, pipelineSeed);
                 } else {
                     if (postLaunch != null) {
                         postLaunch.onLaunched();
                     }
-                    finalizeCurrentState(requestedModuleKey, requestedPageKey);
+                    finalizeCurrentState(pipelineSeed.get("requestedModuleKey"), pipelineSeed.get("requestedPageKey"));
                 }
             }
         });

@@ -35,6 +35,7 @@ public class SandBoxContext {
 	protected Long sandBoxId;
 	protected SandBoxMode sandBoxMode;
     protected String sandBoxName;
+    protected boolean resetData = false;
 
     public AdminUser getAdminUser() {
         return adminUser;
@@ -78,5 +79,24 @@ public class SandBoxContext {
 
     public void setSandBoxName(String sandBoxName) {
         this.sandBoxName = sandBoxName;
+    }
+
+    public boolean isResetData() {
+        return resetData;
+    }
+
+    public void setResetData(boolean resetData) {
+        this.resetData = resetData;
+    }
+
+    public SandBoxContext clone() {
+        SandBoxContext myContext = new SandBoxContext();
+        myContext.setResetData(isResetData());
+        myContext.setAdminUser(getAdminUser());
+        myContext.setSandBoxId(getSandBoxId());
+        myContext.setSandBoxMode(getSandBoxMode());
+        myContext.setSandBoxName(getSandBoxName());
+
+        return myContext;
     }
 }

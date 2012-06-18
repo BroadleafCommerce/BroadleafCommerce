@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import com.smartgwt.client.widgets.Progressbar;
 import com.smartgwt.client.widgets.Window;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.view.SplashWindow;
 import org.broadleafcommerce.openadmin.client.view.Stoppable;
 
 /**
@@ -36,12 +37,18 @@ public class ServerProcessProgressWindow extends Window implements Stoppable {
         setHeight(52);
         setShowMinimizeButton(false);
         setIsModal(true);
-        centerInPage();
         setTitle(BLCMain.getMessageManager().getString("contactingServerTitle"));
         setShowCloseButton(false);
     }
 
 	public void startProgress() {
+        if (BLCMain.SPLASH_PROGRESS.isActive()) {
+            SplashWindow splash = (SplashWindow) BLCMain.SPLASH_PROGRESS;
+            setTop(splash.getTop() + 180);
+            setLeft(splash.getLeft() + 40);
+        } else {
+            centerInPage();
+        }
 		show();
 		progressBar.startProgress();
 	}
