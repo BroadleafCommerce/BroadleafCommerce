@@ -90,7 +90,7 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
                 user.setUsername(userDetails.getUsername());
                 user.setPassword(userDetails.getPassword());
                 if (user.getPassword() == null) {
-                    user.setPassword("NO_PASSWORD");
+                    user.setPassword("LDAP_PROVIDED");
                 }
                 userService.saveUser(user);
             }
