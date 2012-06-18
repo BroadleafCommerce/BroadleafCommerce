@@ -33,6 +33,7 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
     private static final Map<String, ProductOptionType> TYPES = new HashMap<String, ProductOptionType>();
 
     public static final ProductOptionType COLOR  = new ProductOptionType("COLOR","Color");
+    public static final ProductOptionType SIZE  = new ProductOptionType("SIZE","Size");
     public static final ProductOptionType DATE  = new ProductOptionType("DATE","Date");
     public static final ProductOptionType TEXT  = new ProductOptionType("TEXT","Text");
     public static final ProductOptionType BOOLEAN  = new ProductOptionType("BOOLEAN","Boolean");
