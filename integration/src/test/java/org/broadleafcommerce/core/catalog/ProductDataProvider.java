@@ -16,23 +16,34 @@
 
 package org.broadleafcommerce.core.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.testng.annotations.DataProvider;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProductDataProvider {
 
+    /**
+     * A basic product is actually a Product and a Sku
+     * @return
+     */
     @DataProvider(name="basicProduct")
     public static Object[][] provideBasicProduct() {
         Product ci = new ProductImpl();
-        ci.setName("setOfAggieDominoes");
-        ci.setDescription("a fine set of bones for 42");
+        
+        Sku defaultSku = new SkuImpl();
+        defaultSku.setName("setOfAggieDominoes");
+        defaultSku.setDescription("a fine set of bones for 42");
+        ci.setDefaultSku(defaultSku);
 
         return new Object[][]{{ci}};
     }
@@ -141,15 +152,18 @@ public class ProductDataProvider {
         return rp1;
     }
 
-    private static Product getProduct(Long id){
-        if(id == null){
-            Product product = new ProductImpl();
-            product.setName("productNameTest");
+    private static Product getProduct(Long id) {
+        Product product = new ProductImpl();
+        Sku defaultSku = new SkuImpl();
+        defaultSku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
+        defaultSku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
+        product.setDefaultSku(defaultSku);
+        if (id == null) {
+            defaultSku.setName("productNameTest");
             return product;
         }
-        Product p = new ProductImpl();
-        p.setId(id);
-        p.setName(id.toString());
-        return p;
+        product.setId(id);
+        defaultSku.setName(id.toString());
+        return product;
     }
 }

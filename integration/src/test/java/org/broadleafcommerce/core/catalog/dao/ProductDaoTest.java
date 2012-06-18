@@ -16,23 +16,21 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.ProductDataProvider;
 import org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductWeight;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.List;
 
 public class ProductDaoTest extends BaseTest {
 
@@ -44,7 +42,7 @@ public class ProductDaoTest extends BaseTest {
 
     @Test(groups="createProducts", dataProvider="setupProducts", dataProviderClass=ProductDataProvider.class)
     @Rollback(false)
-    public void createProducts(Product product){
+    public void createProducts(Product product) {
         product = catalogService.saveProduct(product);
         assert(product.getId() != null);
     }

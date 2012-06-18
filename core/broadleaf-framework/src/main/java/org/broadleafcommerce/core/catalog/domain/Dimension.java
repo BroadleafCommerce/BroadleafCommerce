@@ -28,7 +28,7 @@ import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 
 @Embeddable
-public class ProductDimension implements Serializable {
+public class Dimension implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

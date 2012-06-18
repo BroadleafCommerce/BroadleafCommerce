@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.catalog.domain.ProductWeight;
+import org.broadleafcommerce.core.catalog.domain.Weight;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,14 +26,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 
 /**
- * This is a JAXB wrapper around ProductWeight
+ * This is a JAXB wrapper around Weight
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@XmlRootElement(name = "productWeight")
+@XmlRootElement(name = "weight")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ProductWeightWrapper implements APIWrapper<ProductWeight>{
+public class WeightWrapper implements APIWrapper<Weight>{
 
     @XmlElement
     protected BigDecimal weight;
@@ -42,7 +42,7 @@ public class ProductWeightWrapper implements APIWrapper<ProductWeight>{
     protected String unitOfMeasure;
 
     @Override
-    public void wrap(ProductWeight model, HttpServletRequest request) {
+    public void wrap(Weight model, HttpServletRequest request) {
         this.weight = model.getWeight();
         if (model.getWeightUnitOfMeasure() != null) {
             this.unitOfMeasure = model.getWeightUnitOfMeasure().getType();

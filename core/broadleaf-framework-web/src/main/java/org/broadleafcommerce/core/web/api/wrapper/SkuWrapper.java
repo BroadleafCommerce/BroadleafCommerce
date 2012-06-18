@@ -59,10 +59,10 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     protected Money salePrice;
     
     @XmlElement
-    protected ProductWeightWrapper productWeight;
+    protected WeightWrapper weight;
 
     @XmlElement
-    protected ProductDimensionWrapper productDimension;
+    protected DimensionWrapper dimension;
     
     @Override
     public void wrap(Sku model, HttpServletRequest request) {
@@ -75,13 +75,13 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
         this.salePrice = model.getSalePrice();
 
         if (model.getWeight() != null){
-            productWeight = (ProductWeightWrapper)context.getBean(ProductWeightWrapper.class.getName());
-            productWeight.wrap(model.getWeight(), request);
+            weight = (WeightWrapper)context.getBean(WeightWrapper.class.getName());
+            weight.wrap(model.getWeight(), request);
         }
 
         if (model.getDimension() != null){
-            productDimension = (ProductDimensionWrapper)context.getBean(ProductDimensionWrapper.class.getName());
-            productDimension.wrap(model.getDimension(), request);
+            dimension = (DimensionWrapper)context.getBean(DimensionWrapper.class.getName());
+            dimension.wrap(model.getDimension(), request);
         }
     }
 }

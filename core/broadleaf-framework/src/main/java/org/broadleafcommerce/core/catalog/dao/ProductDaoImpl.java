@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -140,60 +139,6 @@ public class ProductDaoImpl implements ProductDao {
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Product> readProductsBySku(Long skuId) {
-        TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU", Product.class);
-        query.setParameter("skuId", skuId);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        return query.getResultList();
-    }
-    
-    @Override
-    public List<ProductSku> readProductsBySkuOneToOne(Long skuId) {
-        TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
-        query.setParameter("skuId", skuId);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        return query.getResultList();
-    }
-    
-    @Override
-    public List<Product> readActiveProductsBySku(Long skuId, Date currentDate) {
-    	Date myDate;
-        Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(DATE_LOCK) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-	    		this.currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = this.currentDate;
-	    	}
-    	}
-        TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU", Product.class);
-        query.setParameter("skuId", skuId);
-        query.setParameter("currentDate", myDate);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        return query.getResultList();
-    }
-    
-    @Override
-    public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate) {
-    	Date myDate;
-        Long myCurrentDateResolution = currentDateResolution;
-    	synchronized(DATE_LOCK) {
-	    	if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-	    		this.currentDate = new Date(currentDate.getTime());
-	    		myDate = currentDate;
-	    	} else {
-	    		myDate = this.currentDate;
-	    	}
-    	}
-        TypedQuery<ProductSku> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE", ProductSku.class);
-        query.setParameter("skuId", skuId);
-        query.setParameter("currentDate", myDate);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
 

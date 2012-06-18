@@ -16,19 +16,19 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.catalog.domain.ProductDimension;
+import org.broadleafcommerce.core.catalog.domain.Dimension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlElement;
 import java.math.BigDecimal;
 
 /**
- * JAXB wrapper for ProductDimension
+ * JAXB wrapper for Dimension
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class ProductDimensionWrapper extends BaseWrapper implements APIWrapper<ProductDimension>{
+public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimension>{
 
     @XmlElement
     protected BigDecimal width;
@@ -52,7 +52,7 @@ public class ProductDimensionWrapper extends BaseWrapper implements APIWrapper<P
     protected String dimensionUnitOfMeasure;
     
     @Override
-    public void wrap(ProductDimension model, HttpServletRequest request) {
+    public void wrap(Dimension model, HttpServletRequest request) {
         this.width = model.getWidth();
         this.depth = model.getDepth();
         this.height = model.getHeight();

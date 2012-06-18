@@ -16,33 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javassist.expr.NewArray;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -51,6 +24,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.compass.annotations.Searchable;
@@ -66,7 +41,31 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -116,50 +115,18 @@ public class ProductImpl implements Product {
     @SearchableId
     @AdminPresentation(friendlyName = "ProductImpl_Product_ID", group = "ProductImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
-
-    /** The name. */
-    @Column(name = "NAME")
-    @SearchableProperty(name="productName")
-    @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Name", order=1, group = "ProductImpl_Product_Description", prominent=true, columnWidth="25%", groupOrder=1)
-    protected String name;
     
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "ProductImpl_SEO")
     protected String url;
-    
+
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "ProductImpl_SEO")
     protected String urlKey;
-    
- 
-	/** The description. */
-    @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Description", order=3, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
-    protected String description;
 
-    /** The long description. */
-    @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @SearchableProperty(name="productDescription")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Long_Description", order=4, group = "ProductImpl_Product_Description", prominent=false, largeEntry=true, groupOrder=1)
-    protected String longDescription;
-    
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=5, group = "ProductImpl_Product_Description")
     protected String displayTemplate;
-
-    
-    /** The active start date. */
-    @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Active_Start_Date", order=8, group = "ProductImpl_Active_Date_Range", groupOrder=2)
-    protected Date activeStartDate;
-
-    /** The active end date. */
-    @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Active_End_Date", order=9, group = "ProductImpl_Active_Date_Range", groupOrder=2)
-    protected Date activeEndDate;
 
     /** The product model number */
     @Column(name = "MODEL")
@@ -177,10 +144,10 @@ public class ProductImpl implements Product {
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=8, group = "ProductImpl_Product_Description", prominent=false)
     protected boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = true, targetEntity = SkuImpl.class)
+    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
     @JoinColumn(name = "DEFAULT_SKU_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected Sku sku;
+    protected Sku defaultSku;
     
     /** The skus. */
     @Transient
@@ -201,11 +168,10 @@ public class ProductImpl implements Product {
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     /** The all skus. */
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<Sku> allSkus = new ArrayList<Sku>();
+    protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     /** The product images. */
     @CollectionOfElements
@@ -224,6 +190,7 @@ public class ProductImpl implements Product {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @Deprecated
     protected Map<String, Media> productMedia = new HashMap<String , Media>();
 
     /** The default category. */
@@ -252,130 +219,71 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getId()
-     */
+    @Override
     public Long getId() {
         return id;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#setId(java.lang.Long)
-     */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getName()
-     */
+    @Override
+    @SearchableProperty(name = "productName")
     public String getName() {
-        if (name == null) {
-            if (getDefaultSku() != null) {
-                return getDefaultSku().getName();
-            }
-        }
-        return name;
+        return getDefaultSku().getName();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setName(java.lang.String)
-     */
+    @Override
     public void setName(String name) {
-        this.name = name;
+        getDefaultSku().setName(name);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getDescription()
-     */
+    @Override
+    @SearchableProperty(name = "productDescription")
     public String getDescription() {
-        if (description == null) {
-            if (getDefaultSku() != null) {
-                return getDefaultSku().getDescription();
-            }
-        }
-        return description;
+        return getDefaultSku().getDescription();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setDescription(java.lang
-     * .String)
-     */
+    @Override
     public void setDescription(String description) {
-        this.description = description;
+        getDefaultSku().setDescription(description);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getLongDescription()
-     */
+    @Override
+    @SearchableProperty(name = "productLongDescription")
     public String getLongDescription() {
-        if (longDescription == null) {
-            if (getDefaultSku() != null) {
-                return getDefaultSku().getLongDescription();
-            }
-        }
-        return longDescription;
+        return getDefaultSku().getLongDescription();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setLongDescription(java.
-     * lang.String)
-     */
+
+    @Override
     public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
+        getDefaultSku().setLongDescription(longDescription);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveStartDate()
-     */
+    @Override
     public Date getActiveStartDate() {
-        return activeStartDate;
+        return getDefaultSku().getActiveStartDate();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setActiveStartDate(java.
-     * util.Date)
-     */
+    @Override
     public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate = activeStartDate;
+        getDefaultSku().setActiveStartDate(activeStartDate);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveEndDate()
-     */
+    @Override
     public Date getActiveEndDate() {
-        return activeEndDate;
+        return getDefaultSku().getActiveEndDate();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setActiveEndDate(java.util
-     * .Date)
-     */
+    @Override
     public void setActiveEndDate(Date activeEndDate) {
-        this.activeEndDate = activeEndDate;
+        getDefaultSku().setActiveEndDate(activeEndDate);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#isActive()
-     */
+    @Override
     public boolean isActive() {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
@@ -385,68 +293,73 @@ public class ProductImpl implements Product {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
+    @Override
     public String getModel() {
         return model;
     }
 
+    @Override
     public void setModel(String model) {
         this.model = model;
     }
 
+    @Override
     public String getManufacturer() {
         return manufacturer;
     }
 
+    @Override
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
     }
 
+    @Override
     public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
 
+    @Override
     public void setFeaturedProduct(boolean isFeaturedProduct) {
         this.isFeaturedProduct = isFeaturedProduct;
     }
 
+    @Override
     public Sku getDefaultSku() {
-		return sku;
+		return defaultSku;
 	}
 
+    @Override
 	public void setDefaultSku(Sku defaultSku) {
-		this.sku = defaultSku;
+		this.defaultSku = defaultSku;
 	}
 
-	/**
-	 * @return the promoMessage
-	 */
+    @Override
     public String getPromoMessage() {
 		return promoMessage;
 	}
 
-	/**
-	 * @param promoMessage the promoMessage to set
-	 */
+    @Override
 	public void setPromoMessage(String promoMessage) {
 		this.promoMessage = promoMessage;
 	}
 	
-    /**
-     * Gets the all skus.
-     * @return the all skus
-     */
+    @Override
 	public List<Sku> getAllSkus() {
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(getDefaultSku());
+        for (Sku additionalSku : additionalSkus) {
+            if (additionalSku.getId() != getDefaultSku().getId()) {
+                allSkus.add(additionalSku);
+            }
+        }
         return allSkus;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getSkus()
-     */
+    @Override
 	public List<Sku> getSkus() {
         if (skus.size() == 0) {
-            List<Sku> allSkus = getAllSkus();
-            for (Sku sku : allSkus) {
+            List<Sku> additionalSkus = getAdditionalSkus();
+            for (Sku sku : additionalSkus) {
                 if (sku.isActive()) {
                     skus.add(sku);
                 }
@@ -455,45 +368,30 @@ public class ProductImpl implements Product {
         return skus;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setAllSkus(java.util.List)
-     */
-    public void setAllSkus(List<Sku> skus) {
-        this.allSkus.clear();
+    @Override
+    public List<Sku> getAdditionalSkus() {
+        return additionalSkus;
+    }
+
+    @Override
+    public void setAdditionalSkus(List<Sku> skus) {
+        this.additionalSkus.clear();
         for(Sku sku : skus){
-        	this.allSkus.add(sku);
+        	this.additionalSkus.add(sku);
         }
         //this.skus.clear();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getProductImages()
-     */
     @Deprecated
     public Map<String, String> getProductImages() {
         return productImages;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#getProductImage(java.lang
-     * .String)
-     */
     @Deprecated
     public String getProductImage(String imageKey) {
         return productImages.get(imageKey);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.catalog.domain.Product#setProductImages(java.util
-     * .Map)
-     */
     @Deprecated
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
@@ -505,18 +403,19 @@ public class ProductImpl implements Product {
     	}
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.Product#getDefaultCategory()
-     */
+    @Override
     public Category getDefaultCategory() {
         return defaultCategory;
     }
 
+    @Override
+    @Deprecated
     public Map<String, Media> getProductMedia() {
         return productMedia;
     }
 
+    @Override
+    @Deprecated
     public void setProductMedia(Map<String, Media> productMedia) {
         this.productMedia.clear();
     	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
@@ -524,19 +423,39 @@ public class ProductImpl implements Product {
     	}
     }
 
-    /*
-     * (non-Javadoc)
-     * @seeorg.broadleafcommerce.core.catalog.domain.Product#setDefaultCategory(org.
-     * broadleafcommerce.catalog.domain.Category)
-     */
+    @Override
+    public Map<String, Media> getMedia() {
+        return getDefaultSku().getSkuMedia();
+    }
+
+    @Override
+    public void setMedia(Map<String, Media> media) {
+        getDefaultSku().setSkuMedia(media);
+    }
+    
+    @Override
+    public Map<String, Media> getAllSkuMedia() {
+        Map<String, Media> result = new HashMap<String, Media>();
+        result.putAll(getMedia());
+        for (Sku additionalSku : getAdditionalSkus()) {
+            if (additionalSku.getId() != getDefaultSku().getId()) {
+                result.putAll(additionalSku.getSkuMedia());
+            }
+        }
+        return result;
+    }
+
+    @Override
     public void setDefaultCategory(Category defaultCategory) {
         this.defaultCategory = defaultCategory;
     }
 
+    @Override
     public List<Category> getAllParentCategories() {
         return allParentCategories;
     }
 
+    @Override
     public void setAllParentCategories(List<Category> allParentCategories) {    	
         this.allParentCategories.clear();
         for(Category category : allParentCategories){
@@ -544,10 +463,97 @@ public class ProductImpl implements Product {
         }
     }
 
+    @Override
+    public Dimension getDimension() {
+        return getDefaultSku().getDimension();
+    }
+
+    @Override
+    public void setDimension(Dimension dimension) {
+        getDefaultSku().setDimension(dimension);
+    }
+
+    @Override
+    public BigDecimal getWidth() {
+        return getDefaultSku().getDimension().getWidth();
+    }
+
+    @Override
+    public void setWidth(BigDecimal width) {
+        getDefaultSku().getDimension().setWidth(width);
+    }
+
+    @Override
+    public BigDecimal getHeight() {
+        return getDefaultSku().getDimension().getHeight();
+    }
+
+    @Override
+    public void setHeight(BigDecimal height) {
+        getDefaultSku().getDimension().setHeight(height);
+    }
+
+    @Override
+    public BigDecimal getDepth() {
+        return getDefaultSku().getDimension().getDepth();
+    }
+
+    @Override
+    public void setDepth(BigDecimal depth) {
+        getDefaultSku().getDimension().setDepth(depth);
+    }
+    
+    @Override
+    public BigDecimal getGirth() {
+        return getDefaultSku().getDimension().getGirth();
+    }
+
+    @Override
+    public void setGirth(BigDecimal girth) {
+        getDefaultSku().getDimension().setGirth(girth);
+    }
+
+    @Override
+    public ContainerSizeType getSize() {
+        return getDefaultSku().getDimension().getSize();
+    }
+
+    @Override
+    public void setSize(ContainerSizeType size) {
+        getDefaultSku().getDimension().setSize(size);
+    }
+
+    @Override
+    public ContainerShapeType getContainer() {
+        return getDefaultSku().getDimension().getContainer();
+    }
+
+    @Override
+    public void setContainer(ContainerShapeType container) {
+        getDefaultSku().getDimension().setContainer(container);
+    }
+
+    @Override
+    public String getDimensionString() {
+        return getDefaultSku().getDimension().getDimensionString();
+    }
+
+    @Override
+    public Weight getWeight() {
+        return getDefaultSku().getWeight();
+    }
+
+    @Override
+    public void setWeight(Weight weight) {
+        getDefaultSku().setWeight(weight);
+    }
+
+    @Override
     public List<RelatedProduct> getCrossSaleProducts() {
         return crossSaleProducts;
     }
 
+    @Override
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts.clear();
         for(RelatedProduct relatedProduct : crossSaleProducts){
@@ -555,10 +561,12 @@ public class ProductImpl implements Product {
         }    	
     }
 
+    @Override
     public List<RelatedProduct> getUpSaleProducts() {
         return upSaleProducts;
     }
 
+    @Override
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){
@@ -567,10 +575,12 @@ public class ProductImpl implements Product {
         this.upSaleProducts = upSaleProducts;
     }
 
+    @Override
     public List<ProductAttribute> getProductAttributes() {
 		return productAttributes;
 	}
 
+    @Override
 	public void setProductAttributes(List<ProductAttribute> productAttributes) {
 		this.productAttributes = productAttributes;
 	}
@@ -584,6 +594,7 @@ public class ProductImpl implements Product {
     public void setProductOptions(List<ProductOption> productOptions) {
         this.productOptions = productOptions;
     }
+    
     @Override
     public String getUrl() {
     	if (url == null) {
@@ -592,14 +603,17 @@ public class ProductImpl implements Product {
     		return url;
     	}
 	}
+    
     @Override
 	public void setUrl(String url) {
 		this.url = url;
 	}
+    
     @Override
 	public String getDisplayTemplate() {
 		return displayTemplate;
 	}
+    
     @Override
 	public void setDisplayTemplate(String displayTemplate) {
 		this.displayTemplate = displayTemplate;
@@ -609,7 +623,6 @@ public class ProductImpl implements Product {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((skus == null) ? 0 : skus.hashCode());
         return result;
     }
@@ -628,11 +641,6 @@ public class ProductImpl implements Product {
             return id.equals(other.id);
         }
 
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
         if (skus == null) {
             if (other.skus != null)
                 return false;
