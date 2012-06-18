@@ -16,19 +16,20 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.profile.core.dao.CustomerDao;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.dao.CustomerDao;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -43,7 +44,7 @@ public class OrderDaoImpl implements OrderDao {
     protected CustomerDao customerDao;
 
     public Order readOrderById(final Long orderId) {
-        return (Order) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.order.domain.Order"), orderId);
+        return (Order) em.find(OrderImpl.class, orderId);
     }
 
     public Order save(final Order order) {

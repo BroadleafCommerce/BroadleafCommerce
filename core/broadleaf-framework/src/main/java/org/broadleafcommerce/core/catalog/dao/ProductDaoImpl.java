@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.hibernate.ejb.QueryHints;
@@ -59,7 +60,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product readProductById(Long productId) {
-        return (Product) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.catalog.domain.Product"), productId);
+        return (Product) em.find(ProductImpl.class, productId);
     }
 
     @Override

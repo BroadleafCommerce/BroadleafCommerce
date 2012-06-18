@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.file.dao;
 
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
+import org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
@@ -61,7 +63,7 @@ public class StaticAssetStorageDaoImpl implements StaticAssetStorageDao {
 
     @Override
     public StaticAssetStorage readStaticAssetStorageById(Long id) {
-        return (StaticAssetStorage) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.cms.file.domain.StaticAssetStorage"), id);
+        return (StaticAssetStorage) em.find(StaticAssetStorageImpl.class, id);
     }
 
     @Override

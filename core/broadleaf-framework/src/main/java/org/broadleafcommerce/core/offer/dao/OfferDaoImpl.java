@@ -16,24 +16,25 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferInfo;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferInfo;
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -105,7 +106,7 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public Offer readOfferById(Long offerId) {
-        return (Offer) em.find(entityConfiguration.lookupEntityClass(Offer.class.getName()), offerId);
+        return (Offer) em.find(OfferImpl.class, offerId);
     }
 
     @SuppressWarnings("unchecked")

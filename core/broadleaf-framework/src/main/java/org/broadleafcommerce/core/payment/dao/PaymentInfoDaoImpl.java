@@ -16,19 +16,20 @@
 
 package org.broadleafcommerce.core.payment.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
+import org.broadleafcommerce.core.payment.domain.PaymentLog;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentLog;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blPaymentInfoDao")
 public class PaymentInfoDaoImpl implements PaymentInfoDao {
@@ -52,7 +53,7 @@ public class PaymentInfoDaoImpl implements PaymentInfoDao {
     }
 
     public PaymentInfo readPaymentInfoById(Long paymentId) {
-        return (PaymentInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.core.payment.domain.PaymentInfo"), paymentId);
+        return (PaymentInfo) em.find(PaymentInfoImpl.class, paymentId);
     }
 
     @SuppressWarnings("unchecked")

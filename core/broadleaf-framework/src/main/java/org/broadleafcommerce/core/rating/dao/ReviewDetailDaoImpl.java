@@ -16,9 +16,10 @@
 
 package org.broadleafcommerce.core.rating.dao;
 
-import org.broadleafcommerce.core.rating.domain.ReviewDetail;
-import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.rating.domain.ReviewDetail;
+import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
+import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -35,7 +36,7 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     protected EntityConfiguration entityConfiguration;
 
     public ReviewDetail readReviewDetailById(Long reviewId) {
-        return em.find(ReviewDetail.class, reviewId);
+        return em.find(ReviewDetailImpl.class, reviewId);
     }
 
     public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail) {

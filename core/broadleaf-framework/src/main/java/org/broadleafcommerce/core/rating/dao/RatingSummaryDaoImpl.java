@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.core.rating.dao;
 
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.broadleafcommerce.core.rating.domain.RatingDetail;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
+import org.broadleafcommerce.core.rating.domain.RatingSummaryImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -29,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 @Repository("blRatingSummaryDao")
@@ -43,7 +45,7 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
 	public void deleteRatingSummary(final RatingSummary summary) {
     	RatingSummary lSummary = summary;
     	if (!em.contains(lSummary)) {
-    		lSummary = (RatingSummary) em.find(entityConfiguration.lookupEntityClass(RatingSummary.class.getName()), lSummary.getId());
+    		lSummary = (RatingSummary) em.find(RatingSummaryImpl.class, lSummary.getId());
     	}
         em.remove(lSummary);
     }

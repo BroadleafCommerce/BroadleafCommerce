@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.springframework.stereotype.Repository;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.springframework.stereotype.Repository;
 
 @Repository("blAddressDao")
 public class AddressDaoImpl implements AddressDao {
@@ -38,7 +39,7 @@ public class AddressDaoImpl implements AddressDao {
     }
 
     public Address readAddressById(Long id) {
-        return (Address) em.find(entityConfiguration.lookupEntityClass(Address.class.getName()), id);
+        return (Address) em.find(AddressImpl.class, id);
     }
 
     public Address create() {

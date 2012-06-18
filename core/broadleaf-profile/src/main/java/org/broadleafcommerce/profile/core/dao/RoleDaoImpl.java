@@ -18,6 +18,7 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.Role;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 @Repository("blRoleDao")
@@ -38,7 +40,7 @@ public class RoleDaoImpl implements RoleDao {
     protected EntityConfiguration entityConfiguration;
 
     public Address readAddressById(Long id) {
-        return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.Address"), id);
+        return (Address) em.find(AddressImpl.class, id);
     }
 
     @SuppressWarnings("unchecked")

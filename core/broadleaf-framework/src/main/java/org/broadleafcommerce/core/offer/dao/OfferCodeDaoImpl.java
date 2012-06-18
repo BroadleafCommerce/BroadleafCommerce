@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blOfferCodeDao")
 public class OfferCodeDaoImpl implements OfferCodeDao {
@@ -52,7 +53,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     }
 
     public OfferCode readOfferCodeById(Long offerCodeId) {
-        return (OfferCode) em.find(entityConfiguration.lookupEntityClass(OfferCode.class.getName()), offerCodeId);
+        return (OfferCode) em.find(OfferCodeImpl.class, offerCodeId);
     }
 
     @SuppressWarnings("unchecked")

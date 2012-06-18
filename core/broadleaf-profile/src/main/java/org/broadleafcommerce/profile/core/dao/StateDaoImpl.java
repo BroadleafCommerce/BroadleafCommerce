@@ -18,7 +18,9 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +28,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 @Repository("blStateDao")
@@ -38,7 +41,7 @@ public class StateDaoImpl implements StateDao {
     protected EntityConfiguration entityConfiguration;
 
     public State findStateByAbbreviation(String abbreviation) {
-        return (State) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.State"), abbreviation);
+        return (State) em.find(StateImpl.class, abbreviation);
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +60,7 @@ public class StateDaoImpl implements StateDao {
     }
 
     public Country findCountryByShortName(String shortName) {
-        return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.Country"), shortName);
+        return (Country) em.find(CountryImpl.class, shortName);
     }
 
     @SuppressWarnings("unchecked")
