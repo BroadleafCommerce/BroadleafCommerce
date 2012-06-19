@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.core.security.ldap;
+package org.broadleafcommerce.common.security.ldap;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.User;
-import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.core.service.UserService;
+import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUserDetails;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class allows Spring to do it's thing with respect to mapping user details from
@@ -48,67 +41,13 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMapper {
 
-    @Resource(name="blUserService")
-    protected UserService userService;
-
-    @Resource(name="blCustomerService")
-    protected CustomerService customerService;
-
-    @Resource(name="blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-
     protected boolean useEmailAddressAsUsername = true;
 
     protected boolean additiveRoleNameSubstitutions = false;
 
     protected Map<String, String[]> roleNameSubstitutions;
 
-    protected String provisionType; //Could also be either "ADMIN" or "CUSTOMER"
-
-    /**
-     * See setter: <code>setProvisionType(String)</code>
-     * @param provisionType
-     */
-    public BroadleafActiveDirectoryUserDetailsMapper(String provisionType) {
-        setProvisionType(provisionType);
-    }
-
-    /**
-     * This is invoked to allow Broadleaf to provision a user (or customer) if they do not already exist. This is possible
-     * in an LDAP situation where the user exists in LDAP, but there is no record in Broadleaf tables for that user. Implementors of this
-     * method are required to check the that the user or customer does not exist before provisioning them.
-     *
-     * @param userDetails
-     */
-    protected void provisionUser(DirContextOperations ctx, UserDetails userDetails) {
-        if ("ADMIN".equals(provisionType)) {
-            //This is for the admin
-            User user = userService.readUserByUsername(userDetails.getUsername());
-            if (user == null) {
-                //Create a user...
-                user = (User)entityConfiguration.createEntityInstance(User.class.getName());
-                user.setUsername(userDetails.getUsername());
-                user.setPassword(userDetails.getPassword());
-                if (user.getPassword() == null) {
-                    user.setPassword("LDAP_PROVIDED");
-                }
-                userService.saveUser(user);
-            }
-        } else {
-            //This is for the customer
-            Customer cust = customerService.readCustomerByUsername(userDetails.getUsername());
-            if (cust == null) {
-                //Create a customer...
-                cust = customerService.createCustomer();
-
-                cust.setUsername(userDetails.getUsername());
-                customerService.saveCustomer(cust, true);
-            }
-        }
-    }
-
     @Override
-    @Transactional("blTransactionManager")
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
         Collection<GrantedAuthority> newAuthorities = new HashSet<GrantedAuthority>();
 
@@ -130,9 +69,9 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
             newAuthorities.addAll(authorities);
         }
 
+        String email = (String)ctx.getObjectAttribute("mail");
         UserDetails userDetails = null;
         if (useEmailAddressAsUsername) {
-            String email = (String)ctx.getObjectAttribute("mail");
             if (email != null) {
                 userDetails = super.mapUserFromContext(ctx, email, newAuthorities);
             }
@@ -141,10 +80,18 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
         if (userDetails == null) {
             userDetails = super.mapUserFromContext(ctx, username, newAuthorities);
         }
+        
+        String password = userDetails.getPassword();
+        if (password == null) {
+            password = userDetails.getUsername();
+        }
 
-        provisionUser(ctx, userDetails);
+        BroadleafExternalAuthenticationUserDetails broadleafUser = new BroadleafExternalAuthenticationUserDetails(userDetails.getUsername(), password, userDetails.getAuthorities());
+        broadleafUser.setFirstName((String)ctx.getObjectAttribute("givenName"));
+        broadleafUser.setLastName((String)ctx.getObjectAttribute("sn"));
+        broadleafUser.setEmail(email);
 
-        return userDetails;
+        return broadleafUser;
     }
 
     /**
@@ -185,23 +132,5 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
      */
     public void setAdditiveRoleNameSubstitutions(boolean additiveRoleNameSubstitutions) {
         this.additiveRoleNameSubstitutions = additiveRoleNameSubstitutions;
-    }
-
-    /**
-     * This is a required property that must either be "ADMIN" or "CUSTOMER". This property tells the system whether to provision a customer or user
-     * in the case where the user is authenticated successfully against LDAP, but there is no corresponding customer or user record in the database.
-     *
-     * Typically, this will be set to either "CUSTOMER" or "ADMIN", and will be set in different applications.  For example, in a main, customer facing
-     * eCommerce site, this component will be configured with "CUSTOMER".  In the admin application, this will be configured with "ADMIN".  This MUST be set to
-     * the correct value.  If you look up a user who is supposed to have admin privileges, and you have this configured wrong, it will create a customer from that
-     * user.
-     *
-     * @param provisionType
-     */
-    public void setProvisionType(String provisionType) {
-        if (provisionType == null || (! "ADMIN".equals(provisionType) && ! "CUSTOMER".equals(provisionType))) {
-            throw new IllegalArgumentException("The property or constructor arg \"provisionType\" cannot be null and must be set to either \"ADMIN\" or \"CUSTOMER\"");
-        }
-        this.provisionType = provisionType;
     }
 }

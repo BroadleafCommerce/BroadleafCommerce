@@ -24,19 +24,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,7 +48,7 @@ public class AdminRoleImpl implements AdminRole {
     @AdminPresentation(friendlyName = "AdminRoleImpl_Admin_Role_ID", group = "AdminRoleImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Column(name = "NAME", nullable=false)
+    @Column(name = "NAME", nullable=false, unique = true)
     @Index(name="ADMINROLE_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order=1, group = "AdminRoleImpl_Role", prominent=true)
     protected String name;
