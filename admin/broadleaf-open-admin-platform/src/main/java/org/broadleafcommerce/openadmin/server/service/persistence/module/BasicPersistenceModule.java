@@ -328,7 +328,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             try {
                                 testObject = fieldManager.getFieldValue(testObject, token);
                             } catch (FieldNotAvailableException e) {
-                                throw new IllegalArgumentException(e);
+                                proceed = false;
+                                break;
                             }
                             if (testObject == null) {
                                 Property propertyItem = new Property();
