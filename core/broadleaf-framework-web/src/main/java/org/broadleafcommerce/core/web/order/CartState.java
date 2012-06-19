@@ -28,5 +28,9 @@ public class CartState {
     public static Order getCart(HttpServletRequest request) {
         return (Order) request.getAttribute(CartStateFilter.getCartRequestAttributeName());
     }
+    
+    public static void setCart(HttpServletRequest request, Order cart) {
+        request.setAttribute(CartStateFilter.getCartRequestAttributeName(), cart);
+    }
 
 }
