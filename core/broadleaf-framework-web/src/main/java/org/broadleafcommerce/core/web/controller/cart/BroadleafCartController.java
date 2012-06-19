@@ -37,7 +37,7 @@ public class BroadleafCartController extends AbstractCartController {
 	 * Takes in an item request, adds the item to the customer's current cart, and returns.
 	 * 
 	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will render the "cart" template.
+	 * Otherwise, it will perform a 302 redirect to "/cart"
 	 * 
 	 * @param request
 	 * @param response
@@ -60,7 +60,7 @@ public class BroadleafCartController extends AbstractCartController {
 		cart = cartService.save(cart,  true);
 		CartState.setCart(request, cart);
 		
-		return ajaxRender("cart", request, model);
+    	return isAjaxRequest(request) ? "ajax/cart" : "redirect:/cart";
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class BroadleafCartController extends AbstractCartController {
 	 * was passed in as 0, it will remove the item.
 	 * 
 	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will render the "cart" template.
+	 * Otherwise, it will perform a 302 redirect to "/cart"
 	 * 
 	 * @param request
 	 * @param response
@@ -86,19 +86,22 @@ public class BroadleafCartController extends AbstractCartController {
 		cart = cartService.save(cart, true);
 		CartState.setCart(request, cart);
 		
-		Map<String, Object> extraData = new HashMap<String, Object>();
-		extraData.put("productId", itemRequest.getProductId());
-		extraData.put("cartItemCount", cart.getItemCount());
-		model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-		
-		return ajaxRender("cart", request, model);
+		if (isAjaxRequest(request)) {
+			Map<String, Object> extraData = new HashMap<String, Object>();
+			extraData.put("productId", itemRequest.getProductId());
+			extraData.put("cartItemCount", cart.getItemCount());
+			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
+			return "ajax/cart";
+		} else {
+			return "redirect:/cart";
+		}
 	}
 	
 	/**
 	 * Takes in an item request, updates the quantity of that item in the cart, and returns
 	 * 
 	 * If the method was invoked via an AJAX call, it will render the "ajax/cart" template.
-	 * Otherwise, it will render the "cart" template.
+	 * Otherwise, it will perform a 302 redirect to "/cart"
 	 * 
 	 * @param request
 	 * @param response
@@ -117,12 +120,15 @@ public class BroadleafCartController extends AbstractCartController {
 		cart = cartService.save(cart, true);
 		CartState.setCart(request, cart);
 		
-		Map<String, Object> extraData = new HashMap<String, Object>();
-		extraData.put("cartItemCount", cart.getItemCount());
-		extraData.put("productId", itemRequest.getProductId());
-		model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-		
-		return ajaxRender("cart", request, model);
+		if (isAjaxRequest(request)) {
+			Map<String, Object> extraData = new HashMap<String, Object>();
+			extraData.put("cartItemCount", cart.getItemCount());
+			extraData.put("productId", itemRequest.getProductId());
+			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
+			return "ajax/cart";
+		} else {
+			return "redirect:/cart";
+		}
 	}
 	
 	/**
