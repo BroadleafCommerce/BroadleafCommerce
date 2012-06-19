@@ -33,7 +33,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -58,7 +57,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         this.applicationContext = applicationContext;
     }
 
-    @Transactional("blTransactionManager")
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -87,7 +85,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
-    @Transactional("blTransactionManager")
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -144,7 +141,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
-    @Transactional("blTransactionManager")
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -172,7 +168,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
-    @Transactional("blTransactionManager")
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
@@ -200,7 +195,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
-    @Transactional("blTransactionManager")
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 

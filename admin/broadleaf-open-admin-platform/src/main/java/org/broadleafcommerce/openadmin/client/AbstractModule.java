@@ -34,6 +34,7 @@ public abstract class AbstractModule implements EntryPoint, Module {
 	protected LinkedHashMap<String, String[]> pages = new LinkedHashMap<String, String[]>();
 	protected String moduleTitle;
 	protected String moduleKey;
+    protected Integer order = Integer.MAX_VALUE;
 	
 	public void registerModule() {
 		BLCMain.addModule(this);
@@ -105,4 +106,13 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		//do nothing
 	}
 
+    @Override
+    public Integer getOrder() {
+        return order;
+    }
+
+    @Override
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
 }

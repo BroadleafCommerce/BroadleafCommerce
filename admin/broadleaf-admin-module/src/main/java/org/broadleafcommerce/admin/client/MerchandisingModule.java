@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.admin.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import org.broadleafcommerce.openadmin.client.AbstractModule;
@@ -27,6 +24,9 @@ import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityCommon;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityFramework;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityOpenAdmin;
 import org.broadleafcommerce.openadmin.client.GeneratedMessagesEntityProfile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -101,6 +101,8 @@ public class MerchandisingModule extends AbstractModule {
 			"org.broadleafcommerce.admin.client.presenter.promotion.OfferPresenter",
 			offerPermissions
 		);
+
+        setOrder(50);
 
 		registerModule();
 	}

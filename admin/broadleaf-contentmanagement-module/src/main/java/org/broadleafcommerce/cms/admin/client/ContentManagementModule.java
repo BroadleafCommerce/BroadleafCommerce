@@ -101,6 +101,9 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
         
         setHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextFullFeatured.html");
         setBasicHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextBasic.html");
+
+        setOrder(100);
+
         registerModule();
     }
 }

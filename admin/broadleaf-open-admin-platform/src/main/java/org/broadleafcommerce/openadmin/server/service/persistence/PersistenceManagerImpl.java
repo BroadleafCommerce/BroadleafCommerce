@@ -211,8 +211,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
-		return myModule.fetch(persistencePackage, cto);
+		return postFetch(myModule.fetch(persistencePackage, cto));
 	}
+
+    protected DynamicResultSet postFetch(DynamicResultSet resultSet) throws ServiceException {
+        //do nothing
+        return resultSet;
+    }
 
 	@Override
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {

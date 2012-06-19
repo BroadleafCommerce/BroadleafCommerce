@@ -46,6 +46,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.form.NumericTypeFacto
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.ServerProcessProgressWindow;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +64,7 @@ public class BLCMain implements EntryPoint {
     static {
         MESSAGE_MANAGER.addConstants(GWT.<ConstantsWithLookup>create(OpenAdminMessages.class));
     }
-	private static LinkedHashMap<String, Module> modules = new LinkedHashMap<String, Module>(10);
+	private static HashMap<String, Module> modules = new HashMap<String, Module>(10);
     private static List<PreProcessor> preProcessors = new ArrayList<PreProcessor>(10);
     public static final ServerProcessProgressWindow progressWindow = new ServerProcessProgressWindow();
 
@@ -221,8 +223,22 @@ public class BLCMain implements EntryPoint {
             return;
         }
 
+        //sort modules by their declared order property
+        LinkedHashMap<String, Module> orderedModules = new LinkedHashMap<String, Module>(modules.size());
+        List<Module> moduleList = new ArrayList<Module>(modules.values());
+        Collections.sort(moduleList, new Comparator<Module>() {
+            @Override
+            public int compare(Module module, Module module1) {
+                return module.getOrder().compareTo(module1.getOrder());
+            }
+        });
+        for (Module module : moduleList) {
+            orderedModules.put(module.getModuleKey(), module);
+        }
+        modules = orderedModules;
+
         modules.get(currentModuleKey).preDraw();
-        MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, modules);
+        MASTERVIEW = new MasterView(currentModuleKey, currentPageKey, orderedModules);
         MASTERVIEW.draw();
         AppController.getInstance().go(MASTERVIEW.getContainer(), modules.get(currentModuleKey).getPages(), currentPageKey, currentModuleKey, true);
         modules.get(currentModuleKey).postDraw();
