@@ -23,17 +23,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * An abstract controller that provides convenience methods and resource declarations for its  children
+ * Commonly used Broadleaf Controller operations.
+ * - ajaxRedirects
+ * - isAjaxRequest
+ * - ajaxRender   
  * 
- * Operations that are shared between all controllers belong here.   To use composition rather than
- * extension, implementors can utilize BroadleafControllerUtility.
+ * BroadleafAbstractController provides convenience methods for this functionality.
+ * Implementors who are not able (or willing) to have their Controllers extend
+ * BroadleafAbstractController can utilize this utility class to achieve some of
+ * the same benefits.
  * 
- * @see BroadleafControllerUtility
  * 
- * @author apazzolini
  * @author bpolster
  */
-public abstract class BroadleafAbstractController {
+public class BroadleafControllerUtility {
+	
+	public static final String BLC_REDIRECT_ATTRIBUTE="blc_redirect";
+	public static final String BLC_AJAX_PREFIX="ajax/";
 	
 	/**
 	 * A helper method that returns whether or not the given request was invoked via an AJAX call
@@ -41,8 +47,8 @@ public abstract class BroadleafAbstractController {
 	 * @param request
 	 * @return - whether or not it was an AJAX request
 	 */
-    protected boolean isAjaxRequest(HttpServletRequest request) {
-    	return BroadleafControllerUtility.isAjaxRequest(request);    	
+    public static boolean isAjaxRequest(HttpServletRequest request) {
+    	return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
     
     /**
@@ -60,8 +66,17 @@ public abstract class BroadleafAbstractController {
      * @return the String that should be returned by the method responsible for returning a view. Typically this
      * will be the method with the @RequestMapping annotation
      */
-    protected String ajaxRender(String nonModalPath, HttpServletRequest request, Model model) {
-    	return BroadleafControllerUtility.ajaxRender(nonModalPath, request, model);    	
+    public static String ajaxRender(String nonModalPath, HttpServletRequest request, Model model)  {
+    	if (isAjaxRequest(request)) {
+    		if (nonModalPath.startsWith("redirect:")) {
+        		nonModalPath = nonModalPath.substring(nonModalPath.indexOf("redirect:"));
+        		return buildAjaxRedirect(request, nonModalPath);
+    		} else {
+    			return BLC_AJAX_PREFIX + nonModalPath;
+    		}
+    	} else {    	
+    		return nonModalPath;
+    	}
     }
     
 	/**
@@ -75,8 +90,12 @@ public abstract class BroadleafAbstractController {
 	 * @param model model to add the 
 	 * @throws IOException 
 	 */
-	protected static String buildAjaxRedirect(HttpServletRequest request, String redirectPath) {
-		return BroadleafControllerUtility.buildAjaxRedirect(request, redirectPath);	
+	public static String buildAjaxRedirect(HttpServletRequest request, String redirectPath)  {
+		if (! redirectPath.contains("//") && request.getContextPath() != null) {
+			redirectPath = request.getContextPath() + redirectPath; 			
+		}
+		request.setAttribute(BLC_REDIRECT_ATTRIBUTE, redirectPath);
+		return "ajax/blc_redirect.html";		
 	}
 
 }
