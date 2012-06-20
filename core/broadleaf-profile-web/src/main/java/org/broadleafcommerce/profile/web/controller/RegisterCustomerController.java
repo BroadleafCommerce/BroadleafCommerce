@@ -43,6 +43,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller("blRegisterCustomerController")
 @RequestMapping("/registerCustomer")
 /**
+ * @Deprecated - Use BroadleafRegisterController instead
  * RegisterCustomerController is used to register a customer.
  *
  * This controller simply calls the RegistrationCustomerValidator which can be extended for custom validation and
@@ -97,7 +98,7 @@ public class RegisterCustomerController {
     @ModelAttribute("registerCustomerForm")
     public RegisterCustomerForm initCustomerRegistrationForm() {
         RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();
-        Customer customer = customerService.createCustomerFromId(null);
+        Customer customer = customerService.createNewCustomer();
         customerRegistrationForm.setCustomer(customer);
         return customerRegistrationForm;
     }

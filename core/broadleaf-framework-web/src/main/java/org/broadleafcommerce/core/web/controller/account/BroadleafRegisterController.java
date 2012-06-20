@@ -16,21 +16,127 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
+import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
+import org.broadleafcommerce.profile.web.core.service.LoginService;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The controller responsible for registering a customer
+ * The controller responsible for registering a customer.
+ * 
+ * Uses a component registered with the name blCustomerValidator to perform validation of the
+ * submitted customer.
+ * 
+ * Uses the property "useEmailForLogin" to determine if the username should be defaulted to the
+ * email address if no username is supplied.
+ * 
  * 
  * @author apazzolini
+ * @author bpolster
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
+		
+	private boolean useEmailForLogin = true;
+	private String registerSuccessView = "redirect:/account/myaccount";
+	private String registerView = "/register";
+	
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
+
+    @Resource(name="blRegisterCustomerValidator")
+    protected RegisterCustomerValidator registerCustomerValidator;
+
+    @Resource(name="blMergeCartProcessor")
+    protected MergeCartProcessor mergeCartProcessor;
+    
+    @Resource(name="blLoginService")
+    protected LoginService loginService;    
 	
 	public String register(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender("register", request, model);
+		return ajaxRender(getRegisterView(), request, model);
 	}
+	
+	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, HttpServletRequest request, HttpServletResponse response, Model model) {
+		if (useEmailForLogin) {
+			Customer customer = registerCustomerForm.getCustomer();
+			customer.setUsername(customer.getEmailAddress());
+		}
+		
+	    registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
+	    if (! errors.hasErrors()) {
+	        Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+	        assert(newCustomer != null);
+	        
+	        // The next line needs to use the customer from the input form and not the customer returned after registration
+        	// so that we still have the unencoded password for use by the authentication mechanism.
+	        Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
+	        mergeCartProcessor.execute(request, response, auth);	        
+	        return ajaxRender(getRegisterSuccessView(), request, model);			
+	    } else {
+	    	return ajaxRender(getRegisterView(), request, model);	    	
+	    }
+	}
+	
+    public RegisterCustomerForm initCustomerRegistrationForm() {
+    	Customer customer = CustomerState.getCustomer();
+    	if (customer == null || ! customer.isAnonymous()) {
+    		customer = customerService.createCustomerFromId(null);
+    	}
+    	
+        RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();
+        customerRegistrationForm.setCustomer(customer);
+        return customerRegistrationForm;
+    }
+
+	public boolean isUseEmailForLogin() {
+		return useEmailForLogin;
+	}
+
+	public void setUseEmailForLogin(boolean useEmailForLogin) {
+		this.useEmailForLogin = useEmailForLogin;
+	}
+
+	/**
+	 * Returns the view that will be returned from this controller when the 
+	 * registration is successful.
+	 * 
+	 * By default, returns "redirect:/account/myaccount"
+	 * 
+	 * @return
+	 */
+	public String getRegisterSuccessView() {
+		return registerSuccessView;
+	}
+
+	public void setRegisterSuccessView(String registerSuccessView) {
+		this.registerSuccessView = registerSuccessView;
+	}
+
+	/**
+	 * Returns the view that will be used to display the registration page.
+	 * 
+	 * By default, returns "/register"
+	 * 
+	 * @return
+	 */
+	public String getRegisterView() {
+		return registerView;
+	}
+
+	public void setRegisterView(String registerView) {
+		this.registerView = registerView;
+	}
+
 
 }
