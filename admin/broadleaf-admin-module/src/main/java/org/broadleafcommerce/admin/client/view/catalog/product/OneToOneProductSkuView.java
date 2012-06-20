@@ -57,6 +57,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected ExpandableGridStructureView productOptionsDisplay;
 	protected ToolStripButton generateSkusButton;
 	protected SubItemView skusDisplay;
+	protected GridStructureView bundleItemsDisplay;
     
 	public OneToOneProductSkuView() {
 		setHeight100();
@@ -87,6 +88,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         dynamicFormDisplay = new DynamicFormView(BLCMain.getMessageManager().getString("productDetailsTitle"), entityDataSource);
         attributesDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productAttributesTitle"), false, true);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(attributesDisplay);
+        bundleItemsDisplay = new GridStructureView(BLCMain.getMessageManager().getString("productBundleItemsTitle"), false, true);
+        ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(bundleItemsDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
         Tab crossSaleTab = new Tab(BLCMain.getMessageManager().getString("featuredTabTitle")); 
@@ -212,5 +215,9 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	public SubItemDisplay getSkusDisplay() {
         return skusDisplay;
     }
+	
+	public GridStructureDisplay getBundleItemsDisplay() {
+	    return bundleItemsDisplay;
+	}
 
 }

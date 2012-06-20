@@ -628,6 +628,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 			}
             if (property.getIsDirty()) {
                 record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
+                record.setAttribute("__dirty_"+attributeName, true);
             }
 		}
 		String[] entityType = entity.getType();

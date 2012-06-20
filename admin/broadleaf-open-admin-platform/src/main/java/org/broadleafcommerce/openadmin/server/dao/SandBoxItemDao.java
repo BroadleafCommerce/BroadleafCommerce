@@ -31,6 +31,8 @@ public interface SandBoxItemDao {
 
     public void addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId);
 
+    public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId);
+
     public SandBoxItem updateSandBoxItem(SandBoxItem sandBoxItem);
 
     public List<SandBoxItem> retrieveSandBoxItemsForSandbox(SandBox sandBox);

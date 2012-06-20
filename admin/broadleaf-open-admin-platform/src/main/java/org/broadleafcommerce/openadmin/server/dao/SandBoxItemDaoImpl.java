@@ -66,6 +66,11 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
 
     @Override
     public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
+        addSandBoxItem(sbox, operationType, itemType, description, itemType.getFriendlyType(), temporaryId, originalId);
+    }
+
+    @Override
+    public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding sandbox item.  " + originalId);
         }
@@ -77,6 +82,7 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         sandBoxItem.setOriginalItemId(originalId);
         sandBoxItem.setTemporaryItemId(temporaryId);
         sandBoxItem.setSandBoxItemType(itemType);
+        sandBoxItem.setGroupDescription(groupDescription);
 
         SandBoxAction action = new SandBoxActionImpl();
         action.setActionType(SandBoxActionType.EDIT);

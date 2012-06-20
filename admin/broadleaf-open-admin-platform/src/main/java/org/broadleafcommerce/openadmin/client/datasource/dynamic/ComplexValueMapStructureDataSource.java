@@ -153,5 +153,6 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		pos++;
         	}
         }
+        getAssociatedGrid().setHilites(hilites);
 	}
 }

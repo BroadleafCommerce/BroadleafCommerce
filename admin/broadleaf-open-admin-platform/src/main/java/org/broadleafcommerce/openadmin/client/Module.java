@@ -35,4 +35,8 @@ public interface Module {
 	
 	public void postDraw();
 
+    public Integer getOrder();
+
+    public void setOrder(Integer order);
+
 }

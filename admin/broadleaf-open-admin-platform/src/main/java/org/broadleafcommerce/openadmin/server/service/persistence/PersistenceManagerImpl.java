@@ -206,13 +206,18 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
                 }
                 DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
-                return results;
+                return postFetch(results, persistencePackage);
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
-		return myModule.fetch(persistencePackage, cto);
+		return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage);
 	}
+
+    protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage) throws ServiceException {
+        //do nothing
+        return resultSet;
+    }
 
 	@Override
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
@@ -223,16 +228,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                 }
                 Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
-                return response;
+                return postAdd(response, persistencePackage);
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
 		PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
 		Entity response = myModule.add(persistencePackage);
-        return postAdd(response);
+        return postAdd(response, persistencePackage);
 	}
 
-    protected Entity postAdd(Entity entity) throws ServiceException {
+    protected Entity postAdd(Entity entity, PersistencePackage persistencePackage) throws ServiceException {
         //do nothing
         return entity;
     }
@@ -252,7 +257,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                 }
                 Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.ENTITY));
-                return postUpdate(response);
+                return postUpdate(response, persistencePackage);
             }
         }
         Entity entity = persistencePackage.getEntity();
@@ -264,10 +269,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
         Entity response = myModule.update(persistencePackage);
-        return postUpdate(response);
+        return postUpdate(response, persistencePackage);
     }
 
-    protected Entity postUpdate(Entity entity) throws ServiceException {
+    protected Entity postUpdate(Entity entity, PersistencePackage persistencePackage) throws ServiceException {
         //do nothing
         return entity;
     }

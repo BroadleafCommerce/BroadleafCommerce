@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
@@ -30,6 +27,9 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -92,10 +92,11 @@ public class JoinStructureClientModule extends BasicClientEntityModule {
 			property.setValue(record.getAttribute(joinTable.getSortField()));
 			properties.add(property);
 		}
-		
+
 		Property[] props = new Property[properties.size() + entity.getProperties().length];
 		for (int j=0;j<properties.size();j++){
 			props[j] = properties.get(j);
+            props[j].setIsDirty(true);
 		}
 		int count = properties.size();
 		for (int j = 0; j<entity.getProperties().length; j++){

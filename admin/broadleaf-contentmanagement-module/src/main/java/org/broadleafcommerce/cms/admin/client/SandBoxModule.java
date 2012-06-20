@@ -70,6 +70,8 @@ public class SandBoxModule extends AbstractModule {
             approverSandBoxPermissions
         );
 
+        setOrder(150);
+
         registerModule();
     }
 }

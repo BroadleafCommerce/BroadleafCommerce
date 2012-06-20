@@ -41,7 +41,6 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -92,47 +91,38 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Value("${resetPasswordURL}")
     protected String resetPasswordURL;
 
-    @Transactional("blTransactionManager")
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
     }
 
-    @Transactional("blTransactionManager")
     public void deleteAdminRole(AdminRole role) {
         adminRoleDao.deleteAdminRole(role);
     }
 
-    @Transactional("blTransactionManager")
     public void deleteAdminUser(AdminUser user) {
         adminUserDao.deleteAdminUser(user);
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminPermission readAdminPermissionById(Long id) {
         return adminPermissionDao.readAdminPermissionById(id);
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminRole readAdminRoleById(Long id) {
         return adminRoleDao.readAdminRoleById(id);
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminUser readAdminUserById(Long id) {
         return adminUserDao.readAdminUserById(id);
     }
 
-    @Transactional("blTransactionManager")
     public AdminPermission saveAdminPermission(AdminPermission permission) {
         return adminPermissionDao.saveAdminPermission(permission);
     }
 
-    @Transactional("blTransactionManager")
     public AdminRole saveAdminRole(AdminRole role) {
         return adminRoleDao.saveAdminRole(role);
     }
 
-    @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
     	if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
@@ -140,7 +130,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return adminUserDao.saveAdminUser(user);
     }
 
-    @Transactional("blTransactionManager")
     public AdminUser changePassword(PasswordChange passwordChange) {
     	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -152,37 +141,30 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return user;
     }
 
-    @Transactional("blTransactionManager")
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         return adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
     }
 
-    @Transactional("blTransactionManager")
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         return adminPermissionDao.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName);
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public AdminUser readAdminUserByUserName(String userName) {
         return adminUserDao.readAdminUserByUserName(userName);
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public List<AdminUser> readAllAdminUsers() {
         return adminUserDao.readAllAdminUsers();
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public List<AdminRole> readAllAdminRoles() {
         return adminRoleDao.readAllAdminRoles();
     }
 
-    @Transactional(value="blTransactionManager", readOnly = true)
     public List<AdminPermission> readAllAdminPermissions() {
         return adminPermissionDao.readAllAdminPermissions();
     }
 
-    @Transactional("blTransactionManager")
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
         GenericResponse response = new GenericResponse();
         List<AdminUser> users = null;
@@ -211,7 +193,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return response;
     }
 
-    @Transactional("blTransactionManager")
     public GenericResponse sendResetPasswordNotification(String username) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
@@ -249,7 +230,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return response;
     }
 
-    @Transactional("blTransactionManager")
     public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;

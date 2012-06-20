@@ -33,7 +33,7 @@ public class PresentationLayerAssociatedDataSource extends DynamicEntityDataSour
 
     public static Hilite[] hilites = new Hilite[] {
         new Hilite() {{
-            setCssText("background-color: #fffedc;");
+            setCssText("color: #00149e;");
             setId("listGridDirtyPropertyHilite");
         }}
     };

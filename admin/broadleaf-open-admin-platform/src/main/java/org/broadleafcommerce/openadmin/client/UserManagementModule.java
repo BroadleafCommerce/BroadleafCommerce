@@ -63,6 +63,7 @@ public class UserManagementModule extends AbstractModule {
 			userManagementPermissions
 		);
 
+        setOrder(250);
 		
 		registerModule();
 	}

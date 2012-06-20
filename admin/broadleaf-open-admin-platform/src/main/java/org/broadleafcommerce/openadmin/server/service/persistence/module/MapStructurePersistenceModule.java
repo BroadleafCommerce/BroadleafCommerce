@@ -259,7 +259,13 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			
 			instance = persistenceManager.getDynamicEntityDao().merge(instance);
 			
-			return getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"))[0];
+			Entity[] responses = getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"));
+            for (Entity response : responses) {
+                if (response.findProperty(mapStructure.getKeyPropertyName()).getValue().equals(persistencePackage.getEntity().findProperty(mapStructure.getKeyPropertyName()).getValue())) {
+                    return response;
+                }
+            }
+            return responses[0];
 		} catch (Exception e) {
 			LOG.error("Problem editing entity", e);
 			throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
