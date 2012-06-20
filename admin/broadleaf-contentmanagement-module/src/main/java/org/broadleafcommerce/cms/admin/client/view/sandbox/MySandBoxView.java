@@ -135,8 +135,9 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         grid.setCanSort(true);
         grid.setCanResizeFields(true);
         grid.setShowFilterEditor(true);
-        grid.setCanGroupBy(false);
+        grid.setCanGroupBy(true);
         grid.setDataPageSize(10);
+        grid.setGroupByField("groupDescription");
         grid.setAlternateBodyStyleName("editRowDisabled");
         insideLayout.addMember(grid);
 
@@ -217,8 +218,9 @@ public class MySandBoxView extends VLayout implements Instantiable, MySandBoxDis
         pendingGrid.setCanSort(true);
         pendingGrid.setCanResizeFields(true);
         pendingGrid.setShowFilterEditor(true);
-        pendingGrid.setCanGroupBy(false);
+        pendingGrid.setCanGroupBy(true);
         pendingGrid.setDataPageSize(10);
+        pendingGrid.setGroupByField("groupDescription");
         pendingGrid.setAlternateBodyStyleName("editRowDisabled");
         insideLayout2.addMember(pendingGrid);
 

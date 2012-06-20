@@ -29,7 +29,6 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -94,21 +93,12 @@ public class JoinStructureClientModule extends BasicClientEntityModule {
 			properties.add(property);
 		}
 
-        //Remove unwanted properties from the linked entities. All we need are the joined entity ids and whatever properties are in the join structure itself
-        List<Property> entityPropsList = new ArrayList<Property>();
-        for (Property temp : Arrays.asList(entity.getProperties())) {
-            if (dataSource.getField(temp.getName()) == null) {
-                entityPropsList.add(temp);
-            } else if (dataSource.getPolymorphicEntities().get(dataSource.getField(temp.getName()).getAttribute("inheritedFromType")) == null) {
-                entityPropsList.add(temp);
-            }
-        }
-        entity.setProperties(entityPropsList.toArray(new Property[entityPropsList.size()]));
-        Property[] props = new Property[properties.size() + entity.getProperties().length];
-        for (int j=0;j<properties.size();j++){
-            props[j] = properties.get(j);
-        }
-        int count = properties.size();
+		Property[] props = new Property[properties.size() + entity.getProperties().length];
+		for (int j=0;j<properties.size();j++){
+			props[j] = properties.get(j);
+            props[j].setIsDirty(true);
+		}
+		int count = properties.size();
 		for (int j = 0; j<entity.getProperties().length; j++){
 			props[count] = entity.getProperties()[j];
 			count++;

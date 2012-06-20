@@ -68,4 +68,9 @@ public interface SandBoxItem extends Serializable {
     public AdminAuditable getAuditable();
 
     public void setAuditable(AdminAuditable auditable);
+
+    public String getGroupDescription();
+
+    public void setGroupDescription(String groupDescription);
+
 }

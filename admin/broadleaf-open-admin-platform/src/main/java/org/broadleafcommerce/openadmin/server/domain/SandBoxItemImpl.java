@@ -75,17 +75,21 @@ public class SandBoxItemImpl implements SandBoxItem {
 	protected Long originalSandBoxId;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=2, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=4, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
     @Index(name="SANDBOX_ITEM_TYPE_INDEX", columnNames={"SANDBOX_ITEM_TYPE"})
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=3, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=4, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
     protected String sandboxOperationType;
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "SandBoxItemImpl_Description", order=1, group = "SandBoxItemImpl_Details")
     protected String description;
+
+    @Column(name = "GRP_DESCRIPTION")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Grp_Description", order=2, group = "SandBoxItemImpl_Details", visibility = VisibilityEnum.GRID_HIDDEN)
+    protected String groupDescription;
 
     @Column(name = "TEMPORARY_ITEM_ID")
     @AdminPresentation(excluded = true)
@@ -225,6 +229,16 @@ public class SandBoxItemImpl implements SandBoxItem {
             sandBoxActions = new ArrayList<SandBoxAction>();
         }
         sandBoxActions.add(action);
+    }
+
+    @Override
+    public String getGroupDescription() {
+        return groupDescription;
+    }
+
+    @Override
+    public void setGroupDescription(String groupDescription) {
+        this.groupDescription = groupDescription;
     }
 
     @Override
