@@ -131,9 +131,8 @@ public class CustomerStateFilter extends GenericFilterBean implements Applicatio
             // Cookie logic probably needs to be configurable - with TCS as the exception.
 
             customer = (Customer) request.getSession(true).getAttribute(ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME);
-            if (customer == null) {
-                // TODO: Refactor to use entityConfigMgr directly and remove this method from customerService
-                customer = customerService.createCustomerFromId(null);
+            if (customer == null) { 
+                customer = customerService.createNewCustomer();
                 customer.setAnonymous(true);
                 request.getSession().setAttribute(ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME, customer);
             }

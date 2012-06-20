@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.profile.web.core;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,15 @@ import javax.servlet.http.HttpServletRequest;
 public class CustomerState {
 
     public static Customer getCustomer(HttpServletRequest request) {
+        return (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
+    }
+    
+    /**
+     * Utilizes the current BroadleafRequestContext to lookup a customer from the request.
+     * @return
+     */
+    public static Customer getCustomer() {
+    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         return (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
     }
 
