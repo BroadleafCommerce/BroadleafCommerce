@@ -54,6 +54,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
@@ -982,7 +983,7 @@ public class OrderServiceImpl implements OrderService {
             for (ProductOption productOption : product.getProductOptions()) {
                 if (productOption.getRequired()) {
                     if (attributeValues.get(productOption.getAttributeName()) == null) {
-                        throw new IllegalArgumentException("Unable to add to cart.   Not all required options were provided.");
+                        throw new RequiredAttributeNotProvidedException("Unable to add to cart. Required attribute was not provided: " + productOption.getAttributeName());
                     } else {
                         attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
