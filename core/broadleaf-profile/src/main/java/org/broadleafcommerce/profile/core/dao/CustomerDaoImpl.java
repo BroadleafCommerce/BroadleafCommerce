@@ -38,23 +38,31 @@ public class CustomerDaoImpl implements CustomerDao {
     protected EntityConfiguration entityConfiguration;
 
     public Customer readCustomerById(Long id) {
-        return (Customer) em.find(CustomerImpl.class, id);
+        return em.find(CustomerImpl.class, id);
     }
 
-    public Customer readCustomerByUsername(String username) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
-        query.setParameter("username", username);
-        @SuppressWarnings("unchecked")
-		List<Customer> customers = query.getResultList();
+    public Customer readCustomerByUsername(String username) {        
+		List<Customer> customers = readCustomersByUsername(username);
         return customers == null || customers.isEmpty() ? null : customers.get(0);
+    }
+   
+    @SuppressWarnings("unchecked")
+    public List<Customer> readCustomersByUsername(String username) {
+        Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
+        query.setParameter("username", username);        
+		return query.getResultList();        
     }
 
     public Customer readCustomerByEmail(String emailAddress) {
+		List<Customer> customers = readCustomersByEmail(emailAddress);
+        return customers == null || customers.isEmpty() ? null : customers.get(0);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Customer> readCustomersByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        @SuppressWarnings("unchecked")
-		List<Customer> customers = query.getResultList();
-        return customers == null || customers.isEmpty() ? null : customers.get(0);
+		return query.getResultList();        
     }
 
     public Customer save(Customer customer) {

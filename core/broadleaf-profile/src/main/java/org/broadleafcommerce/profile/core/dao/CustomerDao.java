@@ -18,15 +18,45 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.List;
+
 public interface CustomerDao {
 
     public Customer readCustomerById(Long id);
 
+    /**
+     * Returns the first customer that match the passed in username.
+     * 
+     * @param username
+     * @return
+     */
     public Customer readCustomerByUsername(String username);
+    
+    /**
+     * Returns all customers that match the passed in username.
+     * 
+     * @param username
+     * @return
+     */
+    public List<Customer> readCustomersByUsername(String username);
 
     public Customer save(Customer customer);
 
+    /**
+     * Returns the first customer that matches the passed in email.
+     * 
+     * @param emailAddress
+     * @return
+     */
     public Customer readCustomerByEmail(String emailAddress);
+    
+    /**
+     * Returns all customers that matches the passed in email.
+     * 
+     * @param emailAddress
+     * @return
+     */
+    public List<Customer> readCustomersByEmail(String emailAddress);
 
     public Customer create();
 
