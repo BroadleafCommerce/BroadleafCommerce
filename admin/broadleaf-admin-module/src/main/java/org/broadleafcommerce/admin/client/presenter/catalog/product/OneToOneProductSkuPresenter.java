@@ -16,15 +16,11 @@
 
 package org.broadleafcommerce.admin.client.presenter.catalog.product;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.admin.client.datasource.catalog.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.BundleSkuSearchDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.OneToOneProductSkuDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ParentCategoryListDataSourceFactory;
@@ -35,6 +31,7 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOpti
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductOptionValueDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductSkusDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleItemsDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
@@ -62,6 +59,8 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDia
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -75,6 +74,11 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * 
  * @author jfischer
@@ -84,6 +88,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
 	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
+	protected EntitySearchDialog skuSearchView;	
 	protected SubPresentable crossSalePresenter;
 	protected SubPresentable upSalePresenter;
 	protected SubPresentable mediaPresenter;
@@ -91,6 +96,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	protected SubPresentable parentCategoriesPresenter;
 	protected AssociatedProductOptionPresenter productOptionsPresenter;
 	protected SubPresentable skusPresenter;
+	protected SubPresentable bundleItemsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
 
 	@Override
@@ -108,6 +114,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         parentCategoriesPresenter.load(selectedRecord, dataSource, null);
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
+        bundleItemsPresenter.load(selectedRecord, dataSource, null);
 	}
 
     @Override
@@ -143,6 +150,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		parentCategoriesPresenter.bind();
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
+		bundleItemsPresenter.bind();
 		
 		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
@@ -282,6 +290,20 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             }
         }));
 		
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skuSearchDS", new BundleSkuSearchDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                ListGridDataSource skuSearchDataSource = (ListGridDataSource)result;
+                skuSearchDataSource.resetPermanentFieldVisibility("name", "retailPrice", "salePrice");
+                skuSearchView = new EntitySearchDialog(skuSearchDataSource, true);
+            }
+        }));
+
+        getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleSkusDS", new SkuBundleItemsDataSourceFactory(), new AsyncCallbackAdapter() {
+            public void onSetupSuccess(DataSource result) {
+                bundleItemsPresenter = new EditableJoinStructurePresenter(getDisplay().getBundleItemsDisplay(), skuSearchView, new String[]{EntityImplementations.PRODUCT_BUNDLE}, BLCMain.getMessageManager().getString("skuSelect"), BLCMain.getMessageManager().getString("editBundleItem"), new String[]{"quantity", "salePrice"});
+                bundleItemsPresenter.setDataSource((ListGridDataSource) result, new String[]{"sku.name", "quantity"}, new Boolean[]{false, true});
+            }
+        }));
         getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("staticAssetTreeDS", new StaticAssetsTileGridDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource dataSource) {

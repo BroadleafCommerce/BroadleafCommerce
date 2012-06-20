@@ -90,5 +90,8 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String newProductOptionValue();
     public String skusTabTitle();
     public String skusListTitle();
+    public String productBundleItemsTitle();
+    public String skuSelect();
+    public String editBundleItem();
     
 }

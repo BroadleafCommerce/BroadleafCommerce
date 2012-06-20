@@ -45,5 +45,7 @@ public interface OneToOneProductSkuDisplay extends DynamicEditDisplay {
 	public ToolStripButton getGenerateSkusButton();
 	
 	public SubItemDisplay getSkusDisplay();
+	
+	public GridStructureDisplay getBundleItemsDisplay();
 
 }
