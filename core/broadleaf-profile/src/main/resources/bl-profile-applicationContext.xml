@@ -45,4 +45,16 @@
 		</property>
 	</bean>
 	
+    <bean id="blCustomerForgotPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${customerService.fromAddress}"/>
+        <property name="emailTemplate" value="${customerForgotPasswordEmail.emailTemplate}"/>
+        <property name="subject" value="${customerForgotPasswordEmail.subject}"/>
+    </bean>
+    
+    <bean id="blCustomerForgotUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${customerService.fromAddress}"/>
+        <property name="emailTemplate" value="${customerForgotUsernameEmail.emailTemplate}"/>
+        <property name="subject" value="${customerForgotUsernameEmail.subject}"/>
+    </bean>	
+	
 </beans>
