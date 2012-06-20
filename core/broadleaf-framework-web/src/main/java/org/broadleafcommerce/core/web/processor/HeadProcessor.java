@@ -65,14 +65,12 @@ public class HeadProcessor extends AbstractFragmentElementProcessor {
 		try {
 			pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
 		} catch (TemplateProcessingException e) {
-			// Do nothing
+			// Do nothing.
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
         return new CompleteTemplateFragmentSpec("partials/head");
 	}
-
-
 
 	@Override
 	protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {

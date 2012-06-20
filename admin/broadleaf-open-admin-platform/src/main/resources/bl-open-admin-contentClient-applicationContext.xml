@@ -13,6 +13,8 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
     
+    <bean id="blExploitProtectionService" class="org.broadleafcommerce.openadmin.server.service.ExploitProtectionServiceImpl"/>
+    
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
     
     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">

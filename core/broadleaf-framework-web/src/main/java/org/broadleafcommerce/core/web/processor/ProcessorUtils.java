@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.spring3.context.SpringWebContext;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author apazzolini
@@ -47,6 +48,22 @@ public class ProcessorUtils {
 			cachedBeans.put(key, catalogService);
 		}
 		return catalogService;
+	}
+	
+	/**
+	 * Gets the "blExploitProtectionService" bean via the Spring Web Application Context
+	 * @param arguments the Thymeleaf arguments that's part of the request
+	 * @return "blExploitProtectionService" bean instance
+	 */
+	public static ExploitProtectionService getExploitProtectionService(Arguments arguments) {
+		String key = "blExploitProtectionService";
+		ExploitProtectionService exploitProtectionService = (ExploitProtectionService) cachedBeans.get(key);
+		if (exploitProtectionService == null) { 
+			final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext(); 
+			exploitProtectionService = (ExploitProtectionService) appCtx.getBean(key);
+			cachedBeans.put(key, exploitProtectionService);
+		}
+		return exploitProtectionService;
 	}
 
 }
