@@ -241,6 +241,10 @@ public class MapStructureClientModule extends BasicClientEntityModule {
 			if (property.getDisplayValue() != null) {
 				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
 			}
+            if (property.getIsDirty()) {
+                record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
+                record.setAttribute("__dirty_"+attributeName, true);
+            }
 		}
 		String[] entityType = entity.getType();
 		record.setAttribute("_type", entityType);

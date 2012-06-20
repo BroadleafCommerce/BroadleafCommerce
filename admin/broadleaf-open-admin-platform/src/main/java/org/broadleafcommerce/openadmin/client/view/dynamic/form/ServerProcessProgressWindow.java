@@ -44,7 +44,7 @@ public class ServerProcessProgressWindow extends Window implements Stoppable {
 	public void startProgress() {
         if (BLCMain.SPLASH_PROGRESS.isActive()) {
             SplashWindow splash = (SplashWindow) BLCMain.SPLASH_PROGRESS;
-            setTop(splash.getTop() + 180);
+            setTop(splash.getTop() + 280);
             setLeft(splash.getLeft() + 40);
         } else {
             centerInPage();

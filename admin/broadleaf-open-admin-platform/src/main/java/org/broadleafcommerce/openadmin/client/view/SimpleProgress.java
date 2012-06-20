@@ -45,7 +45,7 @@ public class SimpleProgress extends Progressbar implements Progress {
             public void run() {
             	//asymptote calculation
             	Double factor = 1D/current;
-            	current += .25D;
+            	current += .009D;
                 barValue = (int) (100 - 100D * factor);
                 setPercentDone(barValue);
                 if(isActive)  
