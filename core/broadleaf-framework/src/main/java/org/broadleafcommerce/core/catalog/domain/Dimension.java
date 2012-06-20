@@ -49,11 +49,11 @@ public class Dimension implements Serializable {
     protected BigDecimal girth;
 
     @Column(name = "CONTAINER_SIZE")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size", order=14, group = "ProductDimension_Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType")
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Size", order=14, group = "ProductDimension_Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.vendor.service.type.ContainerSizeType")
     protected String size;
 
     @Column(name = "CONTAINER_SHAPE")
-    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape", order=15, group = "ProductDimension_Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType")
+    @AdminPresentation(friendlyName = "ProductDimension_Product_Container_Shape", order=15, group = "ProductDimension_Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.vendor.service.type.ContainerShapeType")
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
