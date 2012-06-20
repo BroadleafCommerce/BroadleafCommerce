@@ -112,7 +112,7 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
 
         Set<AdminRole> roleSet = user.getAllRoles();
         //First, remove all roles associated with the user if they already existed
-        if (roleSet != null && ! roleSet.isEmpty()){
+        if (roleSet != null){
             roleSet.clear();
         } else {
             roleSet = new HashSet<AdminRole>();
@@ -122,17 +122,18 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
         //Now add the appropriate roles back in
         List<AdminRole> availableRoles = adminSecurityService.readAllAdminRoles();
         if (availableRoles != null) {
+            HashMap<String, AdminRole> roleMap = new HashMap<String, AdminRole>();
+            for (AdminRole role : availableRoles) {
+               roleMap.put(role.getName(), role);
+            }
             Collection<GrantedAuthority> authorities = broadleafUser.getAuthorities();
             for (GrantedAuthority authority : authorities) {
-                for (AdminRole role : availableRoles) {
-                    if (role.getName().equals(authority.getAuthority())) {
-                        roleSet.add(role);
-                        break;
-                    }
+                if (roleMap.get(authority.getAuthority()) != null){
+                    roleSet.add(roleMap.get(authority.getAuthority()));
                 }
             }
         }
-
+        //Save the user data and all of the roles...
         adminSecurityService.saveAdminUser(user);
     }
 }
