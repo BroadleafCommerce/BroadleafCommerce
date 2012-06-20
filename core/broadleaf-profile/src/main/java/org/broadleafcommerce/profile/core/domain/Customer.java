@@ -98,6 +98,21 @@ public interface Customer extends Serializable {
     
     List<CustomerAttribute> getCustomerAttributes();
 
-	void setCustomerAttributes(List<CustomerAttribute> customerAttributes);    
+	void setCustomerAttributes(List<CustomerAttribute> customerAttributes);  
+	
+	/**
+	 * Returns true if this user has been deactivated.
+	 * Most implementations will not allow the user to login if they are deactivated.
+	 * 
+	 * @return
+	 */
+	boolean isDeactivated();
+	
+	/**
+	 * Sets the users deactivated status.
+	 * 
+	 * @param deactivated
+	 */
+	void setDeactivated(boolean deactivated);
     
 }

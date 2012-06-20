@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
+import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
@@ -48,6 +49,11 @@ public interface CustomerService {
      * @return either a <code>Customer</code> from the database if it exists, or a new non-persisted <code>Customer</code>
      */
     public Customer createCustomerFromId(Long customerId);
+    
+    /**
+     * Returns a non-persisted <code>Customer</code>.    Typically used with registering a new customer.
+     */
+    public Customer createNewCustomer();
 
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
@@ -62,5 +68,36 @@ public interface CustomerService {
 	public List<PasswordUpdatedHandler> getPasswordChangedHandlers();
 
 	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
+	
+    /**
+     * Looks up the corresponding Customer and emails the address on file with
+     * the associated username.
+     *
+     * @param emailAddress
+     * @return Response can contain errors including (notFound)
+     */
+    GenericResponse sendForgotUsernameNotification(String emailAddress);
+
+    /**
+     * Generates an access token and then emails the user.
+     *
+     * @param userName - the user to send a reset password email to.
+     * @param resetPasswordUrl - Base url to include in the email.
+     * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
+     * 
+     */
+    GenericResponse sendResetPasswordNotification(String userName, String resetPasswordUrl);
+    
+    /**
+     * Updates the password for the passed in customer only if the passed
+     * in token is valid for that customer.
+     *
+     * @param username Username of the customer
+     * @param token Valid reset token
+     * @param password new password
+     *
+     * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired, passwordMismatch)
+     */
+    GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
 	
 }

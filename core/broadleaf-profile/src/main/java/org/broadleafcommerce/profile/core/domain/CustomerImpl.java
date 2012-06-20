@@ -16,8 +16,19 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,19 +45,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -99,15 +99,19 @@ public class CustomerImpl implements Customer {
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
     @AdminPresentation(excluded = true)
-    protected boolean passwordChangeRequired = false;
+    protected Boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email", group = "CustomerImpl_Customer")
-    protected boolean receiveEmail = true;
+    protected Boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", group = "CustomerImpl_Customer")
-    protected boolean registered = false;
+    protected Boolean registered = false;
+    
+    @Column(name = "DEACTIVATED")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", group = "CustomerImpl_Customer")
+    protected Boolean deactivated = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
@@ -297,6 +301,18 @@ public class CustomerImpl implements Customer {
 
 	public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
 		this.customerAttributes = customerAttributes;
+	}
+	
+	public boolean isDeactivated() {
+		if (deactivated == null) {
+			return false;
+		} else {
+			return deactivated.booleanValue();
+		}
+	}
+
+	public void setDeactivated(boolean deactivated) {
+		this.deactivated = Boolean.valueOf(deactivated);
 	}
 
 	@Override

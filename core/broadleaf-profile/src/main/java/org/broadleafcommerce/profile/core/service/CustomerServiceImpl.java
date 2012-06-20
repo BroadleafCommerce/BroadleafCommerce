@@ -16,17 +16,20 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.email.service.EmailService;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
+import org.broadleafcommerce.common.service.GenericResponse;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
+import org.broadleafcommerce.profile.core.dao.CustomerForgotPasswordSecurityTokenDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken;
+import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
@@ -34,6 +37,14 @@ import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -43,13 +54,30 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Resource(name="blIdGenerationService")
     protected IdGenerationService idGenerationService;
+    
+    @Resource(name="blCustomerForgotPasswordSecurityTokenDao")
+    protected CustomerForgotPasswordSecurityTokenDao customerForgotPasswordSecurityTokenDao;  
 
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
     
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
-   
+    
+    @Resource(name="blEmailService")
+    protected EmailService emailService;
+    
+    @Resource(name="blCustomerForgotPasswordEmail")
+    protected EmailInfo forgotPasswordEmailInfo;
+
+    @Resource(name="blCustomerForgotUsernameEmailInfo")
+    protected EmailInfo forgotUsernameEmailInfo;    
+    
+    //TODO: Make configurable
+    protected int tokenExpiredMinutes = 30;
+
+    protected int passwordTokenLength = 12;   
+    		 
     protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
     protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
     protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
@@ -158,6 +186,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return customer;
     }
+    
+    public Customer createNewCustomer() {
+        return createCustomerFromId(null);
+    }
 
     public Customer readCustomerByUsername(String username) {
         return customerDao.readCustomerByUsername(username);
@@ -190,5 +222,163 @@ public class CustomerServiceImpl implements CustomerService {
 	public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers) {
 		this.passwordChangedHandlers = passwordChangedHandlers;
 	}
+	
+	public GenericResponse sendForgotUsernameNotification(String emailAddress) {
+		GenericResponse response = new GenericResponse();
+		List<Customer> customers = null;
+		if (emailAddress != null) {
+			customers = customerDao.readCustomersByEmail(emailAddress);
+		}
+
+		if (customers == null || customers.isEmpty()) {
+			response.addErrorCode("notFound");
+		} else {
+			List<String> activeUsernames = new ArrayList<String>();
+			for (Customer customer: customers) {
+				if (! customer.isDeactivated()) {
+					activeUsernames.add(customer.getUsername());
+				}
+			}
+
+			if (activeUsernames.size() > 0) {
+				HashMap<String, Object> vars = new HashMap<String, Object>();
+				vars.put("userNames", activeUsernames);
+				emailService.sendTemplateEmail(emailAddress, getForgotUsernameEmailInfo(), vars);
+			} else {
+				// send inactive username found email.
+				response.addErrorCode("inactiveUser");
+			}
+		}
+		return response;
+	}
+
+	public GenericResponse sendResetPasswordNotification(String username, String resetPasswordUrl) {
+		GenericResponse response = new GenericResponse();
+		Customer customer = null;
+
+		if (username != null) {
+			customer = customerDao.readCustomerByUsername(username);
+		}
+
+		checkCustomer(customer,response);
+
+		if (! response.getHasErrors()) {        
+			String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
+			token = token.toLowerCase();
+
+			CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
+			fpst.setCustomerId(customer.getId());
+			fpst.setToken(passwordEncoder.encodePassword(token,null));
+			fpst.setCreateDate(SystemTime.asDate());
+			customerForgotPasswordSecurityTokenDao.saveToken(fpst);
+
+			HashMap<String, Object> vars = new HashMap<String, Object>();
+			vars.put("token", token);
+			if (!StringUtils.isEmpty(resetPasswordUrl)) {
+				if (resetPasswordUrl.contains("?")) {
+					resetPasswordUrl=resetPasswordUrl+"&token="+token;
+				} else {
+					resetPasswordUrl=resetPasswordUrl+"?token="+token;
+				}
+			}
+			vars.put("resetPasswordUrl", resetPasswordUrl); 
+			emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
+
+		}
+		return response;
+	}
     
+    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
+        GenericResponse response = new GenericResponse();
+        Customer customer = null;
+        if (username != null) {
+            customer = customerDao.readCustomerByUsername(username);
+        }
+        checkCustomer(customer, response);
+        checkPassword(password, confirmPassword, response);
+        if (token == null || "".equals(token)) {
+            response.addErrorCode("invalidToken");
+        }
+
+        CustomerForgotPasswordSecurityToken fpst = null;
+        if (! response.getHasErrors()) {
+            token = token.toLowerCase();
+            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token,null));
+            if (fpst == null) {
+                response.addErrorCode("invalidToken");
+            } else if (fpst.isTokenUsedFlag()) {
+                response.addErrorCode("tokenUsed");
+            } else if (isTokenExpired(fpst)) {
+                response.addErrorCode("tokenExpired");
+            }
+        }
+
+        if (! response.getHasErrors()) {
+            customer.setUnencodedPassword(password);
+            saveCustomer(customer);
+            fpst.setTokenUsedFlag(true);
+            customerForgotPasswordSecurityTokenDao.saveToken(fpst);
+        }
+
+        return response;    	
+    }
+    
+    protected void checkCustomer(Customer customer, GenericResponse response) {
+        if (customer == null) {
+            response.addErrorCode("invalidCustomer");
+        } else if (customer.getEmailAddress() == null || "".equals(customer.getEmailAddress())) {
+            response.addErrorCode("emailNotFound");
+        } else if (customer.isDeactivated()) {
+            response.addErrorCode("inactiveUser");
+        }
+    }
+    
+    protected void checkPassword(String password, String confirmPassword, GenericResponse response) {
+        if (password == null || confirmPassword == null || "".equals(password) || "".equals(confirmPassword)) {
+            response.addErrorCode("invalidPassword");
+        } else if (! password.equals(confirmPassword)) {
+            response.addErrorCode("passwordMismatch");
+        }
+    }
+
+    protected boolean isTokenExpired(CustomerForgotPasswordSecurityToken fpst) {
+        Date now = SystemTime.asDate();
+        long currentTimeInMillis = now.getTime();
+        long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
+        long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
+        return minutesSinceSave > tokenExpiredMinutes;
+    }
+
+    public int getTokenExpiredMinutes() {
+        return tokenExpiredMinutes;
+    }
+
+    public void setTokenExpiredMinutes(int tokenExpiredMinutes) {
+        this.tokenExpiredMinutes = tokenExpiredMinutes;
+    }
+
+    public int getPasswordTokenLength() {
+        return passwordTokenLength;
+    }
+
+    public void setPasswordTokenLength(int passwordTokenLength) {
+        this.passwordTokenLength = passwordTokenLength;
+    }
+
+
+	public EmailInfo getForgotPasswordEmailInfo() {
+		return forgotPasswordEmailInfo;
+	}
+
+	public void setForgotPasswordEmailInfo(EmailInfo forgotPasswordEmailInfo) {
+		this.forgotPasswordEmailInfo = forgotPasswordEmailInfo;
+	}
+
+	public EmailInfo getForgotUsernameEmailInfo() {
+		return forgotUsernameEmailInfo;
+	}
+
+	public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
+		this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
+	}	
 }
