@@ -28,6 +28,9 @@ public class EntityImplementations {
 	public static final String CATEGORY_XREF = "org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl";
 	public static final String FEATUREDPRODUCT = "org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl";
 	public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.ProductImpl";
+	public static final String PRODUCT_BUNDLE = "org.broadleafcommerce.core.catalog.domain.ProductBundleImpl";
+	public static final String SKU = "org.broadleafcommerce.core.catalog.domain.SkuImpl";
+	public static final String SKU_BUNDLE_ITEM = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl";
 	public static final String MEDIA = "org.broadleafcommerce.core.media.domain.MediaImpl";
 	public static final String CROSSSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl";
 	public static final String UPSALEPRODUCT = "org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl";

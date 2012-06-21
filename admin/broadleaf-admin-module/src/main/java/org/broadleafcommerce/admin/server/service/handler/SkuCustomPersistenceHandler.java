@@ -99,12 +99,21 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             int order = 0;
             for (ProductOption option : options) {
                 FieldMetadata metadata = new FieldMetadata();
-                metadata.setFieldType(SupportedFieldType.STRING);
-                metadata.setMutable(false);
+                metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
+                metadata.setMutable(true);
                 metadata.setInheritedFromType(SkuImpl.class.getName());
                 metadata.setAvailableToTypes(new String[]{SkuImpl.class.getName()});
                 metadata.setCollection(false);
                 metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+                
+                //Set up the enumeration based on the product option values
+                String[][] optionValues = new String[option.getAllowedValues().size()][2];
+                for (int i = 0; i < option.getAllowedValues().size(); i++) {
+                    ProductOptionValue value = option.getAllowedValues().get(i);
+                    optionValues[i][0] = value.getId().toString();
+                    optionValues[i][1] = value.getAttributeValue();
+                }
+                metadata.setEnumerationValues(optionValues);
                 
                 FieldPresentationAttributes attributes = new FieldPresentationAttributes();
                 metadata.setPresentationAttributes(attributes);
@@ -115,8 +124,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 attributes.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                 attributes.setProminent(true);
                 attributes.setBroadleafEnumeration("");
-                attributes.setReadOnly(true);
-                attributes.setVisibility(VisibilityEnum.FORM_HIDDEN);
+                attributes.setReadOnly(false);
                 attributes.setRequiredOverride(true);
                 
                 //add this to the built Sku properties
