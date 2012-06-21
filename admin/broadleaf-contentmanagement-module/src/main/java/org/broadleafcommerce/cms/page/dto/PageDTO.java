@@ -36,7 +36,7 @@ public class PageDTO implements Serializable {
     protected String templatePath;
     protected String url;
     protected Long sandboxId;
-    protected Map pageFields = new HashMap<String,String>();
+    protected Map<String, String> pageFields = new HashMap<String,String>();
 
     public Long getId() {
         return id;
@@ -86,11 +86,11 @@ public class PageDTO implements Serializable {
         this.sandboxId = sandboxId;
     }
 
-    public Map getPageFields() {
+    public Map<String, String> getPageFields() {
         return pageFields;
     }
 
-    public void setPageFields(Map pageFields) {
+    public void setPageFields(Map<String, String> pageFields) {
         this.pageFields = pageFields;
     }
 }
