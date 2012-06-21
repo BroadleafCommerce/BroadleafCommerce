@@ -41,7 +41,7 @@ import javax.annotation.Resource;
  * @author jfischer
  */
 @Service("blDynamicEntityRemoteService")
-@Transactional("blTransactionManager")
+@Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
 public class DynamicEntityRemoteService implements DynamicEntityService, DynamicEntityRemote, ApplicationContextAware {
 
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
