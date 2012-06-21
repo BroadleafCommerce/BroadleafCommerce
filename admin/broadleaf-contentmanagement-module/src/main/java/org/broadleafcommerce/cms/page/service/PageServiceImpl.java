@@ -335,8 +335,6 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
                 Page productionPage = pageDao.findPageByURI(productionSandbox, locale, uri);
                 
                 if (productionPage != null) {
-                    productionPageDTO = buildPageDTO(productionPage, secure); 
-
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Page found, adding page to cache with key: " + key);
                     }
