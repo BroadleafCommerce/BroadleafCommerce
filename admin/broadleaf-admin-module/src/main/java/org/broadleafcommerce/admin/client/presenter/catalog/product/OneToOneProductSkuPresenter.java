@@ -118,23 +118,6 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 	}
 
     @Override
-    protected void saveClicked() {
-        DynamicForm form = display.getDynamicFormDisplay().getFormOnlyDisplay().getForm();
-        form.setValue("sku.name", (String) form.getValue("name"));
-        form.setValue("sku.description", (String) form.getValue("description"));
-        form.setValue("sku.longDescription", (String) form.getValue("longDescription"));
-        Date activeStartDate = (Date) form.getValue("activeStartDate");
-        if (activeStartDate != null) {
-            form.setValue("sku.activeStartDate", activeStartDate);
-        }
-        Date activeEndDate = (Date) form.getValue("activeEndDate");
-        if (activeEndDate != null) {
-            form.setValue("sku.activeEndDate", activeEndDate);
-        }
-        super.saveClicked();
-    }
-
-    @Override
     protected void itemSaved(DSResponse response, Object rawData, DSRequest request) {
         super.itemSaved(response, rawData, request);
         getDisplay().getAllCategoriesDisplay().getGrid().invalidateCache();
