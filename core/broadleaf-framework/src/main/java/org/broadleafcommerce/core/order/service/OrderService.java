@@ -49,7 +49,6 @@ import java.util.Map;
  * during the shopping process.    Although it is common to also
  * use this service for "named" orders (e.g. wishlists).
  *
- *
  */
 public interface OrderService {
 
@@ -66,34 +65,6 @@ public interface OrderService {
     public Order findNamedOrderForCustomer(String name, Customer customer);
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
-
-    /**
-     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
-     * @Deprecated 
-     *
-     * @param order
-     * @param itemRequest
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException;
-
-    /**
-     * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     *
-     * Due to cart merging and gathering requirements, the item returned is not an
-     * actual cart item.
-     *
-     * @param order
-     * @param itemRequest
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
-
 
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;
     
@@ -213,67 +184,6 @@ public interface OrderService {
 
     public List<PaymentInfo> readPaymentInfosForOrder(Order order);
 
-    /**
-     * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     *
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
-
-    /**
-     * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     *
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @param orderItemAttributes
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> orderItemAttributes) throws PricingException;
-
-    /**
-     * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     *
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException;
-
-    /**
-     * @Deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     *
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @param priceOrder
-     * @param orderItemAttributes
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> orderItemAttributes) throws PricingException;
-
-
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
     
     public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException;
@@ -297,30 +207,6 @@ public interface OrderService {
      */
     public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
-    /**
-     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
-     * @deprecated
-     *
-     * @param order
-     * @param newOrderItem
-     * @return
-     * @throws PricingException
-     */
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
-
-
-    /**
-     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
-     *
-     * @deprecated
-     * @param order
-     * @param newOrderItem
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException;
-
     public Order findOrderByOrderNumber (String orderNumber);
 
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
@@ -337,28 +223,6 @@ public interface OrderService {
 	 */
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
 
-    /**
-     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
-     * @deprecated
-     * @param order
-     * @param itemRequest
-     * @param skuPricingConsiderations
-     * @return
-     * @throws PricingException
-     */
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
-
-    /**
-     * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}     
-     * @deprecated
-     * @param order
-     * @param itemRequest
-     * @param skuPricingConsiderations
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
 
     /**
      * Adds an item to the specified bundle.   This is typically used to manage
@@ -440,7 +304,7 @@ public interface OrderService {
      * @see #setAutomaticallyMergeLikeItems(boolean)
      * @return
      */
-    boolean getAutomaticallyMergeLikeItems();
+    public boolean getAutomaticallyMergeLikeItems();
 
     /**
      * When set to true, the system when items are added to the cart, they will
@@ -453,7 +317,135 @@ public interface OrderService {
      *
      * @param automaticallyMergeLikeItems
      */
-    void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
+    public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
 
+    /* *********************************************************************************
+     * DEPRECATED METHODS                                                              *
+     * *********************************************************************************/
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param order
+     * @param itemRequest
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     *
+     * Due to cart merging and gathering requirements, the item returned is not an
+     * actual cart item.
+     *
+     * @param order
+     * @param itemRequest
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param orderId
+     * @param skuId
+     * @param productId
+     * @param categoryId
+     * @param quantity
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param orderId
+     * @param skuId
+     * @param productId
+     * @param categoryId
+     * @param quantity
+     * @param orderItemAttributes
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> orderItemAttributes) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param orderId
+     * @param skuId
+     * @param productId
+     * @param categoryId
+     * @param quantity
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param orderId
+     * @param skuId
+     * @param productId
+     * @param categoryId
+     * @param quantity
+     * @param priceOrder
+     * @param orderItemAttributes
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> orderItemAttributes) throws PricingException;
+    
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param order
+     * @param newOrderItem
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param order
+     * @param newOrderItem
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException;
+    
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param order
+     * @param itemRequest
+     * @param skuPricingConsiderations
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
+
+    /**
+     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * @param order
+     * @param itemRequest
+     * @param skuPricingConsiderations
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     */
+    @Deprecated
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
 
 }

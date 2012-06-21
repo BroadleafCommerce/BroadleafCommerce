@@ -154,9 +154,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
-        FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
-
-        return fg;
+        return fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
     }
     
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity) {
@@ -184,55 +182,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
-    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, null);
-    }
-    
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> itemAttributes) throws PricingException {
-    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, itemAttributes);
-    }
-    
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
-        return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, priceOrder, null);
-    }
-
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> itemAttributes) throws PricingException {
-        if (orderId == null || (productId == null && skuId == null) || quantity == null) {
-            return null;
-        }
-
-        OrderItemRequestDTO requestDTO = new OrderItemRequestDTO();
-        requestDTO.setCategoryId(categoryId);
-        requestDTO.setProductId(productId);
-        requestDTO.setSkuId(skuId);
-        requestDTO.setQuantity(quantity);
-        requestDTO.setItemAttributes(itemAttributes);
-
-        Order order = addItemToOrder(orderId, requestDTO, priceOrder);
-        if (order == null) {
-            return null;
-        }
-        return findLastMatchingItem(order, skuId, productId);
-    }
-
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
-    	return addDiscreteItemToOrder(order, itemRequest, true);
-    }
-
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
-        DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
-        return addOrderItemToOrder(order, item, priceOrder);
-    }
-
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException {
-    	return addDynamicPriceDiscreteItemToOrder(order, itemRequest, skuPricingConsiderations, true);
-    }
-
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException {
-        DiscreteOrderItem item = orderItemService.createDynamicPriceDiscreteOrderItem(itemRequest, skuPricingConsiderations);
-        return addOrderItemToOrder(order, item, priceOrder);
-    }
-    
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException {
     	return addGiftWrapItemToOrder(order, itemRequest, true);
     }
@@ -537,15 +486,7 @@ public class OrderServiceImpl implements OrderService {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
     
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
-        List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.add(newOrderItem);
-        newOrderItem.setOrder(order);
-        order = updateOrder(order, true);
-        return findLastMatchingItem(order, newOrderItem);
-    }
-
-    private boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
+    protected boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
         // Must match on SKU and options
         if (item1.getSku() != null && item2.getSku() != null) {
             if (item1.getSku().getId().equals(item2.getSku().getId())) {
@@ -562,7 +503,7 @@ public class OrderServiceImpl implements OrderService {
         return false;
     }
 
-    private OrderItem findLastMatchingDiscreteItem(Order order, DiscreteOrderItem itemToFind) {
+    protected OrderItem findLastMatchingDiscreteItem(Order order, DiscreteOrderItem itemToFind) {
         for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
             OrderItem currentItem = (order.getOrderItems().get(i));
             if (currentItem instanceof DiscreteOrderItem) {
@@ -582,7 +523,7 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
-    private boolean bundleItemMatches(BundleOrderItem item1, BundleOrderItem item2) {
+    protected boolean bundleItemMatches(BundleOrderItem item1, BundleOrderItem item2) {
         if (item1.getSku() != null && item2.getSku() != null) {
             return item1.getSku().getId().equals(item2.getSku().getId());
         }
@@ -619,7 +560,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    private OrderItem findLastMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
+    protected OrderItem findLastMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
         for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
             OrderItem currentItem = (order.getOrderItems().get(i));
             if (currentItem instanceof BundleOrderItem) {
@@ -631,7 +572,7 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
-    private OrderItem findLastMatchingItem(Order order, OrderItem itemToFind) {
+    protected OrderItem findLastMatchingItem(Order order, OrderItem itemToFind) {
         if (itemToFind instanceof BundleOrderItem) {
             return findLastMatchingBundleItem(order, (BundleOrderItem) itemToFind);
         } else if (itemToFind instanceof DiscreteOrderItem) {
@@ -641,7 +582,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private OrderItem findLastMatchingItem(Order order,Long skuId, Long productId) {
+    protected OrderItem findLastMatchingItem(Order order,Long skuId, Long productId) {
         if (order.getOrderItems() != null) {
             for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
                 OrderItem currentItem = (order.getOrderItems().get(i));
@@ -670,14 +611,6 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
     	
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
-        List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.add(newOrderItem);
-        newOrderItem.setOrder(order);
-        order = updateOrder(order, priceOrder);
-        return findLastMatchingItem(order, newOrderItem);
-    }
-    
     public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
         List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
         orderItems.add(newOrderItem);
@@ -1005,7 +938,7 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
-    private boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValues) {
+    protected boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValues) {
         if (attributeValues == null || attributeValues.size() == 0) {
             return false;
         }
@@ -1137,4 +1070,84 @@ public class OrderServiceImpl implements OrderService {
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
         this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
     }
+    
+    /* *********************************************************************************
+     * DEPRECATED METHODS                                                              *
+     * *********************************************************************************/
+    
+    @Deprecated
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
+    	return addDiscreteItemToOrder(order, itemRequest, true);
+    }
+
+    @Deprecated
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
+        DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
+        return addOrderItemToOrder(order, item, priceOrder);
+    }
+    
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
+    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, null);
+    }
+    
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> itemAttributes) throws PricingException {
+    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true, itemAttributes);
+    }
+    
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
+        return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, priceOrder, null);
+    }
+
+    @Deprecated
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> itemAttributes) throws PricingException {
+        if (orderId == null || (productId == null && skuId == null) || quantity == null) {
+            return null;
+        }
+
+        OrderItemRequestDTO requestDTO = new OrderItemRequestDTO();
+        requestDTO.setCategoryId(categoryId);
+        requestDTO.setProductId(productId);
+        requestDTO.setSkuId(skuId);
+        requestDTO.setQuantity(quantity);
+        requestDTO.setItemAttributes(itemAttributes);
+
+        Order order = addItemToOrder(orderId, requestDTO, priceOrder);
+        if (order == null) {
+            return null;
+        }
+        return findLastMatchingItem(order, skuId, productId);
+    }
+    
+    @Deprecated
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        List<OrderItem> orderItems = order.getOrderItems();
+        orderItems.add(newOrderItem);
+        newOrderItem.setOrder(order);
+        order = updateOrder(order, priceOrder);
+        return findLastMatchingItem(order, newOrderItem);
+    }
+    
+    @Deprecated
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
+        List<OrderItem> orderItems = order.getOrderItems();
+        orderItems.add(newOrderItem);
+        newOrderItem.setOrder(order);
+        order = updateOrder(order, true);
+        return findLastMatchingItem(order, newOrderItem);
+    }
+    
+    @Deprecated
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException {
+    	return addDynamicPriceDiscreteItemToOrder(order, itemRequest, skuPricingConsiderations, true);
+    }
+
+    @Deprecated
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException {
+        DiscreteOrderItem item = orderItemService.createDynamicPriceDiscreteOrderItem(itemRequest, skuPricingConsiderations);
+        return addOrderItemToOrder(order, item, priceOrder);
+    }
+    
 }
