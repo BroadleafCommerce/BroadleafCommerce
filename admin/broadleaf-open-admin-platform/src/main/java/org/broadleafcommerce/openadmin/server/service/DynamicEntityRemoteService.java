@@ -33,6 +33,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -40,7 +41,8 @@ import javax.annotation.Resource;
  * @author jfischer
  */
 @Service("blDynamicEntityRemoteService")
-public class DynamicEntityRemoteService implements DynamicEntityService, ApplicationContextAware {
+@Transactional("blTransactionManager")
+public class DynamicEntityRemoteService implements DynamicEntityService, DynamicEntityRemote, ApplicationContextAware {
 
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
@@ -221,10 +223,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Applica
         }
     }
 
+    @Override
     public String getPersistenceManagerRef() {
         return persistenceManagerRef;
     }
 
+    @Override
     public void setPersistenceManagerRef(String persistenceManagerRef) {
         this.persistenceManagerRef = persistenceManagerRef;
     }

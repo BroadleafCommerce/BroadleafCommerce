@@ -12,21 +12,6 @@
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
 
-    <aop:config>
-        <aop:pointcut id="blAdminSecurityServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceOperation"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blRemoteServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blSandBoxServiceOperation" expression="execution(* org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService+.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSandBoxServiceOperation"/>
-    </aop:config>
-
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
         <property name="propertyLocations">
             <set>

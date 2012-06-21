@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @Service(value = "blSandBoxService")
+@Transactional("blTransactionManager")
 public class SandBoxServiceImpl implements SandBoxService {
     
     private static final Log LOG = LogFactory.getLog(SandBoxServiceImpl.class);

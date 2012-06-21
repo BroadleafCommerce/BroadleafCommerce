@@ -665,6 +665,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 					property.setValue(formatter.format(record.getAttributeAsDate(attribute)));
                 } else if (linkedValue != null && dataSource.getField(attribute).getAttribute("fieldType") != null && SupportedFieldType.valueOf(dataSource.getField(attribute).getAttribute("fieldType")).equals(SupportedFieldType.FOREIGN_KEY)) {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(linkedValue));
+                    property.setIsDirty(true);
 				} else {
 					property.setValue(dataSource.stripDuplicateAllowSpecialCharacters(record.getAttribute(attribute)));
 				}
@@ -681,6 +682,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		Property fullyQualifiedName = new Property();
 		fullyQualifiedName.setName("ceilingEntityFullyQualifiedClassname");
 		fullyQualifiedName.setValue(ceilingEntityFullyQualifiedClassname);
+        fullyQualifiedName.setIsDirty(true);
 		properties.add(fullyQualifiedName);
 		
 		Property[] props = new Property[properties.size()];

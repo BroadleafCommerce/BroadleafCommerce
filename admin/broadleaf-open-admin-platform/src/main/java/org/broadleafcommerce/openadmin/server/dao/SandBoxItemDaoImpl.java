@@ -105,6 +105,13 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         return query.getResultList();
     }
 
+    public List<SandBoxItem> retrieveSandBoxItemsByTypeForSandbox(SandBox sandBox, SandBoxItemType itemType) {
+        Query query = em.createNamedQuery("BC_READ_ALL_SANDBOX_ITEMS_BY_TYPE");
+        query.setParameter("sandboxId", sandBox.getId());
+        query.setParameter("sandBoxItemType", itemType.getType());
+        return query.getResultList();
+    }
+
     @Override
     public void delete(SandBoxItem sandBoxItem) {
         if (!em.contains(sandBoxItem)) {
