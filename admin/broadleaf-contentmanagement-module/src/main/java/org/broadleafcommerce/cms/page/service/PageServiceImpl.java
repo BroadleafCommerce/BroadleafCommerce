@@ -20,6 +20,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AbstractContentService;
@@ -296,13 +297,13 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         if (envPrefix != null && secure) {
             envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
         }
-
+        
         String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
 
         for (String fieldKey : page.getPageFields().keySet()) {
             PageField pf = page.getPageFields().get(fieldKey);
             String originalValue = pf.getValue();
-            if (envPrefix != null && originalValue != null && originalValue.contains(cmsPrefix)) {
+            if (StringUtils.isNotBlank(envPrefix) && StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
                 String fldValue = originalValue.replaceAll(cmsPrefix, envPrefix+cmsPrefix);
                 pageDTO.getPageFields().put(fieldKey, fldValue);
             } else {
