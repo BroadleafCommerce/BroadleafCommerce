@@ -91,7 +91,7 @@
 
 	<tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
 	    <tx:attributes>
-	      <tx:method name="*" propagation="REQUIRED"/>
+	      <tx:method name="*" propagation="REQUIRED" rollback-for="org.broadleafcommerce.openadmin.client.service.ServiceException"/>
 	      <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
 	    </tx:attributes>
 	</tx:advice>
