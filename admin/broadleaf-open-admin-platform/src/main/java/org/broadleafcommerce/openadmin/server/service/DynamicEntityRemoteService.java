@@ -64,16 +64,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            PersistenceManager persistenceManager = null;
-            try {
-                persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
-                persistenceManager.setTargetMode(TargetModeType.SANDBOX);
-                return persistenceManager.inspect(persistencePackage);
-            } finally {
-                if (persistenceManager != null) {
-                    persistenceManager.close();
-                }
-            }
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+            persistenceManager.setTargetMode(TargetModeType.SANDBOX);
+            return persistenceManager.inspect(persistencePackage);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
             if (e.getCause() == null) {
@@ -92,9 +85,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
         com.anasoft.os.daofusion.cto.client.CriteriaTransferObject targetCto = translateCto(cto);
 
-        PersistenceManager persistenceManager = null;
         try {
-            persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.fetch(persistencePackage, targetCto);
         } catch (ServiceException e) {
@@ -103,14 +95,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
                 throw new ServiceException(message);
             } else {
                 throw new ServiceException(message, e.getCause());
-            }
-        } finally {
-            try {
-                if (persistenceManager != null) {
-                    persistenceManager.close();
-                }
-            } catch (Exception e) {
-                LOG.error("Unable to close persistence manager", e);
             }
         }
     }
@@ -147,9 +131,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
-        PersistenceManager persistenceManager = null;
         try {
-            persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.add(persistencePackage);
         } catch (ServiceException e) {
@@ -159,14 +142,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             } else {
                 throw new ServiceException(message, e.getCause());
             }
-        } finally {
-            try {
-                if (persistenceManager != null) {
-                    persistenceManager.close();
-                }
-            } catch (Exception e) {
-                LOG.error("Unable to close persistence manager", e);
-            }
         }
     }
 
@@ -174,9 +149,8 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
         cleanEntity(persistencePackage.getEntity());
-        PersistenceManager persistenceManager = null;
         try {
-            persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.update(persistencePackage);
         } catch (ServiceException e) {
@@ -186,23 +160,14 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             } else {
                 throw new ServiceException(message, e.getCause());
             }
-        } finally {
-            try {
-                if (persistenceManager != null) {
-                    persistenceManager.close();
-                }
-            } catch (Exception e) {
-                LOG.error("Unable to close persistence manager", e);
-            }
         }
     }
 
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
 
-        PersistenceManager persistenceManager = null;
         try {
-            persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             persistenceManager.remove(persistencePackage);
         } catch (ServiceException e) {
@@ -211,14 +176,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
                 throw new ServiceException(message);
             } else {
                 throw new ServiceException(message, e.getCause());
-            }
-        } finally {
-            try {
-                if (persistenceManager != null) {
-                    persistenceManager.close();
-                }
-            } catch (Exception e) {
-                LOG.error("Unable to close persistence manager", e);
             }
         }
     }

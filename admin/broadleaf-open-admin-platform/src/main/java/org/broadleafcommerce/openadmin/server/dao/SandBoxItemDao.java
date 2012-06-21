@@ -41,4 +41,6 @@ public interface SandBoxItemDao {
 
     public List<SandBoxItem> retrieveSandBoxItemsByTypeForSandbox(SandBox sandBox, SandBoxItemType itemType);
 
+    public List<SandBoxItem> retrieveByGroupName(SandBox sandBox, String groupName);
+
 }
