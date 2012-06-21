@@ -36,11 +36,7 @@ import org.broadleafcommerce.openadmin.client.setup.NullAsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 10/5/11
- * Time: 7:49 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable {
 

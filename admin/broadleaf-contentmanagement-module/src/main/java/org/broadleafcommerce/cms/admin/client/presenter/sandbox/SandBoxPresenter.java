@@ -42,11 +42,7 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.Display;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/22/11
- * Time: 11:51 AM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class SandBoxPresenter extends AbstractEntityPresenter implements Instantiable {
 

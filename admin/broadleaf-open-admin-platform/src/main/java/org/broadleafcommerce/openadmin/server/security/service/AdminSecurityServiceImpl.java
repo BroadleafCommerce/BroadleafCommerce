@@ -41,6 +41,7 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import java.util.List;
  *
  */
 @Service("blAdminSecurityService")
+@Transactional("blTransactionManager")
 public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityServiceImpl.class);

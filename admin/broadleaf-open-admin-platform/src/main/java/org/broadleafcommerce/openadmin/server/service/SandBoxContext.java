@@ -36,6 +36,8 @@ public class SandBoxContext {
 	protected SandBoxMode sandBoxMode;
     protected String sandBoxName;
     protected boolean resetData = false;
+    protected boolean isReplay = false;
+    protected boolean rebuildSandBox = false;
 
     public AdminUser getAdminUser() {
         return adminUser;
@@ -89,6 +91,22 @@ public class SandBoxContext {
         this.resetData = resetData;
     }
 
+    public boolean isReplay() {
+        return isReplay;
+    }
+
+    public void setReplay(boolean replay) {
+        isReplay = replay;
+    }
+
+    public boolean isRebuildSandBox() {
+        return rebuildSandBox;
+    }
+
+    public void setRebuildSandBox(boolean rebuildSandBox) {
+        this.rebuildSandBox = rebuildSandBox;
+    }
+
     public SandBoxContext clone() {
         SandBoxContext myContext = new SandBoxContext();
         myContext.setResetData(isResetData());
@@ -96,6 +114,8 @@ public class SandBoxContext {
         myContext.setSandBoxId(getSandBoxId());
         myContext.setSandBoxMode(getSandBoxMode());
         myContext.setSandBoxName(getSandBoxName());
+        myContext.setReplay(isReplay());
+        myContext.setRebuildSandBox(isRebuildSandBox());
 
         return myContext;
     }
