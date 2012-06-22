@@ -16,20 +16,14 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
-import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
-import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -42,12 +36,20 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * JAXRS endpoint for providing RESTful services related to the shopping cart.
@@ -63,17 +65,14 @@ import java.util.List;
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CartEndpoint implements ApplicationContextAware {
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
 
     @Resource(name="blOfferService")
     protected OfferService offerService;
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
-
-    @Resource(name="blCustomerState")
-    protected CustomerState customerState;
 
     protected ApplicationContext context;
 
@@ -89,10 +88,10 @@ public class CartEndpoint implements ApplicationContextAware {
      */
     @GET
     public OrderWrapper findCartForCustomer(@Context HttpServletRequest request) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
 
             if (cart != null) {
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
@@ -114,13 +113,13 @@ public class CartEndpoint implements ApplicationContextAware {
      */
     @POST
     public OrderWrapper createNewCartForCustomer(@Context HttpServletRequest request) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer == null) {
             customer = customerService.createCustomerFromId(null);
         }
 
-        Order cart = cartService.createNewCartForCustomer(customer);
+        Order cart = orderService.createNewCartForCustomer(customer);
 
         OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
         wrapper.wrap(cart, request);
@@ -136,15 +135,23 @@ public class CartEndpoint implements ApplicationContextAware {
                                       @PathParam("skuId") Long skuId,
                                       @QueryParam("quantity") @DefaultValue("1") int quantity,
                                       @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null && skuId != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                    OrderItem orderItem = cartService.addSkuToOrder(cart.getId(), skuId, productId, categoryId, quantity, priceOrder);
+                	OrderItemRequest orderItemRequest = new OrderItemRequest();
+                	orderItemRequest.setCategoryId(categoryId);
+                	orderItemRequest.setProductId(productId);
+                	orderItemRequest.setSkuId(skuId);
+                	orderItemRequest.setCategoryId(categoryId);
+                	orderItemRequest.setQuantity(quantity);
+                    Order order = orderService.addItem(cart, orderItemRequest, priceOrder);
+                    order = orderService.save(order, priceOrder);
+                    
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                    wrapper.wrap(orderItem.getOrder(), request);
+                    wrapper.wrap(order, request);
 
                     return wrapper;
                 } catch (PricingException e) {
@@ -162,20 +169,26 @@ public class CartEndpoint implements ApplicationContextAware {
     public OrderWrapper removeItemFromOrder(@Context HttpServletRequest request,
                                             @PathParam("itemId") Long itemId,
                                             @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                    Order order = cartService.removeItemFromOrder(cart.getId(), itemId, priceOrder);
+                	OrderItemRequest orderItemRequest = new OrderItemRequest();
+                	orderItemRequest.setOrderItemId(itemId);
+                    Order order = orderService.removeItem(cart, orderItemRequest, priceOrder);
+                    order = orderService.save(order, priceOrder);
+                    
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrap(order, request);
 
                     return wrapper;
                 } catch (PricingException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-                }
+                } catch (ItemNotFoundException e) {
+                	throw new WebApplicationException(Response.Status.NOT_FOUND);
+				}
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -189,18 +202,18 @@ public class CartEndpoint implements ApplicationContextAware {
                                                @PathParam("itemId") Long itemId,
                                                @QueryParam("quantity") Integer quantity,
                                                @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
-                OrderItem item = (OrderItem) CollectionUtils.find(cart.getOrderItems(),
-                        new BeanPropertyValueEqualsPredicate("id", itemId));
-                item.setQuantity(quantity);
                 try {
-                    cartService.updateItemQuantity(cart, item, priceOrder);
+                	OrderItemRequest orderItemRequest = new OrderItemRequest();
+                	orderItemRequest.setOrderItemId(itemId);
+                	orderItemRequest.setQuantity(quantity);
+                    Order order = orderService.updateItem(cart, orderItemRequest, priceOrder);
+                    order = orderService.save(order, priceOrder);
 
-                    Order order = cartService.save(cart, priceOrder);
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrap(order, request);
 
@@ -223,14 +236,14 @@ public class CartEndpoint implements ApplicationContextAware {
     public OrderWrapper addOfferCode(@Context HttpServletRequest request,
                                      @QueryParam("promoCode") String promoCode,
                                      @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
             if (cart != null && offerCode != null) {
                 try {
-                    cart = cartService.addOfferCode(cart, offerCode, priceOrder);
+                    cart = orderService.addOfferCode(cart, offerCode, priceOrder);
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrap(cart, request);
 
@@ -252,14 +265,14 @@ public class CartEndpoint implements ApplicationContextAware {
     public OrderWrapper removeOfferCode(@Context HttpServletRequest request,
                                         @QueryParam("promoCode") String promoCode,
                                         @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
             if (cart != null && offerCode != null) {
                 try {
-                    cart = cartService.removeOfferCode(cart, offerCode, priceOrder);
+                    cart = orderService.removeOfferCode(cart, offerCode, priceOrder);
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrap(cart, request);
 
@@ -278,13 +291,13 @@ public class CartEndpoint implements ApplicationContextAware {
     @Path("offers")
     public OrderWrapper removeAllOfferCodes(@Context HttpServletRequest request,
                                         @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                    cart = cartService.removeAllOfferCodes(cart, priceOrder);
+                    cart = orderService.removeAllOfferCodes(cart, priceOrder);
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrap(cart, request);
 

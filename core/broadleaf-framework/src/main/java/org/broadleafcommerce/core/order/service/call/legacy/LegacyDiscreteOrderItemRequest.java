@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.call;
+package org.broadleafcommerce.core.order.service.call.legacy;
 
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscreteOrderItemRequest extends OrderItemRequest {
+public class LegacyDiscreteOrderItemRequest extends LegacyOrderItemRequest {
 
 
     private List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
-    public DiscreteOrderItemRequest() {
+    public LegacyDiscreteOrderItemRequest() {
         super();
     }
 
-    public DiscreteOrderItemRequest(OrderItemRequest request) {
+    public LegacyDiscreteOrderItemRequest(LegacyOrderItemRequest request) {
         setCategory(request.getCategory());
         setItemAttributes(request.getItemAttributes());
         setPersonalMessage(request.getPersonalMessage());
@@ -40,8 +40,8 @@ public class DiscreteOrderItemRequest extends OrderItemRequest {
     }
 
 
-    public DiscreteOrderItemRequest clone() {
-        DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
+    public LegacyDiscreteOrderItemRequest clone() {
+    	LegacyDiscreteOrderItemRequest returnRequest = new LegacyDiscreteOrderItemRequest();
         copyProperties(returnRequest);
         returnRequest.setDiscreteOrderItemFeePrices(discreteOrderItemFeePrices);
         return returnRequest;

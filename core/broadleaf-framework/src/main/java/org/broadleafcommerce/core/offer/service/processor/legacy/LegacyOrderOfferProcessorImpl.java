@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service.processor;
+package org.broadleafcommerce.core.offer.service.processor.legacy;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemAdjustment;
+import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
@@ -43,13 +44,9 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
-import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.DirectOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -68,22 +65,19 @@ import java.util.Map;
 /**
  * @author jfischer
  */
-@Service("blOrderOfferProcessor")
-public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements OrderOfferProcessor {
+@Service("blLegacyOrderOfferProcessor")
+public class LegacyOrderOfferProcessorImpl extends LegacyAbstractBaseProcessor implements LegacyOrderOfferProcessor {
 
     private static final Log LOG = LogFactory.getLog(OrderOfferProcessorImpl.class);
 
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
+    @Resource(name = "blLegacyCartService")
+    protected LegacyCartService cartService;
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
 
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
@@ -91,6 +85,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
+    /* (non-Javadoc)
+      * @see org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor#filterOrderLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
+      */
     public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
         if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
             LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name=" + offer.getName() + ")");
@@ -127,6 +124,14 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
+    /**
+     * Private method which executes the appliesToOrderRules in the Offer to determine if this offer
+     * can be applied to the Order, OrderItem, or FulfillmentGroup.
+     *
+     * @param offer
+     * @param order
+     * @return true if offer can be applied, otherwise false
+     */
     public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order) {
         return couldOfferApplyToOrder(offer, order, null, null);
     }
@@ -233,6 +238,17 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return remainingCandidateOffers;
     }
 
+    /**
+     * Private method that takes a list of sorted CandidateOrderOffers and determines if each offer can be
+     * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
+     * are create on the Order for each applied CandidateOrderOffer.  An offer with stackable equals false
+     * cannot be applied to an Order that already contains an OrderAdjustment.  An offer with combinable
+     * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
+     *
+     * @param orderOffers a sorted list of CandidateOrderOffer
+     * @param order       the Order to apply the CandidateOrderOffers
+     * @return true if order offer applied; otherwise false
+     */
     public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
         boolean orderOffersApplied = false;
@@ -375,13 +391,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             orderItemService.saveOrderItem(bundleOrderItem);
         }
         for (BundleOrderItem orderItem : bundlesToRemove) {
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(orderItem.getId());
-        	try {
-        		orderService.removeItem(order, orderItemRequest, false);
-        	} catch (ItemNotFoundException e) {
-        		throw new PricingException("Item could not be removed", e);
-        	}
+            cartService.removeItemFromOrder(order, orderItem, false);
         }
     }
 
@@ -403,15 +413,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         for (DiscreteOrderItem orderItem : itemsToRemove) {
             if (orderItem.getBundleOrderItem() == null) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(orderItem.getId());
-	        	try {
-					orderService.removeItem(order, orderItemRequest, false);
-				} catch (ItemNotFoundException e) {
-					throw new PricingException("Could not remove item", e);
-				}
+                cartService.removeItemFromOrder(order, orderItem, false);
             } else {
-                orderService.removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
+                cartService.removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
             }
         }
     }
@@ -447,13 +451,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             }
         }
         for (BundleOrderItem orderItem : bundlesToRemove) {
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(orderItem.getId());
-        	try {
-        		orderService.removeItem(order, orderItemRequest, false);
-        	} catch (ItemNotFoundException e) {
-        		throw new PricingException("Item could not be removed", e);
-        	}
+            cartService.removeItemFromOrder(order, orderItem, false);
         }
     }
 
@@ -485,15 +483,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         for (DiscreteOrderItem orderItem : itemsToRemove) {
             if (orderItem.getBundleOrderItem() == null) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(orderItem.getId());
-	        	try {
-	        		orderService.removeItem(order, orderItemRequest, false);
-				} catch (ItemNotFoundException e) {
-					throw new PricingException("Could not remove item", e);
-				}
+                cartService.removeItemFromOrder(order, orderItem, false);
             } else {
-                orderService.removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
+                cartService.removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
             }
         }
     }
@@ -535,8 +527,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier) {
         StringBuffer identifier = new StringBuffer();
-        if (orderItem.getSplitParentItemId() != null || orderService.getAutomaticallyMergeLikeItems()) {
-            if (!orderService.getAutomaticallyMergeLikeItems()) {
+        if (orderItem.getSplitParentItemId() != null || cartService.getAutomaticallyMergeLikeItems()) {
+            if (! cartService.getAutomaticallyMergeLikeItems()) {
                 identifier.append(orderItem.getSplitParentItemId());
             } else {
                 if (orderItem instanceof BundleOrderItem) {
@@ -705,17 +697,12 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     DiscreteOrderItem delegateItem = myItem.getDelegate();
                     Long delegateItemBundleItemId = getBundleId(delegateItem);
                     if (delegateItemBundleItemId == null) {
-                    	OrderItemRequest orderItemRequest = new OrderItemRequest();
-                    	orderItemRequest.setOrderItemId(delegateItem.getId());
-                        delegateItem = (DiscreteOrderItem) orderService.addItem(order.getDelegate(), orderItemRequest, false);
+                        delegateItem = (DiscreteOrderItem) cartService.addOrderItemToOrder(order.getDelegate(), delegateItem, false);
                         if (targetGroup != null) {
-                        	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-                        	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
-                        	fgItemRequest.setOrderItem(delegateItem);
-                        	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
+                            cartService.addItemToFulfillmentGroup(delegateItem, targetGroup.getDelegate(), false);
                         }
                     } else {
-                        delegateItem = (DiscreteOrderItem) orderService.addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
+                        delegateItem = (DiscreteOrderItem) cartService.addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
                     }
                     myItem.setDelegate(delegateItem);
                 }
@@ -745,13 +732,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             mergeSplitGiftWrapOrderItems(order, giftWrapItems, itemToRemove, delegateItem);
 
             if (delegateItem.getBundleOrderItem() == null) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(itemToRemove.getDelegate().getId());
-	        	try {
-	        		orderService.removeItem(order.getDelegate(), orderItemRequest, false);
-				} catch (ItemNotFoundException e) {
-					throw new PricingException("Could not remove item", e);
-				}
+                cartService.removeItemFromOrder(order.getDelegate(), itemToRemove.getDelegate(), false);
             } else {
                 delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(itemToRemove.getDelegate());
             }
@@ -803,32 +784,17 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     temp.setQuantity(temp.getQuantity() + 1);
                 }
             }
-            
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(bundleContainer.getKey().getId());
-        	try {
-				orderService.removeItem(order.getDelegate(), orderItemRequest, false);
-			} catch (ItemNotFoundException e) {
-				throw new PricingException("Could not remove item", e);
-			}
-        	
+            cartService.removeItemFromOrder(order.getDelegate(), bundleContainer.getKey(), false);
             for (BundleOrderItem vals : gatheredBundleItems.values()) {
                 vals.setId(null);
-                
-                DirectOrderItemRequest directOrderItemRequest = new DirectOrderItemRequest();
-                directOrderItemRequest.setOrderItem(vals);
-                BundleOrderItem temp = (BundleOrderItem) orderService.addItem(order.getDelegate(), directOrderItemRequest, false);
-                
+                BundleOrderItem temp = (BundleOrderItem) cartService.addOrderItemToOrder(order.getDelegate(), vals, false);
                 if (targetGroup != null) {
-                	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
-                	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
-                	fgItemRequest.setOrderItem(temp);
-                	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
+                    cartService.addItemToFulfillmentGroup(temp, targetGroup.getDelegate(), false);
                 }
             }
         }
     }
-    
+
     protected PromotableFulfillmentGroup getTargetFulfillmentGroup(PromotableOrder order, OrderItem key) {
         //find fulfillment group for original order item
         PromotableFulfillmentGroup targetGroup = null;
@@ -859,12 +825,12 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         this.offerDao = offerDao;
     }
 
-    public OrderService getOrderService() {
-        return orderService;
+    public LegacyCartService getCartService() {
+        return cartService;
     }
 
-    public void setOrderService(OrderService orderService) {
-        this.orderService = orderService;
+    public void setCartService(LegacyCartService cartService) {
+        this.cartService = cartService;
     }
 
     public OrderItemService getOrderItemService() {
@@ -891,5 +857,16 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
     }
+
+	@Override
+	public OrderService getOrderService() {
+		throw new UnsupportedOperationException("The legacy order offer processors does not handle the new order service");
+	}
+
+	@Override
+	public void setOrderService(OrderService orderService) {
+		throw new UnsupportedOperationException("The legacy order offer processors does not handle the new order service");
+	}
+
 
 }

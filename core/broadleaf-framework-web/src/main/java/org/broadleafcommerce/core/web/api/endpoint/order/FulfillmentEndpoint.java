@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
-import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -39,10 +38,21 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,11 +72,11 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
-
-    @Resource(name="blCustomerState")
-    protected CustomerState customerState;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
+    
+    @Resource(name="blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
     protected ApplicationContext context;
 
@@ -79,10 +89,10 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
     @GET
     @Path("groups")
     public List<FulfillmentGroupWrapper> findFulfillmentGroupsForOrder(@Context HttpServletRequest request) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null && cart.getFulfillmentGroups() != null && !cart.getFulfillmentGroups().isEmpty()) {
                 List<FulfillmentGroup> fulfillmentGroups = cart.getFulfillmentGroups();
                 List<FulfillmentGroupWrapper> fulfillmentGroupWrappers = new ArrayList<FulfillmentGroupWrapper>();
@@ -102,13 +112,13 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
     @Path("groups")
     public OrderWrapper removeAllFulfillmentGroupsFromOrder(@Context HttpServletRequest request,
                                                             @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                    cartService.removeAllFulfillmentGroupsFromOrder(cart, priceOrder);
+                    fulfillmentGroupService.removeAllFulfillmentGroupsFromOrder(cart, priceOrder);
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrap(cart, request);
                     return wrapper;
@@ -126,17 +136,17 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
     public FulfillmentGroupWrapper addFulfillmentGroupToOrder(@Context HttpServletRequest request,
                                                               FulfillmentGroupWrapper wrapper,
                                                               @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 FulfillmentGroupRequest fulfillmentGroupRequest = wrapper.unwrap(request, context);
 
                 if (fulfillmentGroupRequest.getOrder() != null && fulfillmentGroupRequest.getOrder().getId().equals(cart.getId())){
                     try {
                         fulfillmentGroupRequest.setOrder(cart);
-                        FulfillmentGroup fulfillmentGroup = cartService.addFulfillmentGroupToOrder(fulfillmentGroupRequest, priceOrder);
+                        FulfillmentGroup fulfillmentGroup = fulfillmentGroupService.addFulfillmentGroupToOrder(fulfillmentGroupRequest, priceOrder);
                         FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
                         fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
                         return fulfillmentGroupWrapper;
@@ -156,10 +166,10 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
                                                                  @PathParam("fulfillmentGroupId") Long fulfillmentGroupId,
                                                                  FulfillmentGroupItemWrapper wrapper,
                                                                  @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 FulfillmentGroupItemRequest fulfillmentGroupItemRequest = wrapper.unwrap(request, context);
                 if (fulfillmentGroupItemRequest.getOrderItem() != null) {
@@ -171,16 +181,18 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
                             fulfillmentGroup = fg;
                         }
                     }
+                    fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
 
                     for (OrderItem oi : cart.getOrderItems()) {
                         if (oi.getId().equals(fulfillmentGroupItemRequest.getOrderItem().getId())){
                             orderItem = oi;
                         }
                     }
+                    fulfillmentGroupItemRequest.setOrderItem(orderItem);
 
                     if (fulfillmentGroup != null && orderItem != null) {
                         try {
-                            FulfillmentGroup fg = cartService.addItemToFulfillmentGroup(orderItem, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity(), priceOrder);
+                            FulfillmentGroup fg = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder);
                             FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
                             fulfillmentGroupWrapper.wrap(fg, request);
                             return fulfillmentGroupWrapper;

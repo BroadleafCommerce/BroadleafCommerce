@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
+import org.broadleafcommerce.core.order.service.call.legacy.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;

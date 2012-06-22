@@ -16,23 +16,23 @@
 
 package org.broadleafcommerce.core.checkout.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {
@@ -40,8 +40,8 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Resource(name="blCheckoutWorkflow")
     protected SequenceProcessor checkoutWorkflow;
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
+    @Resource(name="blOrderService")
+    protected OrderService cartService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.core.order.domain.Order, java.util.Map)

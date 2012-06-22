@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.call;
+package org.broadleafcommerce.core.order.service.call.legacy;
+
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broadleafcommerce.core.order.domain.OrderItem;
-
-public class GiftWrapOrderItemRequest extends DiscreteOrderItemRequest {
+public class LegacyGiftWrapOrderItemRequest extends LegacyDiscreteOrderItemRequest {
 
     private List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
 
@@ -49,7 +49,7 @@ public class GiftWrapOrderItemRequest extends DiscreteOrderItemRequest {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        GiftWrapOrderItemRequest other = (GiftWrapOrderItemRequest) obj;
+        LegacyGiftWrapOrderItemRequest other = (LegacyGiftWrapOrderItemRequest) obj;
         if (wrappedItems == null) {
             if (other.wrappedItems != null)
                 return false;

@@ -33,47 +33,44 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.Country;
-import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class OfferServiceTest extends CommonSetupBaseTest {
 
     @Resource
-    OfferService offerService;
+    protected OfferService offerService;
 
     @Resource
-    CartService cartService;
+    protected OrderService orderService;
 
     @Resource
-    CustomerService customerService;
+    protected CustomerService customerService;
 
     @Resource
-    CatalogService catalogService;
+    protected CatalogService catalogService;
 
     @Resource
-    OrderItemService orderItemService;
+    protected OrderItemService orderItemService;
 
     private Order createTestOrderWithOfferAndGiftWrap() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
 
         customerService.saveCustomer(order.getCustomer());
 
@@ -206,7 +203,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
             offerService.save(offer);
         }
-        order = cartService.save(order, true);
+        order = orderService.save(order, true);
 
         assert order.getOrderItems().size() == 4;
         assert order.getTotalTax().equals(new Money("2.00"));

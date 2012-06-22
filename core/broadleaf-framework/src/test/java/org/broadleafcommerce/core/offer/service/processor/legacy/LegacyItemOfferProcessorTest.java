@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service.processor;
+package org.broadleafcommerce.core.offer.service.processor.legacy;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -32,6 +31,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyItemOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
@@ -39,35 +39,37 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class ItemOfferProcessorTest extends TestCase {
+public class LegacyItemOfferProcessorTest extends TestCase {
 
 	private OfferDao offerDaoMock;
-	private CartService cartServiceMock;
+	private LegacyCartService cartServiceMock;
 	private OrderItemService orderItemServiceMock;
 	private FulfillmentGroupItemDao fgItemDaoMock;
-	private ItemOfferProcessorImpl itemProcessor;
+	private LegacyItemOfferProcessorImpl itemProcessor;
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 	
 	@Override
 	protected void setUp() throws Exception {
 		offerDaoMock = EasyMock.createMock(OfferDao.class);
-		cartServiceMock = EasyMock.createMock(CartService.class);
+		cartServiceMock = EasyMock.createMock(LegacyCartService.class);
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
-		itemProcessor = new ItemOfferProcessorImpl();
+		itemProcessor = new LegacyItemOfferProcessorImpl();
 		itemProcessor.setOfferDao(offerDaoMock);
 		itemProcessor.setCartService(cartServiceMock);
 		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);

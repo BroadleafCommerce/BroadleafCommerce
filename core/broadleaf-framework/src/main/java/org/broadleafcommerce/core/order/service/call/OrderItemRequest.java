@@ -16,63 +16,56 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.order.domain.PersonalMessage;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Only the product is required to add an item to an order.
+ * Only the product and quantity are required to add an item to an order.
  *
  * The category can be inferred from the product's default category.
  *
  * The sku can be inferred from either the passed in attributes as they are compared to the product's options or
  * the sku can be determined from the product's default sku.
  *
- * Personal message is optional.
- *
  */
 public class OrderItemRequest {
 
-    private Sku sku;
-    private Category category;
-    private Product product;
-    private int quantity;
-    private PersonalMessage personalMessage;
+    private Long skuId;
+    private Long categoryId;
+    private Long productId;
+    private Long orderItemId;
+    private Integer quantity;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
 
-    public Sku getSku() {
-        return sku;
+    public Long getSkuId() {
+        return skuId;
     }
 
-    public void setSku(Sku sku) {
-        this.sku = sku;
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
     }
 
-    public Category getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -83,51 +76,13 @@ public class OrderItemRequest {
     public void setItemAttributes(Map<String, String> itemAttributes) {
         this.itemAttributes = itemAttributes;
     }
-
-    protected void copyProperties(OrderItemRequest newRequest) {
-        newRequest.setCategory(category);
-        newRequest.setItemAttributes(itemAttributes);
-        newRequest.setPersonalMessage(personalMessage);
-        newRequest.setProduct(product);
-        newRequest.setQuantity(quantity);
-        newRequest.setSku(sku);
+    
+    public Long getOrderItemId() {
+        return orderItemId;
     }
 
-    public OrderItemRequest clone() {
-        OrderItemRequest returnRequest = new OrderItemRequest();
-        copyProperties(returnRequest);
-        return returnRequest;
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OrderItemRequest)) return false;
-
-        OrderItemRequest that = (OrderItemRequest) o;
-
-        if (!category.equals(that.category)) return false;
-        if (!product.equals(that.product)) return false;
-        if (quantity != that.quantity) return false;
-        if (!sku.equals(that.sku)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = product != null ? product.hashCode() : 0;
-        result = 31 * result + (category != null ? category.hashCode() : 0);
-        result = 31 * result + (sku != null ? sku.hashCode() : 0);
-        result = 31 * result + quantity;
-        return result;
-    }
-
-    public PersonalMessage getPersonalMessage() {
-        return personalMessage;
-    }
-
-    public void setPersonalMessage(PersonalMessage personalMessage) {
-        this.personalMessage = personalMessage;
-    }
 }

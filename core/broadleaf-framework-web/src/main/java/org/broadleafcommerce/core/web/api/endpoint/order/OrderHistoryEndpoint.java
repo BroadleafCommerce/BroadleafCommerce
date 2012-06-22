@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -30,10 +30,17 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,11 +57,8 @@ import java.util.List;
 @Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class OrderHistoryEndpoint implements ApplicationContextAware {
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
-
-    @Resource(name="blCustomerState")
-    protected CustomerState customerState;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
 
     protected ApplicationContext context;
 
@@ -66,11 +70,11 @@ public class OrderHistoryEndpoint implements ApplicationContextAware {
     @GET
     public List<OrderWrapper> findOrdersForCustomer(@Context HttpServletRequest request,
                                                     @QueryParam("orderStatus") @DefaultValue("SUBMITTED") String orderStatus) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
         OrderStatus status = OrderStatus.getInstance(orderStatus);
 
         if (customer != null && status != null) {
-            List<Order> orders = cartService.findOrdersForCustomer(customer, status);
+            List<Order> orders = orderService.findOrdersForCustomer(customer, status);
 
             if (orders != null && !orders.isEmpty()) {
                 List<OrderWrapper> wrappers = new ArrayList<OrderWrapper>();

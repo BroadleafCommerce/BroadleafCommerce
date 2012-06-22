@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service;
+package org.broadleafcommerce.core.order.service.legacy;
 
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
@@ -42,13 +42,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Service("blCartService")
+@Service("blLegacyCartService")
 /*
  * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans
  * that are configured via Spring and property files (i.e. payment modules, etc...)
  */
 @ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
-public class CartServiceImpl extends OrderServiceImpl implements CartService {
+public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements LegacyCartService {
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;

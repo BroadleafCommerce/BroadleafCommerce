@@ -16,26 +16,16 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.core.order.OrderItemDataProvider;
-import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
-import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.dao.OrderDao;
-import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -45,6 +35,10 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.List;
 
 public class FulfillmentGroupItemDaoTest extends BaseTest {
 
@@ -67,8 +61,8 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     @Resource
     private OrderItemDao orderItemDao;
     
-    @Resource
-    private CartService cartService;
+    @Resource(name = "blLegacyCartService")
+    private LegacyCartService cartService;
     
     @Resource
     private CustomerAddressDao customerAddressDao;

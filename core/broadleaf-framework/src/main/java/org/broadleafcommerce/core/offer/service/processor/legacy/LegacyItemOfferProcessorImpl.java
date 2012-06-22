@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service.processor;
+package org.broadleafcommerce.core.offer.service.processor.legacy;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.broadleafcommerce.common.money.Money;
@@ -46,8 +46,8 @@ import java.util.List;
  * @author jfischer
  *
  */
-@Service("blItemOfferProcessor")
-public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements ItemOfferProcessor {
+@Service("blLegacyItemOfferProcessor")
+public class LegacyItemOfferProcessorImpl extends LegacyOrderOfferProcessorImpl implements LegacyItemOfferProcessor {
 	
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)

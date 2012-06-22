@@ -17,15 +17,25 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 public interface FulfillmentGroupService {
 
-    FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
+    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
-    FulfillmentGroup createEmptyFulfillmentGroup();
+    public FulfillmentGroup createEmptyFulfillmentGroup();
 
-    FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
+    public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
 
     public void delete(FulfillmentGroup fulfillmentGroup);
+    
+    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException;
+    
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException;
+    
+    public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
 
 }

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.call;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.broadleafcommerce.core.order.service.call.legacy;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemFeePrice;
 
-public class BundleOrderItemRequest {
+import java.util.ArrayList;
+import java.util.List;
+
+public class LegacyBundleOrderItemRequest {
 
     private String name;
     private Category category;
     private int quantity;
-    private List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
+    private List<LegacyDiscreteOrderItemRequest> discreteOrderItems = new ArrayList<LegacyDiscreteOrderItemRequest>();
     private List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
     public String getName() {
@@ -54,11 +54,11 @@ public class BundleOrderItemRequest {
         this.quantity = quantity;
     }
 
-    public List<DiscreteOrderItemRequest> getDiscreteOrderItems() {
+    public List<LegacyDiscreteOrderItemRequest> getDiscreteOrderItems() {
         return discreteOrderItems;
     }
 
-    public void setDiscreteOrderItems(List<DiscreteOrderItemRequest> discreteOrderItems) {
+    public void setDiscreteOrderItems(List<LegacyDiscreteOrderItemRequest> discreteOrderItems) {
         this.discreteOrderItems = discreteOrderItems;
     }
 
@@ -79,7 +79,7 @@ public class BundleOrderItemRequest {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        BundleOrderItemRequest other = (BundleOrderItemRequest) obj;
+        LegacyBundleOrderItemRequest other = (LegacyBundleOrderItemRequest) obj;
         if (category == null) {
             if (other.category != null)
                 return false;

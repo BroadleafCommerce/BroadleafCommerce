@@ -23,10 +23,6 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
-import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
-import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
-import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -35,8 +31,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
@@ -57,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +71,7 @@ public class CheckoutTest extends BaseTest {
     private CustomerService customerService;
     
     @Resource
-    private CartService cartService;
+    private OrderService orderService;
     
     @Resource
     private CatalogService catalogService;
@@ -85,26 +82,13 @@ public class CheckoutTest extends BaseTest {
     @Resource
     private SecurePaymentInfoService securePaymentInfoService;
 
-    @Resource
-    private OfferDao offerDao;
-
-    @Resource
-    private OfferCodeDao offerCodeDao;
-    
-    @Resource
-    private OfferAuditDao offerAuditDao;
-
-    @Resource
-    private OfferService offerService;
-
-    @SuppressWarnings("serial")
 	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
 	@Transactional
     public void testCheckout() throws Exception {
         System.out.println("running test checkout");
     	String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
 
         Address address = buildAddress();
         FulfillmentGroup group = buildFulfillmentGroup(order, address);

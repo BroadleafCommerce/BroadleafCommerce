@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.order.model;
+package org.broadleafcommerce.core.offer.service.processor.legacy;
 
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
+import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 
-public class AddToCartItem extends OrderItemRequest {
-    private Long orderId;
+/**
+ * 
+ * @author jfischer
+ *
+ */
+public interface LegacyOrderOfferProcessor extends OrderOfferProcessor {
 
-    public Long getOrderId() {
-        return orderId;
-    }
+    @Deprecated
+    public LegacyCartService getCartService();
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
+    @Deprecated
+	public void setCartService(LegacyCartService cartService);
+	
 }

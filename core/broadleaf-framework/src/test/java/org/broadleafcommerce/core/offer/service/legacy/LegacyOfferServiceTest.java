@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service;
+package org.broadleafcommerce.core.offer.service.legacy;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -33,13 +32,15 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
+import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
+import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
-import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
-import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessorImpl;
-import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
-import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessorImpl;
-import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
-import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyFulfillmentGroupOfferProcessor;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyFulfillmentGroupOfferProcessorImpl;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyItemOfferProcessor;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyItemOfferProcessorImpl;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyOrderOfferProcessor;
+import org.broadleafcommerce.core.offer.service.processor.legacy.LegacyOrderOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
@@ -47,8 +48,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
@@ -57,18 +58,20 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 /**
  * 
  * @author jfischer
  *
  */
-public class OfferServiceTest extends TestCase { 
+public class LegacyOfferServiceTest extends TestCase { 
 	
 	private OfferServiceImpl offerService;
 	private CustomerOfferDao customerOfferDaoMock;
 	private OfferCodeDao offerCodeDaoMock;
 	private OfferDao offerDaoMock;
-	private CartService cartServiceMock;
+	private LegacyCartService cartServiceMock;
 	private OrderItemService orderItemServiceMock;
 	private FulfillmentGroupItemDao fgItemDaoMock;
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
@@ -82,11 +85,11 @@ public class OfferServiceTest extends TestCase {
 		offerService.setCustomerOfferDao(customerOfferDaoMock);
 		offerService.setOfferCodeDao(offerCodeDaoMock);
 		offerService.setOfferDao(offerDaoMock);
-		cartServiceMock = EasyMock.createMock(CartService.class);
+		cartServiceMock = EasyMock.createMock(LegacyCartService.class);
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
 		
-		OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
+		LegacyOrderOfferProcessor orderProcessor = new LegacyOrderOfferProcessorImpl();
 		orderProcessor.setOfferDao(offerDaoMock);
 		orderProcessor.setCartService(cartServiceMock);
 		orderProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
@@ -94,7 +97,7 @@ public class OfferServiceTest extends TestCase {
 		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		offerService.setOrderOfferProcessor(orderProcessor);
 		
-		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
+		LegacyItemOfferProcessor itemProcessor = new LegacyItemOfferProcessorImpl(); 
 		itemProcessor.setOfferDao(offerDaoMock);
 		itemProcessor.setCartService(cartServiceMock);
 		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
@@ -102,7 +105,7 @@ public class OfferServiceTest extends TestCase {
 		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 		offerService.setItemOfferProcessor(itemProcessor);
 		
-		FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();
+		LegacyFulfillmentGroupOfferProcessor fgProcessor = new LegacyFulfillmentGroupOfferProcessorImpl();
 		fgProcessor.setOfferDao(offerDaoMock);
 		fgProcessor.setCartService(cartServiceMock);
 		fgProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);

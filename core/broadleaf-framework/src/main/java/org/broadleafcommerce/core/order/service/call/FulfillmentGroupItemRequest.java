@@ -16,14 +16,34 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public class FulfillmentGroupItemRequest {
 
+	protected Order order;
+	protected FulfillmentGroup fulfillmentGroup;
     protected OrderItem orderItem;
     protected int quantity;
+    
+    public Order getOrder() {
+		return order;
+	}
 
-    public OrderItem getOrderItem() {
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
+	public FulfillmentGroup getFulfillmentGroup() {
+		return fulfillmentGroup;
+	}
+
+	public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+		this.fulfillmentGroup = fulfillmentGroup;
+	}
+
+	public OrderItem getOrderItem() {
         return orderItem;
     }
 

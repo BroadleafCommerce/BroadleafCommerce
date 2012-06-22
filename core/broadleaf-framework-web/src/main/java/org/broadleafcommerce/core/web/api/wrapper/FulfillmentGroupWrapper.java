@@ -26,7 +26,12 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.ArrayList;
 import java.util.List;
 

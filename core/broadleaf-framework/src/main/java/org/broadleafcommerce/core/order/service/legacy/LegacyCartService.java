@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service;
+package org.broadleafcommerce.core.order.service.legacy;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -23,7 +23,7 @@ import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-public interface CartService extends OrderService {
+public interface LegacyCartService extends LegacyOrderService {
 
     Order createNewCartForCustomer(Customer customer);
 

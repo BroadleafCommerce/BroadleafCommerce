@@ -52,12 +52,12 @@ public class BroadleafCartController extends AbstractCartController {
 		
 		// If the cart is currently empty, it will be the shared, "null" cart. We must detect this
 		// and provision a fresh cart for the current customer upon the first cart add
-		if (cart == null || cart.equals(cartService.getNullOrder())) {
-			cart = cartService.createNewCartForCustomer(CustomerState.getCustomer(request));
+		if (cart == null || cart.equals(orderService.getNullOrder())) {
+			cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
 		}
 		
-		cartService.addItemToOrder(cart.getId(), itemRequest, false);
-		cart = cartService.save(cart,  true);
+		cart = orderService.addItem(cart, itemRequest, false);
+		cart = orderService.save(cart,  true);
 		CartState.setCart(request, cart);
 		
     	return isAjaxRequest(request) ? "ajax/cart" : "redirect:/cart";
@@ -82,8 +82,8 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, PricingException, ItemNotFoundException {
 		Order cart = CartState.getCart(request);
 		
-		cartService.updateItemQuantity(cart, itemRequest);
-		cart = cartService.save(cart, true);
+		cart = orderService.updateItem(cart, itemRequest, false);
+		cart = orderService.save(cart, true);
 		CartState.setCart(request, cart);
 		
 		if (isAjaxRequest(request)) {
@@ -116,8 +116,8 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, PricingException, ItemNotFoundException {
 		Order cart = CartState.getCart(request);
 		
-		cart = cartService.removeItemFromOrder(cart.getId(), itemRequest.getOrderItemId());
-		cart = cartService.save(cart, true);
+		cart = orderService.removeItem(cart, itemRequest, false);
+		cart = orderService.save(cart, true);
 		CartState.setCart(request, cart);
 		
 		if (isAjaxRequest(request)) {
@@ -141,7 +141,7 @@ public class BroadleafCartController extends AbstractCartController {
 	 */
 	public String empty(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
 		Order cart = CartState.getCart(request);
-    	cartService.cancelOrder(cart);
+    	orderService.cancelOrder(cart);
 		CartState.setCart(request, null);
 		
     	return "redirect:/";
