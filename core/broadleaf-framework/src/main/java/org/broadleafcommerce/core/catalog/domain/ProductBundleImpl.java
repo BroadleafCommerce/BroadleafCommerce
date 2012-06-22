@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.hibernate.annotations.BatchSize;
@@ -47,23 +48,23 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICING_MODEL")
-    @AdminPresentation(friendlyName = "Pricing Model", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType")
+    @AdminPresentation(friendlyName = "productBundlePricingModel", helpText="productBundlePricingModelHelp", requiredOverride=RequiredOverride.REQUIRED, group="productBundleGroup", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType")
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
-    @AdminPresentation(friendlyName = "Auto Bundle")
+    @AdminPresentation(friendlyName = "productBundleAutoBundle", tooltip="productBundleAutoBundleTooltip", group="productBundleGroup")
     protected Boolean autoBundle;
 
     @Column(name = "ITEMS_PROMOTABLE")
-    @AdminPresentation(friendlyName = "Items are promotable")
+    @AdminPresentation(friendlyName = "productBundlePromotableItems", group="productBundleGroup")
     protected Boolean itemsPromotable;
 
     @Column(name = "BUNDLE_PROMOTABLE")
-    @AdminPresentation(friendlyName = "Bundle is promotable")
+    @AdminPresentation(friendlyName = "productBundlePromotable", group="productBundleGroup")
     protected Boolean bundlePromotable;
 
     @Column(name = "BUNDLE_PRIORITY")
-    @AdminPresentation(friendlyName = "Priority for auto bundling.")
+    @AdminPresentation(friendlyName = "productBundlePriority", group="productBundleGroup")
     protected int priority=99;
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })

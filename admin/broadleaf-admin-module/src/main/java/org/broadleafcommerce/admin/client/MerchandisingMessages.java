@@ -95,5 +95,13 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String editBundleItem();
     public String skuStartDateTooltip();
     public String skuEndDateTooltip();
+    public String productBundlePricingModelHelp();
+    public String productBundleAutoBundleTooltip();
+    public String productBundleGroup();
+    public String productBundlePricingModel();
+    public String productBundleAutoBundle();
+    public String productBundlePromotableItems();
+    public String productBundlePromotable();
+    public String productBundlePriority();
     
 }
