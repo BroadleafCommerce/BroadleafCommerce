@@ -44,7 +44,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     private PaymentInfoService paymentInfoService;
 
     @Resource(name = "blOrderService")
-    private OrderService cartService;
+    private OrderService orderService;
 
     @Resource
     private CustomerAddressDao customerAddressDao;
@@ -62,7 +62,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         Address address = null;
         if (!addresses.isEmpty())
             address = addresses.get(0).getAddress();
-        Order salesOrder = cartService.createNewCartForCustomer(customer);
+        Order salesOrder = orderService.createNewCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);
@@ -99,7 +99,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         Address address = null;
         if (!addresses.isEmpty())
             address = addresses.get(0).getAddress();
-        Order salesOrder = cartService.findCartForCustomer(customer);
+        Order salesOrder = orderService.findCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);

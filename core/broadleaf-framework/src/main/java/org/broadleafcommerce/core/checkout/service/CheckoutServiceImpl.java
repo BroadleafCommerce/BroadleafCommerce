@@ -41,7 +41,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     protected SequenceProcessor checkoutWorkflow;
 
     @Resource(name="blOrderService")
-    protected OrderService cartService;
+    protected OrderService orderService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.core.order.domain.Order, java.util.Map)
@@ -69,7 +69,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     	CheckoutSeed seed = null;
         try {
             order.setSubmitDate(SystemTime.asDate());
-            order = cartService.save(order, false);
+            order = orderService.save(order, false);
 
             seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);

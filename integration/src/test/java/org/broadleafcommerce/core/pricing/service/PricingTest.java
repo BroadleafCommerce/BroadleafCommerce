@@ -72,7 +72,7 @@ public class PricingTest extends BaseTest {
     private CustomerService customerService;
 
     @Resource(name = "blOrderService")
-    private OrderService cartService;
+    private OrderService orderService;
 
     @Resource
     private ShippingRateService shippingRateService;
@@ -102,7 +102,7 @@ public class PricingTest extends BaseTest {
     @Test(dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
     @Transactional
     public void testPricing() throws Exception {
-        Order order = cartService.createNewCartForCustomer(createCustomer());
+        Order order = orderService.createNewCartForCustomer(createCustomer());
         
         customerService.saveCustomer(order.getCustomer());
 
@@ -194,7 +194,7 @@ public class PricingTest extends BaseTest {
         order.addOfferCode(createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null));
         order.setTotalShipping(new Money(0D));
         
-        cartService.save(order, true);
+        orderService.save(order, true);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
@@ -207,7 +207,7 @@ public class PricingTest extends BaseTest {
     @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
     @Transactional
     public void testShipping() throws Exception {
-        Order order = cartService.createNewCartForCustomer(createCustomer());
+        Order order = orderService.createNewCartForCustomer(createCustomer());
         
         customerService.saveCustomer(order.getCustomer());
         
@@ -290,7 +290,7 @@ public class PricingTest extends BaseTest {
         }
         order.setTotalShipping(new Money(0D));
         
-        cartService.save(order, true);
+        orderService.save(order, true);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping price is not taxable

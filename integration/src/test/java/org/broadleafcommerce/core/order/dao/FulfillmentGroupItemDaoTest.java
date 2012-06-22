@@ -25,7 +25,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -61,8 +62,8 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     @Resource
     private OrderItemDao orderItemDao;
     
-    @Resource(name = "blLegacyCartService")
-    private LegacyCartService cartService;
+    @Resource(name = "blOrderService")
+    private OrderService orderService;
     
     @Resource
     private CustomerAddressDao customerAddressDao;
@@ -106,7 +107,11 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
         salesOrder.addOrderItem(orderItem);
         orderDao.save(salesOrder);
 
-        fulfillmentGroup = cartService.addItemToFulfillmentGroup(orderItem, fulfillmentGroup, orderItem.getQuantity());
+        FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
+        fulfillmentGroupItemRequest.setOrderItem(orderItem);
+        fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
+        fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, true);
+        
         FulfillmentGroupItem fgi = fulfillmentGroup.getFulfillmentGroupItems().get(fulfillmentGroup.getFulfillmentGroupItems().size()-1);
         assert fgi.getId() != null;
         fulfillmentGroupItemId = fgi.getId();
