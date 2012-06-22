@@ -27,13 +27,13 @@ public interface SkuBundleItem extends Serializable {
     * if the pricing model for the bundle is a composition of its parts
     * getProduct().getDefaultSku().getSalePrice()
     *
-    * @param salePrice The sale price for this bundle item
+    * @param itemSalePrice The sale price for this bundle item
     */
     public void setSalePrice(Money salePrice);
 
     /**
-    * @return this salePrice if it is set,
-    *         getProduct().getDefaultSku().getSalePrice() if this item's salePrice is
+    * @return this itemSalePrice if it is set,
+    *         getProduct().getDefaultSku().getSalePrice() if this item's itemSalePrice is
     *         null
     */
     public Money getSalePrice();
