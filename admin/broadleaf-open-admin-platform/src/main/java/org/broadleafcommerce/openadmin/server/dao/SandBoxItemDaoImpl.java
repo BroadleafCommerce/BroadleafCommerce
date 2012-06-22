@@ -64,6 +64,14 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         return items == null || items.isEmpty() ? null : items.get(0);
     }
 
+    public List<SandBoxItem> retrieveByGroupName(SandBox sandBox, String groupName) {
+        Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_GROUP_NAME");
+        query.setParameter("sandboxId", sandBox.getId());
+        query.setParameter("groupName", groupName);
+
+        return query.getResultList();
+    }
+
     @Override
     public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
         addSandBoxItem(sbox, operationType, itemType, description, itemType.getFriendlyType(), temporaryId, originalId);

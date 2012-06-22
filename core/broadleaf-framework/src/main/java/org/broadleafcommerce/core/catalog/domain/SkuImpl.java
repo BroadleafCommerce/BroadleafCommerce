@@ -162,13 +162,13 @@ public class SkuImpl implements Sku {
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "SkuImpl_Sku_Description", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "SkuImpl_Sku_Description", tooltip="skuStartDateTooltip", groupOrder=4)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "SkuImpl_Sku_Description", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "SkuImpl_Sku_Description", tooltip="skuEndDateTooltip", groupOrder=4)
     protected Date activeEndDate;
     
     /** The product dimensions **/

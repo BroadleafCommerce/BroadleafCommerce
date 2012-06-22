@@ -90,9 +90,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
     }
 
-	public void close() throws Exception {
-        //do nothing
-	}
+//	public void close() throws Exception {
+//        //do nothing
+//	}
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

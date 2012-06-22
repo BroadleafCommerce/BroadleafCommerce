@@ -77,6 +77,9 @@ public @interface AdminPresentation {
 	/**
 	 * Specify a GUI grouping for this field
 	 * Fields in the same group will be visually grouped together in the GUI
+	 * <br />
+	 * <br />
+	 * Note: for support I18N, this can also be a key to retrieve a localized String
 	 * 
 	 * @return the group for this field
 	 */

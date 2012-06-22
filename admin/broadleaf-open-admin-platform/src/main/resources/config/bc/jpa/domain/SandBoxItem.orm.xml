@@ -28,4 +28,13 @@
         </query>
     </named-query>
 
+    <named-query name="BC_READ_SANDBOX_ITEM_BY_GROUP_NAME" >
+        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+               WHERE  sandboxItem.sandBoxId = :sandboxId AND
+                      sandboxItem.archivedFlag = 'N' AND
+                      sandboxItem.groupDescription = :groupName
+               ORDER BY sandboxItem.id
+        </query>
+    </named-query>
+
 </entity-mappings>
