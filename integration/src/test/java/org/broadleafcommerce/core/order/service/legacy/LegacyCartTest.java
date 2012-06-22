@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service;
+package org.broadleafcommerce.core.order.service.legacy;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.call.legacy.MergeCartResponse;
+import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CartTest extends OrderBaseTest {
+public class LegacyCartTest extends LegacyOrderBaseTest {
 
     @Test(groups = { "testCartAndNamedOrder" })
     @Transactional

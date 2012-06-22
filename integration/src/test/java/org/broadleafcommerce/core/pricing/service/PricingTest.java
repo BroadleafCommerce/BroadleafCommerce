@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.pricing.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -44,8 +37,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
@@ -63,17 +56,23 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class PricingTest extends BaseTest {
 
     @Resource
     private CustomerService customerService;
 
-    @Resource
-    private CartService cartService;
+    @Resource(name = "blOrderService")
+    private OrderService cartService;
 
     @Resource
     private ShippingRateService shippingRateService;
