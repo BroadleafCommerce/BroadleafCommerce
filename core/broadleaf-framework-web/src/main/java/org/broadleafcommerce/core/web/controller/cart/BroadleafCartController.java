@@ -165,9 +165,12 @@ public class BroadleafCartController extends AbstractCartController {
 			String customerOffer) throws IOException, PricingException, ItemNotFoundException, OfferMaxUseExceededException {
 		Order cart = CartState.getCart(request);
 		
+		Boolean promoAdded = false;
+		
 		OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
 			if(offerCode!=null&&offerService.verifyMaxCustomerUsageThreshold(cart.getCustomer(), offerCode.getOffer())) {
 				cartService.addOfferCode(cart, offerCode, false);
+				promoAdded = true;
 			}
 			
 		cartService.save(cart, true);
@@ -175,13 +178,13 @@ public class BroadleafCartController extends AbstractCartController {
 		
 		if (isAjaxRequest(request)) {
 			Map<String, Object> extraData = new HashMap<String, Object>();
-			extraData.put("offerCode", customerOffer);
+			extraData.put("promoAdded", promoAdded);
 			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
 			return "ajax/cart";
-			
 		} else {
 			return "redirect:/cart";
 		}
+		
 	}
 	
 }
