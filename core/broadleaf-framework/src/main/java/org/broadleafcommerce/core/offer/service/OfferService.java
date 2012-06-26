@@ -61,6 +61,13 @@ public interface OfferService {
      * @return the offer
      */
     public Offer lookupOfferByCode(String code);
+    
+    /**
+     * Lookup an OfferCode by its id
+     * @param id the offer id
+     * @return the offer
+     */
+    public OfferCode findOfferCodeById(Long id);
 
     /**
      * Lookup OfferCode by code.
