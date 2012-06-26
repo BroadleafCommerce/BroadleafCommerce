@@ -56,7 +56,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     @AdminPresentation(friendlyName = "bundleItemQuantity", requiredOverride=RequiredOverride.REQUIRED)
     protected Integer quantity;
 
-    @Column(name = "ITEM_SALE_PRICE")
+    @Column(name = "ITEM_SALE_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "bundleItemSalePrice", tooltip="bundleItemSalePriceTooltip", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
