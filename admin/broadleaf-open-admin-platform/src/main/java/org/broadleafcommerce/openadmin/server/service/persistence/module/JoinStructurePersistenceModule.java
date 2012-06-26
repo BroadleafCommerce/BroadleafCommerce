@@ -68,7 +68,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		}
 	}
 
-	protected BaseCtoConverter getJoinStructureCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, JoinStructure joinStructure) throws ClassNotFoundException {
+	public BaseCtoConverter getJoinStructureCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, JoinStructure joinStructure) throws ClassNotFoundException {
 		BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, joinStructure.getJoinStructureEntityClassname(), mergedProperties);
 		ctoConverter.addLongEQMapping(joinStructure.getJoinStructureEntityClassname(), joinStructure.getName(), AssociationPath.ROOT, joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty());
 		ctoConverter.addLongEQMapping(joinStructure.getJoinStructureEntityClassname(), joinStructure.getName() + "Target", AssociationPath.ROOT, joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty());
@@ -228,42 +228,11 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		Entity entity = persistencePackage.getEntity();
 		JoinStructure joinStructure = (JoinStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
 		try {
-			CriteriaTransferObject cto = new CriteriaTransferObject();
-			FilterAndSortCriteria filterCriteria = cto.get(joinStructure.getName());
-			filterCriteria.setFilterValue(entity.findProperty(joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty()).getValue());
-			if (joinStructure.getSortField() != null) {
-				FilterAndSortCriteria sortCriteria = cto.get(joinStructure.getSortField());
-				sortCriteria.setSortAscending(joinStructure.getSortAscending());
-			}
-
-            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
-			Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-				joinStructure.getJoinStructureEntityClassname(), 
-                entities2,
-				null, 
-				new String[]{}, 
-				new ForeignKey[]{},
-				MergedPropertyType.JOINSTRUCTURE,
-				persistencePerspective.getPopulateToOneFields(), 
-				persistencePerspective.getIncludeFields(), 
-				persistencePerspective.getExcludeFields(),
-                persistencePerspective.getConfigurationKey(),
-				""
-			);
-			BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
-			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
-			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
-			
-			int index = 0;
-			Long myEntityId = Long.valueOf(entity.findProperty(joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty()).getValue());	
-			FieldManager fieldManager = getFieldManager();
-			for (Serializable record : records) {
-				Long targetId = (Long) fieldManager.getFieldValue(record, joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty());
-				if (myEntityId.equals(targetId)) {
-					break;
-				}
-				index++;
-			}
+            JoinStructureRetrieval joinStructureRetrieval = new JoinStructureRetrieval(persistencePerspective, entity, joinStructure).invoke();
+            List<Serializable> records = joinStructureRetrieval.getRecords();
+            int index = joinStructureRetrieval.getIndex();
+            Map<String, FieldMetadata> mergedProperties = joinStructureRetrieval.getMergedProperties();
+            FieldManager fieldManager = getFieldManager();
 			if (joinStructure.getSortField() != null && entity.findProperty(joinStructure.getSortField()).getValue() != null) {
 				Serializable myRecord = records.remove(index);
 				myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
@@ -309,8 +278,8 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
 		}
 	}
-	
-	@Override
+
+    @Override
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
 		if (customCriteria != null && customCriteria.length > 0) {
@@ -400,4 +369,71 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 		
 		return results;
 	}
+
+    public class JoinStructureRetrieval {
+        private PersistencePerspective persistencePerspective;
+        private Entity entity;
+        private JoinStructure joinStructure;
+        private Map<String, FieldMetadata> mergedProperties;
+        private List<Serializable> records;
+        private int index;
+
+        public JoinStructureRetrieval(PersistencePerspective persistencePerspective, Entity entity, JoinStructure joinStructure) {
+            this.persistencePerspective = persistencePerspective;
+            this.entity = entity;
+            this.joinStructure = joinStructure;
+        }
+
+        public Map<String, FieldMetadata> getMergedProperties() {
+            return mergedProperties;
+        }
+
+        public List<Serializable> getRecords() {
+            return records;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public JoinStructureRetrieval invoke() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException {
+            CriteriaTransferObject cto = new CriteriaTransferObject();
+            FilterAndSortCriteria filterCriteria = cto.get(joinStructure.getName());
+            filterCriteria.setFilterValue(entity.findProperty(joinStructure.getLinkedObjectPath() + "." + joinStructure.getLinkedIdProperty()).getValue());
+            if (joinStructure.getSortField() != null) {
+                FilterAndSortCriteria sortCriteria = cto.get(joinStructure.getSortField());
+                sortCriteria.setSortAscending(joinStructure.getSortAscending());
+            }
+
+            Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(joinStructure.getJoinStructureEntityClassname());
+            mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
+                    joinStructure.getJoinStructureEntityClassname(),
+                    entities2,
+                    null,
+                    new String[]{},
+                    new ForeignKey[]{},
+                    MergedPropertyType.JOINSTRUCTURE,
+                    persistencePerspective.getPopulateToOneFields(),
+                    persistencePerspective.getIncludeFields(),
+                    persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
+                    ""
+            );
+            BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
+            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
+            records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+
+            index = 0;
+            Long myEntityId = Long.valueOf(entity.findProperty(joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty()).getValue());
+            FieldManager fieldManager = getFieldManager();
+            for (Serializable record : records) {
+                Long targetId = (Long) fieldManager.getFieldValue(record, joinStructure.getTargetObjectPath() + "." + joinStructure.getTargetIdProperty());
+                if (myEntityId.equals(targetId)) {
+                    break;
+                }
+                index++;
+            }
+            return this;
+        }
+    }
 }

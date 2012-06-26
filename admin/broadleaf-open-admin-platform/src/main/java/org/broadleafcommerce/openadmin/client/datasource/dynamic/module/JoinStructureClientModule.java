@@ -101,6 +101,7 @@ public class JoinStructureClientModule extends BasicClientEntityModule {
 		int count = properties.size();
 		for (int j = 0; j<entity.getProperties().length; j++){
 			props[count] = entity.getProperties()[j];
+            props[count].setIsDirty(true);
 			count++;
 		}
 		entity.setProperties(props);
