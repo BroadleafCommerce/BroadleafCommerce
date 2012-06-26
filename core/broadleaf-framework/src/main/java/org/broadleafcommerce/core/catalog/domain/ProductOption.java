@@ -15,34 +15,37 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+
 import java.io.Serializable;
 import java.util.List;
 
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
-
 /**
- * A product option represents a value that is entered to specify more information about
- * a product prior to entering into the cart.
+ * <p>A product option represents a value that is entered to specify more information about
+ * a product prior to entering into the cart.</p>
  *
- * For example, a product of type shirt might have product options of "size" and "color".
+ * <p>For example, a product of type shirt might have product options of "size" and "color".</p>
  *
- * There is an inherent relationship between product options and product SKUs.  A sku is
+ * <p>There is an inherent relationship between product options and product SKUs.  A sku is
  * meant to provide a way to override the pricing of a product for a specific set of options.
- * Inventory can also be tracked at the SKU level.
+ * Inventory can also be tracked at the SKU level.</p>
  *
- * For example, consider a shirt that is sold in 5 colors and 5 sizes.   For this example,
+ * <p>For example, consider a shirt that is sold in 5 colors and 5 sizes.   For this example,
  * there would be 1 product.   It would have 10 options (5 colors + 5 sizes).   The product would
- * have as few as 1 SKu and a many as 26 SKUs.
+ * have as few as 1 SKu and a many as 26 SKUs.</p>
  *
- * 1 SKU would indicate that the system is not tracking inventory for the items and that all of the
- * variations of shirt are priced the same way.
+ * <p>1 SKU would indicate that the system is not tracking inventory for the items and that all of the
+ * variations of shirt are priced the same way.</p>
  *
- * 26 would indicate that there are 25 SKUs that are used to track inventory and potentially
- * override pricing.    The extra "1" sku is used to hold the default pricing.
+ * <p>26 would indicate that there are 25 SKUs that are used to track inventory and potentially
+ * override pricing.    The extra "1" sku is used to hold the default pricing.</p>
  *
- *
+ *  @author bpolster
  */
 public interface ProductOption extends Serializable {
+    
     /**
      * Returns unique identifier of the product option.
      * @return
@@ -71,25 +74,83 @@ public interface ProductOption extends Serializable {
      * @param type
      */
     public void setType(ProductOptionType type);
-    
+
+    /**
+     * Gets the attribute name for where the ProductOptionValue selected for
+     * this ProductOption is stored in the OrderItemAttributes for the 
+     * OrderItem
+     * 
+     * @return the name of the OrderItemAttribute to store the selected
+     * ProductOptionValue in the Order domain
+     * @see {@link OrderItemAttribute}, {@link OrderItem}
+     */
     public String getAttributeName();
 
+    /**
+     * Sets the attribute name that will be used in storing the selected
+     * ProductOptionValue for this ProductOption
+     * 
+     * @param name - the name of the OrderItemAttribute to store the selected
+     * ProductOptionValue in the Order domain
+     */
     public void setAttributeName(String name);
-    
+
+    /**
+     * The label to show to the user when selecting from the available
+     * {@link ProductOptionValue}s. This might be "Color" or "Size"
+     * 
+     * @return
+     */
     public String getLabel();
-    
+
+    /**
+     * Sets the label to show the user when selecting from the available
+     * {@link ProductOptionValue}s
+     * 
+     * @param label
+     */
     public void setLabel(String label);
 
+    /**
+     * 
+     * @return whether or not this ProductOption is required
+     */
     public Boolean getRequired();
 
+    /**
+     * Sets whether or not 
+     * @param required
+     */
     public void setRequired(Boolean required);
 
+    /**
+     * Gets all the Products associated with this ProductOption
+     * 
+     * @return the Products associated with this ProductOption
+     */
     public List<Product> getProducts();
 
+    /**
+     * Set the Products to associate with this ProductOption
+     * 
+     * @param products
+     */
     public void setProducts(List<Product> products);
 
+    /**
+     * Gets the available values that a user can select for this ProductOption.
+     * This value will be stored in OrderItemAttributes at the OrderItem level. The
+     * OrderItemAttribute name will be whatever was returned from {@link #getAttributeName()}
+     * 
+     * @return the allowed values for this ProductOption
+     */
     public List<ProductOptionValue> getAllowedValues();
 
+    /**
+     * Set the allowed values for this ProductOption
+     * 
+     * @param allowedValues
+     */
     public void setAllowedValues(List<ProductOptionValue> allowedValues);
 
 }
