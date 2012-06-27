@@ -39,6 +39,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
 		<class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
 		<class>org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl</class>
@@ -98,6 +99,7 @@
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
 	</persistence-unit>
 	
@@ -117,6 +119,7 @@
             <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
 	</persistence-unit>
 </persistence>

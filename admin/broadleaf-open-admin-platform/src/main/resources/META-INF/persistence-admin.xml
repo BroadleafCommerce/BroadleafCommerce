@@ -25,6 +25,7 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.ejb.session_factory_observer" value="org.broadleafcommerce.openadmin.server.dao.SessionFactoryChangeListener"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
 	</persistence-unit>
 	
@@ -38,6 +39,7 @@
             <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
 	</persistence-unit>
 

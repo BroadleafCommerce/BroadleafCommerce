@@ -16,27 +16,6 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -57,6 +36,27 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -193,34 +193,42 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Order getOrder() {
         return order;
     }
 
+    @Override
     public void setOrder(Order order) {
         this.order = order;
     }
 
+    @Override
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
+    @Override
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
+    @Override
     public List<FulfillmentGroupItem> getFulfillmentGroupItems() {
         return fulfillmentGroupItems;
     }
     
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
     	List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
@@ -238,10 +246,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return discreteOrderItems;
     }
 
+    @Override
     public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
         this.fulfillmentGroupItems = fulfillmentGroupItems;
     }
 
+    @Override
     public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem) {
         if (this.fulfillmentGroupItems == null) {
             this.fulfillmentGroupItems = new Vector<FulfillmentGroupItem>();
@@ -250,59 +260,73 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     }
 
+    @Override
     public Address getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(Address address) {
         this.address = address;
     }
 
+    @Override
     public Phone getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(Phone phone) {
         this.phone = phone;
     }
 
+    @Override
     public String getMethod() {
         return method;
     }
 
+    @Override
     public void setMethod(String fulfillmentMethod) {
         this.method = fulfillmentMethod;
     }
 
+    @Override
     public Money getRetailShippingPrice() {
         return retailShippingPrice == null ? null : new Money(retailShippingPrice);
     }
 
+    @Override
     public void setRetailShippingPrice(Money retailShippingPrice) {
         this.retailShippingPrice = Money.toAmount(retailShippingPrice);
     }
 
+    @Override
     public FulfillmentGroupType getType() {
         return FulfillmentGroupType.getInstance(type);
     }
 
+    @Override
     public void setType(FulfillmentGroupType type) {
         this.type = type.getType();
     }
 
+    @Override
     public void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer) {
         candidateOffers.add(candidateOffer);
     }
 
+    @Override
     public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers() {
         return candidateOffers;
     }
 
+    @Override
     public void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers) {
         this.candidateOffers = candidateOffers;
 
     }
 
+    @Override
     public void removeAllCandidateOffers() {
         if (candidateOffers != null) {
             for (CandidateFulfillmentGroupOffer offer : candidateOffers) {
@@ -312,10 +336,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         }
     }
 
+    @Override
     public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments() {
         return this.fulfillmentGroupAdjustments;
     }
     
+    @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
     	Money adjustmentsValue = new Money(0);
         for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
@@ -324,6 +350,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return adjustmentsValue;
     }
 
+    @Override
     public void removeAllAdjustments() {
         if (fulfillmentGroupAdjustments != null) {
             for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
@@ -333,122 +360,152 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         }
     }
 
+    @Override
     public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments) {
         this.fulfillmentGroupAdjustments = fulfillmentGroupAdjustments;
     }
 
+    @Override
     public Money getSaleShippingPrice() {
         return saleShippingPrice == null ? null : new Money(saleShippingPrice);
     }
 
+    @Override
     public void setSaleShippingPrice(Money saleShippingPrice) {
         this.saleShippingPrice = Money.toAmount(saleShippingPrice);
     }
 
+    @Override
     public Money getShippingPrice() {
         return shippingPrice == null ? null : new Money(shippingPrice);
     }
 
+    @Override
     public void setShippingPrice(Money shippingPrice) {
         this.shippingPrice = Money.toAmount(shippingPrice);
     }
     
+    @Override
     public List<TaxDetail> getTaxes() {
         return taxes;
     }
 
+    @Override
     public void setTaxes(List<TaxDetail> taxes) {
         this.taxes = taxes;
     }
 
+    @Override
     public Money getTotalTax() {
         return totalTax == null ? null : new Money(totalTax);
     }
 
+    @Override
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
     
+    @Override
     public Money getTotalItemTax() {
 		return totalItemTax == null ? null : new Money(totalItemTax);
 	}
 
-	public void setTotalItemTax(Money totalItemTax) {
+	@Override
+    public void setTotalItemTax(Money totalItemTax) {
 		this.totalItemTax = Money.toAmount(totalItemTax);
 	}
 
-	public Money getTotalFeeTax() {
+	@Override
+    public Money getTotalFeeTax() {
 		return totalFeeTax == null ? null : new Money(totalFeeTax);
 	}
 
-	public void setTotalFeeTax(Money totalFeeTax) {
+	@Override
+    public void setTotalFeeTax(Money totalFeeTax) {
 		this.totalFeeTax = Money.toAmount(totalFeeTax);
 	}
 
-	public Money getTotalFulfillmentGroupTax() {
+	@Override
+    public Money getTotalFulfillmentGroupTax() {
 		return totalFulfillmentGroupTax == null ? null : new Money(totalFulfillmentGroupTax);
 	}
 
-	public void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax) {
+	@Override
+    public void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax) {
 		this.totalFulfillmentGroupTax = Money.toAmount(totalFulfillmentGroupTax);
 	}
 
-	public String getDeliveryInstruction() {
+	@Override
+    public String getDeliveryInstruction() {
         return deliveryInstruction;
     }
 
+    @Override
     public void setDeliveryInstruction(String deliveryInstruction) {
         this.deliveryInstruction = deliveryInstruction;
     }
 
+    @Override
     public PersonalMessage getPersonalMessage() {
         return personalMessage;
     }
 
+    @Override
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
     }
 
+    @Override
     public boolean isPrimary() {
         return primary;
     }
 
+    @Override
     public void setPrimary(boolean primary) {
         this.primary = primary;
     }
 
+    @Override
     public Money getMerchandiseTotal() {
         return merchandiseTotal == null ? null : new Money(merchandiseTotal);
     }
 
+    @Override
     public void setMerchandiseTotal(Money merchandiseTotal) {
         this.merchandiseTotal = Money.toAmount(merchandiseTotal);
     }
 
+    @Override
     public Money getTotal() {
         return total == null ? null : new Money(total);
     }
 
+    @Override
     public void setTotal(Money orderTotal) {
         this.total = Money.toAmount(orderTotal);
     }
     
+    @Override
     public FulfillmentGroupStatusType getStatus() {
         return FulfillmentGroupStatusType.getInstance(status);
     }
 
+    @Override
     public void setStatus(FulfillmentGroupStatusType status) {
         this.status = status.getType();
     }
 
+    @Override
     public List<FulfillmentGroupFee> getFulfillmentGroupFees() {
         return fulfillmentGroupFees;
     }
 
+    @Override
     public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees) {
         this.fulfillmentGroupFees = fulfillmentGroupFees;
     }
 
+    @Override
     public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee) {
         if (fulfillmentGroupFees == null) {
             fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
@@ -456,29 +513,35 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         fulfillmentGroupFees.add(fulfillmentGroupFee);
     }
 
+    @Override
     public void removeAllFulfillmentGroupFees() {
         if (fulfillmentGroupFees != null) {
             fulfillmentGroupFees.clear();
         }
     }
 
+    @Override
     public Boolean isShippingPriceTaxable() {
 		return isShippingPriceTaxable;
 	}
 
-	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
+	@Override
+    public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
 		this.isShippingPriceTaxable = isShippingPriceTaxable;
 	}
 
-	public String getService() {
+	@Override
+    public String getService() {
 		return service;
 	}
 
-	public void setService(String service) {
+	@Override
+    public void setService(String service) {
 		this.service = service;
 	}
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
@@ -486,6 +549,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

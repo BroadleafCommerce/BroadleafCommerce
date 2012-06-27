@@ -41,6 +41,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class ProductOptionImpl implements ProductOption {
     @Column(name = "REQUIRED")
     @AdminPresentation(friendlyName = "Required")
     protected Boolean required;
-
+    
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
