@@ -33,7 +33,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.test.BaseTest;
 import org.mvel2.MVEL;
@@ -140,7 +140,7 @@ public class MVELTest extends BaseTest {
 
         //Import OfferType into the MVEL context since it may be used
         context.addImport("OfferType", OfferType.class);
-        context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
+        context.addImport("FulfillmentType", FulfillmentType.class);
 
         //Compile the MVEL Expression
         Serializable domainExp1 = MVEL.compileExpression("offer.type == OfferType.ORDER_ITEM and (currentItem.sku.id in [1234, 2345, 5678])", context);
@@ -261,12 +261,12 @@ public class MVELTest extends BaseTest {
         ParserContext context = new ParserContext();
         //Import OfferType into the MVEL context since it may be used
         context.addImport("OfferType", OfferType.class);
-        context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
+        context.addImport("FulfillmentType", FulfillmentType.class);
 
         //Compile the MVEL Expression
         //This could test SHIPPING, or PICK_UP_AT_STORE, etc.
         //Could also apply to order instead of FULFILLMENT_GROUP
-        Serializable domainExp1 = MVEL.compileExpression("offer.type.equals(OfferType.FULFILLMENT_GROUP) and (($ in order.fulfillmentGroups if $.type.equals(FulfillmentGroupType.PICK_UP_AT_STORE)) != empty)", context);
+        Serializable domainExp1 = MVEL.compileExpression("offer.type.equals(OfferType.FULFILLMENT_GROUP) and (($ in order.fulfillmentGroups if $.type.equals(FulfillmentType.PICK_UP_AT_STORE)) != empty)", context);
 
         //Add variables to a HashMap that should be passed in to execute the expression
         HashMap<String, Object> domainVars = new HashMap<String, Object>();

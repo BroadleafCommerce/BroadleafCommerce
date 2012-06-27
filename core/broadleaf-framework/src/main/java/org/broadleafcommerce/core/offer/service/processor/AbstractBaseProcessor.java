@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.tool.hbm2x.StringUtils;
@@ -126,7 +126,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 if (exp == null) {
                     ParserContext context = new ParserContext();
                     context.addImport("OfferType", OfferType.class);
-                    context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
+                    context.addImport("FulfillmentType", FulfillmentType.class);
                     context.addImport("MVEL", MVEL.class);
                     //            StringBuffer completeExpression = new StringBuffer(functions.toString());
                     //            completeExpression.append(" ").append(expression);

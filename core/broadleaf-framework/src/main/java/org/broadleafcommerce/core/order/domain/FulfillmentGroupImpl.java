@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImp
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
@@ -122,8 +122,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected BigDecimal shippingPrice;   
 
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupType")
-    protected String type = FulfillmentGroupType.SHIPPING.getType();
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    protected String type = FulfillmentType.SHIPPING.getType();
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -301,12 +301,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     @Override
-    public FulfillmentGroupType getType() {
-        return FulfillmentGroupType.getInstance(type);
+    public FulfillmentType getType() {
+        return FulfillmentType.getInstance(type);
     }
 
     @Override
-    public void setType(FulfillmentGroupType type) {
+    public void setType(FulfillmentType type) {
         this.type = type.getType();
     }
 

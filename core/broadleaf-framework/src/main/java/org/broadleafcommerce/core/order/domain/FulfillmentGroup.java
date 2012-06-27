@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
@@ -71,9 +71,9 @@ public interface FulfillmentGroup extends Serializable {
 
     public void setReferenceNumber(String referenceNumber);
 
-    public FulfillmentGroupType getType();
+    public FulfillmentType getType();
 
-    void setType(FulfillmentGroupType type);
+    void setType(FulfillmentType type);
 
     public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
 
