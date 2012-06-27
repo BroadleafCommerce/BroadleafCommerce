@@ -40,6 +40,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
 		<class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
 		<class>org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl</class>
