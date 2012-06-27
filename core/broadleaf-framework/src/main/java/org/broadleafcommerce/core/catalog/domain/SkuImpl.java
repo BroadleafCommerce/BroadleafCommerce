@@ -225,6 +225,13 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     List<ProductOptionValue> productOptionValues;
+    
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuFeeImpl.class)
+    @JoinTable(name = "BLC_SKU_FEE_XREF",
+                   joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
+            inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    List<SkuFee> fees;
 
     /*
      * (non-Javadoc)
@@ -739,6 +746,16 @@ public class SkuImpl implements Sku {
         this.isMachineSortable = isMachineSortable;
     }	
 
+    @Override
+    public List<SkuFee> getFees() {
+        return fees;
+    }
+
+    @Override
+    public void setFees(List<SkuFee> fees) {
+        this.fees = fees;
+    }
+    
 	@Override
     public boolean equals(Object obj) {
         if (this == obj)

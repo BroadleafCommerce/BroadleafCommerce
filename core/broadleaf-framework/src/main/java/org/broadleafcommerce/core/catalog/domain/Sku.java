@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.media.domain.Media;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -269,5 +270,20 @@ public interface Sku extends Serializable {
     public Boolean isMachineSortable();
 
     public void setMachineSortable(Boolean isMachineSortable);
+
+    /**
+     * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
+     * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
+     * 
+     * @return the {@link SkuFee}s for this Sku
+     */
+    public List<SkuFee> getFees();
+
+    /**
+     * Sets the extra fees for this particular Sku
+     * 
+     * @param fees
+     */
+    public void setFees(List<SkuFee> fees);
 
 }
