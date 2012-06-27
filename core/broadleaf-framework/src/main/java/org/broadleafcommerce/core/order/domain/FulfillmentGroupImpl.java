@@ -50,6 +50,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -148,6 +149,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
     
+    @OneToOne(targetEntity = FulfillmentOptionImpl.class)
+    @JoinColumn(name = "FULFILLMENT_OPTION_ID")
+    protected FulfillmentOption fulfillmentOption;
+    
     @ManyToOne(targetEntity = OrderImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="FG_ORDER_INDEX", columnNames={"ORDER_ID"})
@@ -213,6 +218,16 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Override
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    @Override
+    public FulfillmentOption getFulfillmentOption() {
+        return fulfillmentOption;
+    }
+
+    @Override
+    public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
+        this.fulfillmentOption = fulfillmentOption;
     }
 
     @Override
