@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
 @TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})

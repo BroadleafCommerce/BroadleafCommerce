@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.IdGeneration;
 import org.broadleafcommerce.profile.core.domain.IdGenerationImpl;
@@ -30,6 +25,11 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerTest extends BaseTest {
 

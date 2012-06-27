@@ -16,11 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
@@ -36,6 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerPhoneControllerTest extends BaseTest {
 

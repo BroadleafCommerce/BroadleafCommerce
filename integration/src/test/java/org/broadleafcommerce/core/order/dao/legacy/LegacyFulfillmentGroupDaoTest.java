@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.dao.legacy;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.order.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
@@ -31,6 +29,8 @@ import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
 
 public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
 

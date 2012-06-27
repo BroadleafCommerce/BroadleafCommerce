@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
@@ -61,9 +60,6 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     
     @Resource
     private OrderItemDao orderItemDao;
-    
-    @Resource(name = "blOrderService")
-    private OrderService orderService;
     
     @Resource
     private CustomerAddressDao customerAddressDao;

@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.core.order;
 
-import java.math.BigDecimal;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
-import org.broadleafcommerce.common.money.Money;
 import org.testng.annotations.DataProvider;
+
+import java.math.BigDecimal;
 
 public class OrderItemDataProvider {
 

@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.core.payment;
 
-import java.math.BigDecimal;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.common.money.Money;
 import org.testng.annotations.DataProvider;
+
+import java.math.BigDecimal;
 
 public class PaymentInfoDataProvider {
 

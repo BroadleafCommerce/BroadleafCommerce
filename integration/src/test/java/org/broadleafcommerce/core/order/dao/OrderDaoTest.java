@@ -16,12 +16,7 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.order.OrderDataProvider;
-import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -29,6 +24,10 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.List;
 
 public class OrderDaoTest extends BaseTest {
 

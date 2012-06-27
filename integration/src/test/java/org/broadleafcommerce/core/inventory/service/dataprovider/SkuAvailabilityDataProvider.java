@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.core.inventory.service.dataprovider;
 
-import java.util.Date;
-
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.testng.annotations.DataProvider;
+
+import java.util.Date;
 
 public class SkuAvailabilityDataProvider {
 

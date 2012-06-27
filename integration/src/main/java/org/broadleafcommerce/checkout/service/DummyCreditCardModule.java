@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.checkout.service;
 
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.module.AbstractModule;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.common.time.SystemTime;
 
 /**
  * @author jfischer

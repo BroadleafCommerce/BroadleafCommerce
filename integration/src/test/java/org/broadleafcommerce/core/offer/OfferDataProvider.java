@@ -16,17 +16,17 @@
 
 package org.broadleafcommerce.core.offer;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.testng.annotations.DataProvider;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class OfferDataProvider {

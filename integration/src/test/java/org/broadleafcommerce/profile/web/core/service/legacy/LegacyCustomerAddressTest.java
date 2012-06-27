@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.service.legacy;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -33,6 +29,10 @@ import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.util.List;
 
 public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
 
