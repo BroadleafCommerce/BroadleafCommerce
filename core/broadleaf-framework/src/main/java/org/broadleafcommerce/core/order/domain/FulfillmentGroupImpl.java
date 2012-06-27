@@ -73,31 +73,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Column(name = "FULFILLMENT_GROUP_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
-    @JoinColumn(name = "ORDER_ID")
-    @Index(name="FG_ORDER_INDEX", columnNames={"ORDER_ID"})
-    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Order order;
-
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="FG_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Reference_Number", order=1, group = "FulfillmentGroupImpl_Description", prominent=true)
     protected String referenceNumber;
-
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
-
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "ADDRESS_ID")
-    @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
-    protected Address address;
-
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "PHONE_ID")
-    @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
-    protected Phone phone;
 
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
@@ -127,22 +106,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String type = FulfillmentType.SHIPPING.getType();
 
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
-
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
-    
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
-
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
@@ -168,11 +131,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Primary_FG", order=5, group = "FulfillmentGroupImpl_Description")
     protected boolean primary = false;
 
-    @ManyToOne(targetEntity = PersonalMessageImpl.class)
-    @JoinColumn(name = "PERSONAL_MESSAGE_ID")
-    @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
-    protected PersonalMessage personalMessage;
-
     @Column(name = "MERCHANDISE_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Merchandise_Total", order=10, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal merchandiseTotal;
@@ -186,14 +144,56 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Status", order=6, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType")
     protected String status;
     
+    @Column(name = "SHIPPING_PRICE_TAXABLE")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
+    protected Boolean isShippingPriceTaxable = Boolean.FALSE;
+    
+    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
+    @JoinColumn(name = "ORDER_ID")
+    @Index(name="FG_ORDER_INDEX", columnNames={"ORDER_ID"})
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Order order;
+    
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "ADDRESS_ID")
+    @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
+    protected Address address;
+
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "PHONE_ID")
+    @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
+    protected Phone phone;
+    
+    @ManyToOne(targetEntity = PersonalMessageImpl.class)
+    @JoinColumn(name = "PERSONAL_MESSAGE_ID")
+    @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
+    protected PersonalMessage personalMessage;
+    
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
+    
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
+        
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
     
-    @Column(name = "SHIPPING_PRICE_TAXABLE")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
-    protected Boolean isShippingPriceTaxable = Boolean.FALSE;
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
 
     @Override
     public Long getId() {
