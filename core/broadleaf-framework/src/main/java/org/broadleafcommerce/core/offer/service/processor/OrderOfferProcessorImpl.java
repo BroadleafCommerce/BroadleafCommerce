@@ -85,7 +85,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
-    @Resource(name = "blFulfillmentGroupItemDao")
+	@Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
     @Resource(name = "blPromotableItemFactory")
@@ -758,7 +758,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
     
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, Boolean priceOrder) throws PricingException {
         List<OrderItem> orderItems = order.getOrderItems();
         newOrderItem.setOrder(order);
         newOrderItem = orderItemService.saveOrderItem(newOrderItem);
@@ -900,5 +900,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
     }
+
+    public FulfillmentGroupService getFulfillmentGroupService() {
+		return fulfillmentGroupService;
+	}
+
+	public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService) {
+		this.fulfillmentGroupService = fulfillmentGroupService;
+	}
 
 }

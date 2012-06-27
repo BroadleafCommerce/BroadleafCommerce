@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFa
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 
@@ -90,7 +91,11 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	public PromotableItemFactory getPromotableItemFactory();
 
 	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+	
+    public FulfillmentGroupService getFulfillmentGroupService();
 
+	public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService);
+	
     public void initializeBundleSplitItems(PromotableOrder order);
 
     /**
@@ -131,5 +136,5 @@ public interface OrderOfferProcessor extends BaseProcessor {
      * @return
      */
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier);
-	
+    
 }

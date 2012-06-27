@@ -48,15 +48,20 @@
 	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.core.catalog.service.CatalogService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.OrderService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
+	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyOrderService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
+		<aop:pointcut id="blLegacyOrderServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyOrderService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyOrderServiceOperation" order="1"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyCartService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation" order="1"/>
+		<aop:pointcut id="blLegacyCartServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.legacy.LegacyCartService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyCartServiceOperation" order="1"/>
 	</aop:config>
 
 	<aop:config>

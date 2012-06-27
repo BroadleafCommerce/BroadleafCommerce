@@ -271,7 +271,7 @@ public class NullOrderImpl implements Order {
 
 	@Override
 	public Money getOrderAdjustmentsValue() {
-		return null;
+		return Money.ZERO;
 	}
 
 	@Override
