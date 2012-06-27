@@ -266,7 +266,7 @@ public class MVELTest extends BaseTest {
         //Compile the MVEL Expression
         //This could test SHIPPING, or PICK_UP_AT_STORE, etc.
         //Could also apply to order instead of FULFILLMENT_GROUP
-        Serializable domainExp1 = MVEL.compileExpression("offer.type.equals(OfferType.FULFILLMENT_GROUP) and (($ in order.fulfillmentGroups if $.type.equals(FulfillmentType.PICK_UP_AT_STORE)) != empty)", context);
+        Serializable domainExp1 = MVEL.compileExpression("offer.type.equals(OfferType.FULFILLMENT_GROUP) and (($ in order.fulfillmentGroups if $.type.equals(FulfillmentType.PHYSICAL)) != empty)", context);
 
         //Add variables to a HashMap that should be passed in to execute the expression
         HashMap<String, Object> domainVars = new HashMap<String, Object>();
