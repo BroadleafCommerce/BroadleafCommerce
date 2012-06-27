@@ -37,6 +37,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
 
     @Resource(name = "blLegacyCartService")
@@ -53,7 +54,7 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
     	return customer;
     }
     
-    public Order setUpNamedOrder() throws PricingException {
+	public Order setUpNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
 
         Order order = cartService.createNamedOrderForCustomer("Boxes Named Order", customer);

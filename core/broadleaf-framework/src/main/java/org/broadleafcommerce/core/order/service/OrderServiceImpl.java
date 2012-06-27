@@ -67,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOfferService")
     protected OfferService offerService;
     
+    // This field is static for legacy testing support.
     protected static boolean automaticallyMergeLikeItems = true;
 
 	@Override
@@ -165,6 +166,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@SuppressWarnings("static-access")
 	public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
 		this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
 	}

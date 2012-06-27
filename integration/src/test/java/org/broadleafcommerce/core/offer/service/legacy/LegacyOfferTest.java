@@ -137,7 +137,6 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
     @Test(groups =  {"testPercentageOffOffer"}, dependsOnGroups = { "offerCreateSku1", "offerCreateSku2" })
     @Transactional
     public void testPercentOffOfferWithScaleGreaterThanTwo() throws Exception {
-        CreateOfferUtility cou = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
         Order order = orderService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", ShippingServiceType.BANDED_SHIPPING.getType(), 5D, order));
         orderService.save(order, false);
@@ -607,18 +606,4 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
 
         return item;
     }
-
-    private OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        return createOfferUtility.createOfferCode(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
-    }
-
-    private OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        return createOfferUtility.createOfferCode(offerCodeName, offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
-    }
-
-    private Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
-        return createOfferUtility.createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
-    }
-
-
 }

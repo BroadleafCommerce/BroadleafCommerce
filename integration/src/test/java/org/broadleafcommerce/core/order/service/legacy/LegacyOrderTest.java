@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class LegacyOrderTest extends LegacyOrderBaseTest {
 
     private Long orderId = null;

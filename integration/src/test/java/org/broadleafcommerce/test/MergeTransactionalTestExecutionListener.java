@@ -96,6 +96,7 @@ import java.util.Map;
  * @see BeforeTransaction
  * @see AfterTransaction
  */
+@SuppressWarnings("deprecation")
 public class MergeTransactionalTestExecutionListener extends AbstractTestExecutionListener {
 
 	private static final Log logger = LogFactory.getLog(MergeTransactionalTestExecutionListener.class);

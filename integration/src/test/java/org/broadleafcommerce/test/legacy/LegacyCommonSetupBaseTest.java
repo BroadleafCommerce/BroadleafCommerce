@@ -148,7 +148,6 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     /**
      * Saves a customerAddress with state KY and country US.  Requires that createCountry() and createState() have been called
      * @param customerAddress
-     * @return
      */
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
     	State state = stateService.findStateByAbbreviation("KY");
@@ -160,7 +159,6 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     
     /**
      * Create a state, country, and customer with a basic order and some addresses
-     * @return
      */
     public Customer createCustomerWithBasicOrderAndAddresses() {
     	Customer customer = createCustomerWithAddresses();

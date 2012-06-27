@@ -12,8 +12,8 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+@SuppressWarnings("deprecation")
 public class CreateOfferUtility {
-    
 
     private OfferDao offerDao;
     private OfferCodeDao offerCodeDao;

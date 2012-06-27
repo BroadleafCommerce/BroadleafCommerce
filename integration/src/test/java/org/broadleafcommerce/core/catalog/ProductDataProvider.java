@@ -34,7 +34,6 @@ public class ProductDataProvider {
 
     /**
      * A basic product is actually a Product and a Sku
-     * @return
      */
     @DataProvider(name="basicProduct")
     public static Object[][] provideBasicProduct() {

@@ -35,7 +35,6 @@ import javax.annotation.Resource;
 public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
 
     private Long defaultFulfillmentGroupOrderId;
-    private Long orderId;
     private Long defaultFulfillmentGroupId;
     private Long fulfillmentGroupId;
 
@@ -113,7 +112,6 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
         assert newFG.getId() == null;
         fulfillmentGroup = fulfillmentGroupService.save(newFG);
         assert fulfillmentGroup.getId() != null;
-        orderId = salesOrder.getId();
         fulfillmentGroupId = fulfillmentGroup.getId();
     }
 

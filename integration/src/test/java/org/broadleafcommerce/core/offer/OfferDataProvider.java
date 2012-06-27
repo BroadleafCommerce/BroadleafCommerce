@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@SuppressWarnings("deprecation")
 public class OfferDataProvider {
 
     @DataProvider(name = "offerDataProvider")

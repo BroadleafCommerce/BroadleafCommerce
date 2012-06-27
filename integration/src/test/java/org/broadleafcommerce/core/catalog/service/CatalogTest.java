@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -37,12 +36,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class CatalogTest extends BaseTest {
 
     @Resource
     private CatalogService catalogService;
-    @Resource
-    private ProductDao productDao;
 
     @Test
     @Transactional

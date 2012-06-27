@@ -219,7 +219,8 @@ public class LegacyCheckoutTest extends BaseTest {
 
         CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
 
-            private String referenceNumber = "1234";
+			private static final long serialVersionUID = 1L;
+			private String referenceNumber = "1234";
 
 			public String getCvvCode() {
 				return "123";
