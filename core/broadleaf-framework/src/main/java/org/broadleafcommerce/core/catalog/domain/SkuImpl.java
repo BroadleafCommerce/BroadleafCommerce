@@ -263,6 +263,22 @@ public class SkuImpl implements Sku {
             return null;
         }
     }
+    
+    @Override
+    public Money getProductOptionValueAdjustments() {
+        Money optionValuePriceAdjustments = null;
+        if (getProductOptionValues() != null) {
+            for (ProductOptionValue value : getProductOptionValues()) {
+                if (value.getPriceAdjustment() != null) {
+                    if (optionValuePriceAdjustments == null) {
+                        optionValuePriceAdjustments = Money.ZERO;
+                    }
+                    optionValuePriceAdjustments.add(value.getPriceAdjustment());
+                }
+            }
+        }
+        return optionValuePriceAdjustments;
+    }
 
     /*
      * (non-Javadoc)
@@ -274,20 +290,25 @@ public class SkuImpl implements Sku {
         }
 
     	if (dynamicPrices != null) {
-    		dynamicPrices.getSalePrice();
+    		return dynamicPrices.getSalePrice();
     	}
     	if (
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
     		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+    		
     		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
     		handler.reset();
     		return dynamicPrices.getSalePrice();
     	} else {
-            return salePrice == null ? null : new Money(salePrice);
+    	    if (getProductOptionValueAdjustments() == null) {
+    	        return salePrice == null ? null : new Money(salePrice);
+    	    } else {
+    	        return salePrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(salePrice));
+    	    }
         }
     }
 
@@ -317,13 +338,18 @@ public class SkuImpl implements Sku {
     			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
     			SkuPricingConsiderationContext.getSkuPricingService() != null
     	) {
-    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+    		DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this, getProductOptionValueAdjustments());
     		Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+    		
     		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
     		handler.reset();
     		return dynamicPrices.getRetailPrice();
     	}
-        return retailPrice == null ? null : new Money(retailPrice);
+    	if (getProductOptionValueAdjustments() == null) {
+            return retailPrice == null ? null : new Money(retailPrice);
+        } else {
+            return retailPrice == null ? getProductOptionValueAdjustments() : getProductOptionValueAdjustments().add(new Money(retailPrice));
+        }
     }
 
     /*

@@ -59,6 +59,22 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
             salePrice = new Money(salePriceOverride);
         }
    	}
+
+    /**
+     * Used to add ProductOptionValue price adjustments to the proxy Sku
+     * 
+     * @param sku
+     * @param adjustments - the sum total of the ProductOptionValue price adjustments. If null, this
+     * functions the same as the default constructor. This value is added to both the salePrice and retailPrice
+     */
+    public DefaultDynamicSkuPricingInvocationHandler(Sku sku, Money adjustments) {
+        this(sku);
+
+        if (adjustments != null) {
+            salePrice = (salePrice == null) ? adjustments : salePrice.add(adjustments);
+            retailPrice = (retailPrice == null) ? adjustments : retailPrice.add(adjustments);
+        }
+    }
 	
 	private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
         try {
@@ -73,7 +89,8 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
         }
     }
 	
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	@Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if (method.getName().equals("getRetailPrice")) {
 			return retailPrice;
 		} else if (method.getName().equals("getSalePrice")) {

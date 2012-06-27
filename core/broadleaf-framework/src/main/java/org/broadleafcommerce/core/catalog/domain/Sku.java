@@ -49,6 +49,17 @@ public interface Sku extends Serializable {
     public void setId(Long id);
 
     /**
+     * This is the sum total of the priceAdjustments from the associated ProductOptionValues
+     * 
+     * @return <b>null</b> if there are no ProductOptionValues associated with this Sku or
+     * all of their priceAdjustments are null. Otherwise this will be the sum total of those price
+     * adjustments
+     * 
+     * @see {@link ProductOptionValue}
+     */
+    public Money getProductOptionValueAdjustments();
+    
+    /**
      * Returns the Sale Price of the Sku.  The Sale Price is the standard price the vendor sells
      * this item for.
      */
