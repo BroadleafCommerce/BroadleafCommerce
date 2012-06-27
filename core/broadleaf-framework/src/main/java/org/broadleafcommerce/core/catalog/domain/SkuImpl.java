@@ -283,7 +283,7 @@ public class SkuImpl implements Sku {
                     if (optionValuePriceAdjustments == null) {
                         optionValuePriceAdjustments = Money.ZERO;
                     }
-                    optionValuePriceAdjustments.add(value.getPriceAdjustment());
+                    optionValuePriceAdjustments = optionValuePriceAdjustments.add(value.getPriceAdjustment());
                 }
             }
         }
