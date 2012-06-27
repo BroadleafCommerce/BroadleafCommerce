@@ -338,4 +338,9 @@ public class OfferServiceImpl implements OfferService {
 		this.promotableItemFactory = promotableItemFactory;
 	}
 
+	@Override
+	public OfferCode findOfferCodeById(Long id) {
+		return offerCodeDao.readOfferCodeById(id);
+	}
+
 }
