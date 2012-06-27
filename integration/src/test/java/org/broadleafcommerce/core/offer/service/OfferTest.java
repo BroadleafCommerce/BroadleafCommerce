@@ -79,7 +79,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Resource
+    @Resource(name = "blLegacyCartService")
     private OrderService orderService;
 
     @Resource
@@ -94,7 +94,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Resource
     private OfferCodeDao offerCodeDao;
     
-    @Resource
+    @Resource(name = "blLegacyOrderItemService")
     private OrderItemService orderItemService;
     
     @Resource

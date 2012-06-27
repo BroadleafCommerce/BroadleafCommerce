@@ -37,7 +37,6 @@ public interface OrderService {
 	// Rethink these
     public Order createNewCartForCustomer(Customer customer);
     public Order findOrderById(Long orderId);
-    public Order getNullOrder();
     public Order findCartForCustomer(Customer customer);
     public List<Order> findOrdersForCustomer(Customer customer);
     public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
@@ -52,6 +51,11 @@ public interface OrderService {
     
     public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
     public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
+    
+    /**
+     * @return a shared, static, unmodifiable NullOrder
+     */
+    public Order getNullOrder();
     
     /**
      * @see #setAutomaticallyMergeLikeItems(boolean)

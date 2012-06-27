@@ -21,13 +21,14 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
 
 import java.util.HashMap;
 
-public interface LegacyOrderItemService {
+public interface LegacyOrderItemService extends OrderItemService {
 
     public DiscreteOrderItem createDiscreteOrderItem(LegacyDiscreteOrderItemRequest itemRequest);
 

@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 import java.util.Iterator;
+import java.util.List;
 
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
@@ -87,7 +90,11 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 		FulfillmentGroup fulfillmentGroup = fulfillmentGroupItemRequest.getFulfillmentGroup();
 		
 		if (order == null) {
-			throw new IllegalArgumentException("Order must not be null");
+			if (item.getOrder() != null) {
+				order = item.getOrder();
+			} else {
+				throw new IllegalArgumentException("Order must not be null");
+			}
 		}
 		
 		//TODO: Hook in fulfillment group strategy
@@ -121,6 +128,31 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
         return fulfillmentGroup;
 	}
+	
+	@Override
+    public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem) {
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            Iterator<FulfillmentGroupItem> itr = fulfillmentGroup.getFulfillmentGroupItems().iterator();
+            while (itr.hasNext()) {
+                FulfillmentGroupItem fulfillmentGroupItem = itr.next();
+                if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
+                    itr.remove();
+                    fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                } else if (orderItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
+                            itr.remove();
+                            fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+	
 	
     protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();

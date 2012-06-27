@@ -70,13 +70,13 @@ public class CheckoutTest extends BaseTest {
     @Resource
     private CustomerService customerService;
     
-    @Resource
+    @Resource(name = "blLegacyCartService")
     private OrderService orderService;
     
     @Resource
     private CatalogService catalogService;
     
-    @Resource
+    @Resource(name = "blLegacyOrderItemService")
     private OrderItemService orderItemService;
 
     @Resource

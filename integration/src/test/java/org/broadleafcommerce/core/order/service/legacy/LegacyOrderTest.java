@@ -76,7 +76,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
     
     @Resource
     private ShippingRateService shippingRateService;
-
+    
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone" })
     @Transactional
     @Rollback(false)
@@ -131,7 +131,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         Order order = cartService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
-        cartService.setAutomaticallyMergeLikeItems(true);
+        cartService.setAutomaticallyMergeLikeItems(true); 
 
         LegacyDiscreteOrderItemRequest itemRequest = new LegacyDiscreteOrderItemRequest();
         itemRequest.setQuantity(1);

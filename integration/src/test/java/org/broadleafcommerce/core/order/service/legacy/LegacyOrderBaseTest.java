@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
@@ -40,6 +41,9 @@ public class LegacyOrderBaseTest extends CommonSetupBaseTest {
 
     @Resource(name = "blLegacyCartService")
     protected LegacyCartService cartService;
+    
+    @Resource(name = "blOrderService")
+    protected OrderService nonLegacyOrderService;
     
     private int bundleCount = 0;
     

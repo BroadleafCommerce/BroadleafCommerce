@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -37,5 +38,7 @@ public interface FulfillmentGroupService {
     public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException;
     
     public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
+
+	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
 
 }

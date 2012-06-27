@@ -25,10 +25,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface LegacyCartService extends LegacyOrderService {
 
-    Order createNewCartForCustomer(Customer customer);
-
-    Order findCartForCustomer(Customer customer);
-
     Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
     
     Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
@@ -76,8 +72,4 @@ public interface LegacyCartService extends LegacyOrderService {
 
     void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
 
-    /**
-     * @return a shared, static, unmodifiable NullOrder
-     */
-	public Order getNullOrder();
 }

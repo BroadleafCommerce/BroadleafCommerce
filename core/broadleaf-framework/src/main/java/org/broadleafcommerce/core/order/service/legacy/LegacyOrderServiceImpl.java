@@ -30,9 +30,6 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
-import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
@@ -48,6 +45,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.OrderServiceImpl;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
@@ -63,7 +61,6 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -78,15 +75,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class LegacyOrderServiceImpl implements LegacyOrderService {
+public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOrderService {
 
     private static final Log LOG = LogFactory.getLog(LegacyOrderServiceImpl.class);
-
-    @Resource(name = "blOrderDao")
-    protected OrderDao orderDao;
-
-    @Resource(name = "blPaymentInfoDao")
-    protected PaymentInfoDao paymentInfoDao;
 
     @Resource(name = "blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
@@ -117,14 +108,6 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
-    
-    @Resource(name = "blOfferService")
-    protected OfferService offerService;
-
-    @Resource(name = "blPricingService")
-    protected PricingService pricingService;
-
-    protected boolean automaticallyMergeLikeItems = true;
 
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -132,22 +115,6 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
         return persistOrder(namedOrder);
-    }
-
-    public Order save(Order order, Boolean priceOrder) throws PricingException {
-        return updateOrder(order, priceOrder);
-    }
-
-    public Order findOrderById(Long orderId) {
-        return orderDao.readOrderById(orderId);
-    }
-
-    public List<Order> findOrdersForCustomer(Customer customer) {
-        return orderDao.readOrdersForCustomer(customer.getId());
-    }
-
-    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status) {
-        return orderDao.readOrdersForCustomer(customer, status);
     }
 
     public Order findNamedOrderForCustomer(String name, Customer customer) {
@@ -217,7 +184,7 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
     }
 
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException {
-        removeOrderItemFromFullfillmentGroup(order, item);
+        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
         itemFromOrder.setOrder(null);
         orderItemService.delete(itemFromOrder);
@@ -230,7 +197,7 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
     }
     
     public Order moveItemToOrder(Order originalOrder, Order destinationOrder, OrderItem item, boolean priceOrder) throws PricingException {
-    	removeOrderItemFromFullfillmentGroup(originalOrder, item);
+    	fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(originalOrder, item);
     	OrderItem itemFromOrder = originalOrder.getOrderItems().remove(originalOrder.getOrderItems().indexOf(item));
     	itemFromOrder.setOrder(null);
     	originalOrder = updateOrder(originalOrder, priceOrder);
@@ -444,32 +411,6 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
         updateOrder(order, priceOrder);
     }
 
-    @Override
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
-        if( !order.getAddedOfferCodes().contains(offerCode)) {
-            if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
-                throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
-            }
-            order.getAddedOfferCodes().add(offerCode);
-            order = updateOrder(order, priceOrder);
-        }
-        return order;
-    }
-
-    @Override
-    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException {
-        order.getAddedOfferCodes().remove(offerCode);
-        order = updateOrder(order, priceOrder);
-        return order;
-    }
-
-    @Override
-    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
-        order.getAddedOfferCodes().clear();
-        order = updateOrder(order, priceOrder);
-        return order;
-    }
-
     public void removeNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = findNamedOrderForCustomer(name, customer);
         cancelOrder(namedOrder);
@@ -479,12 +420,18 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
         return orderDao.submitOrder(order);
     }
 
-    public void cancelOrder(Order order) {
-        orderDao.delete(order);
-    }
-
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
+    }
+    	
+    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
+        orderItems.add(newOrderItem);
+        newOrderItem.setBundleOrderItem(bundle);
+
+        order = updateOrder(order, priceOrder);
+
+        return findLastMatchingItem(order, bundle);
     }
     
     protected boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
@@ -560,7 +507,6 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
         return skuMap.isEmpty();
     }
 
-
     protected OrderItem findLastMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
         for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
             OrderItem currentItem = (order.getOrderItems().get(i));
@@ -611,17 +557,7 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
         }
         return null;
     }
-    	
-    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
-        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
-        orderItems.add(newOrderItem);
-        newOrderItem.setBundleOrderItem(bundle);
 
-        order = updateOrder(order, priceOrder);
-
-        return findLastMatchingItem(order, bundle);
-    }
-    
     public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
         DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
         orderItemService.delete(itemFromBundle);
@@ -787,29 +723,6 @@ public class LegacyOrderServiceImpl implements LegacyOrderService {
         fgi.setOrderItem(orderItem);
         fgi.setQuantity(quantity);
         return fgi;
-    }
-
-    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
-        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
-        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-            Iterator<FulfillmentGroupItem> itr = fulfillmentGroup.getFulfillmentGroupItems().iterator();
-            while (itr.hasNext()) {
-                FulfillmentGroupItem fulfillmentGroupItem = itr.next();
-                if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
-                    itr.remove();
-                    fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
-                } else if (orderItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
-                            itr.remove();
-                            fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     protected LegacyDiscreteOrderItemRequest createDiscreteOrderItemRequest(DiscreteOrderItem discreteOrderItem) {

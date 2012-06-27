@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
+import org.broadleafcommerce.core.order.service.OrderItemServiceImpl;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
@@ -40,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service("blLegacyOrderItemService")
-public class LegacyOrderItemServiceImpl implements LegacyOrderItemService {
+public class LegacyOrderItemServiceImpl extends OrderItemServiceImpl implements LegacyOrderItemService {
 
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;

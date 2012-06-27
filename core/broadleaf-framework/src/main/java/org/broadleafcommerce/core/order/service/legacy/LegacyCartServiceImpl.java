@@ -18,15 +18,15 @@ package org.broadleafcommerce.core.order.service.legacy;
 
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
-import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
-import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -42,38 +42,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Service("blLegacyCartService")
 /*
  * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans
  * that are configured via Spring and property files (i.e. payment modules, etc...)
  */
+@Service("blLegacyCartService")
 @ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
 public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements LegacyCartService {
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
     
-    @Resource(name = "blOfferService")
-    protected OfferService offerService;
-    
-    @Resource(name = "blNullOrderFactory")
-    protected NullOrderFactory nullOrderFactory;
-
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
 
-    public Order createNewCartForCustomer(Customer customer) {
-        return orderDao.createNewCartForCustomer(customer);
-    }
-    
-    public Order getNullOrder() {
-    	return nullOrderFactory.getNullOrder();
-    }
-
-    public Order findCartForCustomer(Customer customer) {
-        return orderDao.readCartForCustomer(customer);
-    }
-    
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
     	return addAllItemsToCartFromNamedOrder(namedOrder, true);
     }
@@ -501,4 +483,20 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
+    
+	@Override
+	public Order addItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
+		return addItemToOrder(order.getId(), orderItemRequest, priceOrder);
+	}
+
+	@Override
+	public Order updateItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
+		updateItemQuantity(order, orderItemRequest);
+		return order;
+	}
+
+	@Override
+	public Order removeItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
+		return removeItemFromOrder(order.getId(), orderItemRequest.getOrderItemId(), priceOrder);
+	}
 }

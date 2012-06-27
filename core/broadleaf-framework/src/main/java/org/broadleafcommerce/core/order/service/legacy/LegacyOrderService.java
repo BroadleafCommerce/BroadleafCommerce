@@ -16,20 +16,18 @@
 
 package org.broadleafcommerce.core.order.service.legacy;
 
-import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
@@ -50,17 +48,9 @@ import java.util.Map;
  * use this service for "named" orders (e.g. wishlists).
  *
  */
-public interface LegacyOrderService {
+public interface LegacyOrderService extends OrderService {
 
     public Order createNamedOrderForCustomer(String name, Customer customer);
-
-    public Order save(Order order, Boolean priceOrder) throws PricingException;
-
-    public Order findOrderById(Long orderId);
-
-    public List<Order> findOrdersForCustomer(Customer customer);
-
-    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
 
     public Order findNamedOrderForCustomer(String name, Customer customer);
 
@@ -165,18 +155,10 @@ public interface LegacyOrderService {
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException;
     
     public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException;
-    
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
-
-    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
-
-    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
 
     public void removeNamedOrderForCustomer(String name, Customer customer);
 
     public Order confirmOrder(Order order);
-
-    public void cancelOrder(Order order);
 
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException;
 
@@ -207,7 +189,6 @@ public interface LegacyOrderService {
      */
     public Order addItemToOrder(Long orderId, OrderItemRequest orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
-    public Order findOrderByOrderNumber (String orderNumber);
 
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
     
@@ -299,25 +280,6 @@ public interface LegacyOrderService {
      * @return
      */
     public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException;
-
-    /**
-     * @see #setAutomaticallyMergeLikeItems(boolean)
-     * @return
-     */
-    public boolean getAutomaticallyMergeLikeItems();
-
-    /**
-     * When set to true, the system when items are added to the cart, they will
-     * automatically be merged.    For example, when a user adds an item to the cart
-     * and then adds the item again, the item will have its quantity changed to 2
-     * instead of the cart containing two separate items.
-     *
-     * If this logic needs to be more complex, it is possible to extend the behavior by
-     * overriding OrderOfferProcessor.buildIdentifier().
-     *
-     * @param automaticallyMergeLikeItems
-     */
-    public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
 
     /* *********************************************************************************
      * DEPRECATED METHODS                                                              *

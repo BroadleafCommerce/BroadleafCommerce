@@ -79,6 +79,13 @@
                         <artifactId>maven-jar-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                            <execution>
                                 <goals>
                                     <goal>test-jar</goal>
                                 </goals>

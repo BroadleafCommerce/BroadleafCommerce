@@ -71,7 +71,7 @@ public class PricingTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Resource(name = "blOrderService")
+    @Resource(name = "blLegacyCartService")
     private OrderService orderService;
 
     @Resource
@@ -80,7 +80,7 @@ public class PricingTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
     
-    @Resource
+    @Resource(name = "blLegacyOrderItemService")
     private OrderItemService orderItemService;
     
     @Resource

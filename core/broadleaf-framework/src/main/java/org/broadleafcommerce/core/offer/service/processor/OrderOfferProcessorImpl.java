@@ -705,13 +705,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                     DiscreteOrderItem delegateItem = myItem.getDelegate();
                     Long delegateItemBundleItemId = getBundleId(delegateItem);
                     if (delegateItemBundleItemId == null) {
-                    	OrderItemRequest orderItemRequest = new OrderItemRequest();
-                    	orderItemRequest.setOrderItemId(delegateItem.getId());
-                        delegateItem = (DiscreteOrderItem) orderService.addItem(order.getDelegate(), orderItemRequest, false);
+                    	delegateItem = (DiscreteOrderItem) addOrderItemToOrder(order.getDelegate(), delegateItem, false);
                         if (targetGroup != null) {
                         	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
                         	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());
                         	fgItemRequest.setOrderItem(delegateItem);
+                        	fgItemRequest.setOrder(order.getDelegate());
+                        	fgItemRequest.setQuantity(delegateItem.getQuantity());
                         	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
                         }
                     } else {
@@ -756,6 +756,15 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 delegateItem.getBundleOrderItem().getDiscreteOrderItems().remove(itemToRemove.getDelegate());
             }
         }
+    }
+    
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        List<OrderItem> orderItems = order.getOrderItems();
+        newOrderItem.setOrder(order);
+        newOrderItem = orderItemService.saveOrderItem(newOrderItem);
+        orderItems.add(newOrderItem);
+        order = orderService.save(order, priceOrder);
+        return newOrderItem;
     }
 
     protected void mergeSplitGiftWrapOrderItems(PromotableOrder order, List<GiftWrapOrderItem> giftWrapItems, PromotableOrderItem itemToRemove, DiscreteOrderItem delegateItem) {
