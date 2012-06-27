@@ -102,11 +102,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Method", order=2, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @Deprecated
     protected String method;
     
     @Column(name = "SERVICE")
     @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Service", order=3, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @Deprecated
     protected String service;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
@@ -281,11 +283,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     @Override
+    @Deprecated
     public String getMethod() {
         return method;
     }
 
     @Override
+    @Deprecated
     public void setMethod(String fulfillmentMethod) {
         this.method = fulfillmentMethod;
     }
@@ -531,11 +535,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 	}
 
 	@Override
+	@Deprecated
     public String getService() {
 		return service;
 	}
 
 	@Override
+	@Deprecated
     public void setService(String service) {
 		this.service = service;
 	}

@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
@@ -26,6 +23,9 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
+
+import java.io.Serializable;
+import java.util.List;
 
 public interface FulfillmentGroup extends Serializable {
 
@@ -51,8 +51,10 @@ public interface FulfillmentGroup extends Serializable {
 
     public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
 
+    @Deprecated
     public String getMethod();
 
+    @Deprecated
     public void setMethod(String fulfillmentMethod);
 
     public Money getRetailShippingPrice();
@@ -209,8 +211,10 @@ public interface FulfillmentGroup extends Serializable {
 
 	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
 
+	@Deprecated
 	public String getService();
 
+	@Deprecated
 	public void setService(String service);
 	
 	public List<DiscreteOrderItem> getDiscreteOrderItems();
