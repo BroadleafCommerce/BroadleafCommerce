@@ -49,7 +49,7 @@ import java.util.List;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_SKU_SURCHARGE")
+@Table(name="BLC_SKU_FEE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SkuFeeImpl implements SkuFee {
 
