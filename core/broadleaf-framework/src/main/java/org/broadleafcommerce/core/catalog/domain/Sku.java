@@ -272,6 +272,20 @@ public interface Sku extends Serializable {
     public void setMachineSortable(Boolean isMachineSortable);
 
     /**
+     * Get the flat fulfillment rate for this Sku
+     * 
+     * @return the cost of fulfilling this Sku
+     */
+    public Money getFlatFulfillmentRate();
+
+    /**
+     * Set the fulfillment rate for this Sku
+     * 
+     * @param flatFulfillmentRate
+     */
+    public void setFlatFulfillmentRateRate(Money flatFulfillmentRate);
+    
+    /**
      * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
      * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
      * 

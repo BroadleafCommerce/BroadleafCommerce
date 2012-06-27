@@ -181,11 +181,14 @@ public class SkuImpl implements Sku {
     
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
-    
 
     @Column(name = "IS_MACHINE_SORTABLE")
     @AdminPresentation(friendlyName = "SkuImpl_Is_Product_Machine_Sortable", order=9, group = "SkuImpl_Product_Description", prominent=false)
     protected Boolean isMachineSortable = true;
+
+    @Column(name = "FLAT_FULFILLMENT_RATE")
+    @AdminPresentation(friendlyName = "Flat Fulfillment Rate", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal flatFulfillmentRate;
 	
     /** The sku images. */
     @CollectionOfElements
@@ -744,7 +747,17 @@ public class SkuImpl implements Sku {
 
     public void setMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
-    }	
+    }
+
+    @Override
+    public Money getFlatFulfillmentRate() {
+        return flatFulfillmentRate == null ? null : new Money(flatFulfillmentRate);
+    }
+
+    @Override
+    public void setFlatFulfillmentRateRate(Money flatFulfillmentRate) {
+        this.flatFulfillmentRate = Money.toAmount(flatFulfillmentRate);
+    }
 
     @Override
     public List<SkuFee> getFees() {
