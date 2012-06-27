@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service;
+package org.broadleafcommerce.profile.web.core.service.legacy;
 
 import java.util.List;
 
@@ -29,12 +29,12 @@ import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
-import org.broadleafcommerce.test.CommonSetupBaseTest;
+import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-public class CustomerAddressTest extends CommonSetupBaseTest {
+public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
 
 	private String userName;
 	private Long userId;

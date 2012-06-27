@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.test;
+package org.broadleafcommerce.test.legacy;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -45,13 +45,14 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
+import org.broadleafcommerce.test.BaseTest;
 
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-public abstract class CommonSetupBaseTest extends BaseTest {
+public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     
 	@Resource
     protected CountryService countryService;

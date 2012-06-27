@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.dao;
+package org.broadleafcommerce.core.order.dao.legacy;
 
 import javax.annotation.Resource;
 
@@ -27,12 +27,12 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.test.CommonSetupBaseTest;
+import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
+public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
 
     private Long defaultFulfillmentGroupOrderId;
     private Long orderId;

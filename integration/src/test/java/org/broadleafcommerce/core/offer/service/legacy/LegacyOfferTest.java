@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service;
+package org.broadleafcommerce.core.offer.service.legacy;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.SkuDaoDataProvider;
@@ -30,6 +30,8 @@ import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
+import org.broadleafcommerce.core.offer.service.CreateOfferUtility;
+import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -54,7 +56,7 @@ import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
-import org.broadleafcommerce.test.CommonSetupBaseTest;
+import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -71,7 +73,7 @@ import java.util.List;
  * here employs some deprecated APIs and should therefore not be
  * used as an example of programatically creating offers.
  */
-public class OfferTest extends CommonSetupBaseTest {
+public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
 
     @Resource
     private OfferService offerService;

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service;
+package org.broadleafcommerce.profile.web.core.service.legacy;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.test.CommonSetupBaseTest;
+import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 import org.testng.annotations.Test;
 
-public class AddressTest extends CommonSetupBaseTest {
+public class LegacyAddressTest extends LegacyCommonSetupBaseTest {
 
     List<Long> addressIds = new ArrayList<Long>();
     String userName = new String();

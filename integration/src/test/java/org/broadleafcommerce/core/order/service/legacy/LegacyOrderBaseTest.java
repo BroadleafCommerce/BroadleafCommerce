@@ -30,14 +30,14 @@ import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderI
 import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.test.CommonSetupBaseTest;
+import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LegacyOrderBaseTest extends CommonSetupBaseTest {
+public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
 
     @Resource(name = "blLegacyCartService")
     protected LegacyCartService cartService;
