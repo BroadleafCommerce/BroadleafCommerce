@@ -46,7 +46,7 @@ import org.broadleafcommerce.openadmin.client.view.Display;
  */
 public class SandBoxPresenter extends AbstractEntityPresenter implements Instantiable {
 
-    private static final CommentDialog COMMENT_DIALOG = new CommentDialog();
+    public static final CommentDialog COMMENT_DIALOG = new CommentDialog();
 
 	protected SandBoxDisplay display;
 	protected ListGridRecord lastSelectedRecord = null;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+    <named-query name="BC_READ_ALL_SYSTEM_PROPERTIES" >
+        <query>SELECT sysProp FROM org.broadleafcommerce.common.config.domain.SystemPropertyImpl sysProp</query>
+    </named-query>
+
+    <named-query name="BC_READ_SYSTEM_PROPERTIES_BY_NAME">
+        <query>SELECT sysProp FROM org.broadleafcommerce.common.config.domain.SystemPropertyImpl sysProp
+                WHERE sysProp.name = :propertyName
+        </query>
+    </named-query>
+
+</entity-mappings>

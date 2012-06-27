@@ -2,8 +2,7 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
@@ -26,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 
@@ -33,7 +33,6 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SkuBundleItemImpl_baseSkuBundleItem")
 public class SkuBundleItemImpl implements SkuBundleItem {
 
     private static final long serialVersionUID = 1L;
@@ -53,13 +52,13 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @Column(name = "QUANTITY")
-    @AdminPresentation(friendlyName = "Quantity")
+    @Column(name = "QUANTITY", nullable=false)
+    @AdminPresentation(friendlyName = "bundleItemQuantity", requiredOverride=RequiredOverride.REQUIRED)
     protected Integer quantity;
 
-    @Column(name = "SALE_PRICE")
-    @AdminPresentation(friendlyName = "Sale Price", fieldType = SupportedFieldType.MONEY)
-    protected BigDecimal salePrice;
+    @Column(name = "ITEM_SALE_PRICE", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "bundleItemSalePrice", tooltip="bundleItemSalePriceTooltip", fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal itemSalePrice;
 
     @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID", referencedColumnName = "PRODUCT_ID")
@@ -109,18 +108,18 @@ public class SkuBundleItemImpl implements SkuBundleItem {
 
     public void setSalePrice(Money salePrice) {
         if (salePrice != null) {
-            this.salePrice = salePrice.getAmount();
+            this.itemSalePrice = salePrice.getAmount();
         } else {
-            this.salePrice = null;
+            this.itemSalePrice = null;
         }
     }
 
 
     public Money getSalePrice() {
-        if (salePrice == null) {
+        if (itemSalePrice == null) {
             return sku.getSalePrice();
         } else {
-            return getDynamicSalePrice(sku, salePrice);
+            return getDynamicSalePrice(sku, itemSalePrice);
         }
     }
 

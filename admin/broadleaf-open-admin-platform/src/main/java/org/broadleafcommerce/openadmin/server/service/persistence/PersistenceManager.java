@@ -68,6 +68,6 @@ public interface PersistenceManager {
 
 	public abstract void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers);
 
-	public abstract void close() throws Exception;
+	//public abstract void close() throws Exception;
 
 }

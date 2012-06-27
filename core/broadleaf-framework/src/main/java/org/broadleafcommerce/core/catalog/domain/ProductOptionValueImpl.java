@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -32,6 +34,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -62,6 +66,10 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Column(name ="DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "Display Order")
     protected Long displayOrder;
+    
+    @Column(name = "PRICE_ADJUSTMENT", precision=19, scale=5)
+    @AdminPresentation(friendlyName="Adjustment", fieldType=SupportedFieldType.MONEY)
+    protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
@@ -86,6 +94,26 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     public void setAttributeValue(String attributeValue) {
         this.attributeValue = attributeValue;
     }
+    
+    @Override
+    public Long getDisplayOrder() {
+        return displayOrder;
+    }
+
+    @Override
+    public void setDisplayOrder(Long displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+    
+    @Override
+    public Money getPriceAdjustment() {
+        return new Money(priceAdjustment);
+    }
+
+    @Override
+    public void setPriceAdjustment(Money priceAdjustment) {
+        this.priceAdjustment = Money.toAmount(priceAdjustment);
+    }
 
     @Override
     public ProductOption getProductOption() {
@@ -97,13 +125,4 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         this.productOption = productOption;
     }
 
-    @Override
-    public Long getDisplayOrder() {
-        return displayOrder;
-    }
-
-    @Override
-    public void setDisplayOrder(Long displayOrder) {
-        this.displayOrder = displayOrder;
-    }
 }

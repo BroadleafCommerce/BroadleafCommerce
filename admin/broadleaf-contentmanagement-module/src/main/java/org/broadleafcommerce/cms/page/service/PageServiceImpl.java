@@ -190,7 +190,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
 
         if (checkForSandboxMatch(page.getSandbox(), destSandbox)) {
             if (page.getDeletedFlag()) {
-                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(page.getSandbox(), SandBoxItemType.PAGE, page.getId());
+                SandBoxItem item = sandBoxItemDao.retrieveBySandboxAndTemporaryItemId(page.getSandbox().getId(), SandBoxItemType.PAGE, page.getId());
                 if (page.getOriginalPageId() == null && item != null) {
                     // This page was added in this sandbox and now needs to be deleted.
                     item.setArchivedFlag(true);

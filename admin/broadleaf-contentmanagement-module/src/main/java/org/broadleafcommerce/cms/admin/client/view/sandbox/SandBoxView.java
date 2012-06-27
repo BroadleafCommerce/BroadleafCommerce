@@ -29,11 +29,7 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.reflection.Instantiable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/22/11
- * Time: 3:48 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay {
 
@@ -126,7 +122,7 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         grid.setCanSort(true);
         grid.setCanResizeFields(true);
         grid.setShowFilterEditor(false);
-        grid.setCanGroupBy(true);
+        //grid.setCanGroupBy(true);
         grid.setGroupByField("groupDescription");
         grid.setDataPageSize(10);
         grid.setAlternateBodyStyleName("editRowDisabled");

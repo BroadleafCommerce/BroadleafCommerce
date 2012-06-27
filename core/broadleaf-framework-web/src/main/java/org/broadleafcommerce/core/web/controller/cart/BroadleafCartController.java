@@ -1,5 +1,7 @@
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -147,4 +149,81 @@ public class BroadleafCartController extends AbstractCartController {
     	return "redirect:/";
 	}
 	
+	/** Attempts to add provided Offer to Cart
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param customerOffer
+	 * @return
+	 * @throws IOException
+	 * @throws PricingException
+	 * @throws ItemNotFoundException
+	 * @throws OfferMaxUseExceededException 
+	 */
+	
+	public String addPromo(HttpServletRequest request, HttpServletResponse response, Model model,
+			String customerOffer) throws IOException, PricingException {
+		Order cart = CartState.getCart(request);
+		
+		Boolean promoAdded = false;
+		String exception = "";
+		
+		OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
+		
+		if(offerCode!=null) {
+			try {
+				orderService.addOfferCode(cart, offerCode, false);
+				promoAdded = true;
+				cart = orderService.save(cart, true);
+			} catch(OfferMaxUseExceededException e) {
+				exception = "Use Limit Exceeded";
+			}
+		} else {
+			exception = "Invalid Code";
+		}
+		
+		CartState.setCart(request, cart);
+		
+		if (isAjaxRequest(request)) {
+			Map<String, Object> extraData = new HashMap<String, Object>();
+			extraData.put("promoAdded", promoAdded);
+			extraData.put("exception" , exception);
+			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
+			return "ajax/cart";
+		} else {
+			return "redirect:/cart";
+		}
+		
+	}
+	
+	/** Removes offer from cart
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param offerId
+	 * @return
+	 * @throws IOException
+	 * @throws PricingException
+	 * @throws ItemNotFoundException
+	 * @throws OfferMaxUseExceededException 
+	 */
+	
+	public String removePromo(HttpServletRequest request, HttpServletResponse response, Model model,
+			Long offerCodeId) throws IOException, PricingException {
+		Order cart = CartState.getCart(request);
+		
+		OfferCode offerCode = offerService.findOfferCodeById(offerCodeId);
+
+		orderService.removeOfferCode(cart, offerCode, false);
+		cart = orderService.save(cart, true);
+		CartState.setCart(request, cart);
+
+		if (isAjaxRequest(request)) {
+			return "ajax/cart";
+		} else {
+			return "redirect:/cart";
+		}	
+	}
 }

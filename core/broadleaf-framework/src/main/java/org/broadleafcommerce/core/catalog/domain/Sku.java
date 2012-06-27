@@ -17,8 +17,8 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -49,6 +49,17 @@ public interface Sku extends Serializable {
      */
     public void setId(Long id);
 
+    /**
+     * This is the sum total of the priceAdjustments from the associated ProductOptionValues
+     * 
+     * @return <b>null</b> if there are no ProductOptionValues associated with this Sku or
+     * all of their priceAdjustments are null. Otherwise this will be the sum total of those price
+     * adjustments
+     * 
+     * @see {@link ProductOptionValue}
+     */
+    public Money getProductOptionValueAdjustments();
+    
     /**
      * Returns the Sale Price of the Sku.  The Sale Price is the standard price the vendor sells
      * this item for.  If {@link SkuPricingConsiderationContext} is set, this uses the DynamicSkuPricingService
@@ -373,5 +384,34 @@ public interface Sku extends Serializable {
      * @param isMachineSortable
      */
     public void setMachineSortable(Boolean isMachineSortable);
+
+    /**
+     * Get the flat fulfillment rate for this Sku
+     * 
+     * @return the cost of fulfilling this Sku
+     */
+    public Money getFlatFulfillmentRate();
+
+    /**
+     * Set the fulfillment rate for this Sku
+     * 
+     * @param flatFulfillmentRate
+     */
+    public void setFlatFulfillmentRateRate(Money flatFulfillmentRate);
+    
+    /**
+     * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
+     * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
+     * 
+     * @return the {@link SkuFee}s for this Sku
+     */
+    public List<SkuFee> getFees();
+
+    /**
+     * Sets the extra fees for this particular Sku
+     * 
+     * @param fees
+     */
+    public void setFees(List<SkuFee> fees);
 
 }

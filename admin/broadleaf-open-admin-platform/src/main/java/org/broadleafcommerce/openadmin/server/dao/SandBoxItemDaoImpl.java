@@ -55,9 +55,9 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
     }
 
     @Override
-    public SandBoxItem retrieveBySandboxAndTemporaryItemId(SandBox sandBox, SandBoxItemType type, Long tempItemId) {
+    public SandBoxItem retrieveBySandboxAndTemporaryItemId(Long sandBoxId, SandBoxItemType type, Long tempItemId) {
         Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_TEMP_ITEM_ID");
-        query.setParameter("sandboxId", sandBox.getId());
+        query.setParameter("sandboxId", sandBoxId);
         query.setParameter("itemType", type.getType());
         query.setParameter("temporaryItemId", tempItemId);
         List<SandBoxItem> items = query.getResultList();
@@ -65,12 +65,21 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
     }
 
     @Override
-    public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
-        addSandBoxItem(sbox, operationType, itemType, description, itemType.getFriendlyType(), temporaryId, originalId);
+    public List<SandBoxItem> retrieveByGroupName(Long sandBoxId, String groupName) {
+        Query query = em.createNamedQuery("BC_READ_SANDBOX_ITEM_BY_GROUP_NAME");
+        query.setParameter("sandboxId", sandBoxId);
+        query.setParameter("groupName", groupName);
+
+        return query.getResultList();
     }
 
     @Override
-    public void addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId) {
+    public SandBoxItem addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId) {
+        return addSandBoxItem(sbox, operationType, itemType, description, itemType.getFriendlyType(), temporaryId, originalId);
+    }
+
+    @Override
+    public SandBoxItem addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding sandbox item.  " + originalId);
         }
@@ -90,7 +99,7 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         sandBoxItem.addSandBoxAction(action);
         action.addSandBoxItem(sandBoxItem);
 
-        em.merge(sandBoxItem);
+        return em.merge(sandBoxItem);
     }
 
     @Override

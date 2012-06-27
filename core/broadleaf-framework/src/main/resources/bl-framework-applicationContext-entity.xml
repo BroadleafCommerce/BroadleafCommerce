@@ -25,6 +25,7 @@
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOptionValue" class="org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.core.catalog.domain.SkuBundleItem" class="org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.core.catalog.domain.SkuFee" class="org.broadleafcommerce.core.catalog.domain.SkuFeeImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
