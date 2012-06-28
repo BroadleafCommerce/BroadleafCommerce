@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.legacy;
 
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -203,45 +201,6 @@ public interface LegacyOrderService extends OrderService {
 	 * @return
 	 */
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
-
-
-    /**
-     * Adds an item to the specified bundle.   This is typically used to manage
-     * bundles that were created programmatically.
-     *
-     * It would not be typical to modify an item in a bundle that was
-     * created from a ProductBundle.
-     *
-     * priceOrder must be set to true for the cart to reflect the
-     * state of the bundle accurately; however, it does not need
-     * to be set here.   The requirement is that a pricing operation
-     * happen between the time the bundle is modified and the time
-     * it is redisplayed.
-     *
-     * @param order
-     * @param bundle
-     * @param newOrderItem
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
-
-    /**
-     * Removes an item from the given bundle.
-     *
-     * You may wish to set priceOrder to false if performing set of
-     * cart operations to avoid the expense of exercising the pricing engine
-     * until you are ready to finalize pricing after adding the last item.
-     *
-     * @param order
-     * @param bundle
-     * @param item
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
 
     /**
      * Adds the passed in name/value pair to the order-item.    If the

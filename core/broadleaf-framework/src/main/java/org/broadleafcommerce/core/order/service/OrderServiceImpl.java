@@ -18,16 +18,10 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.dao.CategoryDao;
-import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
-import org.broadleafcommerce.core.order.dao.OrderItemDao;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -59,18 +53,6 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
 
-    @Resource(name = "blOrderItemDao")
-    protected OrderItemDao orderItemDao;
-    
-    @Resource(name = "blProductDao")
-    protected ProductDao productDao;
-
-    @Resource(name = "blCategoryDao")
-    protected CategoryDao categoryDao;
-
-    @Resource(name = "blSkuDao")
-    protected SkuDao skuDao;
-    
     @Resource(name = "blNullOrderFactory")
     protected NullOrderFactory nullOrderFactory;    
     
@@ -138,9 +120,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public boolean cancelOrder(Order order) {
+	public void cancelOrder(Order order) {
         orderDao.delete(order);
-        return true;
 	}
 
 	@Override
@@ -170,16 +151,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public boolean getAutomaticallyMergeLikeItems() {
 		return automaticallyMergeLikeItems;
 	}
@@ -202,7 +173,7 @@ public class OrderServiceImpl implements OrderService {
 
 
 	@Override
-	public Order updateItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -216,6 +187,5 @@ public class OrderServiceImpl implements OrderService {
         orderItemService.delete(itemFromOrder);
         order = save(order, priceOrder);
         return order;
-		//throw new UnsupportedOperationException();
 	}
 }

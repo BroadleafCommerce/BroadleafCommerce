@@ -490,7 +490,7 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
 	}
 
 	@Override
-	public Order updateItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
 		Order order = findOrderById(orderId);
 		updateItemQuantity(order, orderItemRequestDTO);
 		return order;

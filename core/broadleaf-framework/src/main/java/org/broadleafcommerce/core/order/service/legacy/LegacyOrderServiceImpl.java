@@ -103,7 +103,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
-
+    
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
@@ -429,16 +429,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
     	
-    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
-        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
-        orderItems.add(newOrderItem);
-        newOrderItem.setBundleOrderItem(bundle);
-
-        order = updateOrder(order, priceOrder);
-
-        return findLastMatchingItem(order, bundle);
-    }
-    
     protected boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
         // Must match on SKU and options
         if (item1.getSku() != null && item2.getSku() != null) {
@@ -561,15 +551,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
             }
         }
         return null;
-    }
-
-    public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
-        DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
-        orderItemService.delete(itemFromBundle);
-        itemFromBundle.setBundleOrderItem(null);
-        order = updateOrder(order, priceOrder);
-        
-        return order;
     }
 
     /**

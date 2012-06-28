@@ -60,10 +60,10 @@ public class ItemOfferProcessorTest extends TestCase {
 	private OrderService orderServiceMock;
 	private OrderItemService orderItemServiceMock;
 	private FulfillmentGroupItemDao fgItemDaoMock;
-	private ItemOfferProcessorImpl itemProcessorMock;
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
-	
 	private FulfillmentGroupService fgServiceMock;
+	
+	private ItemOfferProcessorImpl itemProcessor;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -71,16 +71,15 @@ public class ItemOfferProcessorTest extends TestCase {
 		orderServiceMock = EasyMock.createMock(OrderService.class);
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
-		
 		fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
-		itemProcessorMock = EasyMock.createMock(ItemOfferProcessorImpl.class, 
-				ItemOfferProcessorImpl.class.getMethod("addOrderItemToOrder", Order.class, OrderItem.class, Boolean.class));
-		itemProcessorMock.setOfferDao(offerDaoMock);
-		itemProcessorMock.setOrderService(orderServiceMock);
-		itemProcessorMock.setFulfillmentGroupItemDao(fgItemDaoMock);
-		itemProcessorMock.setOrderItemService(orderItemServiceMock);
-		itemProcessorMock.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		itemProcessorMock.setFulfillmentGroupService(fgServiceMock);
+		
+		itemProcessor = new ItemOfferProcessorImpl();
+		itemProcessor.setOfferDao(offerDaoMock);
+		itemProcessor.setOrderService(orderServiceMock);
+		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+		itemProcessor.setOrderItemService(orderItemServiceMock);
+		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+		itemProcessor.setFulfillmentGroupService(fgServiceMock);
 	}
 	
 	public void replay() {
@@ -88,8 +87,6 @@ public class ItemOfferProcessorTest extends TestCase {
 		EasyMock.replay(orderServiceMock);
 		EasyMock.replay(orderItemServiceMock);
 		EasyMock.replay(fgItemDaoMock);
-		
-		EasyMock.replay(itemProcessorMock);
 		EasyMock.replay(fgServiceMock);
 	}
 	
@@ -98,8 +95,6 @@ public class ItemOfferProcessorTest extends TestCase {
 		EasyMock.verify(orderServiceMock);
 		EasyMock.verify(orderItemServiceMock);
 		EasyMock.verify(fgItemDaoMock);
-		
-		EasyMock.verify(itemProcessorMock);
 		EasyMock.verify(fgServiceMock);
 	}
 	
@@ -117,7 +112,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			null
 		);
 
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the valid order item offer is included - legacy format - no qualifier
 		//since there's no qualifier, both items can apply
@@ -130,7 +125,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the valid order item offer is included
 		//there is a qualifier and the item qualifying criteria requires only 1, therefore there will be only one qualifier in the qualifiers map
@@ -144,7 +139,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offers.get(0));
 		
 		//test that the invalid order item offer is excluded
 		assertTrue(qualifiedOffers.size() == 0);
@@ -163,7 +158,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			null
 		);
 
-		boolean couldApply = itemProcessorMock.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableDiscreteOrderItems().get(0), order.getFulfillmentGroups().get(0));
+		boolean couldApply = itemProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableDiscreteOrderItems().get(0), order.getFulfillmentGroups().get(0));
 		//test that the valid order item offer is included
 		assertTrue(couldApply);
 		
@@ -173,7 +168,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			null, 
 			null
 		);
-		couldApply = itemProcessorMock.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableDiscreteOrderItems().get(0), order.getFulfillmentGroups().get(0));
+		couldApply = itemProcessor.couldOfferApplyToOrder(offers.get(0), order, order.getDiscountableDiscreteOrderItems().get(0), order.getFulfillmentGroups().get(0));
 		//test that the invalid order item offer is excluded
 		assertFalse(couldApply);
 		
@@ -191,7 +186,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
 
-		boolean couldApply = itemProcessorMock.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableDiscreteOrderItems().get(0));
+		boolean couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableDiscreteOrderItems().get(0));
 		//test that the valid order item offer is included
 		assertTrue(couldApply);
 		
@@ -201,7 +196,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		couldApply = itemProcessorMock.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableDiscreteOrderItems().get(0));
+		couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableDiscreteOrderItems().get(0));
 		//test that the invalid order item offer is excluded
 		assertFalse(couldApply);
 		
@@ -222,7 +217,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		for (PromotableOrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
 			orderItems.add(orderItem);
 		}
-		CandidatePromotionItems candidates = itemProcessorMock.couldOfferApplyToOrderItems(offers.get(0), orderItems);
+		CandidatePromotionItems candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
 		//test that the valid order item offer is included
 		//both cart items are valid for qualification and target
 		assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1 && candidates.getCandidateQualifiersMap().values().iterator().next().size() == 2 && candidates.isMatchedTarget() && candidates.getCandidateTargets().size() == 2);
@@ -233,7 +228,7 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
 			"([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		);
-		candidates = itemProcessorMock.couldOfferApplyToOrderItems(offers.get(0), orderItems);
+		candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
 		//test that the invalid order item offer is excluded because there are no qualifying items
 		assertFalse(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1);
 		
@@ -247,8 +242,8 @@ public class ItemOfferProcessorTest extends TestCase {
 		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(4);
 		
 		EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
-		EasyMock.expect(itemProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
 		EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
+        EasyMock.expect(orderServiceMock.save(EasyMock.isA(Order.class),EasyMock.isA(Boolean.class))).andAnswer(OfferDataItemProvider.getSaveOrderAnswer()).anyTimes();
 		
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
 
@@ -268,9 +263,9 @@ public class ItemOfferProcessorTest extends TestCase {
 		offer1.setId(1L);
 		
 		List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer1);
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
 		
-		boolean applied = itemProcessorMock.applyAllItemOffers(qualifiedOffers, order);
+		boolean applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order);
 		
 		assertTrue(applied);
 		
@@ -280,11 +275,11 @@ public class ItemOfferProcessorTest extends TestCase {
         offer1.setApplyDiscountToSalePrice(false);
         order.getDiscreteOrderItems().get(0).getDelegate().setSalePrice(new Money(1D));
         order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(1D));
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer1);
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);
 		
 
 		
-		applied = itemProcessorMock.applyAllItemOffers(qualifiedOffers, order);
+		applied = itemProcessor.applyAllItemOffers(qualifiedOffers, order);
 		
 		assertFalse(applied);
 		
@@ -319,15 +314,15 @@ public class ItemOfferProcessorTest extends TestCase {
 		offer2.setId(2L);
 		
 		List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer1);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);		
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offer1) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer2);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer2);		
 		assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(1).getOffer().equals(offer2) && qualifiedOffers.get(1).getCandidateQualifiersMap().size() == 1);
 		
-		int appliedCount = itemProcessorMock.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
+		int appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		assertTrue(appliedCount == 1);
 		
-		appliedCount = itemProcessorMock.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		//the first offer is not combinable, the a new adjustment will not be created for the second offer
 		assertTrue(appliedCount == 1);
@@ -335,8 +330,8 @@ public class ItemOfferProcessorTest extends TestCase {
 		order.removeAllAdjustments();
 		
 		offer1.setCombinableWithOtherOffers(true);
-		appliedCount = itemProcessorMock.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
-		appliedCount = itemProcessorMock.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		//the first offer is now combinable, so both offer may be applied
 		assertTrue(appliedCount == 2);
@@ -346,12 +341,12 @@ public class ItemOfferProcessorTest extends TestCase {
 		offer1.setCombinableWithOtherOffers(false);
         offer1.setApplyDiscountToSalePrice(false);
 		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(new Money(10D));
-		appliedCount = itemProcessorMock.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
+		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		
 		//the first offer is not combinable and the discount is less than the sale price
 		assertTrue(appliedCount == 0);
 		
-		appliedCount = itemProcessorMock.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 
 		//since the non-combinable offer was removed, the second offer is now available to be applied
 		assertTrue(appliedCount == 1);
@@ -361,11 +356,11 @@ public class ItemOfferProcessorTest extends TestCase {
 		offer1.setCombinableWithOtherOffers(true);
 		order.getDiscreteOrderItems().get(1).getDelegate().setSalePrice(null);
 		offer2.setStackable(false);
-		appliedCount = itemProcessorMock.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
+		appliedCount = itemProcessor.applyAdjustments(order, 0, qualifiedOffers.get(0), 0);
 		
 		assertTrue(appliedCount == 1);
 		
-		appliedCount = itemProcessorMock.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
+		appliedCount = itemProcessor.applyAdjustments(order, appliedCount, qualifiedOffers.get(1), appliedCount);
 		
 		assertTrue(appliedCount == 2);
 		
@@ -404,16 +399,16 @@ public class ItemOfferProcessorTest extends TestCase {
 			"([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
 		).get(0);
 		
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer1);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer1);		
 		assertTrue(qualifiedOffers.size() == 1 && qualifiedOffers.get(0).getOffer().equals(offer1) && qualifiedOffers.get(0).getCandidateQualifiersMap().size() == 1);
 		
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer2);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer2);		
 		assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(1).getOffer().equals(offer2) && qualifiedOffers.get(1).getCandidateQualifiersMap().size() == 0);
 		
-		itemProcessorMock.filterItemLevelOffer(order, qualifiedOffers, offer3);		
+		itemProcessor.filterItemLevelOffer(order, qualifiedOffers, offer3);		
 		assertTrue(qualifiedOffers.size() == 3 && qualifiedOffers.get(2).getOffer().equals(offer3) && qualifiedOffers.get(2).getCandidateQualifiersMap().size() == 1);
 		
-		itemProcessorMock.applyItemQualifiersAndTargets(qualifiedOffers.get(1), order);
+		itemProcessor.applyItemQualifiersAndTargets(qualifiedOffers.get(1), order);
 		
 		List<PromotableOrderItem> orderItems = new ArrayList<PromotableOrderItem>();
 		for (PromotableOrderItem orderItem : order.getDiscountableDiscreteOrderItems()) {
@@ -432,7 +427,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		assertTrue(qualCount == 0 && targetCount == 4);
 		assertTrue(order.getAllSplitItems().size() == 3);
 		
-		itemProcessorMock.applyItemQualifiersAndTargets(qualifiedOffers.get(0), order);
+		itemProcessor.applyItemQualifiersAndTargets(qualifiedOffers.get(0), order);
 		
 		qualCount = 0;
 		targetCount = 0;
@@ -447,7 +442,7 @@ public class ItemOfferProcessorTest extends TestCase {
 		assertTrue(qualCount == 1 && targetCount == 5);
 		assertTrue(order.getSplitItems().size() == 2 && order.getSplitItems().get(0).getSplitItems().size() == 2 && order.getSplitItems().get(1).getSplitItems().size() == 2);
 		
-		itemProcessorMock.applyItemQualifiersAndTargets(qualifiedOffers.get(2), order);
+		itemProcessor.applyItemQualifiersAndTargets(qualifiedOffers.get(2), order);
 		
 		qualCount = 0;
 		targetCount = 0;

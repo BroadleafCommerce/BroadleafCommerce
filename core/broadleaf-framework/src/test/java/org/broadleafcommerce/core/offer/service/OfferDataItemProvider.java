@@ -121,7 +121,22 @@ public class OfferDataItemProvider {
 	public static IAnswer<OrderItem> getSaveOrderItemAnswer() {
 		return new IAnswer<OrderItem>() {
 			public OrderItem answer() throws Throwable {
-				return (OrderItem) EasyMock.getCurrentArguments()[0];
+				OrderItem orderItem = (OrderItem) EasyMock.getCurrentArguments()[0];
+				if (orderItem.getId() == null) {
+					orderItem.setId(getOrderItemId());
+				}
+				return orderItem;
+			}
+		};
+	}
+	
+	public static IAnswer<Order> getSaveOrderAnswer() {
+		return new IAnswer<Order>() {
+			public Order answer() throws Throwable {
+				Order order = (Order) EasyMock.getCurrentArguments()[0];
+				order.setId(getOrderId());
+				orders.put(order.getId(), order);
+				return order;
 			}
 		};
 	}

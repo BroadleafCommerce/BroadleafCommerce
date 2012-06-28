@@ -33,8 +33,11 @@ import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessorImpl;
+import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessorImpl;
+import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
@@ -72,9 +75,6 @@ public class OfferServiceTest extends TestCase {
 	private FulfillmentGroupItemDao fgItemDaoMock;
 	private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
 	
-	private OrderOfferProcessorImpl orderProcessorMock;
-	private ItemOfferProcessorImpl itemProcessorMock;
-	private FulfillmentGroupOfferProcessorImpl fgProcessorMock;
 	private FulfillmentGroupService fgServiceMock;
 	
 	@Override
@@ -89,37 +89,34 @@ public class OfferServiceTest extends TestCase {
 		orderServiceMock = EasyMock.createMock(OrderService.class);
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
-		
 		fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
-		orderProcessorMock = EasyMock.createMock(OrderOfferProcessorImpl.class, 
-				OrderOfferProcessorImpl.class.getMethod("addOrderItemToOrder", Order.class, OrderItem.class, Boolean.class));
-		orderProcessorMock.setOfferDao(offerDaoMock);
-		orderProcessorMock.setOrderService(orderServiceMock);
-		orderProcessorMock.setFulfillmentGroupItemDao(fgItemDaoMock);
-		orderProcessorMock.setOrderItemService(orderItemServiceMock);
-		orderProcessorMock.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		orderProcessorMock.setFulfillmentGroupService(fgServiceMock);
-		offerService.setOrderOfferProcessor(orderProcessorMock);
 		
-		itemProcessorMock = EasyMock.createMock(ItemOfferProcessorImpl.class, 
-				ItemOfferProcessorImpl.class.getMethod("addOrderItemToOrder", Order.class, OrderItem.class, Boolean.class));
-		itemProcessorMock.setOfferDao(offerDaoMock);
-		itemProcessorMock.setOrderService(orderServiceMock);
-		itemProcessorMock.setFulfillmentGroupItemDao(fgItemDaoMock);
-		itemProcessorMock.setOrderItemService(orderItemServiceMock);
-		itemProcessorMock.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		itemProcessorMock.setFulfillmentGroupService(fgServiceMock);
-		offerService.setItemOfferProcessor(itemProcessorMock);
+		OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
+		orderProcessor.setOfferDao(offerDaoMock);
+		orderProcessor.setOrderService(orderServiceMock);
+		orderProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+		orderProcessor.setOrderItemService(orderItemServiceMock);
+		orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+		orderProcessor.setFulfillmentGroupService(fgServiceMock);
+		offerService.setOrderOfferProcessor(orderProcessor);
 		
-		fgProcessorMock = EasyMock.createMock(FulfillmentGroupOfferProcessorImpl.class, 
-				FulfillmentGroupOfferProcessorImpl.class.getMethod("addOrderItemToOrder", Order.class, OrderItem.class, Boolean.class));
-		fgProcessorMock.setOfferDao(offerDaoMock);
-		fgProcessorMock.setOrderService(orderServiceMock);
-		fgProcessorMock.setFulfillmentGroupItemDao(fgItemDaoMock);
-		fgProcessorMock.setOrderItemService(orderItemServiceMock);
-		fgProcessorMock.setPromotableItemFactory(new PromotableItemFactoryImpl());
-		fgProcessorMock.setFulfillmentGroupService(fgServiceMock);
-		offerService.setFulfillmentGroupOfferProcessor(fgProcessorMock);
+		ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
+		itemProcessor.setOfferDao(offerDaoMock);
+		itemProcessor.setOrderService(orderServiceMock);
+		itemProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+		itemProcessor.setOrderItemService(orderItemServiceMock);
+		itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+		itemProcessor.setFulfillmentGroupService(fgServiceMock);
+		offerService.setItemOfferProcessor(itemProcessor);
+		
+		FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();
+		fgProcessor.setOfferDao(offerDaoMock);
+		fgProcessor.setOrderService(orderServiceMock);
+		fgProcessor.setFulfillmentGroupItemDao(fgItemDaoMock);
+		fgProcessor.setOrderItemService(orderItemServiceMock);
+		fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+		fgProcessor.setFulfillmentGroupService(fgServiceMock);
+		offerService.setFulfillmentGroupOfferProcessor(fgProcessor);
 		offerService.setPromotableItemFactory(new PromotableItemFactoryImpl());
 	}
 	
@@ -131,9 +128,6 @@ public class OfferServiceTest extends TestCase {
 		EasyMock.replay(orderItemServiceMock);
 		EasyMock.replay(fgItemDaoMock);
 		
-		EasyMock.replay(orderProcessorMock);
-		EasyMock.replay(itemProcessorMock);
-		EasyMock.replay(fgProcessorMock);
 		EasyMock.replay(fgServiceMock);
 	}
 	
@@ -145,9 +139,6 @@ public class OfferServiceTest extends TestCase {
 		EasyMock.verify(orderItemServiceMock);
 		EasyMock.verify(fgItemDaoMock);
 		
-		EasyMock.verify(orderProcessorMock);
-		EasyMock.verify(itemProcessorMock);
-		EasyMock.verify(fgProcessorMock);
 		EasyMock.verify(fgServiceMock);
 	}
 	
@@ -163,10 +154,8 @@ public class OfferServiceTest extends TestCase {
 		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(orderItemAdjustmentAnswer).atLeastOnce();
 		
 		EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
-		EasyMock.expect(orderProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
-		EasyMock.expect(itemProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
-		EasyMock.expect(fgProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
 		EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
+        EasyMock.expect(orderServiceMock.save(EasyMock.isA(Order.class),EasyMock.isA(Boolean.class))).andAnswer(OfferDataItemProvider.getSaveOrderAnswer()).anyTimes();
 		
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
 		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
@@ -310,13 +299,11 @@ public class OfferServiceTest extends TestCase {
 		EasyMock.expect(offerDaoMock.createOrderItemAdjustment()).andAnswer(answer2).times(2);
 		
         EasyMock.expect(orderServiceMock.getAutomaticallyMergeLikeItems()).andReturn(true).anyTimes();
+        EasyMock.expect(orderServiceMock.save(EasyMock.isA(Order.class),EasyMock.isA(Boolean.class))).andAnswer(OfferDataItemProvider.getSaveOrderAnswer()).anyTimes();
 		EasyMock.expect(orderItemServiceMock.saveOrderItem(EasyMock.isA(OrderItem.class))).andAnswer(OfferDataItemProvider.getSaveOrderItemAnswer()).anyTimes();
 		EasyMock.expect(fgItemDaoMock.save(EasyMock.isA(FulfillmentGroupItem.class))).andAnswer(OfferDataItemProvider.getSaveFulfillmentGroupItemAnswer()).anyTimes();
 		
 		EasyMock.expect(fgServiceMock.addItemToFulfillmentGroup(EasyMock.isA(FulfillmentGroupItemRequest.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddItemToFulfillmentGroupAnswer()).anyTimes();
-		EasyMock.expect(orderProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
-		EasyMock.expect(itemProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
-		EasyMock.expect(fgProcessorMock.addOrderItemToOrder(EasyMock.isA(Order.class), EasyMock.isA(OrderItem.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getAddOrderItemToOrderAnswer()).anyTimes();
 		EasyMock.expect(orderServiceMock.removeItem(EasyMock.isA(Long.class), EasyMock.isA(Long.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getRemoveItemFromOrderAnswer()).anyTimes();
 		
 		replay();

@@ -18,10 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -43,16 +40,54 @@ public interface OrderService {
     public Order findOrderByOrderNumber(String orderNumber);
     public List<PaymentInfo>findPaymentInfosForOrder(Order order);
     public Order save(Order order, Boolean priceOrder) throws PricingException;
-    public boolean cancelOrder(Order order);
-    
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
-    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
-    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
-    
-    public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
-    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
     
     /**
+     * Deletes the given order. Note that the default implementation in OrderServiceImpl
+     * will actually remove the Order instance 
+     * @param order
+     */
+    public void cancelOrder(Order order);
+    
+    /**
+     * Adds the given OfferCode to the order. Optionally prices the order as well
+     * 
+     * @param order
+     * @param offerCode
+     * @param priceOrder
+     * @return the modified Order
+     * @throws PricingException
+     * @throws OfferMaxUseExceededException
+     */
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+    
+    /**
+     * Remove the given OfferCode for the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCode 
+     * @param priceOrder
+     * @return the modified Order
+     * @throws PricingException
+     */
+    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
+    
+    /**
+     * Removes all offer codes for the given order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param priceOrder
+     * @return the modified Order
+     * @throws PricingException
+     */
+    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
+    
+    /**
+     * The null order is the default order for all customers when they initially
+     * enter the site. Upon the first addition of a product to a cart, a non-null order
+     * will be provisioned for the user.
+     * 
+     * @see org.broadleafcommerce.core.order.domain.NullOrderImpl for more information
+     * 
      * @return a shared, static, unmodifiable NullOrder
      */
     public Order getNullOrder();
@@ -66,7 +101,7 @@ public interface OrderService {
 
     /**
      * When set to true, the system when items are added to the cart, they will
-     * automatically be merged.    For example, when a user adds an item to the cart
+     * automatically be merged. For example, when a user adds an item to the cart
      * and then adds the item again, the item will have its quantity changed to 2
      * instead of the cart containing two separate items.
      *
@@ -78,7 +113,9 @@ public interface OrderService {
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
     
     /**
-     * Merge the anonymous cart with the customer's cart taking into consideration sku activation
+     * Merges the anonymous cart with the customer's current cart, taking into consideration the active
+     * status of the SKUs to merge. For example, if the customer had a SKU in their anonymous cart that is no longer
+     * active, it will not be merged into the new cart.
      * 
      * @param customer the customer whose cart is to be merged
      * @param anonymousCartId the anonymous cart id
@@ -87,9 +124,12 @@ public interface OrderService {
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
     
     /**
-     * Adds an item to the passed in order.
+     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
+     * to the Order. The item to be added can be determined in a few different ways. For example, the 
+     * SKU can be specified directly or it can be determine based on a Product and potentially some
+     * specified ProductOptions for that given product.
      *
-     * Minimum required parameters for OrderItemRequest: productId, quantity
+     * The minimum required parameters for OrderItemRequest are: productId, quantity
      *
      * When priceOrder is false, the system will not reprice the order.   This is more performant in
      * cases such as bulk adds where the repricing could be done for the last item only.
@@ -103,8 +143,8 @@ public interface OrderService {
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
     
     /**
-     * From the given OrderItemRequest object, this will look through the order's DiscreteOrderItems
-     * to find the item with the matching orderItemId and update this item's quantity.
+     * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
+     * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO
      * 
      * Minimum required parameters for OrderItemRequest: orderItemId, quantity
      * 
@@ -116,10 +156,11 @@ public interface OrderService {
      * @throws ItemNotFoundException
      * @throws PricingException
      */
-	public Order updateItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException;
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException;
 	
     /**
-     * Removes the given orderItemId from the Order that matches the orderId
+     * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
+     * the given Order
      * 
      * @see OrderItemRequestDTO
      * @param orderId

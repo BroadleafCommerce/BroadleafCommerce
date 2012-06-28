@@ -84,7 +84,7 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, PricingException, ItemNotFoundException {
 		Order cart = CartState.getCart(request);
 		
-		cart = orderService.updateItem(cart.getId(), itemRequest, false);
+		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart, true);
 		CartState.setCart(request, cart);
 		

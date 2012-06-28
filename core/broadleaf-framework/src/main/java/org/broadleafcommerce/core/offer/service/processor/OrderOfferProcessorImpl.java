@@ -405,7 +405,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 					throw new PricingException("Could not remove item", e);
 				}
             } else {
-                orderService.removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
+            	removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
             }
         }
     }
@@ -483,7 +483,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 					throw new PricingException("Could not remove item", e);
 				}
             } else {
-                orderService.removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
+                removeItemFromBundle(order, orderItem.getBundleOrderItem(), orderItem, false);
             }
         }
     }
@@ -705,7 +705,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                         	fulfillmentGroupService.addItemToFulfillmentGroup(fgItemRequest, false);
                         }
                     } else {
-                        delegateItem = (DiscreteOrderItem) orderService.addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
+                        delegateItem = addOrderItemToBundle(order.getDelegate(), delegateItem.getBundleOrderItem(), delegateItem, false);
                     }
                     myItem.setDelegate(delegateItem);
                 }
@@ -736,7 +736,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
             if (delegateItem.getBundleOrderItem() == null) {
 	        	try {
-	        		orderService.removeItem(order.getDelegate().getId(), itemToRemove.getDelegate().getId(), false);
+	        		orderService.removeItem(order.getDelegate().getId(), delegateItem.getId(), false);
 				} catch (ItemNotFoundException e) {
 					throw new PricingException("Could not remove item", e);
 				}
@@ -746,13 +746,30 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
     
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, Boolean priceOrder) throws PricingException {
+    protected OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, Boolean priceOrder) throws PricingException {
         List<OrderItem> orderItems = order.getOrderItems();
         newOrderItem.setOrder(order);
         newOrderItem = orderItemService.saveOrderItem(newOrderItem);
         orderItems.add(newOrderItem);
         order = orderService.save(order, priceOrder);
         return newOrderItem;
+    }
+    
+    protected DiscreteOrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
+        newOrderItem.setBundleOrderItem(bundle);
+        newOrderItem = (DiscreteOrderItem) orderItemService.saveOrderItem(newOrderItem);
+        orderItems.add(newOrderItem);
+        order = orderService.save(order, priceOrder);
+        return newOrderItem;
+    }
+
+    protected Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
+        DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
+        orderItemService.delete(itemFromBundle);
+        itemFromBundle.setBundleOrderItem(null);
+        order = orderService.save(order, priceOrder);
+        return order;
     }
 
     protected void mergeSplitGiftWrapOrderItems(PromotableOrder order, List<GiftWrapOrderItem> giftWrapItems, PromotableOrderItem itemToRemove, DiscreteOrderItem delegateItem) {

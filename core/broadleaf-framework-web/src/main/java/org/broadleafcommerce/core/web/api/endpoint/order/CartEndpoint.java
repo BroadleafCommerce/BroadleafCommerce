@@ -209,7 +209,7 @@ public class CartEndpoint implements ApplicationContextAware {
                 	OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
                 	orderItemRequestDTO.setOrderItemId(itemId);
                 	orderItemRequestDTO.setQuantity(quantity);
-                    Order order = orderService.updateItem(cart.getId(), orderItemRequestDTO, priceOrder);
+                    Order order = orderService.updateItemQuantity(cart.getId(), orderItemRequestDTO, priceOrder);
                     order = orderService.save(order, priceOrder);
 
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
