@@ -38,6 +38,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -50,6 +51,7 @@ import javax.persistence.EntityManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -103,6 +105,31 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 	public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
 		return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
 	}
+
+    public Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException {
+        return getUpDownInheritance(Class.forName(testClassname));
+    }
+
+    public Class<?>[] getUpDownInheritance(Class<?> testClass) {
+        Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
+        Class<?> topConcreteClass = pEntities[pEntities.length - 1];
+        List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
+        temp.addAll(Arrays.asList(pEntities));
+        Collections.reverse(temp);
+        boolean eof = false;
+        while (!eof) {
+            Class<?> superClass = topConcreteClass.getSuperclass();
+            PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(superClass.getName());
+            if (persistentClass == null) {
+                eof = true;
+            } else {
+                temp.add(0, superClass);
+                topConcreteClass = superClass;
+            }
+        }
+
+        return temp.toArray(new Class<?>[temp.size()]);
+    }
 
 	@Override
 	public Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException {

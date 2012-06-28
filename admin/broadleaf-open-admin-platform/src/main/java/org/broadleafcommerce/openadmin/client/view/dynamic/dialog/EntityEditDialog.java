@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.dialog;
 
-import java.util.Map;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -45,6 +43,8 @@ import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormBuilder;
+
+import java.util.Map;
 
 /**
  * 
@@ -216,7 +216,7 @@ public class EntityEditDialog extends Window {
             previewImg.setImageWidth(60);
         } else if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".gif") || url.endsWith(".png")) {
             String srcPath;
-            if (!url.contains(BLCMain.assetServerUrlPrefix)) {
+            if (BLCMain.assetServerUrlPrefix != null && !url.contains(BLCMain.assetServerUrlPrefix)) {
                 srcPath = BLCMain.buildStoreFrontBaseUrl(url);
                 previewImg.setImageHeight(60);
                 previewImg.setImageWidth(60);

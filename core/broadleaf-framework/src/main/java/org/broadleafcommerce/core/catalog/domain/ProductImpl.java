@@ -16,35 +16,12 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javassist.expr.NewArray;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.Archivable;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -62,11 +39,39 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -91,7 +96,8 @@ import org.hibernate.annotations.Type;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_baseProduct")
-public class ProductImpl implements Product {
+@SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
+public class ProductImpl implements Product, Archivable {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -252,6 +258,16 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
+
+    @Transient
+    protected List<RelatedProduct> filteredCrossSales = null;
+
+    @Transient
+    protected List<RelatedProduct> filteredUpSales = null;
+
+
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.Product#getId()
@@ -341,6 +357,9 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.core.catalog.domain.Product#getActiveStartDate()
      */
     public Date getActiveStartDate() {
+        if ('Y'==getArchived()) {
+            return null;
+        }
         return activeStartDate;
     }
 
@@ -381,8 +400,11 @@ public class ProductImpl implements Product {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("product, " + id + ", inactive due to date");
             }
+            if ('Y'==getArchived()) {
+                LOG.debug("product, " + id + ", inactive due to archived status");
+            }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true) && 'Y'!=getArchived();
     }
 
     public String getModel() {
@@ -545,7 +567,17 @@ public class ProductImpl implements Product {
     }
 
     public List<RelatedProduct> getCrossSaleProducts() {
-        return crossSaleProducts;
+        if (filteredCrossSales == null && crossSaleProducts != null) {
+            filteredCrossSales = new ArrayList<RelatedProduct>(crossSaleProducts.size());
+            filteredCrossSales.addAll(crossSaleProducts);
+            CollectionUtils.filter(crossSaleProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y'!=((Archivable)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                }
+            });
+        }
+        return filteredCrossSales;
     }
 
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
@@ -556,7 +588,17 @@ public class ProductImpl implements Product {
     }
 
     public List<RelatedProduct> getUpSaleProducts() {
-        return upSaleProducts;
+        if (filteredUpSales == null && upSaleProducts != null) {
+            filteredUpSales = new ArrayList<RelatedProduct>(upSaleProducts.size());
+            filteredUpSales.addAll(upSaleProducts);
+            CollectionUtils.filter(upSaleProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y'!=((Archivable)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                }
+            });
+        }
+        return filteredUpSales;
     }
 
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
@@ -605,7 +647,23 @@ public class ProductImpl implements Product {
 		this.displayTemplate = displayTemplate;
 	}
 
-	@Override
+    @Override
+    public Character getArchived() {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        return archiveStatus.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
