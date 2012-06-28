@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -30,20 +31,28 @@ public class FulfillmentServiceImpl implements FulfillmentService {
 
     @Override
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
+        //TODO: throw exception if a FulfillmentOption is not associated to the fulfillmentGroup
+        /*
         if (fulfillmentGroup.getFulfillmentOption() == null) {
             throw new ShippingPriceException("FulfillmentGroups must have a FulfillmentOption associated with them in order to price the FulfillmentGroup");
         }
-        
+        */
         for (FulfillmentProcessor processor : fulfillmentProcessors) {
             if (processor.canCalculateCostForFulfillmentGroup(fulfillmentGroup)) {
                 return processor.calculateCostForFulfillmentGroup(fulfillmentGroup);
             }
         }
-        
-        //no processor was found, throw that up the stack
+        //TODO: remove this section after FulfillmentProcessor implementations
+        fulfillmentGroup.setShippingPrice(new Money(0));
+        fulfillmentGroup.setSaleShippingPrice(new Money(0));
+        fulfillmentGroup.setRetailShippingPrice(new Money(0));
+        return fulfillmentGroup;
+        //TODO: throw exception here since there wasn't a valid Processor found
+        /*
         throw new ShippingPriceException("No valid processor was found to calculate the FulfillmentGroup cost with " +
         		"FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() + 
         				" and name: " + fulfillmentGroup.getFulfillmentOption().getName());
+        */
     }
     
     @Override
