@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.core.pricing.dao;
 
-import java.math.BigDecimal;
-
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 
+import java.math.BigDecimal;
+
+@Deprecated
 public interface ShippingRateDao {
 
     public ShippingRate save(ShippingRate shippingRate);
