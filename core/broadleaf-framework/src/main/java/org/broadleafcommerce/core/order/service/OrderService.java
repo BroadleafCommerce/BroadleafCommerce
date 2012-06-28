@@ -29,21 +29,104 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.List;
 
+/**
+ * The general interface for interacting with shopping carts and completed Orders.
+ * 
+ * @author apazzolini
+ */
 public interface OrderService {
 
-	// Rethink these
+	/**
+	 * Creates a new Order for the given customer. Generally, you will want to use the customer
+	 * that is on the current request, which can be grabbed by utilizing the CustomerState 
+	 * utility class.
+	 * 
+	 * The default Broadleaf implementation of this method will provision a new Order in the 
+	 * database and set the current customer as theowner of the order. If the customer has an 
+	 * email address associated with their profile, that will be copied as well. If the customer
+	 * is a new, anonymous customer, his username will be set to his database id.
+	 * 
+	 * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
+	 * 
+	 * @param customer
+	 * @return
+	 */
     public Order createNewCartForCustomer(Customer customer);
+    
+    /**
+     * Looks up an Order by its database id
+     * 
+     * @param orderId
+     * @return the requested Order
+     */
     public Order findOrderById(Long orderId);
+    
+    /**
+     * Looks up the current shopping cart for the customer. Note that a shopping cart is
+     * simply an Order with OrderStatus = IN_PROCESS. If for some reason the given customer
+     * has more than one current IN_PROCESS Order, the default Broadleaf implementation will
+     * return the first match found. Furthermore, also note that the current shopping cart
+     * for a customer must never be named -- an Order with a non-null "name" property indicates
+     * that it is a wishlist and not a shopping cart.
+     * 
+     * @param customer
+     * @return the current shopping cart for the customer
+     */
     public Order findCartForCustomer(Customer customer);
+    
+    /**
+     * Looks up all Orders for the specified customer, regardless of current OrderStatus
+     * 
+     * @param customer
+     * @return the requested Orders
+     */
     public List<Order> findOrdersForCustomer(Customer customer);
+    
+    /**
+     * Looks up all Orders for the specified customer that are in the specified OrderStatus.
+     * 
+     * @param customer
+     * @param status
+     * @return the requested Orders
+     */
     public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
+    
+    /**
+     * Looks up Orders and returns the order matching the given orderNumber
+     * 
+     * @param orderNumber
+     * @return the requested Order
+     */
     public Order findOrderByOrderNumber(String orderNumber);
+    
+    /**
+     * Returns all PaymentInfo objects that are associated with the given order
+     * 
+     * @param order
+     * @return the list of all PaymentInfo objects
+     */
     public List<PaymentInfo>findPaymentInfosForOrder(Order order);
+    
+    /**
+     * Persists the given order to the database. If the priceOrder flag is set to true,
+     * the pricing workflow will execute before the order is written to the database.
+     * Generally, you will want to price the order in every request scope once, and
+     * preferrably on the last call to save() for performance reasons.
+     * 
+     * However, if you have logic that depends on the Order being priced, there are no
+     * issues with saving as many times as necessary.
+     * 
+     * @param order
+     * @param priceOrder
+     * @return the persisted Order, which will be a different instance than the Order passed in
+     * @throws PricingException
+     */
     public Order save(Order order, Boolean priceOrder) throws PricingException;
     
     /**
-     * Deletes the given order. Note that the default implementation in OrderServiceImpl
-     * will actually remove the Order instance 
+     * Deletes the given order. Note that the default Broadleaf implementation in 
+     * OrderServiceImpl will actually remove the Order instance from the database.
+     * 
      * @param order
      */
     public void cancelOrder(Order order);
