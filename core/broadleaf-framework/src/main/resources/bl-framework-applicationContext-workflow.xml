@@ -39,8 +39,8 @@
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.AutoBundleActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity"/>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingActivity">
-                    <property name="shippingService" ref="blShippingService"/>
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentActivity">
+                    <property name="fulfillmentService" ref="blFulfillmentService"/>
                 </bean>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>
 				<bean class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
@@ -58,7 +58,7 @@
 
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
-	<bean id="blShippingService" class="org.broadleafcommerce.core.pricing.service.ShippingServiceImpl">
+	<bean id="blFulfillmentService" class="org.broadleafcommerce.core.pricing.service.FulfillmentServiceImpl">
 		<property name="shippingModule" ref="blShippingModule"/>
 	</bean>
 	
