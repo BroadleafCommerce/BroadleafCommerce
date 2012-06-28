@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.Archivable;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
@@ -680,7 +680,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
         boolean isArchivable = false;
         for (Class<?> entity : entities) {
-            if (Archivable.class.isAssignableFrom(entity)) {
+            if (Status.class.isAssignableFrom(entity)) {
                 isArchivable = true;
                 break;
             }
@@ -688,7 +688,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         if (isArchivable) {
             SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
                 public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return Restrictions.or(Restrictions.eq(targetPropertyName, false), Restrictions.isNull(targetPropertyName));
+                    return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
                 }
             };
             FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
@@ -879,7 +879,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
             boolean isArchivable = false;
             for (Class<?> entity : entities) {
-                if (Archivable.class.isAssignableFrom(entity)) {
+                if (Status.class.isAssignableFrom(entity)) {
                     isArchivable = true;
                     break;
                 }
@@ -887,7 +887,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (isArchivable) {
                 SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
                     public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                        return Restrictions.or(Restrictions.eq(targetPropertyName, false), Restrictions.isNull(targetPropertyName));
+                        return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
                     }
                 };
                 FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);

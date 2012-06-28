@@ -20,7 +20,7 @@ import net.sf.cglib.core.CollectionUtils;
 import net.sf.cglib.core.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.Archivable;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -39,14 +39,12 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -97,7 +95,7 @@ import java.util.Map;
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
-public class ProductImpl implements Product, Archivable {
+public class ProductImpl implements Product, Status {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -573,7 +571,7 @@ public class ProductImpl implements Product, Archivable {
             CollectionUtils.filter(crossSaleProducts, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
-                    return 'Y'!=((Archivable)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                    return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
                 }
             });
         }
@@ -594,7 +592,7 @@ public class ProductImpl implements Product, Archivable {
             CollectionUtils.filter(upSaleProducts, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
-                    return 'Y'!=((Archivable)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                    return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
                 }
             });
         }

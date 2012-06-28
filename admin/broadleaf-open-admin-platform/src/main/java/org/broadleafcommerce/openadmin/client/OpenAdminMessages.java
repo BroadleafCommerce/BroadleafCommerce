@@ -120,4 +120,5 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String workflowEnabledPreProcessTitle();
     public String ejb3ConfigurationPreProcessTitle();
     public String resetDataTitle();
+    public String lockedMessage();
 }

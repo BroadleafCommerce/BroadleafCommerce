@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
-import org.broadleafcommerce.common.persistence.Archivable;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -44,7 +44,6 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -78,7 +77,7 @@ import java.util.Map;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "CategoryImpl_baseCategory")
 @SQLDelete(sql="UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
-public class CategoryImpl implements Category, Archivable {
+public class CategoryImpl implements Category, Status {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -482,7 +481,7 @@ public class CategoryImpl implements Category, Archivable {
             CollectionUtils.filter(featuredProducts, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
-                    return 'Y' != ((Archivable) ((FeaturedProduct) arg).getProduct()).getArchived();
+                    return 'Y' != ((Status) ((FeaturedProduct) arg).getProduct()).getArchived();
                 }
             });
         }
