@@ -39,7 +39,7 @@
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.AutoBundleActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity"/>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentActivity">
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity">
                     <property name="fulfillmentService" ref="blFulfillmentService"/>
                 </bean>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>
@@ -59,7 +59,8 @@
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
 	<bean id="blFulfillmentService" class="org.broadleafcommerce.core.pricing.service.FulfillmentServiceImpl">
-		<property name="shippingModule" ref="blShippingModule"/>
+	   <!-- TODO: add in the list of default processors to the processors property -->
+	   <!-- <property name="shippingModule" ref="blShippingModule"/> -->
 	</bean>
 	
 	<bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">

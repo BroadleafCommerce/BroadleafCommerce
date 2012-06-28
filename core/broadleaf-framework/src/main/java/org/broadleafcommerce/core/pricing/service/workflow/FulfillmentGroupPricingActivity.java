@@ -23,7 +23,15 @@ import org.broadleafcommerce.core.pricing.service.FulfillmentService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-public class FulfillmentActivity extends BaseActivity {
+/**
+ * Called during the pricing workflow to compute all of the fulfillment costs
+ * for all of the FulfillmentGroups on an Order and updates Order with the
+ * total price of all of the FufillmentGroups
+ * 
+ * @author Phillip Verheyden
+ * @see {@link FulfillmentGroup}, {@link Order}
+ */
+public class FulfillmentGroupPricingActivity extends BaseActivity {
 
     private FulfillmentService fulfillmentService;
 
@@ -43,7 +51,7 @@ public class FulfillmentActivity extends BaseActivity {
 
         Money totalShipping = new Money(0D);
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            fulfillmentGroup = fulfillmentService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+            fulfillmentGroup = fulfillmentService.calculateCostForFulfillmentGroup(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
         }
         order.setTotalShipping(totalShipping);
