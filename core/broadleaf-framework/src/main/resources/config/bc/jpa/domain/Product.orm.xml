@@ -26,21 +26,24 @@
 		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product, IN(product.allSkus) sku
 		WHERE sku.id = :skuId
 		AND product.activeStartDate &lt;= :currentDate
-		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)</query>
+		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)
+        AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')</query>
 	</named-query>
 	
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE" >
 		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.ProductSku product
 		WHERE product.sku.id = :skuId
 		AND product.activeStartDate &lt;= :currentDate
-		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)</query>
+		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)
+        AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')</query>
 	</named-query>
 
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
    		<query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundle productBundle
    		WHERE productBundle.autoBundle = :autoBundle
    		AND productBundle.activeStartDate &lt;= :currentDate
-   		AND (productBundle.activeEndDate &gt; :currentDate OR productBundle.activeEndDate = null)</query>
+   		AND (productBundle.activeEndDate &gt; :currentDate OR productBundle.activeEndDate = null)
+        AND (productBundle.archiveStatus.archived IS NULL OR productBundle.archiveStatus.archived = 'N')</query>
    	</named-query>
 
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
@@ -48,6 +51,7 @@
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
 		AND categoryProduct.categoryProductXref.product.activeStartDate &lt;= :currentDate
 		AND (categoryProduct.categoryProductXref.product.activeEndDate &gt; :currentDate OR categoryProduct.categoryProductXref.product.activeEndDate = null)
+        AND (categoryProduct.categoryProductXref.product.archiveStatus.archived IS NULL OR categoryProduct.categoryProductXref.product.archiveStatus.archived = 'N')
 		ORDER BY categoryProduct.displayOrder
 		</query>
 	</named-query>
