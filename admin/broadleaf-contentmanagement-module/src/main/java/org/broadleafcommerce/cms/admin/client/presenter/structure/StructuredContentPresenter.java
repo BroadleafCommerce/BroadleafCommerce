@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.admin.client.presenter.structure;
 
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -33,7 +34,11 @@ import com.smartgwt.client.widgets.form.events.FilterChangedEvent;
 import com.smartgwt.client.widgets.form.events.FilterChangedHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
 import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.CanvasItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+
 import org.broadleafcommerce.cms.admin.client.datasource.structure.CustomerListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.structure.ProductListDataSourceFactory;
@@ -63,6 +68,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.FilterStateRunnable;
 import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
 
 /**
@@ -187,9 +193,20 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
                 if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
                     formOnlyView.getForm().enable();
                 }
-                for (FormItem formItem : formOnlyView.getForm().getFields()) {
-                    if (formItem instanceof RichTextCanvasItem) {
-                        formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
+                for (final FormItem formItem : formOnlyView.getForm().getFields()) {
+                 	if (formItem instanceof HTMLTextItem) {
+                		((HTMLTextItem)	formItem).setHTMLValue((formOnlyView.getForm().getValue(formItem.getFieldName()))!=null?formOnlyView.getForm().getValue(formItem.getFieldName()).toString():"");
+
+                         	((HTMLTextItem)	formItem).addAssetHandler(new Command() {
+
+                         	@Override
+                         	public void execute() {
+                         		displayAssetSearchDialogFromCKEditor(((HTMLTextItem)	formItem));
+                         	}
+                         	});
+                         	//need to disable again in case the htmltextitem enabled the form on setting the value
+                            getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                            getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
                     }
                 }
                 if (cb != null) {
@@ -314,8 +331,8 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
         }
 
         for (FormItem formItem : legacyForm.getForm().getFields()) {
-            if (formItem instanceof RichTextCanvasItem) {
-                formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
+            if (formItem instanceof CanvasItem) {
+            	((HTMLTextItem)	formItem).setHTMLValue((legacyForm.getForm().getValue(formItem.getFieldName()))!=null?legacyForm.getForm().getValue(formItem.getFieldName()).toString():"");
             }
         }
         resetButtons();

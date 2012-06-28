@@ -16,26 +16,7 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.DataSource;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.rpc.RPCResponse;
-import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.util.BooleanCallback;
-import com.smartgwt.client.util.SC;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.FetchDataEvent;
-import com.smartgwt.client.widgets.events.FetchDataHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
-import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
-import com.smartgwt.client.widgets.form.fields.FormItem;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSourceFactory;
@@ -52,8 +33,34 @@ import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
+
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
+import com.smartgwt.client.data.Criteria;
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.rpc.RPCResponse;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
+import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
+import com.smartgwt.client.widgets.form.fields.CanvasItem;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.form.fields.events.ShowValueEvent;
+import com.smartgwt.client.widgets.form.fields.events.ShowValueHandler;
 
 /**
  * 
@@ -122,6 +129,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
                     }
                 });
+                
                 formOnlyView.setID("pageTemplateForm");
                 formOnlyView.setOverflow(Overflow.VISIBLE);
                 ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).addMember(formOnlyView);
@@ -133,11 +141,25 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                         if (!selectedRecord.getAttributeAsBoolean("lockedFlag")) {
                             formOnlyView.getForm().enable();
                         }
-                        for (FormItem formItem : formOnlyView.getForm().getFields()) {
-                            if (formItem instanceof RichTextCanvasItem) {
-                                formItem.setValue(formOnlyView.getForm().getValue(formItem.getFieldName()));
+                        for (final FormItem formItem : formOnlyView.getForm().getFields()) {
+                        	if (formItem instanceof HTMLTextItem) {
+                        		((HTMLTextItem)	formItem).setHTMLValue((formOnlyView.getForm().getValue(formItem.getFieldName()))!=null?formOnlyView.getForm().getValue(formItem.getFieldName()).toString():"");
+                        		
+
+                                 	((HTMLTextItem)	formItem).addAssetHandler(new Command() {
+		
+                                 	@Override
+                                 	public void execute() {
+                                 		displayAssetSearchDialogFromCKEditor(((HTMLTextItem)	formItem));
+                                 	}
+                                 	});
+                                 	//need to disable again in case the htmltextitem enabled the form on setting the value
+                                    getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+                                    getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
                             }
                         }
+                      
+                        
                     }
                 });
             }
@@ -147,11 +169,12 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
     @Override
 	public void bind() {
 		super.bind();
+           
         getSaveButtonHandlerRegistration().removeHandler();
         formPresenter.getRefreshButtonHandlerRegistration().removeHandler();
         refreshButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
+				
 					getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().reset();
                     FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
                     if (legacyForm != null) {
@@ -159,13 +182,13 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                     }
 
                     for (FormItem formItem : legacyForm.getForm().getFields()) {
-                        if (formItem instanceof RichTextCanvasItem) {
-                            formItem.setValue(legacyForm.getForm().getValue(formItem.getFieldName()));
+                        if (formItem instanceof CanvasItem) {
+                        	((HTMLTextItem)	formItem).setHTMLValue((legacyForm.getForm().getValue(formItem.getFieldName()))!=null?legacyForm.getForm().getValue(formItem.getFieldName()).toString():"");
                         }
                     }
 					getDisplay().getDynamicFormDisplay().getSaveButton().disable();
                     getDisplay().getDynamicFormDisplay().getRefreshButton().disable();
-				}
+			
 			}
         });
         saveButtonHandlerRegistration = getDisplay().getDynamicFormDisplay().getSaveButton().addClickHandler(new ClickHandler() {
@@ -183,9 +206,12 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                                 FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("pageTemplateForm");
                                 final DynamicForm form = legacyForm.getForm();
                                 for (FormItem formItem : form.getFields()) {
-                                    if (formItem instanceof RichTextCanvasItem) {
-                                        form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
-                                    }
+//                                    if (formItem instanceof RichTextCanvasItem) {
+//                                        form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
+//                                    }
+                                	 if (formItem instanceof HTMLTextItem) { 
+                                		 form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
+                                	 }
                                 }
                                 PageTemplateFormListDataSource dataSource = (PageTemplateFormListDataSource) form.getDataSource();
                                 dataSource.setCustomCriteria(new String[]{"constructForm", newId});

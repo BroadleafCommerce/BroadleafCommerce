@@ -18,6 +18,8 @@ package org.broadleafcommerce.cms.admin.client.presenter;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.smartgwt.client.data.DataSource;
+
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGridDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
@@ -27,6 +29,7 @@ import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPres
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,7 +46,7 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
         return null;
     }
 
-	public void displayAssetSearchDialog(final JavaScriptObject editor) {
+	public void displayAssetSearchDialogFromCKEditor(final JavaScriptObject editor) {
 		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
 			@Override
 			public void onSearchItemSelected(TileGridItemSelected event) {
@@ -57,9 +60,30 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 				} else {
 					richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
 				}
-				insertRichTextContent(editor, richContent);
+				insertRichTextContentIntoCKEDitor(editor, richContent);
                 getDisplay().getDynamicFormDisplay().getSaveButton().enable();
                 getDisplay().getDynamicFormDisplay().getRefreshButton().enable();
+			}
+		});
+	}
+	public void displayAssetSearchDialogFromCKEditor(final HTMLTextItem item) {
+		assetSearchDialogView.search("Asset Search", new TileGridItemSelectedHandler() {
+			@Override
+			public void onSearchItemSelected(TileGridItemSelected event) {
+				
+				String staticAssetFullUrl = BLCMain.assetServerUrlPrefix + event.getRecord().getAttribute("fullUrl");
+				String name = event.getRecord().getAttribute("name");
+				String fileExtension = event.getRecord().getAttribute("fileExtension");
+				String richContent;
+
+				if (fileExtension.equals("gif") || fileExtension.equals("jpg") || fileExtension.equals("png")) {
+					richContent =  "<img title='" + name + "' src='" + staticAssetFullUrl + "' alt='" + name + "'/>";
+				} else {
+					richContent = "<a href='" + staticAssetFullUrl + "'>" + name + "</a>";
+				}
+				LogFactory.getLog(this.getClass()).info("inserting from dialog...."+fileExtension+" "+name +" "+staticAssetFullUrl);
+				item.insertAsset(fileExtension,name,staticAssetFullUrl);
+             
 			}
 		});
 	}
@@ -73,15 +97,21 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 
 	private native void exposeNativeDisplayAssetSearchDialog() /*-{
 		var currentPagesPresenter = this;
-		$wnd.displayAssetSearchDialog = function(editor) {
-			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::displayAssetSearchDialog(Lcom/google/gwt/core/client/JavaScriptObject;)(editor);
+	    $wnd.displayAssetSearchDialogFromCKEditor = function(editor) {
+			return currentPagesPresenter.@org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter::displayAssetSearchDialogFromCKEditor(Lcom/google/gwt/core/client/JavaScriptObject;)(editor);
 		}
+
 	}-*/;
 
-	private native void insertRichTextContent(JavaScriptObject tinyMCEEditor, String content) /*-{
-		tinyMCEEditor.selection.setContent(content);
-	}-*/;
-
+	private native void insertRichTextContentIntoCKEDitor(JavaScriptObject ckEditor, String content) /*-{
+	//console.log('inserting text into ckEditor: '+content);
+	//console.log('editor='+ckEditor);
+	// window.parent.printMembers(ckEditor);
+	if (ckEditor!=null && (content!=null)) {
+	   ckEditor.insertHtml(content);
+	}
+	//console.log('finished inserting text into ckEditor');
+}-*/;
     protected String getAdminContext() {
         return BLCMain.adminContext;
     }
@@ -118,9 +148,9 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
     @Override
     public void bind() {
         super.bind();
-        exposeNativeGetTemplatePath();
-        exposeNativeDisplayAssetSearchDialog();
-        exposeNativeGetPreviewUrlPrefix();
-        exposeNativeAdminContext();
+//        exposeNativeGetTemplatePath();
+//        exposeNativeDisplayAssetSearchDialog();
+//        exposeNativeGetPreviewUrlPrefix();
+//        exposeNativeAdminContext();
     }
 }

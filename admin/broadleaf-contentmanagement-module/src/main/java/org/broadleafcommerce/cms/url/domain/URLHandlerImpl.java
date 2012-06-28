@@ -48,7 +48,7 @@ public class URLHandlerImpl implements URLHandler,java.io.Serializable {
 	@AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = "URLHandlerImpl_friendyName", prominent=true, groupOrder=1)
 		    protected String newURL;
 	    @Column(name = "URL_REDIRECT_TYPE")
-	    @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order=4, group = "URLHandlerImpl_friendyName", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.cms.url.URLRedirectType", groupOrder=2)
+	    @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order=4, group = "URLHandlerImpl_friendyName", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.cms.url.type.URLRedirectType", groupOrder=2)
 	    protected String urlRedirectType;
 		
 

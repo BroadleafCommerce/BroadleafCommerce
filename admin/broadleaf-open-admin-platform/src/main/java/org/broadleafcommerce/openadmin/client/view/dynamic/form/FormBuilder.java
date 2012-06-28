@@ -536,34 +536,16 @@ public class FormBuilder {
 			((PasswordItem) formItem).setLength(field.getLength());
 			break;
         case HTML:
-        	RichTextCanvasItem richTextCanvasItem = new RichTextCanvasItem();
-        	RichTextHTMLPane richTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getHtmlEditorIFramePath(), form);
-            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
-                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
-            }
-        	richTextHTMLPane.setWidth(700);
-        	richTextHTMLPane.setHeight(450);
-            richTextHTMLPane.setContentsType(ContentsType.PAGE);
-            //richTextHTMLPane.init();
-        	richTextCanvasItem.setCanvas(richTextHTMLPane);
-            richTextCanvasItem.setShowTitle(true);
-        	
-        	formItem = richTextCanvasItem;
+        	 HTMLTextItem cItem=new HTMLTextItem();
+             formItem=cItem;
+             cItem.setShowTitle(false);
+             cItem.setColSpan(2);
             break;
         case HTML_BASIC:
-        	RichTextCanvasItem basicRichTextCanvasItem = new RichTextCanvasItem();
-        	RichTextHTMLPane basicRichTextHTMLPane = new RichTextHTMLPane(((HtmlEditingModule) BLCMain.getModule(BLCMain.currentModuleKey)).getBasicHtmlEditorIFramePath(), form);
-            if (!(BLCMain.getModule(BLCMain.currentModuleKey) instanceof HtmlEditingModule)) {
-                throw new RuntimeException("An Html editing item was found in the form, but the current module is not of the type org.broadleafcommerce.openadmin.client.HtmlEditingModule");
-            }
-        	basicRichTextHTMLPane.setWidth(300);
-        	basicRichTextHTMLPane.setHeight(175);
-            basicRichTextHTMLPane.setContentsType(ContentsType.PAGE);
-            //basicRichTextHTMLPane.init();
-        	basicRichTextCanvasItem.setCanvas(basicRichTextHTMLPane);
-            basicRichTextCanvasItem.setShowTitle(true);
-        	
-        	formItem = basicRichTextCanvasItem;
+        	 HTMLTextItem cItem2=new HTMLTextItem();
+             formItem=cItem2;
+             cItem2.setShowTitle(false);
+             cItem2.setColSpan(2);
         	break;
         case UPLOAD:
             formItem = new UploadItem();
