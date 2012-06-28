@@ -22,11 +22,11 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
@@ -56,9 +56,9 @@ public interface LegacyOrderService extends OrderService {
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
-    public OrderItem addGiftWrapItemToOrder(Order order, LegacyGiftWrapOrderItemRequest itemRequest) throws PricingException;
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;
     
-    public OrderItem addGiftWrapItemToOrder(Order order, LegacyGiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     /**
      * Used to create dynamic bundles groupings of order items.
@@ -72,7 +72,7 @@ public interface LegacyOrderService extends OrderService {
      * @return
      * @throws PricingException
      */
-    public OrderItem addBundleItemToOrder(Order order, LegacyBundleOrderItemRequest itemRequest) throws PricingException;
+    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException;
 
     /**
      * Used to create dynamic bundles groupings of order items.
@@ -90,7 +90,7 @@ public interface LegacyOrderService extends OrderService {
      * @return
      * @throws PricingException
      */
-    public OrderItem addBundleItemToOrder(Order order, LegacyBundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
 
@@ -142,11 +142,11 @@ public interface LegacyOrderService extends OrderService {
      * the quantity field in the OrderItemRequestDTO.
      * 
      * @param order
-     * @param item
+     * @param orderItemRequestDTO
      * @throws ItemNotFoundException
      * @throws PricingException
      */
-	public void updateItemQuantity(Order order, OrderItemRequest item) throws ItemNotFoundException, PricingException;
+	public void updateItemQuantity(Order order, OrderItemRequestDTO orderItemRequestDTO) throws ItemNotFoundException, PricingException;
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
     
@@ -182,19 +182,19 @@ public interface LegacyOrderService extends OrderService {
      * When priceOrder is false, the system will not reprice the order.   This is more performant in
      * cases such as bulk adds where the repricing could be done for the last item only.
      *
-     * @see OrderItemRequest
+     * @see OrderItemRequestDTO
      * @param orderItemRequestDTO
      * @param priceOrder
      * @return
      */
-    public Order addItemToOrder(Long orderId, OrderItemRequest orderItemRequestDTO, boolean priceOrder) throws PricingException;
+    public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
 
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
     
 	/**
 	 * Not typically used in versions since 1.7.
-	 * See: {@link #addItemToOrder(Long, OrderItemRequest, boolean)}
+	 * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
 	 * 
 	 * @param skuId
 	 * @param productId
@@ -202,7 +202,7 @@ public interface LegacyOrderService extends OrderService {
 	 * @param quantity
 	 * @return
 	 */
-    public LegacyDiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
 
 
     /**
@@ -293,7 +293,7 @@ public interface LegacyOrderService extends OrderService {
      * @throws PricingException
      */
     @Deprecated
-    public OrderItem addDiscreteItemToOrder(Order order, LegacyDiscreteOrderItemRequest itemRequest) throws PricingException;
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException;
 
     /**
      * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
@@ -308,7 +308,7 @@ public interface LegacyOrderService extends OrderService {
      * @throws PricingException
      */
     @Deprecated
-    public OrderItem addDiscreteItemToOrder(Order order, LegacyDiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     /**
      * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
@@ -396,7 +396,7 @@ public interface LegacyOrderService extends OrderService {
      * @throws PricingException
      */
     @Deprecated
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, LegacyDiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
 
     /**
      * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
@@ -408,6 +408,6 @@ public interface LegacyOrderService extends OrderService {
      * @throws PricingException
      */
     @Deprecated
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, LegacyDiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
 
 }

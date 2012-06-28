@@ -96,7 +96,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
     @Resource
     private OfferCodeDao offerCodeDao;
     
-    @Resource(name = "blLegacyOrderItemService")
+    @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
     
     @Resource

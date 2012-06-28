@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.web.order.model;
 
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
-public class AddToCartItem extends OrderItemRequest {
+public class AddToCartItem extends OrderItemRequestDTO {
     private Long orderId;
 
     public Long getOrderId() {

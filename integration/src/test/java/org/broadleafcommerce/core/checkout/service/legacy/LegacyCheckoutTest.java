@@ -77,7 +77,7 @@ public class LegacyCheckoutTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
     
-    @Resource(name = "blLegacyOrderItemService")
+    @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
     @Resource

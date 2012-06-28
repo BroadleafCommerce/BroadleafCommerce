@@ -23,7 +23,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -94,13 +94,13 @@ public interface OrderService {
      * When priceOrder is false, the system will not reprice the order.   This is more performant in
      * cases such as bulk adds where the repricing could be done for the last item only.
      *
-     * @see OrderItemRequest
+     * @see OrderItemRequestDTO
      * @param orderId
      * @param orderItemRequest
      * @param priceOrder
      * @return the order the item was added to
      */
-    public Order addItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException;
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
     
     /**
      * From the given OrderItemRequest object, this will look through the order's DiscreteOrderItems
@@ -108,7 +108,7 @@ public interface OrderService {
      * 
      * Minimum required parameters for OrderItemRequest: orderItemId, quantity
      * 
-     * @see OrderItemRequest
+     * @see OrderItemRequestDTO
      * @param orderId
      * @param orderItemRequest
      * @param priceOrder
@@ -116,12 +116,12 @@ public interface OrderService {
      * @throws ItemNotFoundException
      * @throws PricingException
      */
-	public Order updateItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException;
+	public Order updateItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException;
 	
     /**
      * Removes the given orderItemId from the Order that matches the orderId
      * 
-     * @see OrderItemRequest
+     * @see OrderItemRequestDTO
      * @param orderId
      * @param orderItemId
      * @param priceOrder

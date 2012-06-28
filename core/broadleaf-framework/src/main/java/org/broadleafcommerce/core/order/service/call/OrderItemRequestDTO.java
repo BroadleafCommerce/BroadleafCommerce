@@ -28,7 +28,7 @@ import java.util.Map;
  * the sku can be determined from the product's default sku.
  *
  */
-public class OrderItemRequest {
+public class OrderItemRequestDTO {
 
     private Long skuId;
     private Long categoryId;

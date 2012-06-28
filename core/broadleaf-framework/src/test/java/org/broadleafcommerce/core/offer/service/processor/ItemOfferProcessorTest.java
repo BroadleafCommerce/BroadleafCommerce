@@ -41,7 +41,6 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
 
@@ -69,7 +68,7 @@ public class ItemOfferProcessorTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		offerDaoMock = EasyMock.createMock(OfferDao.class);
-		orderServiceMock = EasyMock.createMock(LegacyCartService.class);
+		orderServiceMock = EasyMock.createMock(OrderService.class);
 		orderItemServiceMock = EasyMock.createMock(OrderItemService.class);
 		fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
 		

@@ -25,9 +25,9 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyGiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
@@ -168,18 +168,18 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
     	return order;
     }
     
-    public LegacyBundleOrderItemRequest createBundleOrderItemRequest() {
+    public BundleOrderItemRequest createBundleOrderItemRequest() {
         Product screwProduct = addTestProduct("Bookshelf", "Components");
         Product shelfProduct = addTestProduct("Bookshelf", "Components");
         Product bracketsProduct = addTestProduct("Bookshelf", "Components");
         Category category = screwProduct.getDefaultCategory();
         
-        List<LegacyDiscreteOrderItemRequest> discreteOrderItems = new ArrayList<LegacyDiscreteOrderItemRequest>();
+        List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
         discreteOrderItems.add(createDiscreteOrderItemRequest(screwProduct, screwProduct.getDefaultSku(), 20));
         discreteOrderItems.add(createDiscreteOrderItemRequest(shelfProduct, shelfProduct.getDefaultSku(), 3));
         discreteOrderItems.add(createDiscreteOrderItemRequest(bracketsProduct, bracketsProduct.getDefaultSku(), 6));
         
-        LegacyBundleOrderItemRequest itemRequest = new LegacyBundleOrderItemRequest();
+        BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
         itemRequest.setCategory(category);
         itemRequest.setName("test bundle " + bundleCount++);
         itemRequest.setQuantity(1);
@@ -187,18 +187,18 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
         return itemRequest;
     }
     
-    public LegacyBundleOrderItemRequest createBundleOrderItemRequestWithInactiveSku() {
+    public BundleOrderItemRequest createBundleOrderItemRequestWithInactiveSku() {
     	Product drawerProduct = addTestProduct("Drawer System", "Systems");
     	Product nailsProduct = addTestProduct("Drawer System", "Systems");
     	Product tracksProduct = addTestProduct("Drawer System", "Systems", false);
     	Category category = drawerProduct.getDefaultCategory();
     	
-    	List<LegacyDiscreteOrderItemRequest> discreteOrderItems = new ArrayList<LegacyDiscreteOrderItemRequest>();
+    	List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
     	discreteOrderItems.add(createDiscreteOrderItemRequest(drawerProduct, drawerProduct.getDefaultSku(), 20));
     	discreteOrderItems.add(createDiscreteOrderItemRequest(nailsProduct, nailsProduct.getDefaultSku(), 3));
     	discreteOrderItems.add(createDiscreteOrderItemRequest(tracksProduct, tracksProduct.getDefaultSku(), 6));
     	
-    	LegacyBundleOrderItemRequest itemRequest = new LegacyBundleOrderItemRequest();
+    	BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
     	itemRequest.setCategory(category);
     	itemRequest.setName("test bundle " + bundleCount++);
     	itemRequest.setQuantity(1);
@@ -206,8 +206,8 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
     	return itemRequest;
     }
     
-    public LegacyDiscreteOrderItemRequest createDiscreteOrderItemRequest(Product product, Sku sku, int quantity) {
-    	LegacyDiscreteOrderItemRequest request = new LegacyDiscreteOrderItemRequest();
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Product product, Sku sku, int quantity) {
+    	DiscreteOrderItemRequest request = new DiscreteOrderItemRequest();
         request.setSku(sku);
         request.setQuantity(quantity);
         request.setProduct(product);
@@ -215,8 +215,8 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
         return request;
     }
 
-    public LegacyGiftWrapOrderItemRequest createGiftWrapOrderItemRequest(Product product, Sku sku, int quantity, List<OrderItem> wrappedItems) {
-        LegacyGiftWrapOrderItemRequest request = new LegacyGiftWrapOrderItemRequest();
+    public GiftWrapOrderItemRequest createGiftWrapOrderItemRequest(Product product, Sku sku, int quantity, List<OrderItem> wrappedItems) {
+        GiftWrapOrderItemRequest request = new GiftWrapOrderItemRequest();
         request.setSku(sku);
         request.setQuantity(quantity);
         request.setProduct(product);
@@ -236,12 +236,12 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
         Product giftWrapProduct = addTestProduct("Gift Box", "Gift Wraps");
         Category category = newProduct.getDefaultCategory();
 
-        List<LegacyDiscreteOrderItemRequest> discreteOrderItems = new ArrayList<LegacyDiscreteOrderItemRequest>();
+        List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
         discreteOrderItems.add(createDiscreteOrderItemRequest(newProduct, newProduct.getDefaultSku(), 1));
         discreteOrderItems.add(createDiscreteOrderItemRequest(newInactiveProduct, newInactiveProduct.getDefaultSku(), 1));
         discreteOrderItems.add(createGiftWrapOrderItemRequest(giftWrapProduct, giftWrapProduct.getDefaultSku(), 1, new ArrayList<OrderItem>()));
 
-        LegacyBundleOrderItemRequest itemRequest = new LegacyBundleOrderItemRequest();
+        BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
         itemRequest.setCategory(category);
         itemRequest.setName("test bundle " + bundleCount++);
         itemRequest.setQuantity(1);
@@ -271,7 +271,7 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
 
         Order order = cartService.createNewCartForCustomer(customer);
 
-        LegacyBundleOrderItemRequest itemRequest = createBundleOrderItemRequestWithGiftWrap();
+        BundleOrderItemRequest itemRequest = createBundleOrderItemRequestWithGiftWrap();
 
         BundleOrderItem newBundle = (BundleOrderItem) cartService.addBundleItemToOrder(order, itemRequest);
         List<OrderItem> addedItems = new ArrayList<OrderItem>();
@@ -292,18 +292,18 @@ public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
         return order;
     }
 
-    protected LegacyBundleOrderItemRequest createBundleOrderItemRequestWithGiftWrap() {
+    protected BundleOrderItemRequest createBundleOrderItemRequestWithGiftWrap() {
         Product newProduct = addTestProduct("Plastic Crate", "Crates");
         Product newActiveProduct = addTestProduct("Plastic Crate", "Crates");
         Product giftWrapProduct = addTestProduct("Gift Box", "Gift Wraps");
         Category category = newProduct.getDefaultCategory();
 
-        List<LegacyDiscreteOrderItemRequest> discreteOrderItems = new ArrayList<LegacyDiscreteOrderItemRequest>();
+        List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
         discreteOrderItems.add(createDiscreteOrderItemRequest(newProduct, newProduct.getDefaultSku(), 1));
         discreteOrderItems.add(createDiscreteOrderItemRequest(newActiveProduct, newActiveProduct.getDefaultSku(), 1));
         discreteOrderItems.add(createGiftWrapOrderItemRequest(giftWrapProduct, giftWrapProduct.getDefaultSku(), 1, new ArrayList<OrderItem>()));
 
-        LegacyBundleOrderItemRequest itemRequest = new LegacyBundleOrderItemRequest();
+        BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
         itemRequest.setCategory(category);
         itemRequest.setName("test bundle " + bundleCount++);
         itemRequest.setQuantity(1);

@@ -67,7 +67,7 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
     @Resource
     protected CatalogService catalogService;
 
-    @Resource(name = "blLegacyOrderItemService")
+    @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
     private Order createTestOrderWithOfferAndGiftWrap() throws PricingException {

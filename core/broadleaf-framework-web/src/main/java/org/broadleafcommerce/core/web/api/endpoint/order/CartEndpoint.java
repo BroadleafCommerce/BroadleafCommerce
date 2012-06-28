@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
@@ -141,13 +141,13 @@ public class CartEndpoint implements ApplicationContextAware {
             Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                	OrderItemRequest orderItemRequest = new OrderItemRequest();
-                	orderItemRequest.setCategoryId(categoryId);
-                	orderItemRequest.setProductId(productId);
-                	orderItemRequest.setSkuId(skuId);
-                	orderItemRequest.setCategoryId(categoryId);
-                	orderItemRequest.setQuantity(quantity);
-                    Order order = orderService.addItem(cart.getId(), orderItemRequest, priceOrder);
+                	OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+                	orderItemRequestDTO.setCategoryId(categoryId);
+                	orderItemRequestDTO.setProductId(productId);
+                	orderItemRequestDTO.setSkuId(skuId);
+                	orderItemRequestDTO.setCategoryId(categoryId);
+                	orderItemRequestDTO.setQuantity(quantity);
+                    Order order = orderService.addItem(cart.getId(), orderItemRequestDTO, priceOrder);
                     order = orderService.save(order, priceOrder);
                     
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
@@ -206,10 +206,10 @@ public class CartEndpoint implements ApplicationContextAware {
             Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                	OrderItemRequest orderItemRequest = new OrderItemRequest();
-                	orderItemRequest.setOrderItemId(itemId);
-                	orderItemRequest.setQuantity(quantity);
-                    Order order = orderService.updateItem(cart.getId(), orderItemRequest, priceOrder);
+                	OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+                	orderItemRequestDTO.setOrderItemId(itemId);
+                	orderItemRequestDTO.setQuantity(quantity);
+                    Order order = orderService.updateItem(cart.getId(), orderItemRequestDTO, priceOrder);
                     order = orderService.save(order, priceOrder);
 
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());

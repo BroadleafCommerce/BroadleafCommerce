@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.call.legacy;
+package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -35,7 +35,7 @@ import java.util.Map;
  * Personal message is optional.
  *
  */
-public class LegacyOrderItemRequest {
+public abstract class AbstractOrderItemRequest {
 
     private Sku sku;
     private Category category;
@@ -84,7 +84,7 @@ public class LegacyOrderItemRequest {
         this.itemAttributes = itemAttributes;
     }
 
-    protected void copyProperties(LegacyOrderItemRequest newRequest) {
+    protected void copyProperties(AbstractOrderItemRequest newRequest) {
         newRequest.setCategory(category);
         newRequest.setItemAttributes(itemAttributes);
         newRequest.setPersonalMessage(personalMessage);
@@ -93,18 +93,12 @@ public class LegacyOrderItemRequest {
         newRequest.setSku(sku);
     }
 
-    public LegacyOrderItemRequest clone() {
-    	LegacyOrderItemRequest returnRequest = new LegacyOrderItemRequest();
-        copyProperties(returnRequest);
-        return returnRequest;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LegacyOrderItemRequest)) return false;
+        if (!(o instanceof AbstractOrderItemRequest)) return false;
 
-        LegacyOrderItemRequest that = (LegacyOrderItemRequest) o;
+        AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
 
         if (!category.equals(that.category)) return false;
         if (!product.equals(that.product)) return false;

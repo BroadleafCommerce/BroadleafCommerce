@@ -32,7 +32,7 @@ import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
@@ -196,13 +196,13 @@ public class OrderServiceImpl implements OrderService {
 	}
     
     @Override
-    public Order addItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
 		throw new UnsupportedOperationException();
     }
 
 
 	@Override
-	public Order updateItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
+	public Order updateItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
 		throw new UnsupportedOperationException();
 	}
 

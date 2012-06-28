@@ -32,10 +32,11 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyBundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.legacy.LegacyDiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
@@ -69,8 +70,8 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
     private Long fulfillmentGroupId;
     private Long bundleOrderItemId;
 
-    @Resource(name = "blLegacyOrderItemService")
-    private LegacyOrderItemService orderItemService;
+    @Resource(name = "blOrderItemService")
+    private OrderItemService orderItemService;
     
     @Resource
     private SkuDao skuDao;
@@ -113,7 +114,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         Order order = cartService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
-        LegacyDiscreteOrderItemRequest itemRequest = new LegacyDiscreteOrderItemRequest();
+        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
         DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest);
@@ -134,7 +135,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert sku.getId() != null;
         cartService.setAutomaticallyMergeLikeItems(true); 
 
-        LegacyDiscreteOrderItemRequest itemRequest = new LegacyDiscreteOrderItemRequest();
+        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
         DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest, true);
@@ -149,7 +150,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
 
         // re-price the order without automatically merging.
         cartService.setAutomaticallyMergeLikeItems(false);
-        LegacyDiscreteOrderItemRequest itemRequest2 = new LegacyDiscreteOrderItemRequest();
+        DiscreteOrderItemRequest itemRequest2 = new DiscreteOrderItemRequest();
         itemRequest2.setQuantity(1);
         itemRequest2.setSku(sku);
         DiscreteOrderItem item2 = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest2, true);
@@ -177,10 +178,10 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert order != null;
         assert sku.getId() != null;
 
-        LegacyBundleOrderItemRequest bundleRequest = new LegacyBundleOrderItemRequest();
+        BundleOrderItemRequest bundleRequest = new BundleOrderItemRequest();
         bundleRequest.setQuantity(1);
         bundleRequest.setName("myBundle");
-        LegacyDiscreteOrderItemRequest itemRequest = new LegacyDiscreteOrderItemRequest();
+        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
         bundleRequest.getDiscreteOrderItems().add(itemRequest);

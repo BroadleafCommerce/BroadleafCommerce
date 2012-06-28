@@ -16,22 +16,43 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.PersonalMessage;
+import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public interface OrderItemService {
-
+	
     public OrderItem readOrderItemById(Long orderItemId);
-
-    public void delete(OrderItem item);
 
     public OrderItem saveOrderItem(OrderItem orderItem);
     
-    public DiscreteOrderItem createDiscreteOrderItem(Sku sku, Product product, Category category, int quantity, Map<String,String> itemAttributes);
+    public void delete(OrderItem item);
     
+    public PersonalMessage createPersonalMessage();
+
+    public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest);
+    
+    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+
+    public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest);
+
+    /**
+     * Used to create "manual" product bundles.   Manual product bundles are primarily designed
+     * for grouping items in the cart display.    Typically ProductBundle will be used to
+     * achieve non programmer related bundles.
+     *
+     *
+     * @param itemRequest
+     * @return
+     */
+    public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
+
+
 }

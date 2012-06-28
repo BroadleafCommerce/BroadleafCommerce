@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -485,14 +485,14 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     }
     
 	@Override
-	public Order addItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
-		return addItemToOrder(orderId, orderItemRequest, priceOrder);
+	public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
+		return addItemToOrder(orderId, orderItemRequestDTO, priceOrder);
 	}
 
 	@Override
-	public Order updateItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
+	public Order updateItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
 		Order order = findOrderById(orderId);
-		updateItemQuantity(order, orderItemRequest);
+		updateItemQuantity(order, orderItemRequestDTO);
 		return order;
 	}
 
