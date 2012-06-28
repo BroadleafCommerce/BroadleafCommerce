@@ -16,29 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import javax.persistence.Embedded;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.AssociationPathElement;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
@@ -71,6 +48,29 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.w3c.dom.DOMException;
+
+import javax.persistence.Embedded;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * @author jfischer
@@ -320,7 +320,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             try {
                                 testObject = fieldManager.getFieldValue(testObject, token);
                             } catch (FieldNotAvailableException e) {
-                                throw new IllegalArgumentException(e);
+                                proceed = false;
+                                break;
                             }
                             if (testObject == null) {
                                 Property propertyItem = new Property();
