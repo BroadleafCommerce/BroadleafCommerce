@@ -552,6 +552,27 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
         return null;
     }
+    
+    @Override
+    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();
+        orderItems.add(newOrderItem);
+        newOrderItem.setBundleOrderItem(bundle);
+
+        order = updateOrder(order, priceOrder);
+
+        return findLastMatchingItem(order, bundle);
+    }
+    
+    @Override
+    public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException {
+        DiscreteOrderItem itemFromBundle = bundle.getDiscreteOrderItems().remove(bundle.getDiscreteOrderItems().indexOf(item));
+        orderItemService.delete(itemFromBundle);
+        itemFromBundle.setBundleOrderItem(null);
+        order = updateOrder(order, priceOrder);
+        
+        return order;
+    }
 
     /**
      * Adds the passed in name/value pair to the order-item.    If the
@@ -709,6 +730,29 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         fgi.setOrderItem(orderItem);
         fgi.setQuantity(quantity);
         return fgi;
+    }
+    
+    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            Iterator<FulfillmentGroupItem> itr = fulfillmentGroup.getFulfillmentGroupItems().iterator();
+            while (itr.hasNext()) {
+                FulfillmentGroupItem fulfillmentGroupItem = itr.next();
+                if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
+                    itr.remove();
+                    fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                } else if (orderItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
+                            itr.remove();
+                            fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected DiscreteOrderItemRequest createDiscreteOrderItemRequest(DiscreteOrderItem discreteOrderItem) {
