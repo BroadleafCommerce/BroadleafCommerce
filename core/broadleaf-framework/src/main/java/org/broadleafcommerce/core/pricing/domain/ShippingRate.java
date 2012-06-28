@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.pricing.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Deprecated
 public interface ShippingRate extends Serializable {
 
     public Long  getId();

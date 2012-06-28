@@ -140,7 +140,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         content.setDeletedFlag(false);
         StructuredContent sc = structuredContentDao.addOrUpdateContentItem(content);
         if (! isProductionSandBox(destinationSandbox)) {
-            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STRUCTURED_CONTENT, sc.getContentName(), sc.getId(), null);
+            sandBoxItemDao.addSandBoxItem(destinationSandbox.getId(), SandBoxOperationType.ADD, SandBoxItemType.STRUCTURED_CONTENT, sc.getContentName(), sc.getId(), null);
         }
         return sc;
     }
@@ -203,7 +203,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
                 type = SandBoxOperationType.DELETE;
             }
 
-            sandBoxItemDao.addSandBoxItem(destSandbox, type, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
+            sandBoxItemDao.addSandBoxItem(destSandbox.getId(), type, SandBoxItemType.STRUCTURED_CONTENT, returnContent.getContentName(), returnContent.getId(), returnContent.getOriginalItemId());
             return returnContent;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service

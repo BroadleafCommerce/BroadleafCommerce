@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.pricing.service.module.ShippingModule;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 
-public class ShippingServiceImpl implements ShippingService {
+public class FulfillmentServiceImpl implements FulfillmentService {
 
     protected ShippingModule shippingModule;
 

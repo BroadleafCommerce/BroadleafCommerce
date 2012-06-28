@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.core.pricing.domain;
 
-import java.math.BigDecimal;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,14 +30,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SHIPPING_RATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Deprecated
 public class ShippingRateImpl implements ShippingRate {
 
     private static final long serialVersionUID = 1L;
@@ -66,58 +67,72 @@ public class ShippingRateImpl implements ShippingRate {
     @Column(name = "BAND_RESULT_PCT", nullable=false)
     protected Integer bandResultPercent;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getFeeType() {
         return feeType;
     }
 
+    @Override
     public void setFeeType(String feeType) {
         this.feeType = feeType;
     }
 
+    @Override
     public String getFeeSubType() {
         return feeSubType;
     }
 
+    @Override
     public void setFeeSubType(String feeSubType) {
         this.feeSubType = feeSubType;
     }
 
+    @Override
     public Integer getFeeBand() {
         return feeBand;
     }
 
+    @Override
     public void setFeeBand(Integer feeBand) {
         this.feeBand = feeBand;
     }
 
+    @Override
     public BigDecimal getBandUnitQuantity() {
         return bandUnitQuantity;
     }
 
+    @Override
     public void setBandUnitQuantity(BigDecimal bandUnitQuantity) {
         this.bandUnitQuantity = bandUnitQuantity;
     }
 
+    @Override
     public BigDecimal getBandResultQuantity() {
         return bandResultQuantity;
     }
 
+    @Override
     public void setBandResultQuantity(BigDecimal bandResultQuantity) {
         this.bandResultQuantity = bandResultQuantity;
     }
 
+    @Override
     public Integer getBandResultPercent() {
         return bandResultPercent;
     }
 
+    @Override
     public void setBandResultPercent(Integer bandResultPercent) {
         this.bandResultPercent = bandResultPercent;
     }

@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.dao;
+package org.broadleafcommerce.core.pricing.service;
 
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 
-import java.math.BigDecimal;
-
-@Deprecated
-public interface ShippingRateDao {
-
-    public ShippingRate save(ShippingRate shippingRate);
-
-    public ShippingRate readShippingRateById(Long id);
-
-    public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity);
-
-    public ShippingRate create();
-
+public interface FulfillmentService {
+	
+    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+    
 }

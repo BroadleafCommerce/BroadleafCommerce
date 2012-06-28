@@ -7,7 +7,8 @@
 		<query>SELECT offer FROM org.broadleafcommerce.core.offer.domain.Offer offer
 		WHERE offer.deliveryType = 'AUTOMATIC'
 		AND (offer.startDate &lt;= :specifiedDate OR offer.startDate = null)
-		AND (offer.endDate &gt; :specifiedDate OR offer.endDate = null)</query>
+		AND (offer.endDate &gt; :specifiedDate OR offer.endDate = null)
+        AND (offer.archiveStatus.archived IS NULL OR offer.archiveStatus.archived = 'N')</query>
 	</named-query>
 
 	<named-query name="BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID" >

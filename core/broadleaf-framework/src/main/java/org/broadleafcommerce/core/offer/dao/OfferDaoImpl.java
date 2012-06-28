@@ -99,17 +99,15 @@ public class OfferDaoImpl implements OfferDao {
         return em.merge(offerInfo);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Offer> readAllOffers() {
         Query query = em.createNamedQuery("BC_READ_ALL_OFFERS");
         return query.getResultList();
     }
 
     public Offer readOfferById(Long offerId) {
-        return (Offer) em.find(OfferImpl.class, offerId);
+        return em.find(OfferImpl.class, offerId);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Offer> readOffersByAutomaticDeliveryType() {
         Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
         query.setParameter("specifiedDate", SystemTime.asDate());
