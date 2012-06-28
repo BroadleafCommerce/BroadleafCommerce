@@ -275,7 +275,7 @@ public class FormBuilder {
                 for (FormItem formItem : formItems) {
                 	ids[x] = formItem.getName();
                 	x++;
-                    if (containsRichTextItem == null && formItem instanceof RichTextCanvasItem) {
+                    if (containsRichTextItem == null && formItem instanceof HTMLTextItem) {
                         containsRichTextItem = true;
                     }
                 }

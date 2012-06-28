@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
-
+@Deprecated
 public class RichTextCanvasItem extends CanvasItem {
     
 	@Override

@@ -22,6 +22,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
+import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
+
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -32,16 +42,6 @@ import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FormItem;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.cms.admin.client.datasource.structure.StructuredContentTypeFormListDataSource;
-import org.broadleafcommerce.cms.admin.client.view.structure.StructuredContentDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.FormOnlyView;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextCanvasItem;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.RichTextHTMLPane;
 
 /**
  * 
@@ -123,9 +123,9 @@ public class StructuredContentPresenterExtractor {
                         FormOnlyView legacyForm = (FormOnlyView) ((FormOnlyView) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay()).getMember("contentTypeForm");
                         final DynamicForm form = legacyForm.getForm();
                         for (FormItem formItem : form.getFields()) {
-                            if (formItem instanceof RichTextCanvasItem) {
-                                form.setValue(formItem.getFieldName(), ((RichTextHTMLPane)((RichTextCanvasItem) formItem).getCanvas()).getValue());
-                            }
+                        	 if (formItem instanceof HTMLTextItem) { 
+                        		 form.setValue(formItem.getFieldName(), ((HTMLTextItem) formItem).getHTMLValue());
+                        	 }
                         }
                         StructuredContentTypeFormListDataSource dataSource = (StructuredContentTypeFormListDataSource) form.getDataSource();
                         dataSource.setCustomCriteria(new String[]{"constructForm", newId});

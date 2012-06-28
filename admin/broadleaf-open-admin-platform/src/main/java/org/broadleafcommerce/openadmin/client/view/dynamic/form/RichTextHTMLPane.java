@@ -25,7 +25,7 @@ import org.broadleafcommerce.openadmin.client.BLCMain;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@Deprecated
 public class RichTextHTMLPane extends HTMLPane {
 
     static {
