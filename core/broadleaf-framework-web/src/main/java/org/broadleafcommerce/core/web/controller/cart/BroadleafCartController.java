@@ -58,7 +58,7 @@ public class BroadleafCartController extends AbstractCartController {
 			cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
 		}
 		
-		cart = orderService.addItem(cart, itemRequest, false);
+		cart = orderService.addItem(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart,  true);
 		CartState.setCart(request, cart);
 		
@@ -84,7 +84,7 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, PricingException, ItemNotFoundException {
 		Order cart = CartState.getCart(request);
 		
-		cart = orderService.updateItem(cart, itemRequest, false);
+		cart = orderService.updateItem(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart, true);
 		CartState.setCart(request, cart);
 		
@@ -118,7 +118,7 @@ public class BroadleafCartController extends AbstractCartController {
 			AddToCartItem itemRequest) throws IOException, PricingException, ItemNotFoundException {
 		Order cart = CartState.getCart(request);
 		
-		cart = orderService.removeItem(cart, itemRequest, false);
+		cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);
 		cart = orderService.save(cart, true);
 		CartState.setCart(request, cart);
 		

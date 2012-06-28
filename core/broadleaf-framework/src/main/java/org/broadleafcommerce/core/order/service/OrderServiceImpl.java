@@ -16,10 +16,16 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
+import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
@@ -45,12 +51,28 @@ import java.util.List;
  */
 @Service("blOrderService")
 public class OrderServiceImpl implements OrderService {
+    private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 	
 	@Resource(name = "blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 	
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
+
+    @Resource(name = "blOrderItemDao")
+    protected OrderItemDao orderItemDao;
+    
+    @Resource(name = "blProductDao")
+    protected ProductDao productDao;
+
+    @Resource(name = "blCategoryDao")
+    protected CategoryDao categoryDao;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
+    
+    @Resource(name = "blNullOrderFactory")
+    protected NullOrderFactory nullOrderFactory;    
     
     @Resource(name = "blPricingService")
     protected PricingService pricingService;
@@ -60,9 +82,6 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-    
-    @Resource(name = "blNullOrderFactory")
-    protected NullOrderFactory nullOrderFactory;    
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
@@ -175,35 +194,28 @@ public class OrderServiceImpl implements OrderService {
 	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
 		throw new UnsupportedOperationException();
 	}
-	
     
+    @Override
+    public Order addItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
+		throw new UnsupportedOperationException();
+    }
+
+
 	@Override
-	public Order addItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
+	public Order updateItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Order updateItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Order removeItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequest.getOrderItemId());
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws ItemNotFoundException, PricingException {
+		Order order = findOrderById(orderId);
+        OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
         fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(orderItem));
         itemFromOrder.setOrder(null);
         orderItemService.delete(itemFromOrder);
         order = save(order, priceOrder);
         return order;
+		//throw new UnsupportedOperationException();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

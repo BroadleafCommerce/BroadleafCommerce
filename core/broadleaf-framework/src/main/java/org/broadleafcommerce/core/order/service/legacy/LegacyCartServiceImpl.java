@@ -485,18 +485,19 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     }
     
 	@Override
-	public Order addItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
-		return addItemToOrder(order.getId(), orderItemRequest, priceOrder);
+	public Order addItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException {
+		return addItemToOrder(orderId, orderItemRequest, priceOrder);
 	}
 
 	@Override
-	public Order updateItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
+	public Order updateItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
+		Order order = findOrderById(orderId);
 		updateItemQuantity(order, orderItemRequest);
 		return order;
 	}
 
 	@Override
-	public Order removeItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException {
-		return removeItemFromOrder(order.getId(), orderItemRequest.getOrderItemId(), priceOrder);
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws ItemNotFoundException, PricingException {
+		return removeItemFromOrder(orderId, orderItemId, priceOrder);
 	}
 }

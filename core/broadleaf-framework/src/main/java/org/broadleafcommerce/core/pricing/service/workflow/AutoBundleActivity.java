@@ -31,7 +31,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -135,10 +134,8 @@ public class AutoBundleActivity extends BaseActivity {
         }
 
         for (BundleOrderItem bundleOrderItem : bundlesToRemove) {
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(bundleOrderItem.getId());
         	try {
-        		order = orderService.removeItem(order, orderItemRequest, false);
+        		order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
         	} catch (ItemNotFoundException e) {
         		throw new PricingException("Could not remove item", e);
         	}
@@ -223,9 +220,7 @@ public class AutoBundleActivity extends BaseActivity {
             // remove-all-items from order
             // this call also deletes any fulfillment group items that are associated with that order item
             for (DiscreteOrderItem item : itemMatches) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(bundleOrderItem.getId());
-	            order = orderService.removeItem(order, orderItemRequest, false);
+	            order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
             }
 
             DiscreteOrderItem baseItem = null;

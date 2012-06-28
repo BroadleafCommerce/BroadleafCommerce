@@ -46,9 +46,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.DirectOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
@@ -375,10 +373,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             orderItemService.saveOrderItem(bundleOrderItem);
         }
         for (BundleOrderItem orderItem : bundlesToRemove) {
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(orderItem.getId());
         	try {
-        		orderService.removeItem(order, orderItemRequest, false);
+        		orderService.removeItem(order.getId(), orderItem.getId(), false);
         	} catch (ItemNotFoundException e) {
         		throw new PricingException("Item could not be removed", e);
         	}
@@ -403,10 +399,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         for (DiscreteOrderItem orderItem : itemsToRemove) {
             if (orderItem.getBundleOrderItem() == null) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(orderItem.getId());
 	        	try {
-					orderService.removeItem(order, orderItemRequest, false);
+					orderService.removeItem(order.getId(), orderItem.getId(), false);
 				} catch (ItemNotFoundException e) {
 					throw new PricingException("Could not remove item", e);
 				}
@@ -447,10 +441,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             }
         }
         for (BundleOrderItem orderItem : bundlesToRemove) {
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(orderItem.getId());
         	try {
-        		orderService.removeItem(order, orderItemRequest, false);
+        		orderService.removeItem(order.getId(), orderItem.getId(), false);
         	} catch (ItemNotFoundException e) {
         		throw new PricingException("Item could not be removed", e);
         	}
@@ -485,10 +477,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         for (DiscreteOrderItem orderItem : itemsToRemove) {
             if (orderItem.getBundleOrderItem() == null) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(orderItem.getId());
 	        	try {
-	        		orderService.removeItem(order, orderItemRequest, false);
+	        		orderService.removeItem(order.getId(), orderItem.getId(), false);
 				} catch (ItemNotFoundException e) {
 					throw new PricingException("Could not remove item", e);
 				}
@@ -745,10 +735,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             mergeSplitGiftWrapOrderItems(order, giftWrapItems, itemToRemove, delegateItem);
 
             if (delegateItem.getBundleOrderItem() == null) {
-	        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-	        	orderItemRequest.setOrderItemId(itemToRemove.getDelegate().getId());
 	        	try {
-	        		orderService.removeItem(order.getDelegate(), orderItemRequest, false);
+	        		orderService.removeItem(order.getDelegate().getId(), itemToRemove.getDelegate().getId(), false);
 				} catch (ItemNotFoundException e) {
 					throw new PricingException("Could not remove item", e);
 				}
@@ -813,10 +801,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 }
             }
             
-        	OrderItemRequest orderItemRequest = new OrderItemRequest();
-        	orderItemRequest.setOrderItemId(bundleContainer.getKey().getId());
         	try {
-				orderService.removeItem(order.getDelegate(), orderItemRequest, false);
+				orderService.removeItem(order.getDelegate().getId(), bundleContainer.getKey().getId(), false);
 			} catch (ItemNotFoundException e) {
 				throw new PricingException("Could not remove item", e);
 			}
@@ -824,10 +810,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             for (BundleOrderItem vals : gatheredBundleItems.values()) {
                 vals.setId(null);
                 
-                DirectOrderItemRequest directOrderItemRequest = new DirectOrderItemRequest();
-                directOrderItemRequest.setOrderItem(vals);
-                BundleOrderItem temp = (BundleOrderItem) orderService.addItem(order.getDelegate(), directOrderItemRequest, false);
-                
+            	BundleOrderItem temp = (BundleOrderItem) addOrderItemToOrder(order.getDelegate(), vals, false);
+
                 if (targetGroup != null) {
                 	FulfillmentGroupItemRequest fgItemRequest = new FulfillmentGroupItemRequest();
                 	fgItemRequest.setFulfillmentGroup(targetGroup.getDelegate());

@@ -907,23 +907,8 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return item;
     }
 
-    /**
-     * Adds an item to the passed in order.
-     *
-     * The orderItemRequest can be sparsely populated.
-     *
-     * When priceOrder is false, the system will not reprice the order.   This is more performant in
-     * cases such as bulk adds where the repricing could be done for the last item only.
-     *
-     * @see OrderItemRequest
-     * @param orderItemRequestDTO
-     * @param priceOrder
-     * @return
-     */
     @Override
     public Order addItemToOrder(Long orderId, OrderItemRequest orderItemRequestDTO, boolean priceOrder) throws PricingException {
-    	//FIXME: Handle DirectOrderItemRequest
-
         if (orderItemRequestDTO.getQuantity() == null || orderItemRequestDTO.getQuantity() == 0) {
             LOG.debug("Not adding item to order because quantity is zero.");
             return null;

@@ -147,7 +147,7 @@ public class CartEndpoint implements ApplicationContextAware {
                 	orderItemRequest.setSkuId(skuId);
                 	orderItemRequest.setCategoryId(categoryId);
                 	orderItemRequest.setQuantity(quantity);
-                    Order order = orderService.addItem(cart, orderItemRequest, priceOrder);
+                    Order order = orderService.addItem(cart.getId(), orderItemRequest, priceOrder);
                     order = orderService.save(order, priceOrder);
                     
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
@@ -175,9 +175,7 @@ public class CartEndpoint implements ApplicationContextAware {
             Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
-                	OrderItemRequest orderItemRequest = new OrderItemRequest();
-                	orderItemRequest.setOrderItemId(itemId);
-                    Order order = orderService.removeItem(cart, orderItemRequest, priceOrder);
+                    Order order = orderService.removeItem(cart.getId(), itemId, priceOrder);
                     order = orderService.save(order, priceOrder);
                     
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
@@ -211,7 +209,7 @@ public class CartEndpoint implements ApplicationContextAware {
                 	OrderItemRequest orderItemRequest = new OrderItemRequest();
                 	orderItemRequest.setOrderItemId(itemId);
                 	orderItemRequest.setQuantity(quantity);
-                    Order order = orderService.updateItem(cart, orderItemRequest, priceOrder);
+                    Order order = orderService.updateItem(cart.getId(), orderItemRequest, priceOrder);
                     order = orderService.save(order, priceOrder);
 
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());

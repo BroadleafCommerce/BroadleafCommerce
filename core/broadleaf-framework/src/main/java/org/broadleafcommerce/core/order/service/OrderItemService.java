@@ -16,7 +16,13 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+
+import java.util.Map;
 
 public interface OrderItemService {
 
@@ -25,5 +31,7 @@ public interface OrderItemService {
     public void delete(OrderItem item);
 
     public OrderItem saveOrderItem(OrderItem orderItem);
+    
+    public DiscreteOrderItem createDiscreteOrderItem(Sku sku, Product product, Category category, int quantity, Map<String,String> itemAttributes);
     
 }

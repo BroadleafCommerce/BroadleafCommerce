@@ -95,12 +95,12 @@ public interface OrderService {
      * cases such as bulk adds where the repricing could be done for the last item only.
      *
      * @see OrderItemRequest
-     * @param order
+     * @param orderId
      * @param orderItemRequest
      * @param priceOrder
      * @return the order the item was added to
      */
-    public Order addItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException;
+    public Order addItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws PricingException;
     
     /**
      * From the given OrderItemRequest object, this will look through the order's DiscreteOrderItems
@@ -109,29 +109,26 @@ public interface OrderService {
      * Minimum required parameters for OrderItemRequest: orderItemId, quantity
      * 
      * @see OrderItemRequest
-     * @param order
+     * @param orderId
      * @param orderItemRequest
      * @param priceOrder
      * @return the order the item was added to
      * @throws ItemNotFoundException
      * @throws PricingException
      */
-	public Order updateItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException;
+	public Order updateItem(Long orderId, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException;
 	
     /**
-     * From the given OrderItemRequest object, this will look through the order's DiscreteOrderItems
-     * to find the item with the matching orderItemId and remove it.
-     * 
-     * Minimum required parameters for OrderItemRequest: orderItemId
+     * Removes the given orderItemId from the Order that matches the orderId
      * 
      * @see OrderItemRequest
-     * @param order
-     * @param orderItemRequest
+     * @param orderId
+     * @param orderItemId
      * @param priceOrder
      * @return the order the item was added to
      * @throws ItemNotFoundException
      * @throws PricingException
      */
-	public Order removeItem(Order order, OrderItemRequest orderItemRequest, boolean priceOrder) throws ItemNotFoundException, PricingException;
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws ItemNotFoundException, PricingException;
 
 }
