@@ -59,8 +59,11 @@
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
 	<bean id="blFulfillmentService" class="org.broadleafcommerce.core.pricing.service.FulfillmentServiceImpl">
-	   <!-- TODO: add in the list of default processors to the processors property -->
-	   <!-- <property name="shippingModule" ref="blShippingModule"/> -->
+	   <property name="fulfillmentProcessors">
+	       <list>
+	           <!-- TODO: add in the list of default processors to the processors property -->
+	       </list>
+	   </property>
 	</bean>
 	
 	<bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
