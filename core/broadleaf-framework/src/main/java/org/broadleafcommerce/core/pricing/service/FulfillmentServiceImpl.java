@@ -74,7 +74,6 @@ public class FulfillmentServiceImpl implements FulfillmentService {
         return fulfillmentProcessors;
     }
 
-    @Override
     public void setFulfillmentProcessors(List<FulfillmentProcessor> fulfillmentProcessors) {
         this.fulfillmentProcessors = fulfillmentProcessors;
     }
