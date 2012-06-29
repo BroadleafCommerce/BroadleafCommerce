@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import java.io.Serializable;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 
 
 /**

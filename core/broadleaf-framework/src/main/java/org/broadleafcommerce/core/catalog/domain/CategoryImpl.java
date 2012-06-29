@@ -16,33 +16,15 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
+import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -60,7 +42,30 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author bTaylor
@@ -71,7 +76,8 @@ import org.hibernate.annotations.Type;
 @Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "CategoryImpl_baseCategory")
-public class CategoryImpl implements Category {
+@SQLDelete(sql="UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
+public class CategoryImpl implements Category, Status {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -220,12 +226,18 @@ public class CategoryImpl implements Category {
     @BatchSize(size = 50)
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
 
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
+
     @Transient
     @Hydrated(factoryMethod = "createChildCategoryURLMap")
     protected Map<String, List<Long>> childCategoryURLMap;
 
     @Transient
     protected List<Category> childCategories = new ArrayList<Category>(50);
+
+    @Transient
+    protected List<FeaturedProduct> filteredFeaturedProducts = null;
 
     @Override
     public Long getId() {
@@ -298,6 +310,9 @@ public class CategoryImpl implements Category {
 
     @Override
     public Date getActiveStartDate() {
+        if ('Y'==getArchived()) {
+            return null;
+        }
         return activeStartDate;
     }
 
@@ -322,8 +337,11 @@ public class CategoryImpl implements Category {
             if (!DateUtil.isActive(activeStartDate, activeEndDate, true)) {
                 LOG.debug("category, " + id + ", inactive due to date");
             }
+            if ('Y'==getArchived()) {
+                LOG.debug("category, " + id + ", inactive due to archived status");
+            }
         }
-        return DateUtil.isActive(activeStartDate, activeEndDate, true);
+        return DateUtil.isActive(activeStartDate, activeEndDate, true) && 'Y'!=getArchived();
     }
 
     @Override
@@ -457,7 +475,17 @@ public class CategoryImpl implements Category {
 
     @Override
     public List<FeaturedProduct> getFeaturedProducts() {
-        return featuredProducts;
+        if (filteredFeaturedProducts == null && featuredProducts != null) {
+            filteredFeaturedProducts = new ArrayList<FeaturedProduct>(featuredProducts.size());
+            filteredFeaturedProducts.addAll(featuredProducts);
+            CollectionUtils.filter(featuredProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y' != ((Status) ((FeaturedProduct) arg).getProduct()).getArchived();
+                }
+            });
+        }
+        return filteredFeaturedProducts;
     }
 
     @Override
@@ -493,7 +521,23 @@ public class CategoryImpl implements Category {
     		this.categoryMedia.put(me.getKey(), me.getValue());
     	}
     }
-    
+
+    @Override
+    public Character getArchived() {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        return archiveStatus.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
     @Override
     public int hashCode() {
         int prime = 31;

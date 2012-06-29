@@ -107,7 +107,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     
     @Override
     public Money getPriceAdjustment() {
-        return new Money(priceAdjustment);
+        return priceAdjustment == null ? null : new Money(priceAdjustment);
     }
 
     @Override

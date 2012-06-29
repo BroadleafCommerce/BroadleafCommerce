@@ -34,7 +34,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.manipulation.DiscreteOrderItemDecorator;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
@@ -208,11 +208,11 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
 		delegate.setReferenceNumber(referenceNumber);
 	}
 
-	public FulfillmentGroupType getType() {
+	public FulfillmentType getType() {
 		return delegate.getType();
 	}
 
-	public void setType(FulfillmentGroupType type) {
+	public void setType(FulfillmentType type) {
 		delegate.setType(type);
 	}
 

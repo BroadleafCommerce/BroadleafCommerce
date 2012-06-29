@@ -101,7 +101,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         StaticAsset newAsset = staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
         
         if (! isProductionSandBox(destinationSandbox)) {
-            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
+            sandBoxItemDao.addSandBoxItem(destinationSandbox.getId(), SandBoxOperationType.ADD, SandBoxItemType.STATIC_ASSET, newAsset.getFullUrl(), newAsset.getId(), null);
         }
         return newAsset;
     }
@@ -154,7 +154,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
                 type = SandBoxOperationType.DELETE;
             }
 
-            sandBoxItemDao.addSandBoxItem(destSandbox, type, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
+            sandBoxItemDao.addSandBoxItem(destSandbox.getId(), type, SandBoxItemType.STATIC_ASSET, returnAsset.getFullUrl(), returnAsset.getId(), returnAsset.getOriginalAssetId());
             return returnAsset;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service

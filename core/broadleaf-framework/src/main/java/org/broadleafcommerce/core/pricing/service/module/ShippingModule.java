@@ -16,9 +16,10 @@
 
 package org.broadleafcommerce.core.pricing.service.module;
 
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
+@Deprecated
 public interface ShippingModule {
 
     public String getName();

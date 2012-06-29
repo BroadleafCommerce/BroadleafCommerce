@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.Arrays;
-
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -27,6 +25,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+
+import java.util.Arrays;
 
 /**
  * @author jfischer
@@ -78,7 +78,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
         return load(associatedRecord, abstractDynamicDataSource, null);
     }
 
-    public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+    public boolean load(final Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
@@ -108,7 +108,13 @@ public abstract class AbstractSubPresentable implements SubPresentable {
             String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
-                    setStartState();
+                    String locked = associatedRecord.getAttribute("__locked");
+                    if (!(locked != null && locked.equals("true"))) {
+                        setReadOnly(false);
+                        setStartState();
+                    } else {
+                        setReadOnly(true);
+                    }
                     if (cb != null) {
                         cb.execute(response, rawData, request);
                     }

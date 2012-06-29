@@ -35,6 +35,18 @@ public class PresentationLayerAssociatedDataSource extends DynamicEntityDataSour
         new Hilite() {{
             setCssText("color: #00149e;");
             setId("listGridDirtyPropertyHilite");
+        }},
+        new Hilite() {{
+            setCssText("color: #aa0000;");
+            setId("listGridDeletedPropertyHilite");
+        }},
+        new Hilite() {{
+            setCssText("font-weight: bold;");
+            setId("listGridActivePropertyHilite");
+        }},
+        new Hilite() {{
+            setCssText("color: #968e9a;");
+            setId("listGridLockedPropertyHilite");
         }}
     };
     

@@ -18,13 +18,17 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
@@ -41,6 +45,8 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -108,7 +114,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return dateFormat.parse(value);
     }
 
-    @SuppressWarnings("unchecked")
     public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> mergedProperties, Boolean setId) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException, NumberFormatException, InstantiationException, ClassNotFoundException {
         FieldManager fieldManager = getFieldManager();
         for (Property property : entity.getProperties()) {
@@ -672,6 +677,23 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
         PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), ceilingEntityFullyQualifiedClassname);
+        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
+        boolean isArchivable = false;
+        for (Class<?> entity : entities) {
+            if (Status.class.isAssignableFrom(entity)) {
+                isArchivable = true;
+                break;
+            }
+        }
+        if (isArchivable) {
+            SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
+                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                    return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
+                }
+            };
+            FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
+            ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
+        }
         return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(fetchTypeFullyQualifiedClassname) ? ceilingEntityFullyQualifiedClassname : fetchTypeFullyQualifiedClassname));
     }
 
@@ -786,17 +808,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(persistencePackage.getCeilingEntityFullyQualifiedClassname());
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
-                    entities,
-                    (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
-                    persistencePerspective.getAdditionalNonPersistentProperties(),
-                    persistencePerspective.getAdditionalForeignKeys(),
-                    MergedPropertyType.PRIMARY,
-                    persistencePerspective.getPopulateToOneFields(),
-                    persistencePerspective.getIncludeFields(),
-                    persistencePerspective.getExcludeFields(),
-                    persistencePerspective.getConfigurationKey(),
-                    ""
+                persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                entities,
+                (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY),
+                persistencePerspective.getAdditionalNonPersistentProperties(),
+                persistencePerspective.getAdditionalForeignKeys(),
+                MergedPropertyType.PRIMARY,
+                persistencePerspective.getPopulateToOneFields(),
+                persistencePerspective.getIncludeFields(),
+                persistencePerspective.getExcludeFields(),
+                persistencePerspective.getConfigurationKey(),
+                ""
             );
             Object primaryKey = getPrimaryKey(entity, mergedProperties);
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
@@ -853,9 +875,24 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePerspective.getConfigurationKey(),
                     ""
             );
-
             BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
+            boolean isArchivable = false;
+            for (Class<?> entity : entities) {
+                if (Status.class.isAssignableFrom(entity)) {
+                    isArchivable = true;
+                    break;
+                }
+            }
+            if (isArchivable) {
+                SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
+                    public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                        return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
+                    }
+                };
+                FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
+                ((NestedPropertyCriteria) queryCriteria).add(filterCriterion);
+            }
             List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
 
             payload = getRecords(mergedProperties, records, null, null);

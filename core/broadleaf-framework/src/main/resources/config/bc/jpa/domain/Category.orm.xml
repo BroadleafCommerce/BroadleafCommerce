@@ -28,6 +28,7 @@
 		WHERE category.defaultParentCategory = :defaultParentCategory
         AND category.activeStartDate &lt;= :currentDate
 		AND (category.activeEndDate &gt; :currentDate OR category.activeEndDate = null)
+        AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')
         </query>
 	</named-query>
 

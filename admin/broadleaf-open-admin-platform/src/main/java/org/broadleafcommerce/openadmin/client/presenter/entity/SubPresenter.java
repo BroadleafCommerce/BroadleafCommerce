@@ -129,7 +129,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
     }
 
     @Override
-    public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
+    public boolean load(final Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
         ClassTree classTree = abstractDynamicDataSource.getPolymorphicEntityTree();
@@ -159,7 +159,13 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
             String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
-                    setStartState();
+                    String locked = associatedRecord.getAttribute("__locked");
+                    if (!(locked != null && locked.equals("true"))) {
+                        setReadOnly(false);
+                        setStartState();
+                    } else {
+                        setReadOnly(true);
+                    }
                     if (cb != null) {
                         cb.execute(response, rawData, request);
                     }

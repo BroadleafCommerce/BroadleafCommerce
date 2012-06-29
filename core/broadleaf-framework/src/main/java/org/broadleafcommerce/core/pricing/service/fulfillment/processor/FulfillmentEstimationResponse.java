@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.dao;
+package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
+import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 
-import java.math.BigDecimal;
-
-@Deprecated
-public interface ShippingRateDao {
-
-    public ShippingRate save(ShippingRate shippingRate);
-
-    public ShippingRate readShippingRateById(Long id);
-
-    public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity);
-
-    public ShippingRate create();
+/**
+ * DTO to allow FulfillmentProcessors to respond to estimation requests for a particular FulfillmentGroup
+ * for a particular FulfillmentOptions
+ * 
+ * @author Phillip Verheyden
+ * @see {@link FulfillmentPricingProcessor}, {@link FulfillmentPricingService}
+ */
+public class FulfillmentEstimationResponse {
 
 }

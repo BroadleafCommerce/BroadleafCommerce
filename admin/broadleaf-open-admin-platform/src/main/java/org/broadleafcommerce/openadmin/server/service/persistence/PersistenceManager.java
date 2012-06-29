@@ -68,6 +68,10 @@ public interface PersistenceManager {
 
 	public abstract void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers);
 
+    public abstract Class<?>[] getUpDownInheritance(Class<?> testClass);
+
+    public abstract Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException;
+
 	//public abstract void close() throws Exception;
 
 }
