@@ -109,8 +109,8 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
-				<bean class="org.broadleafcommerce.core.order.service.workflow.AddOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.CheckAvailabilityActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
