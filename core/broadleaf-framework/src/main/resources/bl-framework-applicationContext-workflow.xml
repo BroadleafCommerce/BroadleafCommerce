@@ -61,7 +61,7 @@
 	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
 	   <property name="processors">
 	       <list>
-	           <bean class="" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProcessor" />
 	       </list>
 	   </property>
 	</bean>
