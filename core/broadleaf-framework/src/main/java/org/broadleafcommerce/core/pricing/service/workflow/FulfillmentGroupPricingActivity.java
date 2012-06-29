@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.pricing.service.workflow;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.pricing.service.FulfillmentService;
+import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -33,10 +33,10 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  */
 public class FulfillmentGroupPricingActivity extends BaseActivity {
 
-    private FulfillmentService fulfillmentService;
+    private FulfillmentPricingService fulfillmentPricingService;
 
-    public void setFulfillmentService(FulfillmentService fulfillmentService) {
-        this.fulfillmentService = fulfillmentService;
+    public void setFulfillmentPricingService(FulfillmentPricingService fulfillmentPricingService) {
+        this.fulfillmentPricingService = fulfillmentPricingService;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FulfillmentGroupPricingActivity extends BaseActivity {
 
         Money totalShipping = new Money(0D);
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            fulfillmentGroup = fulfillmentService.calculateCostForFulfillmentGroup(fulfillmentGroup);
+            fulfillmentGroup = fulfillmentPricingService.calculateCostForFulfillmentGroup(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
         }
         order.setTotalShipping(totalShipping);

@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
-import org.broadleafcommerce.core.pricing.service.FulfillmentService;
+import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 
 /**
  * DTO to allow FulfillmentProcessors to respond to estimation requests for a particular FulfillmentGroup
  * for a particular FulfillmentOptions
  * 
  * @author Phillip Verheyden
- * @see {@link FulfillmentProcessor}, {@link FulfillmentService}
+ * @see {@link FulfillmentPricingProcessor}, {@link FulfillmentPricingService}
  */
 public class FulfillmentEstimationResponse {
 

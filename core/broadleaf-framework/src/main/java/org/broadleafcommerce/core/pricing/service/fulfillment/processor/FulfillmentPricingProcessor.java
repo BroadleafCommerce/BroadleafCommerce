@@ -18,27 +18,27 @@ package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.pricing.service.FulfillmentService;
+import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
 
 /**
  * Main extension interface to allow third-party integrations to respond to fulfillment pricing
  * 
  * @author Phillip Verheyden
- * @see {@link FulfillmentService}
+ * @see {@link FulfillmentPricingService}
  */
-public interface FulfillmentProcessor {
+public interface FulfillmentPricingProcessor {
 
     /**
      * Whether or not this processor can calculate the fulfillment cost for the given {@link FulfillmentGroup}. This is
-     * called during the PricingWorkflow and specifically invoked via FulfillmentService which is invoked
+     * called during the PricingWorkflow and specifically invoked via FulfillmentPricingService which is invoked
      * via {@link FulfillmentGroupPricingActivity}. A common check here is to see if {@link FulfFulfillmentPriceActivityentOption()}
      * is the correct type for this Processor.
      * 
      * @param fulfillmentGroup - the {@link FulfillmentGroup} to calculate costs for. The {@link FulfillmentOption} on this
      * FulfillmentGroup should already be set when this is called
      * @return true if this processor can calculate fulfillment costs for the given FulfillmentGroup
-     * @see {@link FulfillmentService}, {@link FulfillmentGroupPricingActivity}
+     * @see {@link FulfillmentPricingService}, {@link FulfillmentGroupPricingActivity}
      */
     public boolean canCalculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
@@ -59,12 +59,12 @@ public interface FulfillmentProcessor {
      * Whether or not this processor can provide a cost estimate for the given FulfillmentGroup and the given
      * FulfillmentOption. This is not invoked directly by any workflow, but could instead be invoked via a controller
      * that wants to display pricing to a user before the user actually picks a FulfillmentOption. The controller would
-     * inject an instance of FulfillmentService  and thus indirectly invoke this method for a particular option.
+     * inject an instance of FulfillmentPricingService  and thus indirectly invoke this method for a particular option.
      * 
      * @param fulfillmentGroup
      * @param option - the candidate option a user might select based on the estimate
      * @return <b>true</b> if this processor can estimate the costs, <b>false</b> otherwise
-     * @see {@link FulfillmentService}, {@link FulfillmentOption}
+     * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
      */
     public boolean canEstimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option);
 
@@ -78,7 +78,7 @@ public interface FulfillmentProcessor {
      * @param option - the candidate option that a user might select
      * @return a DTO that represents pricing information that might be added to the fulfillment cost of <b>fulfillmentGroup</b> when
      * {@link #calculateCostForFulfillmentGroup(FulfillmentGroup)} is invoked during the pricing workflow
-     * @see {@link FulfillmentService}, {@link FulfillmentOption}
+     * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
      */
     public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option);
     
