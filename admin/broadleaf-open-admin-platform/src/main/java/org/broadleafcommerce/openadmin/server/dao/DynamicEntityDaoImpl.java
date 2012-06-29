@@ -1548,7 +1548,6 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         } catch (MappingException e) {
             property = persistentClass.getProperty(prefix + propertyName);
         }
-        @SuppressWarnings("unchecked")
 		Iterator<Property> componentPropertyIterator = ((org.hibernate.mapping.Component) property.getValue()).getPropertyIterator();
         List<Property> componentPropertyList = new ArrayList<Property>();
         while(componentPropertyIterator.hasNext()) {

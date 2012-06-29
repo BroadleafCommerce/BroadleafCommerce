@@ -16,22 +16,23 @@
 
 package org.broadleafcommerce.core.pricing.service.module;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.Map;
+
+@Deprecated
 public class BandedShippingModule implements ShippingModule {
 	
 	private static final Log LOG = LogFactory.getLog(BandedShippingModule.class);
@@ -48,6 +49,7 @@ public class BandedShippingModule implements ShippingModule {
     private Map<String, String> feeSubTypeMapping;
 
     // this will need to calculate shipping on each fulfilmentGroup in an order
+    @Override
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         calculateShipping(fulfillmentGroup);
         return fulfillmentGroup;
@@ -95,10 +97,12 @@ public class BandedShippingModule implements ShippingModule {
         fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -119,19 +123,23 @@ public class BandedShippingModule implements ShippingModule {
         this.feeSubTypeMapping = feeSubTypeMapping;
     }
 
-	public String getServiceName() {
+	@Override
+    public String getServiceName() {
 		return ShippingServiceType.BANDED_SHIPPING.getType();
 	}
 
-	public Boolean isValidModuleForService(String serviceName) {
+	@Override
+    public Boolean isValidModuleForService(String serviceName) {
 		return getServiceName().equals(serviceName);
 	}
 
-	public Boolean isDefaultModule() {
+	@Override
+    public Boolean isDefaultModule() {
 		return isDefaultModule;
 	}
 
-	public void setDefaultModule(Boolean isDefaultModule) {
+	@Override
+    public void setDefaultModule(Boolean isDefaultModule) {
 		this.isDefaultModule = isDefaultModule;
 	}
 

@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of shipping service types.
@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
  * @author jfischer
  *
  */
+@Deprecated
 public class ShippingServiceType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
@@ -56,10 +57,12 @@ public class ShippingServiceType implements Serializable, BroadleafEnumerationTy
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
 		return friendlyType;
 	}

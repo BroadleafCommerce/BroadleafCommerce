@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.dao;
+package org.broadleafcommerce.common.persistence;
 
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
+/**
+ * @author Jeff Fischer
+ */
+public interface Archivable {
 
-import java.math.BigDecimal;
+    public void setArchived(Character archived);
 
-@Deprecated
-public interface ShippingRateDao {
-
-    public ShippingRate save(ShippingRate shippingRate);
-
-    public ShippingRate readShippingRateById(Long id);
-
-    public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity);
-
-    public ShippingRate create();
+    public Character getArchived();
 
 }

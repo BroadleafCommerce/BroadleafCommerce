@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
@@ -29,17 +28,17 @@ public interface SandBoxItemDao {
 
     public SandBoxItem retrieveBySandboxAndTemporaryItemId(Long sandBoxId, SandBoxItemType type, Long tempItemId);
 
-    public SandBoxItem addSandBoxItem(SandBox sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId);
+    public SandBoxItem addSandBoxItem(Long sandBox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, Long temporaryId, Long originalId);
 
-    public SandBoxItem addSandBoxItem(SandBox sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId);
+    public SandBoxItem addSandBoxItem(Long sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId);
 
     public SandBoxItem updateSandBoxItem(SandBoxItem sandBoxItem);
 
-    public List<SandBoxItem> retrieveSandBoxItemsForSandbox(SandBox sandBox);
+    public List<SandBoxItem> retrieveSandBoxItemsForSandbox(Long sandBox);
 
     public void delete(SandBoxItem sandBoxItem);
 
-    public List<SandBoxItem> retrieveSandBoxItemsByTypeForSandbox(SandBox sandBox, SandBoxItemType itemType);
+    public List<SandBoxItem> retrieveSandBoxItemsByTypeForSandbox(Long sandBox, SandBoxItemType itemType);
 
     public List<SandBoxItem> retrieveByGroupName(Long sandBoxId, String groupName);
 

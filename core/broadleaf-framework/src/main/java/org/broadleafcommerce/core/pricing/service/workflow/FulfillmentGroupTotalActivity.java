@@ -16,16 +16,24 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.common.money.Money;
 
+/**
+ * Called during the pricing workflow to set the merchandise total for each FulfillmentGroup
+ * in an Order. This activity should come before any activity dealing with pricing FulfillmentGroups
+ * 
+ * @author Phillip Verheyden
+ * @see {@link FulfillmentGroup#setMerchandiseTotal(Money)}, {@link FulfillmentGroup#getMerchandiseTotal()}
+ */
 public class FulfillmentGroupTotalActivity extends BaseActivity {
 
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext) context).getSeedData();
         /*Money subTotal = new Money(0D);

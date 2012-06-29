@@ -16,17 +16,29 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * This is the main entity used to hold fulfillment information about an Order. An Order can have
+ * multiple FulfillmentGroups to support shipping items to multiple addresses along with fulfilling
+ * items multiple ways (ship some overnight, deliver some with digital download). This constraint means
+ * that a FulfillmentGroup is unique based on an Address and FulfillmentOption combination. This
+ * also means that in the common case for Orders that are being delivered to a single Address and
+ * a single way (shipping everything express; ie a single FulfillmentOption) then there will be
+ * only 1 FulfillmentGroup for that Order.
+ * 
+ * @author Phillip Verheyden
+ * @see {@link Order}, {@link FulfillmentOption}, {@link Address}, {@link FulfillmentGroupItem}
+ */
 public interface FulfillmentGroup extends Serializable {
 
     public Long getId();
@@ -36,6 +48,10 @@ public interface FulfillmentGroup extends Serializable {
     public Order getOrder();
 
     public void setOrder(Order order);
+    
+    public FulfillmentOption getFulfillmentOption();
+
+    public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
 
     public Address getAddress();
 
@@ -51,8 +67,10 @@ public interface FulfillmentGroup extends Serializable {
 
     public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
 
+    @Deprecated
     public String getMethod();
 
+    @Deprecated
     public void setMethod(String fulfillmentMethod);
 
     public Money getRetailShippingPrice();
@@ -71,9 +89,9 @@ public interface FulfillmentGroup extends Serializable {
 
     public void setReferenceNumber(String referenceNumber);
 
-    public FulfillmentGroupType getType();
+    public FulfillmentType getType();
 
-    void setType(FulfillmentGroupType type);
+    void setType(FulfillmentType type);
 
     public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
 
@@ -209,8 +227,10 @@ public interface FulfillmentGroup extends Serializable {
 
 	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
 
+	@Deprecated
 	public String getService();
 
+	@Deprecated
 	public void setService(String service);
 	
 	public List<DiscreteOrderItem> getDiscreteOrderItems();

@@ -53,7 +53,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -240,7 +240,7 @@ public class OfferDataItemProvider {
 		fg1.setPrimary(true);
 		fg1.setRetailShippingPrice(new Money(10D));
 		fg1.setShippingPrice(new Money(10D));
-		fg1.setType(FulfillmentGroupType.SHIPPING);
+		fg1.setType(FulfillmentType.SHIPPING);
 		
 		FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
 		fgItem1.setFulfillmentGroup(fg1);
@@ -279,7 +279,7 @@ public class OfferDataItemProvider {
 		fg2.setPrimary(true);
 		fg2.setRetailShippingPrice(new Money(20D));
 		fg2.setShippingPrice(new Money(20D));
-		fg2.setType(FulfillmentGroupType.SHIPPING);
+		fg2.setType(FulfillmentType.SHIPPING);
 		
 		FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
 		fgItem2.setFulfillmentGroup(fg2);

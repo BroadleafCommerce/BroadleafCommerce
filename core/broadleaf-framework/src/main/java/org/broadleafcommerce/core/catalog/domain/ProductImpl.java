@@ -16,8 +16,13 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Predicate;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.Archivable;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -41,9 +46,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -90,7 +97,8 @@ import java.util.Map;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_baseProduct")
-public class ProductImpl implements Product {
+@SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
+public class ProductImpl implements Product, Archivable {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -219,6 +227,15 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
+
+    @Transient
+    protected List<RelatedProduct> filteredCrossSales = null;
+
+    @Transient
+    protected List<RelatedProduct> filteredUpSales = null;
+
     @Override
     public Long getId() {
         return id;
@@ -265,7 +282,7 @@ public class ProductImpl implements Product {
 
     @Override
     public Date getActiveStartDate() {
-        return getDefaultSku().getActiveStartDate();
+        return  getDefaultSku().getActiveStartDate();
     }
 
     @Override
@@ -289,8 +306,11 @@ public class ProductImpl implements Product {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true)) {
                 LOG.debug("product, " + id + ", inactive due to date");
             }
+            if ('Y'==getArchived()) {
+                LOG.debug("product, " + id + ", inactive due to archived status");
+            }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true) && 'Y'!=getArchived();
     }
 
     @Override
@@ -344,7 +364,7 @@ public class ProductImpl implements Product {
 	}
 	
     @Override
-	public List<Sku> getAllSkus() {
+    public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
         for (Sku additionalSku : additionalSkus) {
@@ -382,16 +402,19 @@ public class ProductImpl implements Product {
         //this.skus.clear();
     }
 
+    @Override
     @Deprecated
     public Map<String, String> getProductImages() {
         return productImages;
     }
 
+    @Override
     @Deprecated
     public String getProductImage(String imageKey) {
         return productImages.get(imageKey);
     }
 
+    @Override
     @Deprecated
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
@@ -550,7 +573,17 @@ public class ProductImpl implements Product {
 
     @Override
     public List<RelatedProduct> getCrossSaleProducts() {
-        return crossSaleProducts;
+        if (filteredCrossSales == null && crossSaleProducts != null) {
+            filteredCrossSales = new ArrayList<RelatedProduct>(crossSaleProducts.size());
+            filteredCrossSales.addAll(crossSaleProducts);
+            CollectionUtils.filter(crossSaleProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y'!=((Archivable)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                }
+            });
+        }
+        return filteredCrossSales;
     }
 
     @Override
@@ -563,7 +596,17 @@ public class ProductImpl implements Product {
 
     @Override
     public List<RelatedProduct> getUpSaleProducts() {
-        return upSaleProducts;
+        if (filteredUpSales == null && upSaleProducts != null) {
+            filteredUpSales = new ArrayList<RelatedProduct>(upSaleProducts.size());
+            filteredUpSales.addAll(upSaleProducts);
+            CollectionUtils.filter(upSaleProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y'!=((Archivable)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                }
+            });
+        }
+        return filteredUpSales;
     }
 
     @Override
@@ -619,7 +662,23 @@ public class ProductImpl implements Product {
 		this.displayTemplate = displayTemplate;
 	}
 
-	@Override
+    @Override
+    public Character getArchived() {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        return archiveStatus.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

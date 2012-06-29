@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository("blShippingRatesDao")
+@Deprecated
 public class ShippingRateDaoImpl implements ShippingRateDao {
 
     @PersistenceContext(unitName = "blPU")
@@ -38,14 +39,17 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public ShippingRate save(ShippingRate shippingRate) {
         return em.merge(shippingRate);
     }
 
+    @Override
     public ShippingRate readShippingRateById(Long id) {
-        return (ShippingRate) em.find(ShippingRateImpl.class, id);
+        return em.find(ShippingRateImpl.class, id);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity) {
         Query query = em.createNamedQuery("BC_READ_FIRST_SHIPPING_RATE_BY_FEE_TYPES");
@@ -60,6 +64,7 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
         }
     }
 
+    @Override
     public ShippingRate create() {
         return (ShippingRate) entityConfiguration.createEntityInstance(ShippingRate.class.getName());
     }

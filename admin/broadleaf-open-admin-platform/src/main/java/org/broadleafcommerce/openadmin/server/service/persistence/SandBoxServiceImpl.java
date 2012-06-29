@@ -78,7 +78,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public void promoteAllSandBoxItems(SandBox fromSandBox, String comment) {
-        promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(sandBoxItemDao.retrieveSandBoxItemsForSandbox(fromSandBox)));
+        promoteSelectedItems(fromSandBox, comment, new ArrayList<SandBoxItem>(sandBoxItemDao.retrieveSandBoxItemsForSandbox(fromSandBox.getId())));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Override
     public void revertAllSandBoxItems(SandBox originalSandBox, SandBox sandBox) {
          List<SandBoxItem> items = new ArrayList<SandBoxItem>();
-         List<SandBoxItem> sandBoxItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox);
+         List<SandBoxItem> sandBoxItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox.getId());
          for (SandBoxItem item : sandBoxItems) {             
              if (originalSandBox.equals(sandBox) || (item.getOriginalSandBoxId() != null && originalSandBox != null && item.getOriginalSandBoxId().equals(originalSandBox.getId()))) {
                  items.add(item);
@@ -145,7 +145,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Override
     public void rejectAllSandBoxItems(SandBox originalSandBox, SandBox sandBox, String comment) {        
         List<SandBoxItem> items = new ArrayList<SandBoxItem>();
-        List<SandBoxItem> currentItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox);
+        List<SandBoxItem> currentItems = sandBoxItemDao.retrieveSandBoxItemsForSandbox(sandBox.getId());
         for (SandBoxItem item : currentItems) {
             if (item.getOriginalSandBoxId().equals(originalSandBox.getId())) {
                 items.add(item);

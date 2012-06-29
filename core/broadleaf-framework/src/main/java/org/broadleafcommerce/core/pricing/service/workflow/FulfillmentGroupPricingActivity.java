@@ -16,21 +16,30 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.pricing.service.ShippingService;
+import org.broadleafcommerce.core.pricing.service.FulfillmentService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.common.money.Money;
 
-public class ShippingActivity extends BaseActivity {
+/**
+ * Called during the pricing workflow to compute all of the fulfillment costs
+ * for all of the FulfillmentGroups on an Order and updates Order with the
+ * total price of all of the FufillmentGroups
+ * 
+ * @author Phillip Verheyden
+ * @see {@link FulfillmentGroup}, {@link Order}
+ */
+public class FulfillmentGroupPricingActivity extends BaseActivity {
 
-    private ShippingService shippingService;
+    private FulfillmentService fulfillmentService;
 
-    public void setShippingService(ShippingService shippingService) {
-        this.shippingService = shippingService;
+    public void setFulfillmentService(FulfillmentService fulfillmentService) {
+        this.fulfillmentService = fulfillmentService;
     }
 
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext)context).getSeedData();
 
@@ -42,7 +51,7 @@ public class ShippingActivity extends BaseActivity {
 
         Money totalShipping = new Money(0D);
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+            fulfillmentGroup = fulfillmentService.calculateCostForFulfillmentGroup(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
         }
         order.setTotalShipping(totalShipping);
