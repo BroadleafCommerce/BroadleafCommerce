@@ -16,11 +16,40 @@
 
 package org.broadleafcommerce.core.pricing.service;
 
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
+import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentProcessor;
 
+import java.util.List;
+
+/**
+ * 
+ * @author Phillip Verheyden
+ */
 public interface FulfillmentService {
-	
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+
+    /**
+     * 
+     * @param fulfillmentGroup
+     * @return
+     * @throws ShippingPriceException if <b>fulfillmentGroup</b> does not have a FulfillmentOption associated to it or
+     * if there was no processor found to calculate costs for <b>fulfillmentGroup</b>
+     */
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+
+    /**
+     * 
+     * @param fulfillmentGroup
+     * @param option
+     * @return
+     * @throws ShippingPriceException if no processor was found to estimate costs for <b>fulfillmentGroup</b> with the given <b>option</b>
+     */
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) throws ShippingPriceException;
     
+    public List<FulfillmentProcessor> getFulfillmentProcessors();
+
+    public void setFulfillmentProcessors(List<FulfillmentProcessor> fulfillmentProcessors);
+
 }
