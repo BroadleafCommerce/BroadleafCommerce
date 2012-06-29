@@ -29,10 +29,14 @@ import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
@@ -166,9 +170,22 @@ public class OrderServiceImpl implements OrderService {
 		throw new UnsupportedOperationException();
 	}
     
+    @Resource(name = "blAddItemWorkflow")
+    protected SequenceProcessor addItemWorkflow;
+    
     @Override
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
-		throw new UnsupportedOperationException();
+    	CartOperationRequest cartOpRequest = new CartOperationRequest();
+    	cartOpRequest.setItemRequest(orderItemRequestDTO);
+    	cartOpRequest.setOrder(findOrderById(orderId));
+    	try {
+			CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
+			return context.getSeedData().getOrder();
+		} catch (WorkflowException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	throw new PricingException("fjkdlsjfdls");
     }
 
 

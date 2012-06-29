@@ -23,6 +23,14 @@ import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+/**
+ * This legacy interface should no longer be used as of 2.0
+ * 
+ * The new interface and implementation are OrderService and OrderServiceImpl
+ * 
+ * @deprecated
+ */
+@Deprecated
 public interface LegacyCartService extends LegacyOrderService {
 
     Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;

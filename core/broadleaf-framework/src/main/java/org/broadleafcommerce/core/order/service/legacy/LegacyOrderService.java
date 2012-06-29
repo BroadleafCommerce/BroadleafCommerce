@@ -40,14 +40,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In Broadleaf Commerce, a Cart and an Order are the same thing,
- * A "cart" becomes an order after it has been submitted.
- *
- * Most of the methods in this order are used to modify the cart
- * during the shopping process.    Although it is common to also
- * use this service for "named" orders (e.g. wishlists).
- *
+ * This legacy interface should no longer be used as of 2.0
+ * 
+ * The new interface and implementation are OrderService and OrderServiceImpl
+ * 
+ * @deprecated
  */
+@Deprecated
 public interface LegacyOrderService extends OrderService {
 
     public Order createNamedOrderForCustomer(String name, Customer customer);

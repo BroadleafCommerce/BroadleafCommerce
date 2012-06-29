@@ -98,6 +98,19 @@
 		</property>
 		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
 	</bean>
+	
+	<bean id="blAddItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.AddOrderItemActivity"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+	</bean>
 
 	<bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
 		<property name="processContextFactory">

@@ -22,7 +22,7 @@ public interface ProcessContext extends Serializable {
     /**
      * Activly informs the workflow process to stop processing
      * no further activities will be exeecuted
-     * @return
+     * @return 
      */
     public boolean stopProcess();
 

@@ -46,6 +46,14 @@ import java.util.Map;
  * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans
  * that are configured via Spring and property files (i.e. payment modules, etc...)
  */
+/**
+ * This legacy implementation should no longer be used as of 2.0
+ * 
+ * The new interface and implementation are OrderService and OrderServiceImpl
+ * 
+ * @deprecated
+ */
+@Deprecated
 @Service("blLegacyCartService")
 @ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
 public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements LegacyCartService {

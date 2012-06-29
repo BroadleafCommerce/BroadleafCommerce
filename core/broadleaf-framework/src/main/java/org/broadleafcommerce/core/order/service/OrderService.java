@@ -31,8 +31,11 @@ import java.util.List;
 
 /**
  * The general interface for interacting with shopping carts and completed Orders.
- * 
- * @author apazzolini
+ * In Broadleaf Commerce, a Cart and an Order are the same thing. A "cart" becomes 
+ * an order after it has been submitted.
+ *
+ * Most of the methods in this order are used to modify the cart. However, it is also
+ * common to use this service for "named" orders (aka wishlists).
  */
 public interface OrderService {
 

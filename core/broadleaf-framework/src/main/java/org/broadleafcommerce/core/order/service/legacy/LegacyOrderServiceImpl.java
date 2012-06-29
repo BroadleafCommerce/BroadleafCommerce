@@ -76,6 +76,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This legacy implementation should no longer be used as of 2.0
+ * 
+ * The new interface and implementation are OrderService and OrderServiceImpl
+ * 
+ * @deprecated
+ */
+@Deprecated
 public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOrderService {
 
     private static final Log LOG = LogFactory.getLog(LegacyOrderServiceImpl.class);
