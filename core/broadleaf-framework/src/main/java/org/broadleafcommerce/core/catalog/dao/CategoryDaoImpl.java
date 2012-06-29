@@ -56,7 +56,7 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category readCategoryById(Long categoryId) {
-        return (Category) em.find(CategoryImpl.class, categoryId);
+        return em.find(CategoryImpl.class, categoryId);
     }
 
     @Override

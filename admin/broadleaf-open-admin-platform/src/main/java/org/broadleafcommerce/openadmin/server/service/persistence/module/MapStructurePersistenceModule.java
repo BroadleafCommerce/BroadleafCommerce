@@ -198,8 +198,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
 		}
 	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+
 	@Override
 	public Entity add(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
@@ -288,8 +287,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			return value;
 		}
 	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+
 	@Override
 	public Entity update(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();
@@ -355,8 +353,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
 		}
 	}
-	
-	@SuppressWarnings("rawtypes")
+
 	@Override
 	public void remove(PersistencePackage persistencePackage) throws ServiceException {
 		String[] customCriteria = persistencePackage.getCustomCriteria();

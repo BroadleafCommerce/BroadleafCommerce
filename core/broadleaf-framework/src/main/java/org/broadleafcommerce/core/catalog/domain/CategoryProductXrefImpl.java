@@ -27,9 +27,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
  * This entity is only used for executing a named query.

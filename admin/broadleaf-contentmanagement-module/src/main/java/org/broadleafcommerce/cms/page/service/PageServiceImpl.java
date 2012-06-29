@@ -137,7 +137,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         page.setDeletedFlag(false);
         Page newPage = pageDao.addPage(page);
         if (! isProductionSandBox(destinationSandbox)) {
-            sandBoxItemDao.addSandBoxItem(destinationSandbox, SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
+            sandBoxItemDao.addSandBoxItem(destinationSandbox.getId(), SandBoxOperationType.ADD, SandBoxItemType.PAGE, newPage.getFullUrl(), newPage.getId(), null);
         }
         return newPage;
     }
@@ -231,7 +231,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
             }
 
             // Add this item to the sandbox.
-            sandBoxItemDao.addSandBoxItem(destSandbox, type, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
+            sandBoxItemDao.addSandBoxItem(destSandbox.getId(), type, SandBoxItemType.PAGE, clonedPage.getFullUrl(), returnPage.getId(), returnPage.getOriginalPageId());
             return returnPage;
         } else {
             // This should happen via a promote, revert, or reject in the sandbox service

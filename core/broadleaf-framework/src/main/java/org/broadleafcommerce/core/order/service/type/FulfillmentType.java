@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of fulfillment group types.
@@ -28,35 +28,39 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
  * @author jfischer
  *
  */
-public class FulfillmentGroupType implements Serializable, BroadleafEnumerationType {
+public class FulfillmentType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FulfillmentGroupType> TYPES = new HashMap<String, FulfillmentGroupType>();
+    private static final Map<String, FulfillmentType> TYPES = new HashMap<String, FulfillmentType>();
 
-    public static final FulfillmentGroupType PICK_UP_AT_STORE = new FulfillmentGroupType("PICK_UP_AT_STORE", "Pick Up At Store");
-    public static final FulfillmentGroupType SHIPPING = new FulfillmentGroupType("SHIPPING", "Shipping");
+    public static final FulfillmentType DIGITAL = new FulfillmentType("DIGITAL", "Digital");
+    public static final FulfillmentType PHYSICAL = new FulfillmentType("PHYSICAL", "Physical");
+    @Deprecated
+    public static final FulfillmentType SHIPPING = new FulfillmentType("SHIPPING", "Shipping");
 
-    public static FulfillmentGroupType getInstance(final String type) {
+    public static FulfillmentType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
 
-    public FulfillmentGroupType() {
+    public FulfillmentType() {
         //do nothing
     }
 
-    public FulfillmentGroupType(final String type, final String friendlyType) {
+    public FulfillmentType(final String type, final String friendlyType) {
     	this.friendlyType = friendlyType;
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
 		return friendlyType;
 	}
@@ -84,7 +88,7 @@ public class FulfillmentGroupType implements Serializable, BroadleafEnumerationT
             return false;
         if (getClass() != obj.getClass())
             return false;
-        FulfillmentGroupType other = (FulfillmentGroupType) obj;
+        FulfillmentType other = (FulfillmentType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;
