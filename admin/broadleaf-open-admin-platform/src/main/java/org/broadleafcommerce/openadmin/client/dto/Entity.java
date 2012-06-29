@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * 
@@ -34,6 +34,12 @@ public class Entity implements IsSerializable, Serializable {
 	private String[] type;
 	private Property[] properties;
     private boolean isDirty = false;
+    private Boolean isDeleted = false;
+    private Boolean isInactive = false;
+    private Boolean isActive = false;
+    private Boolean isLocked = false;
+    private String lockedBy;
+    private String lockedDate;
     private boolean multiPartAvailableOnThread = false;
     private boolean isValidationFailure;
     private String[][] validationErrors;
@@ -146,5 +152,53 @@ public class Entity implements IsSerializable, Serializable {
 
     public void setValidationErrors(String[][] validationErrors) {
         this.validationErrors = validationErrors;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Boolean getInactive() {
+        return isInactive;
+    }
+
+    public void setInactive(Boolean inactive) {
+        isInactive = inactive;
+    }
+
+    public Boolean getLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(Boolean locked) {
+        isLocked = locked;
+    }
+
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    public void setLockedBy(String lockedBy) {
+        this.lockedBy = lockedBy;
+    }
+
+    public String getLockedDate() {
+        return lockedDate;
+    }
+
+    public void setLockedDate(String lockedDate) {
+        this.lockedDate = lockedDate;
     }
 }
