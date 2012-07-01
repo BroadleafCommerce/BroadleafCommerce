@@ -21,8 +21,8 @@ import net.sf.cglib.core.Predicate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -41,14 +40,10 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -182,16 +177,6 @@ public class ProductImpl implements Product, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
-
-    /** The product images. */
-    @CollectionOfElements
-    @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    @Deprecated
-    protected Map<String, String> productImages = new HashMap<String, String>();
 
     /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -392,30 +377,6 @@ public class ProductImpl implements Product, Status {
         	this.additionalSkus.add(sku);
         }
         //this.skus.clear();
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, String> getProductImages() {
-        return productImages;
-    }
-
-    @Override
-    @Deprecated
-    public String getProductImage(String imageKey) {
-        return productImages.get(imageKey);
-    }
-
-    @Override
-    @Deprecated
-    public void setProductImages(Map<String, String> productImages) {
-        this.productImages.clear();
-//        for(String key : productImages.keySet()){
-//        	this.productImages.put(key, productImages.get(key));
-//        }
-    	for(Map.Entry<String, String> me : productImages.entrySet()) {
-    		this.productImages.put(me.getKey(), me.getValue());
-    	}
     }
 
     @Override

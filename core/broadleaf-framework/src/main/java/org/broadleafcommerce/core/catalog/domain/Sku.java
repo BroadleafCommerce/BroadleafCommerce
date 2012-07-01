@@ -238,28 +238,6 @@ public interface Sku extends Serializable {
     public boolean isActive();
 
     /**
-     * Returns a map of key/value pairs where the key is a string for the name of an image and the value
-     * is a string to the URL of the image.  This is used to display images while browsing the sku.
-     * This method is deprecated. Use getSkuMedia instead.
-     */
-    @Deprecated
-    public Map<String, String> getSkuImages();
-
-    /**
-     * Returns the default image used for the Sku.
-     */
-    @Deprecated
-    public String getSkuImage(String imageKey);
-
-    /**
-     * Sets a map of key/value pairs where the key is a string for the name of an image and the value
-     * is a string to the URL of the image.  This is used to display images while browsing the sku.
-     * This method is deprecated. Use setSkuMedia instead.
-     */
-    @Deprecated
-    public void setSkuImages(Map<String, String> skuImages);
-
-    /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a media object.
      */
