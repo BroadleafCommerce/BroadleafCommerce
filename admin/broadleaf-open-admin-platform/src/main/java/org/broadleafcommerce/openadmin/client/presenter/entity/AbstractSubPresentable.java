@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import com.smartgwt.client.data.DSCallback;
-import com.smartgwt.client.data.DSRequest;
-import com.smartgwt.client.data.DSResponse;
-import com.smartgwt.client.data.Record;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.GridStructureDisplay;
+
+import com.smartgwt.client.data.DSCallback;
+import com.smartgwt.client.data.DSRequest;
+import com.smartgwt.client.data.DSResponse;
+import com.smartgwt.client.data.Record;
 
 import java.util.Arrays;
 
@@ -50,6 +51,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
         this(display, null);
     }
 
+    @Override
     public void setStartState() {
 		if (!disabled) {
 			display.getAddButton().enable();
@@ -58,6 +60,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 		}
 	}
 
+    @Override
     public void enable() {
 		disabled = false;
 		display.getAddButton().enable();
@@ -66,6 +69,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 		display.getToolBar().enable();
 	}
 
+    @Override
     public void disable() {
 		disabled = true;
 		display.getAddButton().disable();
@@ -74,10 +78,12 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 		display.getToolBar().disable();
 	}
     
+    @Override
     public boolean load(Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource) {
         return load(associatedRecord, abstractDynamicDataSource, null);
     }
 
+    @Override
     public boolean load(final Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource, final DSCallback cb) {
 		this.associatedRecord = associatedRecord;
 		this.abstractDynamicDataSource = abstractDynamicDataSource;
@@ -105,8 +111,9 @@ public abstract class AbstractSubPresentable implements SubPresentable {
         display.setVisible(shouldLoad);
 
         if (shouldLoad) {
-            String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+            String id = getRelationshipValue(associatedRecord, abstractDynamicDataSource);
             ((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
+                @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     String locked = associatedRecord.getAttribute("__locked");
                     if (!(locked != null && locked.equals("true"))) {
@@ -124,7 +131,12 @@ public abstract class AbstractSubPresentable implements SubPresentable {
 
         return shouldLoad;
 	}
+    
+    public String getRelationshipValue(final Record associatedRecord, AbstractDynamicDataSource abstractDynamicDataSource) {
+        return abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
+    }
 
+    @Override
     public void setReadOnly(Boolean readOnly) {
 		if (readOnly) {
 			disable();
@@ -135,6 +147,7 @@ public abstract class AbstractSubPresentable implements SubPresentable {
         this.readOnly = readOnly;
 	}
 
+    @Override
     public void setDataSource(ListGridDataSource dataSource, String[] gridFields, Boolean[] editable) {
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
