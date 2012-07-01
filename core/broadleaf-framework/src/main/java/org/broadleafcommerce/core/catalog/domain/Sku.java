@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
@@ -97,12 +98,14 @@ public interface Sku extends Serializable {
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
      * @deprecated
      */
+    @Deprecated
     public Money getListPrice();
 
     /**
      * Sets the the List Price of the Sku.  The List Price is the MSRP of the sku.
      * @deprecated
      */
+    @Deprecated
     public void setListPrice(Money listPrice);
 
     /**
