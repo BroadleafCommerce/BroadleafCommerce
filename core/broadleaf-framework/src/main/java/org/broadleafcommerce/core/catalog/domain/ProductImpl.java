@@ -193,16 +193,6 @@ public class ProductImpl implements Product, Status {
     @Deprecated
     protected Map<String, String> productImages = new HashMap<String, String>();
 
-    /** The product media. */
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    @Deprecated
-    protected Map<String, Media> productMedia = new HashMap<String , Media>();
-
     /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -431,21 +421,6 @@ public class ProductImpl implements Product, Status {
     @Override
     public Category getDefaultCategory() {
         return defaultCategory;
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, Media> getProductMedia() {
-        return productMedia;
-    }
-
-    @Override
-    @Deprecated
-    public void setProductMedia(Map<String, Media> productMedia) {
-        this.productMedia.clear();
-    	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
-    		this.productMedia.put(me.getKey(), me.getValue());
-    	}
     }
 
     @Override

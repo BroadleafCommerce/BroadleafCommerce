@@ -280,22 +280,6 @@ public interface Product extends Serializable {
     public void setProductImages(Map<String, String> productImages);
 
     /**
-     * Returns a map of key/value pairs that associate the media name (key) with the Media object(value)
-     *
-     * @return a map of product media
-     */
-    @Deprecated
-    public Map<String, Media> getProductMedia();
-
-    /**
-     * Sets the product media map.
-     *
-     * @param productMedia - a map of product images
-     */
-    @Deprecated
-    public void setProductMedia(Map<String, Media> productMedia);
-
-    /**
      * Gets the media for this product. This serves as a pass-through to
      * the {@link getDefaultSku()} media
      * 
