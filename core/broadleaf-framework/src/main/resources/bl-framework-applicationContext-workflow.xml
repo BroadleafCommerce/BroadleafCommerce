@@ -62,6 +62,7 @@
 	   <property name="processors">
 	       <list>
 	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProcessor" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.BandedPriceFulfillmentPricingProcessor" />
 	       </list>
 	   </property>
 	</bean>
