@@ -23,7 +23,7 @@ import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
  * for a particular FulfillmentOptions
  * 
  * @author Phillip Verheyden
- * @see {@link FulfillmentPricingProcessor}, {@link FulfillmentPricingService}
+ * @see {@link FulfillmentPricingProvider}, {@link FulfillmentPricingService}
  */
 public class FulfillmentEstimationResponse {
 

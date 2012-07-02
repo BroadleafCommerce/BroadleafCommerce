@@ -20,7 +20,7 @@ import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceExcept
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProcessor;
+import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity;
 
 import java.util.List;
@@ -37,14 +37,14 @@ public interface FulfillmentPricingService {
 
     /**
      * Called during the Pricing workflow to determine the cost for the {@link FulfillmentGroup}. This will loop through
-     * {@link #getProcessors()} and call {@link FulfillmentPricingProcessor#calculateCostForFulfillmentGroup(FulfillmentGroup)}
-     * on the first processor that returns true from {@link FulfillmentPricingProcessor#canCalculateCostForFulfillmentGroup(FulfillmentGroup)}
+     * {@link #getProcessors()} and call {@link FulfillmentPricingProvider#calculateCostForFulfillmentGroup(FulfillmentGroup)}
+     * on the first processor that returns true from {@link FulfillmentPricingProvider#canCalculateCostForFulfillmentGroup(FulfillmentGroup)}
      * 
      * @param fulfillmentGroup
      * @return the updated </b>fulfillmentGroup</b> with its shippingPrice set
      * @throws ShippingPriceException if <b>fulfillmentGroup</b> does not have a FulfillmentOption associated to it or
      * if there was no processor found to calculate costs for <b>fulfillmentGroup</b>
-     * @see {@link FulfillmentPricingProcessor}
+     * @see {@link FulfillmentPricingProvider}
      */
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
 
@@ -52,16 +52,16 @@ public interface FulfillmentPricingService {
      * This provides an estimation for a {@link FulfillmentGroup} with a {@link FulfillmentOption}. The main use case for this method
      * is in a view cart controller that wants to provide estimations for different {@link FulfillmentOption}s before the user
      * actually selects one. This uses {@link #getProcessors()} to allow third-party integrations to respond to
-     * estimations, and returns the first processor that returns true from {@link FulfillmentPricingProcessor#canEstimateCostForFulfillmentGroup(FulfillmentGroup, FulfillmentOption)}.
+     * estimations, and returns the first processor that returns true from {@link FulfillmentPricingProvider#canEstimateCostForFulfillmentGroup(FulfillmentGroup, FulfillmentOption)}.
      * 
      * @param fulfillmentGroup
      * @param option
      * @return the price estimation for a particular {@link FulfillmentGroup} with a candidate {@link FulfillmentOption}
      * @throws ShippingPriceException if no processor was found to estimate costs for <b>fulfillmentGroup</b> with the given <b>option</b>
-     * @see {@link FulfillmentPricingProcessor}
+     * @see {@link FulfillmentPricingProvider}
      */
     public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) throws ShippingPriceException;
     
-    public List<FulfillmentPricingProcessor> getProcessors();
+    public List<FulfillmentPricingProvider> getProviders();
 
 }
