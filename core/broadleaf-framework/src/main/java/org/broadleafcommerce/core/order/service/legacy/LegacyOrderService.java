@@ -49,10 +49,6 @@ import java.util.Map;
 @Deprecated
 public interface LegacyOrderService extends OrderService {
 
-    public Order createNamedOrderForCustomer(String name, Customer customer);
-
-    public Order findNamedOrderForCustomer(String name, Customer customer);
-
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;

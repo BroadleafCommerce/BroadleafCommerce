@@ -94,14 +94,14 @@ public class LegacyPricingTest extends BaseTest {
     @Resource
     private StateService stateService;
 
-    @Test(groups =  {"testShippingInsert"}, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
+    @Test(groups =  {"testShippingInsertLegacy"}, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
     @Rollback(false)
     public void testShippingInsert(ShippingRate shippingRate, ShippingRate sr2) throws Exception {
         shippingRate = shippingRateService.save(shippingRate);
         sr2 = shippingRateService.save(sr2);
     }
 
-    @Test(dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Test(groups = {"testPricingLegacy"}, dependsOnGroups = { "testShippingInsertLegacy", "createCustomerIdGenerationLegacy" })
     @Transactional
     public void testPricing() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -206,7 +206,7 @@ public class LegacyPricingTest extends BaseTest {
 
 
 
-    @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
+    @Test(groups = { "testShippingLegacy" }, dependsOnGroups = { "testShippingInsertLegacy", "createCustomerIdGenerationLegacy"})
     @Transactional
     public void testShipping() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -299,7 +299,7 @@ public class LegacyPricingTest extends BaseTest {
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax().add(order.getTotalShipping()))));
     }
     
-    @Test(groups = { "createCustomerIdGeneration" })
+    @Test(groups = { "createCustomerIdGenerationLegacy" })
     @Rollback(false)
     public void createCustomerIdGeneration() {
         IdGeneration idGeneration = new IdGenerationImpl();

@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.order.service.workflow.add;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
@@ -36,10 +35,6 @@ public class CheckAvailabilityActivity extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         
-        Order order = lcs.addItemToOrder(request.getOrder().getId(), request.getItemRequest(), true);
-        request.setOrder(order);
-        
-        ((CartOperationContext) context).setSeedData(request);
         return context;
     }
 

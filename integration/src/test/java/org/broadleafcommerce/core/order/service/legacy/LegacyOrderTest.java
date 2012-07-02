@@ -79,7 +79,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
     @Resource
     private ShippingRateService shippingRateService;
     
-    @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone" })
+    @Test(groups = { "createCartForCustomerLegacy" }, dependsOnGroups = { "readCustomer", "createPhone" })
     @Transactional
     @Rollback(false)
     public void createCartForCustomer() {
@@ -92,7 +92,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         this.orderId = order.getId();
     }
 
-    @Test(groups = { "findCurrentCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone", "createCartForCustomer" })
+    @Test(groups = { "findCurrentCartForCustomerLegacy" }, dependsOnGroups = { "readCustomer", "createPhone", "createCartForCustomerLegacy" })
     @Transactional
     @Rollback(false)
     public void findCurrentCartForCustomer() {
@@ -105,7 +105,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         this.orderId = order.getId();
     }
 
-    @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "createSku" })
+    @Test(groups = { "addItemToOrderLegacy" }, dependsOnGroups = { "findCurrentCartForCustomerLegacy", "createSku" })
     @Rollback(false)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addItemToOrder() throws PricingException {
@@ -124,7 +124,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert item.getSku().equals(sku);
     }
 
-    @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
+    @Test(groups = { "addAnotherItemToOrderLegacy" }, dependsOnGroups = { "addItemToOrderLegacy" })
     @Rollback(false)
     @Transactional
     public void addAnotherItemToOrder() throws PricingException {
@@ -168,7 +168,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
 
     }
 
-    @Test(groups = { "addBundleToOrder" }, dependsOnGroups = { "addAnotherItemToOrder" })
+    @Test(groups = { "addBundleToOrderLegacy" }, dependsOnGroups = { "addAnotherItemToOrderLegacy" })
     @Rollback(false)
     @Transactional
     public void addBundleToOrder() throws PricingException {
@@ -192,7 +192,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert item.getQuantity() == 1;
     }
 
-    @Test(groups = { "removeBundleFromOrder" }, dependsOnGroups = { "addBundleToOrder" })
+    @Test(groups = { "removeBundleFromOrderLegacy" }, dependsOnGroups = { "addBundleToOrderLegacy" })
     @Rollback(false)
     @Transactional
     public void removeBundleFromOrder() throws PricingException {
@@ -211,7 +211,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert items.size() == startingSize - 1;
     }
 
-    @Test(groups = { "getItemsForOrder" }, dependsOnGroups = { "removeBundleFromOrder" })
+    @Test(groups = { "getItemsForOrderLegacy" }, dependsOnGroups = { "removeBundleFromOrderLegacy" })
     @Transactional
     public void getItemsForOrder() {
         Order order = cartService.findOrderById(orderId);
@@ -220,7 +220,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert orderItems.size() == numOrderItems - 1;
     }
 
-    @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    @Test(groups = { "updateItemsInOrderLegacy" }, dependsOnGroups = { "getItemsForOrderLegacy" })
     @Transactional
     public void updateItemsInOrder() throws ItemNotFoundException, PricingException {
         Order order = cartService.findOrderById(orderId);
@@ -245,7 +245,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         
     }
 
-    @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    @Test(groups = { "removeItemFromOrderLegacy" }, dependsOnGroups = { "getItemsForOrderLegacy" })
     @Transactional
     public void removeItemFromOrder() throws PricingException {
         Order order = cartService.findOrderById(orderId);
@@ -261,7 +261,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert items.size() == startingSize - 1;
     }
 
-    @Test(groups = { "checkOrderItems" }, dependsOnGroups = { "removeItemFromOrder" })
+    @Test(groups = { "checkOrderItemsLegacy" }, dependsOnGroups = { "removeItemFromOrderLegacy" })
     @Transactional
     public void checkOrderItems() throws PricingException {
         Order order = cartService.findOrderById(orderId);
@@ -271,7 +271,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert bundleOrderItem == null;
     }
 
-    @Test(groups = { "addPaymentToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItems" })
+    @Test(groups = { "addPaymentToOrderLegacy" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItemsLegacy" })
     @Rollback(false)
     @Transactional
     public void addPaymentToOrder(PaymentInfo paymentInfo) {
@@ -286,7 +286,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert payment.getOrder().equals(order);
     }
 
-    @Test(groups = "addFulfillmentGroupToOrderFirst", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrder" })
+    @Test(groups = "addFulfillmentGroupToOrderFirstLegacy", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrderLegacy" })
     @Rollback(false)
     @Transactional
     public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) throws PricingException {
@@ -307,7 +307,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         this.fulfillmentGroupId = fg.getId();
     }
 
-    @Test(groups = { "removeFulfillmentGroupFromOrder" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Test(groups = { "removeFulfillmentGroupFromOrderLegacy" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirstLegacy" })
     @Transactional
     public void removeFulfillmentGroupFromOrder() throws PricingException {
         Order order = cartService.findOrderById(orderId);
@@ -323,7 +323,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert items.size() == startingSize - 1;
     }
 
-    @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Test(groups = { "findFulFillmentGroupForOrderFirstLegacy" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirstLegacy" })
     @Transactional
     public void findFillmentGroupForOrderFirst() {
         Order order = cartService.findOrderById(orderId);
@@ -337,7 +337,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
     }
 
-    @Test(groups= {"addItemToFulfillmentGroupSecond"}, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Test(groups= {"addItemToFulfillmentGroupSecondLegacy"}, dependsOnGroups = { "addFulfillmentGroupToOrderFirstLegacy" })
     @Transactional
     public void addItemToFulfillmentgroupSecond() {
         String userName = "customer1";
@@ -374,7 +374,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
      * cartService.findFulfillmentGroupsForOrder(order).size(); assert
      * (beforeRemove - afterRemove) == 1; }
      */
-    @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "addFulfillmentGroupToOrderFirst" })
+    @Test(groups = { "findDefaultFulFillmentGroupForOrderLegacy" }, dependsOnGroups = { "findCurrentCartForCustomerLegacy", "addFulfillmentGroupToOrderFirstLegacy" })
     @Transactional
     public void findDefaultFillmentGroupForOrder() {
         Order order = cartService.findOrderById(orderId);
@@ -399,7 +399,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
      * cartService.findFulfillmentGroupsForOrder(order).size(); assert
      * (beforeRemove - afterRemove) == 1; }
      */
-    @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroupLegacy" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirstLegacy" })
     @Transactional
     public void removeItemFromOrderAfterFulfillmentGroups() {
         Order order = cartService.findOrderById(orderId);
@@ -418,7 +418,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         }
     }
 
-    @Test(groups = { "getOrdersForCustomer" }, dependsOnGroups = { "readCustomer", "findCurrentCartForCustomer" })
+    @Test(groups = { "getOrdersForCustomerLegacy" }, dependsOnGroups = { "readCustomer", "findCurrentCartForCustomerLegacy" })
     @Transactional
     public void getOrdersForCustomer() {
         String username = "customer1";
@@ -428,7 +428,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert orders.size() > 0;
     }
 
-    @Test(groups = { "findCartForAnonymousCustomer" }, dependsOnGroups = { "getOrdersForCustomer" })
+    @Test(groups = { "findCartForAnonymousCustomerLegacy" }, dependsOnGroups = { "getOrdersForCustomerLegacy" })
     public void findCartForAnonymousCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.findCartForCustomer(customer);
@@ -440,7 +440,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert newOrder.getCustomer() != null;
     }
 
-    @Test(groups = { "findOrderByOrderNumber" }, dependsOnGroups = { "findCartForAnonymousCustomer" })
+    @Test(groups = { "findOrderByOrderNumberLegacy" }, dependsOnGroups = { "findCartForAnonymousCustomerLegacy" })
     @Transactional
     public void findOrderByOrderNumber() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
@@ -459,7 +459,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert nullOrder == null;
     }
 
-    @Test(groups = { "findNamedOrderForCustomer" }, dependsOnGroups = { "findOrderByOrderNumber" })
+    @Test(groups = { "findNamedOrderForCustomerLegacy" }, dependsOnGroups = { "findOrderByOrderNumberLegacy" })
     @Transactional
     public void findNamedOrderForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
@@ -473,7 +473,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert newOrder.getId().equals(orderId);
     }
 
-    @Test(groups = { "testReadOrdersForCustomer" }, dependsOnGroups = { "findNamedOrderForCustomer" })
+    @Test(groups = { "testReadOrdersForCustomerLegacy" }, dependsOnGroups = { "findNamedOrderForCustomerLegacy" })
     @Transactional
     public void testReadOrdersForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
@@ -502,7 +502,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert containsOrder == true;
     }
 
-    @Test(groups = { "testOrderProperties" }, dependsOnGroups = { "testReadOrdersForCustomer" })
+    @Test(groups = { "testOrderPropertiesLegacy" }, dependsOnGroups = { "testReadOrdersForCustomerLegacy" })
     public void testOrderProperties() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
@@ -516,7 +516,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert order.getSubmitDate().equals(testCalendar.getTime());
     }
 
-    @Test(groups = { "testNamedOrderForCustomer" }, dependsOnGroups = { "testOrderProperties" })
+    @Test(groups = { "testNamedOrderForCustomerLegacy" }, dependsOnGroups = { "testOrderPropertiesLegacy" })
     public void testNamedOrderForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         customer = customerService.saveCustomer(customer);
@@ -531,7 +531,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
 
     }
 
-    @Test(groups = { "testAddSkuToOrder" })
+    @Test(groups = { "testAddSkuToOrderLegacy" })
     @Transactional
     public void testAddSkuToOrder() throws PricingException {
     	Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
@@ -578,7 +578,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert categoryNullOrderItem != null;
     }
 
-    @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
+    @Test(groups = { "testOrderPaymentInfosLegacy" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
     @Transactional
     public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
@@ -601,7 +601,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         //assert order.getPaymentInfos().size() == 0;
     }
 
-    @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
+    @Test(groups = { "testSubmitOrderLegacy" }, dependsOnGroups = { "findNamedOrderForCustomerLegacy" })
     public void testSubmitOrder() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
@@ -623,7 +623,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert cartService.findCartForCustomer(new CustomerImpl()) == null;
     }
     
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testCreateNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
@@ -670,7 +670,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert categoryNullOrderItem != null;
     }
     
-    @Test(groups = { "testOrderFulfillmentGroups" }, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
+    @Test(groups = { "testOrderFulfillmentGroupsLegacy" }, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
     @Transactional
     public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException, ItemNotFoundException{
         shippingRate = shippingRateService.save(shippingRate);

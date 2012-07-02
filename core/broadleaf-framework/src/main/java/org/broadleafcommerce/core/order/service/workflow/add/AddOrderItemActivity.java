@@ -18,8 +18,18 @@ package org.broadleafcommerce.core.order.service.workflow.add;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -27,18 +37,71 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
+import java.util.List;
+
 public class AddOrderItemActivity extends BaseActivity {
     private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
     
-    @Resource(name = "blLegacyCartService")
-    protected LegacyCartService lcs;
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
+    
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
+        OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
+
+        // Order and sku have been verified in a previous activity -- the values 
+        // in the request can be trusted
+        Order order = request.getOrder();
+        Sku sku = catalogService.findSkuById(orderItemRequestDTO.getSkuId());
         
-        Order order = lcs.addItemToOrder(request.getOrder().getId(), request.getItemRequest(), true);
+        Product product = null;
+        if (orderItemRequestDTO.getProductId() != null) {
+        	product = catalogService.findProductById(orderItemRequestDTO.getProductId());
+        }
+        
+        Category category = null;
+        if (orderItemRequestDTO.getCategoryId() != null) {
+            category = catalogService.findCategoryById(orderItemRequestDTO.getCategoryId());
+        } 
+
+        if (category == null && product != null) {
+            category = product.getDefaultCategory();
+        }
+
+        OrderItem item;
+        if (product == null || !(product instanceof ProductBundle)) {
+        	DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        	itemRequest.setCategory(category);
+	        itemRequest.setProduct(product);
+	        itemRequest.setSku(sku);
+	        itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
+	        itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+        	item = orderItemService.createDiscreteOrderItem(itemRequest);
+        } else {
+        	ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
+        	bundleItemRequest.setCategory(category);
+        	bundleItemRequest.setProductBundle((ProductBundle) product);
+        	bundleItemRequest.setSku(sku);
+        	bundleItemRequest.setQuantity(orderItemRequestDTO.getQuantity());
+        	bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+        	bundleItemRequest.setName(product.getName());
+        	item = orderItemService.createBundleOrderItem(bundleItemRequest);
+        }
+        
+        List<OrderItem> orderItems = order.getOrderItems();
+        orderItems.add(item);
+        item.setOrder(order);
+        item = orderItemService.saveOrderItem(item);
+        order = orderService.save(order, request.isPriceOrder());
+        
+        request.setCreatedItemResponse(item);
         request.setOrder(order);
-        
         ((CartOperationContext) context).setSeedData(request);
         return context;
     }

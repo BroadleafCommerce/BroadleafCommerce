@@ -30,35 +30,35 @@ public class LegacyAddressTest extends LegacyCommonSetupBaseTest {
     String userName = new String();
     Long userId;
 
-    @Test(groups = "createCountry")
+    @Test(groups = "createCountryLegacy")
     public void createCountry() {
     	super.createCountry();
     }
 
-    @Test(groups = "findCountries", dependsOnGroups = "createCountry")
+    @Test(groups = "findCountriesLegacy", dependsOnGroups = "createCountryLegacy")
     public void findCountries() {
         List<Country> countries = countryService.findCountries();
         assert countries.size() > 0;
     }
 
-    @Test(groups = "findCountryByShortName", dependsOnGroups = "createCountry")
+    @Test(groups = "findCountryByShortNameLegacy", dependsOnGroups = "createCountryLegacy")
     public void findCountryByShortName() {
         Country country = countryService.findCountryByAbbreviation("US");
         assert country != null;
     }
 
-    @Test(groups = "createState")
+    @Test(groups = "createStateLegacy")
     public void createState() {
         super.createState();
     }
 
-    @Test(groups = "findStates", dependsOnGroups = "createState")
+    @Test(groups = "findStatesLegacy", dependsOnGroups = "createStateLegacy")
     public void findStates() {
         List<State> states = stateService.findStates();
         assert states.size() > 0;
     }
 
-    @Test(groups = "findStateByAbbreviation", dependsOnGroups = "findStates")
+    @Test(groups = "findStateByAbbreviationLegacy", dependsOnGroups = "findStatesLegacy")
     public void findStateByAbbreviation() {
         State state = stateService.findStateByAbbreviation("KY");
         assert state != null;

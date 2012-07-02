@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.List;
@@ -52,9 +53,31 @@ public interface OrderService {
 	 * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
 	 * 
 	 * @param customer
-	 * @return
+	 * @return the newly created order
 	 */
     public Order createNewCartForCustomer(Customer customer);
+    
+    /**
+     * Creates a new Order for the given customer with the given name. Typically, this represents
+     * a "wishlist" order that the customer can save but not check out with.
+     * 
+     * @param customer
+     * @return the newly created named order
+     */
+    public Order createNamedOrderForCustomer(String name, Customer customer);
+
+    /**
+     * Looks up an Order by the given customer and a specified order name.
+     * 
+     * This is typically used to retrieve a "wishlist" order.
+     * 
+     * @see #createNamedOrderForCustomer(String name, Customer customer)
+     * 
+     * @param name
+     * @param customer
+     * @return the named order requested
+     */
+    public Order findNamedOrderForCustomer(String name, Customer customer);
     
     /**
      * Looks up an Order by its database id
@@ -108,7 +131,7 @@ public interface OrderService {
      * @param order
      * @return the list of all PaymentInfo objects
      */
-    public List<PaymentInfo>findPaymentInfosForOrder(Order order);
+    public List<PaymentInfo> findPaymentInfosForOrder(Order order);
     
     /**
      * Persists the given order to the database. If the priceOrder flag is set to true,
@@ -225,8 +248,9 @@ public interface OrderService {
      * @param orderItemRequest
      * @param priceOrder
      * @return the order the item was added to
+     * @throws WorkflowException 
      */
-    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException, WorkflowException;
     
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified

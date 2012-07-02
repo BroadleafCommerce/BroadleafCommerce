@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 
 import java.util.HashMap;
 
@@ -53,6 +54,8 @@ public interface OrderItemService {
      * @return
      */
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
+
+	public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
 
 
 }

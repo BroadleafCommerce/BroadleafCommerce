@@ -70,7 +70,7 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     @Resource
     private FulfillmentGroupService fulfillmentGroupService;
 
-    @Test(groups = "createItemFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "createOrder", "createCustomerAddress" })
+    @Test(groups = "createItemFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "createOrder", "createCustomerAddressLegacy" })
     @Rollback(false)
     @Transactional
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {

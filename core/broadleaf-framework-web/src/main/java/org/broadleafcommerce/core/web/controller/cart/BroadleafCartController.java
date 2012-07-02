@@ -7,6 +7,7 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.model.AddToCartItem;
+import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.ui.Model;
@@ -47,9 +48,10 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @param itemRequest
 	 * @throws IOException
 	 * @throws PricingException
+	 * @throws WorkflowException 
 	 */
 	public String add(HttpServletRequest request, HttpServletResponse response, Model model,
-			AddToCartItem itemRequest) throws IOException, PricingException {
+			AddToCartItem itemRequest) throws IOException, PricingException, WorkflowException {
 		Order cart = CartState.getCart(request);
 		
 		// If the cart is currently empty, it will be the shared, "null" cart. We must detect this

@@ -30,7 +30,7 @@ import java.util.List;
 
 public class LegacyCartTest extends LegacyOrderBaseTest {
 
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveAllItemsToCartFromNamedOrder() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -42,7 +42,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     	assert namedOrder.getOrderItems().size() == 0;
     }
     
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testAddAllItemsToCartFromNamedOrder() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -55,7 +55,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     	cartService.setMoveNamedOrderItems(true);
     }
 
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testAddAllItemsToCartFromNamedOrderWithoutExistingCart() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -67,7 +67,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     	cartService.setMoveNamedOrderItems(true);
     }
 
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testAddItemToCartFromNamedOrder() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -81,7 +81,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     	assert cart.getOrderItems().size() == 1;
     }
 
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveItemToCartFromNamedOrder() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -97,7 +97,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     	assert namedOrder.getOrderItems().size() == 0;
     }
 
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveItemToCartFromNamedOrderWithoutExistingCart() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -113,7 +113,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     	assert namedOrder.getOrderItems().size() == 0;
     }
 
-    @Test(groups = { "testCartAndNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrderLegacy" })
     @Transactional
     public void testMoveItemToCartFromNamedOrderByIds() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -131,7 +131,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     }
 
     @Transactional
-    @Test(groups = { "testMergeCart" }) 
+    @Test(groups = { "testMergeCartLegacy" }) 
     public void testMergeToEmptyCart() throws PricingException {
     	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
     	Customer customer = customerService.saveCustomer(createNamedCustomer());
@@ -143,7 +143,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     }
     
     @Transactional
-    @Test(groups = { "testMergeCart" }) 
+    @Test(groups = { "testMergeCartLegacy" }) 
     public void testMergeToExistingCart() throws PricingException {
     	//sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
     	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
@@ -160,7 +160,7 @@ public class LegacyCartTest extends LegacyOrderBaseTest {
     }
 
     @Transactional
-    @Test(groups = { "testMergeCart" })
+    @Test(groups = { "testMergeCartLegacy" })
     public void testMergeToExistingCartWithGiftWrapOrderItems() throws PricingException {
         //sets up anonymous cart with two DiscreteOrderItems, and a GiftWrapOrderItem
         Order anonymousCart = setUpAnonymousCartWithGiftWrap();

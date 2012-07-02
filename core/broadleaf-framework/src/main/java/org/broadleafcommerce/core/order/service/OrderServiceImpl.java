@@ -72,6 +72,9 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOfferService")
     protected OfferService offerService;
     
+    @Resource(name = "blAddItemWorkflow")
+    protected SequenceProcessor addItemWorkflow;
+    
     // This field is static for legacy testing support.
     protected static boolean automaticallyMergeLikeItems = true;
 
@@ -79,6 +82,20 @@ public class OrderServiceImpl implements OrderService {
 	public Order createNewCartForCustomer(Customer customer) {
         return orderDao.createNewCartForCustomer(customer);
 	}
+	
+	@Override
+    public Order createNamedOrderForCustomer(String name, Customer customer) {
+        Order namedOrder = orderDao.create();
+        namedOrder.setCustomer(customer);
+        namedOrder.setName(name);
+        namedOrder.setStatus(OrderStatus.NAMED);
+        return orderDao.save(namedOrder); // No need to price here
+    }
+
+	@Override
+    public Order findNamedOrderForCustomer(String name, Customer customer) {
+        return orderDao.readNamedOrderForCustomer(customer, name);
+    }
 
 	@Override
 	public Order findOrderById(Long orderId) {
@@ -170,22 +187,15 @@ public class OrderServiceImpl implements OrderService {
 		throw new UnsupportedOperationException();
 	}
     
-    @Resource(name = "blAddItemWorkflow")
-    protected SequenceProcessor addItemWorkflow;
-    
     @Override
-    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException, WorkflowException {
     	CartOperationRequest cartOpRequest = new CartOperationRequest();
     	cartOpRequest.setItemRequest(orderItemRequestDTO);
     	cartOpRequest.setOrder(findOrderById(orderId));
-    	try {
-			CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
-			return context.getSeedData().getOrder();
-		} catch (WorkflowException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	throw new PricingException("fjkdlsjfdls");
+    	cartOpRequest.setPriceOrder(priceOrder);
+    	
+		CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
+		return context.getSeedData().getOrder();
     }
 
 

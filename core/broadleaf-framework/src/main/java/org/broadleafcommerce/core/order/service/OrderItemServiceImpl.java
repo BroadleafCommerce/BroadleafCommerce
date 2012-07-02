@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
@@ -31,6 +36,7 @@ import org.broadleafcommerce.core.order.service.call.AbstractOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
@@ -176,6 +182,49 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
 
         return item;
+    }
+    
+    @Override
+    public BundleOrderItem createBundleOrderItem(final ProductBundleOrderItemRequest itemRequest) {
+    	ProductBundle productBundle = itemRequest.getProductBundle();
+        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
+        bundleOrderItem.setQuantity(itemRequest.getQuantity());
+        bundleOrderItem.setCategory(itemRequest.getCategory());
+        bundleOrderItem.setSku(itemRequest.getSku());
+        bundleOrderItem.setName(itemRequest.getName());
+        bundleOrderItem.setProductBundle(productBundle);
+
+        for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
+            Product bundleProduct = skuBundleItem.getBundle();
+            Sku bundleSku = skuBundleItem.getSku();
+
+	        Category bundleCategory = null;
+	        if (itemRequest.getCategory() != null) {
+	            bundleCategory = itemRequest.getCategory();
+	        } 
+	
+	        if (bundleCategory == null && bundleProduct != null) {
+	            bundleCategory = bundleProduct.getDefaultCategory();
+	        }
+
+	        DiscreteOrderItemRequest bundleItemRequest = new DiscreteOrderItemRequest();
+	        bundleItemRequest.setCategory(bundleCategory);
+	        bundleItemRequest.setProduct(bundleProduct);
+	        bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
+	        bundleItemRequest.setSku(bundleSku);
+	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
+            
+            DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);
+            bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
+            bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);
+            bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
+        }
+
+        bundleOrderItem.updatePrices();
+        bundleOrderItem.assignFinalPrice();
+        
+        bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
+        return bundleOrderItem;
     }
 
 }

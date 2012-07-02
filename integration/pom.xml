@@ -75,8 +75,8 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>javarebel-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>generate-rebel-xml</id>
@@ -85,6 +85,16 @@
                                     <goal>generate</goal>
                                 </goals>
                             </execution>
+                        </executions>
+                        <configuration>
+                            <relativePath>../../</relativePath>
+                            <rootPath>${rebel.root}</rootPath>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
                             <execution>
                                 <goals>
                                     <goal>test-jar</goal>
@@ -96,7 +106,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <argLine>-Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8083 -javaagent:/usr/lib/jrebel/jrebel.jar -Drebel.log.stdout=true</argLine>
+                            <argLine>-Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 -Drebel.root=${rebel.root} -javaagent:/usr/lib/jrebel/jrebel.jar -Drebel.log.stdout=true</argLine>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -185,7 +185,7 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
         return order;
     }
 
-    @Test(groups =  {"testOffersWithGiftWrap"}, dependsOnGroups = { "testShippingInsert"})
+    @Test(groups =  {"testOffersWithGiftWrapLegacy"}, dependsOnGroups = { "testShippingInsertLegacy"})
     @Transactional
     public void testOrderItemOfferWithGiftWrap() throws PricingException {
     	offerService.getOrderOfferProcessor().setOrderItemService(orderItemService);

@@ -56,7 +56,6 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
@@ -117,18 +116,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
-
-    public Order createNamedOrderForCustomer(String name, Customer customer) {
-        Order namedOrder = orderDao.create();
-        namedOrder.setCustomer(customer);
-        namedOrder.setName(name);
-        namedOrder.setStatus(OrderStatus.NAMED);
-        return persistOrder(namedOrder);
-    }
-
-    public Order findNamedOrderForCustomer(String name, Customer customer) {
-        return orderDao.readNamedOrderForCustomer(customer, name);
-    }
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
         return fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
@@ -808,6 +795,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
 
         Order order = findOrderById(orderId);
+        
         if (order == null) {
             throw new IllegalArgumentException("No order found matching passed in orderId " + orderId + " while trying to addItemToOrder.");
         }

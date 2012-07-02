@@ -36,6 +36,26 @@ public class OrderItemRequestDTO {
     private Long orderItemId;
     private Integer quantity;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
+    
+    public OrderItemRequestDTO() {}
+    
+    public OrderItemRequestDTO(Long productId, Integer quantity) {
+    	setProductId(productId);
+    	setQuantity(quantity);
+    }
+    
+    public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
+    	setProductId(productId);
+    	setSkuId(skuId);
+    	setQuantity(quantity);
+    }
+    
+    public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
+    	setProductId(productId);
+    	setSkuId(skuId);
+    	setCategoryId(categoryId);
+    	setQuantity(quantity);
+    }
 
     public Long getSkuId() {
         return skuId;

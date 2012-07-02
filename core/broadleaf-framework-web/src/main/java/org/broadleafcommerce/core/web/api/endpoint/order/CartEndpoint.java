@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
+import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -156,7 +157,9 @@ public class CartEndpoint implements ApplicationContextAware {
                     return wrapper;
                 } catch (PricingException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-                }
+                } catch (WorkflowException e) {
+                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+				}
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }

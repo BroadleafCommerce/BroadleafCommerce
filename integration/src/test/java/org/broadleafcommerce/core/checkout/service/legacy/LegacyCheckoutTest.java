@@ -83,7 +83,7 @@ public class LegacyCheckoutTest extends BaseTest {
     @Resource
     private SecurePaymentInfoService securePaymentInfoService;
 
-	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+	@Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
 	@Transactional
     public void testCheckout() throws Exception {
         System.out.println("running test checkout");

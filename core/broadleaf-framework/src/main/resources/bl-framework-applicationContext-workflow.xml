@@ -109,6 +109,7 @@
 		</property>
 		<property name="activities">
 			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
 			</list>

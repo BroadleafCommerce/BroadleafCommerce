@@ -42,7 +42,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
     @Resource
     private CustomerAddressService customerAddressService;
 
-    @Test(groups = "testCustomerAddress")
+    @Test(groups = "testCustomerAddressLegacy")
     @Transactional
     public void readCustomerAddresses() {
     	Customer customer = createCustomerWithAddresses();
@@ -52,7 +52,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
     	}
     }
     
-    @Test(groups = "testCustomerAddress")
+    @Test(groups = "testCustomerAddressLegacy")
     @Transactional
     public void createNewDefaultAddress() {
     	Customer customer = createCustomerWithAddresses();
@@ -83,7 +83,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
      * @param customerAddress
      */
     @Deprecated
-    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountry", "createState"})
+    @Test(groups = "createCustomerAddressLegacy", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountryLegacy", "createStateLegacy"})
     @Transactional
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
@@ -104,7 +104,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
      * TThis method only exists because so many other tests depend on it, but should be removed once tests are more isolated
      */
     @Deprecated
-    @Test(groups = "readCustomerAddress", dependsOnGroups = "createCustomerAddress")
+    @Test(groups = "readCustomerAddressLegacy", dependsOnGroups = "createCustomerAddressLegacy")
     @Transactional
     public void readCustomerAddressByUserId() {
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(userId);

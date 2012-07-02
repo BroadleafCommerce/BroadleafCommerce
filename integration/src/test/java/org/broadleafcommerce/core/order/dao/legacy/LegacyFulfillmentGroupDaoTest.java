@@ -50,7 +50,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
     @Resource
     private OrderDao orderDao;
 
-    @Test(groups = "createDefaultFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
+    @Test(groups = "createDefaultFulfillmentGroupLegacy", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
     @Transactional
     @Rollback(false)
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
@@ -73,7 +73,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
         defaultFulfillmentGroupId = fulfillmentGroup.getId();
     }
 
-    @Test(groups = { "readDefaultFulfillmentGroupForOrder" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
+    @Test(groups = { "readDefaultFulfillmentGroupForOrderLegacy" }, dependsOnGroups = { "createDefaultFulfillmentGroupLegacy" })
     @Transactional
     public void readDefaultFulfillmentGroupForOrder() {
         Order order = orderDao.readOrderById(defaultFulfillmentGroupOrderId);
@@ -84,7 +84,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
         assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
-    @Test(groups = { "readDefaultFulfillmentGroupForId" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
+    @Test(groups = { "readDefaultFulfillmentGroupForIdLegacy" }, dependsOnGroups = { "createDefaultFulfillmentGroupLegacy" })
     @Transactional
     public void readDefaultFulfillmentGroupForId() {
         FulfillmentGroup fg = fulfillmentGroupDao.readFulfillmentGroupById(defaultFulfillmentGroupId);
@@ -93,7 +93,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
         assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
-    @Test(groups = "createFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
+    @Test(groups = "createFulfillmentGroupLegacy", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
     @Transactional
     @Rollback(false)
     public void createFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
@@ -115,7 +115,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
         fulfillmentGroupId = fulfillmentGroup.getId();
     }
 
-    @Test(groups = { "readFulfillmentGroupsForId" }, dependsOnGroups = { "createFulfillmentGroup" })
+    @Test(groups = { "readFulfillmentGroupsForIdLegacy" }, dependsOnGroups = { "createFulfillmentGroupLegacy" })
     @Transactional
     public void readFulfillmentGroupsForId() {
         FulfillmentGroup fg = fulfillmentGroupDao.readFulfillmentGroupById(fulfillmentGroupId);
