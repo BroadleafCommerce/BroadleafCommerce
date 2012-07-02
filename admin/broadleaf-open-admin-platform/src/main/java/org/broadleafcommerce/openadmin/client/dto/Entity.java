@@ -81,6 +81,13 @@ public class Entity implements IsSerializable, Serializable {
 	public Property findProperty(String name) {
 		Arrays.sort(properties, new Comparator<Property>() {
             public int compare(Property o1, Property o2) {
+                if (o1 == null && o2 == null) {
+                    return 0;
+                } else if (o1 == null) {
+                    return 1;
+                } else if (o2 == null) {
+                    return -1;
+                }
                 return o1.getName().compareTo(o2.getName());
             }
         });
@@ -88,6 +95,13 @@ public class Entity implements IsSerializable, Serializable {
 		searchProperty.setName(name);
 		int index = Arrays.binarySearch(properties, searchProperty, new Comparator<Property>() {
 			public int compare(Property o1, Property o2) {
+                if (o1 == null && o2 == null) {
+                    return 0;
+                } else if (o1 == null) {
+                    return 1;
+                } else if (o2 == null) {
+                    return -1;
+                }
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
