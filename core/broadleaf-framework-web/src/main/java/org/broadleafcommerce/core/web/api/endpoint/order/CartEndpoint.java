@@ -22,10 +22,12 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
-import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -157,7 +159,7 @@ public class CartEndpoint implements ApplicationContextAware {
                     return wrapper;
                 } catch (PricingException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-                } catch (WorkflowException e) {
+                } catch (AddToCartException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
 				}
             }
@@ -187,8 +189,12 @@ public class CartEndpoint implements ApplicationContextAware {
                     return wrapper;
                 } catch (PricingException e) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-                } catch (ItemNotFoundException e) {
-                	throw new WebApplicationException(Response.Status.NOT_FOUND);
+                } catch (RemoveFromCartException e) {
+                	if (e.getCause() instanceof ItemNotFoundException) {
+                		throw new WebApplicationException(Response.Status.NOT_FOUND);
+                	} else { 
+                		throw new WebApplicationException(Response.Status.NOT_FOUND);
+                	}
 				}
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -219,8 +225,18 @@ public class CartEndpoint implements ApplicationContextAware {
                     wrapper.wrap(order, request);
 
                     return wrapper;
-                } catch (ItemNotFoundException e) {
-                    throw new WebApplicationException(Response.Status.NOT_FOUND);
+                } catch (UpdateCartException e) {
+                	if (e.getCause() instanceof ItemNotFoundException) {
+                		throw new WebApplicationException(Response.Status.NOT_FOUND);
+                	} else { 
+                		throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                	}
+                } catch (RemoveFromCartException e) {
+                	if (e.getCause() instanceof ItemNotFoundException) {
+                		throw new WebApplicationException(Response.Status.NOT_FOUND);
+                	} else { 
+                		throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                	}
                 } catch (PricingException pe) {
                     throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                 }

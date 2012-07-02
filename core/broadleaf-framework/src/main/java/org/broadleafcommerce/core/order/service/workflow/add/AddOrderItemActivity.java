@@ -37,8 +37,6 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-import java.util.List;
-
 public class AddOrderItemActivity extends BaseActivity {
     private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
     
@@ -94,10 +92,9 @@ public class AddOrderItemActivity extends BaseActivity {
         	item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         
-        List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.add(item);
         item.setOrder(order);
         item = orderItemService.saveOrderItem(item);
+        order.getOrderItems().add(item);
         order = orderService.save(order, request.isPriceOrder());
         
         request.setCreatedItemResponse(item);

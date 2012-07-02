@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -83,7 +84,7 @@ public class AutoBundleActivity extends BaseActivity {
     }
 
 
-    public Order handleAutomaticBundling(Order order) throws PricingException, ItemNotFoundException {
+    public Order handleAutomaticBundling(Order order) throws PricingException, RemoveFromCartException {
         boolean itemsHaveBeenUnbundled = false;
         List<DiscreteOrderItem> unbundledItems = null;
 
@@ -136,7 +137,7 @@ public class AutoBundleActivity extends BaseActivity {
         for (BundleOrderItem bundleOrderItem : bundlesToRemove) {
         	try {
         		order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
-        	} catch (ItemNotFoundException e) {
+        	} catch (RemoveFromCartException e) {
         		throw new PricingException("Could not remove item", e);
         	}
         }
@@ -186,7 +187,7 @@ public class AutoBundleActivity extends BaseActivity {
      * @throws PricingException 
      * @throws ItemNotFoundException 
      */
-    private Order bundleItems(Order order, ProductBundle productBundle, Integer numApplications, List<DiscreteOrderItem> unbundledItems) throws PricingException, ItemNotFoundException {
+    private Order bundleItems(Order order, ProductBundle productBundle, Integer numApplications, List<DiscreteOrderItem> unbundledItems) throws PricingException, RemoveFromCartException {
 
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         bundleOrderItem.setQuantity(numApplications);

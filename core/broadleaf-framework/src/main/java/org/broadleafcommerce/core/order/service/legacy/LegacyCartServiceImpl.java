@@ -26,7 +26,10 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -493,19 +496,33 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
     }
     
 	@Override
-	public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException {
-		return addItemToOrder(orderId, orderItemRequestDTO, priceOrder);
+	public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+		try {
+			return addItemToOrder(orderId, orderItemRequestDTO, priceOrder);
+		} catch (PricingException e) {
+			throw new AddToCartException("Could not add item", e);
+		}
 	}
 
 	@Override
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
-		Order order = findOrderById(orderId);
-		updateItemQuantity(order, orderItemRequestDTO);
-		return order;
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
+		try {
+			Order order = findOrderById(orderId);
+			updateItemQuantity(order, orderItemRequestDTO);
+			return order;
+		} catch (PricingException e) {
+			throw new UpdateCartException("Could not update cart", e);
+		} catch (ItemNotFoundException e) {
+			throw new UpdateCartException("Could not update cart", e);
+		}
 	}
 
 	@Override
-	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws ItemNotFoundException, PricingException {
-		return removeItemFromOrder(orderId, orderItemId, priceOrder);
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+		try {
+			return removeItemFromOrder(orderId, orderItemId, priceOrder);
+		} catch (PricingException e) {
+			throw new RemoveFromCartException("Could not remove item", e);
+		}
 	}
 }

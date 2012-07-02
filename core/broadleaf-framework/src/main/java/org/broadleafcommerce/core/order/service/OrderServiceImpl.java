@@ -24,10 +24,11 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
@@ -74,6 +75,12 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blAddItemWorkflow")
     protected SequenceProcessor addItemWorkflow;
+    
+    @Resource(name = "blUpdateItemWorkflow")
+    protected SequenceProcessor updateItemWorkflow;
+    
+    @Resource(name = "blRemoveItemWorkflow")
+    protected SequenceProcessor removeItemWorkflow;
     
     // This field is static for legacy testing support.
     protected static boolean automaticallyMergeLikeItems = true;
@@ -188,31 +195,41 @@ public class OrderServiceImpl implements OrderService {
 	}
     
     @Override
-    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException, WorkflowException {
-    	CartOperationRequest cartOpRequest = new CartOperationRequest();
-    	cartOpRequest.setItemRequest(orderItemRequestDTO);
-    	cartOpRequest.setOrder(findOrderById(orderId));
-    	cartOpRequest.setPriceOrder(priceOrder);
-    	
-		CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
-		return context.getSeedData().getOrder();
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+    	try {
+    		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+    		CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
+    		return context.getSeedData().getOrder();
+    	} catch (WorkflowException e) {
+    		throw new AddToCartException("Could not add to cart", e.getCause());
+    	}
     }
 
-
 	@Override
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException {
-		throw new UnsupportedOperationException();
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
+		if (orderItemRequestDTO.getQuantity() == 0) {
+			return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
+		}
+		
+    	try {
+    		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+    		CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
+    		return context.getSeedData().getOrder();
+    	} catch (WorkflowException e) {
+    		throw new UpdateCartException("Could not update cart quantity", e.getCause());
+    	}
 	}
 
 	@Override
-	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws ItemNotFoundException, PricingException {
-		Order order = findOrderById(orderId);
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
-        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
-        OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(orderItem));
-        itemFromOrder.setOrder(null);
-        orderItemService.delete(itemFromOrder);
-        order = save(order, priceOrder);
-        return order;
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+    	try {
+    		OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+    		orderItemRequestDTO.setOrderItemId(orderItemId);
+    		CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+    		CartOperationContext context = (CartOperationContext) removeItemWorkflow.doActivities(cartOpRequest);
+    		return context.getSeedData().getOrder();
+    	} catch (WorkflowException e) {
+    		throw new RemoveFromCartException("Could not remove from cart", e.getCause());
+    	}
 	}
 }

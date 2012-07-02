@@ -21,7 +21,9 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -238,7 +240,7 @@ public interface OrderService {
      * SKU can be specified directly or it can be determine based on a Product and potentially some
      * specified ProductOptions for that given product.
      *
-     * The minimum required parameters for OrderItemRequest are: productId, quantity
+     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
      *
      * When priceOrder is false, the system will not reprice the order.   This is more performant in
      * cases such as bulk adds where the repricing could be done for the last item only.
@@ -249,8 +251,9 @@ public interface OrderService {
      * @param priceOrder
      * @return the order the item was added to
      * @throws WorkflowException 
+     * @throws Throwable 
      */
-    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException, WorkflowException;
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
     
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
@@ -263,10 +266,10 @@ public interface OrderService {
      * @param orderItemRequest
      * @param priceOrder
      * @return the order the item was added to
-     * @throws ItemNotFoundException
-     * @throws PricingException
+     * @throws UpdateCartException
+     * @throws RemoveFromCartException 
      */
-	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws ItemNotFoundException, PricingException;
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
 	
     /**
      * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
@@ -277,9 +280,8 @@ public interface OrderService {
      * @param orderItemId
      * @param priceOrder
      * @return the order the item was added to
-     * @throws ItemNotFoundException
-     * @throws PricingException
+     * @throws RemoveFromCartException 
      */
-	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws ItemNotFoundException, PricingException;
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
 
 }

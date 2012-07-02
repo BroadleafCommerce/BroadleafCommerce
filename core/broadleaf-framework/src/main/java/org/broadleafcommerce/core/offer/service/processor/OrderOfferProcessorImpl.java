@@ -47,7 +47,7 @@ import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
 import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -375,7 +375,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         for (BundleOrderItem orderItem : bundlesToRemove) {
         	try {
         		orderService.removeItem(order.getId(), orderItem.getId(), false);
-        	} catch (ItemNotFoundException e) {
+        	} catch (RemoveFromCartException e) {
         		throw new PricingException("Item could not be removed", e);
         	}
         }
@@ -401,7 +401,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             if (orderItem.getBundleOrderItem() == null) {
 	        	try {
 					orderService.removeItem(order.getId(), orderItem.getId(), false);
-				} catch (ItemNotFoundException e) {
+				} catch (RemoveFromCartException e) {
 					throw new PricingException("Could not remove item", e);
 				}
             } else {
@@ -443,7 +443,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         for (BundleOrderItem orderItem : bundlesToRemove) {
         	try {
         		orderService.removeItem(order.getId(), orderItem.getId(), false);
-        	} catch (ItemNotFoundException e) {
+        	} catch (RemoveFromCartException e) {
         		throw new PricingException("Item could not be removed", e);
         	}
         }
@@ -479,7 +479,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             if (orderItem.getBundleOrderItem() == null) {
 	        	try {
 	        		orderService.removeItem(order.getId(), orderItem.getId(), false);
-				} catch (ItemNotFoundException e) {
+				} catch (RemoveFromCartException e) {
 					throw new PricingException("Could not remove item", e);
 				}
             } else {
@@ -737,7 +737,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             if (delegateItem.getBundleOrderItem() == null) {
 	        	try {
 	        		orderService.removeItem(order.getDelegate().getId(), delegateItem.getId(), false);
-				} catch (ItemNotFoundException e) {
+				} catch (RemoveFromCartException e) {
 					throw new PricingException("Could not remove item", e);
 				}
             } else {
@@ -820,7 +820,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             
         	try {
 				orderService.removeItem(order.getDelegate().getId(), bundleContainer.getKey().getId(), false);
-			} catch (ItemNotFoundException e) {
+			} catch (RemoveFromCartException e) {
 				throw new PricingException("Could not remove item", e);
 			}
         	

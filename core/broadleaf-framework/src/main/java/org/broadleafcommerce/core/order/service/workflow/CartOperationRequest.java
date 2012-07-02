@@ -36,6 +36,12 @@ public class CartOperationRequest {
 	
 	protected OrderItem createdItemResponse;
 	
+	public CartOperationRequest(Order order, OrderItemRequestDTO itemRequest, boolean priceOrder) {
+		setOrder(order);
+		setItemRequest(itemRequest);
+		setPriceOrder(priceOrder);
+	}
+	
 	public OrderItemRequestDTO getItemRequest() {
 		return itemRequest;
 	}

@@ -110,8 +110,33 @@
 		<property name="activities">
 			<list>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
-				<bean class="org.broadleafcommerce.core.order.service.workflow.add.CheckAvailabilityActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+	</bean>
+	
+	<bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+	</bean>
+	
+	<bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>

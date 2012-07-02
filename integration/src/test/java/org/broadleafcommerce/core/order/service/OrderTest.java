@@ -20,9 +20,9 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Propagation;
@@ -77,7 +77,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "createSku" })
     @Rollback(false)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void addItemToOrder() throws PricingException, WorkflowException {
+    public void addItemToOrder() throws PricingException, AddToCartException {
         numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         Order order = orderService.findOrderById(orderId);
