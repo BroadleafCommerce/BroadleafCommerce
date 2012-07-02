@@ -59,10 +59,10 @@
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
 	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
-	   <property name="processors">
+	   <property name="providers">
 	       <list>
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProcessor" />
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.BandedPriceFulfillmentPricingProcessor" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProvider" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.BandedPriceFulfillmentPricingProvider" />
 	       </list>
 	   </property>
 	</bean>

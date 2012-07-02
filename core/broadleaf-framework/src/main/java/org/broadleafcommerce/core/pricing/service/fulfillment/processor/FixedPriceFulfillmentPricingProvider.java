@@ -16,38 +16,42 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
-import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 
 /**
- * Used in conjunction with {@link BandedPriceFulfillmentOption}.
+ * Processor used in conjunction with {@link FixedPriceFulfillmentOption}. Simply takes the
+ * flat rate defined on the option and sets that to the total shipping price of the {@link FulfillmentGroup}
  * 
  * @author Phillip Verheyden
- * @see {@link BandedPriceFulfillmentOption}, {@link FulfillmentPriceBand}
+ * @see {@link FixedPriceFulfillmentOption}
  */
-public class BandedPriceFulfillmentPricingProcessor implements FulfillmentPricingProcessor {
+public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingProvider {
 
     @Override
     public boolean canCalculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        return fulfillmentGroup.getFulfillmentOption() instanceof BandedPriceFulfillmentOption;
+        return fulfillmentGroup.getFulfillmentOption() instanceof FixedPriceFulfillmentOption;
     }
 
     @Override
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        
-        return null;
+        Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
+        fulfillmentGroup.setRetailShippingPrice(price);
+        fulfillmentGroup.setSaleShippingPrice(price);        
+        fulfillmentGroup.setShippingPrice(price);
+        return fulfillmentGroup;
     }
 
     @Override
     public boolean canEstimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) {
-        return option instanceof BandedPriceFulfillmentOption;
+        return option instanceof FixedPriceFulfillmentOption;
     }
 
     @Override
     public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) {
-        // TODO Auto-generated method stub
+        //TODO: return the price that was set in the option
         return null;
     }
 
