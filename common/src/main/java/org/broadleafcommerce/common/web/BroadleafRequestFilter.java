@@ -16,27 +16,23 @@
 
 package org.broadleafcommerce.common.web;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
@@ -55,6 +51,9 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
 
     @Resource(name = "blSandBoxResolver")
     private BroadleafSandBoxResolver sandboxResolver;
+
+    @Resource(name = "blThemeResolver")
+    private BroadleafThemeResolver themeResolver;
 
 
     /**
@@ -105,6 +104,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         Site site = siteResolver.resolveSite(request);
         Locale locale = localeResolver.resolveLocale(request);
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
+        Theme theme = themeResolver.resolveTheme(request, site);
 
         BroadleafRequestContext brc = new BroadleafRequestContext();        
         brc.setSite(site);
@@ -112,6 +112,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         brc.setRequest(request);
         brc.setSandbox(currentSandbox);
         brc.setResponse(response);
+        brc.setTheme(theme);
         BroadleafRequestContext.setBroadleafRequestContext(brc);
         
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap");
