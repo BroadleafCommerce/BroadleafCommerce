@@ -56,9 +56,9 @@ public class MySandBoxPresenter extends SandBoxPresenter implements Instantiable
             public void onSetupSuccess(DataSource dataSource) {
                 CustomCriteriaListGridDataSource sandBoxItemDS = (CustomCriteriaListGridDataSource) getPresenterSequenceSetupManager().getDataSource("sandBoxItemDS");
                 setupDisplayItems(sandBoxItemDS, dataSource);
-                sandBoxItemDS.setupGridFields(new String[]{"auditable.createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "auditable.dateCreated", "auditable.dateUpdated"});
+                //sandBoxItemDS.setupGridFields(new String[]{"auditable.createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "auditable.dateCreated", "auditable.dateUpdated"});
                 ((CustomCriteriaListGridDataSource) dataSource).setAssociatedGrid(((MySandBoxDisplay) getDisplay()).getPendingGrid());
-                ((CustomCriteriaListGridDataSource) dataSource).setupGridFields(new String[]{"auditable.createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "auditable.dateCreated", "auditable.dateUpdated"});
+                //((CustomCriteriaListGridDataSource) dataSource).setupGridFields(new String[]{"auditable.createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "auditable.dateCreated", "auditable.dateUpdated"});
             }
         }));
     }

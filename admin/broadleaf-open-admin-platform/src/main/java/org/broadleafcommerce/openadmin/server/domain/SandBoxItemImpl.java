@@ -34,20 +34,13 @@ import java.util.List;
 @Table(name="BLC_SANDBOX_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 @AdminPresentationOverrides(
-        {
-            @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-            @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Created", group = "SandBoxItemImpl_Audit", readOnly = true)),
-            @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Updated", group = "SandBoxItemImpl_Audit", readOnly = true)),
-            @AdminPresentationOverride(name="sandBox.name", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="sandBox.author", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="sandBox.site", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="sandBox.sandboxType", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="originalSandBox.name", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="originalSandBox.author", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="originalSandBox.site", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="originalSandBox.sandboxType", value=@AdminPresentation(excluded = true))
-        }
+    {
+        @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)),
+        @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Updated", order = 4, group = "SandBoxItemImpl_Audit", readOnly = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Admin_User_Login", order = 5, group = "SandBoxItemImpl_Audit", readOnly = true))
+    }
 )
 @EntityListeners(value = { AdminAuditableListener.class })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SandBoxItemImpl_baseSandBoxItem")
@@ -75,20 +68,20 @@ public class SandBoxItemImpl implements SandBoxItem {
 	protected Long originalSandBoxId;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=4, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=1, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
     @Index(name="SANDBOX_ITEM_TYPE_INDEX", columnNames={"SANDBOX_ITEM_TYPE"})
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=4, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=6, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
     protected String sandboxOperationType;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Description", order=1, group = "SandBoxItemImpl_Details")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Description", order=2, group = "SandBoxItemImpl_Details")
     protected String description;
 
     @Column(name = "GRP_DESCRIPTION")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Grp_Description", order=2, group = "SandBoxItemImpl_Details", visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String groupDescription;
 
     @Column(name = "TEMPORARY_ITEM_ID")
@@ -97,7 +90,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     protected Long temporaryItemId;
 
     @Column(name = "ORIGINAL_ITEM_ID")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Original_Id", order=3, group = "SandBoxItemImpl_Details")
     @Index(name="SB_ORIG_ITEM_ID_INDEX", columnNames={"ORIGINAL_ITEM_ID"})
     protected Long originalItemId;
 
@@ -105,6 +98,11 @@ public class SandBoxItemImpl implements SandBoxItem {
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ARCHIVED_FLAG_INDEX", columnNames={"ARCHIVED_FLAG"})
     protected Character archivedFlag = 'N';
+
+    @Column(name = "ROOT_ENTITY_ITEM")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @Index(name="ROOT_ENTY_ITM_INDEX", columnNames={"ROOT_ENTITY_ITEM"})
+    protected Boolean rootEntityItem = false;
 
     @ManyToMany(targetEntity = SandBoxActionImpl.class, cascade = CascadeType.ALL)
     @JoinTable(
@@ -249,6 +247,16 @@ public class SandBoxItemImpl implements SandBoxItem {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
+    }
+
+    @Override
+    public Boolean getRootEntityItem() {
+        return rootEntityItem;
+    }
+
+    @Override
+    public void setRootEntityItem(Boolean rootEntityItem) {
+        this.rootEntityItem = rootEntityItem;
     }
 
     @Override
