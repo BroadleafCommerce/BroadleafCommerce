@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -38,6 +39,9 @@ public class RemoveOrderItemActivity extends BaseActivity {
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+    
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
@@ -45,7 +49,7 @@ public class RemoveOrderItemActivity extends BaseActivity {
 
 		Order order = request.getOrder();
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
-        //fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(orderItem));
         itemFromOrder.setOrder(null);
         orderItemService.delete(itemFromOrder);

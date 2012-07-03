@@ -14,51 +14,51 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service.legacy;
+package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
+import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LegacyAddressTest extends LegacyCommonSetupBaseTest {
+public class AddressTest extends CommonSetupBaseTest {
 
     List<Long> addressIds = new ArrayList<Long>();
     String userName = new String();
     Long userId;
 
-    @Test(groups = "createCountryLegacy")
+    @Test(groups = "createCountry")
     public void createCountry() {
     	super.createCountry();
     }
 
-    @Test(groups = "findCountriesLegacy", dependsOnGroups = "createCountryLegacy")
+    @Test(groups = "findCountries", dependsOnGroups = "createCountry")
     public void findCountries() {
         List<Country> countries = countryService.findCountries();
         assert countries.size() > 0;
     }
 
-    @Test(groups = "findCountryByShortNameLegacy", dependsOnGroups = "createCountryLegacy")
+    @Test(groups = "findCountryByShortName", dependsOnGroups = "createCountry")
     public void findCountryByShortName() {
         Country country = countryService.findCountryByAbbreviation("US");
         assert country != null;
     }
 
-    @Test(groups = "createStateLegacy")
+    @Test(groups = "createState")
     public void createState() {
         super.createState();
     }
 
-    @Test(groups = "findStatesLegacy", dependsOnGroups = "createStateLegacy")
+    @Test(groups = "findStates", dependsOnGroups = "createState")
     public void findStates() {
         List<State> states = stateService.findStates();
         assert states.size() > 0;
     }
 
-    @Test(groups = "findStateByAbbreviationLegacy", dependsOnGroups = "findStatesLegacy")
+    @Test(groups = "findStateByAbbreviation", dependsOnGroups = "findStates")
     public void findStateByAbbreviation() {
         State state = stateService.findStateByAbbreviation("KY");
         assert state != null;

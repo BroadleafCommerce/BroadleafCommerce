@@ -67,6 +67,23 @@
                     <argLine>-Xmx512m</argLine>
                 </configuration>
             </plugin>
+			<plugin>
+				<!-- Only delete the contents of the target folder so that it doesn't
+				lose its "derived" status in Eclipse -->
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<excludeDefaultDirectories>true</excludeDefaultDirectories>
+					<filesets>
+						<fileset>
+							<directory>target</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+				<version>2.4.1</version>
+			</plugin>
         </plugins>
     </build>
     <profiles>

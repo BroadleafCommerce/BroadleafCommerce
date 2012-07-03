@@ -22,8 +22,11 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -188,6 +191,37 @@ public class OrderServiceImpl implements OrderService {
 	public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
 		this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
 	}
+	
+	@Override
+    public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
+        if (order.getOrderItems() != null) {
+            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
+                OrderItem currentItem = (order.getOrderItems().get(i));
+                if (currentItem instanceof DiscreteOrderItem) {
+                    DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+                    if (skuId != null) {
+                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getId())) {
+                            return discreteItem;
+                        }
+                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getId())) {
+                        return discreteItem;
+                    }
+
+                } else if (currentItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
+                    if (skuId != null) {
+                        if (bundleItem.getSku() != null && skuId.equals(bundleItem.getSku().getId())) {
+                            return bundleItem;
+                        }
+                    } else if (productId != null && bundleItem.getProduct() != null && productId.equals(bundleItem.getProduct().getId())) {
+                        return bundleItem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
 
 	@Override
 	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {

@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -235,6 +236,24 @@ public interface OrderService {
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
     
     /**
+     * Looks through the given order and returns the latest added OrderItem that matches on the skuId
+     * and productId. Generally, this is used to retrieve the OrderItem that was just added to the cart.
+     * The default Broadleaf implementation will attempt to match on skuId first, and failing that, it will
+     * look at the productId.
+     * 
+     * Note that the behavior is slightly undeterministic in the case that {@link setAutomaticallyMergeLikeItems}
+     * is set to true and the last added sku matches on a previously added sku. In this case, the sku that has the
+     * merged items would be returned, so the total quantity of the OrderItem might not match exactly what was 
+     * just added.
+     * 
+     * @param order
+     * @param skuId
+     * @param productId
+     * @return the best matching OrderItem with highest index in the list of OrderItems in the order
+     */
+	public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
+	
+    /**
      * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
      * to the Order. The item to be added can be determined in a few different ways. For example, the 
      * SKU can be specified directly or it can be determine based on a Product and potentially some
@@ -283,5 +302,6 @@ public interface OrderService {
      * @throws RemoveFromCartException 
      */
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
+
 
 }

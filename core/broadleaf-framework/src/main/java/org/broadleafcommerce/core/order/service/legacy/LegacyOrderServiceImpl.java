@@ -519,35 +519,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
     }
 
-    protected OrderItem findLastMatchingItem(Order order,Long skuId, Long productId) {
-        if (order.getOrderItems() != null) {
-            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
-                OrderItem currentItem = (order.getOrderItems().get(i));
-                if (currentItem instanceof DiscreteOrderItem) {
-                    DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                    if (skuId != null) {
-                        if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getId())) {
-                            return discreteItem;
-                        }
-                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getId())) {
-                        return discreteItem;
-                    }
-
-                } else if (currentItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
-                    if (skuId != null) {
-                        if (bundleItem.getSku() != null && skuId.equals(bundleItem.getSku().getId())) {
-                            return bundleItem;
-                        }
-                    } else if (productId != null && bundleItem.getProduct() != null && productId.equals(bundleItem.getProduct().getId())) {
-                        return bundleItem;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
     @Override
     public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException {
         List<DiscreteOrderItem> orderItems = bundle.getDiscreteOrderItems();

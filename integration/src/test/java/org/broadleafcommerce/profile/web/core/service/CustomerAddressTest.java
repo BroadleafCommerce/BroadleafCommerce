@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service.legacy;
+package org.broadleafcommerce.profile.web.core.service;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
@@ -25,7 +25,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerAddressImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
-import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
+import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ import javax.annotation.Resource;
 
 import java.util.List;
 
-public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
+public class CustomerAddressTest extends CommonSetupBaseTest {
 
 	private String userName;
 	private Long userId;
@@ -42,7 +42,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
     @Resource
     private CustomerAddressService customerAddressService;
 
-    @Test(groups = "testCustomerAddressLegacy")
+    @Test(groups = "testCustomerAddress")
     @Transactional
     public void readCustomerAddresses() {
     	Customer customer = createCustomerWithAddresses();
@@ -52,7 +52,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
     	}
     }
     
-    @Test(groups = "testCustomerAddressLegacy")
+    @Test(groups = "testCustomerAddress")
     @Transactional
     public void createNewDefaultAddress() {
     	Customer customer = createCustomerWithAddresses();
@@ -83,7 +83,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
      * @param customerAddress
      */
     @Deprecated
-    @Test(groups = "createCustomerAddressLegacy", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountryLegacy", "createStateLegacy"})
+    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountry", "createState"})
     @Transactional
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
@@ -104,7 +104,7 @@ public class LegacyCustomerAddressTest extends LegacyCommonSetupBaseTest {
      * TThis method only exists because so many other tests depend on it, but should be removed once tests are more isolated
      */
     @Deprecated
-    @Test(groups = "readCustomerAddressLegacy", dependsOnGroups = "createCustomerAddressLegacy")
+    @Test(groups = "readCustomerAddress", dependsOnGroups = "createCustomerAddress")
     @Transactional
     public void readCustomerAddressByUserId() {
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(userId);

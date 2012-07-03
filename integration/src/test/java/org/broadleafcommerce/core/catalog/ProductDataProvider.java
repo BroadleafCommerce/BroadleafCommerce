@@ -28,6 +28,7 @@ import org.testng.annotations.DataProvider;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ProductDataProvider {
@@ -152,10 +153,13 @@ public class ProductDataProvider {
     }
 
     private static Product getProduct(Long id) {
+    	Calendar activeStartCal = Calendar.getInstance();
+    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         Product product = new ProductImpl();
         Sku defaultSku = new SkuImpl();
         defaultSku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         defaultSku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
+        defaultSku.setActiveStartDate(activeStartCal.getTime());
         product.setDefaultSku(defaultSku);
         if (id == null) {
             defaultSku.setName("productNameTest");

@@ -164,8 +164,6 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert(order.getOrderItems().size()==2);
         assert(order.getOrderItems().get(0).getQuantity()==2);
         assert(order.getOrderItems().get(1).getQuantity()==1);
-
-
     }
 
     @Test(groups = { "addBundleToOrderLegacy" }, dependsOnGroups = { "addAnotherItemToOrderLegacy" })

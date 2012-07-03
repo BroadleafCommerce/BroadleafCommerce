@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.order.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 /**
@@ -33,8 +32,6 @@ public class CartOperationRequest {
 	protected Order order;
 	
 	protected boolean priceOrder;
-	
-	protected OrderItem createdItemResponse;
 	
 	public CartOperationRequest(Order order, OrderItemRequestDTO itemRequest, boolean priceOrder) {
 		setOrder(order);
@@ -66,12 +63,4 @@ public class CartOperationRequest {
 		this.priceOrder = priceOrder;
 	}
 
-	public OrderItem getCreatedItemResponse() {
-		return createdItemResponse;
-	}
-
-	public void setCreatedItemResponse(OrderItem createdItemResponse) {
-		this.createdItemResponse = createdItemResponse;
-	}
-	
 }
