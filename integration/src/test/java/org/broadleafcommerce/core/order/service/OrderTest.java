@@ -35,7 +35,6 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
-import org.broadleafcommerce.core.workflow.SilentErrorHandler;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.springframework.test.annotation.Rollback;
@@ -174,10 +173,9 @@ public class OrderTest extends OrderBaseTest {
         
     	Product activeProduct = addTestProduct("mug", "cups", true);
     	Product inactiveProduct = addTestProduct("cup", "cups", false);
-        
+    	
     	// Inactive skus should not be added
         OrderItemRequestDTO itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(inactiveProduct.getDefaultSku().getId());
-        addItemWorkflow.setDefaultErrorHandler(new SilentErrorHandler());
         boolean addSuccessful = true;
         try {
         	order = orderService.addItem(orderId, itemRequest, true);
@@ -189,7 +187,6 @@ public class OrderTest extends OrderBaseTest {
         
     	// Products that have SKUs marked as inactive should not be added either
         itemRequest = new OrderItemRequestDTO().setQuantity(1).setProductId(inactiveProduct.getId());
-        addItemWorkflow.setDefaultErrorHandler(new SilentErrorHandler());
         addSuccessful = true;
         try {
         	order = orderService.addItem(orderId, itemRequest, true);

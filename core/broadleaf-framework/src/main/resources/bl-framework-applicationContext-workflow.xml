@@ -115,7 +115,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
 	</bean>
 	
 	<bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
@@ -128,7 +128,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
 	</bean>
 	
 	<bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
@@ -140,7 +140,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
 	</bean>
 
 	<bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
