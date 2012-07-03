@@ -86,7 +86,6 @@ public class LegacyCheckoutTest extends BaseTest {
 	@Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
 	@Transactional
     public void testCheckout() throws Exception {
-        System.out.println("running test checkout");
     	String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = orderService.createNewCartForCustomer(customer);

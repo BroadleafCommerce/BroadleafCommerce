@@ -42,7 +42,7 @@ public class CatalogTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
 
-    @Test
+    @Test(groups = {"testCatalog"})
     @Transactional
     public void testCatalog() throws Exception {
         Category category = new CategoryImpl();

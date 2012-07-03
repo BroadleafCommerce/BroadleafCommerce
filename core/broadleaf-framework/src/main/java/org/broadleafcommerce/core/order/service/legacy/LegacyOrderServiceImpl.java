@@ -58,8 +58,6 @@ import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotPr
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
@@ -113,9 +111,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-
-    @Resource(name = "blSecurePaymentInfoService")
-    protected SecurePaymentInfoService securePaymentInfoService;
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
         return fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
@@ -207,19 +202,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
         return addPaymentToOrder(order, payment, null);
-    }
-
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
-        payment.setOrder(order);
-        order.getPaymentInfos().add(payment);
-        order = persistOrder(order);
-        int paymentIndex = order.getPaymentInfos().size() - 1;
-
-        if (securePaymentInfo != null) {
-            securePaymentInfoService.save(securePaymentInfo);
-        }
-
-        return order.getPaymentInfos().get(paymentIndex);
     }
 
     public void removeAllPaymentsFromOrder(Order order) {

@@ -25,11 +25,8 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 
-@SuppressWarnings("deprecation")
 public class OrderBaseTest extends CommonSetupBaseTest {
 
-    private int bundleCount = 0;
-    
     protected Customer createNamedCustomer() {
     	Customer customer = customerService.createCustomerFromId(null);
     	customer.setUsername(String.valueOf(customer.getId()));

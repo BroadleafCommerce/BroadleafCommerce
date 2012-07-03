@@ -37,6 +37,8 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
@@ -55,15 +57,18 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 	
+    /* DAOs */
 	@Resource(name = "blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 	
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
 
+    /* Factories */
     @Resource(name = "blNullOrderFactory")
     protected NullOrderFactory nullOrderFactory;    
     
+    /* Services */
     @Resource(name = "blPricingService")
     protected PricingService pricingService;
     
@@ -75,7 +80,11 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
+
+    @Resource(name = "blSecurePaymentInfoService")
+    protected SecurePaymentInfoService securePaymentInfoService;
     
+    /* Workflows */
     @Resource(name = "blAddItemWorkflow")
     protected SequenceProcessor addItemWorkflow;
     
@@ -141,12 +150,32 @@ public class OrderServiceImpl implements OrderService {
 	public List<PaymentInfo> findPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
 	}
+	
+	@Override
+    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
+        payment.setOrder(order);
+        order.getPaymentInfos().add(payment);
+        order = persist(order);
+        int paymentIndex = order.getPaymentInfos().size() - 1;
+
+        if (securePaymentInfo != null) {
+            securePaymentInfoService.save(securePaymentInfo);
+        }
+
+        return order.getPaymentInfos().get(paymentIndex);
+    }
 
 	@Override
 	public Order save(Order order, Boolean priceOrder) throws PricingException {
         if (priceOrder) {
             order = pricingService.executePricing(order);
         }
+        return persist(order);
+	}
+	
+	// This method exists to provide OrderService methods the ability to save an order
+	// without having to worry about a PricingException being thrown.
+	protected Order persist(Order order) {
         return orderDao.save(order);
 	}
 

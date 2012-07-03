@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -135,6 +136,18 @@ public interface OrderService {
      * @return the list of all PaymentInfo objects
      */
     public List<PaymentInfo> findPaymentInfosForOrder(Order order);
+
+    /**
+     * Associates a given PaymentInfo with an Order. Note that it is acceptable for the 
+     * securePaymentInfo to be null. For example, if the secure credit card details are 
+     * handled by a third party, a given application may never have associated securePaymentInfos
+     * 
+     * @param order
+     * @param payment
+     * @param securePaymentInfo - null if it doesn't exist
+     * @return the persisted version of the PaymentInfo
+     */
+    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo);
     
     /**
      * Persists the given order to the database. If the priceOrder flag is set to true,

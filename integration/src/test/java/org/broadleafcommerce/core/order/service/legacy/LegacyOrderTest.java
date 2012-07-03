@@ -105,7 +105,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         this.orderId = order.getId();
     }
 
-    @Test(groups = { "addItemToOrderLegacy" }, dependsOnGroups = { "findCurrentCartForCustomerLegacy", "createSku" })
+    @Test(groups = { "addItemToOrderLegacy" }, dependsOnGroups = { "findCurrentCartForCustomerLegacy", "createSku", "testCatalog" })
     @Rollback(false)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addItemToOrder() throws PricingException {

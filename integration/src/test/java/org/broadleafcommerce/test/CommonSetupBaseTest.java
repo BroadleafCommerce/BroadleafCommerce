@@ -20,10 +20,14 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
@@ -206,6 +210,43 @@ public abstract class CommonSetupBaseTest extends BaseTest {
 
         return newProduct;
     }
+    
+    public ProductBundle addProductBundle() {
+    	// Create the product
+    	Product p = addTestProduct("bundleproduct1", "bundlecat1");
+    	
+    	// Create the sku for the ProductBundle object
+    	Sku bundleSku = catalogService.createSku();
+        bundleSku.setName(p.getName());
+        bundleSku.setRetailPrice(new Money(44.99));
+        bundleSku.setActiveStartDate(p.getActiveStartDate());
+        bundleSku.setActiveEndDate(p.getActiveEndDate());
+        bundleSku.setDiscountable(true);
+        
+        // Create the ProductBundle and associate the sku
+    	ProductBundle bundle = (ProductBundle) catalogService.createProduct(ProductType.BUNDLE);
+        bundle.setDefaultCategory(p.getDefaultCategory());
+        bundle.setDefaultSku(bundleSku);
+    	bundle = (ProductBundle) catalogService.saveProduct(bundle);
+    	
+    	// Reverse-associate the ProductBundle to the sku (Must be done this way because it's a 
+    	// bidirectional OneToOne relationship
+    	bundleSku.setDefaultProduct(bundle);
+    	catalogService.saveSku(bundleSku);
+    	
+    	// Wrap the product/sku that is part of the bundle in a SkuBundleItem
+    	SkuBundleItem skuBundleItem = new SkuBundleItemImpl();
+    	skuBundleItem.setBundle(bundle);
+    	skuBundleItem.setQuantity(1);
+    	skuBundleItem.setSku(p.getDefaultSku());
+        
+    	// Add the SkuBundleItem to the ProductBundle
+    	bundle.getSkuBundleItems().add(skuBundleItem);
+        bundle = (ProductBundle) catalogService.saveProduct(bundle);
+    	
+    	return bundle;
+    }
+	
 
     public void createShippingRates() {
         ShippingRate sr = new ShippingRateImpl();
