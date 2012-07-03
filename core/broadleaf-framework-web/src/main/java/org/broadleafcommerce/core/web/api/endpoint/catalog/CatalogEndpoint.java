@@ -16,12 +16,22 @@
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.catalog.domain.*;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.*;
+import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,10 +40,18 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -377,7 +395,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
-            Map<String, Media> media = product.getProductMedia();
+            Map<String, Media> media = product.getMedia();
             if (media != null) {
                 for (Media med : media.values()) {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());

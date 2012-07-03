@@ -35,7 +35,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
@@ -190,15 +189,6 @@ public class SkuImpl implements Sku {
     @Column(name = "FLAT_FULFILLMENT_RATE")
     @AdminPresentation(friendlyName = "Flat Fulfillment Rate", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal flatFulfillmentRate;
-	
-    /** The sku images. */
-    @CollectionOfElements
-    @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @Deprecated
-    protected Map<String, String> skuImages = new HashMap<String, String>();
 
     /** The sku media. */
     @ManyToMany(targetEntity = MediaImpl.class)
@@ -248,6 +238,7 @@ public class SkuImpl implements Sku {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -561,24 +552,6 @@ public class SkuImpl implements Sku {
             }
         }
         return this.isActive() && product.isActive() && category.isActive();
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, String> getSkuImages() {
-        return skuImages;
-    }
-
-    @Override
-    @Deprecated
-    public String getSkuImage(String imageKey) {
-        return skuImages.get(imageKey);
-    }
-
-    @Override
-    @Deprecated
-    public void setSkuImages(Map<String, String> skuImages) {
-        this.skuImages = skuImages;
     }
 
     @Override

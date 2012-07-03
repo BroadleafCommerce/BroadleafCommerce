@@ -18,16 +18,16 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProcessor;
+import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProvider;
 
 import java.io.Serializable;
 
 /**
- * Used in conjunction with the {@link FixedPriceFulfillmentPricingProcessor} to allow for a single price
+ * Used in conjunction with the {@link FixedPriceFulfillmentPricingProvider} to allow for a single price
  * for fulfilling an order (e.g. $5 shipping)
  * 
  * @author Phillip Verheyden
- * @see {@link FixedPriceFulfillmentPricingProcessor}
+ * @see {@link FixedPriceFulfillmentPricingProvider}
  */
 public interface FixedPriceFulfillmentOption extends FulfillmentOption, Serializable {
     

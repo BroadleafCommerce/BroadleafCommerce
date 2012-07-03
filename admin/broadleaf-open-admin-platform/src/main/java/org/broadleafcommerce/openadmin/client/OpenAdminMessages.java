@@ -121,4 +121,7 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String ejb3ConfigurationPreProcessTitle();
     public String resetDataTitle();
     public String lockedMessage();
+    public String dirtyMessage();
+    public String activeMessage();
+    public String deletedMessage();
 }

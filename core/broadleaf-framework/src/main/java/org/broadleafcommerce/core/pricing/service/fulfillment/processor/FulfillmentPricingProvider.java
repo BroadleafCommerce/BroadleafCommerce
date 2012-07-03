@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPrici
  * @author Phillip Verheyden
  * @see {@link FulfillmentPricingService}
  */
-public interface FulfillmentPricingProcessor {
+public interface FulfillmentPricingProvider {
 
     /**
      * Whether or not this processor can calculate the fulfillment cost for the given {@link FulfillmentGroup}. This is

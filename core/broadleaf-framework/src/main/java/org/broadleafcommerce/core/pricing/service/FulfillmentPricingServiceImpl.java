@@ -21,13 +21,13 @@ import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceExcept
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProcessor;
+import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
 
 import java.util.List;
 
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {
 
-    protected List<FulfillmentPricingProcessor> processors;
+    protected List<FulfillmentPricingProvider> providers;
 
     @Override
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
@@ -37,12 +37,12 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
             throw new ShippingPriceException("FulfillmentGroups must have a FulfillmentOption associated with them in order to price the FulfillmentGroup");
         }
         */
-        for (FulfillmentPricingProcessor processor : processors) {
+        for (FulfillmentPricingProvider processor : providers) {
             if (processor.canCalculateCostForFulfillmentGroup(fulfillmentGroup)) {
                 return processor.calculateCostForFulfillmentGroup(fulfillmentGroup);
             }
         }
-        //TODO: remove this section after FulfillmentPricingProcessor implementations
+        //TODO: remove this section after FulfillmentPricingProvider implementations
         fulfillmentGroup.setShippingPrice(new Money(0));
         fulfillmentGroup.setSaleShippingPrice(new Money(0));
         fulfillmentGroup.setRetailShippingPrice(new Money(0));
@@ -57,7 +57,7 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
     
     @Override
     public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) throws ShippingPriceException {
-        for (FulfillmentPricingProcessor processor : processors) {
+        for (FulfillmentPricingProvider processor : providers) {
             if (processor.canEstimateCostForFulfillmentGroup(fulfillmentGroup, option)) {
                 return processor.estimateCostForFulfillmentGroup(fulfillmentGroup, option);
             }
@@ -70,12 +70,12 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
     }
 
     @Override
-    public List<FulfillmentPricingProcessor> getProcessors() {
-        return processors;
+    public List<FulfillmentPricingProvider> getProviders() {
+        return providers;
     }
 
-    public void setProcessors(List<FulfillmentPricingProcessor> processors) {
-        this.processors = processors;
+    public void setProviders(List<FulfillmentPricingProvider> providers) {
+        this.providers = providers;
     }
 
 }

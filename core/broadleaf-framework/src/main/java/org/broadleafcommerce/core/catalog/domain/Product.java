@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.core.media.domain.Media;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.media.domain.Media;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
@@ -252,49 +252,6 @@ public interface Product extends Serializable {
      */
     public List<Sku> getAllSkus();
     
-    /**
-     * Returns a map of key/value pairs that associate the image name (key) with the URL to the image (value)
-     * for display purposes. This method is deprecated. Use getProductMedia instead.
-     *
-     * @return a map of product images
-     */
-    @Deprecated
-    public Map<String, String> getProductImages();
-
-    /**
-     * Returns a string URL to an image given the string key passed in for this product.
-     *
-     * @param imageKey - a string key to lookup the image for the product
-     *
-     * @return a URL to the image associated witht he key passed in.
-     */
-    @Deprecated
-    public String getProductImage(String imageKey);
-
-    /**
-     * Sets the product images map. This method is deprecated. Use setProductMedia instead.
-     *
-     * @param productImages - a map of product images
-     */
-    @Deprecated
-    public void setProductImages(Map<String, String> productImages);
-
-    /**
-     * Returns a map of key/value pairs that associate the media name (key) with the Media object(value)
-     *
-     * @return a map of product media
-     */
-    @Deprecated
-    public Map<String, Media> getProductMedia();
-
-    /**
-     * Sets the product media map.
-     *
-     * @param productMedia - a map of product images
-     */
-    @Deprecated
-    public void setProductMedia(Map<String, Media> productMedia);
-
     /**
      * Gets the media for this product. This serves as a pass-through to
      * the {@link getDefaultSku()} media
