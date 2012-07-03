@@ -55,7 +55,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     	GenericResponse errorResponse = customerService.sendResetPasswordNotification(username, getResetPasswordUrl(request));
         if (errorResponse.getHasErrors()) {
         	 String errorCode = errorResponse.getErrorCodesList().get(0);
-             request.setAttribute("errorCode", errorCode);
+        	 model.addAttribute("errorCode", errorCode);             
              return ajaxRender(getForgotPasswordView(), request, model);
         } else {
             request.getSession(true).setAttribute("forgot_password_username", username);

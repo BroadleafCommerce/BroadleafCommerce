@@ -37,14 +37,14 @@ import java.io.IOException;
 @Component("blAuthenticationSuccessRedirectStrategy")
 public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectStrategy {
 	
-	private String redirectPath="redirect";
+	private String redirectPath="/redirect";
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
 	@Override
 	public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
 		if (BroadleafControllerUtility.isAjaxRequest(request)) {
 			request.getSession().setAttribute("BLC_REDIRECT_URL", url);
-			url = request.getContextPath()+getRedirectPath();
+			url = getRedirectPath();
 		}
 		redirectStrategy.sendRedirect(request, response, url);
 	}
