@@ -38,8 +38,8 @@ import java.util.List;
         @AdminPresentationOverride(name="auditable.createdBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name="auditable.updatedBy.id", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true)),
-        @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Updated", order = 4, group = "SandBoxItemImpl_Audit", readOnly = true)),
-        @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Admin_User_Login", order = 5, group = "SandBoxItemImpl_Audit", readOnly = true))
+        @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Date_Updated", order = 4, group = "SandBoxItemImpl_Audit", readOnly = true, prominent = true)),
+        @AdminPresentationOverride(name="auditable.createdBy.login", value=@AdminPresentation(friendlyName = "SandBoxItemImpl_Admin_User_Login", order = 5, group = "SandBoxItemImpl_Audit", readOnly = true, prominent = true))
     }
 )
 @EntityListeners(value = { AdminAuditableListener.class })
@@ -68,16 +68,16 @@ public class SandBoxItemImpl implements SandBoxItem {
 	protected Long originalSandBoxId;
 
     @Column(name = "SANDBOX_ITEM_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=1, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Item_Type", order=1, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxItemType", prominent = true)
     @Index(name="SANDBOX_ITEM_TYPE_INDEX", columnNames={"SANDBOX_ITEM_TYPE"})
     protected String sandBoxItemType;
 
     @Column(name = "SANDBOX_OPERATION_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=6, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Operation_Type", order=6, group = "SandBoxItemImpl_Details", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType", prominent = true)
     protected String sandboxOperationType;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Description", order=2, group = "SandBoxItemImpl_Details")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Description", order=2, group = "SandBoxItemImpl_Details", prominent = true)
     protected String description;
 
     @Column(name = "GRP_DESCRIPTION")
@@ -90,7 +90,7 @@ public class SandBoxItemImpl implements SandBoxItem {
     protected Long temporaryItemId;
 
     @Column(name = "ORIGINAL_ITEM_ID")
-    @AdminPresentation(friendlyName = "SandBoxItemImpl_Original_Id", order=3, group = "SandBoxItemImpl_Details")
+    @AdminPresentation(friendlyName = "SandBoxItemImpl_Original_Id", order=3, group = "SandBoxItemImpl_Details", prominent = true)
     @Index(name="SB_ORIG_ITEM_ID_INDEX", columnNames={"ORIGINAL_ITEM_ID"})
     protected Long originalItemId;
 

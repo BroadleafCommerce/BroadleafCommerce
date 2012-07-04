@@ -263,7 +263,7 @@ public class SandBoxPresenter extends AbstractEntityPresenter implements Instant
             @Override
             public void onSetupSuccess(DataSource dataSource) {
                 setupDisplayItems(dataSource);
-                //((CustomCriteriaListGridDataSource) dataSource).setupGridFields(new String[]{"auditable.createdBy.name", "description", "sandBoxItemType", "sandboxOperationType", "auditable.dateCreated", "auditable.dateUpdated"});
+                ((CustomCriteriaListGridDataSource) dataSource).setupGridFields(new String[]{});
             }
         }));
     }
