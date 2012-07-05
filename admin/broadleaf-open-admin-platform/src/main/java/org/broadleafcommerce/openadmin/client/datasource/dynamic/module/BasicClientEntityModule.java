@@ -638,7 +638,7 @@ public class BasicClientEntityModule implements DataSourceModule {
 		String[] entityType = entity.getType();
 		record.setAttribute("_type", entityType);
         if (!entity.isDirty()) {
-            if (!entity.getActive()) {
+            if (entity.getInactive()) {
                 record.setAttribute("_hilite", "listGridInActivePropertyHilite");
             }
             if (entity.getDeleted()) {
