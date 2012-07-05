@@ -49,6 +49,10 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 		this.rootName = rootName;
 	}
 
+    public void setupGridFields() {
+        setupGridFields(new String[]{});
+    }
+
     public void setupGridFields(final String[] fieldNames) {
         Boolean[] canEdit = new Boolean[fieldNames.length];
         for (int j=0;j<fieldNames.length;j++) {

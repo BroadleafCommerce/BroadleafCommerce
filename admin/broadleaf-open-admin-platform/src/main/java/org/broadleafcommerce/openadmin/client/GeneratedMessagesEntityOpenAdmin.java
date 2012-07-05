@@ -28,10 +28,13 @@ import com.google.gwt.i18n.client.LocalizableResource.Generate;
 @Generate(format = "com.google.gwt.i18n.rebind.format.PropertiesFormat")
 @DefaultLocale("en_US")
 public interface GeneratedMessagesEntityOpenAdmin extends ConstantsWithLookup {
+
     public String AdminAuditable_Date_Created();
     public String AdminAuditable_Date_Updated();
     public String SandBoxItemImpl_Date_Created();
     public String SandBoxItemImpl_Date_Updated();
+    public String SandBoxItemImpl_Admin_User_Login();
+    public String SandBoxItemImpl_Original_Id();
     public String SandBoxItemImpl_baseSandBoxItem();
     public String SandBoxItemImpl_Item_Type();
     public String SandBoxItemImpl_Operation_Type();
@@ -64,4 +67,5 @@ public interface GeneratedMessagesEntityOpenAdmin extends ConstantsWithLookup {
     public String AdminRoleImpl_Role();
     public String AdminUserImpl_Primary_Key();
     public String AdminUserImpl_User();
+
 }

@@ -103,8 +103,8 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
                     return BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("lockedMessage"), new String[]{"userName", "date"}, new String[]{record.getAttribute("__lockedUserName"), record.getAttribute("__lockedDate")});
                 } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridDirtyPropertyHilite")) {
                     return BLCMain.getMessageManager().getString("dirtyMessage");
-                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridActivePropertyHilite")) {
-                    return BLCMain.getMessageManager().getString("activeMessage");
+                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridInActivePropertyHilite")) {
+                    return BLCMain.getMessageManager().getString("inActiveMessage");
                 } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridDeletedPropertyHilite")) {
                     return BLCMain.getMessageManager().getString("deletedMessage");
                 }

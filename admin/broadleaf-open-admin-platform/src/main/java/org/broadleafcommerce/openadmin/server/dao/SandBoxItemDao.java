@@ -32,6 +32,8 @@ public interface SandBoxItemDao {
 
     public SandBoxItem addSandBoxItem(Long sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId);
 
+    public SandBoxItem addSandBoxItem(Long sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId, Boolean isRoot);
+
     public SandBoxItem updateSandBoxItem(SandBoxItem sandBoxItem);
 
     public List<SandBoxItem> retrieveSandBoxItemsForSandbox(Long sandBox);
@@ -41,5 +43,7 @@ public interface SandBoxItemDao {
     public List<SandBoxItem> retrieveSandBoxItemsByTypeForSandbox(Long sandBox, SandBoxItemType itemType);
 
     public List<SandBoxItem> retrieveByGroupName(Long sandBoxId, String groupName);
+
+    public List<SandBoxItem> retrieveSandBoxItemsByTypesForSandbox(Long sandBox, List<SandBoxItemType> sandBoxItemTypes);
 
 }

@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.datasource.dynamic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.widgets.DataBoundComponent;
@@ -31,6 +27,10 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityServiceAsync;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -48,6 +48,10 @@ public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 	public ListGridDataSource(String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
 		super(name, persistencePerspective, service, modules);
 	}
+
+    public void setupGridFields() {
+        setupGridFields(new String[]{});
+    }
 
     public void setupGridFields(final String[] fieldNames) {
         Boolean[] canEdit = new Boolean[fieldNames.length];

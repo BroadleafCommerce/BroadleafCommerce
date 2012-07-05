@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Progressbar;
 import com.smartgwt.client.widgets.Window;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -70,7 +71,7 @@ public class ServerProcessProgressWindow extends Window implements Stoppable {
     }
 
     public void setProgressBar(Progress progressBar) {
-        if (this.progressBar != null) {
+        if (this.progressBar != null && contains((Canvas) this.progressBar)) {
             removeItem((Progressbar) this.progressBar);
         }
         this.progressBar = progressBar;
