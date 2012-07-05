@@ -39,9 +39,11 @@ public class AdminAuditableListener {
             		field.set(entity, new AdminAuditable());
             		auditable = field.get(entity);
             	}
-        		Field temporalField = auditable.getClass().getDeclaredField("dateCreated");
+        		Field temporalCreatedField = auditable.getClass().getDeclaredField("dateCreated");
+                Field temporalUpdatedField = auditable.getClass().getDeclaredField("dateUpdated");
         		Field agentField = auditable.getClass().getDeclaredField("createdBy");
-        		setAuditValueTemporal(temporalField, auditable);
+        		setAuditValueTemporal(temporalCreatedField, auditable);
+                setAuditValueTemporal(temporalUpdatedField, auditable);
         		setAuditValueAgent(agentField, auditable);
             }
         }

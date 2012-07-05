@@ -45,6 +45,10 @@ public class TileGridDataSource extends PresentationLayerAssociatedDataSource {
 		super(name, persistencePerspective, service, modules);
 	}
 
+    public void setupGridFields() {
+        setupGridFields(new String[]{});
+    }
+
     public void setupGridFields(final String[] fieldNames) {
         if (fieldNames.length > 0) {
 			resetProminenceOnly(fieldNames);

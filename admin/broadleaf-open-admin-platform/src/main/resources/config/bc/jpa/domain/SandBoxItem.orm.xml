@@ -28,6 +28,15 @@
         </query>
     </named-query>
 
+    <named-query name="BC_READ_ALL_SANDBOX_ITEMS_BY_TYPES" >
+        <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
+               WHERE  sandboxItem.sandBoxId = :sandboxId AND
+                      sandboxItem.sandBoxItemType IN (:sandBoxItemTypes) AND
+                      sandboxItem.archivedFlag = 'N'
+               ORDER BY sandboxItem.id
+        </query>
+    </named-query>
+
     <named-query name="BC_READ_SANDBOX_ITEM_BY_GROUP_NAME" >
         <query>SELECT sandboxItem FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItem sandboxItem
                WHERE  sandboxItem.sandBoxId = :sandboxId AND
