@@ -51,8 +51,6 @@ public interface LegacyOrderService extends OrderService {
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;
-    
-    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     /**
      * Used to create dynamic bundles groupings of order items.
