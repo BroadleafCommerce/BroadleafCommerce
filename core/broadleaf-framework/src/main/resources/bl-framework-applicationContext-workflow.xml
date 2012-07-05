@@ -113,6 +113,7 @@
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
@@ -124,8 +125,10 @@
 		</property>
 		<property name="activities">
 			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
@@ -137,6 +140,8 @@
 		</property>
 		<property name="activities">
 			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
 				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
 			</list>
 		</property>

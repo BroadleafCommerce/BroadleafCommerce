@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -31,6 +30,13 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
+/**
+ * This class is responsible for removing OrderItems when requested by the OrderService.
+ * Note that this class does not touch the FulfillmentGroupItems and expects that they 
+ * have already been remoevd by the time this activity executes. 
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
 public class RemoveOrderItemActivity extends BaseActivity {
     private static Log LOG = LogFactory.getLog(RemoveOrderItemActivity.class);
     
@@ -40,23 +46,24 @@ public class RemoveOrderItemActivity extends BaseActivity {
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
     
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
-
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
+        // Find the OrderItem from the database based on its ID
 		Order order = request.getOrder();
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
-        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+        
+        // Remove the OrderItem from the Order
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(orderItem));
+        
+        // Delete the OrderItem from the database
         itemFromOrder.setOrder(null);
         orderItemService.delete(itemFromOrder);
+        
         order = orderService.save(order, request.isPriceOrder());
         
         request.setOrder(order);
-        ((CartOperationContext) context).setSeedData(request);
         return context;
     }
 

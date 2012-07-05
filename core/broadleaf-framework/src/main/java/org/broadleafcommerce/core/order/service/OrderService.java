@@ -20,6 +20,7 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -249,6 +250,14 @@ public interface OrderService {
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
     
     /**
+     * Changes the OrderStatus to SUBMITTED
+     * 
+     * @param order to confirm
+     * @return the order that was confirmed
+     */
+	public Order confirmOrder(Order order);
+    
+    /**
      * Looks through the given order and returns the latest added OrderItem that matches on the skuId
      * and productId. Generally, this is used to retrieve the OrderItem that was just added to the cart.
      * The default Broadleaf implementation will attempt to match on skuId first, and failing that, it will
@@ -265,6 +274,22 @@ public interface OrderService {
      * @return the best matching OrderItem with highest index in the list of OrderItems in the order
      */
 	public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
+	
+	/**
+	 * Adds a GiftWrapItem to the order based on the itemRequest. A GiftWrapItem is a product (for example,
+	 * a "Gift Box with Red Ribbon") that contains a list of OrderItems that should be wrapped by this
+	 * GiftWrapItem.
+	 * 
+	 * The OrderItems must already exist and belong to an order before they are able to be wrapped by the
+	 * GiftWrapItem
+	 * 
+	 * @param order
+	 * @param itemRequest
+	 * @param priceOrder
+	 * @return the GiftWrapItem instance that was created and attached to the order
+	 * @throws PricingException
+	 */
+	public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 	
     /**
      * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
@@ -315,6 +340,10 @@ public interface OrderService {
      * @throws RemoveFromCartException 
      */
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
+
+
+
+
 
 
 }

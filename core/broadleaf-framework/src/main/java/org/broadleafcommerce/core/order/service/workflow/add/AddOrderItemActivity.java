@@ -98,7 +98,7 @@ public class AddOrderItemActivity extends BaseActivity {
         order = orderService.save(order, request.isPriceOrder());
         
         request.setOrder(order);
-        ((CartOperationContext) context).setSeedData(request);
+        request.setAddedOrderItem(item);
         return context;
     }
 

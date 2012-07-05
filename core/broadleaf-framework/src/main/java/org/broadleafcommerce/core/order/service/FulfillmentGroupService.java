@@ -39,6 +39,14 @@ public interface FulfillmentGroupService {
     
     public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
 
+    /**
+     * Removes every fulfillment group item in every fulfillment group in the order
+     * that is associated with the given orderItem. Note that it does not save the changes
+     * made - instead, the caller is responsible for saving the order further down.
+     * 
+     * @param order
+     * @param orderItem
+     */
 	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
 
 }

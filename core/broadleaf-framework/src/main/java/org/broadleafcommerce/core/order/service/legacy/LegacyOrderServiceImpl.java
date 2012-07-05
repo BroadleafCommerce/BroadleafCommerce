@@ -38,7 +38,6 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
@@ -149,11 +148,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     	return addGiftWrapItemToOrder(order, itemRequest, true);
     }
 
-    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
-        GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
-        return addOrderItemToOrder(order, item, priceOrder);
-    }
-    
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException {
     	return addBundleItemToOrder(order, itemRequest, true);
     }
@@ -396,10 +390,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     public void removeNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = findNamedOrderForCustomer(name, customer);
         cancelOrder(namedOrder);
-    }
-
-    public Order confirmOrder(Order order) {
-        return orderDao.submitOrder(order);
     }
 
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
@@ -984,11 +974,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     
     @Deprecated
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
-        List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.add(newOrderItem);
-        newOrderItem.setOrder(order);
-        order = updateOrder(order, true);
-        return findLastMatchingItem(order, newOrderItem);
+    	return addOrderItemToOrder(order, newOrderItem, true);
     }
     
     @Deprecated

@@ -150,8 +150,6 @@ public interface LegacyOrderService extends OrderService {
 
     public void removeNamedOrderForCustomer(String name, Customer customer);
 
-    public Order confirmOrder(Order order);
-
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException;
 
     public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
@@ -233,10 +231,6 @@ public interface LegacyOrderService extends OrderService {
      * @return
      */
     public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException;
-
-    /* *********************************************************************************
-     * DEPRECATED METHODS                                                              *
-     * *********************************************************************************/
 
     /**
      * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)

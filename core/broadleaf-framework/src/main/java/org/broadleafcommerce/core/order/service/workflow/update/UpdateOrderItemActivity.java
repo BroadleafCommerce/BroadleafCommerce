@@ -42,10 +42,6 @@ public class UpdateOrderItemActivity extends BaseActivity {
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Order order = request.getOrder();
         
-        if (orderItemRequestDTO.getQuantity() < 0) {
-        	throw new IllegalArgumentException("Quantity cannot be negative");
-        }
-        
     	OrderItem orderItem = null;
 		for (DiscreteOrderItem doi : order.getDiscreteOrderItems()) {
 			if (doi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
@@ -56,13 +52,16 @@ public class UpdateOrderItemActivity extends BaseActivity {
         if (orderItem == null || !order.getOrderItems().contains(orderItem)) {
             throw new ItemNotFoundException("Order Item (" + orderItem.getId() + ") not found in Order (" + order.getId() + ")");
         }
-		
-        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(orderItem));
-        itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
-        order = orderService.save(order, request.isPriceOrder());
         
+        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(orderItem));
+        
+        request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
+        
+        itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
+        order = orderService.save(order, false);
+        
+        request.setAddedOrderItem(itemFromOrder);
         request.setOrder(order);
-        ((CartOperationContext) context).setSeedData(request);
         return context;
     }
 

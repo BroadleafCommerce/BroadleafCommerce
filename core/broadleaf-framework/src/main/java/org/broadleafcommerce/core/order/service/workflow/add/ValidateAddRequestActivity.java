@@ -92,7 +92,6 @@ public class ValidateAddRequestActivity extends BaseActivity {
         	request.getItemRequest().setSkuId(sku.getId());
         }
         
-        ((CartOperationContext) context).setSeedData(request);
         return context;
     }
     

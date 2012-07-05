@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 /**
@@ -32,6 +33,12 @@ public class CartOperationRequest {
 	protected Order order;
 	
 	protected boolean priceOrder;
+	
+	// Set during the course of the workflow for use in subsequent workflow steps
+	protected OrderItem addedOrderItem;
+	
+	// Set during the course of the workflow for use in subsequent workflow steps
+	protected Integer orderItemQuantityDelta;
 	
 	public CartOperationRequest(Order order, OrderItemRequestDTO itemRequest, boolean priceOrder) {
 		setOrder(order);
@@ -63,4 +70,20 @@ public class CartOperationRequest {
 		this.priceOrder = priceOrder;
 	}
 
+	public OrderItem getAddedOrderItem() {
+		return addedOrderItem;
+	}
+
+	public void setAddedOrderItem(OrderItem addedOrderItem) {
+		this.addedOrderItem = addedOrderItem;
+	}
+
+	public Integer getOrderItemQuantityDelta() {
+		return orderItemQuantityDelta;
+	}
+
+	public void setOrderItemQuantityDelta(Integer orderItemQuantityDelta) {
+		this.orderItemQuantityDelta = orderItemQuantityDelta;
+	}
+	
 }

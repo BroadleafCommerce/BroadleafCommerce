@@ -24,9 +24,11 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -256,6 +258,23 @@ public class OrderServiceImpl implements OrderService {
 	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+    public Order confirmOrder(Order order) {
+        return orderDao.submitOrder(order);
+    }
+	
+	@Override
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
+        GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
+        item.setOrder(order);
+        item = (GiftWrapOrderItem) orderItemService.saveOrderItem(item);
+        
+        order.getOrderItems().add(item);
+        order = save(order, priceOrder);
+        
+        return item;
+    }
     
     @Override
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {

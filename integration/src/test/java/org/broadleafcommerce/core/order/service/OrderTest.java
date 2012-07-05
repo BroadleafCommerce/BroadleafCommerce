@@ -22,6 +22,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -32,7 +34,6 @@ import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -47,12 +48,10 @@ import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class OrderTest extends OrderBaseTest {
 
     private Long orderId = null;
     private int numOrderItems = 0;
-    private Long fulfillmentGroupId;
     private Long bundleOrderItemId;
 
     @Resource(name = "blOrderItemService")
@@ -61,8 +60,8 @@ public class OrderTest extends OrderBaseTest {
     @Resource
     private SkuDao skuDao;
     
-    @Resource
-    private ShippingRateService shippingRateService;
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
     
     @Resource(name = "blAddItemWorkflow")
     protected SequenceProcessor addItemWorkflow;
@@ -103,8 +102,6 @@ public class OrderTest extends OrderBaseTest {
         assert order != null;
         assert sku.getId() != null;
         
-        List<Sku> allSkus = skuDao.readAllSkus();
-        
         OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
         itemRequest.setQuantity(1);
         itemRequest.setSkuId(sku.getId());
@@ -116,6 +113,15 @@ public class OrderTest extends OrderBaseTest {
         assert item.getQuantity() == numOrderItems;
         assert item.getSku() != null;
         assert item.getSku().equals(sku);
+        
+        assert order.getFulfillmentGroups().size() == 1;
+        
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 1;
+        
+        FulfillmentGroupItem fgItem = fg.getFulfillmentGroupItems().get(0);
+        assert fgItem.getOrderItem().equals(item);
+        assert fgItem.getQuantity() == item.getQuantity();
     }
     
     @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
@@ -143,6 +149,15 @@ public class OrderTest extends OrderBaseTest {
 
         assert(order.getOrderItems().size()==1);
         assert(order.getOrderItems().get(0).getQuantity()==2);
+        
+        assert order.getFulfillmentGroups().size() == 1;
+        
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 1;
+        
+        FulfillmentGroupItem fgItem = fg.getFulfillmentGroupItems().get(0);
+        assert fgItem.getOrderItem().equals(item);
+        assert fgItem.getQuantity() == item.getQuantity();
 
         // re-price the order without automatically merging.
         orderService.setAutomaticallyMergeLikeItems(false);
@@ -163,6 +178,15 @@ public class OrderTest extends OrderBaseTest {
         assert(order.getOrderItems().size()==2);
         assert(order.getOrderItems().get(0).getQuantity()==2);
         assert(order.getOrderItems().get(1).getQuantity()==1);
+        
+        assert order.getFulfillmentGroups().size() == 1;
+        
+        fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+	        assert fgi.getQuantity() == fgi.getOrderItem().getQuantity();
+        }
     }
     
     @Test(groups = { "testIllegalAddScenarios" }, dependsOnGroups = { "addItemToOrder" })
@@ -291,6 +315,100 @@ public class OrderTest extends OrderBaseTest {
         assert orderItems != null;
         assert orderItems.size() == numOrderItems - 1;
     }
+    
+    @Test(groups = { "testManyToOneFGItemToOrderItem" }, dependsOnGroups = { "getItemsForOrder" })
+    @Transactional
+    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException {
+    	// Grab the order and the first OrderItem
+        Order order = orderService.findOrderById(orderId);
+        List<OrderItem> orderItems = order.getOrderItems();
+        assert orderItems.size() > 0;
+        OrderItem item = orderItems.get(0);
+        
+        // Set the quantity of the first OrderItem to 10
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(10);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
+        OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 10;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 1;
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        FulfillmentGroupItem fgItem = null;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		fgItem = fgi;
+        	}
+        }
+        
+        assert fgItem != null;
+        
+        // Split one of the fulfillment group items to simulate a OneToMany relationship between
+        // OrderItems and FulfillmentGroupItems
+        FulfillmentGroup secondFg = fulfillmentGroupService.createEmptyFulfillmentGroup();
+        secondFg.setOrder(order);
+        secondFg = fulfillmentGroupService.save(secondFg);
+        fgItem.setQuantity(5);
+        FulfillmentGroupItem clonedFgItem = fgItem.clone();
+        clonedFgItem.setFulfillmentGroup(secondFg);
+        secondFg.addFulfillmentGroupItem(clonedFgItem);
+        order.getFulfillmentGroups().add(secondFg);
+        order = orderService.save(order, false);
+        
+        // Set the quantity of the first OrderItem to 15
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(15);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 15;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 2;
+        int fgItemQuantity = 0;
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	        for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
+	        	if (fgi.getOrderItem().equals(updatedItem)) {
+	        		fgItemQuantity += fgi.getQuantity();
+	        	}
+	        }
+        }
+        assert fgItemQuantity == 15;
+        
+        // Set the quantity of the first OrderItem to 3
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(3);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 3;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 2;
+        boolean fgItemFound = false;
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	        for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
+	        	if (fgi.getOrderItem().equals(updatedItem)) {
+	        		assert fgItemFound == false;
+	        		assert fgi.getQuantity() == 3;
+	        		fgItemFound = true;
+	        	}
+	        }
+        }
+        assert fgItemFound;
+    }
 
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
@@ -312,6 +430,43 @@ public class OrderTest extends OrderBaseTest {
         assert updatedItem != null;
         assert updatedItem.getQuantity() == 10;
         
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 1;
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        boolean fgItemUpdated = false;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		assert fgi.getQuantity() == 10;
+        		fgItemUpdated = true;
+        	}
+        }
+        assert fgItemUpdated;
+        
+        // Set the quantity of the first OrderItem to 5
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(5);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed - going to a smaller quantity is also ok
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 5;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 1;
+        fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        fgItemUpdated = false;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		assert fgi.getQuantity() == 5;
+        		fgItemUpdated = true;
+        	}
+        }
+        assert fgItemUpdated;
+        
         // Setting the quantity to 0 should in fact remove the item completely
         int startingSize = order.getOrderItems().size();
         orderItemRequestDTO = new OrderItemRequestDTO();
@@ -323,6 +478,18 @@ public class OrderTest extends OrderBaseTest {
         updatedItem = orderItemService.readOrderItemById(item.getId());
         assert updatedItem == null;
         assert order.getOrderItems().size() == startingSize - 1;
+        
+        // Assert that the appropriate fulfillment group item has been removed
+        assert order.getFulfillmentGroups().size() == 1;
+        fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == startingSize - 1;
+        boolean fgItemRemoved = true;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		fgItemRemoved = false;
+        	}
+        }
+        assert fgItemRemoved;
     }
 
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
@@ -510,7 +677,6 @@ public class OrderTest extends OrderBaseTest {
         assert orderService.findCartForCustomer(new CustomerImpl()) == null;
     }
 
-    /*
     @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
     public void testSubmitOrder() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
@@ -528,158 +694,4 @@ public class OrderTest extends OrderBaseTest {
         assert confirmedOrder.getStatus().equals(OrderStatus.SUBMITTED);
     }
 
-    @Test(groups = "addFulfillmentGroupToOrderFirst", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrder" })
-    @Rollback(false)
-    @Transactional
-    public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) throws PricingException {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
-        Order order = orderService.findOrderById(orderId);
-
-        fulfillmentGroup.setOrder(order);
-        fulfillmentGroup.setAddress(address);
-        FulfillmentGroup fg = orderService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
-        assert fg != null;
-        assert fg.getId() != null;
-        assert fg.getAddress().equals(fulfillmentGroup.getAddress());
-        assert fg.getOrder().equals(order);
-        assert fg.getMethod().equals(fulfillmentGroup.getMethod());
-        assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
-        this.fulfillmentGroupId = fg.getId();
-    }
-
-    @Test(groups = { "removeFulfillmentGroupFromOrder" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void removeFulfillmentGroupFromOrder() throws PricingException {
-        Order order = orderService.findOrderById(orderId);
-        List<FulfillmentGroup> fgItems = order.getFulfillmentGroups();
-        assert fgItems.size() > 0;
-        int startingSize = fgItems.size();
-        FulfillmentGroup item = fgItems.get(0);
-        assert item != null;
-        orderService.removeFulfillmentGroupFromOrder(order, item);
-        order = orderService.findOrderById(orderId);
-        List<FulfillmentGroup> items = order.getFulfillmentGroups();
-        assert items != null;
-        assert items.size() == startingSize - 1;
-    }
-
-    @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void findFillmentGroupForOrderFirst() {
-        Order order = orderService.findOrderById(orderId);
-        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
-        assert fg != null;
-        assert fg.getId() != null;
-        FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
-        assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getOrder().equals(order);
-        assert fg.getMethod().equals(fulfillmentGroup.getMethod());
-        assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
-    }
-
-    @Test(groups= {"addItemToFulfillmentGroupSecond"}, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void addItemToFulfillmentgroupSecond() {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
-        Order order = orderService.findOrderById(orderId);
-        List<OrderItem> orderItems = order.getOrderItems();
-        assert(orderItems.size() > 0);
-        FulfillmentGroup newFg = new FulfillmentGroupImpl();
-        newFg.setAddress(address);
-        newFg.setMethod("standard");
-        newFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-        try {
-            newFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
-        } catch (PricingException e) {
-            throw new RuntimeException(e);
-        }
-        order = orderService.findOrderById(orderId);
-        FulfillmentGroup newNewFg = order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(newFg));
-        assert(newNewFg.getFulfillmentGroupItems().size() == 1);
-        assert(newNewFg.getFulfillmentGroupItems().get(0).getOrderItem().equals(orderItems.get(0)));
-
-    }
-
-    @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void findDefaultFillmentGroupForOrder() {
-        Order order = orderService.findOrderById(orderId);
-        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
-        assert fg != null;
-        assert fg.getId() != null;
-        FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
-        assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getOrder().equals(order);
-        assert fg.getMethod().equals(fulfillmentGroup.getMethod());
-        assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
-    }
-
-    @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void removeItemFromOrderAfterFulfillmentGroups() {
-        Order order = orderService.findOrderById(orderId);
-        List<OrderItem> orderItems = order.getOrderItems();
-        assert orderItems.size() > 0;
-        OrderItem item = orderItems.get(0);
-        assert item != null;
-        try {
-            orderService.removeItemFromOrder(order, item);
-        } catch (PricingException e) {
-            throw new RuntimeException(e);
-        }
-        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
-        for (FulfillmentGroupItem fulfillmentGroupItem : fg.getFulfillmentGroupItems()) {
-            assert !fulfillmentGroupItem.getOrderItem().equals(item);
-        }
-    }
-
-    @Test(groups = { "testOrderFulfillmentGroups" }, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
-    @Transactional
-    public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException, ItemNotFoundException{
-        shippingRate = shippingRateService.save(shippingRate);
-        sr2 = shippingRateService.save(sr2);
-    	Customer customer = createCustomerWithAddresses();
-    	Order order = initializeExistingCart(customer);
-    	CustomerAddress customerAddress = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0);
-    	
-    	FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
-    	
-    	List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
-
-    	for (OrderItem orderItem : order.getOrderItems()) {
-    		FulfillmentGroupItemRequest fgiRequest = new FulfillmentGroupItemRequest();
-    		fgiRequest.setOrderItem(orderItem);
-    		fgiRequest.setQuantity(1);
-    		fgiRequests.add(fgiRequest);
-    	}
-    	
-    	fgRequest.setAddress(customerAddress.getAddress());
-    	fgRequest.setFulfillmentGroupItemRequests(fgiRequests);
-    	fgRequest.setOrder(orderService.findCartForCustomer(customer));
-    	fgRequest.setMethod("standard");
-    	fgRequest.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-    	orderService.addFulfillmentGroupToOrder(fgRequest);
-    	
-    	Order resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 1;
-    	assert resultOrder.getFulfillmentGroups().get(0).getFulfillmentGroupItems().size() == 2;
-    	
-    	orderService.removeAllFulfillmentGroupsFromOrder(order, false);
-    	resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 0;
-    	
-    	FulfillmentGroup defaultFg = orderService.createDefaultFulfillmentGroup(order, customerAddress.getAddress());
-    	defaultFg.setMethod("standard");
-    	defaultFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-    	assert defaultFg.isPrimary();
-    	orderService.addFulfillmentGroupToOrder(order, defaultFg);
-    	resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 1;
-    }
-    */
-    
 }

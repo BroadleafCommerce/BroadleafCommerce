@@ -97,7 +97,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 			}
 		}
 		
-		//TODO: Hook in fulfillment group strategy
         // 1) Find the order item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
@@ -117,6 +116,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         	FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
         	fgRequest.setOrder(order);
             fulfillmentGroup = addFulfillmentGroupToOrder(fgRequest, false);
+            fulfillmentGroup = save(fulfillmentGroup);
+            order.getFulfillmentGroups().add(fulfillmentGroup);
         }
 
         FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity());
