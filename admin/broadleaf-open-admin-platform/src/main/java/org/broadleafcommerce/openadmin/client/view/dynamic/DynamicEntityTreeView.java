@@ -20,7 +20,9 @@ import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.grid.HoverCustomizer;
 import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
@@ -76,6 +78,25 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         grid.setCanSort(false);
         grid.setCanResizeFields(true);
         grid.setShowRoot(showRoot);
+        grid.setHoverMoveWithMouse(true);
+        grid.setCanHover(true);
+        grid.setShowHover(true);
+        grid.setHoverOpacity(75);
+        grid.setHoverCustomizer(new HoverCustomizer() {
+            @Override
+            public String hoverHTML(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (record != null && record.getAttribute("__locked") != null && record.getAttributeAsBoolean("__locked")) {
+                    return BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("lockedMessage"), new String[]{"userName", "date"}, new String[]{record.getAttribute("__lockedUserName"), record.getAttribute("__lockedDate")});
+                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridDirtyPropertyHilite")) {
+                    return BLCMain.getMessageManager().getString("dirtyMessage");
+                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridActivePropertyHilite")) {
+                    return BLCMain.getMessageManager().getString("activeMessage");
+                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridDeletedPropertyHilite")) {
+                    return BLCMain.getMessageManager().getString("deletedMessage");
+                }
+                return null;
+            }
+        });
         addMember(grid);
 	}
 

@@ -633,6 +633,20 @@ public class BasicClientEntityModule implements DataSourceModule {
 		}
 		String[] entityType = entity.getType();
 		record.setAttribute("_type", entityType);
+        if (!entity.isDirty()) {
+            if (entity.getActive()) {
+                record.setAttribute("_hilite", "listGridActivePropertyHilite");
+            }
+            if (entity.getDeleted()) {
+                record.setAttribute("_hilite", "listGridDeletedPropertyHilite");
+            }
+        }
+        if (entity.getLocked()) {
+            record.setAttribute("_hilite", "listGridLockedPropertyHilite");
+            record.setAttribute("__locked", true);
+            record.setAttribute("__lockedUserName", entity.getLockedBy()==null?"":entity.getLockedBy());
+            record.setAttribute("__lockedDate", entity.getLockedDate()==null?"":entity.getLockedDate());
+        }
 		return record;
 	}
     

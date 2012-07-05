@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
@@ -97,12 +98,14 @@ public interface Sku extends Serializable {
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
      * @deprecated
      */
+    @Deprecated
     public Money getListPrice();
 
     /**
      * Sets the the List Price of the Sku.  The List Price is the MSRP of the sku.
      * @deprecated
      */
+    @Deprecated
     public void setListPrice(Money listPrice);
 
     /**
@@ -236,28 +239,6 @@ public interface Sku extends Serializable {
      * the sku can add the sku to their cart.
      */
     public boolean isActive();
-
-    /**
-     * Returns a map of key/value pairs where the key is a string for the name of an image and the value
-     * is a string to the URL of the image.  This is used to display images while browsing the sku.
-     * This method is deprecated. Use getSkuMedia instead.
-     */
-    @Deprecated
-    public Map<String, String> getSkuImages();
-
-    /**
-     * Returns the default image used for the Sku.
-     */
-    @Deprecated
-    public String getSkuImage(String imageKey);
-
-    /**
-     * Sets a map of key/value pairs where the key is a string for the name of an image and the value
-     * is a string to the URL of the image.  This is used to display images while browsing the sku.
-     * This method is deprecated. Use setSkuMedia instead.
-     */
-    @Deprecated
-    public void setSkuImages(Map<String, String> skuImages);
 
     /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value

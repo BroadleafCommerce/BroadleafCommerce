@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
+package org.broadleafcommerce.core.order.fulfillment.domain;
 
-import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+
+import java.util.List;
 
 /**
- * DTO to allow FulfillmentProcessors to respond to estimation requests for a particular FulfillmentGroup
- * for a particular FulfillmentOptions
  * 
  * @author Phillip Verheyden
- * @see {@link FulfillmentPricingProvider}, {@link FulfillmentPricingService}
  */
-public class FulfillmentEstimationResponse {
+public interface BandedPriceFulfillmentOption extends FulfillmentOption {
+    
+    public List<FulfillmentPriceBand> getBands();
+
+    public void setBands(List<FulfillmentPriceBand> bands);
 
 }

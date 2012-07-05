@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.Theme;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +43,7 @@ public class BroadleafRequestContext {
     private SandBox sandbox;
     private Locale locale;
     private Site site;
+    private Theme theme;
 
     public HttpServletRequest getRequest() {
         return request;
@@ -101,5 +103,13 @@ public class BroadleafRequestContext {
     
     public boolean isProductionSandbox() {
         return (sandbox == null || SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType()));
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 }

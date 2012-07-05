@@ -21,8 +21,8 @@ import net.sf.cglib.core.Predicate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.Archivable;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -41,10 +40,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -98,7 +95,7 @@ import java.util.Map;
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
-public class ProductImpl implements Product, Archivable {
+public class ProductImpl implements Product, Status {
 
 	private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -180,26 +177,6 @@ public class ProductImpl implements Product, Archivable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
-
-    /** The product images. */
-    @CollectionOfElements
-    @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    @Deprecated
-    protected Map<String, String> productImages = new HashMap<String, String>();
-
-    /** The product media. */
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    @Deprecated
-    protected Map<String, Media> productMedia = new HashMap<String , Media>();
 
     /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -403,47 +380,8 @@ public class ProductImpl implements Product, Archivable {
     }
 
     @Override
-    @Deprecated
-    public Map<String, String> getProductImages() {
-        return productImages;
-    }
-
-    @Override
-    @Deprecated
-    public String getProductImage(String imageKey) {
-        return productImages.get(imageKey);
-    }
-
-    @Override
-    @Deprecated
-    public void setProductImages(Map<String, String> productImages) {
-        this.productImages.clear();
-//        for(String key : productImages.keySet()){
-//        	this.productImages.put(key, productImages.get(key));
-//        }
-    	for(Map.Entry<String, String> me : productImages.entrySet()) {
-    		this.productImages.put(me.getKey(), me.getValue());
-    	}
-    }
-
-    @Override
     public Category getDefaultCategory() {
         return defaultCategory;
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, Media> getProductMedia() {
-        return productMedia;
-    }
-
-    @Override
-    @Deprecated
-    public void setProductMedia(Map<String, Media> productMedia) {
-        this.productMedia.clear();
-    	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
-    		this.productMedia.put(me.getKey(), me.getValue());
-    	}
     }
 
     @Override
@@ -579,7 +517,7 @@ public class ProductImpl implements Product, Archivable {
             CollectionUtils.filter(crossSaleProducts, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
-                    return 'Y'!=((Archivable)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                    return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
                 }
             });
         }
@@ -602,7 +540,7 @@ public class ProductImpl implements Product, Archivable {
             CollectionUtils.filter(upSaleProducts, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
-                    return 'Y'!=((Archivable)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                    return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
                 }
             });
         }

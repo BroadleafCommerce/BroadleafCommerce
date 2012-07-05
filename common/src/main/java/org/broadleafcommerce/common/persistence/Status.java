@@ -19,10 +19,12 @@ package org.broadleafcommerce.common.persistence;
 /**
  * @author Jeff Fischer
  */
-public interface Archivable {
+public interface Status {
 
     public void setArchived(Character archived);
 
     public Character getArchived();
+
+    public boolean isActive();
 
 }

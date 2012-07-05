@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentProcessor;
+import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
 
 import java.io.Serializable;
 
@@ -38,17 +38,17 @@ import java.io.Serializable;
  * and next-day shipping with Fedex. What they would do in the admin is create an instance of FedexFulfillmentOption
  * entity and give it the name "Overnight" (along with any needed Fedex configuration properties), then create an instance of
  * UPSFulfillmentOption and give it the name "2 Day". When the user goes to check out, they will then see a list
- * with "Overnight" and "2 day" in it. A FulfillmentProcessor can then be used to estimate the fulfillment cost
+ * with "Overnight" and "2 day" in it. A FulfillmentPricingProvider can then be used to estimate the fulfillment cost
  * (and calculate the fulfillment cost) for that particular option.
  * <br />
  * <br />
  * FulfillmentOptions are also inherently related to FulfillmentProcessors, in that specific types of FulfillmentOption
- * implementations should also have a FulfillmentProcessor that can handle operations (estimation and calculation) for
+ * implementations should also have a FulfillmentPricingProvider that can handle operations (estimation and calculation) for
  * pricing a FulfillmentGroup. Typical third-party implementations of this paradigm would have a 1 FulfillmentOption
- * entity implementation and 1 FulfillmentProcessor implementation for that particular service.
+ * entity implementation and 1 FulfillmentPricingProvider implementation for that particular service.
  * 
  * @author Phillip Verheyden
- * @see {@link FulfillmentProcessor}, {@link FulfillmentGroup}
+ * @see {@link FulfillmentPricingProvider}, {@link FulfillmentGroup}
  */
 public interface FulfillmentOption extends Serializable {
     

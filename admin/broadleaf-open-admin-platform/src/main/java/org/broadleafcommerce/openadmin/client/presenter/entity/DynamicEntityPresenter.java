@@ -16,10 +16,6 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -58,6 +54,10 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLay
 import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.openadmin.client.view.Display;
 import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -192,7 +192,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                         } else {
                             formPresenter.setStartState();
                             ((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
-                            display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), true, true, false, selectedRecord);
+                            String locked = selectedRecord.getAttribute("__locked");
+                            display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), true, !(locked != null && locked.equals("true")), false, selectedRecord);
                             display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
                             display.getListDisplay().getRemoveButton().enable();
                         }

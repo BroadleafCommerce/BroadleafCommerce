@@ -10,6 +10,9 @@
 	<bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupFee" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.FulfillmentOption" class="org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption" class="org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption" class="org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand" class="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.Order" class="org.broadleafcommerce.core.order.domain.OrderImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl" scope="prototype"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
+package org.broadleafcommerce.common.web;
 
-import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.Theme;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * DTO to allow FulfillmentProcessors to respond to estimation requests for a particular FulfillmentGroup
- * for a particular FulfillmentOptions
- * 
- * @author Phillip Verheyden
- * @see {@link FulfillmentPricingProvider}, {@link FulfillmentPricingService}
+ * Responsible for returning the theme used by Broadleaf Commerce for the current request.
+ * For a single site installation, this should return a theme whose path and name are empty string.
+ *
+ * @author bpolster
  */
-public class FulfillmentEstimationResponse {
-
+public interface BroadleafThemeResolver {
+    public Theme resolveTheme(HttpServletRequest request, Site site);
 }
