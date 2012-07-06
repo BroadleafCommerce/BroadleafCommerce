@@ -124,4 +124,6 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
     public String dirtyMessage();
     public String inActiveMessage();
     public String deletedMessage();
+    public String showArchivedRecords();
+    public String hideArchivedRecords();
 }

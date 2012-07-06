@@ -671,13 +671,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
-    public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
-        return getTotalRecords(ceilingEntityFullyQualifiedClassname, null, cto, ctoConverter);
-    }
-
-    public int getTotalRecords(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
-        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), ceilingEntityFullyQualifiedClassname);
-        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(ceilingEntityFullyQualifiedClassname));
+    public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
+        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), persistencePackage.getCeilingEntityFullyQualifiedClassname());
+        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
         boolean isArchivable = false;
         for (Class<?> entity : entities) {
             if (Status.class.isAssignableFrom(entity)) {
@@ -685,7 +681,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 break;
             }
         }
-        if (isArchivable) {
+        if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
             SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
                 public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
                     return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
@@ -694,7 +690,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
             ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
         }
-        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(fetchTypeFullyQualifiedClassname) ? ceilingEntityFullyQualifiedClassname : fetchTypeFullyQualifiedClassname));
+        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname()) ? persistencePackage.getCeilingEntityFullyQualifiedClassname() : persistencePackage.getFetchTypeFullyQualifiedClassname()));
     }
 
     public void extractProperties(Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
@@ -884,7 +880,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     break;
                 }
             }
-            if (isArchivable) {
+            if (isArchivable && !persistencePerspective.getShowArchivedFields()) {
                 SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
                     public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
                         return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
@@ -896,7 +892,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
 
             payload = getRecords(mergedProperties, records, null, null);
-            totalRecords = getTotalRecords(ceilingEntityFullyQualifiedClassname, persistencePackage.getFetchTypeFullyQualifiedClassname(), cto, ctoConverter);
+            totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
         } catch (Exception e) {
             LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);

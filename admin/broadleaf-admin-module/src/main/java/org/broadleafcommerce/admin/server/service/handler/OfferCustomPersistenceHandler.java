@@ -16,18 +16,13 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -49,8 +44,13 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.tool.hbm2x.StringUtils;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -177,7 +177,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 				}
 			}
 			
-			int totalRecords = helper.getTotalRecords(ceilingEntityFullyQualifiedClassname, cto, ctoConverter);
+			int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
 			
 			DynamicResultSet response = new DynamicResultSet(null, entities, totalRecords);
 			

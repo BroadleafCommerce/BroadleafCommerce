@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -32,7 +33,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import java.util.Date;
 import java.util.List;
 
@@ -199,10 +199,12 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void delete(Product product){
-    	if (!em.contains(product)) {
-    		product = readProductById(product.getId());
-    	}
-        em.remove(product);    	
+//    	if (!em.contains(product)) {
+//    		product = readProductById(product.getId());
+//    	}
+//        em.remove(product);
+        ((Status) product).setArchived('Y');
+        em.merge(product);
     }
 
     @Override

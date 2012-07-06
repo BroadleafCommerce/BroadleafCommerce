@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
@@ -137,8 +138,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 	
 	public void remove(Serializable entity) {
-		standardEntityManager.remove(entity);
-		standardEntityManager.flush();
+        boolean isArchivable = Status.class.isAssignableFrom(entity.getClass());
+        if (isArchivable) {
+            ((Status) entity).setArchived('Y');
+            merge(entity);
+        } else {
+            standardEntityManager.remove(entity);
+            standardEntityManager.flush();
+        }
 	}
 	
 	public void clear() {
