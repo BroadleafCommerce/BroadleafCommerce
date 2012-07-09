@@ -129,7 +129,7 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
             List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItem.class);
             Entity[] results = helper.getRecords(originalProps, records);
-            int totalRecords = helper.getTotalRecords(SandBoxItem.class.getName(), cto, ctoConverter);
+            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
 
             DynamicResultSet response = new DynamicResultSet(results, totalRecords);
 

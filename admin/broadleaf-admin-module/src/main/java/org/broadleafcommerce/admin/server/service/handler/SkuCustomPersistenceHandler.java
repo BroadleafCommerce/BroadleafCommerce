@@ -19,18 +19,12 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -52,8 +46,11 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Phillip Verheyden
@@ -159,7 +156,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
-            int totalRecords = helper.getTotalRecords(ceilingEntityFullyQualifiedClassname, persistencePackage.getFetchTypeFullyQualifiedClassname(), cto, ctoConverter);
+            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
             
             //Now fill out the relevant properties for the product options for the Skus that were returned
             for (int i = 0; i < records.size(); i++) {

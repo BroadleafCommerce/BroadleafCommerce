@@ -25,7 +25,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
-import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
+import org.broadleafcommerce.common.web.SandBoxContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

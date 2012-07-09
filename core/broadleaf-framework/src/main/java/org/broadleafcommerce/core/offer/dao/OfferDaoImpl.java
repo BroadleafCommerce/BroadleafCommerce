@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -33,7 +34,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import java.util.List;
 
 @Repository("blOfferDao")
@@ -78,10 +78,12 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public void delete(Offer offer) {
-    	if (!em.contains(offer)) {
-    		offer = readOfferById(offer.getId());
-    	}
-        em.remove(offer);
+//    	if (!em.contains(offer)) {
+//    		offer = readOfferById(offer.getId());
+//    	}
+//        em.remove(offer);
+        ((Status) offer).setArchived('Y');
+        em.merge(offer);
     }
 
 	public void delete(OfferInfo offerInfo) {
