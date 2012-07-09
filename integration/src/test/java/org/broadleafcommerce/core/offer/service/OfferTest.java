@@ -16,12 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.SkuDaoDataProvider;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -34,6 +29,7 @@ import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -49,7 +45,6 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -64,6 +59,12 @@ import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This integration test class is kept to guarantee backwards
@@ -459,7 +460,7 @@ public class OfferTest extends CommonSetupBaseTest {
         Long offerId = offer.getId();
         offerDao.delete(offer);
         Offer deletedOffer = offerDao.readOfferById(offerId);
-        assert deletedOffer == null;
+        assert ((OfferImpl) deletedOffer).getArchived() == 'Y';
 
         offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer = offerService.save(offer);
@@ -478,8 +479,8 @@ public class OfferTest extends CommonSetupBaseTest {
 
         customerOfferDao.delete(customerOffer);
         customerOffer = customerOfferDao.readCustomerOfferById(customerOfferId);
-
-        assert(customerOffer == null);
+        
+        assert customerOffer == null || ((OfferImpl) customerOffer).getArchived() == 'Y';
     }
 
     @Test(groups =  {"testReadAllOffers"}, dependsOnGroups = { "testOfferDelete"})
