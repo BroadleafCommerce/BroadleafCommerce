@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.service.CreateOfferUtility;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -460,7 +461,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         Long offerId = offer.getId();
         offerDao.delete(offer);
         Offer deletedOffer = offerDao.readOfferById(offerId);
-        assert deletedOffer == null;
+        assert ((OfferImpl) deletedOffer).getArchived() == 'Y';
 
         offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer = offerService.save(offer);
@@ -480,7 +481,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         customerOfferDao.delete(customerOffer);
         customerOffer = customerOfferDao.readCustomerOfferById(customerOfferId);
 
-        assert(customerOffer == null);
+        assert customerOffer == null || ((OfferImpl) customerOffer).getArchived() == 'Y';
     }
 
     @Test(groups =  {"testReadAllOffersLegacy"}, dependsOnGroups = { "testOfferDeleteLegacy"})

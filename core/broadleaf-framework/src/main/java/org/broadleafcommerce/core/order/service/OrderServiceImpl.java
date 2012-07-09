@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -29,7 +30,6 @@ import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
@@ -65,6 +65,9 @@ public class OrderServiceImpl implements OrderService {
 	
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
+    
+    @Resource(name = "blOfferDao")
+    protected OfferDao offerDao;
 
     /* Factories */
     @Resource(name = "blNullOrderFactory")
@@ -85,6 +88,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
+
+    @Resource(name = "blMergeCartService")
+    protected MergeCartService mergeCartService;
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
@@ -252,13 +258,6 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
-    
-
-	@Override
-	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
-		throw new UnsupportedOperationException();
-	}
-	
 	@Override
     public Order confirmOrder(Order order) {
         return orderDao.submitOrder(order);

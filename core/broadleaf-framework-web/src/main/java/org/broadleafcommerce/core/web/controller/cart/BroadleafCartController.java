@@ -54,7 +54,7 @@ public class BroadleafCartController extends AbstractCartController {
 	 */
 	public String add(HttpServletRequest request, HttpServletResponse response, Model model,
 			AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException  {
-		Order cart = CartState.getCart(request);
+		Order cart = CartState.getCart();
 		
 		// If the cart is currently empty, it will be the shared, "null" cart. We must detect this
 		// and provision a fresh cart for the current customer upon the first cart add
@@ -64,7 +64,7 @@ public class BroadleafCartController extends AbstractCartController {
 		
 		cart = orderService.addItem(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart,  true);
-		CartState.setCart(request, cart);
+		CartState.setCart(cart);
 		
     	return isAjaxRequest(request) ? "ajax/cart" : "redirect:/cart";
 	}
@@ -87,11 +87,11 @@ public class BroadleafCartController extends AbstractCartController {
 	 */
 	public String updateQuantity(HttpServletRequest request, HttpServletResponse response, Model model,
 			AddToCartItem itemRequest) throws IOException, UpdateCartException, PricingException, RemoveFromCartException {
-		Order cart = CartState.getCart(request);
+		Order cart = CartState.getCart();
 		
 		cart = orderService.updateItemQuantity(cart.getId(), itemRequest, false);
 		cart = orderService.save(cart, true);
-		CartState.setCart(request, cart);
+		CartState.setCart(cart);
 		
 		if (isAjaxRequest(request)) {
 			Map<String, Object> extraData = new HashMap<String, Object>();
@@ -121,11 +121,11 @@ public class BroadleafCartController extends AbstractCartController {
 	 */
 	public String remove(HttpServletRequest request, HttpServletResponse response, Model model,
 			AddToCartItem itemRequest) throws IOException, PricingException, RemoveFromCartException {
-		Order cart = CartState.getCart(request);
+		Order cart = CartState.getCart();
 		
 		cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);
 		cart = orderService.save(cart, true);
-		CartState.setCart(request, cart);
+		CartState.setCart(cart);
 		
 		if (isAjaxRequest(request)) {
 			Map<String, Object> extraData = new HashMap<String, Object>();
@@ -147,9 +147,9 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @throws PricingException
 	 */
 	public String empty(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-		Order cart = CartState.getCart(request);
+		Order cart = CartState.getCart();
     	orderService.cancelOrder(cart);
-		CartState.setCart(request, null);
+		CartState.setCart(null);
 		
     	return "redirect:/";
 	}
@@ -169,7 +169,7 @@ public class BroadleafCartController extends AbstractCartController {
 	
 	public String addPromo(HttpServletRequest request, HttpServletResponse response, Model model,
 			String customerOffer) throws IOException, PricingException {
-		Order cart = CartState.getCart(request);
+		Order cart = CartState.getCart();
 		
 		Boolean promoAdded = false;
 		String exception = "";
@@ -188,7 +188,7 @@ public class BroadleafCartController extends AbstractCartController {
 			exception = "Invalid Code";
 		}
 		
-		CartState.setCart(request, cart);
+		CartState.setCart(cart);
 		
 		if (isAjaxRequest(request)) {
 			Map<String, Object> extraData = new HashMap<String, Object>();
@@ -217,13 +217,13 @@ public class BroadleafCartController extends AbstractCartController {
 	
 	public String removePromo(HttpServletRequest request, HttpServletResponse response, Model model,
 			Long offerCodeId) throws IOException, PricingException {
-		Order cart = CartState.getCart(request);
+		Order cart = CartState.getCart();
 		
 		OfferCode offerCode = offerService.findOfferCodeById(offerCodeId);
 
 		orderService.removeOfferCode(cart, offerCode, false);
 		cart = orderService.save(cart, true);
-		CartState.setCart(request, cart);
+		CartState.setCart(cart);
 
 		if (isAjaxRequest(request)) {
 			return "ajax/cart";

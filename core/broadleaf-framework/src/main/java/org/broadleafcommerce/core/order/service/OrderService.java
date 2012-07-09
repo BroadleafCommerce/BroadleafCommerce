@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededExc
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
@@ -239,17 +238,6 @@ public interface OrderService {
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
     
     /**
-     * Merges the anonymous cart with the customer's current cart, taking into consideration the active
-     * status of the SKUs to merge. For example, if the customer had a SKU in their anonymous cart that is no longer
-     * active, it will not be merged into the new cart.
-     * 
-     * @param customer the customer whose cart is to be merged
-     * @param anonymousCartId the anonymous cart id
-     * @return the response containing the cart, any items added to the cart, and any items removed from the cart
-     */
-    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
-    
-    /**
      * Changes the OrderStatus to SUBMITTED
      * 
      * @param order to confirm
@@ -340,5 +328,6 @@ public interface OrderService {
      * @throws RemoveFromCartException 
      */
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
+
 
 }

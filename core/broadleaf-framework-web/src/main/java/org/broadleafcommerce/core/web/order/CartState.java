@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.order;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.web.order.security.CartStateFilter;
 import org.springframework.stereotype.Component;
@@ -25,12 +26,25 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blCartState")
 public class CartState {
 
-    public static Order getCart(HttpServletRequest request) {
+	/**
+	 * Gets the current cart based on the current servlet request
+	 * 
+	 * @return the current customer's cart
+	 */
+    public static Order getCart() {
+    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         return (Order) request.getAttribute(CartStateFilter.getCartRequestAttributeName());
     }
     
-    public static void setCart(HttpServletRequest request, Order cart) {
+    /**
+     * Sets the current cart on the current servlet request
+     * 
+     * @param cart the new cart to set
+     */
+    public static void setCart(Order cart) {
+    	HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         request.setAttribute(CartStateFilter.getCartRequestAttributeName(), cart);
     }
+    
 
 }

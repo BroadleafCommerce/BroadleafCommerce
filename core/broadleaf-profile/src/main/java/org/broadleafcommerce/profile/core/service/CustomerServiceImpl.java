@@ -294,7 +294,6 @@ public class CustomerServiceImpl implements CustomerService {
 			}
 			vars.put("resetPasswordUrl", resetPasswordUrl); 
 			emailService.sendTemplateEmail(customer.getEmailAddress(), getForgotPasswordEmailInfo(), vars);
-
 		}
 		return response;
 	}

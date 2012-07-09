@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
-import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderDao;
@@ -89,9 +88,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
-
-    @Resource(name = "blOfferDao")
-    protected OfferDao offerDao;
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;

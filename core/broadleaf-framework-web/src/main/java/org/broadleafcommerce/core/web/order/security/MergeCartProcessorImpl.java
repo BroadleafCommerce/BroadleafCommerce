@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.MergeCartService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -41,6 +42,9 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
 
     @Resource(name="blOrderService")
     private OrderService orderService;
+    
+    @Resource(name="blMergeCartService")
+    private MergeCartService mergeCartService;
 
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
@@ -52,7 +56,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         }
         MergeCartResponse mergeCartResponse;
         try {
-            mergeCartResponse = orderService.mergeCart(loggedInCustomer, cart);
+            mergeCartResponse = mergeCartService.mergeCart(loggedInCustomer, cart);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }

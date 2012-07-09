@@ -57,10 +57,9 @@ public interface LegacyCartService extends LegacyOrderService {
      * @return the response containing the cart, any items added to the cart,
      *         and any items removed from the cart
      */
-    MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException;
+	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
     
-    MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException;
-
     /**
      * Reconstruct the cart using previous stored state taking into
      * consideration sku activation
@@ -68,10 +67,9 @@ public interface LegacyCartService extends LegacyOrderService {
      * @return the response containing the cart and any items removed from the
      *         cart
      */
-    ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
+	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
+	public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
     
-    ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
-
     boolean isMoveNamedOrderItems();
 
     void setMoveNamedOrderItems(boolean moveNamedOrderItems);
