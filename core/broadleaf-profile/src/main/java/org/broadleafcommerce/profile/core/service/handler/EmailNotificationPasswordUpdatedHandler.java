@@ -28,6 +28,10 @@ import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+/**
+ * @deprecated - This email approach is no longer recommended.   See documentation for BroadleafCommerce    
+ * @author bpolster
+ */
 public class EmailNotificationPasswordUpdatedHandler implements PasswordUpdatedHandler {
 
 	private static final Log LOG = LogFactory.getLog(EmailNotificationPasswordUpdatedHandler.class);

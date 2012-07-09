@@ -17,6 +17,8 @@
 package org.broadleafcommerce.profile.core.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -48,6 +50,7 @@ import java.util.List;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
+	private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
 	
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
@@ -67,16 +70,20 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource(name="blEmailService")
     protected EmailService emailService;
     
-    @Resource(name="blCustomerForgotPasswordEmail")
+    @Resource(name="blForgotPasswordEmailInfo")
     protected EmailInfo forgotPasswordEmailInfo;
 
-    @Resource(name="blCustomerForgotUsernameEmailInfo")
+    @Resource(name="blForgotUsernameEmailInfo")
     protected EmailInfo forgotUsernameEmailInfo;    
     
-    //TODO: Make configurable
+    @Resource(name="blRegistrationEmailInfo")
+    protected EmailInfo registrationEmailInfo;    
+    
+    @Resource(name="blChangePasswordEmailInfo")
+    protected EmailInfo changePasswordEmailInfo;       
+    
     protected int tokenExpiredMinutes = 30;
-
-    protected int passwordTokenLength = 12;   
+    protected int passwordTokenLength = 20;   
     		 
     protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
     protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
@@ -104,7 +111,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
-        // TODO: Service level validation
         customer.setRegistered(true);
 
         // When unencodedPassword is set the save() will encode it
@@ -118,6 +124,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerRole.setRole(role);
         customerRole.setCustomer(retCustomer);
         roleDao.addRoleToCustomer(customerRole);
+        
+        HashMap<String, Object> vars = new HashMap<String, Object>();
+		vars.put("customer", retCustomer);
+        
+        emailService.sendTemplateEmail(customer.getEmailAddress(), getRegistrationEmailInfo(), vars);        
         notifyPostRegisterListeners(retCustomer);
         return retCustomer;
     }
@@ -252,7 +263,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return response;
 	}
 
-	public GenericResponse sendResetPasswordNotification(String username, String resetPasswordUrl) {
+	public GenericResponse sendForgotPasswordNotification(String username, String resetPasswordUrl) {
 		GenericResponse response = new GenericResponse();
 		Customer customer = null;
 
@@ -287,19 +298,18 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		return response;
 	}
-    
-    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
-        GenericResponse response = new GenericResponse();
-        Customer customer = null;
-        if (username != null) {
-            customer = customerDao.readCustomerByUsername(username);
-        }
-        checkCustomer(customer, response);
-        checkPassword(password, confirmPassword, response);
-        if (token == null || "".equals(token)) {
+	
+	public GenericResponse checkPasswordResetToken(String token) {
+		GenericResponse response = new GenericResponse();
+        checkPasswordResetToken(token, response);               
+        return response;
+	}
+	
+	private CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
+		if (token == null || "".equals(token)) {
             response.addErrorCode("invalidToken");
         }
-
+		
         CustomerForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
@@ -311,6 +321,27 @@ public class CustomerServiceImpl implements CustomerService {
             } else if (isTokenExpired(fpst)) {
                 response.addErrorCode("tokenExpired");
             }
+        }		
+        return fpst;
+	}
+    
+    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
+        GenericResponse response = new GenericResponse();
+        Customer customer = null;
+        if (username != null) {
+            customer = customerDao.readCustomerByUsername(username);
+        }
+        checkCustomer(customer, response);
+        checkPassword(password, confirmPassword, response);
+        CustomerForgotPasswordSecurityToken fpst = checkPasswordResetToken(token, response);
+        
+        if (! response.getHasErrors()) {
+        	if (! customer.getId().equals(fpst.getCustomerId())) {
+        		if (LOG.isWarnEnabled()) {
+        			LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId() + ", " + token);
+        		}
+        		response.addErrorCode("invalidToken");
+        	}
         }
 
         if (! response.getHasErrors()) {
@@ -323,8 +354,8 @@ public class CustomerServiceImpl implements CustomerService {
         return response;    	
     }
     
-    protected void checkCustomer(Customer customer, GenericResponse response) {
-        if (customer == null) {
+    protected void checkCustomer(Customer customer, GenericResponse response) {       
+        if (customer == null) {        	
             response.addErrorCode("invalidCustomer");
         } else if (customer.getEmailAddress() == null || "".equals(customer.getEmailAddress())) {
             response.addErrorCode("emailNotFound");
@@ -380,5 +411,21 @@ public class CustomerServiceImpl implements CustomerService {
 
 	public void setForgotUsernameEmailInfo(EmailInfo forgotUsernameEmailInfo) {
 		this.forgotUsernameEmailInfo = forgotUsernameEmailInfo;
-	}	
+	}
+
+	public EmailInfo getRegistrationEmailInfo() {
+		return registrationEmailInfo;
+	}
+
+	public void setRegistrationEmailInfo(EmailInfo registrationEmailInfo) {
+		this.registrationEmailInfo = registrationEmailInfo;
+	}
+
+	public EmailInfo getChangePasswordEmailInfo() {
+		return changePasswordEmailInfo;
+	}
+
+	public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
+		this.changePasswordEmailInfo = changePasswordEmailInfo;
+	}
 }

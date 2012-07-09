@@ -16,18 +16,25 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.core.service.validator.ResetPasswordValidator;
+import org.broadleafcommerce.profile.web.core.service.LoginService;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The controller responsible for login, forgot password, forgot username, 
- * and reset password actions.
+ * The controller responsible for login and login related activities including
+ * forgot username, forgot password, and reset password.
+ * 
+ * The actual login processing is done via Spring Security.
  * 
  * @author apazzolini
  * @author bpolster
@@ -36,38 +43,94 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
+    
+    @Resource(name="blResetPasswordValidator")
+    protected ResetPasswordValidator resetPasswordValidator;
+    
+    @Resource(name="blLoginService")
+    protected LoginService loginService;
+    
+    @Resource(name="blMergeCartProcessor")
+    protected MergeCartProcessor mergeCartProcessor;
 	
 	private String loginView = "/login";
-	private String forgotPasswordView = "/forgotPassword";
-	private String forgotUsernameView = "/forgotUsername";	
-	private String resetPasswordView = "/resetPassword";
-	private String resetPasswordFormName = "resetPasswordForm";
-		
+	private String forgotPasswordView = "/login/forgotPassword";
+	private String forgotUsernameView = "/login/forgotUsername";	
+	private String forgotPasswordSuccessView = "/login/forgotPasswordSuccess";
+	private String resetPasswordView = "/login/resetPassword";
+	private String resetPasswordErrorView = "/login/resetPasswordError";
+	private String resetPasswordSuccessView = "redirect:/";
+	private String resetPasswordFormName = "/login/resetPasswordForm";
+	
+	/**
+	 * Redirects to the login view.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return ajaxRender(getLoginView(), request, model);
 	}
 	
+	/**
+	 * Redirects to te forgot password view.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return ajaxRender(getForgotPasswordView(), request, model);
 	}
 	
+	/**
+	 * Looks up the passed in username and sends an email to the address on file with a 
+	 * reset password token. 
+	 * 
+	 * Returns error codes for invalid username.
+	 * 
+	 * @param username
+	 * @param request
+	 * @param model
+	 * @return
+	 */
     public String processForgotPassword(String username, HttpServletRequest request, Model model) {
-    	GenericResponse errorResponse = customerService.sendResetPasswordNotification(username, getResetPasswordUrl(request));
+    	GenericResponse errorResponse = customerService.sendForgotPasswordNotification(username, getResetPasswordUrl(request));
         if (errorResponse.getHasErrors()) {
         	 String errorCode = errorResponse.getErrorCodesList().get(0);
         	 model.addAttribute("errorCode", errorCode);             
              return ajaxRender(getForgotPasswordView(), request, model);
         } else {
             request.getSession(true).setAttribute("forgot_password_username", username);
-            String url = buildRedirectToResetPasswordWithMessage("passwordTokenSent");
-        	return ajaxRender(url, request, model);
+        	return ajaxRender(getForgotPasswordSuccessView(), request, model);
         }
     }   
     
+    /**
+     * Returns the forgot username view.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
 	public String forgotUsername(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return ajaxRender(getForgotUsernameView(), request, model);
 	}	
     
+	/**
+	 * Looks up an account by email address and if found, sends an email with the 
+	 * associated username.
+	 * 
+	 * @param email
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
     public String processForgotUsername(String email, HttpServletRequest request, HttpServletResponse response, Model model) {
         GenericResponse errorResponse = customerService.sendForgotUsernameNotification(email);
         if (errorResponse.getHasErrors()) {
@@ -80,37 +143,87 @@ public class BroadleafLoginController extends BroadleafAbstractController {
         }
      }    
     
+    /**
+     * Displays the reset password view.   Expects a valid resetPasswordToken to exist
+     * that was generated by {@link processForgotPassword} or similar.   Returns an error
+     * view if the token is invalid or expired.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
 	public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-		model.addAttribute("resetPasswordForm", initResetPasswordForm(request));
-		return ajaxRender(getForgotUsernameView(), request, model);
+		ResetPasswordForm resetPasswordForm = initResetPasswordForm(request);
+		model.addAttribute("resetPasswordForm", resetPasswordForm);
+		GenericResponse errorResponse = customerService.checkPasswordResetToken(resetPasswordForm.getToken());
+		if (errorResponse.getHasErrors()) {
+			String errorCode = errorResponse.getErrorCodesList().get(0);
+            request.setAttribute("errorCode", errorCode);
+			return ajaxRender(getResetPasswordErrorView(), request, model);
+		} else {
+			return ajaxRender(getResetPasswordView(), request, model);
+		}
 	}	
     
-    public String processResetPassword(ResetPasswordForm resetPasswordForm, HttpServletRequest request, HttpServletResponse response, Model model) {
-    	GenericResponse errorResponse = customerService.resetPasswordUsingToken(
+	/**
+	 * Processes the reset password token and allows the user to change their password.  
+	 * Ensures that the password and confirm password match, that the token is valid,
+	 * and that the token matches the provided email address.
+	 * 
+	 * @param resetPasswordForm
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param errors
+	 * @return
+	 */
+    public String processResetPassword(ResetPasswordForm resetPasswordForm, HttpServletRequest request, HttpServletResponse response, Model model, BindingResult errors) {
+    	GenericResponse errorResponse = new GenericResponse();
+    	resetPasswordValidator.validate(resetPasswordForm.getUsername(), resetPasswordForm.getPassword(), resetPasswordForm.getPasswordConfirm(), errors);
+    	if (errorResponse.getHasErrors()) {
+    		return ajaxRender(getResetPasswordView(), request, model);
+    	}
+    	
+    	errorResponse = customerService.resetPasswordUsingToken(
                 resetPasswordForm.getUsername(), 
                 resetPasswordForm.getToken(), 
-                resetPasswordForm.getPassword(), 
-                resetPasswordForm.getConfirmPassword());
+                resetPasswordForm.getPassword(),
+                resetPasswordForm.getPasswordConfirm());
         if (errorResponse.getHasErrors()) {
         	String errorCode = errorResponse.getErrorCodesList().get(0);
             request.setAttribute("errorCode", errorCode);
             return ajaxRender(getResetPasswordView(), request, model);
-        } else {
-        	String url = buildRedirectToLoginWithMessage("passwordReset");
-        	return ajaxRender(url, request, model);
+        } else {        	
+	        // The reset password was successful, so log this customer in.         	
+	        Authentication auth = loginService.loginCustomer(resetPasswordForm.getUsername(), resetPasswordForm.getPassword());
+	        mergeCartProcessor.execute(request, response, auth);	        
+
+        	return ajaxRender(getResetPasswordSuccessView(), request, model);
         }
      }
     
+    /**
+     * By default, redirects to the login page with a message.  
+     * 
+     * @param message
+     * @return
+     */
     protected String buildRedirectToLoginWithMessage(String message) {
         StringBuffer url = new StringBuffer("redirect:").append(getLoginView()).append("?messageCode=").append(message);
         return url.toString();
     }
-
-    protected String buildRedirectToResetPasswordWithMessage(String message) {
-        StringBuffer url = new StringBuffer("redirect:").append(getResetPasswordView()).append("?messageCode=").append(message);
-        return url.toString();
-    } 
     
+    /**
+     * Initializes the reset password by ensuring that the passed in token URL 
+     * parameter initializes the hidden form field.
+     * 
+     * Also, if the reset password request is in the same session as the
+     * forgotPassword request, the username will auto-populate
+     * 
+     * @param request
+     * @return
+     */
     public ResetPasswordForm initResetPasswordForm(HttpServletRequest request) {
         ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
         String username = (String) request.getSession(true).getAttribute("forgot_password_username");
@@ -166,6 +279,18 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 
 	public void setResetPasswordView(String resetPasswordView) {
 		this.resetPasswordView = resetPasswordView;
+	}	
+
+	/**
+	 * The view returned after a successful forgotPassword email has been sent.
+	 * @return
+	 */
+	public String getForgotPasswordSuccessView() {
+		return forgotPasswordSuccessView;
+	}
+
+	public void setForgotPasswordSuccessView(String forgotPasswordSuccessView) {
+		this.forgotPasswordSuccessView = forgotPasswordSuccessView;
 	}
 
 	/**
@@ -180,13 +305,54 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 		this.resetPasswordFormName = resetPasswordFormName;
 	}
 	
-	public String getResetPasswordUrl(HttpServletRequest request) {
-		String url = request.getScheme() + "://" + request.getServerName();
+	public String getResetPasswordScheme(HttpServletRequest request) {
+		return request.getScheme();
+	}
+	
+	public String getResetPasswordPort(HttpServletRequest request, String scheme) {
+		if ("http".equalsIgnoreCase(scheme) && request.getServerPort() != 80) {
+			return ":" + request.getServerPort();
+		} else if ("https".equalsIgnoreCase(scheme) && request.getServerPort() != 443) {
+			return ":" + request.getServerPort();
+		}
+		return "";  // no port required
+	}
+	
+	public String getResetPasswordUrl(HttpServletRequest request) {		
+		String url = request.getScheme() + "://" + request.getServerName() + getResetPasswordPort(request, request.getScheme());
+		
 		if (request.getContextPath() != null && ! "".equals(request.getContextPath())) {
 			url = url + request.getContextPath() + getResetPasswordView();
 		} else {
 			url = url + getResetPasswordView();
 		}
 		return url;
+	}
+
+	/**
+	 * View user is directed to if they try to access the resetPasswordForm with an 
+	 * invalid token.
+	 * 
+	 * @return
+	 */
+	public String getResetPasswordErrorView() {
+		return resetPasswordErrorView;
+	}
+
+	public void setResetPasswordErrorView(String resetPasswordErrorView) {
+		this.resetPasswordErrorView = resetPasswordErrorView;
+	}
+
+	/**
+	 * View that a user is sent to after a successful reset password operations.
+	 * Should be a redirect (e.g. start with "redirect:" since 
+     * this will cause the entire SpringSecurity pipeline to be fulfilled.
+     */
+	public String getResetPasswordSuccessView() {
+		return resetPasswordSuccessView;
+	}
+
+	public void setResetPasswordSuccessView(String resetPasswordSuccessView) {
+		this.resetPasswordSuccessView = resetPasswordSuccessView;
 	}
 }

@@ -102,6 +102,10 @@
         <property name="fromAddress" value="test@broadleafcommerce.org"/>
         <property name="sendAsyncPriority" value="8"/>
     </bean>
+    
+    <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
+    	<constructor-arg ref="blMailSender"/>
+    </bean>
 
     <bean id="serviceStatusEmail"
           class="org.broadleafcommerce.common.email.service.info.EmailInfo"
