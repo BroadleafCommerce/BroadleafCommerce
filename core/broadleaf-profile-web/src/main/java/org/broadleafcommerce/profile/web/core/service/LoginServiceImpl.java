@@ -37,8 +37,12 @@ public class LoginServiceImpl implements LoginService {
     private UserDetailsService userDetailsService;
 
     public Authentication loginCustomer(Customer customer) {
-        UserDetails principal = userDetailsService.loadUserByUsername(customer.getUsername());
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, customer.getUnencodedPassword(), principal.getAuthorities());
+    	return loginCustomer(customer.getUsername(), customer.getUnencodedPassword());
+    }
+    
+    public Authentication loginCustomer(String username, String clearTextPassword) {
+        UserDetails principal = userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, clearTextPassword, principal.getAuthorities());
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;

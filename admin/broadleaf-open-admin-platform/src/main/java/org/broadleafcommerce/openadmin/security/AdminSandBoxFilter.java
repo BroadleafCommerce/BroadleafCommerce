@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.security;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
-import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
+import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.stereotype.Component;
@@ -60,7 +60,7 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
             SandBox sandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
             session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());
             session.removeAttribute(SANDBOX_ID_VAR);
-            SandBoxContext context = new SandBoxContext();
+            AdminSandBoxContext context = new AdminSandBoxContext();
             context.setSandBoxId(sandBox.getId());
             context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
             context.setAdminUser(adminUser);

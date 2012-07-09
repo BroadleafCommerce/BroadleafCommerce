@@ -31,8 +31,13 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
@@ -103,9 +108,15 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
 
         Site site = siteResolver.resolveSite(request);
         Locale locale = localeResolver.resolveLocale(request);
-        SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
         Theme theme = themeResolver.resolveTheme(request, site);
-
+	
+	SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
+	if (currentSandbox != null) {
+            SandBoxContext previewSandBoxContext = new SandBoxContext();
+            previewSandBoxContext.setSandBoxId(currentSandbox.getId());
+            previewSandBoxContext.setPreviewMode(true);
+            SandBoxContext.setSandBoxContext(previewSandBoxContext);
+        }
         BroadleafRequestContext brc = new BroadleafRequestContext();        
         brc.setSite(site);
         brc.setLocale(locale);
@@ -124,8 +135,12 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         	LOG.trace("Using pre-existing ruleMap - added by non standard BLC process.");
         }
         ruleMap.put("locale", locale);
-        
-        filterChain.doFilter(request, response);
+
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            SandBoxContext.setSandBoxContext(null);
+        }
     }
    
 

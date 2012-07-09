@@ -121,7 +121,6 @@ public class BasicClientEntityModule implements DataSourceModule {
      * We are doing this because we can apply seamless
      * CTO-to-criteria conversions back on the server.
      */
-    @SuppressWarnings("unchecked")
     public CriteriaTransferObject getCto(DSRequest request) {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         
@@ -150,7 +149,6 @@ public class BasicClientEntityModule implements DataSourceModule {
         Criteria criteria = request.getCriteria();
         String jsObj = JSON.encode(criteria.getJsObj());
         // filter
-        @SuppressWarnings("rawtypes")
 		Map filterData = criteria.getValues();
         Set<String> filterFieldNames = filterData.keySet();
         for (String fieldName : filterFieldNames) {

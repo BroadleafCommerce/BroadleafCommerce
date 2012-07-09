@@ -75,8 +75,8 @@ public abstract class BroadleafAbstractController {
 	 * @param model model to add the 
 	 * @throws IOException 
 	 */
-	protected static String buildAjaxRedirect(HttpServletRequest request, String redirectPath) {
-		return BroadleafControllerUtility.buildAjaxRedirect(request, redirectPath);	
+	protected static String buildAjaxRedirect(HttpServletRequest request, String redirectPath, Model model) {
+		return BroadleafControllerUtility.buildAjaxRedirect(request, redirectPath, model);	
 	}
 
 }

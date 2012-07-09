@@ -71,10 +71,10 @@
     <aop:config>
         <aop:pointcut id="blLocaleServiceOperation" expression="execution(* org.broadleafcommerce.common.locale.service.LocaleService.*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLocaleServiceOperation"/>
-    </aop:config>
+    </aop:config>         
     
-
-	<bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.MessageCreator">
+<!--  Message creator for velocity templates.  Now should be defined in client properties file. -->
+	<!-- bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.VelocityMessageCreator">
 		<constructor-arg ref="blVelocityEngine"/>
 		<constructor-arg ref="blMailSender"/>
 		<constructor-arg>
@@ -106,5 +106,5 @@
                 <entry key="serverInfo" value-ref="blServerInfo"/>
             </map>
         </constructor-arg>
-	</bean>
+	</bean  -->
 </beans>

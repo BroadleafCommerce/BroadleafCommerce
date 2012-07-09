@@ -17,12 +17,17 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -37,6 +42,8 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspectiveItemType
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.ServiceException;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -199,7 +206,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 					FilterAndSortCriteria sortCriteria = cto.get(joinStructure.getSortField());
 					sortCriteria.setSortAscending(joinStructure.getSortAscending());
 					BaseCtoConverter ctoConverter = getJoinStructureCtoConverter(persistencePerspective, cto, mergedProperties, joinStructure);
-					int totalRecords = getTotalRecords(joinStructure.getJoinStructureEntityClassname(), cto, ctoConverter);
+					int totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
 					fieldManager.setFieldValue(instance, joinStructure.getSortField(), Long.valueOf(totalRecords + 1));
 				}
 				instance = persistenceManager.getDynamicEntityDao().merge(instance);
@@ -318,6 +325,30 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
 		}
 	}
+
+    @Override
+    public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
+        JoinStructure joinStructure = (JoinStructure) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.JOINSTRUCTURE);
+        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), joinStructure.getJoinStructureEntityClassname());
+        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(joinStructure.getJoinStructureEntityClassname()));
+        boolean isArchivable = false;
+        for (Class<?> entity : entities) {
+            if (Status.class.isAssignableFrom(entity)) {
+                isArchivable = true;
+                break;
+            }
+        }
+        if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
+            SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
+                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                    return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
+                }
+            };
+            FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
+            ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
+        }
+        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
+    }
 	
 	@Override
 	public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
@@ -359,7 +390,7 @@ public class JoinStructurePersistenceModule extends BasicPersistenceModule {
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, joinStructure.getJoinStructureEntityClassname());
 			List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(joinStructure.getJoinStructureEntityClassname()));
 			payload = getRecords(mergedPropertiesTarget, records, mergedProperties, joinStructure.getTargetObjectPath());
-			totalRecords = getTotalRecords(joinStructure.getJoinStructureEntityClassname(), cto, ctoConverter);
+			totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
 		} catch (Exception e) {
 			LOG.error("Problem fetching results for " + joinStructure.getJoinStructureEntityClassname(), e);
 			throw new ServiceException("Unable to fetch results for " + joinStructure.getJoinStructureEntityClassname(), e);

@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service;
+package org.broadleafcommerce.common.email.service.message;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.springframework.security.core.Authentication;
+import org.broadleafcommerce.common.email.service.info.EmailInfo;
+import org.springframework.mail.javamail.JavaMailSender;
 
-public interface LoginService {
-    public Authentication loginCustomer(Customer customer);
-        
-    public Authentication loginCustomer(String username, String clearTextPassword);
+import java.util.HashMap;
+
+public class NullMessageCreator extends MessageCreator {
+	
+    public NullMessageCreator(JavaMailSender mailSender) {
+    	super(mailSender);  
+    }
+    
+	@Override
+	public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
+		return info.getEmailTemplate();
+	}
 }

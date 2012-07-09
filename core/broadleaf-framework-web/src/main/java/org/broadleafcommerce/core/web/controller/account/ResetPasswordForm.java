@@ -11,7 +11,7 @@ public class ResetPasswordForm implements Serializable {
     private String username;
     private String token;
     private String password;
-    private String confirmPassword;
+    private String passwordConfirm; 
 
     public String getUsername() {
         return username;
@@ -37,11 +37,11 @@ public class ResetPasswordForm implements Serializable {
         this.password = password;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}    
 }

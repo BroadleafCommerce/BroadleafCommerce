@@ -167,6 +167,11 @@
 		<aop:pointcut id="blCustomerServiceOperation5" expression="execution(* org.broadleafcommerce.profile.core.service.CustomerService.reset*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerServiceOperation5"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blCustomerServiceOperation6" expression="execution(* org.broadleafcommerce.profile.core.service.CustomerService.send*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerServiceOperation6"/>
+	</aop:config>	
 
 	<aop:config>
 		<aop:pointcut id="blUserServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.UserService.save*(..))"/>

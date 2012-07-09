@@ -109,7 +109,8 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 
 	/**
 	 * Returns the view that will be returned from this controller when the 
-	 * registration is successful.
+	 * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since 
+	 * this will cause the entire SpringSecurity pipeline to be fulfilled.
 	 * 
 	 * By default, returns "redirect:/account/myaccount"
 	 * 

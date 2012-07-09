@@ -433,7 +433,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 			
 			BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
-			totalRecords = getTotalRecords(ceilingEntityFullyQualifiedClassname, cto, ctoConverter);
+			totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
 			if (totalRecords > 1) {
 				throw new ServiceException("Queries to retrieve an entity containing a MapStructure must return only 1 entity. Your query returned ("+totalRecords+") values.");
 			}

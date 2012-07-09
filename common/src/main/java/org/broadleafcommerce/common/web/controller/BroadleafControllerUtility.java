@@ -44,10 +44,16 @@ public class BroadleafControllerUtility {
 	/**
 	 * A helper method that returns whether or not the given request was invoked via an AJAX call
 	 * 
+	 * Returns true if the request contains the XMLHttpRequest header or a blcAjax=true parameter.
+	 * 
 	 * @param request
 	 * @return - whether or not it was an AJAX request
 	 */
     public static boolean isAjaxRequest(HttpServletRequest request) {
+    	String ajaxParameter = request.getParameter("blcAjax");
+    	if (ajaxParameter != null && "true".equals(ajaxParameter)) {
+    		return true;
+    	}
     	return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
     
@@ -70,7 +76,7 @@ public class BroadleafControllerUtility {
     	if (isAjaxRequest(request)) {
     		if (nonModalPath.startsWith("redirect:")) {
         		nonModalPath = nonModalPath.substring(nonModalPath.indexOf("redirect:"));
-        		return buildAjaxRedirect(request, nonModalPath);
+        		return buildAjaxRedirect(request, nonModalPath, model);
     		} else {
     			return BLC_AJAX_PREFIX + nonModalPath;
     		}
@@ -90,12 +96,14 @@ public class BroadleafControllerUtility {
 	 * @param model model to add the 
 	 * @throws IOException 
 	 */
-	public static String buildAjaxRedirect(HttpServletRequest request, String redirectPath)  {
+	public static String buildAjaxRedirect(HttpServletRequest request, String redirectPath, Model model)  {
+		redirectPath = redirectPath.replaceFirst("redirect:", "");
+		
 		if (! redirectPath.contains("//") && request.getContextPath() != null) {
 			redirectPath = request.getContextPath() + redirectPath; 			
 		}
 		request.setAttribute(BLC_REDIRECT_ATTRIBUTE, redirectPath);
-		return "ajax/blc_redirect.html";		
+		return "ajax/blc_redirect";		
 	}
 
 }
