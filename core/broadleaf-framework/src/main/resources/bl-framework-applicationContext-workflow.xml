@@ -56,7 +56,7 @@
 
 	<bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
-	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.NullCreditCardPaymentModule"/>
 
 	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
 	   <property name="providers">
