@@ -664,4 +664,12 @@ public interface Product extends Serializable {
 	 */
 	public String getGeneratedUrl();
 
+	/**
+	 * Looks at all ProductAttributes for this product and returns the attribute that matches the given name
+	 * 
+	 * @param name the name of the attribute
+	 * @return the matching ProductAttribute (null if no match)
+	 */
+	public ProductAttribute getProductAttributeByName(String name);
+
 }
