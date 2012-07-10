@@ -16,14 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -32,19 +25,24 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
+@SuppressWarnings("deprecation")
 public class CatalogTest extends BaseTest {
 
     @Resource
     private CatalogService catalogService;
-    @Resource
-    private ProductDao productDao;
 
-    @Test
+    @Test(groups = {"testCatalog"})
     @Transactional
     public void testCatalog() throws Exception {
         Category category = new CategoryImpl();

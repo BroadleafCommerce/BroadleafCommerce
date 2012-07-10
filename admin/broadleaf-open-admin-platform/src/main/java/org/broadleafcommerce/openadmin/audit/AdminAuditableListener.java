@@ -16,8 +16,9 @@
 
 package org.broadleafcommerce.openadmin.audit;
 
-import org.broadleafcommerce.openadmin.server.service.SandBoxContext;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.SandBoxContext;
+import org.broadleafcommerce.openadmin.security.AdminSandBoxContext;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -39,9 +40,11 @@ public class AdminAuditableListener {
             		field.set(entity, new AdminAuditable());
             		auditable = field.get(entity);
             	}
-        		Field temporalField = auditable.getClass().getDeclaredField("dateCreated");
+        		Field temporalCreatedField = auditable.getClass().getDeclaredField("dateCreated");
+                Field temporalUpdatedField = auditable.getClass().getDeclaredField("dateUpdated");
         		Field agentField = auditable.getClass().getDeclaredField("createdBy");
-        		setAuditValueTemporal(temporalField, auditable);
+        		setAuditValueTemporal(temporalCreatedField, auditable);
+                setAuditValueTemporal(temporalUpdatedField, auditable);
         		setAuditValueAgent(agentField, auditable);
             }
         }
@@ -74,7 +77,7 @@ public class AdminAuditableListener {
 
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
     	try {
-            SandBoxContext context = SandBoxContext.getSandBoxContext();
+            AdminSandBoxContext context = (AdminSandBoxContext) SandBoxContext.getSandBoxContext();
             if (context != null) {
                 field.setAccessible(true);
                 field.set(entity, context.getAdminUser());

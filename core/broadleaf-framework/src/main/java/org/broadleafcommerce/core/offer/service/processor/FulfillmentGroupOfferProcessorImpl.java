@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.collections.comparators.ReverseComparator;
@@ -40,6 +34,12 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 
  * @author jfischer
@@ -48,9 +48,6 @@ import org.springframework.stereotype.Service;
 @Service("blFulfillmentGroupOfferProcessor")
 public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl implements FulfillmentGroupOfferProcessor {
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor#filterFulfillmentGroupLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
-	 */
 	public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer) {
 		for (PromotableFulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			boolean fgLevelQualification = false;
@@ -129,17 +126,6 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 		return promotableCandidateFulfillmentGroupOffer;
 	}
 	
-	/**
-     * Private method that takes a list of sorted CandidateOrderOffers and determines if each offer can be
-     * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
-     * are create on the Order for each applied CandidateOrderOffer.  An offer with stackable equals false
-     * cannot be applied to an Order that already contains an OrderAdjustment.  An offer with combinable
-     * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
-     *
-     * @param qualifiedFGOffers a sorted list of CandidateOrderOffer
-     * @param order the Order to apply the CandidateOrderOffers
-     * @return true if order offer applied; otherwise false
-     */
     @SuppressWarnings("unchecked")
 	public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order) {
     	Map<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>> offerMap = new HashMap<FulfillmentGroupOfferPotential, List<PromotableCandidateFulfillmentGroupOffer>>();

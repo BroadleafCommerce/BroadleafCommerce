@@ -24,15 +24,28 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
-import org.broadleafcommerce.core.order.domain.*;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This pricing workflow step will automatically bundle items in the cart.
@@ -54,8 +67,8 @@ public class AutoBundleActivity extends BaseActivity {
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
 
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
@@ -71,7 +84,7 @@ public class AutoBundleActivity extends BaseActivity {
     }
 
 
-    public Order handleAutomaticBundling(Order order) throws PricingException {
+    public Order handleAutomaticBundling(Order order) throws PricingException, RemoveFromCartException {
         boolean itemsHaveBeenUnbundled = false;
         List<DiscreteOrderItem> unbundledItems = null;
 
@@ -107,8 +120,9 @@ public class AutoBundleActivity extends BaseActivity {
      * Removes all automatic bundles from the order and replaces with DiscreteOrderItems.
      *
      * @param order
+     * @throws PricingException 
      */
-    private Order removeAutomaticBundles(Order order) throws PricingException{
+    private Order removeAutomaticBundles(Order order) throws PricingException {
         List<BundleOrderItem> bundlesToRemove = new ArrayList<BundleOrderItem>();
 
         for (OrderItem orderItem : order.getOrderItems()) {
@@ -121,7 +135,11 @@ public class AutoBundleActivity extends BaseActivity {
         }
 
         for (BundleOrderItem bundleOrderItem : bundlesToRemove) {
-            order = cartService.removeItemFromOrder(order, bundleOrderItem, false);
+        	try {
+        		order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
+        	} catch (RemoveFromCartException e) {
+        		throw new PricingException("Could not remove item", e);
+        	}
         }
 
         return order;
@@ -166,8 +184,10 @@ public class AutoBundleActivity extends BaseActivity {
      * @param order
      * @param productBundle
      * @param numApplications
+     * @throws PricingException 
+     * @throws ItemNotFoundException 
      */
-    private Order bundleItems(Order order, ProductBundle productBundle, Integer numApplications, List<DiscreteOrderItem> unbundledItems) throws PricingException {
+    private Order bundleItems(Order order, ProductBundle productBundle, Integer numApplications, List<DiscreteOrderItem> unbundledItems) throws PricingException, RemoveFromCartException {
 
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         bundleOrderItem.setQuantity(numApplications);
@@ -201,7 +221,7 @@ public class AutoBundleActivity extends BaseActivity {
             // remove-all-items from order
             // this call also deletes any fulfillment group items that are associated with that order item
             for (DiscreteOrderItem item : itemMatches) {
-                order = cartService.removeItemFromOrder(order, item, false);
+	            order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), false);
             }
 
             DiscreteOrderItem baseItem = null;
@@ -260,7 +280,7 @@ public class AutoBundleActivity extends BaseActivity {
         bundleOrderItem.assignFinalPrice();
 
         order.getOrderItems().add(bundleOrderItem);
-        order =  cartService.save(order, false);
+        order =  orderService.save(order, false);
 
         for (OrderItem orderItem : order.getOrderItems()) {
             if (orderItem instanceof BundleOrderItem) {
@@ -287,7 +307,7 @@ public class AutoBundleActivity extends BaseActivity {
         }
 
         //reload order with new fulfillment group items
-        order = cartService.save(order, false);
+        order = orderService.save(order, false);
         return order;
     }
 

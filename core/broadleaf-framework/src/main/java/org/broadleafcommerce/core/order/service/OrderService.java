@@ -18,297 +18,215 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * In Broadleaf Commerce, a Cart and an Order are the same thing,
- * A "cart" becomes an order after it has been submitted.
+ * The general interface for interacting with shopping carts and completed Orders.
+ * In Broadleaf Commerce, a Cart and an Order are the same thing. A "cart" becomes 
+ * an order after it has been submitted.
  *
- * Most of the methods in this order are used to modify the cart
- * during the shopping process.    Although it is common to also
- * use this service for "named" orders (e.g. wishlists).
- *
+ * Most of the methods in this order are used to modify the cart. However, it is also
+ * common to use this service for "named" orders (aka wishlists).
  */
 public interface OrderService {
 
+	/**
+	 * Creates a new Order for the given customer. Generally, you will want to use the customer
+	 * that is on the current request, which can be grabbed by utilizing the CustomerState 
+	 * utility class.
+	 * 
+	 * The default Broadleaf implementation of this method will provision a new Order in the 
+	 * database and set the current customer as theowner of the order. If the customer has an 
+	 * email address associated with their profile, that will be copied as well. If the customer
+	 * is a new, anonymous customer, his username will be set to his database id.
+	 * 
+	 * @see org.broadleafcommerce.profile.web.core.CustomerState#getCustomer()
+	 * 
+	 * @param customer
+	 * @return the newly created order
+	 */
+    public Order createNewCartForCustomer(Customer customer);
+    
+    /**
+     * Creates a new Order for the given customer with the given name. Typically, this represents
+     * a "wishlist" order that the customer can save but not check out with.
+     * 
+     * @param customer
+     * @return the newly created named order
+     */
     public Order createNamedOrderForCustomer(String name, Customer customer);
 
-    public Order save(Order order, Boolean priceOrder) throws PricingException;
-
-    public Order findOrderById(Long orderId);
-
-    public List<Order> findOrdersForCustomer(Customer customer);
-
-    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
-
+    /**
+     * Looks up an Order by the given customer and a specified order name.
+     * 
+     * This is typically used to retrieve a "wishlist" order.
+     * 
+     * @see #createNamedOrderForCustomer(String name, Customer customer)
+     * 
+     * @param name
+     * @param customer
+     * @return the named order requested
+     */
     public Order findNamedOrderForCustomer(String name, Customer customer);
-
-    public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
-
-    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;
     
-    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+    /**
+     * Looks up an Order by its database id
+     * 
+     * @param orderId
+     * @return the requested Order
+     */
+    public Order findOrderById(Long orderId);
+    
+    /**
+     * Looks up the current shopping cart for the customer. Note that a shopping cart is
+     * simply an Order with OrderStatus = IN_PROCESS. If for some reason the given customer
+     * has more than one current IN_PROCESS Order, the default Broadleaf implementation will
+     * return the first match found. Furthermore, also note that the current shopping cart
+     * for a customer must never be named -- an Order with a non-null "name" property indicates
+     * that it is a wishlist and not a shopping cart.
+     * 
+     * @param customer
+     * @return the current shopping cart for the customer
+     */
+    public Order findCartForCustomer(Customer customer);
+    
+    /**
+     * Looks up all Orders for the specified customer, regardless of current OrderStatus
+     * 
+     * @param customer
+     * @return the requested Orders
+     */
+    public List<Order> findOrdersForCustomer(Customer customer);
+    
+    /**
+     * Looks up all Orders for the specified customer that are in the specified OrderStatus.
+     * 
+     * @param customer
+     * @param status
+     * @return the requested Orders
+     */
+    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
+    
+    /**
+     * Looks up Orders and returns the order matching the given orderNumber
+     * 
+     * @param orderNumber
+     * @return the requested Order
+     */
+    public Order findOrderByOrderNumber(String orderNumber);
+    
+    /**
+     * Returns all PaymentInfo objects that are associated with the given order
+     * 
+     * @param order
+     * @return the list of all PaymentInfo objects
+     */
+    public List<PaymentInfo> findPaymentInfosForOrder(Order order);
 
     /**
-     * Used to create dynamic bundles groupings of order items.
-     * Typically not used with ProductBundles which should instead
-     * call addProductToOrder.
-     *
-     * Prices the order after adding the bundle.
-     *
+     * Associates a given PaymentInfo with an Order. Note that it is acceptable for the 
+     * securePaymentInfo to be null. For example, if the secure credit card details are 
+     * handled by a third party, a given application may never have associated securePaymentInfos
+     * 
      * @param order
-     * @param itemRequest
-     * @return
-     * @throws PricingException
+     * @param payment
+     * @param securePaymentInfo - null if it doesn't exist
+     * @return the persisted version of the PaymentInfo
      */
-    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException;
-
-    /**
-     * Used to create dynamic bundles groupings of order items.
-     * Typically not used with ProductBundles which should instead
-     * call addProductToOrder.
-     *
-     * Prices the order after adding the bundle if priceOrder = true.  Clients
-     * may wish to perform many cart operations without pricing and
-     * then use priceOrder = true on the last operation to avoid
-     * exercising the pricing engine in a batch order update mode.
-     *
-     * @param order
-     * @param itemRequest
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
-
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
-
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo);
-
-    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException;
-    
-    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException;
-
-    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
-    
-    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
-
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException;
-    
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException;
-
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException;
-    
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
-
-    public FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException;
-    /**
-     * Delegates to the fully parametrized method with priceOrder = true.
-     *
-     * @param order
-     * @param item
-     * @throws ItemNotFoundException
-     * @throws PricingException
-     */
-    public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException;
-
-    /**
-     * Updates the quantity and reprices the order.
-     * Removes the orderItem if the quantity is updated to 0 (or less).
-     *
-     *
-     * @param order
-     * @param item
-     * @param priceOrder
-     * @throws ItemNotFoundException
-     * @throws PricingException
-     */
-    public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException;
     
     /**
-     * From the given OrderItemRequestDTO object, this will look through the order's DiscreteOrderItems
-     * to find the item with the matching orderItemId and update this item's quantity with the value of 
-     * the quantity field in the OrderItemRequestDTO.
+     * Persists the given order to the database. If the priceOrder flag is set to true,
+     * the pricing workflow will execute before the order is written to the database.
+     * Generally, you will want to price the order in every request scope once, and
+     * preferrably on the last call to save() for performance reasons.
+     * 
+     * However, if you have logic that depends on the Order being priced, there are no
+     * issues with saving as many times as necessary.
      * 
      * @param order
-     * @param item
-     * @throws ItemNotFoundException
+     * @param priceOrder
+     * @return the persisted Order, which will be a different instance than the Order passed in
      * @throws PricingException
      */
-	public void updateItemQuantity(Order order, OrderItemRequestDTO item) throws ItemNotFoundException, PricingException;
-
-    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
+    public Order save(Order order, Boolean priceOrder) throws PricingException;
     
-    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
-
-    public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException;
-    
-    public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException;
-    
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
-
-    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
-
-    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
-
-    public void removeNamedOrderForCustomer(String name, Customer customer);
-
-    public Order confirmOrder(Order order);
-
+    /**
+     * Deletes the given order. Note that the default Broadleaf implementation in 
+     * OrderServiceImpl will actually remove the Order instance from the database.
+     * 
+     * @param order
+     */
     public void cancelOrder(Order order);
-
-    public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException;
-
-    public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
-
-    public List<PaymentInfo> readPaymentInfosForOrder(Order order);
-
-    public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
     
-    public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException;
-
-    public void removeAllPaymentsFromOrder(Order order);
-
-    public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address);
-
     /**
-     * Adds an item to the passed in order.
-     *
-     * The orderItemRequest can be sparsely populated.
-     *
-     * When priceOrder is false, the system will not reprice the order.   This is more performant in
-     * cases such as bulk adds where the repricing could be done for the last item only.
-     *
-     * @see OrderItemRequestDTO
-     * @param orderItemRequestDTO
-     * @param priceOrder
-     * @return
-     */
-    public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
-
-    public Order findOrderByOrderNumber (String orderNumber);
-
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
-    
-	/**
-	 * Not typically used in versions since 1.7.
-	 * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}
-	 * 
-	 * @param skuId
-	 * @param productId
-	 * @param categoryId
-	 * @param quantity
-	 * @return
-	 */
-    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);    
-
-
-    /**
-     * Adds an item to the specified bundle.   This is typically used to manage
-     * bundles that were created programmatically.
-     *
-     * It would not be typical to modify an item in a bundle that was
-     * created from a ProductBundle.
-     *
-     * priceOrder must be set to true for the cart to reflect the
-     * state of the bundle accurately; however, it does not need
-     * to be set here.   The requirement is that a pricing operation
-     * happen between the time the bundle is modified and the time
-     * it is redisplayed.
-     *
+     * Adds the given OfferCode to the order. Optionally prices the order as well
+     * 
      * @param order
-     * @param bundle
-     * @param newOrderItem
+     * @param offerCode
      * @param priceOrder
-     * @return
+     * @return the modified Order
+     * @throws PricingException
+     * @throws OfferMaxUseExceededException
+     */
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+    
+    /**
+     * Remove the given OfferCode for the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCode 
+     * @param priceOrder
+     * @return the modified Order
      * @throws PricingException
      */
-    public OrderItem addOrderItemToBundle(Order order, BundleOrderItem bundle, DiscreteOrderItem newOrderItem, boolean priceOrder) throws PricingException;
-
-    /**
-     * Removes an item from the given bundle.
-     *
-     * You may wish to set priceOrder to false if performing set of
-     * cart operations to avoid the expense of exercising the pricing engine
-     * until you are ready to finalize pricing after adding the last item.
-     *
-     * @param order
-     * @param bundle
-     * @param item
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    public Order removeItemFromBundle(Order order, BundleOrderItem bundle, OrderItem item, boolean priceOrder) throws PricingException;
-
-    /**
-     * Adds the passed in name/value pair to the order-item.    If the
-     * attribute already exists, then it is updated with the new value.   
-     * 
-     * If the value passed in is null or empty string and the attribute exists, it is removed
-     * from the order item.
-     *
-     * You may wish to set priceOrder to false if performing set of
-     * cart operations to avoid the expense of exercising the pricing engine
-     * until you are ready to finalize pricing after adding the last item.
-     *
-     * @param order
-     * @param item
-     * @param attributeValues
-     * @param priceOrder
-     * @return
-     */
-    public Order addOrUpdateOrderItemAttributes(Order order, OrderItem item, Map<String,String> attributeValues, boolean priceOrder) throws ItemNotFoundException, PricingException;
+    public Order removeOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException;
     
     /**
-     * Adds the passed in name/value pair to the order-item.    If the
-     * attribute already exists, then it is updated with the new value.   
+     * Removes all offer codes for the given order. Optionally prices the order as well.
      * 
-     * If the value passed in is null and the attribute exists, it is removed
-     * from the order item.
-     *
-     * You may wish to set priceOrder to false if performing set of
-     * cart operations to avoid the expense of exercising the pricing engine
-     * until you are ready to finalize pricing after adding the last item.
-     *
      * @param order
-     * @param item
-     * @param attributeName
      * @param priceOrder
-     * @return
+     * @return the modified Order
+     * @throws PricingException
      */
-    public Order removeOrderItemAttribute(Order order, OrderItem item, String attributeName, boolean priceOrder) throws ItemNotFoundException, PricingException;
-
+    public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException;
+    
+    /**
+     * The null order is the default order for all customers when they initially
+     * enter the site. Upon the first addition of a product to a cart, a non-null order
+     * will be provisioned for the user.
+     * 
+     * @see org.broadleafcommerce.core.order.domain.NullOrderImpl for more information
+     * 
+     * @return a shared, static, unmodifiable NullOrder
+     */
+    public Order getNullOrder();
+    
     /**
      * @see #setAutomaticallyMergeLikeItems(boolean)
-     * @return
+     * 
+     * @return whether or not like-items will be automatically merged
      */
     public boolean getAutomaticallyMergeLikeItems();
 
     /**
      * When set to true, the system when items are added to the cart, they will
-     * automatically be merged.    For example, when a user adds an item to the cart
+     * automatically be merged. For example, when a user adds an item to the cart
      * and then adds the item again, the item will have its quantity changed to 2
      * instead of the cart containing two separate items.
      *
@@ -318,134 +236,97 @@ public interface OrderService {
      * @param automaticallyMergeLikeItems
      */
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems);
-
-    /* *********************************************************************************
-     * DEPRECATED METHODS                                                              *
-     * *********************************************************************************/
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param order
-     * @param itemRequest
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException;
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     *
-     * Due to cart merging and gathering requirements, the item returned is not an
-     * actual cart item.
-     *
-     * @param order
-     * @param itemRequest
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @param orderItemAttributes
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, Map<String,String> orderItemAttributes) throws PricingException;
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException;
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param orderId
-     * @param skuId
-     * @param productId
-     * @param categoryId
-     * @param quantity
-     * @param priceOrder
-     * @param orderItemAttributes
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder, Map<String,String> orderItemAttributes) throws PricingException;
     
     /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param order
-     * @param newOrderItem
-     * @return
-     * @throws PricingException
+     * Changes the OrderStatus to SUBMITTED
+     * 
+     * @param order to confirm
+     * @return the order that was confirmed
      */
-    @Deprecated
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
-
-    /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param order
-     * @param newOrderItem
-     * @param priceOrder
-     * @return
-     * @throws PricingException
-     */
-    @Deprecated
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException;
+	public Order confirmOrder(Order order);
     
     /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
+     * Looks through the given order and returns the latest added OrderItem that matches on the skuId
+     * and productId. Generally, this is used to retrieve the OrderItem that was just added to the cart.
+     * The default Broadleaf implementation will attempt to match on skuId first, and failing that, it will
+     * look at the productId.
+     * 
+     * Note that the behavior is slightly undeterministic in the case that {@link setAutomaticallyMergeLikeItems}
+     * is set to true and the last added sku matches on a previously added sku. In this case, the sku that has the
+     * merged items would be returned, so the total quantity of the OrderItem might not match exactly what was 
+     * just added.
+     * 
      * @param order
-     * @param itemRequest
-     * @param skuPricingConsiderations
-     * @return
-     * @throws PricingException
+     * @param skuId
+     * @param productId
+     * @return the best matching OrderItem with highest index in the list of OrderItems in the order
      */
-    @Deprecated
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
-
+	public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId);
+	
+	/**
+	 * Adds a GiftWrapItem to the order based on the itemRequest. A GiftWrapItem is a product (for example,
+	 * a "Gift Box with Red Ribbon") that contains a list of OrderItems that should be wrapped by this
+	 * GiftWrapItem.
+	 * 
+	 * The OrderItems must already exist and belong to an order before they are able to be wrapped by the
+	 * GiftWrapItem
+	 * 
+	 * @param order
+	 * @param itemRequest
+	 * @param priceOrder
+	 * @return the GiftWrapItem instance that was created and attached to the order
+	 * @throws PricingException
+	 */
+	public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
+	
     /**
-     * @deprecated Call addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder)
-     * @param order
-     * @param itemRequest
-     * @param skuPricingConsiderations
+     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
+     * to the Order. The item to be added can be determined in a few different ways. For example, the 
+     * SKU can be specified directly or it can be determine based on a Product and potentially some
+     * specified ProductOptions for that given product.
+     *
+     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
+     *
+     * When priceOrder is false, the system will not reprice the order.   This is more performant in
+     * cases such as bulk adds where the repricing could be done for the last item only.
+     *
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
      * @param priceOrder
-     * @return
-     * @throws PricingException
+     * @return the order the item was added to
+     * @throws WorkflowException 
+     * @throws Throwable 
      */
-    @Deprecated
-    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
-
+    public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
+    
+    /**
+     * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
+     * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO
+     * 
+     * Minimum required parameters for OrderItemRequest: orderItemId, quantity
+     * 
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws UpdateCartException
+     * @throws RemoveFromCartException 
+     */
+	public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException;
+	
+    /**
+     * Initiates the removeItem workflow that will attempt to remove the specified OrderItem from 
+     * the given Order
+     * 
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemId
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws RemoveFromCartException 
+     */
+	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
+	
 }

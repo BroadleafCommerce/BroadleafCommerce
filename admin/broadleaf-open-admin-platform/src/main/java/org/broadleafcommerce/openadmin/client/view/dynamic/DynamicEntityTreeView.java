@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic;
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
 import com.smartgwt.client.widgets.grid.HoverCustomizer;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -28,6 +29,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.TreeGrid;
 import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
 
 /**
  * 
@@ -38,6 +40,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 	
 	protected ToolStripButton addButton;
 	protected ToolStripButton removeButton;
+    protected ToolStripButton showArchivedButton;
 	protected ComboBoxItem entityType = new ComboBoxItem();
 	protected TreeGrid grid;
 	protected ToolStrip toolBar;
@@ -66,6 +69,15 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 
         toolBar.addSpacer(6);
         toolBar.addFill();
+
+        showArchivedButton = new ToolStripButton();
+        String archivedButtonTitle = ((AbstractDynamicDataSource) dataSource).isShowArchived()?BLCMain.getMessageManager().getString("hideArchivedRecords"):BLCMain.getMessageManager().getString("showArchivedRecords");
+        showArchivedButton.setTitle(archivedButtonTitle);
+        showArchivedButton.setIcon(GWT.getModuleBaseURL() + "sc/skins/Enterprise/images/headerIcons/find.png");
+        showArchivedButton.setVisibility(Visibility.HIDDEN);
+        toolBar.addButton(showArchivedButton);
+
+        toolBar.addSpacer(6);
         
         addMember(toolBar);
         grid = new TreeGrid();
@@ -89,8 +101,8 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
                     return BLCMain.getMessageManager().replaceKeys(BLCMain.getMessageManager().getString("lockedMessage"), new String[]{"userName", "date"}, new String[]{record.getAttribute("__lockedUserName"), record.getAttribute("__lockedDate")});
                 } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridDirtyPropertyHilite")) {
                     return BLCMain.getMessageManager().getString("dirtyMessage");
-                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridActivePropertyHilite")) {
-                    return BLCMain.getMessageManager().getString("activeMessage");
+                } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridInActivePropertyHilite")) {
+                    return BLCMain.getMessageManager().getString("inActiveMessage");
                 } else if (record != null && record.getAttribute("_hilite") != null && record.getAttribute("_hilite").equals("listGridDeletedPropertyHilite")) {
                     return BLCMain.getMessageManager().getString("deletedMessage");
                 }
@@ -100,30 +112,18 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         addMember(grid);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getAddButton()
-	 */
 	public ToolStripButton getAddButton() {
 		return addButton;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getRemoveButton()
-	 */
 	public ToolStripButton getRemoveButton() {
 		return removeButton;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getEntityType()
-	 */
 	public ComboBoxItem getEntityType() {
 		return entityType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityTreeDisplay#getGrid()
-	 */
 	public ListGrid getGrid() {
 		return grid;
 	}
@@ -131,5 +131,9 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 	public ToolStrip getToolBar() {
 		return toolBar;
 	}
+
+    public ToolStripButton getShowArchivedButton() {
+        return showArchivedButton;
+    }
 
 }

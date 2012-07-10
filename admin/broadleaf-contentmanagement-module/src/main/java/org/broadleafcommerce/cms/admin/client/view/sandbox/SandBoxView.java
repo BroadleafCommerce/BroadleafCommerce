@@ -122,8 +122,7 @@ public class SandBoxView extends VLayout implements Instantiable, SandBoxDisplay
         grid.setCanSort(true);
         grid.setCanResizeFields(true);
         grid.setShowFilterEditor(false);
-        //grid.setCanGroupBy(true);
-        grid.setGroupByField("groupDescription");
+        grid.setCanGroupBy(false);
         grid.setDataPageSize(10);
         grid.setAlternateBodyStyleName("editRowDisabled");
         insideLayout.addMember(grid);

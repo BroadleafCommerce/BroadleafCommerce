@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.order;
 
-import java.math.BigDecimal;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.common.money.Money;
 import org.testng.annotations.DataProvider;
+
+import java.math.BigDecimal;
 
 public class OrderDataProvider {
 

@@ -56,7 +56,7 @@
 
 	<bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
 
-	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+	<bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.NullCreditCardPaymentModule"/>
 
 	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
 	   <property name="providers">
@@ -102,6 +102,50 @@
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+	</bean>
+	
+	<bean id="blAddItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+	</bean>
+	
+	<bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
+	</bean>
+	
+	<bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
+				<bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
 	</bean>
 
 	<bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">

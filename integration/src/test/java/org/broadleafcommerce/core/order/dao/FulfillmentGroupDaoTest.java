@@ -16,11 +16,7 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.order.FulfillmentGroupDataProvider;
-import org.broadleafcommerce.core.order.dao.FulfillmentGroupDao;
-import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
@@ -32,10 +28,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
+import javax.annotation.Resource;
+
 public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
 
     private Long defaultFulfillmentGroupOrderId;
-    private Long orderId;
     private Long defaultFulfillmentGroupId;
     private Long fulfillmentGroupId;
 
@@ -113,7 +110,6 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
         assert newFG.getId() == null;
         fulfillmentGroup = fulfillmentGroupService.save(newFG);
         assert fulfillmentGroup.getId() != null;
-        orderId = salesOrder.getId();
         fulfillmentGroupId = fulfillmentGroup.getId();
     }
 

@@ -46,9 +46,8 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	protected PersistencePerspective persistencePerspective;
 	protected DataSourceModule[] modules;
 	protected FormItemCallbackHandlerManager formItemCallbackHandlerManager = new FormItemCallbackHandlerManager();
-    //TODO change this flag to come from an annotation on the entity that defines the commit status from the server side
-	//protected boolean commitImmediately = true;
     protected Record addedRecord;
+    protected boolean showArchived = false;
 
 
     /**
@@ -172,5 +171,17 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 
     public void setAddedRecord(Record addedRecord) {
         this.addedRecord = addedRecord;
+    }
+
+    public boolean isShowArchived() {
+        return showArchived;
+    }
+
+    public void setShowArchived(boolean showArchived) {
+        this.showArchived = showArchived;
+    }
+
+    public PersistencePerspective getPersistencePerspective() {
+        return persistencePerspective;
     }
 }

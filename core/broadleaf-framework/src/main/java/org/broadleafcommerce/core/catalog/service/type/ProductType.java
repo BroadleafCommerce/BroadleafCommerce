@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.catalog.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of product types.
@@ -34,7 +34,7 @@ public class ProductType implements Serializable, BroadleafEnumerationType {
     private static final Map<String, ProductType> TYPES = new HashMap<String, ProductType>();
 
     public static final ProductType PRODUCT  = new ProductType("org.broadleafcommerce.core.catalog.domain.Product", "Normal Product");
-    public static final ProductType PRODUCT_SKU  = new ProductType("org.broadleafcommerce.core.catalog.domain.ProductSku", "One To One Product Sku");
+    public static final ProductType BUNDLE  = new ProductType("org.broadleafcommerce.core.catalog.domain.ProductBundle", "Product Bundle");
 
     public static ProductType getInstance(final String type) {
         return TYPES.get(type);

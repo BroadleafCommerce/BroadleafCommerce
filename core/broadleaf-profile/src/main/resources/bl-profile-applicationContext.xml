@@ -14,6 +14,9 @@
 	<bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
 	<bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
 	<bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
+	<bean id="blForgotPasswordEmailInfo" parent="blNullEmailInfo" />
+	<bean id="blForgotUsernameEmailInfo" parent="blNullEmailInfo" />
+	<bean id="blChangePasswordEmailInfo" parent="blNullEmailInfo" /> 
 
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 	
@@ -21,40 +24,6 @@
 	
 	<bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.DefaultEncryptionModule"/>
 	
-	<bean id="blCustomerService" class="org.broadleafcommerce.profile.core.service.CustomerServiceImpl">
-		<property name="passwordResetHandlers">
-			<list>
-				<bean class="org.broadleafcommerce.profile.core.service.handler.EmailNotificationPasswordUpdatedHandler">
-					<property name="passwordResetEmailSubject">
-						<map>
-							<entry key="en_US">
-								<value>Password Reset</value>
-							</entry>
-						</map>
-					</property>
-					<property name="passwordResetEmailTemplate">
-						<map>
-							<entry key="en_US">
-								<value>org/broadleafcommerce/profile/email/service/template/passwordReset.vm</value>
-							</entry>
-						</map>
-					</property>
-					<property name="passwordResetEmailFromAddress" value="team@yourcompany.com"/>
-				</bean>
-			</list>
-		</property>
-	</bean>
-	
-    <bean id="blCustomerForgotPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${customerService.fromAddress}"/>
-        <property name="emailTemplate" value="${customerForgotPasswordEmail.emailTemplate}"/>
-        <property name="subject" value="${customerForgotPasswordEmail.subject}"/>
-    </bean>
-    
-    <bean id="blCustomerForgotUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${customerService.fromAddress}"/>
-        <property name="emailTemplate" value="${customerForgotUsernameEmail.emailTemplate}"/>
-        <property name="subject" value="${customerForgotUsernameEmail.subject}"/>
-    </bean>	
+
 	
 </beans>

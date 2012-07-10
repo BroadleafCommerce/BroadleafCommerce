@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.core.pricing.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -44,8 +37,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
@@ -63,17 +56,24 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
+import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+@SuppressWarnings("deprecation")
 public class PricingTest extends BaseTest {
 
     @Resource
     private CustomerService customerService;
 
-    @Resource
-    private CartService cartService;
+    @Resource(name = "blOrderService")
+    private OrderService orderService;
 
     @Resource
     private ShippingRateService shippingRateService;
@@ -81,7 +81,7 @@ public class PricingTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
     
-    @Resource
+    @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
     
     @Resource
@@ -100,10 +100,10 @@ public class PricingTest extends BaseTest {
         sr2 = shippingRateService.save(sr2);
     }
 
-    @Test(dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Test(groups = {"testPricing"}, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
     @Transactional
     public void testPricing() throws Exception {
-        Order order = cartService.createNewCartForCustomer(createCustomer());
+        Order order = orderService.createNewCartForCustomer(createCustomer());
         
         customerService.saveCustomer(order.getCustomer());
 
@@ -195,7 +195,7 @@ public class PricingTest extends BaseTest {
         order.addOfferCode(createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null));
         order.setTotalShipping(new Money(0D));
         
-        cartService.save(order, true);
+        orderService.save(order, true);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
@@ -208,7 +208,7 @@ public class PricingTest extends BaseTest {
     @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration"})
     @Transactional
     public void testShipping() throws Exception {
-        Order order = cartService.createNewCartForCustomer(createCustomer());
+        Order order = orderService.createNewCartForCustomer(createCustomer());
         
         customerService.saveCustomer(order.getCustomer());
         
@@ -291,7 +291,7 @@ public class PricingTest extends BaseTest {
         }
         order.setTotalShipping(new Money(0D));
         
-        cartService.save(order, true);
+        orderService.save(order, true);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping price is not taxable

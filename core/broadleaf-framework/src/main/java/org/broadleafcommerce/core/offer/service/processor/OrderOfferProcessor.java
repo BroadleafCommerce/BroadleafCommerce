@@ -23,8 +23,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFa
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
 
 import java.util.List;
 import java.util.Map;
@@ -44,19 +45,38 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	
 	public Boolean executeExpression(String expression, Map<String, Object> vars);
 	
+    /**
+     * Executes the appliesToOrderRules in the Offer to determine if this offer
+     * can be applied to the Order, OrderItem, or FulfillmentGroup.
+     *
+     * @param offer
+     * @param order
+     * @return true if offer can be applied, otherwise false
+     */
 	public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
 	
 	public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
 	
+    /**
+     * Takes a list of sorted CandidateOrderOffers and determines if each offer can be
+     * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
+     * are create on the Order for each applied CandidateOrderOffer.  An offer with stackable equals false
+     * cannot be applied to an Order that already contains an OrderAdjustment.  An offer with combinable
+     * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
+     *
+     * @param orderOffers a sorted list of CandidateOrderOffer
+     * @param order       the Order to apply the CandidateOrderOffers
+     * @return true if order offer applied; otherwise false
+     */
 	public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
 	
 	public void compileOrderTotal(PromotableOrder order);
     
     public void initializeSplitItems(PromotableOrder order);
-	
-    public CartService getCartService();
+    
+    public OrderService getOrderService();
 
-	public void setCartService(CartService cartService);
+	public void setOrderService(OrderService orderService);
 	
 	public void gatherCart(PromotableOrder order);
 	
@@ -71,7 +91,11 @@ public interface OrderOfferProcessor extends BaseProcessor {
 	public PromotableItemFactory getPromotableItemFactory();
 
 	public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
+	
+    public FulfillmentGroupService getFulfillmentGroupService();
 
+	public void setFulfillmentGroupService(FulfillmentGroupService fulfillmentGroupService);
+	
     public void initializeBundleSplitItems(PromotableOrder order);
 
     /**
@@ -112,5 +136,5 @@ public interface OrderOfferProcessor extends BaseProcessor {
      * @return
      */
     public String buildIdentifier(OrderItem orderItem, String extraIdentifier);
-	
+    
 }

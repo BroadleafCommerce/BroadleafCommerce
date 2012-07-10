@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.AmountItem;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.service.PaymentInfoService;
@@ -26,7 +26,12 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,8 +135,8 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
         PaymentInfoService paymentInfoService = (PaymentInfoService) context.getBean("blPaymentInfoService");
         PaymentInfo paymentInfo = paymentInfoService.create();
 
-        CartService cartService = (CartService) context.getBean("blCartService");
-        Order order = cartService.findOrderById(this.orderId);
+        OrderService orderService = (OrderService) context.getBean("blOrderService");
+        Order order = orderService.findOrderById(this.orderId);
         paymentInfo.setOrder(order);
 
         paymentInfo.setType(PaymentInfoType.getInstance(this.type));

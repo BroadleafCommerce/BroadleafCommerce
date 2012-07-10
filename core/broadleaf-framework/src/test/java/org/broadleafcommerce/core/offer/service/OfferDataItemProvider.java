@@ -16,14 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -53,9 +46,9 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -67,6 +60,16 @@ import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 
  * @author jfischer
@@ -75,19 +78,28 @@ import org.easymock.classextension.EasyMock;
 public class OfferDataItemProvider {
 
 	public static Long orderItemId = 1L;
+	public static Long orderId = 1L;
 	
 	public static Long getOrderItemId() {
 		return orderItemId++;
 	}
 	
+	public static Long getOrderId() {
+		return orderId++;
+	}
+	
+	protected static Map<Long, Order> orders = new HashMap<Long, Order>();
+	
 	public static IAnswer<FulfillmentGroup> getAddItemToFulfillmentGroupAnswer() {
 		return new IAnswer<FulfillmentGroup>() {
 			public FulfillmentGroup answer() throws Throwable {
-				FulfillmentGroup fg = (FulfillmentGroup) EasyMock.getCurrentArguments()[1];
+				FulfillmentGroupItemRequest fgItemRequest = (FulfillmentGroupItemRequest) EasyMock.getCurrentArguments()[0];
+				FulfillmentGroup fg = fgItemRequest.getFulfillmentGroup();
 				FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
-				fgItem.setOrderItem((OrderItem) EasyMock.getCurrentArguments()[0]);
-				fgItem.setQuantity(((OrderItem) EasyMock.getCurrentArguments()[0]).getQuantity());
+				fgItem.setOrderItem((OrderItem) fgItemRequest.getOrderItem());
+				fgItem.setQuantity(fgItemRequest.getQuantity());
 				fg.getFulfillmentGroupItems().add(fgItem);
+				
 				return fg;
 			}
 		};
@@ -109,7 +121,22 @@ public class OfferDataItemProvider {
 	public static IAnswer<OrderItem> getSaveOrderItemAnswer() {
 		return new IAnswer<OrderItem>() {
 			public OrderItem answer() throws Throwable {
-				return (OrderItem) EasyMock.getCurrentArguments()[0];
+				OrderItem orderItem = (OrderItem) EasyMock.getCurrentArguments()[0];
+				if (orderItem.getId() == null) {
+					orderItem.setId(getOrderItemId());
+				}
+				return orderItem;
+			}
+		};
+	}
+	
+	public static IAnswer<Order> getSaveOrderAnswer() {
+		return new IAnswer<Order>() {
+			public Order answer() throws Throwable {
+				Order order = (Order) EasyMock.getCurrentArguments()[0];
+				order.setId(getOrderId());
+				orders.put(order.getId(), order);
+				return order;
 			}
 		};
 	}
@@ -125,12 +152,21 @@ public class OfferDataItemProvider {
 	public static IAnswer<Order> getRemoveItemFromOrderAnswer() {
 		return new IAnswer<Order>() {
 			public Order answer() throws Throwable {
-				Order order = (Order) EasyMock.getCurrentArguments()[0];
-				order.getOrderItems().remove((OrderItem) EasyMock.getCurrentArguments()[1]);
+				Long orderId = (Long) EasyMock.getCurrentArguments()[0];
+				Order order = orders.get(orderId);
+				
+				Iterator<OrderItem> orderItemItr = order.getOrderItems().listIterator();
+				while (orderItemItr.hasNext()) {
+					OrderItem item = orderItemItr.next();
+					if (item.getId().equals((Long) EasyMock.getCurrentArguments()[1])) {
+						orderItemItr.remove();
+					}
+				}
+				
 				for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
 					Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
 					while (itr.hasNext()) {
-						if (itr.next().getOrderItem().equals((OrderItem) EasyMock.getCurrentArguments()[1])) {
+						if (itr.next().getOrderItem().getId().equals((Long) EasyMock.getCurrentArguments()[1])) {
 							itr.remove();
 						}
 					}
@@ -142,6 +178,7 @@ public class OfferDataItemProvider {
 	
 	public PromotableOrder createBasicOrder() {
 		Order order = new OrderImpl();
+		order.setId(getOrderId());
 		
 		Category category1 = new CategoryImpl();
 		category1.setName("test1");
@@ -291,6 +328,8 @@ public class OfferDataItemProvider {
 		order.getFulfillmentGroups().add(fg2);
 		
 		order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
+		
+		orders.put(order.getId(), order);
 		
 		PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl());
 		

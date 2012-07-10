@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemFeePrice;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BundleOrderItemRequest {
 

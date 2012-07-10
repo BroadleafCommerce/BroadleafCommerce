@@ -33,7 +33,6 @@ public class SandBoxItemType implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, SandBoxItemType> TYPES = new HashMap<String, SandBoxItemType>();
 
-    public static final SandBoxItemType ENTITY  = new SandBoxItemType("ENTITY", "Entity");
     public static final SandBoxItemType PAGE  = new SandBoxItemType("PAGE", "Page");
     public static final SandBoxItemType STRUCTURED_CONTENT  = new SandBoxItemType("STRUCTURED_CONTENT", "Structured Content");
     public static final SandBoxItemType STATIC_ASSET  = new SandBoxItemType("STATIC_ASSET", "Static Asset");

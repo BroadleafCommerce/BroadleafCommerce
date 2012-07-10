@@ -16,14 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service.workflow;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
@@ -31,15 +24,22 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
+import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 public class PaymentProcessContextFactory implements ProcessContextFactory {
 
     @Resource(name = "blSecurePaymentInfoService")
-    private SecurePaymentInfoService securePaymentInfoService;
+    protected SecurePaymentInfoService securePaymentInfoService;
 
-    @Resource(name = "blCartService")
-    private CartService cartService;
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
 
-    private PaymentActionType paymentActionType;
+    protected PaymentActionType paymentActionType;
 
     public ProcessContext createContext(Object seedData) throws WorkflowException {
         if (!(seedData instanceof PaymentSeed)) {
@@ -49,7 +49,7 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
         Map<PaymentInfo, Referenced> secureMap = paymentSeed.getInfos();
         if (secureMap == null) {
             secureMap = new HashMap<PaymentInfo, Referenced>();
-            List<PaymentInfo> paymentInfoList = cartService.readPaymentInfosForOrder(paymentSeed.getOrder());
+            List<PaymentInfo> paymentInfoList = orderService.findPaymentInfosForOrder(paymentSeed.getOrder());
             if (paymentInfoList == null || paymentInfoList.size() == 0) {
                 throw new WorkflowException("No payment info instances associated with the order -- id: " + paymentSeed.getOrder().getId());
             }

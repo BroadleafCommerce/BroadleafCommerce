@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.pricing;
 
-import java.math.BigDecimal;
-
 import org.broadleafcommerce.core.pricing.domain.ShippingRateImpl;
 import org.testng.annotations.DataProvider;
+
+import java.math.BigDecimal;
 
 public class ShippingRateDataProvider {
 

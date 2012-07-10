@@ -121,7 +121,6 @@ public class BasicClientEntityModule implements DataSourceModule {
      * We are doing this because we can apply seamless
      * CTO-to-criteria conversions back on the server.
      */
-    @SuppressWarnings("unchecked")
     public CriteriaTransferObject getCto(DSRequest request) {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         
@@ -150,7 +149,6 @@ public class BasicClientEntityModule implements DataSourceModule {
         Criteria criteria = request.getCriteria();
         String jsObj = JSON.encode(criteria.getJsObj());
         // filter
-        @SuppressWarnings("rawtypes")
 		Map filterData = criteria.getValues();
         Set<String> filterFieldNames = filterData.keySet();
         for (String fieldName : filterFieldNames) {
@@ -626,16 +624,20 @@ public class BasicClientEntityModule implements DataSourceModule {
 			if (property.getDisplayValue() != null) {
 				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
 			}
-            if (property.getIsDirty()) {
-                record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
-                record.setAttribute("__dirty_"+attributeName, true);
-            }
+            //if (property.getIsDirty()) {
+                //record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
+                //record.setAttribute("__dirty_"+attributeName, true);
+            //}
 		}
+        if (entity.isDirty()) {
+            record.setAttribute("_hilite", "listGridDirtyPropertyHilite");
+            record.setAttribute("__dirty", true);
+        }
 		String[] entityType = entity.getType();
 		record.setAttribute("_type", entityType);
         if (!entity.isDirty()) {
-            if (entity.getActive()) {
-                record.setAttribute("_hilite", "listGridActivePropertyHilite");
+            if (entity.getInactive()) {
+                record.setAttribute("_hilite", "listGridInActivePropertyHilite");
             }
             if (entity.getDeleted()) {
                 record.setAttribute("_hilite", "listGridDeletedPropertyHilite");

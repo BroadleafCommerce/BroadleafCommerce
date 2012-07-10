@@ -35,7 +35,7 @@ import java.util.Map;
  * Personal message is optional.
  *
  */
-public class OrderItemRequest {
+public abstract class AbstractOrderItemRequest {
 
     private Sku sku;
     private Category category;
@@ -84,7 +84,7 @@ public class OrderItemRequest {
         this.itemAttributes = itemAttributes;
     }
 
-    protected void copyProperties(OrderItemRequest newRequest) {
+    protected void copyProperties(AbstractOrderItemRequest newRequest) {
         newRequest.setCategory(category);
         newRequest.setItemAttributes(itemAttributes);
         newRequest.setPersonalMessage(personalMessage);
@@ -93,18 +93,12 @@ public class OrderItemRequest {
         newRequest.setSku(sku);
     }
 
-    public OrderItemRequest clone() {
-        OrderItemRequest returnRequest = new OrderItemRequest();
-        copyProperties(returnRequest);
-        return returnRequest;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof OrderItemRequest)) return false;
+        if (!(o instanceof AbstractOrderItemRequest)) return false;
 
-        OrderItemRequest that = (OrderItemRequest) o;
+        AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
 
         if (!category.equals(that.category)) return false;
         if (!product.equals(that.product)) return false;

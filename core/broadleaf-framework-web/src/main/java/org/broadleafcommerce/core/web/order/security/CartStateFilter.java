@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.web.order.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
 import org.springframework.core.Ordered;
@@ -53,11 +53,12 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
 
     private static String cartRequestAttributeName = "cart";
 
+	@SuppressWarnings("unchecked")
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {		
 		Customer customer = (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
 		
@@ -65,10 +66,10 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 			if (LOG.isTraceEnabled()) {
 				LOG.trace("Looking up cart for customer " + customer.getId());
 			}
-		   	Order cart = cartService.findCartForCustomer(customer);
+		   	Order cart = orderService.findCartForCustomer(customer);
 	    	
 	    	if (cart == null) { 
-	    		cart = cartService.getNullOrder();
+	    		cart = orderService.getNullOrder();
 	    	}
 
 	    	request.setAttribute(cartRequestAttributeName, cart);

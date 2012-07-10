@@ -17,15 +17,36 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 public interface FulfillmentGroupService {
 
-    FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
+    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
-    FulfillmentGroup createEmptyFulfillmentGroup();
+    public FulfillmentGroup createEmptyFulfillmentGroup();
 
-    FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
+    public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
 
     public void delete(FulfillmentGroup fulfillmentGroup);
+    
+    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException;
+    
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException;
+    
+    public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
+
+    /**
+     * Removes every fulfillment group item in every fulfillment group in the order
+     * that is associated with the given orderItem. Note that it does not save the changes
+     * made - instead, the caller is responsible for saving the order further down.
+     * 
+     * @param order
+     * @param orderItem
+     */
+	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
 
 }

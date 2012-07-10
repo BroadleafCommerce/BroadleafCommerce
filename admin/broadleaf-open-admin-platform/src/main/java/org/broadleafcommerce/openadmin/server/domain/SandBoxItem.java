@@ -73,4 +73,8 @@ public interface SandBoxItem extends Serializable {
 
     public void setGroupDescription(String groupDescription);
 
+    public Boolean getRootEntityItem();
+
+    public void setRootEntityItem(Boolean rootEntityItem);
+
 }

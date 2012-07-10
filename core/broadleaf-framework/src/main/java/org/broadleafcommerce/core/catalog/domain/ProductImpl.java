@@ -599,6 +599,16 @@ public class ProductImpl implements Product, Status {
 	public void setDisplayTemplate(String displayTemplate) {
 		this.displayTemplate = displayTemplate;
 	}
+    
+    @Override
+    public ProductAttribute getProductAttributeByName(String name) {
+    	for (ProductAttribute attribute : getProductAttributes()) {
+    		if (attribute.getName().equals(name)) {
+    			return attribute;
+    		}
+    	}
+    	return null;
+    }
 
     @Override
     public Character getArchived() {

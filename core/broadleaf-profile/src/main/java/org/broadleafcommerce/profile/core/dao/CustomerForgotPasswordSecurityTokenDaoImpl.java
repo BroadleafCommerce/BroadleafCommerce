@@ -41,7 +41,7 @@ public class CustomerForgotPasswordSecurityTokenDaoImpl implements CustomerForgo
 
     @Override
     public CustomerForgotPasswordSecurityToken readToken(String token) {
-        return (CustomerForgotPasswordSecurityToken) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.ForgotPasswordSecurityToken"), token);        
+        return (CustomerForgotPasswordSecurityToken) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken"), token);        
     }
 
     @Override

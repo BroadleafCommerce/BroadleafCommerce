@@ -16,17 +16,17 @@
 
 package org.broadleafcommerce.core.web.layout.tags;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.legacy.LegacyCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 
 public class OrderLookupTag extends BodyTagSupport {
 
@@ -39,9 +39,8 @@ public class OrderLookupTag extends BodyTagSupport {
     @Override
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-        CustomerState customerState = (CustomerState) applicationContext.getBean("blCustomerState");
-        Customer customer = customerState.getCustomer((HttpServletRequest) pageContext.getRequest());
-        CartService cartService = (CartService) applicationContext.getBean("blCartService");
+        Customer customer = CustomerState.getCustomer((HttpServletRequest) pageContext.getRequest());
+        LegacyCartService cartService = (LegacyCartService) applicationContext.getBean("blLegacyCartService");
         Order order = null;
         if (orderName != null && orderId != null) {
             throw new IllegalArgumentException("Only orderName or orderId attribute may be specified on orderLookup tag");

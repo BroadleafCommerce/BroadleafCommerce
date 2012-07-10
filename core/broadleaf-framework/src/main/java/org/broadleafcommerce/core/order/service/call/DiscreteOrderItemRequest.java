@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscreteOrderItemRequest extends OrderItemRequest {
+public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
 
 
     private List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
@@ -30,7 +30,7 @@ public class DiscreteOrderItemRequest extends OrderItemRequest {
         super();
     }
 
-    public DiscreteOrderItemRequest(OrderItemRequest request) {
+    public DiscreteOrderItemRequest(AbstractOrderItemRequest request) {
         setCategory(request.getCategory());
         setItemAttributes(request.getItemAttributes());
         setPersonalMessage(request.getPersonalMessage());
@@ -41,7 +41,7 @@ public class DiscreteOrderItemRequest extends OrderItemRequest {
 
 
     public DiscreteOrderItemRequest clone() {
-        DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
+    	DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
         copyProperties(returnRequest);
         returnRequest.setDiscreteOrderItemFeePrices(discreteOrderItemFeePrices);
         return returnRequest;

@@ -79,6 +79,11 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
 
     @Override
     public SandBoxItem addSandBoxItem(Long sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId) {
+        return addSandBoxItem(sbox, operationType, itemType, description, groupDescription, temporaryId, originalId, false);
+    }
+
+    @Override
+    public SandBoxItem addSandBoxItem(Long sbox, SandBoxOperationType operationType, SandBoxItemType itemType, String description, String groupDescription, Long temporaryId, Long originalId, Boolean isRoot) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding sandbox item.  " + originalId);
         }
@@ -91,6 +96,7 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         sandBoxItem.setTemporaryItemId(temporaryId);
         sandBoxItem.setSandBoxItemType(itemType);
         sandBoxItem.setGroupDescription(groupDescription);
+        sandBoxItem.setRootEntityItem(isRoot);
 
         SandBoxAction action = new SandBoxActionImpl();
         action.setActionType(SandBoxActionType.EDIT);
@@ -107,16 +113,26 @@ public class SandBoxItemDaoImpl implements SandBoxItemDao {
         return em.merge(sandBoxItem);
     }
 
+    @Override
     public List<SandBoxItem> retrieveSandBoxItemsForSandbox(Long sandBox) {
         Query query = em.createNamedQuery("BC_READ_ALL_SANDBOX_ITEMS");
         query.setParameter("sandboxId", sandBox);
         return query.getResultList();
     }
 
+    @Override
     public List<SandBoxItem> retrieveSandBoxItemsByTypeForSandbox(Long sandBox, SandBoxItemType itemType) {
         Query query = em.createNamedQuery("BC_READ_ALL_SANDBOX_ITEMS_BY_TYPE");
         query.setParameter("sandboxId", sandBox);
         query.setParameter("sandBoxItemType", itemType.getType());
+        return query.getResultList();
+    }
+
+    @Override
+    public List<SandBoxItem> retrieveSandBoxItemsByTypesForSandbox(Long sandBox, List<SandBoxItemType> sandBoxItemTypes) {
+        Query query = em.createNamedQuery("BC_READ_ALL_SANDBOX_ITEMS_BY_TYPE");
+        query.setParameter("sandboxId", sandBox);
+        query.setParameter("sandBoxItemTypes", sandBoxItemTypes);
         return query.getResultList();
     }
 

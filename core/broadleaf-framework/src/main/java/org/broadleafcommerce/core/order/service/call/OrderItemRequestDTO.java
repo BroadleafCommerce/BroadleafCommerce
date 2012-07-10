@@ -36,53 +36,79 @@ public class OrderItemRequestDTO {
     private Long orderItemId;
     private Integer quantity;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
+    
+    public OrderItemRequestDTO() {}
+    
+    public OrderItemRequestDTO(Long productId, Integer quantity) {
+    	setProductId(productId);
+    	setQuantity(quantity);
+    }
+    
+    public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
+    	setProductId(productId);
+    	setSkuId(skuId);
+    	setQuantity(quantity);
+    }
+    
+    public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
+    	setProductId(productId);
+    	setSkuId(skuId);
+    	setCategoryId(categoryId);
+    	setQuantity(quantity);
+    }
 
     public Long getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(Long skuId) {
+    public OrderItemRequestDTO setSkuId(Long skuId) {
         this.skuId = skuId;
+        return this;
     }
 
     public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public OrderItemRequestDTO setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+        return this;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public OrderItemRequestDTO setProductId(Long productId) {
         this.productId = productId;
+        return this;
     }
 
     public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public OrderItemRequestDTO setQuantity(Integer quantity) {
         this.quantity = quantity;
+        return this;
     }
 
     public Map<String, String> getItemAttributes() {
         return itemAttributes;
     }
 
-    public void setItemAttributes(Map<String, String> itemAttributes) {
+    public OrderItemRequestDTO setItemAttributes(Map<String, String> itemAttributes) {
         this.itemAttributes = itemAttributes;
+        return this;
     }
     
     public Long getOrderItemId() {
         return orderItemId;
     }
 
-    public void setOrderItemId(Long orderItemId) {
+    public OrderItemRequestDTO setOrderItemId(Long orderItemId) {
         this.orderItemId = orderItemId;
+        return this;
     }
 
 }

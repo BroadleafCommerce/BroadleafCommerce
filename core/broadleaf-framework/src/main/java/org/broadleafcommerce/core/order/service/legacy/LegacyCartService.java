@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service;
+package org.broadleafcommerce.core.order.service.legacy;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -23,11 +23,15 @@ import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-public interface CartService extends OrderService {
-
-    Order createNewCartForCustomer(Customer customer);
-
-    Order findCartForCustomer(Customer customer);
+/**
+ * This legacy interface should no longer be used as of 2.0
+ * 
+ * The new interface and implementation are OrderService and OrderServiceImpl
+ * 
+ * @deprecated
+ */
+@Deprecated
+public interface LegacyCartService extends LegacyOrderService {
 
     Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
     
@@ -53,10 +57,9 @@ public interface CartService extends OrderService {
      * @return the response containing the cart, any items added to the cart,
      *         and any items removed from the cart
      */
-    MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException;
+	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
     
-    MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException;
-
     /**
      * Reconstruct the cart using previous stored state taking into
      * consideration sku activation
@@ -64,10 +67,9 @@ public interface CartService extends OrderService {
      * @return the response containing the cart and any items removed from the
      *         cart
      */
-    ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
+	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
+	public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
     
-    ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
-
     boolean isMoveNamedOrderItems();
 
     void setMoveNamedOrderItems(boolean moveNamedOrderItems);
@@ -76,8 +78,4 @@ public interface CartService extends OrderService {
 
     void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
 
-    /**
-     * @return a shared, static, unmodifiable NullOrder
-     */
-	public Order getNullOrder();
 }

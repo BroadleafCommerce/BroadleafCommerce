@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.controller;
 
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.struts.mock.MockHttpServletResponse;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -33,6 +31,9 @@ import org.springframework.validation.BindingResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 
 import javax.annotation.Resource;
 

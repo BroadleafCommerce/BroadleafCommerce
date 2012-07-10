@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.service;
+package org.broadleafcommerce.openadmin.security;
 
-
+import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 
-public class SandBoxContext {
-	
-	private static final ThreadLocal<SandBoxContext> SANDBOXCONTEXT = new ThreadLocal<SandBoxContext>();
-	
-	public static SandBoxContext getSandBoxContext() {
-		return SANDBOXCONTEXT.get();
-	}
-	
-	public static void setSandBoxContext(SandBoxContext sandBoxContext) {
-		SANDBOXCONTEXT.set(sandBoxContext);
-	}
-	
-	protected AdminUser adminUser;
-	protected Long sandBoxId;
-	protected SandBoxMode sandBoxMode;
+/**
+ * @author Jeff Fischer
+ */
+public class AdminSandBoxContext extends SandBoxContext {
+
+    protected AdminUser adminUser;
+    protected SandBoxMode sandBoxMode;
     protected String sandBoxName;
     protected boolean resetData = false;
     protected boolean isReplay = false;
@@ -47,33 +40,13 @@ public class SandBoxContext {
         this.adminUser = adminUser;
     }
 
-    /**
-	 * @return the sandBoxName
-	 */
-	public Long getSandBoxId() {
-		return sandBoxId;
-	}
-	
-	/**
-	 * @param sandBoxId the sandBoxName to set
-	 */
-	public void setSandBoxId(Long sandBoxId) {
-		this.sandBoxId = sandBoxId;
-	}
+    public SandBoxMode getSandBoxMode() {
+        return sandBoxMode;
+    }
 
-	/**
-	 * @return the sandBoxMode
-	 */
-	public SandBoxMode getSandBoxMode() {
-		return sandBoxMode;
-	}
-
-	/**
-	 * @param sandBoxMode the sandBoxMode to set
-	 */
-	public void setSandBoxMode(SandBoxMode sandBoxMode) {
-		this.sandBoxMode = sandBoxMode;
-	}
+    public void setSandBoxMode(SandBoxMode sandBoxMode) {
+        this.sandBoxMode = sandBoxMode;
+    }
 
     public String getSandBoxName() {
         return sandBoxName;
@@ -81,14 +54,6 @@ public class SandBoxContext {
 
     public void setSandBoxName(String sandBoxName) {
         this.sandBoxName = sandBoxName;
-    }
-
-    public boolean isResetData() {
-        return resetData;
-    }
-
-    public void setResetData(boolean resetData) {
-        this.resetData = resetData;
     }
 
     public boolean isReplay() {
@@ -107,15 +72,25 @@ public class SandBoxContext {
         this.rebuildSandBox = rebuildSandBox;
     }
 
+    public boolean isResetData() {
+        return resetData;
+    }
+
+    public void setResetData(boolean resetData) {
+        this.resetData = resetData;
+    }
+
     public SandBoxContext clone() {
-        SandBoxContext myContext = new SandBoxContext();
+        AdminSandBoxContext myContext = new AdminSandBoxContext();
         myContext.setResetData(isResetData());
         myContext.setAdminUser(getAdminUser());
         myContext.setSandBoxId(getSandBoxId());
+        myContext.setPreviewMode(getPreviewMode());
         myContext.setSandBoxMode(getSandBoxMode());
         myContext.setSandBoxName(getSandBoxName());
         myContext.setReplay(isReplay());
         myContext.setRebuildSandBox(isRebuildSandBox());
+
 
         return myContext;
     }

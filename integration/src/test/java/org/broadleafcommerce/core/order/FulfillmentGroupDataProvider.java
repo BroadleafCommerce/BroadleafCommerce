@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.order;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
-import org.broadleafcommerce.core.pricing.service.module.BandedShippingModule;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.testng.annotations.DataProvider;
 

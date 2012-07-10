@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.profile.web.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddressTest extends CommonSetupBaseTest {
 

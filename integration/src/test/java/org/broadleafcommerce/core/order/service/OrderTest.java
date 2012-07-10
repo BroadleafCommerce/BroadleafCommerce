@@ -16,27 +16,27 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
-import org.broadleafcommerce.core.catalog.domain.*;
-import org.broadleafcommerce.core.order.FulfillmentGroupDataProvider;
-import org.broadleafcommerce.core.order.domain.*;
-import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
-import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.InventoryUnavailableException;
+import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.pricing.ShippingRateDataProvider;
-import org.broadleafcommerce.core.pricing.domain.ShippingRate;
-import org.broadleafcommerce.core.pricing.service.ShippingRateService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
-import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,8 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -53,16 +52,20 @@ public class OrderTest extends OrderBaseTest {
 
     private Long orderId = null;
     private int numOrderItems = 0;
-    private Long fulfillmentGroupId;
     private Long bundleOrderItemId;
 
-    @Resource
+    @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
+    
     @Resource
     private SkuDao skuDao;
-    @Resource
-    private ShippingRateService shippingRateService;
-
+    
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
+    
+    @Resource(name = "blAddItemWorkflow")
+    protected SequenceProcessor addItemWorkflow;
+    
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone" })
     @Transactional
     @Rollback(false)
@@ -70,7 +73,7 @@ public class OrderTest extends OrderBaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
 
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
         assert order != null;
         assert order.getId() != null;
         this.orderId = order.getId();
@@ -83,46 +86,61 @@ public class OrderTest extends OrderBaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
 
-        Order order = cartService.findCartForCustomer(customer);
+        Order order = orderService.findCartForCustomer(customer);
         assert order != null;
         assert order.getId() != null;
         this.orderId = order.getId();
     }
 
-    @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "createSku" })
+    @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "createSku", "testCatalog" })
     @Rollback(false)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void addItemToOrder() throws PricingException {
+    public void addItemToOrder() throws AddToCartException {
         numOrderItems++;
-        Sku sku = skuDao.readFirstSku();
-        Order order = cartService.findOrderById(orderId);
-        assert order != null;
-        assert sku.getId() != null;
-        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
-        itemRequest.setQuantity(1);
-        itemRequest.setSku(sku);
-        DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest);
-        assert item != null;
-        assert item.getQuantity() == numOrderItems;
-        assert item.getSku() != null;
-        assert item.getSku().equals(sku);
-    }
-
-    @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
-    @Rollback(false)
-    @Transactional
-    public void addAnotherItemToOrder() throws PricingException {
-    	numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
-        orderService.setAutomaticallyMergeLikeItems(true);
-
-        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        
+        OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
         itemRequest.setQuantity(1);
-        itemRequest.setSku(sku);
-        DiscreteOrderItem item = (DiscreteOrderItem) orderService.addDiscreteItemToOrder(order, itemRequest, true);
+        itemRequest.setSkuId(sku.getId());
+        order = orderService.addItem(orderId, itemRequest, true);
+        
+        DiscreteOrderItem item = (DiscreteOrderItem) orderService.findLastMatchingItem(order, sku.getId(), null);
+        
+        assert item != null;
+        assert item.getQuantity() == numOrderItems;
+        assert item.getSku() != null;
+        assert item.getSku().equals(sku);
+        
+        assert order.getFulfillmentGroups().size() == 1;
+        
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 1;
+        
+        FulfillmentGroupItem fgItem = fg.getFulfillmentGroupItems().get(0);
+        assert fgItem.getOrderItem().equals(item);
+        assert fgItem.getQuantity() == item.getQuantity();
+    }
+    
+    @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
+    @Rollback(false)
+    @Transactional
+    public void addAnotherItemToOrder() throws AddToCartException {
+        Sku sku = skuDao.readFirstSku();
+        Order order = orderService.findOrderById(orderId);
+        assert order != null;
+        assert sku.getId() != null;
+        orderService.setAutomaticallyMergeLikeItems(true); 
+        
+        OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
+        itemRequest.setQuantity(1);
+        itemRequest.setSkuId(sku.getId());
+        // Note that we are not incrementing the numOrderItems count because it should have gotten merged
+        order = orderService.addItem(orderId, itemRequest, true);
+        DiscreteOrderItem item = (DiscreteOrderItem) orderService.findLastMatchingItem(order, sku.getId(), null);
+        
         assert item.getSku() != null;
         assert item.getSku().equals(sku);
         assert item.getQuantity() == 2;  // item-was merged with prior item.
@@ -131,13 +149,25 @@ public class OrderTest extends OrderBaseTest {
 
         assert(order.getOrderItems().size()==1);
         assert(order.getOrderItems().get(0).getQuantity()==2);
+        
+        assert order.getFulfillmentGroups().size() == 1;
+        
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 1;
+        
+        FulfillmentGroupItem fgItem = fg.getFulfillmentGroupItems().get(0);
+        assert fgItem.getOrderItem().equals(item);
+        assert fgItem.getQuantity() == item.getQuantity();
 
         // re-price the order without automatically merging.
         orderService.setAutomaticallyMergeLikeItems(false);
-        DiscreteOrderItemRequest itemRequest2 = new DiscreteOrderItemRequest();
-        itemRequest2.setQuantity(1);
-        itemRequest2.setSku(sku);
-        DiscreteOrderItem item2 = (DiscreteOrderItem) orderService.addDiscreteItemToOrder(order, itemRequest2, true);
+    	numOrderItems++;
+        
+        itemRequest = new OrderItemRequestDTO();
+        itemRequest.setQuantity(1);
+        itemRequest.setSkuId(sku.getId());
+        order = orderService.addItem(orderId, itemRequest, true);
+        DiscreteOrderItem item2 = (DiscreteOrderItem) orderService.findLastMatchingItem(order, sku.getId(), null);
 
         assert item2.getSku() != null;
         assert item2.getSku().equals(sku);
@@ -148,38 +178,121 @@ public class OrderTest extends OrderBaseTest {
         assert(order.getOrderItems().size()==2);
         assert(order.getOrderItems().get(0).getQuantity()==2);
         assert(order.getOrderItems().get(1).getQuantity()==1);
-
-
+        
+        assert order.getFulfillmentGroups().size() == 1;
+        
+        fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+	        assert fgi.getQuantity() == fgi.getOrderItem().getQuantity();
+        }
     }
-
+    
+    @Test(groups = { "testIllegalAddScenarios" }, dependsOnGroups = { "addItemToOrder" })
+    @Transactional
+    public void testIllegalAddScenarios() throws AddToCartException {
+        Order order = orderService.findOrderById(orderId);
+        assert order != null;
+        
+    	Product activeProduct = addTestProduct("mug", "cups", true);
+    	Product inactiveProduct = addTestProduct("cup", "cups", false);
+    	
+    	// Inactive skus should not be added
+        OrderItemRequestDTO itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(inactiveProduct.getDefaultSku().getId());
+        boolean addSuccessful = true;
+        try {
+        	order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+        	addSuccessful = false;
+        	assert e.getCause() instanceof InventoryUnavailableException;
+        }
+        assert !addSuccessful;
+        
+    	// Products that have SKUs marked as inactive should not be added either
+        itemRequest = new OrderItemRequestDTO().setQuantity(1).setProductId(inactiveProduct.getId());
+        addSuccessful = true;
+        try {
+        	order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+        	addSuccessful = false;
+        	assert e.getCause() instanceof InventoryUnavailableException;
+        }
+        assert !addSuccessful;
+        
+        // Negative quantities are not allowed
+        itemRequest = new OrderItemRequestDTO().setQuantity(-1).setSkuId(activeProduct.getDefaultSku().getId());
+        addSuccessful = true;
+        try {
+        	order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+        	addSuccessful = false;
+        	assert e.getCause() instanceof IllegalArgumentException;
+        }
+        assert !addSuccessful;
+        
+        // Order must exist
+        itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(activeProduct.getDefaultSku().getId());
+        addSuccessful = true;
+        try {
+        	order = orderService.addItem(-1L, itemRequest, true);
+        } catch (AddToCartException e) {
+        	addSuccessful = false;
+        	assert e.getCause() instanceof IllegalArgumentException;
+        }
+        assert !addSuccessful;
+        
+        // If a product is provided, it must exist
+        itemRequest = new OrderItemRequestDTO().setQuantity(1).setProductId(-1L);
+        addSuccessful = true;
+        try {
+        	order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+        	addSuccessful = false;
+        	assert e.getCause() instanceof IllegalArgumentException;
+        }
+        assert !addSuccessful;
+        
+        // The SKU must exist
+        itemRequest = new OrderItemRequestDTO().setQuantity(1).setSkuId(-1L);
+        addSuccessful = true;
+        try {
+        	order = orderService.addItem(orderId, itemRequest, true);
+        } catch (AddToCartException e) {
+        	addSuccessful = false;
+        	assert e.getCause() instanceof IllegalArgumentException;
+        }
+        assert !addSuccessful;
+        
+    }
+    
     @Test(groups = { "addBundleToOrder" }, dependsOnGroups = { "addAnotherItemToOrder" })
     @Rollback(false)
     @Transactional
-    public void addBundleToOrder() throws PricingException {
+    public void addBundleToOrder() throws AddToCartException {
         numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
-
-        BundleOrderItemRequest bundleRequest = new BundleOrderItemRequest();
-        bundleRequest.setQuantity(1);
-        bundleRequest.setName("myBundle");
-        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
-        itemRequest.setQuantity(1);
-        itemRequest.setSku(sku);
-        bundleRequest.getDiscreteOrderItems().add(itemRequest);
-
-        BundleOrderItem item = (BundleOrderItem) orderService.addBundleItemToOrder(order, bundleRequest);
+        
+        ProductBundle bundleItem = addProductBundle();
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setProductId(bundleItem.getId());
+        orderItemRequestDTO.setSkuId(bundleItem.getDefaultSku().getId());
+        orderItemRequestDTO.setQuantity(1);
+        
+    	order = orderService.addItem(order.getId(), orderItemRequestDTO, true);
+    	BundleOrderItem item = (BundleOrderItem) orderService.findLastMatchingItem(order, bundleItem.getDefaultSku().getId(), null);
         bundleOrderItemId = item.getId();
         assert item != null;
         assert item.getQuantity() == 1;
     }
-
+    
     @Test(groups = { "removeBundleFromOrder" }, dependsOnGroups = { "addBundleToOrder" })
     @Rollback(false)
     @Transactional
-    public void removeBundleFromOrder() throws PricingException {
+    public void removeBundleFromOrder() throws RemoveFromCartException {
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() == numOrderItems;
@@ -188,13 +301,12 @@ public class OrderTest extends OrderBaseTest {
         assert bundleOrderItem != null;
         assert bundleOrderItem.getDiscreteOrderItems() != null;
         assert bundleOrderItem.getDiscreteOrderItems().size() == 1;
-        orderService.removeItemFromOrder(order, bundleOrderItem);
-        order = orderService.findOrderById(orderId);
+        order = orderService.removeItem(order.getId(), bundleOrderItem.getId(), true);
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
         assert items.size() == startingSize - 1;
     }
-
+    
     @Test(groups = { "getItemsForOrder" }, dependsOnGroups = { "removeBundleFromOrder" })
     @Transactional
     public void getItemsForOrder() {
@@ -203,205 +315,220 @@ public class OrderTest extends OrderBaseTest {
         assert orderItems != null;
         assert orderItems.size() == numOrderItems - 1;
     }
-
-    @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    
+    @Test(groups = { "testManyToOneFGItemToOrderItem" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void updateItemsInOrder() throws ItemNotFoundException, PricingException {
+    public void testManyToOneFGItemToOrderItem() throws UpdateCartException, RemoveFromCartException, PricingException {
+    	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
-        //item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
-        ((DiscreteOrderItem) item).getSku().setSalePrice(new Money(BigDecimal.valueOf(10000)));
-        ((DiscreteOrderItem) item).getSku().setRetailPrice(new Money(BigDecimal.valueOf(10000)));
-        item.setQuantity(10);
-        orderService.updateItemQuantity(order, item);
+        
+        // Set the quantity of the first OrderItem to 10
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(10);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
         assert updatedItem != null;
-        assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
         assert updatedItem.getQuantity() == 10;
         
-        List<OrderItem> updateItems = new ArrayList<OrderItem> (order.getOrderItems());
-        updateItems.get(0).setQuantity(15);
-        orderService.updateItemQuantity(order, updatedItem);
-        order = orderService.findOrderById(orderId);
-        assert order.getOrderItems().get(0).getQuantity() == 15;
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 1;
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        FulfillmentGroupItem fgItem = null;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		fgItem = fgi;
+        	}
+        }
         
+        assert fgItem != null;
+        
+        // Split one of the fulfillment group items to simulate a OneToMany relationship between
+        // OrderItems and FulfillmentGroupItems
+        FulfillmentGroup secondFg = fulfillmentGroupService.createEmptyFulfillmentGroup();
+        secondFg.setOrder(order);
+        secondFg = fulfillmentGroupService.save(secondFg);
+        fgItem.setQuantity(5);
+        FulfillmentGroupItem clonedFgItem = fgItem.clone();
+        clonedFgItem.setFulfillmentGroup(secondFg);
+        secondFg.addFulfillmentGroupItem(clonedFgItem);
+        order.getFulfillmentGroups().add(secondFg);
+        order = orderService.save(order, false);
+        
+        // Set the quantity of the first OrderItem to 15
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(15);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 15;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 2;
+        int fgItemQuantity = 0;
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	        for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
+	        	if (fgi.getOrderItem().equals(updatedItem)) {
+	        		fgItemQuantity += fgi.getQuantity();
+	        	}
+	        }
+        }
+        assert fgItemQuantity == 15;
+        
+        // Set the quantity of the first OrderItem to 3
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(3);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 3;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 2;
+        boolean fgItemFound = false;
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	        for (FulfillmentGroupItem fgi : fulfillmentGroup.getFulfillmentGroupItems()) {
+	        	if (fgi.getOrderItem().equals(updatedItem)) {
+	        		assert fgItemFound == false;
+	        		assert fgi.getQuantity() == 3;
+	        		fgItemFound = true;
+	        	}
+	        }
+        }
+        assert fgItemFound;
+    }
+
+    @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    @Transactional
+    public void updateItemsInOrder() throws UpdateCartException, RemoveFromCartException {
+    	// Grab the order and the first OrderItem
+        Order order = orderService.findOrderById(orderId);
+        List<OrderItem> orderItems = order.getOrderItems();
+        assert orderItems.size() > 0;
+        OrderItem item = orderItems.get(0);
+        
+        // Set the quantity of the first OrderItem to 10
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(10);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed
+        OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 10;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 1;
+        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        boolean fgItemUpdated = false;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		assert fgi.getQuantity() == 10;
+        		fgItemUpdated = true;
+        	}
+        }
+        assert fgItemUpdated;
+        
+        // Set the quantity of the first OrderItem to 5
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(5);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the quantity has changed - going to a smaller quantity is also ok
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem != null;
+        assert updatedItem.getQuantity() == 5;
+        
+        // Assert that the appropriate fulfillment group item has changed
+        assert order.getFulfillmentGroups().size() == 1;
+        fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == 2;
+        fgItemUpdated = false;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		assert fgi.getQuantity() == 5;
+        		fgItemUpdated = true;
+        	}
+        }
+        assert fgItemUpdated;
+        
+        // Setting the quantity to 0 should in fact remove the item completely
+        int startingSize = order.getOrderItems().size();
+        orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(item.getId());
+        orderItemRequestDTO.setQuantity(0);
+        order = orderService.updateItemQuantity(order.getId(), orderItemRequestDTO, true);
+        
+        // Assert that the item has been removed
+        updatedItem = orderItemService.readOrderItemById(item.getId());
+        assert updatedItem == null;
+        assert order.getOrderItems().size() == startingSize - 1;
+        
+        // Assert that the appropriate fulfillment group item has been removed
+        assert order.getFulfillmentGroups().size() == 1;
+        fg = order.getFulfillmentGroups().get(0);
+        assert fg.getFulfillmentGroupItems().size() == startingSize - 1;
+        boolean fgItemRemoved = true;
+        for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        	if (fgi.getOrderItem().equals(updatedItem)) {
+        		fgItemRemoved = false;
+        	}
+        }
+        assert fgItemRemoved;
     }
 
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
-    public void removeItemFromOrder() throws PricingException {
+    public void removeItemFromOrder() throws RemoveFromCartException {
+    	// Grab the order and the first OrderItem
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         int startingSize = orderItems.size();
         OrderItem item = orderItems.get(0);
+        Long itemId = item.getId();
         assert item != null;
-        orderService.removeItemFromOrder(order, item);
-        order = orderService.findOrderById(orderId);
+        
+        // Remove the item
+        order = orderService.removeItem(order.getId(), item.getId(), true);
         List<OrderItem> items = order.getOrderItems();
+        OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
+        
+        // Assert that the item has been removed
         assert items != null;
         assert items.size() == startingSize - 1;
+        assert updatedItem == null;
     }
 
     @Test(groups = { "checkOrderItems" }, dependsOnGroups = { "removeItemFromOrder" })
     @Transactional
     public void checkOrderItems() throws PricingException {
         Order order = orderService.findOrderById(orderId);
-        //the removal from the previous test was rolled back
+        // The removal from the removeBundleFromOrder() has actually persisted.
+        // However, the previous two transactions were rolled back and thus the items still exist.
         assert order.getOrderItems().size() == 2;
+        
+        // As mentioned, the bundleOrderItem however has gone away
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
         assert bundleOrderItem == null;
     }
 
-    @Test(groups = { "addPaymentToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItems" })
-    @Rollback(false)
-    @Transactional
-    public void addPaymentToOrder(PaymentInfo paymentInfo) {
-        Order order = orderService.findOrderById(orderId);
-        orderService.addPaymentToOrder(order, paymentInfo, null);
-
-        order = orderService.findOrderById(orderId);
-        PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
-        assert payment != null;
-        //assert payment.getId() != null;
-        assert payment.getOrder() != null;
-        assert payment.getOrder().equals(order);
-    }
-
-    @Test(groups = "addFulfillmentGroupToOrderFirst", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrder" })
-    @Rollback(false)
-    @Transactional
-    public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) throws PricingException {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
-        Order order = orderService.findOrderById(orderId);
-
-        fulfillmentGroup.setOrder(order);
-        fulfillmentGroup.setAddress(address);
-        FulfillmentGroup fg = orderService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
-        assert fg != null;
-        assert fg.getId() != null;
-        assert fg.getAddress().equals(fulfillmentGroup.getAddress());
-        assert fg.getOrder().equals(order);
-        assert fg.getMethod().equals(fulfillmentGroup.getMethod());
-        assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
-        this.fulfillmentGroupId = fg.getId();
-    }
-
-    @Test(groups = { "removeFulfillmentGroupFromOrder" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void removeFulfillmentGroupFromOrder() throws PricingException {
-        Order order = orderService.findOrderById(orderId);
-        List<FulfillmentGroup> fgItems = order.getFulfillmentGroups();
-        assert fgItems.size() > 0;
-        int startingSize = fgItems.size();
-        FulfillmentGroup item = fgItems.get(0);
-        assert item != null;
-        orderService.removeFulfillmentGroupFromOrder(order, item);
-        order = orderService.findOrderById(orderId);
-        List<FulfillmentGroup> items = order.getFulfillmentGroups();
-        assert items != null;
-        assert items.size() == startingSize - 1;
-    }
-
-    @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void findFillmentGroupForOrderFirst() {
-        Order order = orderService.findOrderById(orderId);
-        FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
-        assert fg != null;
-        assert fg.getId() != null;
-        FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
-        assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getOrder().equals(order);
-        assert fg.getMethod().equals(fulfillmentGroup.getMethod());
-        assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
-    }
-
-    @Test(groups= {"addItemToFulfillmentGroupSecond"}, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void addItemToFulfillmentgroupSecond() {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
-        Order order = orderService.findOrderById(orderId);
-        List<OrderItem> orderItems = order.getOrderItems();
-        assert(orderItems.size() > 0);
-        FulfillmentGroup newFg = new FulfillmentGroupImpl();
-        newFg.setAddress(address);
-        newFg.setMethod("standard");
-        newFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-        try {
-            newFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
-        } catch (PricingException e) {
-            throw new RuntimeException(e);
-        }
-        order = orderService.findOrderById(orderId);
-        FulfillmentGroup newNewFg = order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(newFg));
-        assert(newNewFg.getFulfillmentGroupItems().size() == 1);
-        assert(newNewFg.getFulfillmentGroupItems().get(0).getOrderItem().equals(orderItems.get(0)));
-
-    }
-
-    /*
-     * @Test(groups = { "removeFulFillmentGroupForOrderFirst" }, dependsOnGroups
-     * = { "findCurrentCartForCustomer",
-     * "addFulfillmentGroupToOrderFirst" }) public void
-     * removeFulFillmentGroupForOrderFirst() { int beforeRemove =
-     * orderService.findFulfillmentGroupsForOrder(order).size();
-     * FulfillmentGroup fulfillmentGroup = entityManager.find(FulfillmentGroupImpl.class,
-     * fulfillmentGroupId); orderService.removeFulfillmentGroupFromOrder(order,
-     * fulfillmentGroup); int afterRemove =
-     * orderService.findFulfillmentGroupsForOrder(order).size(); assert
-     * (beforeRemove - afterRemove) == 1; }
-     */
-    @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void findDefaultFillmentGroupForOrder() {
-        Order order = orderService.findOrderById(orderId);
-        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
-        assert fg != null;
-        assert fg.getId() != null;
-        FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
-        assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getOrder().equals(order);
-        assert fg.getMethod().equals(fulfillmentGroup.getMethod());
-        assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
-    }
-
-    /*
-     * @Test(groups = { "removeDefaultFulFillmentGroupForOrder" },
-     * dependsOnGroups = { "findCurrentCartForCustomer",
-     * "addFulfillmentGroupToOrderFirst" }) public void
-     * removeDefaultFulFillmentGroupForOrder() { int beforeRemove =
-     * orderService.findFulfillmentGroupsForOrder(order).size();
-     * orderService.removeFulfillmentGroupFromOrder(order, fulfillmentGroup);
-     * int afterRemove =
-     * orderService.findFulfillmentGroupsForOrder(order).size(); assert
-     * (beforeRemove - afterRemove) == 1; }
-     */
-    @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
-    @Transactional
-    public void removeItemFromOrderAfterFulfillmentGroups() {
-        Order order = orderService.findOrderById(orderId);
-        List<OrderItem> orderItems = order.getOrderItems();
-        assert orderItems.size() > 0;
-        OrderItem item = orderItems.get(0);
-        assert item != null;
-        try {
-            orderService.removeItemFromOrder(order, item);
-        } catch (PricingException e) {
-            throw new RuntimeException(e);
-        }
-        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
-        for (FulfillmentGroupItem fulfillmentGroupItem : fg.getFulfillmentGroupItems()) {
-            assert !fulfillmentGroupItem.getOrderItem().equals(item);
-        }
-    }
-
+    
     @Test(groups = { "getOrdersForCustomer" }, dependsOnGroups = { "readCustomer", "findCurrentCartForCustomer" })
     @Transactional
     public void getOrdersForCustomer() {
@@ -415,9 +542,9 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "findCartForAnonymousCustomer" }, dependsOnGroups = { "getOrdersForCustomer" })
     public void findCartForAnonymousCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.findCartForCustomer(customer);
+        Order order = orderService.findCartForCustomer(customer);
         assert order == null;
-        order = cartService.createNewCartForCustomer(customer);
+        order = orderService.createNewCartForCustomer(customer);
         Long orderId = order.getId();
         Order newOrder = orderService.findOrderById(orderId);
         assert newOrder != null;
@@ -428,7 +555,7 @@ public class OrderTest extends OrderBaseTest {
     @Transactional
     public void findOrderByOrderNumber() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
         order.setOrderNumber("3456");
         order = orderService.save(order, false);
         Long orderId = order.getId();
@@ -447,7 +574,7 @@ public class OrderTest extends OrderBaseTest {
     @Transactional
     public void findNamedOrderForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
         order.setStatus(OrderStatus.NAMED);
         order.setName("COOL ORDER");
         order = orderService.save(order, false);
@@ -461,15 +588,14 @@ public class OrderTest extends OrderBaseTest {
     @Transactional
     public void testReadOrdersForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
         order.setStatus(OrderStatus.IN_PROCESS);
         order = orderService.save(order, false);
 
         List<Order> newOrders = orderService.findOrdersForCustomer(customer, OrderStatus.IN_PROCESS);
         boolean containsOrder = false;
 
-        if (newOrders.contains(order))
-        {
+        if (newOrders.contains(order)) {
             containsOrder = true;
         }
 
@@ -478,8 +604,7 @@ public class OrderTest extends OrderBaseTest {
         containsOrder = false;
         newOrders = orderService.findOrdersForCustomer(customer, null);
 
-        if (newOrders.contains(order))
-        {
+        if (newOrders.contains(order)) {
             containsOrder = true;
         }
 
@@ -489,7 +614,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "testOrderProperties" }, dependsOnGroups = { "testReadOrdersForCustomer" })
     public void testOrderProperties() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
 
         assert order.getSubTotal() == null;
         assert order.getTotal() == null;
@@ -509,86 +634,53 @@ public class OrderTest extends OrderBaseTest {
         assert order != null;
         assert order.getName().equals("Birthday Order");
         assert order.getCustomer().equals(customer);
+        
+        orderService.cancelOrder(order);
 
-        orderService.removeNamedOrderForCustomer("Birthday Order", customer);
         assert orderService.findOrderById(orderId) == null;
-
     }
 
-    @Test(groups = { "testAddSkuToOrder" })
+    @Test(groups = { "addPaymentToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItems" })
+    @Rollback(false)
     @Transactional
-    public void testAddSkuToOrder() throws PricingException {
-    	Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+    public void addPaymentToOrder(PaymentInfo paymentInfo) {
+        Order order = orderService.findOrderById(orderId);
+        orderService.addPaymentToOrder(order, paymentInfo, null);
 
-        Category category = new CategoryImpl();
-        category.setName("Pants");
-        category = catalogService.saveCategory(category);
-        
-        Calendar activeStartCal = Calendar.getInstance();
-        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-        
-        Sku newDefaultSku = new SkuImpl();
-        newDefaultSku.setName("Leather Pants");
-        newDefaultSku.setRetailPrice(new Money(44.99));
-        newDefaultSku.setActiveStartDate(activeStartCal.getTime());
-        newDefaultSku.setDiscountable(true);
-        newDefaultSku = catalogService.saveSku(newDefaultSku);
-        
-        Product newProduct = new ProductImpl();
-        newProduct.setDefaultCategory(category);
-        newProduct.setDefaultSku(newDefaultSku);
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
-
-        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                newProduct.getId(), category.getId(), null);
-        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                null, category.getId(), 2);
-        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newDefaultSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                null, category.getId(), 2);
-        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                newProduct.getId(), null, 2);
-    	
-        assert orderItem != null;
-        assert skuNullOrderItem == null;
-        assert quantityNullOrderItem == null;
-        assert orderNullOrderItem == null;
-        assert productNullOrderItem != null;
-        assert categoryNullOrderItem != null;
+        order = orderService.findOrderById(orderId);
+        PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
+        assert payment != null;
+        assert payment.getOrder() != null;
+        assert payment.getOrder().equals(order);
     }
 
     @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
     @Transactional
     public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
-        Order order = cartService.createNewCartForCustomer(customer);
-        orderService.addPaymentToOrder(order, info);
+        Order order = orderService.createNewCartForCustomer(customer);
+        orderService.addPaymentToOrder(order, info, null);
 
         boolean foundInfo = false;
         assert order.getPaymentInfos() != null;
-        for (PaymentInfo testInfo : order.getPaymentInfos())
-        {
-            if (testInfo.equals(info))
-            {
+        for (PaymentInfo testInfo : order.getPaymentInfos()) {
+            if (testInfo.equals(info)) {
                 foundInfo = true;
             }
         }
         assert foundInfo == true;
-        assert orderService.readPaymentInfosForOrder(order) != null;
+        assert orderService.findPaymentInfosForOrder(order) != null;
+    }
 
-        //orderService.removeAllPaymentsFromOrder(order);
-        //assert order.getPaymentInfos().size() == 0;
+    @Test
+    public void findCartForNullCustomerId() {
+        assert orderService.findCartForCustomer(new CustomerImpl()) == null;
     }
 
     @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
     public void testSubmitOrder() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
         order.setStatus(OrderStatus.IN_PROCESS);
         order = orderService.save(order, false);
         Long orderId = order.getId();
@@ -602,100 +694,4 @@ public class OrderTest extends OrderBaseTest {
         assert confirmedOrder.getStatus().equals(OrderStatus.SUBMITTED);
     }
 
-    @Test
-    public void findCartForNullCustomerId() {
-        assert cartService.findCartForCustomer(new CustomerImpl()) == null;
-    }
-    
-    @Test(groups = { "testCartAndNamedOrder" })
-    @Transactional
-    public void testCreateNamedOrder() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
-
-        Calendar activeStartCal = Calendar.getInstance();
-        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-        Category category = new CategoryImpl();
-        category.setName("Pants");
-        category.setActiveStartDate(activeStartCal.getTime());
-        category = catalogService.saveCategory(category);
-        
-        Sku newDefaultSku = new SkuImpl();
-        newDefaultSku.setName("Leather Pants");
-        newDefaultSku.setRetailPrice(new Money(44.99));
-        newDefaultSku.setActiveStartDate(activeStartCal.getTime());
-        newDefaultSku.setDiscountable(true);
-        newDefaultSku = catalogService.saveSku(newDefaultSku);
-        
-        Product newProduct = new ProductImpl();
-        newProduct.setDefaultCategory(category);
-        newProduct.setDefaultSku(newDefaultSku);
-        newProduct = catalogService.saveProduct(newProduct);        
-
-        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
-
-        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                newProduct.getId(), category.getId(), null);
-        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                null, category.getId(), 2);
-        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newDefaultSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                null, category.getId(), 2);
-        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newDefaultSku.getId(),
-                newProduct.getId(), null, 2);
-        
-        assert orderItem != null;
-        assert skuNullOrderItem == null;
-        assert quantityNullOrderItem == null;
-        assert orderNullOrderItem == null;
-        assert productNullOrderItem != null;
-        assert categoryNullOrderItem != null;
-    }
-    
-    @Test(groups = { "testOrderFulfillmentGroups" }, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
-    @Transactional
-    public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException, ItemNotFoundException{
-        shippingRate = shippingRateService.save(shippingRate);
-        sr2 = shippingRateService.save(sr2);
-    	Customer customer = createCustomerWithAddresses();
-    	Order order = initializeExistingCart(customer);
-    	CustomerAddress customerAddress = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0);
-    	
-    	FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
-    	
-    	List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
-
-    	for (OrderItem orderItem : order.getOrderItems()) {
-    		FulfillmentGroupItemRequest fgiRequest = new FulfillmentGroupItemRequest();
-    		fgiRequest.setOrderItem(orderItem);
-    		fgiRequest.setQuantity(1);
-    		fgiRequests.add(fgiRequest);
-    	}
-    	
-    	fgRequest.setAddress(customerAddress.getAddress());
-    	fgRequest.setFulfillmentGroupItemRequests(fgiRequests);
-    	fgRequest.setOrder(cartService.findCartForCustomer(customer));
-    	fgRequest.setMethod("standard");
-    	fgRequest.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-    	orderService.addFulfillmentGroupToOrder(fgRequest);
-    	
-    	Order resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 1;
-    	assert resultOrder.getFulfillmentGroups().get(0).getFulfillmentGroupItems().size() == 2;
-    	
-    	orderService.removeAllFulfillmentGroupsFromOrder(order, false);
-    	resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 0;
-    	
-    	FulfillmentGroup defaultFg = orderService.createDefaultFulfillmentGroup(order, customerAddress.getAddress());
-    	defaultFg.setMethod("standard");
-    	defaultFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
-    	assert defaultFg.isPrimary();
-    	orderService.addFulfillmentGroupToOrder(order, defaultFg);
-    	resultOrder = orderService.findOrderById(order.getId());
-    	assert resultOrder.getFulfillmentGroups().size() == 1;
-    }
-    
 }

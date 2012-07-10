@@ -16,15 +16,6 @@
 
 package org.broadleafcommerce.test;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -48,6 +39,15 @@ import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -96,6 +96,7 @@ import org.springframework.util.ReflectionUtils;
  * @see BeforeTransaction
  * @see AfterTransaction
  */
+@SuppressWarnings("deprecation")
 public class MergeTransactionalTestExecutionListener extends AbstractTestExecutionListener {
 
 	private static final Log logger = LogFactory.getLog(MergeTransactionalTestExecutionListener.class);

@@ -82,11 +82,11 @@ public interface CustomerService {
      * Generates an access token and then emails the user.
      *
      * @param userName - the user to send a reset password email to.
-     * @param resetPasswordUrl - Base url to include in the email.
+     * @param forgotPasswordUrl - Base url to include in the email.
      * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
      * 
      */
-    GenericResponse sendResetPasswordNotification(String userName, String resetPasswordUrl);
+    GenericResponse sendForgotPasswordNotification(String userName, String forgotPasswordUrl);
     
     /**
      * Updates the password for the passed in customer only if the passed
@@ -96,8 +96,17 @@ public interface CustomerService {
      * @param token Valid reset token
      * @param password new password
      *
-     * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired, passwordMismatch)
+     * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired)
      */
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
+    
+    /**
+     * Verifies that the passed in token is valid.   
+     * 
+     * Returns responseCodes of "invalidToken", "tokenUsed", and "tokenExpired".
+     * @param token
+     * @return
+     */
+    public GenericResponse checkPasswordResetToken(String token);
 	
 }

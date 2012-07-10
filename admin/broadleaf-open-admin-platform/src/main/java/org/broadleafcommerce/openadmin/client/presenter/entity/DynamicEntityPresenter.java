@@ -45,6 +45,7 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.ResultSet;
 import com.smartgwt.client.rpc.RPCResponse;
 import com.smartgwt.client.types.DSOperationType;
+import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
@@ -79,6 +80,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
     protected HandlerRegistration cellSavedHandlerRegistration;
     protected HandlerRegistration fetchDataHandlerRegistration;
     protected HandlerRegistration saveButtonHandlerRegistration;
+    protected HandlerRegistration showArchivedButtonHandlerRegistration;
     protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 
     protected Boolean disabled = false;
@@ -216,6 +218,18 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
                 display.getListDisplay().getGrid().selectRecord(event.getRecord());
             }
         });
+        showArchivedButtonHandlerRegistration = display.getListDisplay().getShowArchivedButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.isLeftButtonDown()) {
+                    ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).setShowArchived(!((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived());
+                    String title = ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived()?BLCMain.getMessageManager().getString("hideArchivedRecords"):BLCMain.getMessageManager().getString("showArchivedRecords");
+                    display.getListDisplay().getShowArchivedButton().setTitle(title);
+                    ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPersistencePerspective().setShowArchivedFields(((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).isShowArchived());
+                    display.getListDisplay().getGrid().invalidateCache();
+                }
+            }
+        });
     }
 
     protected void saveClicked() {
@@ -255,6 +269,13 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
         if (getDefaultItemId() != null) {
             loadInitialItem();
+        }
+
+        if (display.getListDisplay().getGrid().getDataSource().getField("archiveStatus.archived") != null) {
+            //this must be an archived enabled entity
+            display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.VISIBLE);
+        } else {
+            display.getListDisplay().getShowArchivedButton().setVisibility(Visibility.HIDDEN);
         }
 
         if (BLCMain.MODAL_PROGRESS.isActive()) {

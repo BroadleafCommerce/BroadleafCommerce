@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 the original author or authors.
+ * Copyright 2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,19 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
-import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,117 +39,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Service("blCartService")
-/*
- * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans
- * that are configured via Spring and property files (i.e. payment modules, etc...)
+/**
+ * These methods used to exist in LegacyCartService.
+ * 
+ * @author apazzolini
  */
-@ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
-public class CartServiceImpl extends OrderServiceImpl implements CartService {
+@Service("blMergeCartService")
+public class MergeCartServiceImpl implements MergeCartService {
+    @Resource(name = "blOfferDao")
+    private OfferDao offerDao;
 
-    @Resource(name="blCustomerService")
-    protected CustomerService customerService;
+    @Resource(name = "blOrderService")
+    private OrderService orderService;
+    
+    @Resource(name = "blOrderItemService")
+    private OrderItemService orderItemService;
     
     @Resource(name = "blOfferService")
-    protected OfferService offerService;
-    
-    @Resource(name = "blNullOrderFactory")
-    protected NullOrderFactory nullOrderFactory;
+    private OfferService offerService;
 
-    protected boolean moveNamedOrderItems = true;
-    protected boolean deleteEmptyNamedOrders = true;
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
-    public Order createNewCartForCustomer(Customer customer) {
-        return orderDao.createNewCartForCustomer(customer);
-    }
-    
-    public Order getNullOrder() {
-    	return nullOrderFactory.getNullOrder();
-    }
-
-    public Order findCartForCustomer(Customer customer) {
-        return orderDao.readCartForCustomer(customer);
-    }
-    
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-    	return addAllItemsToCartFromNamedOrder(namedOrder, true);
-    }
-
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
-        if (cartOrder == null) {
-            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
-        }
-        List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
-        for (int i = 0; i < items.size(); i++) {
-			OrderItem orderItem = items.get(i);
-
-            // only run pricing routines on the last item.
-            boolean shouldPriceOrder = (priceOrder && (i == items.size() -1));
-			if (moveNamedOrderItems) {
-				moveItemToOrder(namedOrder, cartOrder, orderItem, shouldPriceOrder);
-			} else {
-				addOrderItemToOrder(cartOrder, orderItem, shouldPriceOrder);
-			}
-			
-		}
-        return cartOrder;
-    }
-    
-    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException {
-    	return moveItemToCartFromNamedOrder(customerId, orderName, orderItemId, quantity, true);
-    }
-
-    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException {
-        Order wishlistOrder = findNamedOrderForCustomer(orderName, customerService.createCustomerFromId(customerId));
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
-        orderItem.setQuantity(quantity);
-        return moveItemToCartFromNamedOrder(wishlistOrder, orderItem, priceOrder);
-    }
-    
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
-    	return moveItemToCartFromNamedOrder(namedOrder, orderItem, true);
-    }
-
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws PricingException {
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
-        if (cartOrder == null) {
-            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
-        }
-        if (moveNamedOrderItems) {
-            moveItemToOrder(namedOrder, cartOrder, orderItem, priceOrder);
-            if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
-                cancelOrder(namedOrder);
-            }
-        } else {
-        	orderItem = addOrderItemToOrder(cartOrder, orderItem, priceOrder);
-        }
-        
-        return orderItem;
-    }
-    
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-    	return moveAllItemsToCartFromNamedOrder(namedOrder, true);
-    }
-
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
-        Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder, priceOrder);
-        if (deleteEmptyNamedOrders) {
-            cancelOrder(namedOrder);
-        }
-        return cartOrder;
-    }
-
+    @Override
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
     	return mergeCart(customer, anonymousCart, true);
     }
+
+    @Override
+    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
+    	return reconstructCart(customer, true);
+    }
     
-    /*
-     * (non-Javadoc)
-     * @seeorg.broadleafcommerce.core.order.service.OrderService#mergeCart(org.
-     * broadleafcommerce.profile.domain.Customer, java.lang.Long)
-     */
-    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
+	@Override
+	public MergeCartResponse mergeCart(Customer customer, Order anonymousCart, boolean priceOrder) throws PricingException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         // reconstruct cart items (make sure they are valid)
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer, false);
@@ -177,7 +97,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
                 if (customerCart == null) {
-                    customerCart = createNewCartForCustomer(customer);
+                    customerCart = orderService.createNewCartForCustomer(customer);
                 }
                 Map<OrderItem, OrderItem> oldNewItemMap = new HashMap<OrderItem, OrderItem>();
                 customerCart = mergeRegularOrderItems(anonymousCart, mergeCartResponse, customerCart, oldNewItemMap);
@@ -185,13 +105,83 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                 customerCart = removeExpiredGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
                 customerCart = mergeGiftWrapOrderItems(mergeCartResponse, customerCart, oldNewItemMap);
 
-                customerCart = save(customerCart, priceOrder);
-                cancelOrder(anonymousCart);
+                customerCart = orderService.save(customerCart, priceOrder);
+                orderService.cancelOrder(anonymousCart);
             }
         }
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
-    }
+	}
+	
+	@Override
+	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
+		ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
+		Order customerCart = orderService.findCartForCustomer(customer);
+		if (customerCart != null) {
+			List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
+			for (OrderItem orderItem : customerCart.getOrderItems()) {
+				 if (orderItem instanceof DiscreteOrderItem) {
+					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+                    if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                        if (!discreteOrderItem.getSku().isActive(
+                                discreteOrderItem.getProduct(),
+                                orderItem.getCategory())) {
+                            itemsToRemove.add(orderItem);
+                        }
+                    } else {
+                        if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                            itemsToRemove.add(orderItem);
+                        }
+                    }
+				} else if (orderItem instanceof BundleOrderItem) {
+					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+					boolean removeBundle = false;
+					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
+							.getDiscreteOrderItems()) {
+                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
+                            if (!discreteOrderItem.getSku().isActive(
+                                    discreteOrderItem.getProduct(),
+                                    orderItem.getCategory())) {
+                                /*
+                                 * Bundle has an inactive item in it -- remove the
+                                 * whole bundle
+                                 */
+                                removeBundle = true;
+                                break;
+                            }
+                        } else {
+                            if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
+                                removeBundle = true;
+                                break;
+                            }
+                        }
+					}
+					if (removeBundle) {
+						itemsToRemove.add(orderItem);
+					}
+				}
+			}
+
+            //Remove any giftwrap items who have one or more wrapped item members that have been removed
+            for (OrderItem orderItem : customerCart.getOrderItems()) {
+                if (orderItem instanceof GiftWrapOrderItem) {
+                    for (OrderItem wrappedItem : ((GiftWrapOrderItem) orderItem).getWrappedItems()) {
+                        if (itemsToRemove.contains(wrappedItem)) {
+                            itemsToRemove.add(orderItem);
+                            break;
+                        }
+                    }
+                }
+            }
+
+			for (OrderItem item : itemsToRemove) {
+				removeItemFromOrder(customerCart, item, priceOrder);
+			}
+			reconstructCartResponse.setRemovedItems(itemsToRemove);
+		}
+		reconstructCartResponse.setOrder(customerCart);
+		return reconstructCartResponse;
+	}
 
     protected Order mergeGiftWrapOrderItems(MergeCartResponse mergeCartResponse, Order customerCart, Map<OrderItem, OrderItem> oldNewItemMap) throws PricingException {
         //update any remaining gift wrap items with their cloned wrapped item values, instead of the originals
@@ -403,102 +393,22 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return customerCart;
     }
 
-    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-    	return reconstructCart(customer, true);
+    protected OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, Boolean priceOrder) throws PricingException {
+        List<OrderItem> orderItems = order.getOrderItems();
+        newOrderItem.setOrder(order);
+        newOrderItem = orderItemService.saveOrderItem(newOrderItem);
+        orderItems.add(newOrderItem);
+        order = orderService.save(order, priceOrder);
+        return newOrderItem;
     }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.core.order.service.OrderService#reconstructCart(org.
-     * broadleafcommerce.profile.domain.Customer)
-     */
-	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
-		ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-		Order customerCart = findCartForCustomer(customer);
-		if (customerCart != null) {
-			List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
-			for (OrderItem orderItem : customerCart.getOrderItems()) {
-				 if (orderItem instanceof DiscreteOrderItem) {
-					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                    if (discreteOrderItem.getSku().getActiveStartDate() != null) {
-                        if (!discreteOrderItem.getSku().isActive(
-                                discreteOrderItem.getProduct(),
-                                orderItem.getCategory())) {
-                            itemsToRemove.add(orderItem);
-                        }
-                    } else {
-                        if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
-                            itemsToRemove.add(orderItem);
-                        }
-                    }
-				} else if (orderItem instanceof BundleOrderItem) {
-					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-					boolean removeBundle = false;
-					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
-							.getDiscreteOrderItems()) {
-                        if (discreteOrderItem.getSku().getActiveStartDate() != null) {
-                            if (!discreteOrderItem.getSku().isActive(
-                                    discreteOrderItem.getProduct(),
-                                    orderItem.getCategory())) {
-                                /*
-                                 * Bundle has an inactive item in it -- remove the
-                                 * whole bundle
-                                 */
-                                removeBundle = true;
-                                break;
-                            }
-                        } else {
-                            if (!discreteOrderItem.getProduct().isActive() || !orderItem.getCategory().isActive()) {
-                                removeBundle = true;
-                                break;
-                            }
-                        }
-					}
-					if (removeBundle) {
-						itemsToRemove.add(orderItem);
-					}
-				}
-			}
-
-            //Remove any giftwrap items who have one or more wrapped item members that have been removed
-            for (OrderItem orderItem : customerCart.getOrderItems()) {
-                if (orderItem instanceof GiftWrapOrderItem) {
-                    for (OrderItem wrappedItem : ((GiftWrapOrderItem) orderItem).getWrappedItems()) {
-                        if (itemsToRemove.contains(wrappedItem)) {
-                            itemsToRemove.add(orderItem);
-                            break;
-                        }
-                    }
-                }
-            }
-
-			for (OrderItem item : itemsToRemove) {
-				removeItemFromOrder(customerCart, item, priceOrder);
-			}
-			reconstructCartResponse.setRemovedItems(itemsToRemove);
-		}
-		reconstructCartResponse.setOrder(customerCart);
-		return reconstructCartResponse;
-	}
-
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
-    public boolean isMoveNamedOrderItems() {
-        return moveNamedOrderItems;
+    
+    protected Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException {
+        fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, item);
+        OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
+        itemFromOrder.setOrder(null);
+        orderItemService.delete(itemFromOrder);
+        order = orderService.save(order, priceOrder);
+        return order;
     }
-
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
-    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
-        this.moveNamedOrderItems = moveNamedOrderItems;
-    }
-
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public boolean isDeleteEmptyNamedOrders() {
-        return deleteEmptyNamedOrders;
-    }
-
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
-        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
-    }
+	
 }

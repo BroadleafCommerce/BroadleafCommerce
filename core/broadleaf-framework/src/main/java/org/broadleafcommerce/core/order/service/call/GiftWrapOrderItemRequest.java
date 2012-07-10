@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.core.order.domain.OrderItem;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public class GiftWrapOrderItemRequest extends DiscreteOrderItemRequest {
 

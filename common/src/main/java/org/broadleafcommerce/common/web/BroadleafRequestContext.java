@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class BroadleafRequestContext {
 	
-	private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();
+	private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();	
 	
 	public static BroadleafRequestContext getBroadleafRequestContext() {
 		return BROADLEAF_REQUEST_CONTEXT.get();
@@ -44,6 +44,7 @@ public class BroadleafRequestContext {
     private Locale locale;
     private Site site;
     private Theme theme;
+    public java.util.Locale javaLocale;
 
     public HttpServletRequest getRequest() {
         return request;
@@ -80,9 +81,21 @@ public class BroadleafRequestContext {
     public Locale getLocale() {
         return locale;
     }
+    
+    /**
+     * Returns the java.util.Locale constructed from the org.broadleafcommerce.common.locale.domain.Locale.
+     * @return
+     */
+    public java.util.Locale getJavaLocale() {
+    	if (this.javaLocale == null) {
+    		this.javaLocale = convertLocaleToJavaLocale();
+    	}
+    	return this.javaLocale;
+    }
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+        this.javaLocale = convertLocaleToJavaLocale();
     }
 
     public String getRequestURIWithoutContext() {
@@ -90,6 +103,23 @@ public class BroadleafRequestContext {
     		return request.getRequestURI().substring(request.getContextPath().length());
     	} else {
     		return request.getRequestURI();
+    	}
+    }
+    
+    private java.util.Locale convertLocaleToJavaLocale() {    	
+    	if (locale == null || locale.getLocaleCode() == null) {
+    		return null;
+        } else {
+        	String localeString = locale.getLocaleCode();
+	        String[] components = localeString.split("_");
+        	if (components.length == 1) {
+        		return new java.util.Locale(components[0]);
+        	} else if (components.length == 2) {
+        		return new java.util.Locale(components[0], components[1]);
+        	} else if (components.length == 3) {
+        		return new java.util.Locale(components[0], components[1], components[2]);
+        	}
+    		return null;	    	
     	}
     }
     

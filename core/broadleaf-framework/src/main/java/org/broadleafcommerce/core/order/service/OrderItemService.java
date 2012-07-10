@@ -24,12 +24,23 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 
 import java.util.HashMap;
 
 public interface OrderItemService {
+	
+    public OrderItem readOrderItemById(Long orderItemId);
+
+    public OrderItem saveOrderItem(OrderItem orderItem);
+    
+    public void delete(OrderItem item);
+    
+    public PersonalMessage createPersonalMessage();
 
     public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest);
+    
+    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
 
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest);
 
@@ -44,14 +55,7 @@ public interface OrderItemService {
      */
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
 
-    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
+	public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
 
-    public OrderItem readOrderItemById(Long orderItemId);
-
-    public void delete(OrderItem item);
-
-    public OrderItem saveOrderItem(OrderItem orderItem);
-    
-    public PersonalMessage createPersonalMessage();
 
 }

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+@SuppressWarnings("deprecation")
 public class MergeDependencyInjectionTestExecutionListener extends DependencyInjectionTestExecutionListener {
 
 	@Override

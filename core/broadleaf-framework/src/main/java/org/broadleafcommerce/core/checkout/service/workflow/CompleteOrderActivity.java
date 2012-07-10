@@ -16,17 +16,11 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
-
 public class CompleteOrderActivity extends BaseActivity {
-
-    @Resource(name="blCartService")
-    private CartService cartService;
 
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();

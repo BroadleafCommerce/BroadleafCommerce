@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 
 import javax.annotation.Resource;
 
@@ -31,8 +31,8 @@ import javax.annotation.Resource;
  */
 public abstract class AbstractAccountController extends BroadleafAbstractController {
 	
-    @Resource(name="blCartService")
-    protected CartService cartService;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
 
 
 }

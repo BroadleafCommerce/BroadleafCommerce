@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
@@ -27,14 +32,16 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
+import org.broadleafcommerce.core.order.service.call.AbstractOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +62,15 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemDao.saveOrderItem(orderItem);
     }
     
-    protected void populateDiscreteOrderItem(DiscreteOrderItem item, OrderItemRequest itemRequest) {
+    public void delete(final OrderItem item) {
+        orderItemDao.delete(item);
+    }
+    
+    public PersonalMessage createPersonalMessage() {
+        return orderItemDao.createPersonalMessage();
+    }
+    
+    protected void populateDiscreteOrderItem(DiscreteOrderItem item, AbstractOrderItemRequest itemRequest) {
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
@@ -79,6 +94,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         populateDiscreteOrderItem(item, itemRequest);
+        
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
@@ -88,12 +104,13 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         item.updatePrices();
         item.assignFinalPrice();
+        
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
     }
 
-    public DiscreteOrderItem createDiscreteOrderItem(final OrderItemRequest itemRequest) {
+    public DiscreteOrderItem createDiscreteOrderItem(final AbstractOrderItemRequest itemRequest) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         populateDiscreteOrderItem(item, itemRequest);
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
@@ -166,12 +183,48 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         return item;
     }
-
-    public void delete(final OrderItem item) {
-        orderItemDao.delete(item);
-    }
     
-    public PersonalMessage createPersonalMessage() {
-        return orderItemDao.createPersonalMessage();
+    @Override
+    public BundleOrderItem createBundleOrderItem(final ProductBundleOrderItemRequest itemRequest) {
+    	ProductBundle productBundle = itemRequest.getProductBundle();
+        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
+        bundleOrderItem.setQuantity(itemRequest.getQuantity());
+        bundleOrderItem.setCategory(itemRequest.getCategory());
+        bundleOrderItem.setSku(itemRequest.getSku());
+        bundleOrderItem.setName(itemRequest.getName());
+        bundleOrderItem.setProductBundle(productBundle);
+
+        for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
+            Product bundleProduct = skuBundleItem.getBundle();
+            Sku bundleSku = skuBundleItem.getSku();
+
+	        Category bundleCategory = null;
+	        if (itemRequest.getCategory() != null) {
+	            bundleCategory = itemRequest.getCategory();
+	        } 
+	
+	        if (bundleCategory == null && bundleProduct != null) {
+	            bundleCategory = bundleProduct.getDefaultCategory();
+	        }
+
+	        DiscreteOrderItemRequest bundleItemRequest = new DiscreteOrderItemRequest();
+	        bundleItemRequest.setCategory(bundleCategory);
+	        bundleItemRequest.setProduct(bundleProduct);
+	        bundleItemRequest.setQuantity(skuBundleItem.getQuantity());
+	        bundleItemRequest.setSku(bundleSku);
+	        bundleItemRequest.setItemAttributes(itemRequest.getItemAttributes());
+            
+            DiscreteOrderItem bundleDiscreteItem = createDiscreteOrderItem(bundleItemRequest);
+            bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
+            bundleDiscreteItem.setBundleOrderItem(bundleOrderItem);
+            bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
+        }
+
+        bundleOrderItem.updatePrices();
+        bundleOrderItem.assignFinalPrice();
+        
+        bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
+        return bundleOrderItem;
     }
+
 }

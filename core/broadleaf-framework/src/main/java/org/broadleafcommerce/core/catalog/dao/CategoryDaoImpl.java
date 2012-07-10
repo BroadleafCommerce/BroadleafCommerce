@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -29,7 +30,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import java.util.Date;
 import java.util.List;
 
@@ -182,10 +182,12 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public void delete(Category category) {
-        if (!em.contains(category)) {
-            category = readCategoryById(category.getId());
-        }
-        em.remove(category);
+//        if (!em.contains(category)) {
+//            category = readCategoryById(category.getId());
+//        }
+//        em.remove(category);
+        ((Status) category).setArchived('Y');
+        em.merge(category);
     }
 
     @Override

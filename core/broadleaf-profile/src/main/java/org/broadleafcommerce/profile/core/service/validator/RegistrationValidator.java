@@ -21,9 +21,10 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
 
 @Component("blRegistrationValidator")
-public class RegistrationValidator {
+public class RegistrationValidator implements Validator {
 
     public static final String DEFAULT_VALID_NAME_REGEX = "[A-Za-z'. ]{1,80}";
 
@@ -44,7 +45,7 @@ public class RegistrationValidator {
 
         if (errors.hasErrors()){
             if (!passwordConfirm.equals(password)) {
-                errors.rejectValue("passwordConfirm", "invalid");
+                errors.rejectValue("passwordConfirm", "invalid"); 
             }
             if (!customer.getFirstName().matches(validNameRegex)) {
                 errors.rejectValue("firstName", "firstName.invalid", null, null);
@@ -83,4 +84,13 @@ public class RegistrationValidator {
     public void setValidPasswordRegex(String validPasswordRegex) {
         this.validPasswordRegex = validPasswordRegex;
     }
+
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return false;
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+	}
 }

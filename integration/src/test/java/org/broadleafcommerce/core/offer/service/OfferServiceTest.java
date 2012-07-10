@@ -33,8 +33,8 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.CartService;
 import org.broadleafcommerce.core.order.service.OrderItemService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
@@ -54,23 +54,23 @@ import java.util.List;
 public class OfferServiceTest extends CommonSetupBaseTest {
 
     @Resource
-    OfferService offerService;
+    protected OfferService offerService;
+
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
 
     @Resource
-    CartService cartService;
+    protected CustomerService customerService;
 
     @Resource
-    CustomerService customerService;
+    protected CatalogService catalogService;
 
-    @Resource
-    CatalogService catalogService;
-
-    @Resource
-    OrderItemService orderItemService;
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
     private Order createTestOrderWithOfferAndGiftWrap() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
+        Order order = orderService.createNewCartForCustomer(customer);
 
         customerService.saveCustomer(order.getCustomer());
 
@@ -186,6 +186,11 @@ public class OfferServiceTest extends CommonSetupBaseTest {
     @Test(groups =  {"testOffersWithGiftWrap"}, dependsOnGroups = { "testShippingInsert"})
     @Transactional
     public void testOrderItemOfferWithGiftWrap() throws PricingException {
+    	offerService.getOrderOfferProcessor().setOrderItemService(orderItemService);
+    	offerService.getItemOfferProcessor().setOrderItemService(orderItemService);
+    	offerService.getOrderOfferProcessor().setOrderService(orderService);
+    	offerService.getItemOfferProcessor().setOrderService(orderService);
+    	
         Order order = createTestOrderWithOfferAndGiftWrap();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(
@@ -204,7 +209,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
             offerService.save(offer);
         }
-        order = cartService.save(order, true);
+        order = orderService.save(order, true);
 
         assert order.getOrderItems().size() == 4;
         assert order.getTotalTax().equals(new Money("2.00"));

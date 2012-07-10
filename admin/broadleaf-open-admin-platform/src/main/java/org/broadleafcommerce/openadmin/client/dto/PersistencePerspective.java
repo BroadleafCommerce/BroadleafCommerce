@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 
 /**
@@ -42,6 +42,7 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 	protected String[] excludeFields = new String[]{};
 	protected String[] includeFields = new String[]{};
     protected String configurationKey;
+    protected Boolean showArchivedFields = false;
 	
 	public PersistencePerspective() {
 	}
@@ -182,5 +183,13 @@ public class PersistencePerspective implements IsSerializable, Serializable {
 
     public void setConfigurationKey(String configurationKey) {
         this.configurationKey = configurationKey;
+    }
+
+    public Boolean getShowArchivedFields() {
+        return showArchivedFields;
+    }
+
+    public void setShowArchivedFields(Boolean showArchivedFields) {
+        this.showArchivedFields = showArchivedFields;
     }
 }

@@ -38,4 +38,6 @@ public interface DynamicEntityListDisplay {
 	
 	public abstract ToolStrip getToolBar();
 
+    public abstract ToolStripButton getShowArchivedButton();
+
 }

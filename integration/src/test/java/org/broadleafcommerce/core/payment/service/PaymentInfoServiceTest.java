@@ -16,15 +16,10 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.service.PaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -36,6 +31,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
+import javax.annotation.Resource;
+
+import java.util.List;
+
 public class PaymentInfoServiceTest extends BaseTest {
 
     String userName = new String();
@@ -44,8 +43,8 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Resource
     private PaymentInfoService paymentInfoService;
 
-    @Resource
-    private CartService cartService;
+    @Resource(name = "blOrderService")
+    private OrderService orderService;
 
     @Resource
     private CustomerAddressDao customerAddressDao;
@@ -63,7 +62,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         Address address = null;
         if (!addresses.isEmpty())
             address = addresses.get(0).getAddress();
-        Order salesOrder = cartService.createNewCartForCustomer(customer);
+        Order salesOrder = orderService.createNewCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);
@@ -100,7 +99,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         Address address = null;
         if (!addresses.isEmpty())
             address = addresses.get(0).getAddress();
-        Order salesOrder = cartService.findCartForCustomer(customer);
+        Order salesOrder = orderService.findCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);

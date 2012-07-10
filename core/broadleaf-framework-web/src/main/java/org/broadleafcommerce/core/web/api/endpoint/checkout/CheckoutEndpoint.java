@@ -19,17 +19,19 @@ package org.broadleafcommerce.core.web.api.endpoint.checkout;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.CartService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.*;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.CompositePaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.web.api.wrapper.*;
+import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.BeansException;
@@ -40,11 +42,20 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JAXRS endpoint for exposing the checkout process as a set of RESTful services.
@@ -67,11 +78,8 @@ public class CheckoutEndpoint implements ApplicationContextAware {
     @Resource(name="blCompositePaymentService")
     protected CompositePaymentService compositePaymentService;
 
-    @Resource(name="blCartService")
-    protected CartService cartService;
-
-    @Resource(name="blCustomerState")
-    protected CustomerState customerState;
+    @Resource(name="blOrderService")
+    protected OrderService orderService;
 
     protected ApplicationContext context;
 
@@ -85,10 +93,10 @@ public class CheckoutEndpoint implements ApplicationContextAware {
     //This should only be called for modules that need to engage the workflow directly without doing a complete checkout.
     //e.g. PayPal for doing an authorize and retrieving the redirect: url to PayPal
     public PaymentResponseItemWrapper executePayment(@Context HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
                         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
@@ -115,10 +123,10 @@ public class CheckoutEndpoint implements ApplicationContextAware {
 
     @POST
     public OrderWrapper performCheckout(@Context HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
-        Customer customer = customerState.getCustomer(request);
+        Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
-            Order cart = cartService.findCartForCustomer(customer);
+            Order cart = orderService.findCartForCustomer(customer);
             if (cart != null) {
                 try {
                     if (mapWrappers != null && !mapWrappers.isEmpty()) {
@@ -148,7 +156,7 @@ public class CheckoutEndpoint implements ApplicationContextAware {
                     cart.setStatus(OrderStatus.IN_PROCESS);
 
                     try {
-                        cartService.save(cart, false);
+                        orderService.save(cart, false);
                     } catch (PricingException e1) {
                         throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
                     }

@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.security.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.security.service.dataprovider.AdminUserDataProvider;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
 
 public class AdminUserTest extends BaseTest {
     @Resource
