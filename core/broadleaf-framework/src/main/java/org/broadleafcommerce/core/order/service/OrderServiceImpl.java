@@ -46,16 +46,20 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author apazzolini
  */
 @Service("blOrderService")
+@ManagedResource(objectName="org.broadleafcommerce:name=OrderService", description="Order Service", currencyTimeLimit=15)
 public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 	
@@ -258,11 +262,105 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
+	
 	@Override
     public Order confirmOrder(Order order) {
         return orderDao.submitOrder(order);
     }
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+    protected boolean moveNamedOrderItems = true;
+    protected boolean deleteEmptyNamedOrders = true;
+    
+    @Override
+    public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        if (cartOrder == null) {
+            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+        }
+        List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
+        for (OrderItem item : items) {
+        	if (moveNamedOrderItems) {
+        		removeItem(namedOrder.getId(), item.getId(), false);
+        	}
+        	
+        	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+        	cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+        }
+        
+        if (deleteEmptyNamedOrders) {
+            cancelOrder(namedOrder);
+        }
+        
+        return cartOrder;
+    }
+    
+    @Override
+    public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        if (cartOrder == null) {
+            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+        }
+        
+    	if (moveNamedOrderItems) {
+    		removeItem(namedOrder.getId(), item.getId(), false);
+    	}
+        	
+    	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+    	cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+    	
+        if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
+            cancelOrder(namedOrder);
+        }
+        	
+        return cartOrder;
+    }
+	
+    @Override
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    public boolean isMoveNamedOrderItems() {
+        return moveNamedOrderItems;
+    }
+
+    @Override
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
+        this.moveNamedOrderItems = moveNamedOrderItems;
+    }
+
+    @Override
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    public boolean isDeleteEmptyNamedOrders() {
+        return deleteEmptyNamedOrders;
+    }
+
+    @Override
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
+        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	@Override
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
@@ -315,8 +413,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	/**
-	 * This method will return the exception that is immediately below the deepest WorkflowException
-	 * in the current stack trace.
+	 * This method will return the exception that is immediately below the deepest 
+	 * WorkflowException in the current stack trace.
 	 * 
 	 * @param e the workflow exception that contains the requested root cause
 	 * @return the root cause of the workflow exception

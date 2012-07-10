@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.call.AbstractOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
@@ -225,6 +226,21 @@ public class OrderItemServiceImpl implements OrderItemService {
         
         bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
         return bundleOrderItem;
+    }
+    
+    @Override
+    public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
+    	OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO()
+    		.setQuantity(item.getQuantity())
+    		.setSkuId(((DiscreteOrderItem) item).getSku().getId());
+    	if (item.getCategory() != null) {
+    		orderItemRequest.setCategoryId(item.getCategory().getId());
+    	}
+    	if (((DiscreteOrderItem) item).getProduct() != null) {
+    		orderItemRequest.setProductId(((DiscreteOrderItem) item).getProduct().getId());
+    	}
+    	
+    	return orderItemRequest;
     }
 
 }

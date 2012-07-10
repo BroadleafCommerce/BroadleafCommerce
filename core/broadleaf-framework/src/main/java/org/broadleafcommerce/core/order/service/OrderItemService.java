@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 
 import java.util.HashMap;
@@ -56,6 +57,16 @@ public interface OrderItemService {
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
 
 	public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
+
+	/**
+	 * Creates an OrderItemRequestDTO object that most closely resembles the given OrderItem.
+	 * That is, it will copy the SKU and quantity and attempt to copy the product and category
+	 * if they exist.
+	 * 
+	 * @param item the item to copy
+	 * @return the OrderItemRequestDTO that mirrors the item
+	 */
+	public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item);
 
 
 }

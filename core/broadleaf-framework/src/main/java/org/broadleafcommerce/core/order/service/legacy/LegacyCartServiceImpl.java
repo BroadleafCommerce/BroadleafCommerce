@@ -28,8 +28,6 @@ import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -50,14 +48,10 @@ import java.util.List;
  */
 @Deprecated
 @Service("blLegacyCartService")
-@ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
 public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements LegacyCartService {
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
-    
-    protected boolean moveNamedOrderItems = true;
-    protected boolean deleteEmptyNamedOrders = true;
 
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
     	return addAllItemsToCartFromNamedOrder(namedOrder, true);
@@ -144,26 +138,6 @@ public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements Leg
 		return mergeCartService.reconstructCart(customer, priceOrder);
 	}
 
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
-    public boolean isMoveNamedOrderItems() {
-        return moveNamedOrderItems;
-    }
-
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
-    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
-        this.moveNamedOrderItems = moveNamedOrderItems;
-    }
-
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public boolean isDeleteEmptyNamedOrders() {
-        return deleteEmptyNamedOrders;
-    }
-
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
-        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
-    }
-    
 	@Override
 	public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
 		try {

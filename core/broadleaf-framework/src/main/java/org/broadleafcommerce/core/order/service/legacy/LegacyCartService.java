@@ -69,13 +69,5 @@ public interface LegacyCartService extends LegacyOrderService {
      */
 	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
 	public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
-    
-    boolean isMoveNamedOrderItems();
-
-    void setMoveNamedOrderItems(boolean moveNamedOrderItems);
-
-    boolean isDeleteEmptyNamedOrders();
-
-    void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
 
 }

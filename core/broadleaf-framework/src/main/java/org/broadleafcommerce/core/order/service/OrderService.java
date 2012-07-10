@@ -329,4 +329,72 @@ public interface OrderService {
      */
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
 	
+	/**
+	 * @see #setMoveNamedOrderItems(boolean)
+	 * @return whether items will be removed from the wishlist when added to the cart
+	 */
+    public boolean isMoveNamedOrderItems();
+
+    /**
+     * Determines whether or not items will be removed from the named order (wishlist)
+     * when they are moved to the Customer's current cart.
+     * 
+     * @param moveNamedOrderItems
+     */
+    public void setMoveNamedOrderItems(boolean moveNamedOrderItems);
+
+    /**
+     * @see #setDeleteEmptyNamedOrders(boolean)
+     * @return whether empty wishlists will be deleted automatically
+     */
+    public boolean isDeleteEmptyNamedOrders();
+
+    /**
+     * Sets whether or not to delete named orders once all items have been removed.
+     * 
+     * @param deleteEmptyNamedOrders
+     */
+    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
+
+    /**
+     * Adds the passed in orderItem to the current cart for the same Customer that owns the
+     * named order. This method will remove the item from the wishlist based on whether the 
+     * {@link setMoveNamedOrderItems} flag is set.
+     * 
+     * Note that if an item was in a wishlist and is no longer able to be added to the cart,
+     * the item will still be removed from the wishlist.
+     * 
+     * Note that this method does not change the association of the OrderItems to the new
+     * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
+     * it is created.
+     * 
+     * @param namedOrder 
+     * @param orderItem 
+     * @param priceOrder 
+     * @return the cart with the requested orderItem added to it
+     * @throws RemoveFromCartException
+     * @throws AddToCartException
+     */
+	public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+
+	/**
+	 * Adds all orderItems to the current cart from the same Customer that owns the named
+	 * order. This method will remove the item from the wishlist based on whether the 
+     * {@link setMoveNamedOrderItems} flag is set.
+     * 
+     * Note that any items that are in the wishlist but are no longer able to be added to a cart
+     * will still be removed from the wishlist.
+     * 
+     * Note that this method does not change the association of the OrderItems to the new
+     * order -- instead, those OrderItems is completely removed and a new OrderItem that mirrors
+     * it is created.
+     * 
+	 * @param namedOrder
+	 * @param priceOrder
+	 * @return
+	 * @throws RemoveFromCartException
+	 * @throws AddToCartException
+	 */
+	public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+	
 }
