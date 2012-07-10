@@ -328,6 +328,5 @@ public interface OrderService {
      * @throws RemoveFromCartException 
      */
 	public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException;
-
-
+	
 }

@@ -313,4 +313,28 @@ public class OrderServiceImpl implements OrderService {
     		throw new RemoveFromCartException("Could not remove from cart", e.getCause());
     	}
 	}
+	
+	/**
+	 * This method will return the exception that is immediately below the deepest WorkflowException
+	 * in the current stack trace.
+	 * 
+	 * @param e the workflow exception that contains the requested root cause
+	 * @return the root cause of the workflow exception
+	 */
+	protected Throwable getCartOperationExceptionRootCause(WorkflowException e) {
+		Throwable cause = e.getCause();
+		if (cause == null) {
+			return e;
+		}
+		
+		Throwable currentCause = cause;
+		while (currentCause.getCause() != null) {
+			currentCause = currentCause.getCause();
+			if (currentCause instanceof WorkflowException) {
+				cause = currentCause.getCause();
+			}
+		}
+		
+		return cause;
+	}
 }
