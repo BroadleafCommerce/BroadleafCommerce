@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic;
 
 import java.util.HashMap;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -40,20 +41,20 @@ import com.google.gwt.user.client.ui.RichTextArea.Formatter;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.smartgwt.client.types.Overflow;
-import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.events.CloseClickEvent;
 import com.smartgwt.client.widgets.events.CloseClickHandler;
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.DateItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.FlowLayout;
 
 public class RichTextToolbar extends Composite {
+	public static enum DisplayType {
+		DETAILED,
+		BASIC
+	} ;
 	/** Local CONSTANTS **/
 	//ImageMap and CSS related
-	private static final String HTTP_STATIC_ICONS_GIF = "http://blog.elitecoderz.net/wp-includes/js/tinymce/themes/advanced/img/icons.gif";
+	private static final String HTTP_STATIC_ICONS_GIF = GWT.getModuleBaseURL() +"admin/images/icons.gif";
 	private static final String CSS_ROOT_NAME = "RichTextToolbar";
 	
 	//Color and Fontlists - First Value (key) is the Name to display, Second Value (value) is the HTML-Definition
@@ -170,8 +171,9 @@ public class RichTextToolbar extends Composite {
 	private Command saveCommand;
 
 
-	/** Constructor of the Toolbar **/
-	public RichTextToolbar(RichTextArea richtext) {
+	/** Constructor of the Toolbar 
+	 * @param displayType **/
+	public RichTextToolbar(RichTextArea richtext, DisplayType displayType) {
 		//Initialize the main-panel
 		outer = new VerticalPanel();
 
@@ -192,6 +194,7 @@ public class RichTextToolbar extends Composite {
 
 		//Add the two inner panels to the main panel
 		outer.add(topPanel);
+		
 		outer.add(bottomPanel);
 
 		//Some graphical stuff to the main panel and the initialisation of the new widget

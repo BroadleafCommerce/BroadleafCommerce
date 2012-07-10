@@ -675,7 +675,7 @@
 
             <!--Scheduling Libraries -->
             <dependency>
-                <groupId>opensymphony</groupId>
+                <groupId>org.opensymphony.quartz</groupId>
                 <artifactId>quartz</artifactId>
                 <version>1.6.1</version>
                 <type>jar</type>

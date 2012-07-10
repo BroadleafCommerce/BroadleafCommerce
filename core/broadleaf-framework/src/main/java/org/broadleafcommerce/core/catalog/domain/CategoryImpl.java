@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
@@ -170,7 +171,7 @@ public class CategoryImpl implements Category, Status {
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=6, group = "CategoryImpl_Description", largeEntry=true)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=6, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)

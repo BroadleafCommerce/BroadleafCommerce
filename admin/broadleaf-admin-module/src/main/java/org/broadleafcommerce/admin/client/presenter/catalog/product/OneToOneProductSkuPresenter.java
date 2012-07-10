@@ -35,6 +35,7 @@ import org.broadleafcommerce.admin.client.datasource.catalog.product.SkuBundleIt
 import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.service.AppServices;
 import org.broadleafcommerce.admin.client.view.catalog.product.OneToOneProductSkuDisplay;
+import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
@@ -57,7 +58,9 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -79,7 +82,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implements Instantiable {
+public class OneToOneProductSkuPresenter extends HtmlEditingPresenter implements Instantiable {
 
 	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected EntitySearchDialog productSearchView;
@@ -111,6 +114,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
         productOptionsPresenter.load(selectedRecord, dataSource, null);
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
+        addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
 	}
 
     @Override
@@ -130,7 +134,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 		productOptionsPresenter.bind();
 		skusPresenter.bind();
 		bundleItemsPresenter.bind();
-		
+	    
 		getDisplay().getGenerateSkusButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -170,6 +174,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
 
 	@Override
     public void setup() {
+
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("productDS", new OneToOneProductSkuDataSourceFactory(), new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource top) {
@@ -301,7 +306,7 @@ public class OneToOneProductSkuPresenter extends DynamicEntityPresenter implemen
             @Override
             public void onSetupSuccess(DataSource dataSource) {
             	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	final AssetSearchDialog assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
+            	 assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
                 getPresenterSequenceSetupManager().getDataSource("productMediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
                     @Override
                     public void execute(final FormItem formItem) {

@@ -147,3 +147,7 @@ textarea {
     resize: none;
 }
 
+.gwt-RichTextArea {
+	border:none;
+	background-color: #ffffff;
+}

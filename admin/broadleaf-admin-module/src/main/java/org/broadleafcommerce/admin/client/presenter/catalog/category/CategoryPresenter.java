@@ -50,6 +50,7 @@ import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDa
 import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
+import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
 import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
@@ -80,7 +81,7 @@ import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEn
  * @author jfischer
  *
  */
-public class CategoryPresenter extends DynamicEntityPresenter implements Instantiable {
+public class CategoryPresenter extends HtmlEditingPresenter implements Instantiable {
 
 	protected MapStructureEntityEditDialog mapEntityAdd;
 	protected String rootId = "1";
@@ -157,6 +158,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		featuredPresenter.load(selectedRecord, dataSource, null);
 		childProductsPresenter.load(selectedRecord, dataSource, null);
 		getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();
+		addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
 	}
 
 	@Override
@@ -300,7 +302,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
             @Override
             public void onSetupSuccess(DataSource dataSource) {
             	TileGridDataSource staticAssetTreeDS = (TileGridDataSource) dataSource;
-            	final AssetSearchDialog assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
+            	 assetSearchDialogView = new AssetSearchDialog(staticAssetTreeDS);
                 getPresenterSequenceSetupManager().getDataSource("mediaMapDS").getFormItemCallbackHandlerManager().addFormItemCallback("url", new FormItemCallback() {
                     @Override
                     public void execute(final FormItem formItem) {

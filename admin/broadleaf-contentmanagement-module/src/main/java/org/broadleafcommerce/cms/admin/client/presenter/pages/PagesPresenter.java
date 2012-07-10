@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter.pages;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageDataSourceFactory;
 import org.broadleafcommerce.cms.admin.client.datasource.pages.PageTemplateFormListDataSource;
@@ -150,7 +153,7 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
 		
                                  	@Override
                                  	public void execute() {
-                                 		displayAssetSearchDialogFromCKEditor(((HTMLTextItem)	formItem));
+                                 		displayAssetSearchDialog(((HTMLTextItem)	formItem));
                                  	}
                                  	});
                                  	//need to disable again in case the htmltextitem enabled the form on setting the value
@@ -196,8 +199,11 @@ public class PagesPresenter extends HtmlEditingPresenter implements Instantiable
                 //save the regular entity form and the page template form
                 if (event.isLeftButtonDown()) { 
                     DSRequest requestProperties = new DSRequest();
-                    requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
-
+                    try {
+             		       requestProperties.setAttribute("dirtyValues", getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+             		} catch (Exception e) {
+             				Logger.getLogger(this.getClass().toString()).log(Level.WARNING,"ignore, usually thown in gwt-run mode",e);
+             		}
                     getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
                         @Override
                         public void execute(DSResponse response, Object rawData, DSRequest request) {

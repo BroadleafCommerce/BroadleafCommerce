@@ -198,7 +198,7 @@ public class StructuredContentPresenter extends HtmlEditingPresenter implements 
 
                          	@Override
                          	public void execute() {
-                         		displayAssetSearchDialogFromCKEditor(((HTMLTextItem)	formItem));
+                         		displayAssetSearchDialog(((HTMLTextItem)	formItem));
                          	}
                          	});
                          	//need to disable again in case the htmltextitem enabled the form on setting the value

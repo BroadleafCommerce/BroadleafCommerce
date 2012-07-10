@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -44,10 +45,14 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 		
         setWidth100();
         setBackgroundColor("#eaeaea");
-        form = new DynamicForm(); 
+        form = new BLCDynamicForm(); 
         form.setHeight(175);
         form.setWidth100();
         form.setPadding(10);
+        form.setCellPadding(8);
+        form.setTitleOrientation(TitleOrientation.TOP);
+        form.setNumCols(1);
+        form.setWrapItemTitles(false);
         form.disable();
         form.setBackgroundColor("#eaeaea");
         if (dataSource != null) {

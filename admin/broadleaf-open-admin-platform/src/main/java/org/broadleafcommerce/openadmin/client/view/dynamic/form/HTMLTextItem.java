@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RichTextArea;
@@ -9,33 +10,55 @@ import com.smartgwt.client.widgets.WidgetCanvas;
 import com.smartgwt.client.widgets.form.fields.CanvasItem;
 
 public class HTMLTextItem extends CanvasItem {
+
 	private final RichTextArea textArea;
 	private final RichTextToolbar toolBar;
 	public HTMLTextItem() {
+		this( DisplayType.DETAILED);
+	}
+	public HTMLTextItem(DisplayType displayType) {
 		super();
 		textArea = new RichTextArea();
-		toolBar = new RichTextToolbar(getTextArea());
+		toolBar = new RichTextToolbar(getTextArea(),displayType);
 		VerticalPanel vp = new VerticalPanel();
-		getTextArea().setWidth("100%");
-		getTextArea().setHeight("100%");
+	    if(displayType == displayType.DETAILED) {
+		    getTextArea().setWidth("100%");
+		    getTextArea().setHeight("100%");
+	    	toolBar.setWidth("100%");
+	    	toolBar.setHeight("100%");
+	    } else {
+	    	getTextArea().setWidth("100%");
+			getTextArea().setHeight("60px");
+			toolBar.setWidth("100%");
+			toolBar.setHeight("40px");
+	    }
+	    vp.setBorderWidth(2);
+	   
 		vp.add(getToolBar());
 		vp.add(getTextArea());
 		///CanvasItem cItem = new CanvasItem();
 		
 		WidgetCanvas wc=new WidgetCanvas(vp);
 		wc.setCanDragResize(true);
+
 		setCanvas(wc);
 		final HTMLTextItem item=this;
-
+		
 		Command saveCommand=new Command() {
 			@Override
 			public void execute() {
 		    	item.storeValue(getHTMLValue());
+		    
 			}
 		};
+		
+
+		
 		//since this is a wrpper for gwt composite, we need to tell the parent form when something change
 		//change will then be reflected in the dynamic form , for example enabling the save button. 
 		toolBar.setSaveCommand(saveCommand);
+	
+
 	}
 	private RichTextArea getTextArea() {
 		return textArea;
@@ -45,7 +68,8 @@ public class HTMLTextItem extends CanvasItem {
 	}
 
 	public void setHTMLValue(String value) {
-	     storeValue(value);
+	    storeValue(value);
+		//setValue(value);
 	     getToolBar().setHTML(value);
 		 //getTextArea().setHTML(value);
 	}
@@ -63,5 +87,33 @@ public class HTMLTextItem extends CanvasItem {
 		toolBar.insertAsset(fileExtension, name, staticAssetFullUrl);
 		
 	}
+@Override
+public Object getValue() {
+	// TODO Auto-generated method stub
+	
+	return getHTMLValue();
+}
+@Override
+public void setValue(Object value) {
+	
+    super.setValue(value);
+	setHTMLValue(value.toString());
+}
+@Override
+public void setValue(String value) {
+	
+	
+	if(value==null) value="";
+	super.setValue(value);
+	setHTMLValue(value);
+}
+
+ @Override
+public void setDisabled(Boolean disabled) {
+	// TODO Auto-generated method stub
+	super.setDisabled(disabled);
+	getToolBar().setVisible(!disabled);
+	getTextArea().setEnabled(!disabled);
+}
 
 }

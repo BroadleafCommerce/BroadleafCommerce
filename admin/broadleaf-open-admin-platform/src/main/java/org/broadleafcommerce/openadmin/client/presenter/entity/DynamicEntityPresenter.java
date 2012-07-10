@@ -16,6 +16,24 @@
 
 package org.broadleafcommerce.openadmin.client.presenter.entity;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
+import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
+import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
+import org.broadleafcommerce.openadmin.client.view.Display;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
@@ -43,21 +61,6 @@ import com.smartgwt.client.widgets.grid.events.CellSavedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.tree.TreeGrid;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.callback.ItemEdited;
-import org.broadleafcommerce.openadmin.client.callback.ItemEditedHandler;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelected;
-import org.broadleafcommerce.openadmin.client.callback.SearchItemSelectedHandler;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.AbstractDynamicDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.openadmin.client.setup.PresenterSequenceSetupManager;
-import org.broadleafcommerce.openadmin.client.view.Display;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * @author jfischer
@@ -217,7 +220,12 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
     protected void saveClicked() {
         DSRequest requestProperties = new DSRequest();
-        requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+        
+	    try {
+	   	 requestProperties.setAttribute("dirtyValues", display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().getChangedValues());
+	   	} catch (Exception e) {
+	   	 	   Logger.getLogger(this.getClass().toString()).log(Level.WARNING,"ignore, usually thown in gwt-run mode",e);  
+	   	}	
         display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
             @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {

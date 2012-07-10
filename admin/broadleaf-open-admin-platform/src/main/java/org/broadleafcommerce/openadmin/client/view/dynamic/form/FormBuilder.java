@@ -27,16 +27,17 @@ import java.util.MissingResourceException;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.HtmlEditingModule;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.security.SecurityManager;
+import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.ContentsType;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.FetchDataEvent;
 import com.smartgwt.client.widgets.events.FetchDataHandler;
@@ -77,7 +78,6 @@ public class FormBuilder {
             Arrays.sort(recordAttributes);
         }
 		form.setDataSource(dataSource);
-        form.setCellPadding(8);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
         Map<String, Boolean> sectionCollapsed = new HashMap<String, Boolean>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
@@ -538,15 +538,18 @@ public class FormBuilder {
         case HTML:
         	 HTMLTextItem cItem=new HTMLTextItem();
              formItem=cItem;
-             cItem.setShowTitle(false);
-             cItem.setColSpan(2);
+             formItem.setHeight(300);
+              formItem.setWidth("*");
+              formItem.setShouldSaveValue(true);
             break;
         case HTML_BASIC:
-        	 HTMLTextItem cItem2=new HTMLTextItem();
+        	 HTMLTextItem cItem2=new HTMLTextItem(DisplayType.BASIC);
              formItem=cItem2;
-             cItem2.setShowTitle(false);
-             cItem2.setColSpan(2);
-        	break;
+             formItem.setHeight(140);
+			 formItem.setWidth("*");
+			 formItem.setShouldSaveValue(true);
+      
+             break;
         case UPLOAD:
             formItem = new UploadItem();
             break;
