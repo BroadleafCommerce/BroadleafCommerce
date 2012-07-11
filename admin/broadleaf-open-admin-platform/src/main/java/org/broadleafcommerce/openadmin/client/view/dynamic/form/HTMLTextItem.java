@@ -3,6 +3,10 @@ package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
+import com.google.gwt.dom.client.IFrameElement;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.logical.shared.InitializeEvent;
+import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -19,6 +23,17 @@ public class HTMLTextItem extends CanvasItem {
 	public HTMLTextItem(DisplayType displayType) {
 		super();
 		textArea = new RichTextArea();
+	    textArea.addInitializeHandler(new InitializeHandler() {
+            public void onInitialize(InitializeEvent ie) {
+            IFrameElement fe = (IFrameElement)
+            textArea.getElement().cast();
+            if(fe==null) return;
+            Style s = fe.getContentDocument().getBody().getStyle();
+            s.setProperty("fontFamily", "helvetica, sans-serif");
+            s.setProperty("fontSize", "12");
+            
+            }
+    }); 
 		toolBar = new RichTextToolbar(getTextArea(),displayType);
 		VerticalPanel vp = new VerticalPanel();
 	    if(displayType == displayType.DETAILED) {
@@ -33,7 +48,7 @@ public class HTMLTextItem extends CanvasItem {
 			toolBar.setHeight("40px");
 	    }
 	    vp.setBorderWidth(2);
-	   
+
 		vp.add(getToolBar());
 		vp.add(getTextArea());
 		///CanvasItem cItem = new CanvasItem();

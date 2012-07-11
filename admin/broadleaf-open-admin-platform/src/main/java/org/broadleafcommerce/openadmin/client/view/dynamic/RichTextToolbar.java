@@ -115,7 +115,7 @@ public class RichTextToolbar extends Composite {
 	private static final String GUI_HOVERTEXT_HLINE = "Insert Horizontal Line";
 	private static final String GUI_HOVERTEXT_BREAKLINK = "Break Link";
 	private static final String GUI_HOVERTEXT_LINK = "Generate Link";
-	private static final String GUI_HOVERTEXT_ASSET = "Add BLC Asset";
+	private static final String GUI_HOVERTEXT_ASSET = "Insert Asset";
 	private static final String GUI_HOVERTEXT_IDENTLEFT = "Ident Left";
 	private static final String GUI_HOVERTEXT_IDENTRIGHT = "Ident Right";
 	private static final String GUI_HOVERTEXT_UNORDERLIST = "Unordered List";
@@ -498,7 +498,7 @@ public class RichTextToolbar extends Composite {
 		bottomPanel.add(fontlist = createFontList());
 		bottomPanel.add(new HTML("&nbsp;"));
 		bottomPanel.add(colorlist = createColorList());
-		bottomPanel.add(assetslink = createTextPushButton("Add BLC Asset",0,380,100,20,GUI_HOVERTEXT_ASSET));
+		bottomPanel.add(assetslink = createTextPushButton(GUI_HOVERTEXT_ASSET,0,380,100,20,GUI_HOVERTEXT_ASSET));
 		bottomPanel.add(htmlPreview = createTextPushButton("Preview",20,460,100,20,GUI_HOVERTEXT_HTMLPREVIEW));
 	}
 

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.cms.admin.client.presenter;
 
+import java.util.HashMap;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Command;
 import com.smartgwt.client.data.DataSource;
@@ -27,6 +29,8 @@ import org.broadleafcommerce.cms.admin.client.datasource.file.StaticAssetsTileGr
 import org.broadleafcommerce.openadmin.client.BLCMain;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
+import org.broadleafcommerce.openadmin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.setup.AsyncCallbackAdapter;
@@ -79,6 +83,14 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 	}
 
 	public void displayAssetSearchDialog(final HTMLTextItem item) {
+    HashMap<String, Object> initialValues = new HashMap<String, Object>(10);
+    initialValues.put("operation", "add");
+    initialValues.put("customCriteria", "assetListUi");
+    initialValues.put("ceilingEntityFullyQualifiedClassname", CeilingEntities.STATICASSETS);
+	initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
+    initialValues.put("csrfToken", BLCMain.csrfToken);
+    compileDefaultValuesFromCurrentFilter(initialValues);
+    assetSearchDialogView.setInitialValues(initialValues);
 		assetSearchDialogView.search("Asset Search",
 				new TileGridItemSelectedHandler() {
 					@Override
@@ -102,7 +114,7 @@ public abstract class HtmlEditingPresenter extends DynamicEntityPresenter {
 									+ "'>" + name + "</a>";
 						}
 						LogFactory.getLog(this.getClass())
-								.info("inserting from dialog...."
+								.debug("inserting from dialog...."
 										+ fileExtension + " " + name + " "
 										+ staticAssetFullUrl);
 						item.insertAsset(fileExtension, name,

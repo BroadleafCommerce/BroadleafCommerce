@@ -150,4 +150,6 @@ textarea {
 .gwt-RichTextArea {
 	border:none;
 	background-color: #ffffff;
+	####font-family:helvetica, sans-serif;    ###bug , for now its not being used by the widget, explicity set it in the code instead
+    ####font-size:11px;
 }
