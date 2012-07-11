@@ -63,13 +63,13 @@ public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
     @Column(name = "FULFILLMENT_BAND_ID")
     protected Long id;
 
-    @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT")
+    @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", nullable = false)
     protected BigDecimal retailPriceMinimumAmount;
 
-    @Column(name="RESULT_AMOUNT")
+    @Column(name="RESULT_AMOUNT", nullable = false)
     protected BigDecimal resultAmount;
     
-    @Column(name="RESULT__AMOUNT_TYPE")
+    @Column(name="RESULT__AMOUNT_TYPE", nullable = false)
     @AdminPresentation(friendlyName="Result Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType")
     protected String resultAmountType = FulfillmentBandResultAmountType.RATE.getType();
     

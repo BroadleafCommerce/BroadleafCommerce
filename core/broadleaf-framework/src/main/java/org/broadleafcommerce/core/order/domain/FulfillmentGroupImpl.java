@@ -149,7 +149,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
     
-    @OneToOne(targetEntity = FulfillmentOptionImpl.class)
+    @ManyToOne(targetEntity = FulfillmentOptionImpl.class)
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
     

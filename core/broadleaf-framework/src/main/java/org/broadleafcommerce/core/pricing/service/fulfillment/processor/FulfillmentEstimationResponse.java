@@ -16,7 +16,11 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
+
+import java.util.Map;
 
 /**
  * DTO to allow FulfillmentProcessors to respond to estimation requests for a particular FulfillmentGroup
@@ -27,4 +31,13 @@ import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
  */
 public class FulfillmentEstimationResponse {
 
+    protected Map<? extends FulfillmentOption, Money> fulfillmentOptionPrices;
+
+    public Map<? extends FulfillmentOption, Money> getFulfillmentOptionPrices() {
+        return fulfillmentOptionPrices;
+    }
+
+    public void setFulfillmentOptionPrices(Map<? extends FulfillmentOption, Money> fulfillmentOptionPrices) {
+        this.fulfillmentOptionPrices = fulfillmentOptionPrices;
+    }
 }

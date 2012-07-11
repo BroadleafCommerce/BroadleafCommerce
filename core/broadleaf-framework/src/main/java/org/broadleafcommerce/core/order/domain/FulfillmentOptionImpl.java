@@ -72,7 +72,7 @@ public abstract class FulfillmentOptionImpl implements FulfillmentOption {
     @Column(name = "ADD_FULFILLMENT_FEES")
     protected Boolean addFulfillmentFees;
 
-    @Column(name = "FULFILLMENT_TYPE")
+    @Column(name = "FULFILLMENT_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "Fulfillment Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
