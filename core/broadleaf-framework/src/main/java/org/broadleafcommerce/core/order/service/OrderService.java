@@ -376,6 +376,24 @@ public interface OrderService {
      * @throws AddToCartException
      */
 	public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
+	
+    /**
+     * This method performs the same function as addItemFromNamedOrder(Order, OrderItem, boolean)
+     * except that instead of adding all of the quantity from the named order to the cart, it will
+     * only add/move the specific quantity requested.
+     * 
+     * @see #addItemFromNamedOrder(Order, OrderItem, boolean)
+     * 
+     * @param namedOrder 
+     * @param orderItem 
+     * @param quantity
+     * @param priceOrder 
+     * @return the cart with the requested orderItem added to it
+     * @throws RemoveFromCartException
+     * @throws AddToCartException
+     * @throws UpdateCartException 
+     */
+	public Order addItemFromNamedOrder(Order namedOrder, OrderItem orderItem, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException;
 
 	/**
 	 * Adds all orderItems to the current cart from the same Customer that owns the named

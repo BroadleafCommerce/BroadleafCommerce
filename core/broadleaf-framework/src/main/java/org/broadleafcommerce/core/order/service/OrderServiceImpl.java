@@ -309,6 +309,35 @@ public class OrderServiceImpl implements OrderService {
         return cartOrder;
     }
     
+    @Override
+    public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException {
+    	// Validate that the quantity requested makes sense
+        if (quantity < 1 || quantity > item.getQuantity()) {
+        	throw new IllegalArgumentException("Cannot move 0 or less quantity");
+        } else if (quantity == item.getQuantity()) {
+        	return addItemFromNamedOrder(namedOrder, item, priceOrder);
+        }
+        
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        if (cartOrder == null) {
+            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+        }
+        
+    	if (moveNamedOrderItems) {
+	        // Update the old item to its new quantity only if we're moving items
+	        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+	        orderItemRequestDTO.setOrderItemId(item.getId());
+	        orderItemRequestDTO.setQuantity(item.getQuantity() - quantity);
+	        updateItemQuantity(namedOrder.getId(), orderItemRequestDTO, false);
+    	}
+        	
+    	OrderItemRequestDTO orderItemRequest = orderItemService.buildOrderItemRequestDTOFromOrderItem(item);
+    	orderItemRequest.setQuantity(quantity);
+    	cartOrder = addItem(cartOrder.getId(), orderItemRequest, priceOrder);
+        	
+        return cartOrder;
+    }
+    
 	@Override
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
