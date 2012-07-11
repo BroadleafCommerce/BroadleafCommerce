@@ -58,7 +58,7 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
     @Resource
     protected OfferService offerService;
 
-    @Resource(name = "blLegacyCartService")
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
 
     @Resource
@@ -188,11 +188,6 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
     @Test(groups =  {"testOffersWithGiftWrapLegacy"}, dependsOnGroups = { "testShippingInsertLegacy"})
     @Transactional
     public void testOrderItemOfferWithGiftWrap() throws PricingException {
-    	offerService.getOrderOfferProcessor().setOrderItemService(orderItemService);
-    	offerService.getItemOfferProcessor().setOrderItemService(orderItemService);
-    	offerService.getOrderOfferProcessor().setOrderService(orderService);
-    	offerService.getItemOfferProcessor().setOrderService(orderService);
-    	
         Order order = createTestOrderWithOfferAndGiftWrap();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(

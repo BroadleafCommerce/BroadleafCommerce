@@ -40,7 +40,7 @@ public class OrderLookupTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         Customer customer = CustomerState.getCustomer((HttpServletRequest) pageContext.getRequest());
-        LegacyCartService cartService = (LegacyCartService) applicationContext.getBean("blLegacyCartService");
+        LegacyCartService cartService = (LegacyCartService) applicationContext.getBean("blOrderService");
         Order order = null;
         if (orderName != null && orderId != null) {
             throw new IllegalArgumentException("Only orderName or orderId attribute may be specified on orderLookup tag");

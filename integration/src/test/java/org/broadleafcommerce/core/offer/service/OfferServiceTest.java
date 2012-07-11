@@ -186,11 +186,6 @@ public class OfferServiceTest extends CommonSetupBaseTest {
     @Test(groups =  {"testOffersWithGiftWrap"}, dependsOnGroups = { "testShippingInsert"})
     @Transactional
     public void testOrderItemOfferWithGiftWrap() throws PricingException {
-    	offerService.getOrderOfferProcessor().setOrderItemService(orderItemService);
-    	offerService.getItemOfferProcessor().setOrderItemService(orderItemService);
-    	offerService.getOrderOfferProcessor().setOrderService(orderService);
-    	offerService.getItemOfferProcessor().setOrderService(orderService);
-    	
         Order order = createTestOrderWithOfferAndGiftWrap();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
         List<Offer> offers = dataProvider.createItemBasedOfferWithItemCriteria(

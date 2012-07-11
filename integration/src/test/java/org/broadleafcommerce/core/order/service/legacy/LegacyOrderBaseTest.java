@@ -39,7 +39,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class LegacyOrderBaseTest extends LegacyCommonSetupBaseTest {
 
-    @Resource(name = "blLegacyCartService")
+    @Resource(name = "blOrderService")
     protected LegacyCartService cartService;
     
     private int bundleCount = 0;

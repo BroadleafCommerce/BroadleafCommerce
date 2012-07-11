@@ -26,6 +26,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.lang.management.ManagementFactory;
+
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
 @TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
 public abstract class BaseTest extends AbstractTestNGSpringContextTests {
@@ -33,10 +35,16 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 	private static MergeClassPathXMLApplicationContext mergeContext = null;
 	
 	public static MergeClassPathXMLApplicationContext getContext() {
+			
 		try {
 			if (mergeContext == null) {
 				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-				mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
+				
+				String[] additionalContexts = (ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Dlegacy=true")) 
+						? new String[]{"bl-applicationContext-test-legacy.xml"} 
+						: new String[]{};
+				
+				mergeContext = new MergeClassPathXMLApplicationContext(contexts, additionalContexts);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);

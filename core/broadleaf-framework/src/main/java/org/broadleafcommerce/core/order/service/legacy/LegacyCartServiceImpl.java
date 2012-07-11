@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -47,7 +46,6 @@ import java.util.List;
  * @deprecated
  */
 @Deprecated
-@Service("blLegacyCartService")
 public class LegacyCartServiceImpl extends LegacyOrderServiceImpl implements LegacyCartService {
 
     @Resource(name="blCustomerService")

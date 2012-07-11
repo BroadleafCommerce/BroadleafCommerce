@@ -69,7 +69,7 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
     @Resource
     protected CatalogService catalogService;
     
-    @Resource(name = "blLegacyCartService")
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
     
     @Resource

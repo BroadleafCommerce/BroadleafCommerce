@@ -901,14 +901,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         }
     }
 
-    public boolean getAutomaticallyMergeLikeItems() {
-        return automaticallyMergeLikeItems;
-    }
-
-    public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
-        this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
-    }
-    
     /* *********************************************************************************
      * DEPRECATED METHODS                                                              *
      * *********************************************************************************/

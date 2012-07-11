@@ -106,8 +106,10 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blRemoveItemWorkflow")
     protected SequenceProcessor removeItemWorkflow;
     
-    // This field is static for legacy testing support.
-    protected static boolean automaticallyMergeLikeItems = true;
+    /* Fields */
+    protected boolean moveNamedOrderItems = true;
+    protected boolean deleteEmptyNamedOrders = true;
+    protected boolean automaticallyMergeLikeItems = true; 
 
 	@Override
 	public Order createNewCartForCustomer(Customer customer) {
@@ -222,16 +224,11 @@ public class OrderServiceImpl implements OrderService {
 		 return order;	
 	}
 
-	@Override
-	public boolean getAutomaticallyMergeLikeItems() {
-		return automaticallyMergeLikeItems;
-	}
-
-	@Override
-	@SuppressWarnings("static-access")
-	public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
-		this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
-	}
+    @Override
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
+        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
+    }
 	
 	@Override
     public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
@@ -268,19 +265,6 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.submitOrder(order);
     }
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    protected boolean moveNamedOrderItems = true;
-    protected boolean deleteEmptyNamedOrders = true;
-    
     @Override
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
@@ -324,42 +308,6 @@ public class OrderServiceImpl implements OrderService {
         	
         return cartOrder;
     }
-	
-    @Override
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
-    public boolean isMoveNamedOrderItems() {
-        return moveNamedOrderItems;
-    }
-
-    @Override
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
-    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
-        this.moveNamedOrderItems = moveNamedOrderItems;
-    }
-
-    @Override
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public boolean isDeleteEmptyNamedOrders() {
-        return deleteEmptyNamedOrders;
-    }
-
-    @Override
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
-        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 	@Override
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
@@ -411,6 +359,34 @@ public class OrderServiceImpl implements OrderService {
     		throw new RemoveFromCartException("Could not remove from cart", e.getCause());
     	}
 	}
+
+	@Override
+	public boolean getAutomaticallyMergeLikeItems() {
+		return automaticallyMergeLikeItems;
+	}
+
+	@Override
+	public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
+		this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
+	}
+	
+    @Override
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    public boolean isMoveNamedOrderItems() {
+        return moveNamedOrderItems;
+    }
+
+    @Override
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
+        this.moveNamedOrderItems = moveNamedOrderItems;
+    }
+
+    @Override
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    public boolean isDeleteEmptyNamedOrders() {
+        return deleteEmptyNamedOrders;
+    }
 	
 	/**
 	 * This method will return the exception that is immediately below the deepest 

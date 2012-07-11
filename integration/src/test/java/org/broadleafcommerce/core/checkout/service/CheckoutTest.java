@@ -82,7 +82,7 @@ public class CheckoutTest extends BaseTest {
     @Resource
     private SecurePaymentInfoService securePaymentInfoService;
 
-	@Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
+	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
 	@Transactional
     public void testCheckout() throws Exception {
     	String userName = "customer1";
