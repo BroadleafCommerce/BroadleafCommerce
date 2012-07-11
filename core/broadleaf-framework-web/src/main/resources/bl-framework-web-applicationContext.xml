@@ -49,6 +49,8 @@
 		<property name="cacheable" value="false"/>
 	</bean>
 	
+	<bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
+	
 	<bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
 		<property name="templateResolvers">
 			<set>
@@ -57,7 +59,7 @@
 		</property>
 		<property name="dialects">
 			<set>
-				<bean class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
+				<ref bean="thymeleafSpringStandardDialect" />
 				<ref bean="blDialect" />
 			</set>
 		</property>
@@ -71,7 +73,7 @@
 		</property>
 		<property name="dialects">
 			<set>
-				<bean class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
+				<ref bean="thymeleafSpringStandardDialect" />
 				<ref bean="blDialect" />
 			</set>
 		</property>
