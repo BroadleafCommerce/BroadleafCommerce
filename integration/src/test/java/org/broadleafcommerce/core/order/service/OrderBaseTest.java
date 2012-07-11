@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 
@@ -33,7 +32,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     	return customer;
     }
     
-	public Order setUpNamedOrder() throws PricingException, AddToCartException {
+	public Order setUpNamedOrder() throws AddToCartException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
 
         Order order = orderService.createNamedOrderForCustomer("Boxes Named Order", customer);
