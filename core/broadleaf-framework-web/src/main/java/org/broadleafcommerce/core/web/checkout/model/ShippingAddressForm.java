@@ -19,7 +19,31 @@ package org.broadleafcommerce.core.web.checkout.model;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 
+/**
+ * A form to model adding a shipping address with shipping options.
+ * 
+ * @author Elbert Bautista (ebautista)
+ * @author Andre Azzolini (apazzolini)
+ */
 public class ShippingAddressForm {
 
-    private Address shippingAddress = new AddressImpl();
+    protected Address address = new AddressImpl();
+    protected String addressName = null;
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public String getAddressName() {
+		return addressName;
+	}
+
+	public void setAddressName(String addressName) {
+		this.addressName = addressName;
+	}
+	
 }
