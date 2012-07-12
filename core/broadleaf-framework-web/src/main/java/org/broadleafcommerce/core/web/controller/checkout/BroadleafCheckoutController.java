@@ -16,4 +16,8 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
 		return ajaxRender("multiship", request, model);
 	}
 
+
+    public String attachShippingAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return null;
+    }
 }
