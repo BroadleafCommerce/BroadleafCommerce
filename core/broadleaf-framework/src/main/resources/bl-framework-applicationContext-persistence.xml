@@ -95,6 +95,11 @@
 	</aop:config>
 
 	<aop:config>
+		<aop:pointcut id="blFulfillmentOptionServiceOperation" expression="execution(* org.broadleafcommerce.core.order.service.FulfillmentOptionService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentOptionServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
 		<aop:pointcut id="blSecurePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.save(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation"/>
 	</aop:config>
