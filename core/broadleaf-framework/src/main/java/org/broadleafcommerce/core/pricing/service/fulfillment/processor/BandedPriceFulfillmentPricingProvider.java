@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -48,7 +49,7 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
     }
 
     @Override
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
         if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
             LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
             fulfillmentGroup.setShippingPrice(new Money(0D));
@@ -56,19 +57,24 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
             fulfillmentGroup.setRetailShippingPrice(new Money(0D));
             return fulfillmentGroup;
         }
-        //In this case, the estimation logic is the same as calculation logic. Call the estimation service to get the prices.
-        HashSet<FulfillmentOption> options = new HashSet<FulfillmentOption>();
-        options.add(fulfillmentGroup.getFulfillmentOption());
-        FulfillmentEstimationResponse response = estimateCostForFulfillmentGroup(fulfillmentGroup, options);
-        fulfillmentGroup.setSaleShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-        fulfillmentGroup.setRetailShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-        fulfillmentGroup.setShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
 
-        return fulfillmentGroup;
+        if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption())) {
+            //In this case, the estimation logic is the same as calculation logic. Call the estimation service to get the prices.
+            HashSet<FulfillmentOption> options = new HashSet<FulfillmentOption>();
+            options.add(fulfillmentGroup.getFulfillmentOption());
+            FulfillmentEstimationResponse response = estimateCostForFulfillmentGroup(fulfillmentGroup, options);
+            fulfillmentGroup.setSaleShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setRetailShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+
+            return fulfillmentGroup;
+        }
+
+        throw new ShippingPriceException("An unsupported FulfillmentOption was passed to the calculateCostForFulfillmentGroup method");
     }
 
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
 
         //Set up the response object
         FulfillmentEstimationResponse res = new FulfillmentEstimationResponse();

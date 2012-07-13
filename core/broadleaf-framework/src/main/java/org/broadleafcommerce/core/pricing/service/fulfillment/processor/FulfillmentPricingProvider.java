@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
@@ -42,7 +43,7 @@ public interface FulfillmentPricingProvider {
      * @return the modified {@link FulfillmentGroup} with correct pricing. This is typically <b>fulfillmentGroup</b> after it
      * has been modified
      */
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
 
     /**
      * Whether or not this processor can provide a cost calculate for the given FulfillmentGroup and the given
@@ -63,7 +64,8 @@ public interface FulfillmentPricingProvider {
      * cannot respond to.  So, if the invoker of this method passes in several types of fulfillment options, the response should only contain prices for the fulfillment options
      * that will would cause a call to
      * {@link #canCalculateCostForFulfillmentGroup(org.broadleafcommerce.core.order.domain.FulfillmentGroup, org.broadleafcommerce.core.order.domain.FulfillmentOption)}
-     * to return true.  This method may return null or it may return a non-null response with an empty map, indicating that no price estimate was available for the options given.
+     * to return true.  This method may return null or it may return a non-null response with an empty map, indicating that no price estimate was available for the options given. This
+     * method SHOULD NOT throw an exception if it encounters a FulfillmentOption that it can not price. It should simply ignore that option.
      * 
      * @param fulfillmentGroup - the group to estimate fulfillment costs for
      * @param options - the candidate options that a user might select
@@ -71,6 +73,6 @@ public interface FulfillmentPricingProvider {
      * {@link #calculateCostForFulfillmentGroup(FulfillmentGroup)} is invoked during the pricing workflow
      * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
      */
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options);
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException;
     
 }
