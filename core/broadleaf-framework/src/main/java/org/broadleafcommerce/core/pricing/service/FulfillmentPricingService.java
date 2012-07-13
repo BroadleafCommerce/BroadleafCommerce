@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.processor.Fulfillm
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This service can be used in a couple of different ways. First, this is used in the pricing workflow and specifically
@@ -51,16 +52,16 @@ public interface FulfillmentPricingService {
     /**
      * This provides an estimation for a {@link FulfillmentGroup} with a {@link FulfillmentOption}. The main use case for this method
      * is in a view cart controller that wants to provide estimations for different {@link FulfillmentOption}s before the user
-     * actually selects one. This uses {@link #getProcessors()} to allow third-party integrations to respond to
-     * estimations, and returns the first processor that returns true from {@link FulfillmentPricingProvider#canEstimateCostForFulfillmentGroup(FulfillmentGroup, FulfillmentOption)}.
+     * actually selects one. This uses {@link #getProviders()} to allow third-party integrations to respond to
+     * estimations, and returns the first processor that returns true from {@link FulfillmentPricingProvider#canCalculateCostForFulfillmentGroup(FulfillmentGroup, FulfillmentOption)}.
      * 
      * @param fulfillmentGroup
-     * @param option
+     * @param options
      * @return the price estimation for a particular {@link FulfillmentGroup} with a candidate {@link FulfillmentOption}
      * @throws ShippingPriceException if no processor was found to estimate costs for <b>fulfillmentGroup</b> with the given <b>option</b>
      * @see {@link FulfillmentPricingProvider}
      */
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) throws ShippingPriceException;
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException;
     
     public List<FulfillmentPricingProvider> getProviders();
 

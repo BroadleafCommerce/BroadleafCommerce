@@ -23,7 +23,9 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {
 
@@ -52,17 +54,22 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
     }
     
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) throws ShippingPriceException {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
+        FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
+        HashMap<FulfillmentOption, Money> prices = new HashMap<FulfillmentOption, Money>();
+        response.setFulfillmentOptionPrices(prices);
         for (FulfillmentPricingProvider processor : providers) {
-            if (processor.canCalculateCostForFulfillmentGroup(fulfillmentGroup, option)) {
-                return processor.estimateCostForFulfillmentGroup(fulfillmentGroup, option);
+            //Leave it up to the providers to determine if they can respond to a pricing estimate.  If they can't, or if one or more of the options that are passed in can't be responded
+            //to, then the response from the pricing provider should not include the options that it could not respond to.
+            FulfillmentEstimationResponse processorResponse = processor.estimateCostForFulfillmentGroup(fulfillmentGroup, options);
+            if (processorResponse != null
+                    && processorResponse.getFulfillmentOptionPrices() != null
+                    && processorResponse.getFulfillmentOptionPrices().size() > 0) {
+                prices.putAll(processorResponse.getFulfillmentOptionPrices());
             }
         }
-        
-        //no processor was found, throw that up the stack
-        throw new ShippingPriceException("No valid processor was found to calculate the FulfillmentGroup cost with " +
-                "FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() + 
-                        " and name: " + fulfillmentGroup.getFulfillmentOption().getName());
+
+        return response;
     }
 
     @Override
