@@ -15,6 +15,7 @@
 		<mapping-file>config/bc/jpa/domain/CodeType.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/OrderMultishipOption.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/PaymentInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Offer.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>

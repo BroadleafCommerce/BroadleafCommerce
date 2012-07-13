@@ -138,6 +138,11 @@
 		<aop:pointcut id="blCodeTypeServiceOperation" expression="execution(* org.broadleafcommerce.core.util.service.CodeTypeService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCodeTypeServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blOrderMultishipOption" expression="execution(* org.broadleafcommerce.core.order.dao.OrderMultishipOptionDao.save*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderMultishipOption"/>
+	</aop:config>
 
 	<aop:config>
 		<aop:pointcut id="blOrderItemDaoOperation" expression="execution(* org.broadleafcommerce.core.order.dao.OrderItemDao.save*(..))"/>

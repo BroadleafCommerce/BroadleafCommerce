@@ -21,6 +21,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * In charge of performing the various modify cart operations
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
 public class BroadleafCartController extends AbstractCartController {
 	
 	/**

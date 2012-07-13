@@ -1,12 +1,15 @@
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
+import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingAddressForm;
+import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -21,7 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.beans.PropertyEditorSupport;
 
-public class BroadleafCheckoutController extends BroadleafAbstractController {
+/**
+ * In charge of performing the various checkout operations
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
+public class BroadleafCheckoutController extends AbstractCheckoutController {
 	
 	@Resource(name = "blStateService")
 	protected StateService stateService;
@@ -35,6 +43,17 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
 	@Resource(name = "blAddressService")
 	protected AddressService addressService;
 	
+	@Resource(name = "blOrderMultishipOptionService")
+	protected OrderMultishipOptionService orderMultishipOptionService;
+	
+	/**
+	 * Renders the default checkout page.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return the return path
+	 */
 	public String checkout(HttpServletRequest request, HttpServletResponse response, Model model) {
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
@@ -46,22 +65,72 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
 	    return null;
 	}
 
+	/**
+	 * Renders the multiship page. This page is used by the user when shipping items
+	 * to different locations (or with different FulfillmentOptions) is desired.
+	 * 
+	 * Note that the default Broadleaf implementation will require the user to input
+	 * an Address and FulfillmentOption for each quantity of each DiscreteOrderItem.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return the return path
+	 */
 	public String showMultiship(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Customer customer = CustomerState.getCustomer();
+		Order cart = CartState.getCart();
+		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.generateMultishipOptions(cart));
     	model.addAttribute("customerAddresses", customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()));
+    	model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
 		return ajaxRender("multiship", request, model);
 	}
 	
-    public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model) {
-    	return buildAjaxRedirect(request, "/cart", model);
+	/**
+	 * Processes the given options for multiship
+	 * 
+	 * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @param orderMultishipOptionForm
+	 * @return a redirect to the checkout page
+	 */
+    public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
+    		OrderMultishipOptionForm orderMultishipOptionForm) {
+    	if (isAjaxRequest(request)) {
+    		return buildAjaxRedirect(request, "/checkout", model);
+    	} else {
+    		return "redirect:/checkout";
+    	}
     }
 
+    /**
+     * Renders the add address form during the multiship process
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @return the return path
+     */
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         return ajaxRender("multiship-add-address", request, model);
     }
     
+    /**
+     * Processes the requested add address from the multiship process.
+     * This method will create a CustomerAddress based on the requested Address
+     * and associate it with the current Customer in session.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param addressForm
+     * @return the return path to the multiship page
+     */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
     		 ShippingAddressForm addressForm) {
     	Address address = addressService.saveAddress(addressForm.getAddress());
@@ -75,6 +144,16 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
     	return showMultiship(request, response, model);
     }
     
+    /**
+     * Initializes some custom binding operations for the checkout flow. 
+     * More specifically, this method will attempt to bind state and country
+     * abbreviations to actual State and Country objects when the String 
+     * representation of the abbreviation is submitted.
+     * 
+     * @param request
+     * @param binder
+     * @throws Exception
+     */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override

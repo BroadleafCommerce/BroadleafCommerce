@@ -15,4 +15,5 @@
 		WHERE ca.customer.id = :customerId
 		AND ca.address.isDefault = TRUE</query>
 	</named-query>
+	
 </entity-mappings>
