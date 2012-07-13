@@ -28,7 +28,7 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 public class ShippingAddressForm {
 
     protected Address address = new AddressImpl();
-    protected String addressName = null;
+    protected String addressName;
 
 	public Address getAddress() {
 		return address;
