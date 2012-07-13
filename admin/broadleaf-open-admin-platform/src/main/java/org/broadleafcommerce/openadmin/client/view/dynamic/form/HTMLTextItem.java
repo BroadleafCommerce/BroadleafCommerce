@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.client.view.dynamic.form;
 
+import org.broadleafcommerce.openadmin.client.security.SecureCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar;
 import org.broadleafcommerce.openadmin.client.view.dynamic.RichTextToolbar.DisplayType;
 
@@ -72,7 +74,15 @@ public class HTMLTextItem extends CanvasItem {
 		//since this is a wrpper for gwt composite, we need to tell the parent form when something change
 		//change will then be reflected in the dynamic form , for example enabling the save button. 
 		toolBar.setSaveCommand(saveCommand);
-	
+	     SecurityManager.getInstance().doSecure("PERMISSION_READ_ASSET", new  SecureCallbackAdapter() {
+				 public void succeed() {
+					 getToolBar().showAssetButton(true);
+				}
+				 @Override
+				public void fail() {
+					 getToolBar().showAssetButton(false);
+				}
+			});
 
 	}
 	private RichTextArea getTextArea() {

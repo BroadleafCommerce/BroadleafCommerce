@@ -17,11 +17,13 @@
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Processor used in conjunction with {@link FixedPriceFulfillmentOption}. Simply takes the
@@ -38,7 +40,7 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
     }
 
     @Override
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
         if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption())) {
             Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
             fulfillmentGroup.setRetailShippingPrice(price);
@@ -52,18 +54,21 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
     }
 
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) {
-        if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, option)) {
-            FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
-            HashMap<FulfillmentOption, Money> shippingPrices = new HashMap<FulfillmentOption, Money>();
-            response.setFulfillmentOptionPrices(shippingPrices);
-            Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
-            shippingPrices.put(option, price);
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
 
-            return response;
+        FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
+        HashMap<FulfillmentOption, Money> shippingPrices = new HashMap<FulfillmentOption, Money>();
+        response.setFulfillmentOptionPrices(shippingPrices);
+
+        for (FulfillmentOption option : options) {
+            if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, option)) {
+                Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
+                shippingPrices.put(option, price);
+                return response;
+            }
         }
 
-        throw new IllegalArgumentException("Cannot estimate shipping cost for the fulfillment option: "  + option.getClass().getName());
+        return response;
     }
 
 }

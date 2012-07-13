@@ -39,5 +39,6 @@ public class CeilingEntities {
     public static final String PRODUCT = "org.broadleafcommerce.core.catalog.domain.Product";
     public static final String STRUCTUREDCONTENTITEMCRITERIA = "org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria";
     public static final String SANDBOXITEM = "org.broadleafcommerce.openadmin.server.domain.SandBoxItem";
+    public static final String URLHANDLER = "org.broadleafcommerce.cms.url.domain.URLHandler";
 
 }

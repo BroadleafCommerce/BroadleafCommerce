@@ -85,10 +85,10 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 		);
 
 		List<String> redirectUrlPermissions = new ArrayList<String>();
-		redirectUrlPermissions.add("PERMISSION_CREATE_PROMOTION");
-		redirectUrlPermissions.add("PERMISSION_UPDATE_PROMOTION");
-		redirectUrlPermissions.add("PERMISSION_DELETE_PROMOTION");
-        redirectUrlPermissions.add("PERMISSION_READ_PROMOTION");
+		redirectUrlPermissions.add("PERMISSION_CREATE_URLHANDLER");
+		redirectUrlPermissions.add("PERMISSION_UPDATE_URLHANDLER");
+		redirectUrlPermissions.add("PERMISSION_DELETE_URLHANDLER");
+        redirectUrlPermissions.add("PERMISSION_READ_URLHANDLER");
 		setSection(
             BLCMain.getMessageManager().getString("redirectUrlPermissions"),
 			"urlRedirect",
@@ -98,9 +98,6 @@ public class ContentManagementModule extends AbstractHtmlEditingModule {
 			redirectUrlPermissions
 		);
 
-        
-        setHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextFullFeatured.html");
-        setBasicHtmlEditorIFramePath(GWT.getModuleBaseURL()+"admin/richTextBasic.html");
 
         setOrder(100);
 

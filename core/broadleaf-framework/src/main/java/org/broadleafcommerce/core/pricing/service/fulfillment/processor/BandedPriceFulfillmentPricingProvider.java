@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -28,7 +29,9 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmount
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Used in conjunction with {@link BandedPriceFulfillmentOption}.
@@ -46,7 +49,7 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
     }
 
     @Override
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
         if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
             LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
             fulfillmentGroup.setShippingPrice(new Money(0D));
@@ -54,66 +57,78 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
             fulfillmentGroup.setRetailShippingPrice(new Money(0D));
             return fulfillmentGroup;
         }
-        //In this case, the estimation logic is the same as calculation logic. Call the estimation service to get the prices.
-        FulfillmentEstimationResponse response = estimateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption());
-        fulfillmentGroup.setSaleShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-        fulfillmentGroup.setRetailShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
-        fulfillmentGroup.setShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
 
-        return fulfillmentGroup;
+        if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption())) {
+            //In this case, the estimation logic is the same as calculation logic. Call the estimation service to get the prices.
+            HashSet<FulfillmentOption> options = new HashSet<FulfillmentOption>();
+            options.add(fulfillmentGroup.getFulfillmentOption());
+            FulfillmentEstimationResponse response = estimateCostForFulfillmentGroup(fulfillmentGroup, options);
+            fulfillmentGroup.setSaleShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setRetailShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+            fulfillmentGroup.setShippingPrice(response.getFulfillmentOptionPrices().get(fulfillmentGroup.getFulfillmentOption()));
+
+            return fulfillmentGroup;
+        }
+
+        throw new ShippingPriceException("An unsupported FulfillmentOption was passed to the calculateCostForFulfillmentGroup method");
     }
 
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, FulfillmentOption option) {
-        BandedPriceFulfillmentOption bandedPriceFulfillmentOption = (BandedPriceFulfillmentOption)option;
-        List<FulfillmentPriceBand> bands = bandedPriceFulfillmentOption.getBands();
-        if (bands == null || bands.isEmpty()) {
-            //Something is misconfigured. There are no bands associated with this fulfillment option
-            throw new IllegalStateException("There were no Fulfillment Price Bands configred for a BandedPriceFulfillmentOption with ID: "
-                    + bandedPriceFulfillmentOption.getId());
-        }
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
 
         //Set up the response object
         FulfillmentEstimationResponse res = new FulfillmentEstimationResponse();
         HashMap<BandedPriceFulfillmentOption, Money> shippingPrices = new HashMap<BandedPriceFulfillmentOption, Money>();
         res.setFulfillmentOptionPrices(shippingPrices);
-        
-        //Calculate the amount that the band will be applied to
-        BigDecimal retailTotal = new BigDecimal(0D);
-        for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-            BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
-            if (price == null) {
-                price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
-            }
-            retailTotal = retailTotal.add(price);
-        }
 
-        BigDecimal fulfillmentAmount = new BigDecimal(0D);
-        for (FulfillmentPriceBand band : bands) {
-            BigDecimal bandRetailPriceMinimumAmount = band.getRetailPriceMinimumAmount();
-            if (retailTotal.compareTo(bandRetailPriceMinimumAmount) >= 0) {
-                //So far, we've found a potenial match
-                //Now, determine if this is a percentage or actual amount
-                FulfillmentBandResultAmountType resultAmountType = band.getResultAmountType();
-                if (FulfillmentBandResultAmountType.RATE.equals(resultAmountType)) {
-                    if (band.getResultAmount().compareTo(fulfillmentAmount) <= 0) {
-                        //We found a matching option that is cheaper than what we found before
-                        fulfillmentAmount = band.getResultAmount();
-                    }
-                } else if (FulfillmentBandResultAmountType.PERCENTAGE.equals(resultAmountType)) {
-                    //Since this is a percentage, we calculate the result amount based on retailTotal and the band percentage
-                    BigDecimal resultAmount = retailTotal.multiply(band.getResultAmount());
-                    if (resultAmount.compareTo(fulfillmentAmount) <= 0) {
-                        //We found a matching option that is cheaper than what we found before
-                        fulfillmentAmount = resultAmount;
-                    }
-                } else {
-                    LOG.warn("Unknown FulfillmentBandResultAmountType: " + resultAmountType.getType() + " Should be RATE or PERCENTAGE. Ignoring.");
+        for (FulfillmentOption option : options) {
+            if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, option)) {
+                BandedPriceFulfillmentOption bandedPriceFulfillmentOption = (BandedPriceFulfillmentOption)option;
+                List<FulfillmentPriceBand> bands = bandedPriceFulfillmentOption.getBands();
+                if (bands == null || bands.isEmpty()) {
+                    //Something is misconfigured. There are no bands associated with this fulfillment option
+                    throw new IllegalStateException("There were no Fulfillment Price Bands configred for a BandedPriceFulfillmentOption with ID: "
+                            + bandedPriceFulfillmentOption.getId());
                 }
+
+                //Calculate the amount that the band will be applied to
+                BigDecimal retailTotal = new BigDecimal(0D);
+                for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                    BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
+                    if (price == null) {
+                        price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                    }
+                    retailTotal = retailTotal.add(price);
+                }
+
+                BigDecimal fulfillmentAmount = new BigDecimal(0D);
+                for (FulfillmentPriceBand band : bands) {
+                    BigDecimal bandRetailPriceMinimumAmount = band.getRetailPriceMinimumAmount();
+                    if (retailTotal.compareTo(bandRetailPriceMinimumAmount) >= 0) {
+                        //So far, we've found a potenial match
+                        //Now, determine if this is a percentage or actual amount
+                        FulfillmentBandResultAmountType resultAmountType = band.getResultAmountType();
+                        if (FulfillmentBandResultAmountType.RATE.equals(resultAmountType)) {
+                            if (band.getResultAmount().compareTo(fulfillmentAmount) <= 0) {
+                                //We found a matching option that is cheaper than what we found before
+                                fulfillmentAmount = band.getResultAmount();
+                            }
+                        } else if (FulfillmentBandResultAmountType.PERCENTAGE.equals(resultAmountType)) {
+                            //Since this is a percentage, we calculate the result amount based on retailTotal and the band percentage
+                            BigDecimal resultAmount = retailTotal.multiply(band.getResultAmount());
+                            if (resultAmount.compareTo(fulfillmentAmount) <= 0) {
+                                //We found a matching option that is cheaper than what we found before
+                                fulfillmentAmount = resultAmount;
+                            }
+                        } else {
+                            LOG.warn("Unknown FulfillmentBandResultAmountType: " + resultAmountType.getType() + " Should be RATE or PERCENTAGE. Ignoring.");
+                        }
+                    }
+                }
+
+                shippingPrices.put(bandedPriceFulfillmentOption, new Money(fulfillmentAmount));
             }
         }
-
-        shippingPrices.put(bandedPriceFulfillmentOption, new Money(fulfillmentAmount));
 
         return res;
     }

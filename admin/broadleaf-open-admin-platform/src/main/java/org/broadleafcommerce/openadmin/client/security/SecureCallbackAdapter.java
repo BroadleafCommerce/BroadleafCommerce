@@ -27,7 +27,7 @@ import com.smartgwt.client.util.SC;
  */
 public abstract class SecureCallbackAdapter {
 
-	abstract void succeed();
+	public abstract void succeed();
 	
 	public void fail() {
 		SC.say(BLCMain.getMessageManager().getString("insufficientPrivileges"));

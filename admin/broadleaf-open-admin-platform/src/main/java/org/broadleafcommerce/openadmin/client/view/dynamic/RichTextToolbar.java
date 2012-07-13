@@ -617,6 +617,9 @@ public class RichTextToolbar extends Composite {
 	public void setSaveCommand(Command saveCommand) {
 		this.saveCommand=saveCommand;
 	}
+	public void showAssetButton(boolean visible) {
+		assetslink.setVisible(visible);
+	}
 }
 
 

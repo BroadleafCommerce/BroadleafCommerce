@@ -26,6 +26,8 @@ import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelected;
 import org.broadleafcommerce.openadmin.client.callback.TileGridItemSelectedHandler;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
+import org.broadleafcommerce.openadmin.client.security.SecureCallbackAdapter;
+import org.broadleafcommerce.openadmin.client.security.SecurityManager;
 import org.broadleafcommerce.openadmin.client.view.dynamic.grid.TileGrid;
 
 import com.smartgwt.client.data.Criteria;
@@ -150,12 +152,13 @@ public class AssetSearchDialog extends Window {
                 tileGrid.fetchData(valuesAsCriteria);
             }
         });
-        IButton addAssetButton = new IButton("Upload Asset");
+        final IButton addAssetButton = new IButton("Upload Asset");
         addAssetButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
             	addNewItem("Add a New Asset",staticAssetDataSource);
             }
         });
+  
         filterLayout.addMember(filterForm);
         filterLayout.addMember(searchButton);
         filterLayout.addMember(addAssetButton);
@@ -166,6 +169,17 @@ public class AssetSearchDialog extends Window {
         mainLayout.addMember(buttonsLayout);
 
         addItem(mainLayout); 
+        addAssetButton.hide();
+        SecurityManager.getInstance().doSecure("PERMISSION_CREATE_ASSET", new  SecureCallbackAdapter() {
+			 public void succeed() {
+				addAssetButton.show();
+			}
+			 @Override
+			public void fail() {
+				 addAssetButton.hide();
+			}
+		});
+		
 	}
 	
 	protected void addNewItem(String newItemTitle,final DynamicEntityDataSource staticAssetDataSource) {
