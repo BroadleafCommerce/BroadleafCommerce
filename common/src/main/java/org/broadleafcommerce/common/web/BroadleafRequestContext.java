@@ -99,11 +99,23 @@ public class BroadleafRequestContext {
     }
 
     public String getRequestURIWithoutContext() {
+    	String requestURIWithoutContext; 
+    	
     	if (request.getContextPath() != null) {
-    		return request.getRequestURI().substring(request.getContextPath().length());
+    		requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
     	} else {
-    		return request.getRequestURI();
+    		requestURIWithoutContext = request.getRequestURI();
     	}
+    	
+        // Remove JSESSION-ID or other modifiers
+        int pos = requestURIWithoutContext.indexOf(";");
+        if (pos >= 0) {
+        	requestURIWithoutContext = requestURIWithoutContext.substring(0,pos);
+        }
+        
+        return requestURIWithoutContext;
+    	
+    	
     }
     
     private java.util.Locale convertLocaleToJavaLocale() {    	
