@@ -6,6 +6,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
@@ -35,7 +36,8 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
 	protected AddressService addressService;
 	
 	public String checkout(HttpServletRequest request, HttpServletResponse response, Model model) {
-    	model.addAttribute("state", stateService.findStates());
+    	model.addAttribute("states", stateService.findStates());
+        model.addAttribute("countries", countryService.findCountries());
 		return "checkout";
 	}
 	
@@ -56,7 +58,8 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
 
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
     	model.addAttribute("states", stateService.findStates());
-    	return ajaxRender("multiship-add-address", request, model);
+        model.addAttribute("countries", countryService.findCountries());
+        return ajaxRender("multiship-add-address", request, model);
     }
     
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -78,6 +81,14 @@ public class BroadleafCheckoutController extends BroadleafAbstractController {
             public void setAsText(String text) {
             	State state = stateService.findStateByAbbreviation(text);
                 setValue(state);
+            }
+        });
+
+        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                Country country = countryService.findCountryByAbbreviation(text);
+                setValue(country);
             }
         });
     }
