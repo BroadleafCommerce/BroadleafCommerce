@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
@@ -48,5 +49,7 @@ public interface FulfillmentGroupService {
      * @param orderItem
      */
 	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
+	
+	public FulfillmentGroupFee createFulfillmentGroupFee();
 
 }

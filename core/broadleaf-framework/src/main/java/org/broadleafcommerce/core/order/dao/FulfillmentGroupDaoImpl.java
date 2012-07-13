@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -39,14 +40,17 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public FulfillmentGroup save(final FulfillmentGroup fulfillmentGroup) {
         return em.merge(fulfillmentGroup);
     }
 
+    @Override
     public FulfillmentGroup readFulfillmentGroupById(final Long fulfillmentGroupId) {
-        return (FulfillmentGroup) em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
+        return em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
     }
 
+    @Override
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(final Order order) {
         final Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
@@ -55,6 +59,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return fulfillmentGroups == null || fulfillmentGroups.isEmpty() ? null : fulfillmentGroups.get(0);
     }
 
+    @Override
     public void delete(FulfillmentGroup fulfillmentGroup) {
     	if (!em.contains(fulfillmentGroup)) {
     		fulfillmentGroup = readFulfillmentGroupById(fulfillmentGroup.getId());
@@ -62,6 +67,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         em.remove(fulfillmentGroup);
     }
 
+    @Override
     public FulfillmentGroup createDefault() {
         final FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroup"));
         fg.setPrimary(true);
@@ -69,9 +75,16 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return fg;
     }
 
+    @Override
     public FulfillmentGroup create() {
         final FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroup"));
         fg.setType(FulfillmentType.SHIPPING);
         return fg;
     }
+
+    @Override
+    public FulfillmentGroupFee createFulfillmentGroupFee() {
+        return ((FulfillmentGroupFee) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroupFee"));
+    }
+
 }
