@@ -51,9 +51,9 @@ public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "FulfillmentBandId")
+    @GeneratedValue(generator= "FulfillmentPriceBandId")
     @GenericGenerator(
-        name="FulfillmentBandId",
+        name="FulfillmentPriceBandId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
             @Parameter(name="segment_value", value="FulfillmentPriceBandImpl"),
