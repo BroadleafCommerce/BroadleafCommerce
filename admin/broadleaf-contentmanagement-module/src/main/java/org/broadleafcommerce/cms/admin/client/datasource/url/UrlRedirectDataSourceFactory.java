@@ -1,5 +1,6 @@
 package org.broadleafcommerce.cms.admin.client.datasource.url;
 
+import org.broadleafcommerce.cms.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.openadmin.client.datasource.SimpleDataSourceFactory;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.CustomCriteriaListGridDataSource;
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.module.DataSourceModule;
@@ -14,8 +15,7 @@ import com.smartgwt.client.data.DataSource;
 public class UrlRedirectDataSourceFactory extends SimpleDataSourceFactory{
 
     public UrlRedirectDataSourceFactory()  {
-        // For non-BLC this would be super("AdminPermissionImpl")
-        super("org.broadleafcommerce.cms.url.domain.URLHandlerImpl");
+        super(CeilingEntities.URLHANDLER);
     }
 
     public PersistencePerspective setupPersistencePerspective(PersistencePerspective persistencePerspective) {
