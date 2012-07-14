@@ -28,7 +28,7 @@
 	<bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
-				<value>classpath*:/META-INF/persistence-admin.xml</value>
+				<value>classpath*:/META-INF/persistence-open-admin.xml</value>
 			</list>
 		</property>
 	</bean>
