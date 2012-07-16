@@ -21,12 +21,17 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl;
+import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
+import org.broadleafcommerce.profile.core.service.AddressService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -37,7 +42,16 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 
     @Resource(name = "blOrderMultishipOptionDao")
     OrderMultishipOptionDao orderMultishipOptionDao;
-
+    
+	@Resource(name = "blAddressService")
+	protected AddressService addressService;
+	
+	@Resource(name = "blOrderItemService")
+	protected OrderItemService orderItemService;
+	
+    @Resource(name = "blFulfillmentOptionService")
+    protected FulfillmentOptionService fulfillmentOptionService;
+    
 	@Override
 	public OrderMultishipOption save(OrderMultishipOption orderMultishipOption) {
         return orderMultishipOptionDao.save(orderMultishipOption);
@@ -54,17 +68,82 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     }
 	
 	@Override
-	public List<OrderMultishipOption> generateMultishipOptions(Order order) {
+	public void deleteAllOrderMultishipOptions(Order order) {
+		List<OrderMultishipOption> options = findOrderMultishipOptions(order.getId());
+		orderMultishipOptionDao.deleteAll(options);
+	}
+	
+	@Override
+	public void saveOrderMultishipOptions(Order order, List<OrderMultishipOptionDTO> optionDTOs) {
+		deleteAllOrderMultishipOptions(order);
+		
 		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-		for (DiscreteOrderItem discreteOrderItem : order.getDiscreteOrderItems()) {
-			for (int i = 0; i < discreteOrderItem.getQuantity(); i++) {
-				OrderMultishipOption orderMultishipOption = new OrderMultishipOptionImpl();
-				orderMultishipOption.setOrder(order);
-				orderMultishipOption.setOrderItem(discreteOrderItem);
-				orderMultishipOptions.add(orderMultishipOption);
+		for (OrderMultishipOptionDTO dto: optionDTOs) {
+			OrderMultishipOption option = orderMultishipOptionDao.create();
+			option.setOrder(order);
+			option.setOrderItem(orderItemService.readOrderItemById(dto.getOrderItemId()));
+			option.setAddress(addressService.readAddressById(dto.getAddressId()));
+			option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId()));
+			orderMultishipOptions.add(option);
+		}
+		
+		for (OrderMultishipOption option : orderMultishipOptions) {
+			save(option);
+		}
+	}
+	
+	@Override
+	public List<OrderMultishipOption> getOrGenerateOrderMultishipOptions(Order order) {
+		List<OrderMultishipOption> orderMultishipOptions = findOrderMultishipOptions(order.getId());
+		if (orderMultishipOptions == null || orderMultishipOptions.size() == 0) {
+			orderMultishipOptions = generateOrderMultishipOptions(order);
+		}
+		
+		// Create a map representing the current discrete order item counts for the order
+		Map<Long, Integer> orderDiscreteOrderItemCounts = new HashMap<Long, Integer>();
+		for (DiscreteOrderItem item : order.getDiscreteOrderItems()) {
+			orderDiscreteOrderItemCounts.put(item.getId(), item.getQuantity());
+		}
+		
+		List<OrderMultishipOption> optionsToRemove = new ArrayList<OrderMultishipOption>();
+		for (OrderMultishipOption option : orderMultishipOptions) {
+			Integer count = orderDiscreteOrderItemCounts.get(option.getOrderItem().getId());
+			if (count == null || count == 0) {
+				optionsToRemove.add(option);
+			} else {
+				count--;
+				orderDiscreteOrderItemCounts.put(option.getOrderItem().getId(), count);
 			}
 		}
 		
+		for (Entry<Long, Integer> entry : orderDiscreteOrderItemCounts.entrySet()) {
+			DiscreteOrderItem item = (DiscreteOrderItem) orderItemService.readOrderItemById(entry.getKey());
+			orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, item, entry.getValue()));
+		}
+		
+		orderMultishipOptionDao.deleteAll(optionsToRemove);
+		
+		return orderMultishipOptions;
+	}
+	
+	@Override
+	public List<OrderMultishipOption> generateOrderMultishipOptions(Order order) {
+		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+		for (DiscreteOrderItem discreteOrderItem : order.getDiscreteOrderItems()) {
+			orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, discreteOrderItem, discreteOrderItem.getQuantity()));
+		}
+		
+		return orderMultishipOptions;
+	}
+	
+	protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, DiscreteOrderItem item, Integer quantity) {
+		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+		for (int i = 0; i < quantity; i++) {
+			OrderMultishipOption orderMultishipOption = new OrderMultishipOptionImpl();
+			orderMultishipOption.setOrder(order);
+			orderMultishipOption.setOrderItem(item);
+			orderMultishipOptions.add(orderMultishipOption);
+		}
 		return orderMultishipOptions;
 	}
 }

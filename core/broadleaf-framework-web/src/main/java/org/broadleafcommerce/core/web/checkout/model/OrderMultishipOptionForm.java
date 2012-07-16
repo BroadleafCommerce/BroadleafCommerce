@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
+
 import java.util.List;
 
 /**

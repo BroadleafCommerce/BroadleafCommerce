@@ -52,4 +52,11 @@ public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
 	public OrderMultishipOption create() {
         return (OrderMultishipOption) entityConfiguration.createEntityInstance(OrderMultishipOption.class.getName());
     }
+    
+    @Override
+    public void deleteAll(List<OrderMultishipOption> options) {
+    	for (OrderMultishipOption option : options) {
+    		em.remove(option);
+    	}
+    }
 }

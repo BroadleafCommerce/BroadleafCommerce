@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
+import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
 
 import java.util.List;
 
@@ -53,6 +54,13 @@ public interface OrderMultishipOptionService {
 	 * @return the newly created OrderMultishipOption
 	 */
 	public OrderMultishipOption create();
+	
+	/**
+	 * Removes all OrderMultishipOptions for this Order permanently.
+	 * 
+	 * @param order
+	 */
+	public void deleteAllOrderMultishipOptions(Order order);
 
 	/**
 	 * Generates the blank set of OrderMultishipOptions for a given order.
@@ -64,6 +72,33 @@ public interface OrderMultishipOptionService {
 	 * @param order the order to generate OrderMultishipOptions for
 	 * @return the OrderMultishipOptions generated for the Order.
 	 */
-	public List<OrderMultishipOption> generateMultishipOptions(Order order);
+	public List<OrderMultishipOption> generateOrderMultishipOptions(Order order);
+
+	/**
+	 * If this order has associated OrderMultishipOptions, this method will return those
+	 * options. If there are items in the order that do not have associated options,
+	 * options for those items will be generated and attached to the existing options.
+	 * 
+	 * @see #findOrderMultishipOptions(Long)
+	 * @see #generateOrderMultishipOptions(Order)
+	 * 
+	 * @param order
+	 * @return the OrderMultishipOptions for this Order
+	 */
+	public List<OrderMultishipOption> getOrGenerateOrderMultishipOptions(Order order);
+
+	/**
+	 * Associates the appropriate objects based on the OrderMultishipOptionDTOs to
+	 * OrderMultishipOption instances, associates them with the given order,
+	 * and saves the set.
+	 * 
+	 * Note that this method will clear any previously saved OrderMultishipOptions for
+	 * the requested order before performing the save.
+	 * 
+	 * @param order
+	 * @param optionDTOs
+	 */
+	public void saveOrderMultishipOptions(Order order, List<OrderMultishipOptionDTO> optionDTOs);
+
 
 }

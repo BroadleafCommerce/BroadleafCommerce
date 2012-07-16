@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.checkout.model;
-
+package org.broadleafcommerce.core.order.service.call;
 
 /**
  * This DTO is used to bind multiship options in a way that doesn't require
@@ -28,17 +27,10 @@ package org.broadleafcommerce.core.web.checkout.model;
  */
 public class OrderMultishipOptionDTO {
 
-	protected Long orderId;
 	protected Long orderItemId;
 	protected Long addressId;
 	protected Long fulfillmentOptionId;
 	
-	public Long getOrderId() {
-		return orderId;
-	}
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
-	}
 	public Long getOrderItemId() {
 		return orderItemId;
 	}

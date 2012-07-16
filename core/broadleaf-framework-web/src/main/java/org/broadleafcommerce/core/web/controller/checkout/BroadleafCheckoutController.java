@@ -3,17 +3,17 @@ package org.broadleafcommerce.core.web.controller.checkout;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -114,7 +114,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	public String showMultiship(HttpServletRequest request, HttpServletResponse response, Model model) {
 		Customer customer = CustomerState.getCustomer();
 		Order cart = CartState.getCart();
-		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.generateMultishipOptions(cart));
+		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
     	model.addAttribute("customerAddresses", customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()));
     	model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
 		return ajaxRender("multiship", request, model);
@@ -133,6 +133,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	 */
     public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
     		OrderMultishipOptionForm orderMultishipOptionForm) {
+    	orderMultishipOptionService.saveOrderMultishipOptions(CartState.getCart(), orderMultishipOptionForm.getOptions());
+    	
     	if (isAjaxRequest(request)) {
     		return buildAjaxRedirect(request, "/checkout", model);
     	} else {
@@ -235,6 +237,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return boolean indicating whether or not the fulfillment groups on the cart have addresses.
      */
     public boolean hasValidShippingAddresses(Order cart) {
+    	if (cart.getFulfillmentGroups() == null) {
+    		return false;
+    	}
+    	
         for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
             if (fulfillmentGroup.getAddress() == null) {
                 return false;

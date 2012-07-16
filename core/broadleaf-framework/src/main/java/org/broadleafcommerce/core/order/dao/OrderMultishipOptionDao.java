@@ -55,5 +55,12 @@ public interface OrderMultishipOptionDao {
 	 */
 	public OrderMultishipOption create();
 
+	/**
+	 * Removes all of the OrderMultishipOptions in the list permanently
+	 * 
+	 * @param options the options to delete
+	 */
+	public void deleteAll(List<OrderMultishipOption> options);
+
 
 }
