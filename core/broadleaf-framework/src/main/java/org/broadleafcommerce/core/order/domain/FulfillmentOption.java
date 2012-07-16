@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
 
@@ -90,13 +91,25 @@ public interface FulfillmentOption extends Serializable {
      */
     public void setLongDescription(String longDescription);
 
+    /**
+     * Tells the {@link FulfillmentPricingProvider} whether it should try to use the
+     * flat rate cost for a {@link Sku} rather than try to factor that {@link Sku}
+     * into its shipping calculation. This defaults to <b>true</b>
+     * 
+     * @return <b>true</b> if the {@link FulfillmentPricingProvider} should use 
+     * the flat rate on a {@link Sku} when it's available rather than try to calculate
+     * shipping for it, <b>false</b> otherwise. Default value is <b>true</b>
+     */
     public Boolean getUseFlatRates();
 
+    /**
+     * Tells the {@link FulfillmentPricingProvider} whether it should try to use the
+     * flat rate cost for a {@link Sku} rather than try to factor that {@link Sku}
+     * into its shipping calculation
+     * 
+     * @param useFlatRates
+     */
     public void setUseFlatRates(Boolean useFlatRates);
-    
-    public Boolean getAddFulfillmentFees();
-    
-    public void setAddFulfillmentFees(Boolean addFulfillmentFees);
 
     /**
      * Gets the type of fulfillment that this option supports
