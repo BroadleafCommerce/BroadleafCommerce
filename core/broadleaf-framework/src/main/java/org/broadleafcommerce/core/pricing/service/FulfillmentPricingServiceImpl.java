@@ -49,9 +49,9 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
 
         if (fulfillmentGroup.getFulfillmentOption() == null) {
             //There is no shipping option yet. We'll simply set the shipping price to zero for now, and continue.
-            fulfillmentGroup.setRetailShippingPrice(new Money(0D));
-            fulfillmentGroup.setShippingPrice(new Money(0D));
-            fulfillmentGroup.setSaleShippingPrice(new Money(0D));
+            fulfillmentGroup.setRetailShippingPrice(Money.ZERO);
+            fulfillmentGroup.setShippingPrice(Money.ZERO);
+            fulfillmentGroup.setSaleShippingPrice(Money.ZERO);
             return fulfillmentGroup;
         }
         
