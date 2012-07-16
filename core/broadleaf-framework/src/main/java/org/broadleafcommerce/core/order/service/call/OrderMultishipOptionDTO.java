@@ -27,10 +27,17 @@ package org.broadleafcommerce.core.order.service.call;
  */
 public class OrderMultishipOptionDTO {
 
+	protected Long id;
 	protected Long orderItemId;
 	protected Long addressId;
 	protected Long fulfillmentOptionId;
 	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public Long getOrderItemId() {
 		return orderItemId;
 	}

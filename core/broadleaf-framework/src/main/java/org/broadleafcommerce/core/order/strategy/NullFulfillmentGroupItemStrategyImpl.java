@@ -29,6 +29,8 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
  */
 public class NullFulfillmentGroupItemStrategyImpl extends FulfillmentGroupItemStrategyImpl {
 	
+	protected boolean removeEmptyFulfillmentGroups = false;
+	
 	@Override
 	public CartOperationRequest onItemAdded(CartOperationRequest request) {
 		return request;
@@ -37,6 +39,16 @@ public class NullFulfillmentGroupItemStrategyImpl extends FulfillmentGroupItemSt
 	@Override
 	public CartOperationRequest onItemUpdated(CartOperationRequest request) {
 		return request;
+	}
+	
+	@Override
+	public CartOperationRequest verify(CartOperationRequest request) {
+		return request;
+	}
+	
+	@Override
+	public boolean isRemoveEmptyFulfillmentGroups() {
+		return removeEmptyFulfillmentGroups;
 	}
 
 }

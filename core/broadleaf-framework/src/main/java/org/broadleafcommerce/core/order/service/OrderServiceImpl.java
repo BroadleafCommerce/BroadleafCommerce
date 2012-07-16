@@ -357,7 +357,7 @@ public class OrderServiceImpl implements OrderService {
     		CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
     		return context.getSeedData().getOrder();
     	} catch (WorkflowException e) {
-    		throw new AddToCartException("Could not add to cart", e.getCause());
+    		throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
     	}
     }
 
@@ -372,7 +372,7 @@ public class OrderServiceImpl implements OrderService {
     		CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
     		return context.getSeedData().getOrder();
     	} catch (WorkflowException e) {
-    		throw new UpdateCartException("Could not update cart quantity", e.getCause());
+    		throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
     	}
 	}
 
@@ -385,7 +385,7 @@ public class OrderServiceImpl implements OrderService {
     		CartOperationContext context = (CartOperationContext) removeItemWorkflow.doActivities(cartOpRequest);
     		return context.getSeedData().getOrder();
     	} catch (WorkflowException e) {
-    		throw new RemoveFromCartException("Could not remove from cart", e.getCause());
+    		throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
     	}
 	}
 

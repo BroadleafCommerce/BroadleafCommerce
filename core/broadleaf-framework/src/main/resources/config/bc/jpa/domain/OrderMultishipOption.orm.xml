@@ -7,5 +7,10 @@
 		<query>SELECT mso FROM org.broadleafcommerce.core.order.domain.OrderMultishipOption mso
 		WHERE mso.order.id = :orderId</query>
 	</named-query>
+	
+	<named-query name="BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ITEM_ID" >
+		<query>SELECT mso FROM org.broadleafcommerce.core.order.domain.OrderMultishipOption mso
+		WHERE mso.orderItem.id = :orderItemId</query>
+	</named-query>
 
 </entity-mappings>

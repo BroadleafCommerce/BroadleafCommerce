@@ -44,6 +44,14 @@ public interface OrderMultishipOptionDao {
 	 * @return the associated OrderMultishipOptions
 	 */
 	public List<OrderMultishipOption> readOrderMultishipOptions(Long orderId);
+	
+	/**
+	 * Returns all associated OrderMultishipOptions to the given OrderItem
+	 * 
+	 * @param orderItemId the order item's id to find OrderMultishipOptions for
+	 * @return the associated OrderMultishipOptions
+	 */
+	public List<OrderMultishipOption> readOrderItemOrderMultishipOptions(Long orderItemId);
 
 	/**
 	 * Creates a new OrderMultishipOption instance.
@@ -61,6 +69,7 @@ public interface OrderMultishipOptionDao {
 	 * @param options the options to delete
 	 */
 	public void deleteAll(List<OrderMultishipOption> options);
+
 
 
 }

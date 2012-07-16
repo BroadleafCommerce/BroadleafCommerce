@@ -45,6 +45,15 @@ public interface OrderMultishipOptionService {
 	 * @return the associated OrderMultishipOptions
 	 */
 	public List<OrderMultishipOption> findOrderMultishipOptions(Long orderId);
+	
+	/**
+	 * Finds all OrderMultishipOptions associated with the given Order Item 
+	 * based on the order item id
+	 * 
+	 * @param orderItemId the orderItem id to find OrderMultishipOptions for
+	 * @return the associated OrderMultishipOptions
+	 */
+	public List<OrderMultishipOption> findOrderItemOrderMultishipOptions(Long orderItemId);
 
 	/**
 	 * Creates a new instance of the OrderMultishipOption.
@@ -61,6 +70,25 @@ public interface OrderMultishipOptionService {
 	 * @param order
 	 */
 	public void deleteAllOrderMultishipOptions(Order order);
+
+	/**
+	 * Removes all OrderMultishipOptions associated with the OrderItem
+	 * represented by this orderItemId permanently.
+	 * 
+	 * @param orderItemId
+	 */
+	public void deleteOrderItemOrderMultishipOptions(Long orderItemId);
+	
+	/**
+	 * Removes up to numToDelete OrderMultishipOptions associated with 
+	 * the OrderItem represented by this orderItemId permanently.
+	 * 
+	 * @see #deleteOrderItemOrderMultishipOptions(Long)
+	 * 
+	 * @param orderItemId 
+	 * @param numToDelete the maximum number of occurrences of this orderItemId to delete
+	 */
+	public void deleteOrderItemOrderMultishipOptions(Long orderItemId, int numToDelete);
 
 	/**
 	 * Generates the blank set of OrderMultishipOptions for a given order.

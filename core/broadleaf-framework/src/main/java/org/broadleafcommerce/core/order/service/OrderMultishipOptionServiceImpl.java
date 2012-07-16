@@ -61,11 +61,30 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 	public List<OrderMultishipOption> findOrderMultishipOptions(Long orderId) {
         return orderMultishipOptionDao.readOrderMultishipOptions(orderId);
     }
+	
+	@Override
+	public List<OrderMultishipOption> findOrderItemOrderMultishipOptions(Long orderItemId) {
+        return orderMultishipOptionDao.readOrderItemOrderMultishipOptions(orderItemId);
+    }
     
 	@Override
 	public OrderMultishipOption create() {
         return orderMultishipOptionDao.create();
     }
+	
+	@Override
+	public void deleteOrderItemOrderMultishipOptions(Long orderItemId) {
+		List<OrderMultishipOption> options = findOrderItemOrderMultishipOptions(orderItemId);
+		orderMultishipOptionDao.deleteAll(options);
+	}
+	
+	@Override
+	public void deleteOrderItemOrderMultishipOptions(Long orderItemId, int numToDelete) {
+		List<OrderMultishipOption> options = findOrderItemOrderMultishipOptions(orderItemId);
+		numToDelete = (numToDelete > options.size()) ? options.size() : numToDelete;
+		options = options.subList(0, numToDelete);
+		orderMultishipOptionDao.deleteAll(options);
+	}
 	
 	@Override
 	public void deleteAllOrderMultishipOptions(Order order) {
@@ -75,11 +94,18 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 	
 	@Override
 	public void saveOrderMultishipOptions(Order order, List<OrderMultishipOptionDTO> optionDTOs) {
-		deleteAllOrderMultishipOptions(order);
+		Map<Long, OrderMultishipOption> currentOptions = new HashMap<Long, OrderMultishipOption>();
+		for (OrderMultishipOption option : findOrderMultishipOptions(order.getId())) {
+			currentOptions.put(option.getId(), option);
+		}
 		
 		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
 		for (OrderMultishipOptionDTO dto: optionDTOs) {
-			OrderMultishipOption option = orderMultishipOptionDao.create();
+			OrderMultishipOption option = currentOptions.get(dto.getId());
+			if (option == null) {
+				option = orderMultishipOptionDao.create();
+			}
+			
 			option.setOrder(order);
 			option.setOrderItem(orderItemService.readOrderItemById(dto.getOrderItemId()));
 			option.setAddress(addressService.readAddressById(dto.getAddressId()));
@@ -121,6 +147,7 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 			orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, item, entry.getValue()));
 		}
 		
+		orderMultishipOptions.removeAll(optionsToRemove);
 		orderMultishipOptionDao.deleteAll(optionsToRemove);
 		
 		return orderMultishipOptions;

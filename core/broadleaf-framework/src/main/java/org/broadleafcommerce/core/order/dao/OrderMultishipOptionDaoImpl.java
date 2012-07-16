@@ -49,6 +49,13 @@ public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
     }
     
     @Override
+	public List<OrderMultishipOption> readOrderItemOrderMultishipOptions(final Long orderItemId) {
+        TypedQuery<OrderMultishipOption> query = em.createNamedQuery("BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ITEM_ID", OrderMultishipOption.class);
+        query.setParameter("orderItemId", orderItemId);
+        return query.getResultList();
+    }
+    
+    @Override
 	public OrderMultishipOption create() {
         return (OrderMultishipOption) entityConfiguration.createEntityInstance(OrderMultishipOption.class.getName());
     }

@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FulfillmentGroupRequest {
 
@@ -30,6 +31,7 @@ public class FulfillmentGroupRequest {
     protected Phone phone;
     protected String method;
     protected String service;
+    protected FulfillmentOption fulfillmentOption;
 	protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
@@ -63,8 +65,16 @@ public class FulfillmentGroupRequest {
 	public void setMethod(String method) {
 		this.method = method;
 	}
+	
+    public FulfillmentOption getFulfillmentOption() {
+		return fulfillmentOption;
+	}
 
-    public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {
+	public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
+		this.fulfillmentOption = fulfillmentOption;
+	}
+
+	public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {
         return fulfillmentGroupItemRequests;
     }
 

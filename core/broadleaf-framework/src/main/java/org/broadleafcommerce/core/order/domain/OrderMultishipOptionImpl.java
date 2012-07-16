@@ -49,20 +49,20 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @Column(name = "ORDER_MULTISHIP_OPTION_ID")
     protected Long id;
     
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = OrderImpl.class)
+    @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="MULTISHIP_OPTION_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = OrderItemImpl.class)
+    @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
+    @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
     
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = FulfillmentOptionImpl.class)
+    @ManyToOne(targetEntity = FulfillmentOptionImpl.class)
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
 

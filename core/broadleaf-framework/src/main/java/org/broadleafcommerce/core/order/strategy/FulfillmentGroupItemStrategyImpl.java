@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.strategy;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -31,7 +32,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.HashMap;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -50,6 +54,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     
     @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fgItemDao;
+    
+    protected boolean removeEmptyFulfillmentGroups = true;
 	
 	@Override
 	public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
@@ -119,7 +125,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 							// We have enough quantity in this fg item to facilitate the entire requsted update
 							fgItem.setQuantity(fgItem.getQuantity() - remainingToDecrement);
 							done = true;
-						} else {
+						} else if (!done) {
 							// We do not have enough quantity. We'll remove this item and continue searching
 							// for the remainder.
 							remainingToDecrement = remainingToDecrement - fgItem.getQuantity();
@@ -147,6 +153,69 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         
         fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
         
+        
         return request;
 	}
+	
+	@Override
+	public CartOperationRequest verify(CartOperationRequest request) throws PricingException {
+		Order order = request.getOrder();
+		
+        if (isRemoveEmptyFulfillmentGroups() && order.getFulfillmentGroups() != null) {
+        	ListIterator<FulfillmentGroup> fgIter = order.getFulfillmentGroups().listIterator();
+        	while (fgIter.hasNext()) {
+        		FulfillmentGroup fg = fgIter.next();
+	        	if (fg.getFulfillmentGroupItems() == null || fg.getFulfillmentGroupItems().size() == 0) {
+	        		fgIter.remove();
+	        		fulfillmentGroupService.delete(fg);
+	        	}
+	        }
+        }
+        
+        Map<Long, Integer> doiQuantityMap = new HashMap<Long, Integer>();
+        for (DiscreteOrderItem doi : order.getDiscreteOrderItems()) {
+        	Integer doiQuantity = doiQuantityMap.get(doi.getId());
+        	if (doiQuantity == null) {
+        		doiQuantity = 0;
+        	}
+        	doiQuantity += doi.getQuantity();
+        	doiQuantityMap.put(doi.getId(), doiQuantity);
+        }
+        
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+        	for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+        		if (fgi.getOrderItem() instanceof DiscreteOrderItem) {
+        			Long doiId = fgi.getOrderItem().getId();
+        			Integer doiQuantity = doiQuantityMap.get(doiId);
+        			
+        			if (doiQuantity == null) {
+        				throw new IllegalStateException("Fulfillment group items and discrete order items are not in sync. DiscreteOrderItem id: " + doiId);
+        			}
+        			
+        			doiQuantity -= fgi.getQuantity();
+        			doiQuantityMap.put(doiId, doiQuantity);
+        		}
+        	}
+        }
+        
+        for (Entry<Long, Integer> entry : doiQuantityMap.entrySet()) {
+        	if (entry.getValue() != 0) {
+        		throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
+        	}
+        }
+        
+		return request;
+	}
+
+	@Override
+	public boolean isRemoveEmptyFulfillmentGroups() {
+		return removeEmptyFulfillmentGroups;
+	}
+
+	@Override
+	public void setRemoveEmptyFulfillmentGroups(boolean removeEmptyFulfillmentGroups) {
+		this.removeEmptyFulfillmentGroups = removeEmptyFulfillmentGroups;
+	}
+
+	
 }

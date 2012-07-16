@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -37,7 +38,7 @@ public interface FulfillmentGroupService {
     
     public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException;
     
-    public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
+    public Order removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
 
     /**
      * Removes every fulfillment group item in every fulfillment group in the order
@@ -48,5 +49,17 @@ public interface FulfillmentGroupService {
      * @param orderItem
      */
 	public void removeOrderItemFromFullfillmentGroups(Order order, OrderItem orderItem);
+
+	/**
+	 * Associates FulfillmentGroupItems in the given Order such that they match the structure
+	 * of the OrderMultishipOptions associated with the given Order. 
+	 * 
+	 * @see OrderMultishipOption
+	 * 
+	 * @param order
+	 * @return the saved order
+	 * @throws PricingException 
+	 */
+	public Order splitIntoMultishipGroups(Order order, boolean priceOrder) throws PricingException;
 
 }

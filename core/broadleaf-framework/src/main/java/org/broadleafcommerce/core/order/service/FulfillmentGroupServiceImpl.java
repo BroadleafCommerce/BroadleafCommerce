@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -31,8 +32,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
@@ -45,6 +48,9 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+    
+    @Resource(name = "blOrderMultishipOptionService")
+    protected OrderMultishipOptionService orderMultishipOptionService;
 
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         return fulfillmentGroupDao.save(fulfillmentGroup);
@@ -70,6 +76,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         fg.setPhone(fulfillmentGroupRequest.getPhone());
         fg.setMethod(fulfillmentGroupRequest.getMethod());
         fg.setService(fulfillmentGroupRequest.getService());
+        fg.setFulfillmentOption(fulfillmentGroupRequest.getFulfillmentOption());
 
         for (int i = 0; i < fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size(); i++) {
             FulfillmentGroupItemRequest request = fulfillmentGroupRequest.getFulfillmentGroupItemRequests().get(i);
@@ -154,6 +161,52 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
     }
 	
+	@Override
+	public Order splitIntoMultishipGroups(Order order, boolean priceOrder) throws PricingException {
+		order = removeAllFulfillmentGroupsFromOrder(order, false);
+		List<OrderMultishipOption> multishipOptions =  orderMultishipOptionService.findOrderMultishipOptions(order.getId());
+		
+		// This map is keyed by a String that follows the pattern "<address.id>:<fulfillmentOption.id>"
+		// For example, a key could be "23:3"
+		Map<String, FulfillmentGroup> multishipGroups = new HashMap<String, FulfillmentGroup>();
+		
+		for (OrderMultishipOption option : multishipOptions) {
+			String key = option.getAddress().getId() + ":" + option.getFulfillmentOption().getId();
+			
+			FulfillmentGroup fg = multishipGroups.get(key);
+			if (fg == null) {
+				FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
+				fgr.setOrder(order);
+				fgr.setAddress(option.getAddress());
+				fgr.setFulfillmentOption(option.getFulfillmentOption());
+				fg = addFulfillmentGroupToOrder(fgr, false);
+				fg = save(fg);
+				order.getFulfillmentGroups().add(fg);
+			}
+			
+			FulfillmentGroupItem fulfillmentGroupItem = null;
+			for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+				if (fgi.getOrderItem().getId() == option.getOrderItem().getId()) {
+					fulfillmentGroupItem = fgi;
+				}
+			}
+			
+			if (fulfillmentGroupItem == null) {
+		        fulfillmentGroupItem = fulfillmentGroupItemDao.create();
+		        fulfillmentGroupItem.setFulfillmentGroup(fg);
+		        fulfillmentGroupItem.setOrderItem(option.getOrderItem());
+		        fulfillmentGroupItem.setQuantity(1);
+		        fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
+		        fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
+			} else {
+				fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+			}
+			
+			multishipGroups.put(key, fg);
+		}
+		
+		return orderService.save(order, priceOrder);
+	}
 	
     protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
@@ -164,14 +217,15 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 
 	@Override
-	public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
+	public Order removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
         if (order.getFulfillmentGroups() != null) {
             for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
                 FulfillmentGroup fulfillmentGroup = iterator.next();
                 iterator.remove();
                 fulfillmentGroupDao.delete(fulfillmentGroup);
             }
-            orderService.save(order, priceOrder);
+            order = orderService.save(order, priceOrder);
         }
+        return order;
 	}
 }

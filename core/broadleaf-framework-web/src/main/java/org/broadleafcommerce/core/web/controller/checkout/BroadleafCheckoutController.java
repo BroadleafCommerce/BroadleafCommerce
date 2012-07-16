@@ -53,8 +53,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model) {
+    	Order cart = CartState.getCart();
+		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.findOrderMultishipOptions(cart.getId()));
         model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
-        model.addAttribute("validShipping", hasValidShippingAddresses(CartState.getCart()));
+        model.addAttribute("validShipping", hasValidShippingAddresses(cart));
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
 		return "checkout";
@@ -130,10 +132,13 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	 * @param model
 	 * @param orderMultishipOptionForm
 	 * @return a redirect to the checkout page
+	 * @throws PricingException 
 	 */
     public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
-    		OrderMultishipOptionForm orderMultishipOptionForm) {
-    	orderMultishipOptionService.saveOrderMultishipOptions(CartState.getCart(), orderMultishipOptionForm.getOptions());
+    		OrderMultishipOptionForm orderMultishipOptionForm) throws PricingException {
+    	Order cart = CartState.getCart();
+    	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
+    	cart = fulfillmentGroupService.splitIntoMultishipGroups(cart, true);
     	
     	if (isAjaxRequest(request)) {
     		return buildAjaxRedirect(request, "/checkout", model);
