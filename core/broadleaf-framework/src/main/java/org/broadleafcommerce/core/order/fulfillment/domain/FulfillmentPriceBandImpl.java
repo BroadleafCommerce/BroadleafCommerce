@@ -63,10 +63,10 @@ public class FulfillmentPriceBandImpl implements FulfillmentPriceBand {
     @Column(name = "FULFILLMENT_BAND_ID")
     protected Long id;
 
-    @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", nullable = false)
+    @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", precision=19, scale=5, nullable = false)
     protected BigDecimal retailPriceMinimumAmount;
 
-    @Column(name="RESULT_AMOUNT", nullable = false)
+    @Column(name="RESULT_AMOUNT", precision=19, scale=5, nullable = false)
     protected BigDecimal resultAmount;
     
     @Column(name="RESULT__AMOUNT_TYPE", nullable = false)
