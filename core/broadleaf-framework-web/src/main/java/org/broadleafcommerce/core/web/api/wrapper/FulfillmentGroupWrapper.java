@@ -60,12 +60,6 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @XmlElement
     protected PhoneWrapper phone;
 
-    @XmlElement
-    protected String method;
-
-    @XmlElement
-    protected String service;
-
     @XmlElement(name = "fulfillmentGroupItem")
     @XmlElementWrapper(name = "fulfillmentGroupItems")
     protected List<FulfillmentGroupItemWrapper> fulfillmentGroupItems;
@@ -74,8 +68,6 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     public void wrap(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
         this.total = model.getTotal();
-        this.method = model.getMethod();
-        this.service = model.getService();
 
         if (model.getOrder() != null) {
             this.orderId = model.getOrder().getId();
@@ -109,8 +101,6 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @Override
     public FulfillmentGroupRequest unwrap(HttpServletRequest request, ApplicationContext appContext) {
         FulfillmentGroupRequest fulfillmentGroupRequest = new FulfillmentGroupRequest();
-        fulfillmentGroupRequest.setMethod(this.method);
-        fulfillmentGroupRequest.setService(this.service);
 
         List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
         for (FulfillmentGroupItemWrapper wrapper : this.fulfillmentGroupItems) {
