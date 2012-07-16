@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -41,7 +42,9 @@ import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -54,6 +57,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -186,10 +191,6 @@ public class SkuImpl implements Sku {
     @AdminPresentation(friendlyName = "SkuImpl_Is_Product_Machine_Sortable", order=9, group = "SkuImpl_Product_Description", prominent=false)
     protected Boolean isMachineSortable = true;
 
-    @Column(name = "FLAT_FULFILLMENT_RATE")
-    @AdminPresentation(friendlyName = "Flat Fulfillment Rate", fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal flatFulfillmentRate;
-
     /** The sku media. */
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_SKU_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
@@ -224,14 +225,24 @@ public class SkuImpl implements Sku {
     @JoinTable(name = "BLC_SKU_OPTION_VALUE_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID", referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    List<ProductOptionValue> productOptionValues;
+    protected List<ProductOptionValue> productOptionValues;
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuFeeImpl.class)
     @JoinTable(name = "BLC_SKU_FEE_XREF",
                    joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    List<SkuFee> fees;
+    protected List<SkuFee> fees;
+
+    @ElementCollection
+    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", 
+                   joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
+    @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID")
+    @MapKeyColumn(name = "FULFILLMENT_OPTION_ID")
+    @Column(name = "RATE", precision=19, scale=5)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
 
     @Override
     public Long getId() {
@@ -623,16 +634,6 @@ public class SkuImpl implements Sku {
     }
 
     @Override
-    public Money getFlatFulfillmentRate() {
-        return flatFulfillmentRate == null ? null : new Money(flatFulfillmentRate);
-    }
-
-    @Override
-    public void setFlatFulfillmentRateRate(Money flatFulfillmentRate) {
-        this.flatFulfillmentRate = Money.toAmount(flatFulfillmentRate);
-    }
-
-    @Override
     public List<SkuFee> getFees() {
         return fees;
     }
@@ -640,6 +641,16 @@ public class SkuImpl implements Sku {
     @Override
     public void setFees(List<SkuFee> fees) {
         this.fees = fees;
+    }
+    
+    @Override
+    public Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates() {
+        return fulfillmentFlatRates;
+    }
+    
+    @Override
+    public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates) {
+        this.fulfillmentFlatRates = fulfillmentFlatRates;
     }
     
 	@Override
