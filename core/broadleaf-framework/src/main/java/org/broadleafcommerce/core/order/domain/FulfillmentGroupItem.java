@@ -16,38 +16,38 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.money.Money;
+
 import java.io.Serializable;
 import java.util.List;
 
-import org.broadleafcommerce.common.money.Money;
-
 public interface FulfillmentGroupItem extends Serializable {
 
-    Long getId();
+    public Long getId();
 
-    void setId(Long id);
+    public void setId(Long id);
 
-    FulfillmentGroup getFulfillmentGroup();
+    public FulfillmentGroup getFulfillmentGroup();
 
-    void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    OrderItem getOrderItem();
+    public OrderItem getOrderItem();
 
-    void setOrderItem(OrderItem orderItem);
+    public void setOrderItem(OrderItem orderItem);
 
-    int getQuantity();
+    public int getQuantity();
 
-    void setQuantity(int quantity);
+    public void setQuantity(int quantity);
 
-    Money getRetailPrice();
+    public Money getRetailPrice();
 
-    Money getSalePrice();
+    public Money getSalePrice();
 
-    Money getPrice();
+    public Money getPrice();
 
-    String getStatus();
+    public String getStatus();
 
-    void setStatus(String status);
+    public void setStatus(String status);
     
     public void removeAssociations();
 
