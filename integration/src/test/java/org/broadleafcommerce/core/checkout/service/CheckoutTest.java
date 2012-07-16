@@ -31,6 +31,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
@@ -39,7 +41,6 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -220,59 +221,73 @@ public class CheckoutTest extends BaseTest {
 			private static final long serialVersionUID = 1L;
 			private String referenceNumber = "1234";
 
-			public String getCvvCode() {
+			@Override
+            public String getCvvCode() {
 				return "123";
 			}
 
-			public Integer getExpirationMonth() {
+			@Override
+            public Integer getExpirationMonth() {
 				return 11;
 			}
 
-			public Integer getExpirationYear() {
+			@Override
+            public Integer getExpirationYear() {
 				return 2011;
 			}
 
-			public Long getId() {
+			@Override
+            public Long getId() {
 				return null;
 			}
 
-			public String getPan() {
+			@Override
+            public String getPan() {
 				return "1111111111111111";
 			}
 
-			public void setCvvCode(String cvvCode) {
+			@Override
+            public void setCvvCode(String cvvCode) {
 				//do nothing
 			}
 
-			public void setExpirationMonth(Integer expirationMonth) {
+			@Override
+            public void setExpirationMonth(Integer expirationMonth) {
 				//do nothing
 			}
 
-			public void setExpirationYear(Integer expirationYear) {
+			@Override
+            public void setExpirationYear(Integer expirationYear) {
 				//do nothing
 			}
 
-			public void setId(Long id) {
+			@Override
+            public void setId(Long id) {
 				//do nothing
 			}
 
-			public void setPan(String pan) {
+			@Override
+            public void setPan(String pan) {
 				//do nothing
 			}
 
-			public EncryptionModule getEncryptionModule() {
+			@Override
+            public EncryptionModule getEncryptionModule() {
 				return encryptionModule;
 			}
 
-			public String getReferenceNumber() {
+			@Override
+            public String getReferenceNumber() {
 				return referenceNumber;
 			}
 
-			public void setEncryptionModule(EncryptionModule encryptionModule) {
+			@Override
+            public void setEncryptionModule(EncryptionModule encryptionModule) {
 				//do nothing
 			}
 
-			public void setReferenceNumber(String referenceNumber) {
+			@Override
+            public void setReferenceNumber(String referenceNumber) {
 				this.referenceNumber = referenceNumber;
 			}
 
@@ -322,8 +337,9 @@ public class CheckoutTest extends BaseTest {
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
         group.setShippingPrice(total);
-        group.setMethod("standard");
-        group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
+        option.setPrice(new Money(0));
+        group.setFulfillmentOption(option);
         return group;
     }
 

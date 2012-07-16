@@ -93,11 +93,12 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
         group.setAddress(address);
         group.setIsShippingPriceTaxable(true);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
-        //TODO: update test with banded fulfillment option
         group.setMethod("standard");
         group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        group.setShippingPrice(new Money("0"));
         group.setOrder(order);
         groups.add(group);
+        group.setTotal(new Money(0));
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
         group.setRetailShippingPrice(total);
@@ -210,10 +211,8 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
 
         assert order.getOrderItems().size() == 4;
         assert order.getTotalTax().equals(new Money("2.00"));
-        //TODO: verify what the correct shipping cost should be based on Fulfillment refactor
-        //assert order.getTotalShipping().equals(new Money("8.50"));
+        assert order.getTotalShipping().equals(new Money("0"));
         assert order.getSubTotal().equals(new Money("40.00"));
-        //TODO: add in correct fulfillmentGroup total to this after verifying from Fulfillment refactor
         assert order.getTotal().equals(new Money("42.00"));
 
         boolean foundGiftItemAndCorrectQuantity = false;

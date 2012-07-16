@@ -50,7 +50,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -149,7 +148,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
     
-    @ManyToOne(targetEntity = FulfillmentOptionImpl.class)
+    @ManyToOne(targetEntity = FulfillmentOptionImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
     
