@@ -25,7 +25,9 @@ import java.util.List;
  * @author Phillip Verheyden
  */
 public interface FulfillmentOptionService {
-    
+
+    public FulfillmentOption readFulfillmentOptionById(Long fulfillmentOptionId);
+
     public FulfillmentOption save(FulfillmentOption option);
 
     public List<FulfillmentOption> readAllFulfillmentOptions();

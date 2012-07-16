@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
+import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 
@@ -25,12 +30,21 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
  * @author Elbert Bautista (ebautista)
  * @author Andre Azzolini (apazzolini)
  */
-public class ShippingAddressForm {
+public class ShippingInfoForm {
 
     protected Address address = new AddressImpl();
     protected String addressName;
+    protected Long fulfillmentOptionId;
 
-	public Address getAddress() {
+    public Long getFulfillmentOptionId() {
+        return fulfillmentOptionId;
+    }
+
+    public void setFulfillmentOptionId(Long fulfillmentOptionId) {
+        this.fulfillmentOptionId = fulfillmentOptionId;
+    }
+
+    public Address getAddress() {
 		return address;
 	}
 

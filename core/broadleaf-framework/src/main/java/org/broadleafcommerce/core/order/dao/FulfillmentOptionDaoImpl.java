@@ -17,7 +17,10 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -39,6 +42,11 @@ public class FulfillmentOptionDaoImpl implements FulfillmentOptionDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Override
+    public FulfillmentOption readFulfillmentOptionById(final Long fulfillmentOptionId) {
+        return (FulfillmentOptionImpl) em.find(FulfillmentOptionImpl.class, fulfillmentOptionId);
+    }
 
     @Override
     public FulfillmentOption save(FulfillmentOption option) {

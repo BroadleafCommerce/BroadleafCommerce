@@ -35,6 +35,11 @@ public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
     FulfillmentOptionDao fulfillmentOptionDao;
 
     @Override
+    public FulfillmentOption readFulfillmentOptionById(Long fulfillmentOptionId) {
+        return fulfillmentOptionDao.readFulfillmentOptionById(fulfillmentOptionId);
+    }
+
+    @Override
     public FulfillmentOption save(FulfillmentOption option) {
         return fulfillmentOptionDao.save(option);
     }

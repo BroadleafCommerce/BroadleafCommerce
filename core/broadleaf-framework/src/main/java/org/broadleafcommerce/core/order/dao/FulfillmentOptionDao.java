@@ -26,6 +26,8 @@ import java.util.List;
  */
 public interface FulfillmentOptionDao {
 
+    public FulfillmentOption readFulfillmentOptionById(final Long fulfillmentOptionId);
+
     public FulfillmentOption save(FulfillmentOption option);
     
     public List<FulfillmentOption> readAllFulfillmentOptions();

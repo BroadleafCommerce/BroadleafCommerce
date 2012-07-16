@@ -20,7 +20,16 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
+import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
+import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
+import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CustomerAddressService;
+import org.broadleafcommerce.profile.core.service.StateService;
 
 import javax.annotation.Resource;
 
@@ -43,5 +52,32 @@ public class AbstractCheckoutController extends BroadleafAbstractController {
 
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
+
+    @Resource(name = "blStateService")
+    protected StateService stateService;
+
+    @Resource(name = "blCountryService")
+    protected CountryService countryService;
+
+    @Resource(name = "blCustomerAddressService")
+    protected CustomerAddressService customerAddressService;
+
+    @Resource(name = "blAddressService")
+    protected AddressService addressService;
+
+    @Resource(name = "blOrderMultishipOptionService")
+    protected OrderMultishipOptionService orderMultishipOptionService;
+
+    @Resource(name = "blShippingInfoFormValidator")
+    protected ShippingInfoFormValidator shippingInfoFormValidator;
+
+    @Resource(name = "blBillingInfoFormValidator")
+    protected BillingInfoFormValidator billingInfoFormValidator;
+
+    @Resource(name = "blCreditCardPaymentInfoFactory")
+    protected PaymentInfoFactory creditCardPaymentInfoFactory;
+
+    @Resource(name = "blSecurePaymentInfoService")
+    protected SecurePaymentInfoService securePaymentInfoService;
 
 }
