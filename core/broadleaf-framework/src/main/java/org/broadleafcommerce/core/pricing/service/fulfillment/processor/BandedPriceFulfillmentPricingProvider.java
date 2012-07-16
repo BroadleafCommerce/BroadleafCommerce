@@ -20,6 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -93,19 +96,43 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
 
                 //Calculate the amount that the band will be applied to
                 BigDecimal retailTotal = new BigDecimal(0D);
+                BigDecimal flatTotal = new BigDecimal(0D);
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                    BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
-                    if (price == null) {
-                        price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                    
+                    //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the retail
+                    //total but instead tack it onto the final rate
+                    boolean addToRetailTotal = true;
+                    if (option.getUseFlatRates()) {
+                        Sku sku = null;
+                        if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
+                            sku = ((DiscreteOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
+                        } else if (fulfillmentGroupItem.getOrderItem() instanceof BundleOrderItem) {
+                            sku = ((BundleOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
+                        }
+                        
+                        if (sku != null) {
+                            BigDecimal rate = sku.getFulfillmentFlatRates().get(option);
+                            if (rate != null) {
+                                addToRetailTotal = false;
+                                flatTotal = flatTotal.add(rate);
+                            }
+                        }
                     }
-                    retailTotal = retailTotal.add(price);
+                    
+                    if (addToRetailTotal) {
+                        BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
+                        if (price == null) {
+                            price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                        }
+                        retailTotal = retailTotal.add(price);
+                    }
                 }
 
                 BigDecimal fulfillmentAmount = new BigDecimal(0D);
                 for (FulfillmentPriceBand band : bands) {
                     BigDecimal bandRetailPriceMinimumAmount = band.getRetailPriceMinimumAmount();
                     if (retailTotal.compareTo(bandRetailPriceMinimumAmount) >= 0) {
-                        //So far, we've found a potenial match
+                        //So far, we've found a potential match
                         //Now, determine if this is a percentage or actual amount
                         FulfillmentBandResultAmountType resultAmountType = band.getResultAmountType();
                         if (FulfillmentBandResultAmountType.RATE.equals(resultAmountType)) {
@@ -125,6 +152,9 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
                         }
                     }
                 }
+                
+                //add the flat rate amount calculated on the Sku
+                fulfillmentAmount = fulfillmentAmount.add(flatTotal);
 
                 shippingPrices.put(bandedPriceFulfillmentOption, new Money(fulfillmentAmount));
             }
