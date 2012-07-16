@@ -59,8 +59,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         model.addAttribute("validShipping", hasValidShippingAddresses(cart));
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
-		return "checkout";
-	}
+        return ajaxRender("checkout", request, model);
+    }
 
     /**
      * Processes the request to save a single shipping address
@@ -82,7 +82,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             checkout(request, response, model);
-            return isAjaxRequest(request) ? "ajax/checkout" : "/checkout";
+            return ajaxRender("checkout", request, model);
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
@@ -206,7 +206,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {
             checkout(request, response, model);
-            return isAjaxRequest(request) ? "ajax/checkout" : "/checkout";
+            return ajaxRender("checkout", request, model);
         }
 
         PaymentInfo ccInfo = creditCardPaymentInfoFactory.constructPaymentInfo(cart);
@@ -214,6 +214,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         cart.getPaymentInfos().add(ccInfo);
 
         CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
+        ccReference.setNameOnCard(billingForm.getCreditCardName());
         ccReference.setReferenceNumber(ccInfo.getReferenceNumber());
         ccReference.setPan(billingForm.getCreditCardNumber());
         ccReference.setCvvCode(billingForm.getCreditCardCvvCode());
@@ -230,9 +231,14 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
             checkout(request, response, model);
             model.addAttribute("paymentException", true);
-            return isAjaxRequest(request) ? "ajax/checkout" : "/checkout";
+            return ajaxRender("checkout", request, model);
         }
-        return isAjaxRequest(request) ? "ajax/order_confirmation" : "redirect:/order_confirmation";
+
+        if (isAjaxRequest(request)) {
+            return buildAjaxRedirect(request, "/" + defaultOrderConfirmationViewName + "/" + cart.getOrderNumber(), model);
+        } else {
+            return "redirect:/" + defaultOrderConfirmationViewName + "/" + cart.getOrderNumber();
+        }
     }
 
     /**

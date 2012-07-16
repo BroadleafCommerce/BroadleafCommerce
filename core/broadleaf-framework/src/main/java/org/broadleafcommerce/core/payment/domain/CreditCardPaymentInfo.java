@@ -58,6 +58,16 @@ public interface CreditCardPaymentInfo extends Referenced {
      */
     public void setExpirationYear(Integer expirationYear);
 
+    /**
+     * @return the nameOnCard
+     */
+    public String getNameOnCard();
+
+    /**
+     * @param nameOnCard the name on the card to set
+     */
+    public void setNameOnCard(String nameOnCard);
+
     public String getCvvCode();
 
     public void setCvvCode(String cvvCode);

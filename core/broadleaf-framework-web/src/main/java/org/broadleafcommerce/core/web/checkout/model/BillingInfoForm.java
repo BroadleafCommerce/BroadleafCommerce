@@ -27,12 +27,13 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 public class BillingInfoForm {
 
     private Address address = new AddressImpl();
+    private String creditCardName;
     private String creditCardNumber;
     private String creditCardCvvCode;
     private String creditCardExpMonth;
     private String creditCardExpYear;
     private String selectedCreditCardType;
-    private boolean isSameAddress;
+    private boolean useShippingAddress;
 
     public Address getAddress() {
         return address;
@@ -40,6 +41,14 @@ public class BillingInfoForm {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getCreditCardName() {
+        return creditCardName;
+    }
+
+    public void setCreditCardName(String creditCardName) {
+        this.creditCardName = creditCardName;
     }
 
     public String getCreditCardNumber() {
@@ -82,12 +91,11 @@ public class BillingInfoForm {
         this.selectedCreditCardType = selectedCreditCardType;
     }
 
-    public boolean isSameAddress() {
-        return isSameAddress;
+    public boolean isUseShippingAddress() {
+        return useShippingAddress;
     }
 
-    public void setSameAddress(boolean sameAddress) {
-        isSameAddress = sameAddress;
+    public void setUseShippingAddress(boolean useShippingAddress) {
+        this.useShippingAddress = useShippingAddress;
     }
-
 }

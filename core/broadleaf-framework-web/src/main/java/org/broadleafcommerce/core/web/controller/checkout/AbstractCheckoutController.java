@@ -41,6 +41,8 @@ import javax.annotation.Resource;
  */
 public class AbstractCheckoutController extends BroadleafAbstractController {
 
+    protected String defaultOrderConfirmationViewName = "confirmation";
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 

@@ -33,16 +33,17 @@ public class BillingInfoFormValidator implements Validator {
     public void validate(Object obj, Errors errors) {
         BillingInfoForm billingInfoForm = (BillingInfoForm) obj;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.firstName", "firstName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.lastName", "lastName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.addressLine1", "addressLine1.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.city", "city.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.postalCode", "postalCode.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.firstName", "firstName.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.lastName", "lastName.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.addressLine1", "addressLine1.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.city", "city.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.postalCode", "postalCode.required");
 
         if (billingInfoForm.getAddress().getCountry() == null) {
             errors.rejectValue("address.country", "country.required", null, null);
         }
 
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardName", "creditCardName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardNumber", "creditCardNumber.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardCvvCode", "creditCardCvvCode.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardExpMonth", "creditCardExpMonth.required");

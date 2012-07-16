@@ -241,6 +241,10 @@ public class LegacyCheckoutTest extends BaseTest {
 				return "1111111111111111";
 			}
 
+            public String getNameOnCard() {
+                return "Cardholder Name";
+            }
+
 			public void setCvvCode(String cvvCode) {
 				//do nothing
 			}
@@ -257,7 +261,11 @@ public class LegacyCheckoutTest extends BaseTest {
 				//do nothing
 			}
 
-			public void setPan(String pan) {
+            public void setNameOnCard(String nameOnCard) {
+                //do nothing
+            }
+
+            public void setPan(String pan) {
 				//do nothing
 			}
 

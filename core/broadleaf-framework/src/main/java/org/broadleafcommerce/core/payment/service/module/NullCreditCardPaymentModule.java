@@ -57,6 +57,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
      */
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         CreditCardPaymentInfo ccInfo = (CreditCardPaymentInfo) paymentContext.getReferencedPaymentInfo();
+        String nameOnCard = ccInfo.getNameOnCard();
         String ccNumber = ccInfo.getPan().replaceAll("[\\s-]+", "");
         Integer expMonth = ccInfo.getExpirationMonth();
         Integer expYear = ccInfo.getExpirationYear();
@@ -91,13 +92,15 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         PaymentResponseItem responseItem = new PaymentResponseItemImpl();
         responseItem.setTransactionTimestamp(SystemTime.asDate());
         responseItem.setTransactionSuccess(validDate && validCard && validCVV);
+        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
         if (responseItem.getTransactionSuccess()) {
             Map<String, String> additionalFields = new HashMap<String, String>();
+            additionalFields.put("NAME_ON_CARD", nameOnCard);
             additionalFields.put("CARD_TYPE", cardType);
             additionalFields.put("EXP_MONTH", expMonth+"");
             additionalFields.put("EXP_YEAR", expYear+"");
             additionalFields.put("LAST_FOUR", StringUtils.right(ccNumber, 4));
-            responseItem.setAdditionalFields(additionalFields);
+            paymentContext.getPaymentInfo().setAdditionalFields(additionalFields);
         }
 
         return responseItem;

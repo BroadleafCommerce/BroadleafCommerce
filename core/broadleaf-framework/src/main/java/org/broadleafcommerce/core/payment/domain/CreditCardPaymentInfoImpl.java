@@ -69,6 +69,9 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     @Column(name = "EXPIRATION_YEAR", nullable=false)
     protected Integer expirationYear;
 
+    @Column(name = "NAME_ON_CARD", nullable=false)
+    protected String nameOnCard;
+
     @Transient
     protected String cvvCode;
 
@@ -140,6 +143,20 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
      */
     public void setExpirationYear(Integer expirationYear) {
         this.expirationYear = expirationYear;
+    }
+
+    /* (non-Javadoc)
+    * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getNameOnCard()
+    */
+    public String getNameOnCard() {
+        return nameOnCard;
+    }
+
+    /* (non-Javadoc)
+    * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setNameOnCard(java.lang.String)
+    */
+    public void setNameOnCard(String nameOnCard) {
+        this.nameOnCard = nameOnCard;
     }
 
     public String getCvvCode() {

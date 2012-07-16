@@ -240,7 +240,11 @@ public class CheckoutTest extends BaseTest {
 				return "1111111111111111";
 			}
 
-			public void setCvvCode(String cvvCode) {
+            public String getNameOnCard() {
+                return "Cardholder Name";
+            }
+
+            public void setCvvCode(String cvvCode) {
 				//do nothing
 			}
 
@@ -252,7 +256,11 @@ public class CheckoutTest extends BaseTest {
 				//do nothing
 			}
 
-			public void setId(Long id) {
+            public void setNameOnCard(String nameOnCard) {
+                //do nothing
+            }
+
+            public void setId(Long id) {
 				//do nothing
 			}
 
