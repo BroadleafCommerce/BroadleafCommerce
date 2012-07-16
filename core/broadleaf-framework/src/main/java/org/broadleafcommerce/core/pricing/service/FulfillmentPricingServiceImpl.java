@@ -59,7 +59,6 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
         List<FulfillmentGroupFee> fulfillmentFees = new ArrayList<FulfillmentGroupFee>();
         for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
             List<SkuFee> fees = null;
-            //TODO: how should fees work for Bundles? Can BundleOrderItems be apart of a FulfillmentGroup?
             if (item.getOrderItem() instanceof BundleOrderItem) {
                 fees = ((BundleOrderItem)item.getOrderItem()).getSku().getFees();
             } else if (item.getOrderItem() instanceof DiscreteOrderItem) {
