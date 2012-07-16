@@ -20,8 +20,10 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -365,20 +367,6 @@ public interface Sku extends Serializable {
      * @param isMachineSortable
      */
     public void setMachineSortable(Boolean isMachineSortable);
-
-    /**
-     * Get the flat fulfillment rate for this Sku
-     * 
-     * @return the cost of fulfilling this Sku
-     */
-    public Money getFlatFulfillmentRate();
-
-    /**
-     * Set the fulfillment rate for this Sku
-     * 
-     * @param flatFulfillmentRate
-     */
-    public void setFlatFulfillmentRateRate(Money flatFulfillmentRate);
     
     /**
      * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
@@ -394,5 +382,23 @@ public interface Sku extends Serializable {
      * @param fees
      */
     public void setFees(List<SkuFee> fees);
+
+    /**
+     * Gets the flat rate for fulfilling this {@link Sku} for a particular {@link FulfillmentOption}. Depending
+     * on the result of {@link FulfillmentOption#getUseFlatRates()}, this flat rate will be used in calculating
+     * the cost of fulfilling this {@link Sku}.
+     * 
+     * @return the flat rates for this {@link Sku}
+     */
+    public Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates();
+
+    /**
+     * Sets the flat rates for fulfilling this {@link Sku} for a particular {@link FulfillmentOption}. Depending
+     * on the result of {@link FulfillmentOption#getUseFlatRates()}, this flat rate will be used in calculating
+     * the cost of fulfilling this {@link Sku}.
+     * 
+     * @param fulfillmentFlatRates
+     */
+    public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates);
 
 }

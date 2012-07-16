@@ -69,14 +69,14 @@ public abstract class FulfillmentOptionImpl implements FulfillmentOption {
     protected String longDescription;
 
     @Column(name = "USE_FLAT_RATES")
-    protected Boolean useFlatRates;
+    protected Boolean useFlatRates = true;
 
     @Column(name = "ADD_FULFILLMENT_FEES")
     protected Boolean addFulfillmentFees;
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "Fulfillment Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
-    protected String fulfillmentType;
+    protected String fulfillmentType = FulfillmentType.PHYSICAL.getType();
 
     @Override
     public Long getId() {

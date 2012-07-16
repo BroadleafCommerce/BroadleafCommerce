@@ -20,6 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -34,7 +37,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Used in conjunction with {@link BandedPriceFulfillmentOption}.
+ * <p>Used in conjunction with {@link BandedPriceFulfillmentOption}. If 2 bands are configured equal to each other (meaning, there are
+ * 2 {@link FulfillmentPriceBand}s that have the same retail price minimum, this will choose the cheaper of the 2</p>
+ * <p>If the retail total does not fall within a configured price band, the total cost of fulfillment is zero</p>
  * 
  * @author Phillip Verheyden
  * @see {@link BandedPriceFulfillmentOption}, {@link FulfillmentPriceBand}
@@ -52,9 +57,9 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
         if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
             LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
-            fulfillmentGroup.setShippingPrice(new Money(0D));
-            fulfillmentGroup.setSaleShippingPrice(new Money(0D));
-            fulfillmentGroup.setRetailShippingPrice(new Money(0D));
+            fulfillmentGroup.setShippingPrice(Money.ZERO);
+            fulfillmentGroup.setSaleShippingPrice(Money.ZERO);
+            fulfillmentGroup.setRetailShippingPrice(Money.ZERO);
             return fulfillmentGroup;
         }
 
@@ -92,41 +97,79 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
                 }
 
                 //Calculate the amount that the band will be applied to
-                BigDecimal retailTotal = new BigDecimal(0D);
+                BigDecimal retailTotal = BigDecimal.ZERO;
+                BigDecimal flatTotal = BigDecimal.ZERO;
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                    BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
-                    if (price == null) {
-                        price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                    
+                    //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the retail
+                    //total but instead tack it onto the final rate
+                    boolean addToRetailTotal = true;
+                    if (option.getUseFlatRates()) {
+                        Sku sku = null;
+                        if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
+                            sku = ((DiscreteOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
+                        } else if (fulfillmentGroupItem.getOrderItem() instanceof BundleOrderItem) {
+                            sku = ((BundleOrderItem)fulfillmentGroupItem.getOrderItem()).getSku();
+                        }
+                        
+                        if (sku != null) {
+                            BigDecimal rate = sku.getFulfillmentFlatRates().get(option);
+                            if (rate != null) {
+                                addToRetailTotal = false;
+                                flatTotal = flatTotal.add(rate);
+                            }
+                        }
                     }
-                    retailTotal = retailTotal.add(price);
+                    
+                    if (addToRetailTotal) {
+                        BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
+                        if (price == null) {
+                            price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                        }
+                        retailTotal = retailTotal.add(price);
+                    }
                 }
 
-                BigDecimal fulfillmentAmount = new BigDecimal(0D);
+                BigDecimal lowestFulfillmentAmount = BigDecimal.ZERO;
+                BigDecimal lowestFulfillmentBandRetailMinimum = BigDecimal.ZERO;
                 for (FulfillmentPriceBand band : bands) {
                     BigDecimal bandRetailPriceMinimumAmount = band.getRetailPriceMinimumAmount();
                     if (retailTotal.compareTo(bandRetailPriceMinimumAmount) >= 0) {
-                        //So far, we've found a potenial match
+                        //So far, we've found a potential match
                         //Now, determine if this is a percentage or actual amount
                         FulfillmentBandResultAmountType resultAmountType = band.getResultAmountType();
+                        BigDecimal bandFulfillmentPrice = null;
                         if (FulfillmentBandResultAmountType.RATE.equals(resultAmountType)) {
-                            if (band.getResultAmount().compareTo(fulfillmentAmount) <= 0) {
-                                //We found a matching option that is cheaper than what we found before
-                                fulfillmentAmount = band.getResultAmount();
-                            }
+                            bandFulfillmentPrice = band.getResultAmount();
                         } else if (FulfillmentBandResultAmountType.PERCENTAGE.equals(resultAmountType)) {
                             //Since this is a percentage, we calculate the result amount based on retailTotal and the band percentage
-                            BigDecimal resultAmount = retailTotal.multiply(band.getResultAmount());
-                            if (resultAmount.compareTo(fulfillmentAmount) <= 0) {
-                                //We found a matching option that is cheaper than what we found before
-                                fulfillmentAmount = resultAmount;
-                            }
+                            bandFulfillmentPrice = retailTotal.multiply(band.getResultAmount());
                         } else {
                             LOG.warn("Unknown FulfillmentBandResultAmountType: " + resultAmountType.getType() + " Should be RATE or PERCENTAGE. Ignoring.");
                         }
+                        
+                        if (bandFulfillmentPrice != null) {
+                            //If there is a duplicate price band (meaning, 2 price bands are configured with the same miniumum retail price)
+                            //then the lowest fulfillment amount should only be updated if the result of the current band being looked at
+                            //is cheaper
+                            if (lowestFulfillmentBandRetailMinimum.equals(bandRetailPriceMinimumAmount)) {
+                                if (bandFulfillmentPrice.compareTo(lowestFulfillmentAmount) <= 0) {
+                                    lowestFulfillmentAmount = bandFulfillmentPrice;
+                                    lowestFulfillmentBandRetailMinimum = bandRetailPriceMinimumAmount;
+                                }
+                            } else if (bandRetailPriceMinimumAmount.compareTo(lowestFulfillmentBandRetailMinimum) > 0) {
+                                lowestFulfillmentAmount = bandFulfillmentPrice;
+                                lowestFulfillmentBandRetailMinimum = bandRetailPriceMinimumAmount;
+                            }
+                            
+                        }
                     }
                 }
+                
+                //add the flat rate amount calculated on the Sku
+                lowestFulfillmentAmount = lowestFulfillmentAmount.add(flatTotal);
 
-                shippingPrices.put(bandedPriceFulfillmentOption, new Money(fulfillmentAmount));
+                shippingPrices.put(bandedPriceFulfillmentOption, new Money(lowestFulfillmentAmount));
             }
         }
 

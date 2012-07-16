@@ -17,19 +17,23 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.Order;
 
 public interface FulfillmentGroupDao {
 
-    FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId);
+    public FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId);
 
-    FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
+    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
-    FulfillmentGroup readDefaultFulfillmentGroupForOrder(Order order);
+    public FulfillmentGroup readDefaultFulfillmentGroupForOrder(Order order);
 
-    void delete(FulfillmentGroup fulfillmentGroup);
+    public void delete(FulfillmentGroup fulfillmentGroup);
 
-    FulfillmentGroup createDefault();
+    public FulfillmentGroup createDefault();
 
-    FulfillmentGroup create();
+    public FulfillmentGroup create();
+
+    public FulfillmentGroupFee createFulfillmentGroupFee();
+    
 }

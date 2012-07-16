@@ -33,11 +33,12 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -91,9 +92,12 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         group.setAddress(address);
         group.setIsShippingPriceTaxable(true);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
-        //TODO: update test with banded fulfillment option
-        group.setMethod("standard");
-        group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+
+        FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
+        option.setPrice(new Money("8.50"));        
+        group.setFulfillmentOption(option);
+
+        group.setFulfillmentOption(option);
         group.setOrder(order);
         groups.add(group);
         order.setFulfillmentGroups(groups);
@@ -208,11 +212,9 @@ public class OfferServiceTest extends CommonSetupBaseTest {
 
         assert order.getOrderItems().size() == 4;
         assert order.getTotalTax().equals(new Money("2.00"));
-        //TODO: verify what the correct shipping cost should be based on Fulfillment refactor
-        //assert order.getTotalShipping().equals(new Money("8.50"));
+        assert order.getTotalShipping().equals(new Money("8.50"));
         assert order.getSubTotal().equals(new Money("40.00"));
-        //TODO: add in correct fulfillmentGroup total to this after verifying from Fulfillment refactor
-        assert order.getTotal().equals(new Money("42.00"));
+        assert order.getTotal().equals(new Money("50.50"));
 
         boolean foundGiftItemAndCorrectQuantity = false;
 

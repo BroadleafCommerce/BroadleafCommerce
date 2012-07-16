@@ -116,6 +116,11 @@ public class CompatibleGWTSecuredRPCServiceExporter extends GWTRPCServiceExporte
 			}
 			return processException(e, rpcRequest);
 		}
+		if(response!=null && response.startsWith("//EX")) {
+			//BLC-604... For now lets display the raw message
+			return   RPC.encodeResponseForFailure(
+					rpcRequest.getMethod(),new com.gwtincubator.security.exception.AccessDeniedException(response));
+		}
 		return response;
 	}
 	

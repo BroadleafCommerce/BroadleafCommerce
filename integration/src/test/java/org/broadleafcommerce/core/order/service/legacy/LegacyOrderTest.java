@@ -284,7 +284,7 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
         assert payment.getOrder().equals(order);
     }
 
-    @Test(groups = "addFulfillmentGroupToOrderFirstLegacy", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrderLegacy" })
+    @Test(groups = "addFulfillmentGroupToOrderFirstLegacy", dataProvider = "basicFulfillmentGroupLegacy", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrderLegacy" })
     @Rollback(false)
     @Transactional
     public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) throws PricingException {

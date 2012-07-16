@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -52,18 +53,22 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
+    @Override
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         return fulfillmentGroupDao.save(fulfillmentGroup);
     }
 
+    @Override
     public FulfillmentGroup createEmptyFulfillmentGroup() {
         return fulfillmentGroupDao.create();
     }
 
+    @Override
     public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId) {
         return fulfillmentGroupDao.readFulfillmentGroupById(fulfillmentGroupId);
     }
 
+    @Override
     public void delete(FulfillmentGroup fulfillmentGroup) {
         fulfillmentGroupDao.delete(fulfillmentGroup);
     }
@@ -228,4 +233,9 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
         return order;
 	}
+
+	public FulfillmentGroupFee createFulfillmentGroupFee() {
+	    return fulfillmentGroupDao.createFulfillmentGroupFee();
+	}
+
 }

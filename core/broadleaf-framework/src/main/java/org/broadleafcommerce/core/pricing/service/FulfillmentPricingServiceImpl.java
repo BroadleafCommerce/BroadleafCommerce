@@ -18,11 +18,21 @@ package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.core.catalog.domain.SkuFee;
+import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
 
+import javax.annotation.Resource;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -30,16 +40,48 @@ import java.util.Set;
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {
 
     protected List<FulfillmentPricingProvider> providers;
+    
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
 
     @Override
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
 
         if (fulfillmentGroup.getFulfillmentOption() == null) {
             //There is no shipping option yet. We'll simply set the shipping price to zero for now, and continue.
-            fulfillmentGroup.setRetailShippingPrice(new Money(0D));
-            fulfillmentGroup.setShippingPrice(new Money(0D));
-            fulfillmentGroup.setSaleShippingPrice(new Money(0D));
+            fulfillmentGroup.setRetailShippingPrice(Money.ZERO);
+            fulfillmentGroup.setShippingPrice(Money.ZERO);
+            fulfillmentGroup.setSaleShippingPrice(Money.ZERO);
             return fulfillmentGroup;
+        }
+        
+        //create and associate all the Fulfillment Fees
+        List<FulfillmentGroupFee> fulfillmentFees = new ArrayList<FulfillmentGroupFee>();
+        for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
+            List<SkuFee> fees = null;
+            if (item.getOrderItem() instanceof BundleOrderItem) {
+                fees = ((BundleOrderItem)item.getOrderItem()).getSku().getFees();
+            } else if (item.getOrderItem() instanceof DiscreteOrderItem) {
+                fees = ((DiscreteOrderItem)item.getOrderItem()).getSku().getFees();
+            }
+            
+            if (fees != null) {
+                for (SkuFee fee : fees) {
+                    if (SkuFeeType.FULFILLMENT.equals(fee.getFeeType())) {
+                        FulfillmentGroupFee fulfillmentFee = fulfillmentGroupService.createFulfillmentGroupFee();
+                        fulfillmentFee.setName(fee.getName());
+                        fulfillmentFee.setTaxable(fee.getTaxable());
+                        fulfillmentFee.setAmount(fee.getAmount());
+                        
+                        fulfillmentFees.add(fulfillmentFee);
+                    }
+                }
+            }
+        }
+        
+        if (fulfillmentFees.size() > 0) {
+            fulfillmentGroup.setFulfillmentGroupFees(fulfillmentFees);
+            fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
         }
 
         for (FulfillmentPricingProvider processor : providers) {

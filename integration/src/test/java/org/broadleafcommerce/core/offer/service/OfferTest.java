@@ -40,11 +40,13 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
+import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -137,7 +139,9 @@ public class OfferTest extends CommonSetupBaseTest {
     @Transactional
     public void testPercentOffOfferWithScaleGreaterThanTwo() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", ShippingServiceType.BANDED_SHIPPING.getType(), 5D, order));
+        FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
+        option.setPrice(new Money(0));
+        order.setFulfillmentGroups(createFulfillmentGroups(option, 5D, order));
         orderService.save(order, false);
 
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
@@ -430,7 +434,9 @@ public class OfferTest extends CommonSetupBaseTest {
     @Transactional
     public void testFulfillmentGroupOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", ShippingServiceType.BANDED_SHIPPING.getType(), 5D, order));
+        FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
+        option.setPrice(new Money(0));
+        order.setFulfillmentGroups(createFulfillmentGroups(option, 5D, order));
         orderService.save(order, false);
         
         order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2, order));
@@ -532,11 +538,10 @@ public class OfferTest extends CommonSetupBaseTest {
         assert (customerOffer.getId().equals(customerOfferTest.getId()));
     }
 
-    private List<FulfillmentGroup> createFulfillmentGroups(String method, String service, Double shippingPrice, Order order) {
+    private List<FulfillmentGroup> createFulfillmentGroups(FulfillmentOption option, Double shippingPrice, Order order) {
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         FulfillmentGroup group = new FulfillmentGroupImpl();
-        group.setMethod(method);
-        group.setService(service);
+        group.setFulfillmentOption(option);
         groups.add(group);
         group.setRetailShippingPrice(new Money(shippingPrice));
         group.setOrder(order);

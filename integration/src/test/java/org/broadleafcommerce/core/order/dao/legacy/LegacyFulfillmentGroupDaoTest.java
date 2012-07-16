@@ -50,7 +50,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
     @Resource
     private OrderDao orderDao;
 
-    @Test(groups = "createDefaultFulfillmentGroupLegacy", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
+    @Test(groups = "createDefaultFulfillmentGroupLegacy", dataProvider = "basicFulfillmentGroupLegacy", dataProviderClass = FulfillmentGroupDataProvider.class)
     @Transactional
     @Rollback(false)
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
@@ -93,7 +93,7 @@ public class LegacyFulfillmentGroupDaoTest extends LegacyCommonSetupBaseTest {
         assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
-    @Test(groups = "createFulfillmentGroupLegacy", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
+    @Test(groups = "createFulfillmentGroupLegacy", dataProvider = "basicFulfillmentGroupLegacy", dataProviderClass = FulfillmentGroupDataProvider.class)
     @Transactional
     @Rollback(false)
     public void createFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
