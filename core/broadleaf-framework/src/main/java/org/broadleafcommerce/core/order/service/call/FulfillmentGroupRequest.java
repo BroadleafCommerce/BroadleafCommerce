@@ -16,21 +16,31 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FulfillmentGroupRequest {
 
     protected Address address;
     protected Order order;
     protected Phone phone;
+    
+    /**
+     * Both of these fields uses are superceded by the FulfillmentOption paradigm
+     */
+    @Deprecated
     protected String method;
+    @Deprecated
     protected String service;
-	protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
+    
+    protected FulfillmentOption option;
+	
+    protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
         return address;
@@ -55,14 +65,14 @@ public class FulfillmentGroupRequest {
     public void setPhone(Phone phone) {
         this.phone = phone;
     }
-
-    public String getMethod() {
-		return method;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    
+    public FulfillmentOption getOption() {
+        return option;
+    }
+    
+    public void setOption(FulfillmentOption option) {
+        this.option = option;
+    }
 
     public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {
         return fulfillmentGroupItemRequests;
@@ -72,10 +82,38 @@ public class FulfillmentGroupRequest {
         this.fulfillmentGroupItemRequests = fulfillmentGroupItemRequests;
     }
 
+    /**
+     * Deprecated in favor of {@link #getOption()}
+     * @see {@link FulfillmentOption}
+     */
+    @Deprecated
+    public String getMethod() {
+        return method;
+    }
+
+    /**
+     * Deprecated in favor of {@link #setOption(FulfillmentOption)}
+     * @see {@link FulfillmentOption}
+     */    
+    @Deprecated
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    /**
+     * Deprecated in favor of {@link #getOption()}
+     * @see {@link FulfillmentOption}
+     */
+    @Deprecated
 	public String getService() {
 		return service;
 	}
 
+    /**
+     * Deprecated in favor of {@link #setOption(FulfillmentOption)}
+     * @see {@link FulfillmentOption}
+     */    
+    @Deprecated
 	public void setService(String service) {
 		this.service = service;
 	}
