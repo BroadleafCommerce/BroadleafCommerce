@@ -32,6 +32,10 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
 
+    <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
+        <constructor-arg ref="blMailSender"/>
+    </bean>
+
 	<bean id="blServerInfo" class="org.broadleafcommerce.common.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
