@@ -114,6 +114,19 @@ public interface OrderMultishipOptionService {
 	 * @return the OrderMultishipOptions for this Order
 	 */
 	public List<OrderMultishipOption> getOrGenerateOrderMultishipOptions(Order order);
+	
+	/**
+	 * Given the (potetially only partially filled out) OrderMultishipOptionDTO objects,
+	 * builds out the associated OrderMultishipOption objects. This is done by looking up
+	 * the non-null fields in the optionDtos for their associated entity.
+	 * 
+	 * Note that the only potentially null fields are address and location ids.
+	 * 
+	 * @param order
+	 * @param optionDtos
+	 * @return the associated OrderMultishipOptions
+	 */
+	public List<OrderMultishipOption> getOrderMultishipOptionsFromDTOs(Order order, List<OrderMultishipOptionDTO> optionDtos);
 
 	/**
 	 * Associates the appropriate objects based on the OrderMultishipOptionDTOs to
@@ -127,6 +140,7 @@ public interface OrderMultishipOptionService {
 	 * @param optionDTOs
 	 */
 	public void saveOrderMultishipOptions(Order order, List<OrderMultishipOptionDTO> optionDTOs);
+
 
 
 }

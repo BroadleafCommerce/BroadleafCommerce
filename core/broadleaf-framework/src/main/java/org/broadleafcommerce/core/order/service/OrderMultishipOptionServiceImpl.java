@@ -154,6 +154,25 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 	}
 	
 	@Override
+	public List<OrderMultishipOption> getOrderMultishipOptionsFromDTOs(Order order, List<OrderMultishipOptionDTO> optionDtos) {
+		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+		for (OrderMultishipOptionDTO optionDto : optionDtos) {
+			OrderMultishipOption option = new OrderMultishipOptionImpl();
+			if (optionDto.getAddressId() != null) {
+				option.setAddress(addressService.readAddressById(optionDto.getAddressId()));
+			}	
+			if (optionDto.getFulfillmentOptionId() != null) {
+				option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(optionDto.getFulfillmentOptionId()));
+			}
+			option.setId(optionDto.getId());
+			option.setOrder(order);
+			option.setOrderItem(orderItemService.readOrderItemById(optionDto.getOrderItemId()));
+			orderMultishipOptions.add(option);
+		}
+		return orderMultishipOptions;
+	}
+	
+	@Override
 	public List<OrderMultishipOption> generateOrderMultishipOptions(Order order) {
 		List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
 		for (DiscreteOrderItem discreteOrderItem : order.getDiscreteOrderItems()) {

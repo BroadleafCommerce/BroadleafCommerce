@@ -48,7 +48,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	protected String checkoutPageRedirect = "redirect:/checkout";
 	protected String multishipView = "ajax:checkout/multiship";
     protected String multishipAddAddressView = "ajax:checkout/multishipAddAddressForm";
-	protected String multishipSuccessView = "ajaxredirect:/checkout";
+    protected String multishipAddAddressSuccessView = "redirect:/checkout/multiship";
+	protected String multishipSuccessView = "redirect:/checkout";
 	protected String baseConfirmationView = "ajaxredirect:/confirmation";
 
     /**
@@ -88,8 +89,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
-            checkout(request, response, model);
-            return getCheckoutView();
+            return checkout(request, response, model);
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
@@ -130,7 +130,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	}
 	
 	/**
-	 * Processes the given options for multiship
+	 * Processes the given options for multiship. Validates that all options are
+	 * selected before performing any actions.
 	 * 
 	 * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
 	 * 
@@ -142,7 +143,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	 * @throws PricingException 
 	 */
     public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
-    		OrderMultishipOptionForm orderMultishipOptionForm) throws PricingException {
+    		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException {
     	Order cart = CartState.getCart();
     	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
     	cart = fulfillmentGroupService.splitIntoMultishipGroups(cart, true);
@@ -158,7 +159,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path
      */
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
-     multishipAddAddressView = "ajax:checkout/partials/multishipAddAddressForm";
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         return getMultishipAddAddressView();
@@ -176,7 +176,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path to the multiship page
      */
     public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
-    		 ShippingInfoForm addressForm) {
+    		 ShippingInfoForm addressForm, BindingResult result) {
+        multishipAddAddressFormValidator.validate(addressForm, result);
+        if (result.hasErrors()) {
+            return showMultishipAddAddress(request, response, model);
+        }
+    	
     	Address address = addressService.saveAddress(addressForm.getAddress());
     	
     	CustomerAddress customerAddress = customerAddressService.create();
@@ -185,7 +190,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	customerAddress.setCustomer(CustomerState.getCustomer());
     	customerAddressService.saveCustomerAddress(customerAddress);
     	
-    	return showMultiship(request, response, model);
+    	return getMultishipAddAddressSuccessView();
     }
 
     /**
@@ -326,6 +331,14 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
 	public String getMultishipSuccessView() {
 		return multishipSuccessView;
+	}
+	
+	public String getMultishipAddAddressSuccessView() {
+		return multishipAddAddressSuccessView;
+	}
+
+	public void setMultishipAddAddressSuccessView(String multishipAddAddressSuccessView) {
+		this.multishipAddAddressSuccessView = multishipAddAddressSuccessView;
 	}
 
 	public void setMultishipSuccessView(String multishipSuccessView) {
