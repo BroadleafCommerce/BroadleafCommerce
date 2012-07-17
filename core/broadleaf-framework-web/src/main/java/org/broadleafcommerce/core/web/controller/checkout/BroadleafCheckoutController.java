@@ -43,6 +43,13 @@ import java.util.Map;
  * @author Elbert Bautista (elbertbautista)
  */
 public class BroadleafCheckoutController extends AbstractCheckoutController {
+	
+	protected String checkoutView = "checkout/checkout";
+	protected String checkoutPageRedirect = "redirect:/checkout";
+	protected String multishipView = "ajax:checkout/multiship";
+    protected String multishipAddAddressView = "ajax:checkout/multishipAddAddressForm";
+	protected String multishipSuccessView = "ajaxredirect:/checkout";
+	protected String baseConfirmationView = "ajaxredirect:/confirmation";
 
     /**
      * Renders the default checkout page.
@@ -59,7 +66,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         model.addAttribute("validShipping", hasValidShippingAddresses(cart));
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
-        return ajaxRender("checkout", request, model);
+        return getCheckoutView();
     }
 
     /**
@@ -82,7 +89,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             checkout(request, response, model);
-            return ajaxRender("checkout", request, model);
+            return getCheckoutView();
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
@@ -94,11 +101,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         CartState.setCart(cart);
 
-        return isAjaxRequest(request) ? "ajax/checkout" : "redirect:/checkout";
+        return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
     }
 
     public String savePaymentForm(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-        return isAjaxRequest(request) ? "ajax/checkout" : "redirect:/checkout";
+        return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
     }
 
 	/**
@@ -119,7 +126,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
     	model.addAttribute("customerAddresses", customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()));
     	model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
-		return ajaxRender("multiship", request, model);
+        return getMultishipView();
 	}
 	
 	/**
@@ -139,12 +146,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	Order cart = CartState.getCart();
     	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
     	cart = fulfillmentGroupService.splitIntoMultishipGroups(cart, true);
-    	
-    	if (isAjaxRequest(request)) {
-    		return buildAjaxRedirect(request, "/checkout", model);
-    	} else {
-    		return "redirect:/checkout";
-    	}
+    	return getMultishipSuccessView();
     }
 
     /**
@@ -156,9 +158,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return the return path
      */
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
+     multishipAddAddressView = "ajax:checkout/partials/multishipAddAddressForm";
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
-        return ajaxRender("multishipAddAddress", request, model);
+        return getMultishipAddAddressView();
     }
     
     /**
@@ -206,7 +209,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {
             checkout(request, response, model);
-            return ajaxRender("checkout", request, model);
+            return getCheckoutView();
         }
 
         PaymentInfo ccInfo = creditCardPaymentInfoFactory.constructPaymentInfo(cart);
@@ -231,14 +234,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
             checkout(request, response, model);
             model.addAttribute("paymentException", true);
-            return ajaxRender("checkout", request, model);
+            return getCheckoutView();
         }
 
-        if (isAjaxRequest(request)) {
-            return buildAjaxRedirect(request, "/" + defaultOrderConfirmationViewName + "/" + cart.getOrderNumber(), model);
-        } else {
-            return "redirect:/" + defaultOrderConfirmationViewName + "/" + cart.getOrderNumber();
-        }
+        return getConfirmationView(cart.getOrderNumber());
     }
 
     /**
@@ -286,6 +285,58 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 setValue(country);
             }
         });
-
     }
+
+	public String getCheckoutView() {
+		return checkoutView;
+	}
+
+	public void setCheckoutView(String checkoutView) {
+		this.checkoutView = checkoutView;
+	}
+
+	public String getCheckoutPageRedirect() {
+		return checkoutPageRedirect;
+	}
+
+	public void setCheckoutPageRedirect(String checkoutPageRedirect) {
+		this.checkoutPageRedirect = checkoutPageRedirect;
+	}
+	
+	public String getMultishipView() {
+		return multishipView;
+	}
+
+	public void setMultishipView(String multishipView) {
+		this.multishipView = multishipView;
+	}
+	
+	public String getMultishipAddAddressView() {
+		return multishipAddAddressView;
+	}
+
+	public void setMultishipAddAddressView(String multishipAddAddressView) {
+		this.multishipAddAddressView = multishipAddAddressView;
+	}
+
+	public String getMultishipSuccessView() {
+		return multishipSuccessView;
+	}
+
+	public void setMultishipSuccessView(String multishipSuccessView) {
+		this.multishipSuccessView = multishipSuccessView;
+	}
+
+	public String getBaseConfirmationView() {
+		return baseConfirmationView;
+	}
+
+	public void setBaseConfirmationView(String baseConfirmationView) {
+		this.baseConfirmationView = baseConfirmationView;
+	}
+	
+	protected String getConfirmationView(String orderNumber) {
+		return getBaseConfirmationView() + "/" + orderNumber;
+	}
+	
 }

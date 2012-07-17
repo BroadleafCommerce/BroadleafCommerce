@@ -31,16 +31,17 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+    
+    protected String orderConfirmationView = "ajax:checkout/confirmation";
 
     public String displayOrderConfirmationByOrderNumber(String orderNumber, Model model,
              HttpServletRequest request, HttpServletResponse response) {
-
         Customer customer = CustomerState.getCustomer();
         if (customer != null) {
             Order order = orderService.findOrderByOrderNumber(orderNumber);
             if (order != null && customer.equals(order.getCustomer())) {
                 model.addAttribute("order", order);
-                return ajaxRender("confirmation", request, model);
+                return getOrderConfirmationView();
             }
         }
         return null;
@@ -54,9 +55,17 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
             Order order = orderService.findOrderById(orderId);
             if (order != null && customer.equals(order.getCustomer())) {
                 model.addAttribute("order", order);
-                return ajaxRender("confirmation", request, model);
+                return getOrderConfirmationView();
             }
         }
         return null;
     }
+
+	public String getOrderConfirmationView() {
+		return orderConfirmationView;
+	}
+
+	public void setOrderConfirmationView(String orderConfirmationView) {
+		this.orderConfirmationView = orderConfirmationView;
+	}
 }

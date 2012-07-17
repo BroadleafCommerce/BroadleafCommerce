@@ -48,8 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafRegisterController extends BroadleafAbstractController {
 		
 	private boolean useEmailForLogin = true;
-	private String registerSuccessView = "redirect:/account/myAccount";
-	private String registerView = "/authentication/register";
+	private String registerSuccessView = "ajaxredirect:/account";
+	private String registerView = "ajax:authentication/register";
 	
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
@@ -64,7 +64,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     protected LoginService loginService;    
 	
 	public String register(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender(getRegisterView(), request, model);
+		return getRegisterView();
 	}
 	
 	public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -82,9 +82,9 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
         	// so that we still have the unencoded password for use by the authentication mechanism.
 	        Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
 	        mergeCartProcessor.execute(request, response, auth);	        
-	        return ajaxRender(getRegisterSuccessView(), request, model);			
+	        return getRegisterSuccessView();
 	    } else {
-	    	return ajaxRender(getRegisterView(), request, model);	    	
+	    	return getRegisterView();
 	    }
 	}
 	
@@ -112,7 +112,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	 * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since 
 	 * this will cause the entire SpringSecurity pipeline to be fulfilled.
 	 * 
-	 * By default, returns "redirect:/account/myaccount"
+	 * By default, returns "redirect:/account"
 	 * 
 	 * @return
 	 */

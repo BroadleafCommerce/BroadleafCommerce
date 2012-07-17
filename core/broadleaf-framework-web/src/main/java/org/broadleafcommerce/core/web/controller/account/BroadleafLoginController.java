@@ -53,14 +53,14 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     @Resource(name="blMergeCartProcessor")
     protected MergeCartProcessor mergeCartProcessor;
 	
-	private String loginView = "/login";
-	private String forgotPasswordView = "/login/forgotPassword";
-	private String forgotUsernameView = "/login/forgotUsername";	
-	private String forgotPasswordSuccessView = "/login/forgotPasswordSuccess";
-	private String resetPasswordView = "/login/resetPassword";
-	private String resetPasswordErrorView = "/login/resetPasswordError";
+	private String loginView = "ajax:authentication/login";
+	private String forgotPasswordView = "ajax:authentication/forgotPassword";
+	private String forgotUsernameView = "ajax:authentication/forgotUsername";	
+	private String forgotPasswordSuccessView = "ajax:authentication/forgotPasswordSuccess";
+	private String resetPasswordView = "authentication/resetPassword";
+	private String resetPasswordErrorView = "authentication/resetPasswordError";
 	private String resetPasswordSuccessView = "redirect:/";
-	private String resetPasswordFormName = "/login/resetPasswordForm";
+	private String resetPasswordFormView = "authentication/resetPasswordForm";
 	
 	/**
 	 * Redirects to the login view.
@@ -71,7 +71,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @return
 	 */
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender(getLoginView(), request, model);
+		return getLoginView();
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	 * @return
 	 */
 	public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender(getForgotPasswordView(), request, model);
+		return getForgotPasswordView();
 	}
 	
 	/**
@@ -102,10 +102,10 @@ public class BroadleafLoginController extends BroadleafAbstractController {
         if (errorResponse.getHasErrors()) {
         	 String errorCode = errorResponse.getErrorCodesList().get(0);
         	 model.addAttribute("errorCode", errorCode);             
-             return ajaxRender(getForgotPasswordView(), request, model);
+             return getForgotPasswordView();
         } else {
             request.getSession(true).setAttribute("forgot_password_username", username);
-        	return ajaxRender(getForgotPasswordSuccessView(), request, model);
+        	return getForgotPasswordSuccessView();
         }
     }   
     
@@ -118,7 +118,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      * @return
      */
 	public String forgotUsername(HttpServletRequest request, HttpServletResponse response, Model model) {
-		return ajaxRender(getForgotUsernameView(), request, model);
+		return getForgotUsernameView();
 	}	
     
 	/**
@@ -136,10 +136,9 @@ public class BroadleafLoginController extends BroadleafAbstractController {
         if (errorResponse.getHasErrors()) {
         	String errorCode = errorResponse.getErrorCodesList().get(0);
             request.setAttribute("errorCode", errorCode);
-        	return ajaxRender(getForgotUsernameView(), request, model);
+        	return getForgotUsernameView();
         } else {
-        	String url = buildRedirectToLoginWithMessage("usernameSent");
-        	return ajaxRender(url, request, model);
+        	return buildRedirectToLoginWithMessage("usernameSent");
         }
      }    
     
@@ -160,9 +159,9 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 		if (errorResponse.getHasErrors()) {
 			String errorCode = errorResponse.getErrorCodesList().get(0);
             request.setAttribute("errorCode", errorCode);
-			return ajaxRender(getResetPasswordErrorView(), request, model);
+			return getResetPasswordErrorView();
 		} else {
-			return ajaxRender(getResetPasswordView(), request, model);
+			return getResetPasswordView();
 		}
 	}	
     
@@ -182,7 +181,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     	GenericResponse errorResponse = new GenericResponse();
     	resetPasswordValidator.validate(resetPasswordForm.getUsername(), resetPasswordForm.getPassword(), resetPasswordForm.getPasswordConfirm(), errors);
     	if (errorResponse.getHasErrors()) {
-    		return ajaxRender(getResetPasswordView(), request, model);
+    		return getResetPasswordView();
     	}
     	
     	errorResponse = customerService.resetPasswordUsingToken(
@@ -193,13 +192,13 @@ public class BroadleafLoginController extends BroadleafAbstractController {
         if (errorResponse.getHasErrors()) {
         	String errorCode = errorResponse.getErrorCodesList().get(0);
             request.setAttribute("errorCode", errorCode);
-            return ajaxRender(getResetPasswordView(), request, model);
+            return getResetPasswordView();
         } else {        	
 	        // The reset password was successful, so log this customer in.         	
 	        Authentication auth = loginService.loginCustomer(resetPasswordForm.getUsername(), resetPasswordForm.getPassword());
 	        mergeCartProcessor.execute(request, response, auth);	        
 
-        	return ajaxRender(getResetPasswordSuccessView(), request, model);
+        	return getResetPasswordSuccessView();
         }
      }
     
@@ -294,15 +293,15 @@ public class BroadleafLoginController extends BroadleafAbstractController {
 	}
 
 	/**
-	 * The form name to use for the reset password model..
+	 * The view name to use for the reset password model..
 	 * @return
 	 */
-	public String getResetPasswordFormName() {
-		return resetPasswordFormName;
+	public String getResetPasswordFormView() {
+		return resetPasswordFormView;
 	}
 
-	public void setResetPasswordFormName(String resetPasswordFormName) {
-		this.resetPasswordFormName = resetPasswordFormName;
+	public void setResetPasswordFormView(String resetPasswordFormView) {
+		this.resetPasswordFormView = resetPasswordFormView;
 	}
 	
 	public String getResetPasswordScheme(HttpServletRequest request) {

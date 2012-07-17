@@ -17,7 +17,6 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -25,6 +24,7 @@ import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 /**
@@ -37,12 +37,12 @@ import java.util.List;
  */
 public class BroadleafAccountWishlistController extends AbstractAccountController {
 
-    private String accountWishlistView = "account/wishlist";
+    protected String accountWishlistView = "account/wishlist";
 
     public String viewWishlist(HttpServletRequest request, HttpServletResponse response, Model model) {
         Order wishlist = orderService.findNamedOrderForCustomer("wishlist", CustomerState.getCustomer());
         model.addAttribute("wishlist", wishlist);
-        return ajaxRender(getAccountWishlistView(), request, model);
+        return getAccountWishlistView();
     }
 
     public String removeItemFromWishlist(HttpServletRequest request, HttpServletResponse response, Model model, Long itemId) {
@@ -53,7 +53,7 @@ public class BroadleafAccountWishlistController extends AbstractAccountControlle
             e.printStackTrace();
         }
         model.addAttribute("wishlist", wishlist);
-        return ajaxRender(getAccountWishlistView(), request, model);
+        return getAccountWishlistView();
     }
 
     public String moveItemToCart(HttpServletRequest request, HttpServletResponse response, Model model, Long orderItemId) {
@@ -85,7 +85,7 @@ public class BroadleafAccountWishlistController extends AbstractAccountControlle
 
         model.addAttribute("wishlist", wishlist);
 
-        return ajaxRender(getAccountWishlistView(), request, model);
+        return getAccountWishlistView();
     }
 
     public String moveAllItemsToCart(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -98,7 +98,7 @@ public class BroadleafAccountWishlistController extends AbstractAccountControlle
             e.printStackTrace();
         }
         model.addAttribute("wishlist", wishlist);
-        return ajaxRender(getAccountWishlistView(), request, model);
+        return getAccountWishlistView();
     }
 
     public void setAccountWishlistView(String updateAccountView) {

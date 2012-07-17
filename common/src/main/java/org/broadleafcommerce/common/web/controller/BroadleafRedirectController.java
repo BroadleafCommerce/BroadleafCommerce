@@ -53,6 +53,6 @@ public class BroadleafRedirectController {
 		if (path == null) {
 			path = request.getContextPath();
 		}
-		return BroadleafControllerUtility.buildAjaxRedirect(request, path, model);
+		return "ajaxredirect:" + path;
 	}
 }

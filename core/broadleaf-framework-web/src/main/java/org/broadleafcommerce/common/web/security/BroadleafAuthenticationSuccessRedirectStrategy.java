@@ -50,10 +50,11 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
 	}
 
 	public String updateLoginErrorUrlForAjax(String url) {
+		String blcAjax = BroadleafControllerUtility.BLC_AJAX_PARAMETER;
 		if (url != null && url.indexOf("?") > 0) {
-			url = url + "&blcAjax=true";
+			url = url + "&" + blcAjax + "=true";
 		} else {
-			url = url + "?blcAjax=true";
+			url = url + "?" + blcAjax + "=true";
 		}
 		return url;
 	}

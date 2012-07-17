@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.SearchIntercept;
@@ -40,7 +39,10 @@ public class BroadleafSearchController extends AbstractCatalogController {
 
 	@Resource(name = "blSearchService")
     protected SearchService searchService;
+	
+	protected String searchView = "ajax:catalog/search";
 
+	//TODO: This isn't really implemented
     @SuppressWarnings("unchecked")
 	public String search(Model model, HttpServletRequest request,
             String queryString,
@@ -74,11 +76,15 @@ public class BroadleafSearchController extends AbstractCatalogController {
         model.addAttribute("categories", categories);
         model.addAttribute("categoryGroups", categoryGroups);
         
-        if (isAjaxRequest(request) && StringUtils.equals(queryString, originalQueryString)) {
-        	return ajaxRender("search", request, model);
-        } else { 
-        	return "search";
-        }
+        return getSearchView();
     }
 
+	public String getSearchView() {
+		return searchView;
+	}
+
+	public void setSearchView(String searchView) {
+		this.searchView = searchView;
+	}
+    
 }

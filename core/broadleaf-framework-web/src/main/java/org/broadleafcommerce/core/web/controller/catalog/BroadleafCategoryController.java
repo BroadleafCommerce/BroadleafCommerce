@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class BroadleafCategoryController extends BroadleafAbstractController implements Controller {
 	
-    protected String defaultCategoryTemplateName = "catalog/category";
+    protected String defaultCategoryView = "catalog/category";
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
     
@@ -46,10 +46,18 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 		if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
 			model.setViewName(category.getDisplayTemplate());	
 		} else {
-			model.setViewName(defaultCategoryTemplateName);
+			model.setViewName(getDefaultCategoryView());
 		}
 		
 		return model;
 	}
 
+	public String getDefaultCategoryView() {
+		return defaultCategoryView;
+	}
+
+	public void setDefaultCategoryView(String defaultCategoryView) {
+		this.defaultCategoryView = defaultCategoryView;
+	}
+	
 }

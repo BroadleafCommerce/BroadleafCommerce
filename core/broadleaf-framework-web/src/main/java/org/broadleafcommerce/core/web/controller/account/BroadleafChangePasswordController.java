@@ -26,7 +26,6 @@ import org.springframework.validation.BindingResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This controller handles password changes for a customer's account
@@ -34,14 +33,15 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafChangePasswordController extends BroadleafAbstractController {
 
     @Resource(name = "blCustomerService")
-    private CustomerService customerService;
+    protected CustomerService customerService;
+    
     @Resource(name = "blChangePasswordValidator")
-    private ChangePasswordValidator changePasswordValidator;
+    protected ChangePasswordValidator changePasswordValidator;
 
-    private String changePasswordView = "account/changePassword";
+    protected String changePasswordView = "account/changePassword";
 
     public String viewChangePassword(HttpServletRequest request, Model model) {
-        return ajaxRender(getChangePasswordView(), request, model);
+        return getChangePasswordView();
     }
 
     public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result) {
@@ -54,12 +54,12 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
         changePasswordValidator.validate(passwordChange, result);
 
         if (result.hasErrors()) {
-            return ajaxRender(getChangePasswordView(), request, model);
+            return getChangePasswordView();
         }
 
         customerService.changePassword(passwordChange);
 
-        return ajaxRender(getChangePasswordView(), request, model);
+        return getChangePasswordView();
     }
 
     public String getChangePasswordView() {

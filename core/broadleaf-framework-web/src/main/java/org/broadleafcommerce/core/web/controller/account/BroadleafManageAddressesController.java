@@ -10,17 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 
 public class BroadleafManageAddressesController extends BroadleafAbstractController {
 
-    @Resource
+    @Resource(name = "blAddressService")
     private AddressService addressService;
 
     private String manageAddressesView = "account/manageAddresses";
 
     public String viewManageAddresses(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return ajaxRender(getManageAddressesView(), request, model);
+        return getManageAddressesView();
     }
 
     public String processManageAddresses(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return ajaxRender(getManageAddressesView(), request, model);
+        return getManageAddressesView();
     }
 
     public String getManageAddressesView() {

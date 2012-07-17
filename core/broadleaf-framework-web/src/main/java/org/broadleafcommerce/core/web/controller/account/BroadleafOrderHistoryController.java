@@ -4,7 +4,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,7 +25,7 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         	throw new IllegalArgumentException("The orderNumber provided is not valid");
         }
         model.addAttribute("order", order);
-        return ajaxRender(getOrderHistoryView(), request, model);
+        return getOrderHistoryView();
     }
 
     public String getOrderHistoryView() {

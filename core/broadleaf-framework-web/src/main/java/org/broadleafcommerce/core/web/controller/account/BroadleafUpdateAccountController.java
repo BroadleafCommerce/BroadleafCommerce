@@ -1,7 +1,6 @@
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.web.controller.account.validator.ChangePasswordValidator;
 import org.broadleafcommerce.core.web.controller.account.validator.UpdateAccountValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -11,31 +10,30 @@ import org.springframework.validation.BindingResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class BroadleafUpdateAccountController extends BroadleafAbstractController {
 
-    @Resource
-    CustomerService customerService;
+    @Resource(name = "blCustomerService")
+    protected CustomerService customerService;
+    
     @Resource(name = "blUpdateAccountValidator")
-    private UpdateAccountValidator updateAccountValidator;
+    protected UpdateAccountValidator updateAccountValidator;
 
-    private String updateAccountView = "account/myAccount";
+    protected String updateAccountView = "account/updateAccount";
 
     public String viewUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form) {
         Customer customer = CustomerState.getCustomer();
         form.setEmailAddress(customer.getEmailAddress());
         form.setFirstName(customer.getFirstName());
         form.setLastName(customer.getLastName());
-        return ajaxRender(getUpdateAccountView(), request, model);
+        return getUpdateAccountView();
     }
 
     public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result) {
-
         updateAccountValidator.validate(form, result);
 
         if (result.hasErrors()) {
-            return ajaxRender(getUpdateAccountView(), request, model);
+            return getUpdateAccountView();
         }
 
         Customer customer = CustomerState.getCustomer();
@@ -44,8 +42,7 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         customer.setLastName(form.getLastName());
         customerService.saveCustomer(customer);
 
-        return ajaxRender(getUpdateAccountView(), request, model);
-
+        return getUpdateAccountView();
     }
 
     public void setUpdateAccountView(String updateAccountView) {
@@ -55,6 +52,5 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
     public String getUpdateAccountView() {
         return updateAccountView;
     }
-
 
 }

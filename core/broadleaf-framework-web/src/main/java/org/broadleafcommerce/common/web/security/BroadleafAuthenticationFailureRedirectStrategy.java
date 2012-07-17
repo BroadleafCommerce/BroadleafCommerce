@@ -30,7 +30,7 @@ import java.io.IOException;
  * 
  * Designed for use with SpringSecurity when errors are present.
  * 
- * Tacks on blcAjax=true to the redirect request if the request is an ajax request.   This will cause the
+ * Tacks on the BLC_AJAX_PARAMETER=true to the redirect request if the request is an ajax request.   This will cause the
  * resulting controller (e.g. LoginController) to treat the request as if it is coming from Ajax and 
  * return the related page fragment rather than returning the full view of the page.
  * 
@@ -51,10 +51,11 @@ public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectS
 	}
 
 	public String updateUrlForAjax(String url) {
+		String blcAjax = BroadleafControllerUtility.BLC_AJAX_PARAMETER;
 		if (url != null && url.indexOf("?") > 0) {
-			url = url + "&blcAjax=true";
+			url = url + "&" + blcAjax + "=true";
 		} else {
-			url = url + "?blcAjax=true";
+			url = url + "?" + blcAjax + "=true";
 		}
 		return url;
 	}

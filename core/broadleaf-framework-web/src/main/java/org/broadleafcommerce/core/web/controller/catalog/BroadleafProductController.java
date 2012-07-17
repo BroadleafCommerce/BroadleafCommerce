@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafProductController extends BroadleafAbstractController implements Controller {
 	
-    protected String defaultProductTemplateName = "product";
+    protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";    
 
 	@Override
@@ -32,8 +32,17 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 		if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
 			model.setViewName(product.getDisplayTemplate());	
 		} else {
-			model.setViewName(defaultProductTemplateName);
+			model.setViewName(getDefaultProductView());
 		}
 		return model;
 	}
+
+	public String getDefaultProductView() {
+		return defaultProductView;
+	}
+
+	public void setDefaultProductView(String defaultProductView) {
+		this.defaultProductView = defaultProductView;
+	}
+	
 }

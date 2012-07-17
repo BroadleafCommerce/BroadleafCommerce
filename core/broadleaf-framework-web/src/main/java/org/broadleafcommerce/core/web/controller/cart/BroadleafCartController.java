@@ -28,6 +28,9 @@ import java.util.Map;
  */
 public class BroadleafCartController extends AbstractCartController {
 	
+	protected String cartView = "ajax:cart/cart";
+	protected String cartPageRedirect = "redirect:/cart";
+	
 	/**
 	 * Renders the cart page.
 	 * 
@@ -40,7 +43,7 @@ public class BroadleafCartController extends AbstractCartController {
 	 * @throws PricingException
 	 */
 	public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-		return ajaxRender("cart", request, model);
+		return getCartView();
 	}
 	
 	/**
@@ -71,7 +74,7 @@ public class BroadleafCartController extends AbstractCartController {
 		cart = orderService.save(cart,  true);
 		CartState.setCart(cart);
 		
-    	return isAjaxRequest(request) ? "ajax/cart" : "redirect:/cart";
+    	return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
 	}
 	
 	/**
@@ -103,9 +106,9 @@ public class BroadleafCartController extends AbstractCartController {
 			extraData.put("productId", itemRequest.getProductId());
 			extraData.put("cartItemCount", cart.getItemCount());
 			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-			return "ajax/cart";
+			return getCartView();
 		} else {
-			return "redirect:/cart";
+			return getCartPageRedirect();
 		}
 	}
 	
@@ -137,9 +140,9 @@ public class BroadleafCartController extends AbstractCartController {
 			extraData.put("cartItemCount", cart.getItemCount());
 			extraData.put("productId", itemRequest.getProductId());
 			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-			return "ajax/cart";
+			return getCartView();
 		} else {
-			return "redirect:/cart";
+			return getCartPageRedirect();
 		}
 	}
 	
@@ -155,7 +158,6 @@ public class BroadleafCartController extends AbstractCartController {
 		Order cart = CartState.getCart();
     	orderService.cancelOrder(cart);
 		CartState.setCart(null);
-		
     	return "redirect:/";
 	}
 	
@@ -200,9 +202,9 @@ public class BroadleafCartController extends AbstractCartController {
 			extraData.put("promoAdded", promoAdded);
 			extraData.put("exception" , exception);
 			model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
-			return "ajax/cart";
+			return getCartView();
 		} else {
-			return "redirect:/cart";
+			return getCartPageRedirect();
 		}
 		
 	}
@@ -230,10 +232,23 @@ public class BroadleafCartController extends AbstractCartController {
 		cart = orderService.save(cart, true);
 		CartState.setCart(cart);
 
-		if (isAjaxRequest(request)) {
-			return "ajax/cart";
-		} else {
-			return "redirect:/cart";
-		}	
+    	return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
 	}
+
+	public String getCartView() {
+		return cartView;
+	}
+
+	public void setCartView(String cartView) {
+		this.cartView = cartView;
+	}
+
+	public String getCartPageRedirect() {
+		return cartPageRedirect;
+	}
+
+	public void setCartPageRedirect(String cartPageRedirect) {
+		this.cartPageRedirect = cartPageRedirect;
+	}
+	
 }

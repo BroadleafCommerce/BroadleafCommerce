@@ -16,11 +16,8 @@
 
 package org.broadleafcommerce.common.web.controller;
 
-import org.springframework.ui.Model;
-
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
 
 /**
  * Commonly used Broadleaf Controller operations.
@@ -38,8 +35,8 @@ import java.io.IOException;
  */
 public class BroadleafControllerUtility {
 	
-	public static final String BLC_REDIRECT_ATTRIBUTE="blc_redirect";
-	public static final String BLC_AJAX_PREFIX="ajax/";
+	public static final String BLC_REDIRECT_ATTRIBUTE = "blc_redirect";
+	public static final String BLC_AJAX_PARAMETER = "blcAjax";
 	
 	/**
 	 * A helper method that returns whether or not the given request was invoked via an AJAX call
@@ -50,60 +47,9 @@ public class BroadleafControllerUtility {
 	 * @return - whether or not it was an AJAX request
 	 */
     public static boolean isAjaxRequest(HttpServletRequest request) {
-    	String ajaxParameter = request.getParameter("blcAjax");
-    	if (ajaxParameter != null && "true".equals(ajaxParameter)) {
-    		return true;
-    	}
-    	return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    	String ajaxParameter = request.getParameter(BLC_AJAX_PARAMETER);
+    	return (ajaxParameter != null && "true".equals(ajaxParameter)) ||
+    		"XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
     
-    /**
-     * <p>A helper method that will correctly handle either returning the partial content requested (to be displayed
-     * in a modal or only update a certain part of a page for example) or render it in its full view. It will 
-     * determine which rendering method to use based on whether or not it was an AJAX request.</p>
-     * 
-     * <p>This method will assume that given the String identifier of a nonModalPath (such as "cart"), the partial
-     * view that would be returned lives in "ajax/cart".</p>
-     * 
-     * 
-     * @param nonModalPath - the path to the full content view
-     * @param request
-     * @param model
-     * @return the String that should be returned by the method responsible for returning a view. Typically this
-     * will be the method with the @RequestMapping annotation
-     */
-    public static String ajaxRender(String nonModalPath, HttpServletRequest request, Model model)  {
-    	if (isAjaxRequest(request)) {
-    		if (nonModalPath.startsWith("redirect:")) {
-        		nonModalPath = nonModalPath.substring(nonModalPath.indexOf("redirect:"));
-        		return buildAjaxRedirect(request, nonModalPath, model);
-    		} else {
-    			return BLC_AJAX_PREFIX + nonModalPath;
-    		}
-    	} else {    	
-    		return nonModalPath;
-    	}
-    }
-    
-	/**
-	 * A helper method that utilizes a Broadleaf Commerce specific mechanism to allow redirects from 
-	 * ajax calls.
-	 * 
-	 * This method will return the user
-	 * 
-	 * @param request
-	 * @param redirectPath
-	 * @param model model to add the 
-	 * @throws IOException 
-	 */
-	public static String buildAjaxRedirect(HttpServletRequest request, String redirectPath, Model model)  {
-		redirectPath = redirectPath.replaceFirst("redirect:", "");
-		
-		if (! redirectPath.contains("//") && request.getContextPath() != null) {
-			redirectPath = request.getContextPath() + redirectPath; 			
-		}
-		request.setAttribute(BLC_REDIRECT_ATTRIBUTE, redirectPath);
-		return "ajax/blc_redirect";		
-	}
-
 }
