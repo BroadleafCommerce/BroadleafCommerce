@@ -81,6 +81,8 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
      */
     public static final String IFRAME_URL_PREFIX = "iframe:";
     
+    protected String fullPageLayout = "layout/fullPageLayout";
+    
     private boolean canHandle(final String viewName) {
         final String[] viewNamesToBeProcessed = getViewNames();
         final String[] viewNamesNotToBeProcessed = getExcludedViewNames();
@@ -88,6 +90,11 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
                 (viewNamesNotToBeProcessed == null || !PatternMatchUtils.simpleMatch(viewNamesNotToBeProcessed, viewName)));
     }
 
+    /**
+     * Determines which internal method to call for creating the appropriate view. If no
+     * Broadleaf specific methods match the viewName, it delegates to the parent 
+     * ThymeleafViewResolver createView method
+     */
     @Override
     protected View createView(final String viewName, final Locale locale) throws Exception {
         if (!canHandle(viewName)) {
@@ -112,6 +119,15 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         return super.createView(viewName, locale);
     }
     
+    /**
+     * Performs a Broadleaf AJAX redirect. This is used in conjunction with BLC.js to support
+     * doing a browser page change as as result of an AJAX call.
+     * 
+     * @param redirectUrl
+     * @param locale
+     * @return
+     * @throws Exception
+     */
     protected View loadAjaxRedirectView(String redirectUrl, final Locale locale) throws Exception {
     	if (isAjaxRequest()) {
     		String viewName = "utility/blcRedirect";
@@ -131,10 +147,21 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
 	    return super.loadView(viewName, locale);
     }
     
+    /**
+     * If the current request is an AJAX request, this method will render the requested viewName.
+     * However, if the current request is NOT and AJAX request, this method will render the 
+     * fullPageLayout with the requested viewName set as the templateName variable for use by 
+     * the fullPageLayout.
+     * 
+     * @param requestedViewName
+     * @param locale
+     * @return
+     * @throws Exception
+     */
     protected View loadAjaxView(final String requestedViewName, final Locale locale) throws Exception {
     	String viewName = requestedViewName;
     	if (!isAjaxRequest()) {
-	        viewName = "layout/fullPageLayout";
+	        viewName = getFullPageLayout();
 	        addStaticVariable("templateName", requestedViewName);
     	}
 	    return super.loadView(viewName, locale);
@@ -150,4 +177,13 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         return BroadleafControllerUtility.isAjaxRequest(request);
     }
+
+	public String getFullPageLayout() {
+		return fullPageLayout;
+	}
+
+	public void setFullPageLayout(String fullPageLayout) {
+		this.fullPageLayout = fullPageLayout;
+	}
+    
 }
