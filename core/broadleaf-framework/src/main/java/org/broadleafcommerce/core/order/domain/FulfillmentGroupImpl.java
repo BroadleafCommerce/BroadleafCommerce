@@ -80,13 +80,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Method", order=2, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true, friendlyName = "FulfillmentGroupImpl_Shipping_Method", order=2, group = "FulfillmentGroupImpl_Description", prominent=true)
     @Deprecated
     protected String method;
     
     @Column(name = "SERVICE")
     @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Service", order=3, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true, friendlyName = "FulfillmentGroupImpl_Shipping_Service", order=3, group = "FulfillmentGroupImpl_Description", prominent=true)
     @Deprecated
     protected String service;
 
@@ -104,7 +104,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "TYPE")
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
-    protected String type = FulfillmentType.SHIPPING.getType();
+    protected String type = FulfillmentType.PHYSICAL.getType();
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
