@@ -19,8 +19,8 @@ package org.broadleafcommerce.core.pricing.service;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity;
 
 import java.util.List;

@@ -35,7 +35,7 @@ import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmen
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBand;
 import org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.BandedPriceFulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

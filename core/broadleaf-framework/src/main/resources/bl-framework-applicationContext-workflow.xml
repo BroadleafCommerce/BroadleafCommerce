@@ -42,8 +42,8 @@
 	<bean id="blFulfillmentPricingService" class="org.broadleafcommerce.core.pricing.service.FulfillmentPricingServiceImpl">
 	   <property name="providers">
 	       <list>
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProvider" />
-	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.processor.BandedPriceFulfillmentPricingProvider" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
+	           <bean class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider" />
 	       </list>
 	   </property>
 	</bean>

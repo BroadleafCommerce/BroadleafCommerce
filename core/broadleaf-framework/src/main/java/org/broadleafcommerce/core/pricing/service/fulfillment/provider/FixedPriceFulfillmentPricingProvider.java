@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
+package org.broadleafcommerce.core.pricing.service.fulfillment.provider;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;

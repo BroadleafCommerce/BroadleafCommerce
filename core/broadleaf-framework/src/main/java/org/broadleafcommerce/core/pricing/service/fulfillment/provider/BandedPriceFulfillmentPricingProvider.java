@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
+package org.broadleafcommerce.core.pricing.service.fulfillment.provider;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

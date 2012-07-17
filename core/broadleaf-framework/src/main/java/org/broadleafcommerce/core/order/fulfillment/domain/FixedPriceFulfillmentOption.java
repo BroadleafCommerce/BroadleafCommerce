@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FixedPriceFulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider;
 
 import java.io.Serializable;
 

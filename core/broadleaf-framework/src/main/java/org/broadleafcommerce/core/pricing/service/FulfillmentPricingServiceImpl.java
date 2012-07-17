@@ -27,8 +27,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentPricingProvider;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 
 import javax.annotation.Resource;
 
