@@ -81,7 +81,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         fg.setPhone(fulfillmentGroupRequest.getPhone());
         fg.setMethod(fulfillmentGroupRequest.getMethod());
         fg.setService(fulfillmentGroupRequest.getService());
-        fg.setFulfillmentOption(fulfillmentGroupRequest.getFulfillmentOption());
+        fg.setFulfillmentOption(fulfillmentGroupRequest.getOption());
 
         for (int i = 0; i < fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size(); i++) {
             FulfillmentGroupItemRequest request = fulfillmentGroupRequest.getFulfillmentGroupItemRequests().get(i);
@@ -183,7 +183,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 				FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
 				fgr.setOrder(order);
 				fgr.setAddress(option.getAddress());
-				fgr.setFulfillmentOption(option.getFulfillmentOption());
+				fgr.setOption(option.getFulfillmentOption());
 				fg = addFulfillmentGroupToOrder(fgr, false);
 				fg = save(fg);
 				order.getFulfillmentGroups().add(fg);
