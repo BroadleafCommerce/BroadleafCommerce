@@ -16,14 +16,21 @@
 
 package org.broadleafcommerce.core.pricing.service;
 
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.pricing.dao.ShippingRateDao;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
 
+/**
+ * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedPriceFulfillmentPricingProvider}
+ * @see {@link FulfillmentOption}, {@link FulfillmentPricingService}
+ */
 @Service("blShippingRateService")
 @Deprecated
 public class ShippingRateServiceImpl implements ShippingRateService {

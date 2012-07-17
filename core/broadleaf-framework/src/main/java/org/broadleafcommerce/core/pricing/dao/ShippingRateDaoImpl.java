@@ -17,8 +17,12 @@
 package org.broadleafcommerce.core.pricing.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.domain.ShippingRateImpl;
+import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -29,6 +33,10 @@ import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedPriceFulfillmentPricingProvider}
+ * @see {@link FulfillmentOption}, {@link FulfillmentPricingService}
+ */
 @Repository("blShippingRatesDao")
 @Deprecated
 public class ShippingRateDaoImpl implements ShippingRateDao {

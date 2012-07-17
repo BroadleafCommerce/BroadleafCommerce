@@ -67,9 +67,17 @@ public interface FulfillmentGroup extends Serializable {
 
     public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
 
+    /**
+     * @deprecated Should use {@link #getFulfillmentOption()} instead
+     * @see {@link FulfillmentOption}
+     */
     @Deprecated
     public String getMethod();
 
+    /**
+     * @deprecated Should use {@link #setFulfillmentOption()} instead
+     * @see {@link FulfillmentOption}
+     */
     @Deprecated
     public void setMethod(String fulfillmentMethod);
 
@@ -227,9 +235,17 @@ public interface FulfillmentGroup extends Serializable {
 
 	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
 
+    /**
+     * @deprecated Should use {@link #getFulfillmentOption()} instead
+     * @see {@link FulfillmentOption}
+     */
 	@Deprecated
 	public String getService();
 
+    /**
+     * @deprecated Should use {@link #setFulfillmentOption()} instead
+     * @see {@link FulfillmentOption}
+     */
 	@Deprecated
 	public void setService(String service);
 	

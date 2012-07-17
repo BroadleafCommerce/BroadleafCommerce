@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.module;
+package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 
 /**
- * @deprecated Superceded by functionality given by {@link FulfillmentOption} and {@link FulfillmentPricingProvider}
- * @see {@link FulfillmentPricingProvider}, {@link FulfillmentOption}
+ * @deprecated Should use the {@link FulfillmentOption} paradigm, implemented in {@link FulfillmentPricingService}
+ * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
  */
 @Deprecated
-public interface ShippingModule {
-
-    public String getName();
-
-    public void setName(String name);
-
+public interface ShippingService {
+	
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
     
-    public String getServiceName();
-    
-    public Boolean isValidModuleForService(String serviceName);
-    
-    public void setDefaultModule(Boolean isDefaultModule);
-    
-    public Boolean isDefaultModule();
-
 }

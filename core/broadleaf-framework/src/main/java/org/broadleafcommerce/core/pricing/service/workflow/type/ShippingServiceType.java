@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.pricing.service.workflow.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -26,7 +28,8 @@ import java.util.Map;
  * An extendible enumeration of shipping service types.
  * 
  * @author jfischer
- *
+ * @deprecated Should use the {@link FulfillmentOption} and {@link FulfillmentPricingProvider} paradigm
+ * @see {@link FulfillmentOption}, {@link FulfillmentPricingProvider}
  */
 @Deprecated
 public class ShippingServiceType implements Serializable, BroadleafEnumerationType {

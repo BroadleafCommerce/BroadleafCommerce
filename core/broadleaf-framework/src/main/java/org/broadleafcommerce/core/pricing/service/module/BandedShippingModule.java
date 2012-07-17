@@ -22,8 +22,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
+import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedPriceFulfillmentPricingProvider;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 
@@ -32,6 +34,10 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * @deprecated Superceded by functionality given by {@link BandedPriceFulfillmentOption} and {@link BandedPriceFulfillmentPricingProvider}
+ * @see {@link BandedPriceFulfillmentOption}, {@link BandedPriceFulfillmentOption}
+ */
 @Deprecated
 public class BandedShippingModule implements ShippingModule {
 	
