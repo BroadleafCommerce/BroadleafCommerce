@@ -194,31 +194,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return addPaymentToOrder(order, payment, null);
     }
 
-    public void removeAllPaymentsFromOrder(Order order) {
-        removePaymentsFromOrder(order, null);
-    }
-
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
-        List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
-        for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
-            if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
-                infos.add(paymentInfo);
-            }
-        }
-        order.getPaymentInfos().removeAll(infos);
-        for (PaymentInfo paymentInfo : infos) {
-            try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
-            } catch (WorkflowException e) {
-                // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the PaymentInfo", e);
-            }
-            order.getPaymentInfos().remove(paymentInfo);
-            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
-            paymentInfoDao.delete(paymentInfo);
-        }
-    }
-    
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
     	return addFulfillmentGroupToOrder(fulfillmentGroupRequest, true);
     }

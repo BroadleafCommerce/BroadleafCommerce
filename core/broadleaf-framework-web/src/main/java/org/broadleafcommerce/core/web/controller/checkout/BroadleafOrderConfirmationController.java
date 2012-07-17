@@ -32,7 +32,7 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
-    protected String orderConfirmationView = "ajax:checkout/confirmation";
+    protected String orderConfirmationView = "checkout/confirmation";
 
     public String displayOrderConfirmationByOrderNumber(String orderNumber, Model model,
              HttpServletRequest request, HttpServletResponse response) {

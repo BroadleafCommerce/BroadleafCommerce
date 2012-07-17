@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.CreditCardValidator;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
@@ -47,7 +48,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
      * validates that the cvv != "000" in order to demonstrate a PaymentException
      *
      * This method will set the TransactionSuccess to false on the PaymentResponseItem
-     * resulting in a PaymentException in the workflow if any of the conditions above are invalid.
+     * if any of the conditions above are invalid.
      *
      * This does NOT integrate with any Payment Gateway and should not be used in any production environment.
      * This class is for demonstration purposes only.
@@ -56,6 +57,19 @@ public class NullCreditCardPaymentModule extends AbstractModule {
      * @return PaymentResponseItem - the response item
      */
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
+        //Note that you cannot perform operations on paymentContext.getPaymentInfo() directly because that is a copy of the actual payment on the order.
+        //In order to persist custom attributes to the credit card payment info on the order we must look it up first.
+        PaymentInfo paymentInfo = null;
+        for (PaymentInfo pi : paymentContext.getPaymentInfo().getOrder().getPaymentInfos()) {
+            if (PaymentInfoType.CREDIT_CARD == pi.getType()) {
+                paymentInfo = pi;
+            }
+        }
+
+        if (paymentInfo == null) {
+            throw new PaymentException("PaymentInfo of type CREDIT_CARD must be on the order");
+        }
+
         CreditCardPaymentInfo ccInfo = (CreditCardPaymentInfo) paymentContext.getReferencedPaymentInfo();
         String nameOnCard = ccInfo.getNameOnCard();
         String ccNumber = ccInfo.getPan().replaceAll("[\\s-]+", "");
@@ -92,7 +106,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         PaymentResponseItem responseItem = new PaymentResponseItemImpl();
         responseItem.setTransactionTimestamp(SystemTime.asDate());
         responseItem.setTransactionSuccess(validDate && validCard && validCVV);
-        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+        responseItem.setAmountPaid(paymentInfo.getAmount());
         if (responseItem.getTransactionSuccess()) {
             Map<String, String> additionalFields = new HashMap<String, String>();
             additionalFields.put("NAME_ON_CARD", nameOnCard);
@@ -100,7 +114,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
             additionalFields.put("EXP_MONTH", expMonth+"");
             additionalFields.put("EXP_YEAR", expYear+"");
             additionalFields.put("LAST_FOUR", StringUtils.right(ccNumber, 4));
-            paymentContext.getPaymentInfo().setAdditionalFields(additionalFields);
+            paymentInfo.setAdditionalFields(additionalFields);
         }
 
         return responseItem;

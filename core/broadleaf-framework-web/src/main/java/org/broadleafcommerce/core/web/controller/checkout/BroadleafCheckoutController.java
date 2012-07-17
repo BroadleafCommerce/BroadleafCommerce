@@ -194,6 +194,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * This method allows a checkout and assumes that a credit card payment info
      * will be either sent to a third party gateway or saved in a secure schema.
      *
+     * Note: this method removes any existing payment infos of type CREDIT_CARD
+     * and re-creates it with the information from the BillingInfoForm
+     *
      * @param request
      * @param response
      * @param model
@@ -205,6 +208,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         Order cart = CartState.getCart();
         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+
+        orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
 
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {

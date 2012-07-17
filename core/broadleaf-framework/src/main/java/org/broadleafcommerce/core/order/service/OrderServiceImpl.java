@@ -41,6 +41,7 @@ import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
@@ -415,6 +416,33 @@ public class OrderServiceImpl implements OrderService {
     @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
     public boolean isDeleteEmptyNamedOrders() {
         return deleteEmptyNamedOrders;
+    }
+
+    @Override
+    public void removeAllPaymentsFromOrder(Order order) {
+        removePaymentsFromOrder(order, null);
+    }
+
+    @Override
+    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
+        List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
+        for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
+            if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
+                infos.add(paymentInfo);
+            }
+        }
+        order.getPaymentInfos().removeAll(infos);
+        for (PaymentInfo paymentInfo : infos) {
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+            }
+            order.getPaymentInfos().remove(paymentInfo);
+            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
+            paymentInfoDao.delete(paymentInfo);
+        }
     }
 	
 	/**

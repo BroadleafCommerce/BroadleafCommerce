@@ -158,8 +158,6 @@ public interface LegacyOrderService extends OrderService {
     
     public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException;
 
-    public void removeAllPaymentsFromOrder(Order order);
-
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address);
 
     /**
@@ -178,8 +176,6 @@ public interface LegacyOrderService extends OrderService {
     public Order addItemToOrder(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws PricingException;
 
 
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
-    
 	/**
 	 * Not typically used in versions since 1.7.
 	 * See: {@link #addItemToOrder(Long, OrderItemRequestDTO, boolean)}

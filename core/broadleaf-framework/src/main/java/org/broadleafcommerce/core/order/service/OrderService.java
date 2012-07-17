@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -414,5 +415,21 @@ public interface OrderService {
 	 * @throws AddToCartException
 	 */
 	public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
-	
+
+    /**
+     * Deletes all the Payment Info's on the order.
+     *
+     * @param order
+     */
+    public void removeAllPaymentsFromOrder(Order order);
+
+    /**
+     * Deletes the Payment Info of the passed in type from the order
+     * Note that this method will also delete any associated Secure Payment Infos if necessary.
+     *
+     * @param order
+     * @param paymentInfoType
+     */
+    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
+
 }
