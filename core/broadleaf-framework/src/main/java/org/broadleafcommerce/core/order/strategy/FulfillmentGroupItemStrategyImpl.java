@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.order.strategy;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -172,33 +171,31 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
 	        }
         }
         
-        Map<Long, Integer> doiQuantityMap = new HashMap<Long, Integer>();
-        for (DiscreteOrderItem doi : order.getDiscreteOrderItems()) {
-        	Integer doiQuantity = doiQuantityMap.get(doi.getId());
-        	if (doiQuantity == null) {
-        		doiQuantity = 0;
+        Map<Long, Integer> oiQuantityMap = new HashMap<Long, Integer>();
+        for (OrderItem oi : order.getOrderItems()) {
+        	Integer oiQuantity = oiQuantityMap.get(oi.getId());
+        	if (oiQuantity == null) {
+        		oiQuantity = 0;
         	}
-        	doiQuantity += doi.getQuantity();
-        	doiQuantityMap.put(doi.getId(), doiQuantity);
+        	oiQuantity += oi.getQuantity();
+        	oiQuantityMap.put(oi.getId(), oiQuantity);
         }
         
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
         	for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-        		if (fgi.getOrderItem() instanceof DiscreteOrderItem) {
-        			Long doiId = fgi.getOrderItem().getId();
-        			Integer doiQuantity = doiQuantityMap.get(doiId);
-        			
-        			if (doiQuantity == null) {
-        				throw new IllegalStateException("Fulfillment group items and discrete order items are not in sync. DiscreteOrderItem id: " + doiId);
-        			}
-        			
-        			doiQuantity -= fgi.getQuantity();
-        			doiQuantityMap.put(doiId, doiQuantity);
-        		}
+    			Long oiId = fgi.getOrderItem().getId();
+    			Integer oiQuantity = oiQuantityMap.get(oiId);
+    			
+    			if (oiQuantity == null) {
+    				throw new IllegalStateException("Fulfillment group items and discrete order items are not in sync. DiscreteOrderItem id: " + oiId);
+    			}
+    			
+    			oiQuantity -= fgi.getQuantity();
+    			oiQuantityMap.put(oiId, oiQuantity);
         	}
         }
         
-        for (Entry<Long, Integer> entry : doiQuantityMap.entrySet()) {
+        for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
         	if (entry.getValue() != 0) {
         		throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
         	}
