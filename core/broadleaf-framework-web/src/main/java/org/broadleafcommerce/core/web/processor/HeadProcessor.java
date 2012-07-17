@@ -39,6 +39,7 @@ import java.util.Map;
 public class HeadProcessor extends AbstractFragmentElementProcessor {
 
     public static final String FRAGMENT_ATTR_NAME = StandardFragmentAttrProcessor.ATTR_NAME;
+    protected String HEAD_PARTIAL_PATH = "layout/partials/head";
     
 	/**
 	 * Sets the name of this processor to be used in Thymeleaf template
@@ -69,7 +70,7 @@ public class HeadProcessor extends AbstractFragmentElementProcessor {
 		}
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("pageTitle", pageTitle);
 		((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
-        return new CompleteTemplateFragmentSpec("partials/head");
+        return new CompleteTemplateFragmentSpec(HEAD_PARTIAL_PATH);
 	}
 
 	@Override

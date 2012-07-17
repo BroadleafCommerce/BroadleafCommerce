@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class BroadleafCategoryController extends BroadleafAbstractController implements Controller {
 	
-    protected String defaultCategoryTemplateName = "category";
+    protected String defaultCategoryTemplateName = "catalog/category";
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
     

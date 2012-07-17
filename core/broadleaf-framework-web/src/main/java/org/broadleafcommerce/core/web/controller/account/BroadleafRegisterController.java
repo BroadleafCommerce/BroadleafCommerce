@@ -48,8 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafRegisterController extends BroadleafAbstractController {
 		
 	private boolean useEmailForLogin = true;
-	private String registerSuccessView = "redirect:/account/myaccount";
-	private String registerView = "/register";
+	private String registerSuccessView = "redirect:/account/myAccount";
+	private String registerView = "/authentication/register";
 	
     @Resource(name="blCustomerService")
     protected CustomerService customerService;

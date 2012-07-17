@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 public class BroadleafAccountController extends AbstractAccountController {
-	private String myAccountView = "/account/myaccount";
+	private String myAccountView = "/account/myAccount";
 	
 	/*
 	 * TODO: UpdateProfileDTO
@@ -56,7 +56,7 @@ public class BroadleafAccountController extends AbstractAccountController {
     
     */		
 	
-	public String myaccount(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String myAccount(HttpServletRequest request, HttpServletResponse response, Model model) {
 		return myAccountView;		
 	}
 

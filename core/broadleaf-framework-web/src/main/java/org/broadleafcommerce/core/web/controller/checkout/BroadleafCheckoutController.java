@@ -158,7 +158,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
-        return ajaxRender("multiship-add-address", request, model);
+        return ajaxRender("multishipAddAddress", request, model);
     }
     
     /**
