@@ -28,7 +28,7 @@ import java.util.Set;
  * Main extension interface to allow third-party integrations to respond to fulfillment pricing
  * 
  * @author Phillip Verheyden
- * @see {@link FulfillmentPricingService}
+ * @see {@link FulfillmentPricingService}, {@link FulfillmentGroupPricingActivity}
  */
 public interface FulfillmentPricingProvider {
 
