@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
-import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
@@ -43,7 +43,7 @@ public interface FulfillmentPricingProvider {
      * @return the modified {@link FulfillmentGroup} with correct pricing. This is typically <b>fulfillmentGroup</b> after it
      * has been modified
      */
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
 
     /**
      * Whether or not this processor can provide a cost calculate for the given FulfillmentGroup and the given
@@ -73,6 +73,6 @@ public interface FulfillmentPricingProvider {
      * {@link #calculateCostForFulfillmentGroup(FulfillmentGroup)} is invoked during the pricing workflow
      * @see {@link FulfillmentPricingService}, {@link FulfillmentOption}
      */
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException;
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException;
     
 }

@@ -16,35 +16,35 @@
 
 package org.broadleafcommerce.common.vendor.service.exception;
 
-import org.broadleafcommerce.common.vendor.service.message.ShippingPriceResponse;
+import org.broadleafcommerce.common.vendor.service.message.FulfillmentPriceExceptionResponse;
 
-public class ShippingPriceException extends Exception {
+public class FulfillmentPriceException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    protected ShippingPriceResponse shippingPriceResponse;
+    protected FulfillmentPriceExceptionResponse fulfillmentPriceExceptionResponse;
 
-    public ShippingPriceException() {
+    public FulfillmentPriceException() {
         super();
     }
 
-    public ShippingPriceException(String message, Throwable cause) {
+    public FulfillmentPriceException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ShippingPriceException(String message) {
+    public FulfillmentPriceException(String message) {
         super(message);
     }
 
-    public ShippingPriceException(Throwable cause) {
+    public FulfillmentPriceException(Throwable cause) {
         super(cause);
     }
 
-    public ShippingPriceResponse getShippingPriceResponse() {
-        return shippingPriceResponse;
+    public FulfillmentPriceExceptionResponse getFulfillmentPriceExceptionResponse() {
+        return fulfillmentPriceExceptionResponse;
     }
 
-    public void setShippingPriceResponse(ShippingPriceResponse shippingPriceResponse) {
-        this.shippingPriceResponse = shippingPriceResponse;
+    public void setFulfillmentPriceExceptionResponse(FulfillmentPriceExceptionResponse fulfillmentPriceExceptionResponse) {
+        this.fulfillmentPriceExceptionResponse = fulfillmentPriceExceptionResponse;
     }
 }

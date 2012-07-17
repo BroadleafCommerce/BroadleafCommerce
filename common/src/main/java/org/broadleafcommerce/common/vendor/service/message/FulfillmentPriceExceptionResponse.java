@@ -18,7 +18,7 @@ package org.broadleafcommerce.common.vendor.service.message;
 
 import java.io.Serializable;
 
-public interface ShippingPriceResponse extends Serializable {
+public interface FulfillmentPriceExceptionResponse extends Serializable {
 
     public boolean isErrorDetected();
 

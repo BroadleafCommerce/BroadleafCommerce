@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -54,7 +54,7 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
     }
 
     @Override
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException {
         if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
             LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
             fulfillmentGroup.setShippingPrice(Money.ZERO);
@@ -75,11 +75,11 @@ public class BandedPriceFulfillmentPricingProvider implements FulfillmentPricing
             return fulfillmentGroup;
         }
 
-        throw new ShippingPriceException("An unsupported FulfillmentOption was passed to the calculateCostForFulfillmentGroup method");
+        throw new FulfillmentPriceException("An unsupported FulfillmentOption was passed to the calculateCostForFulfillmentGroup method");
     }
 
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException {
 
         //Set up the response object
         FulfillmentEstimationResponse res = new FulfillmentEstimationResponse();

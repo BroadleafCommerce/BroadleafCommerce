@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.module;
 
-import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
 @Deprecated
@@ -26,7 +26,7 @@ public interface ShippingModule {
 
     public void setName(String name);
 
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
     
     public String getServiceName();
     

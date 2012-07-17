@@ -17,23 +17,23 @@
 package org.broadleafcommerce.common.vendor.service.exception;
 
 
-public class ShippingPriceHostException extends ShippingPriceException {
+public class FulfillmentPriceHostException extends FulfillmentPriceException {
 
     private static final long serialVersionUID = 1L;
 
-    public ShippingPriceHostException() {
+    public FulfillmentPriceHostException() {
         super();
     }
 
-    public ShippingPriceHostException(String message, Throwable cause) {
+    public FulfillmentPriceHostException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ShippingPriceHostException(String message) {
+    public FulfillmentPriceHostException(String message) {
         super(message);
     }
 
-    public ShippingPriceHostException(Throwable cause) {
+    public FulfillmentPriceHostException(Throwable cause) {
         super(cause);
     }
 

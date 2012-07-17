@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service;
 
-import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.processor.FulfillmentEstimationResponse;
@@ -43,11 +43,11 @@ public interface FulfillmentPricingService {
      * 
      * @param fulfillmentGroup
      * @return the updated </b>fulfillmentGroup</b> with its shippingPrice set
-     * @throws ShippingPriceException if <b>fulfillmentGroup</b> does not have a FulfillmentOption associated to it or
+     * @throws FulfillmentPriceException if <b>fulfillmentGroup</b> does not have a FulfillmentOption associated to it or
      * if there was no processor found to calculate costs for <b>fulfillmentGroup</b>
      * @see {@link FulfillmentPricingProvider}
      */
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException;
 
     /**
      * This provides an estimation for a {@link FulfillmentGroup} with a {@link FulfillmentOption}. The main use case for this method
@@ -58,10 +58,10 @@ public interface FulfillmentPricingService {
      * @param fulfillmentGroup
      * @param options
      * @return the price estimation for a particular {@link FulfillmentGroup} with a candidate {@link FulfillmentOption}
-     * @throws ShippingPriceException if no processor was found to estimate costs for <b>fulfillmentGroup</b> with the given <b>option</b>
+     * @throws FulfillmentPriceException if no processor was found to estimate costs for <b>fulfillmentGroup</b> with the given <b>option</b>
      * @see {@link FulfillmentPricingProvider}
      */
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException;
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException;
     
     public List<FulfillmentPricingProvider> getProviders();
 

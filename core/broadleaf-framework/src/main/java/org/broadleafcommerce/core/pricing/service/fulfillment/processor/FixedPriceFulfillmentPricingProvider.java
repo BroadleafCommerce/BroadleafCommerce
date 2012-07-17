@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.pricing.service.fulfillment.processor;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOption;
@@ -40,7 +40,7 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
     }
 
     @Override
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException {
         if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption())) {
             Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
             fulfillmentGroup.setRetailShippingPrice(price);
@@ -54,7 +54,7 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
     }
 
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException {
 
         FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
         HashMap<FulfillmentOption, Money> shippingPrices = new HashMap<FulfillmentOption, Money>();

@@ -17,7 +17,7 @@
 package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -45,7 +45,7 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
     protected FulfillmentGroupService fulfillmentGroupService;
 
     @Override
-    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
+    public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException {
 
         if (fulfillmentGroup.getFulfillmentOption() == null) {
             //There is no shipping option yet. We'll simply set the shipping price to zero for now, and continue.
@@ -90,13 +90,13 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
             }
         }
 
-        throw new ShippingPriceException("No valid processor was found to calculate the FulfillmentGroup cost with " +
+        throw new FulfillmentPriceException("No valid processor was found to calculate the FulfillmentGroup cost with " +
         		"FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() + 
         				" and name: " + fulfillmentGroup.getFulfillmentOption().getName());
     }
     
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws ShippingPriceException {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException {
         FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
         HashMap<FulfillmentOption, Money> prices = new HashMap<FulfillmentOption, Money>();
         response.setFulfillmentOptionPrices(prices);
