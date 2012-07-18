@@ -24,8 +24,8 @@
    			<set>
                    <value>production</value>
                    <value>staging</value>
-                   <value>integrationQA</value>
-                   <value>integrationDev</value>
+                   <value>integrationqa</value>
+                   <value>integrationdev</value>
                    <value>development</value>
                    <value>local</value>
    			</set>
