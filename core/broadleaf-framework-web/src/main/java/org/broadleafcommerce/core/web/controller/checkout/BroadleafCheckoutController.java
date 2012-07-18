@@ -58,7 +58,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected static String multishipAddAddressView = "ajax:checkout/multishipAddAddressForm";
     protected static String multishipAddAddressSuccessView = "redirect:/checkout/multiship";
 	protected static String multishipSuccessView = "redirect:/checkout";
-	protected static String baseConfirmationView = "ajaxredirect:/confirmation";
+    protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
     /**
      * Renders the default checkout page.
@@ -273,9 +273,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             payments.put(ccInfo, ccReference);
 
-            cart.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
-            cart.setStatus(OrderStatus.SUBMITTED);
-            cart.setSubmitDate(Calendar.getInstance().getTime());
+            initializeOrderForCheckout(cart);
 
             CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
 
@@ -293,6 +291,18 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     /**
+     * This method initializes the order for checkout by setting
+     * the order number, status, and the submit date.
+     *
+     * @param order
+     */
+    protected void initializeOrderForCheckout(Order order) {
+        order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
+        order.setStatus(OrderStatus.SUBMITTED);
+        order.setSubmitDate(Calendar.getInstance().getTime());
+    }
+
+    /**
      * This method dictates what actions need to be taken if there is a failure during the checkout process.
      * Normally called when either the transaction success is false (e.g. payment declined by gateway)
      * or an unknown error occurs during the Checkout Workflow (e.g. a CheckoutException is thrown)
@@ -301,7 +311,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      *
      * @param order
      */
-    public void processFailedOrderCheckout(Order order) throws PricingException {
+    protected void processFailedOrderCheckout(Order order) throws PricingException {
         order.setOrderNumber(null);
         order.setStatus(OrderStatus.IN_PROCESS);
         order.setSubmitDate(null);
@@ -314,7 +324,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param cart
      * @return boolean indicating whether or not the fulfillment groups on the cart have addresses.
      */
-    public boolean hasValidShippingAddresses(Order cart) {
+    protected boolean hasValidShippingAddresses(Order cart) {
     	if (cart.getFulfillmentGroups() == null) {
     		return false;
     	}
@@ -333,7 +343,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      *
      * @return List containing expiration months of the form "01 - January"
      */
-    public List<String> populateExpirationMonths() {
+    protected List<String> populateExpirationMonths() {
         List<String> expirationMonths = new ArrayList<String>();
         NumberFormat formatter = new DecimalFormat("00");
         String[] months = new DateFormatSymbols().getMonths();
@@ -349,7 +359,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      *
      * @return List of the next ten years starting with the current year.
      */
-    public List<String> populateExpirationYears() {
+    protected List<String> populateExpirationYears() {
         List<String> expirationYears = new ArrayList<String>();
         DateTime dateTime = new DateTime();
         for (int i=0; i<10; i++){
@@ -417,8 +427,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	public String getBaseConfirmationView() {
 		return baseConfirmationView;
 	}
-	
-	protected String getConfirmationView(String orderNumber) {
+
+    protected String getConfirmationView(String orderNumber) {
 		return getBaseConfirmationView() + "/" + orderNumber;
 	}
 
