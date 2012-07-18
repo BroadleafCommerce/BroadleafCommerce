@@ -77,6 +77,23 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         model.addAttribute("expirationYears", populateExpirationYears());
         return getCheckoutView();
     }
+    
+    /**
+     * Converts the order to singleship by collapsing all of the fulfillment groups into the 
+     * default one
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @return a redirect to /checkout
+     * @throws PricingException 
+     */
+	public String convertToSingleship(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
+    	Order cart = CartState.getCart();
+		fulfillmentGroupService.collapseToOneFulfillmentGroup(cart, true);
+		return getCheckoutPageRedirect();
+	}
+	
 
     /**
      * Processes the request to save a single shipping address
@@ -295,7 +312,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     	}
     	
         for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
-            if (fulfillmentGroup.getAddress() == null) {
+            if (fulfillmentGroup.getAddress() == null || fulfillmentGroup.getFulfillmentOption() == null) {
                 return false;
             }
         }
@@ -420,5 +437,5 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 	protected String getConfirmationView(String orderNumber) {
 		return getBaseConfirmationView() + "/" + orderNumber;
 	}
-	
+
 }

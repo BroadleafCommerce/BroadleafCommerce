@@ -38,6 +38,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -168,6 +169,54 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             }
         }
     }
+	
+	@Override
+	public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException {
+		if (order.getFulfillmentGroups() == null || order.getFulfillmentGroups().size() < 2) {
+			return order;
+		}
+		
+		// Get the default (first) fulfillment group to collapse the others into
+		ListIterator<FulfillmentGroup> fgIter = order.getFulfillmentGroups().listIterator();
+		FulfillmentGroup collapsedFg = fgIter.next();
+		
+		// Build out a map representing the default fgs items keyed by OrderItem id
+		Map<Long, FulfillmentGroupItem> fgOrderItemMap = new HashMap<Long, FulfillmentGroupItem>();
+		for (FulfillmentGroupItem fgi : collapsedFg.getFulfillmentGroupItems()) {
+			fgOrderItemMap.put(fgi.getOrderItem().getId(), fgi);
+		}
+		
+		// For all non default fgs, collapse the items into the default fg
+		while (fgIter.hasNext()) {
+			FulfillmentGroup fg = fgIter.next();
+			ListIterator<FulfillmentGroupItem> fgItemIter = fg.getFulfillmentGroupItems().listIterator();
+			while (fgItemIter.hasNext()) {
+				FulfillmentGroupItem fgi = fgItemIter.next();
+				
+				Long orderItemId = fgi.getOrderItem().getId();
+				FulfillmentGroupItem matchingFgi = fgOrderItemMap.get(orderItemId);
+				
+				if (matchingFgi == null) {
+			        matchingFgi = fulfillmentGroupItemDao.create();
+			        matchingFgi.setFulfillmentGroup(collapsedFg);
+			        matchingFgi.setOrderItem(fgi.getOrderItem());
+			        matchingFgi.setQuantity(fgi.getQuantity());
+			        matchingFgi = fulfillmentGroupItemDao.save(matchingFgi);
+			        collapsedFg.getFulfillmentGroupItems().add(matchingFgi);
+					fgOrderItemMap.put(orderItemId, matchingFgi);
+				} else {
+					matchingFgi.setQuantity(matchingFgi.getQuantity() + fgi.getQuantity());
+				}
+				
+				fulfillmentGroupItemDao.delete(fgi);
+				fgItemIter.remove();
+			}
+			fulfillmentGroupDao.delete(fg);
+			fgIter.remove();
+		}
+		
+		return orderService.save(order, priceOrder);
+	}
 	
 	@Override
 	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException {

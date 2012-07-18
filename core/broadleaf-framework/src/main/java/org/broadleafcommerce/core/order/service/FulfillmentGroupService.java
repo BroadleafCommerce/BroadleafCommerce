@@ -65,5 +65,18 @@ public interface FulfillmentGroupService {
 	 */
 	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
 
+	/**
+	 * Collapses all of the fulfillment groups in the given order to the first fulfillment group
+	 * in the order.
+	 * 
+	 * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
+	 * 
+	 * @param order
+	 * @param priceOrder
+	 * @return the saved order
+	 * @throws PricingException 
+	 */
+	public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
+
 
 }
