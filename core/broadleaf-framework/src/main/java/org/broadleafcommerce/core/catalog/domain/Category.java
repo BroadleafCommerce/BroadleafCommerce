@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -449,5 +450,19 @@ public interface Category extends Serializable {
 	 * @return the cumulative upsale products
 	 */
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
+
+	/**
+	 * Returns all of the SearchFacets that are directly associated with this Category
+	 * 
+	 * @return related SearchFacets
+	 */
+	public List<SearchFacet> getSearchFacets();
+
+	/**
+	 * Sets the SearchFacets that are directly associated with this Category
+	 * 
+	 * @param searchFacets
+	 */
+	public void setSearchFacets(List<SearchFacet> searchFacets);
 
 }

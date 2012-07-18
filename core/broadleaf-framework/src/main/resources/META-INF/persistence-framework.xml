@@ -87,6 +87,8 @@
 		<class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchInterceptImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
+		<class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
+		<class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
 		<class>org.broadleafcommerce.core.rating.domain.RatingSummaryImpl</class>
 		<class>org.broadleafcommerce.core.rating.domain.RatingDetailImpl</class>
 		<class>org.broadleafcommerce.core.rating.domain.ReviewDetailImpl</class>

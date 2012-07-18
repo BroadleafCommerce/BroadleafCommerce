@@ -34,6 +34,8 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -238,6 +240,13 @@ public class CategoryImpl implements Category, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
+    
+    @ManyToMany(targetEntity = SearchFacetImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_SEARCH_FACET_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SEARCH_FACET_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<SearchFacet> searchFacets = new ArrayList<SearchFacet>(10);
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -592,8 +601,18 @@ public class CategoryImpl implements Category, Status {
     		this.allProducts.add(product);
     	}
 	}
+    
+    @Override
+    public List<SearchFacet> getSearchFacets() {
+		return searchFacets;
+	}
 
     @Override
+	public void setSearchFacets(List<SearchFacet> searchFacets) {
+		this.searchFacets = searchFacets;
+	}
+
+	@Override
     public Map<String, Media> getCategoryMedia() {
         return categoryMedia;
     }
