@@ -63,6 +63,7 @@ public interface FulfillmentGroupService {
 	 * @return the saved order
 	 * @throws PricingException 
 	 */
-	public Order splitIntoMultishipGroups(Order order, boolean priceOrder) throws PricingException;
+	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
+
 
 }

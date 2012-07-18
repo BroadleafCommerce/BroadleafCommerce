@@ -68,7 +68,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model) {
     	Order cart = CartState.getCart();
-		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.findOrderMultishipOptions(cart.getId()));
+		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
         model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
         model.addAttribute("validShipping", hasValidShippingAddresses(cart));
     	model.addAttribute("states", stateService.findStates());
@@ -155,7 +155,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     		OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException {
     	Order cart = CartState.getCart();
     	orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
-    	cart = fulfillmentGroupService.splitIntoMultishipGroups(cart, true);
+    	cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
     	return getMultishipSuccessView();
     }
 

@@ -23,12 +23,14 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
@@ -167,20 +170,27 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 	
 	@Override
-	public Order splitIntoMultishipGroups(Order order, boolean priceOrder) throws PricingException {
-		order = removeAllFulfillmentGroupsFromOrder(order, false);
+	public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException {
 		List<OrderMultishipOption> multishipOptions =  orderMultishipOptionService.findOrderMultishipOptions(order.getId());
 		
-		// This map is keyed by a String that follows the pattern "<address.id>:<fulfillmentOption.id>"
-		// For example, a key could be "23:3"
+		// Build map of fulfillmentGroupItemId --> FulfillmentGroupItem.quantity
+		// Also build map of addressId:fulfillmentOptionId --> FulfillmentGroup
+		Map<Long, Integer> fgItemQuantityMap = new HashMap<Long, Integer>();
 		Map<String, FulfillmentGroup> multishipGroups = new HashMap<String, FulfillmentGroup>();
+		for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+			String key = getKey(fg.getAddress(), fg.getFulfillmentOption());
+			multishipGroups.put(key, fg);
+			
+			for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+				fgItemQuantityMap.put(fgi.getId(), fgi.getQuantity());
+			}
+		}
 		
 		for (OrderMultishipOption option : multishipOptions) {
-			Long addressKey = (option.getAddress() == null) ? -1 : option.getAddress().getId();
-			Long fulfillmentOptionKey = (option.getFulfillmentOption() == null) ? -1 : option.getFulfillmentOption().getId();
-			String key = addressKey + ":" + fulfillmentOptionKey;
-			
+			String key = getKey(option.getAddress(), option.getFulfillmentOption());
 			FulfillmentGroup fg = multishipGroups.get(key);
+			
+			// Get or create a fulfillment group that matches this OrderMultishipOption destination
 			if (fg == null) {
 				FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
 				
@@ -189,6 +199,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 				if (option.getAddress() != null) {
 					fgr.setAddress(option.getAddress());
 				}
+				
 				if (option.getFulfillmentOption() != null) {
 					fgr.setOption(option.getFulfillmentOption());
 				}
@@ -198,6 +209,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 				order.getFulfillmentGroups().add(fg);
 			}
 			
+			// See if there is a fulfillment group item that matches this OrderMultishipOption
+			// OrderItem request
 			FulfillmentGroupItem fulfillmentGroupItem = null;
 			for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
 				if (fgi.getOrderItem().getId() == option.getOrderItem().getId()) {
@@ -205,6 +218,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 				}
 			}
 			
+			// If there is no matching fulfillment group item, create a new one with quantity 1
 			if (fulfillmentGroupItem == null) {
 		        fulfillmentGroupItem = fulfillmentGroupItemDao.create();
 		        fulfillmentGroupItem.setFulfillmentGroup(fg);
@@ -213,13 +227,72 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 		        fulfillmentGroupItem = fulfillmentGroupItemDao.save(fulfillmentGroupItem);
 		        fg.getFulfillmentGroupItems().add(fulfillmentGroupItem);
 			} else {
-				fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+				// There are three potential scenarios where a fulfillment group item exists:
+				//   1: It has been previously created and exists in the database and
+				//      has an id. This means it's in the fgItemQuantityMap. If there is 
+				//      remaining quantity in that map, we will decrement it for future
+				//      usage. If the quantity is 0 in the map, that means that we have more
+				//      items than we did before, and we must simply increment the quantity.
+				//      (qty == 0 or qty is not null)
+				//   2: It was created in this request but has been saved to the database because
+				//      it is a brand new fulfillment group and so it has an id. 
+				//      However, it does not have an entry in the fgItemQuantityMap,
+				//      so we can simply increment the quantity.
+				//      (qty == null)
+				//   3: It was created in this request and has not yet been saved to the database.
+				//      This is because it was a previously existing fulfillment group that has new
+				//      items. Therefore, we simply increment the quantity.
+				//      (fulfillmentGroupItem.getId() == null)
+				if (fulfillmentGroupItem.getId() != null) {
+					Integer qty = fgItemQuantityMap.get(fulfillmentGroupItem.getId());
+					if (qty == null || qty == 0) {
+						fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+					} else {
+						qty -= 1;
+						fgItemQuantityMap.put(fulfillmentGroupItem.getId(), qty);
+					}
+				} else {
+					fulfillmentGroupItem.setQuantity(fulfillmentGroupItem.getQuantity() + 1);
+				}
 			}
 			
 			multishipGroups.put(key, fg);
 		}
 		
+		// Go through all of the items in the fgItemQuantityMap. For all items that have a
+		// zero quantity, we don't need to do anything because we've already matched them
+		// to the newly requested OrderMultishipOption. For items that have a non-zero quantity,
+		// there are two possible scenarios:
+		//   1: The quantity remaining matches exactly the quantity of a fulfillmentGroupItem.
+		//      In this case, we can simply remove the fulfillmentGroupItem.
+		//   2: The quantity in the map is greater than what we've found. This means that we
+		//      need to subtract the remaining old quantity from the new quantity.
+		// Furthermore, delete the empty fulfillment groups.
+		for (Entry<Long, Integer> entry : fgItemQuantityMap.entrySet()) {
+			if (entry.getValue() > 0) {
+				FulfillmentGroupItem fgi = fulfillmentGroupItemDao.readFulfillmentGroupItemById(entry.getKey());
+				if (fgi.getQuantity() == entry.getValue()) {
+					FulfillmentGroup fg = fgi.getFulfillmentGroup();
+					fg.getFulfillmentGroupItems().remove(fgi);
+					fulfillmentGroupItemDao.delete(fgi);
+					if (fg.getFulfillmentGroupItems().size() == 0) {
+						order.getFulfillmentGroups().remove(fg);
+						fulfillmentGroupDao.delete(fg);
+					}
+				} else { 
+					fgi.setQuantity(fgi.getQuantity() - entry.getValue());
+					fulfillmentGroupItemDao.save(fgi);
+				}
+			}
+		}
+		
 		return orderService.save(order, priceOrder);
+	}
+	
+	protected String getKey(Address address, FulfillmentOption option) {
+		Long addressKey = (address == null) ? -1 : address.getId();
+		Long fulfillmentOptionKey = (option == null) ? -1 : option.getId();
+		return addressKey + ":" + fulfillmentOptionKey;
 	}
 	
     protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
