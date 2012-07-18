@@ -176,14 +176,23 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 		Map<String, FulfillmentGroup> multishipGroups = new HashMap<String, FulfillmentGroup>();
 		
 		for (OrderMultishipOption option : multishipOptions) {
-			String key = option.getAddress().getId() + ":" + option.getFulfillmentOption().getId();
+			Long addressKey = (option.getAddress() == null) ? -1 : option.getAddress().getId();
+			Long fulfillmentOptionKey = (option.getFulfillmentOption() == null) ? -1 : option.getFulfillmentOption().getId();
+			String key = addressKey + ":" + fulfillmentOptionKey;
 			
 			FulfillmentGroup fg = multishipGroups.get(key);
 			if (fg == null) {
 				FulfillmentGroupRequest fgr = new FulfillmentGroupRequest();
+				
 				fgr.setOrder(order);
-				fgr.setAddress(option.getAddress());
-				fgr.setOption(option.getFulfillmentOption());
+				
+				if (option.getAddress() != null) {
+					fgr.setAddress(option.getAddress());
+				}
+				if (option.getFulfillmentOption() != null) {
+					fgr.setOption(option.getFulfillmentOption());
+				}
+				
 				fg = addFulfillmentGroupToOrder(fgr, false);
 				fg = save(fg);
 				order.getFulfillmentGroups().add(fg);
