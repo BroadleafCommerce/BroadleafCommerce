@@ -16,9 +16,10 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,31 +33,29 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.math.BigDecimal;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SEARCH_FACET_RANGE")
+@Table(name = "BLC_CATEGORY_SEARCH_FACET_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class SearchFacetRangeImpl implements SearchFacetRange {
+public class CategorySearchFacetImpl implements CategorySearchFacet {
 	
     @Id
-    @GeneratedValue(generator = "SearchFacetRangeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchFacetRangeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchFacetRangeImpl", allocationSize = 50)
-    @Column(name = "SEARCH_FACET_RANGE_ID")
+    @GeneratedValue(generator = "CategorySearchFacetId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CategorySearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategorySearchFacetImpl", allocationSize = 50)
+    @Column(name = "CATEGORY_SEARCH_FACET_ID")
     protected Long id;
     
-	@ManyToOne(targetEntity = SearchFacetImpl.class, optional = false)
+	@ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "CATEGORY_ID")
+    protected Category category;
+    
+	@ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
-    @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
-    protected SearchFacet searchFacet = new SearchFacetImpl();
+    protected SearchFacet searchFacet;
     
-    @Column(name = "MIN_VALUE", precision=19, scale=5)
-    protected BigDecimal minValue;
-    
-    @Column(name = "MAX_VALUE", precision=19, scale=5)
-    protected BigDecimal maxValue;
-    
+    @Column(name =  "POSITION")
+    protected Integer position;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -66,7 +65,17 @@ public class SearchFacetRangeImpl implements SearchFacetRange {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	@Override
+	public Category getCategory() {
+		return category;
+	}
+
+	@Override
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
 	@Override
 	public SearchFacet getSearchFacet() {
 		return searchFacet;
@@ -78,23 +87,13 @@ public class SearchFacetRangeImpl implements SearchFacetRange {
 	}
 
 	@Override
-	public BigDecimal getMinValue() {
-		return minValue;
+	public Integer getPosition() {
+		return position;
 	}
 
 	@Override
-	public void setMinValue(BigDecimal minValue) {
-		this.minValue = minValue;
+	public void setPosition(Integer position) {
+		this.position = position;
 	}
-
-	@Override
-	public BigDecimal getMaxValue() {
-		return maxValue;
-	}
-
-	@Override
-	public void setMaxValue(BigDecimal maxValue) {
-		this.maxValue = maxValue;
-	}
-
+    
 }

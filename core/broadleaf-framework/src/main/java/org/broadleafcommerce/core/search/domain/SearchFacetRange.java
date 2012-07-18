@@ -70,22 +70,6 @@ public interface SearchFacetRange {
 	public void setMaxValue(BigDecimal maxValue);
 
 	/**
-	 * Gets the label of this SearchFacetRange. This is the value to be displayed that corresponds to
-	 * the range for this object.
-	 * 
-	 * @return the label
-	 */
-	public String getLabel();
-
-	/**
-	 * Sets the label of this SearchFacetRange
-	 * 
-	 * @see #getLabel()
-	 * @param label
-	 */
-	public void setLabel(String label);
-
-	/**
 	 * Gets the associated SearchFacet to this range
 	 * 
 	 * @return the associated SearchFacet

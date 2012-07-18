@@ -85,6 +85,7 @@
 		<class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
 		<class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
 		<class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
+		<class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchInterceptImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
 		<class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>

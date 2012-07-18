@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 import javax.annotation.Nonnull;
@@ -456,13 +457,28 @@ public interface Category extends Serializable {
 	 * 
 	 * @return related SearchFacets
 	 */
-	public List<SearchFacet> getSearchFacets();
+	public List<CategorySearchFacet> getSearchFacets();
 
 	/**
 	 * Sets the SearchFacets that are directly associated with this Category
 	 * 
 	 * @param searchFacets
 	 */
-	public void setSearchFacets(List<SearchFacet> searchFacets);
+	public void setSearchFacets(List<CategorySearchFacet> searchFacets);
+
+	/**
+	 * Sets the SearchFacets that should not be rendered by this Category. Typically, this will include
+	 * facets from parent categories that do not apply to this category.
+	 * 
+	 * @param excludedSearchFacets
+	 */
+	void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets);
+
+	/**
+	 * Gets the excluded SearchFacets
+	 * @return the excluded SearchFacets
+	 */
+	List<SearchFacet> getExcludedSearchFacets();
+
 
 }
