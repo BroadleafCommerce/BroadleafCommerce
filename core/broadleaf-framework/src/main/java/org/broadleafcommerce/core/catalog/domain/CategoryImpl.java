@@ -554,19 +554,19 @@ public class CategoryImpl implements Category, Status {
     }
     
     @Override
-    public List<RelatedProduct> getCummulativeCrossSaleProducts() {
+    public List<RelatedProduct> getCumulativeCrossSaleProducts() {
     	List<RelatedProduct> products = getCrossSaleProducts();
     	for (Category parentCategory : getAllParentCategories()) {
-    		products.addAll(parentCategory.getCummulativeCrossSaleProducts());
+    		products.addAll(parentCategory.getCumulativeCrossSaleProducts());
     	}
     	return products;
     }
     
     @Override
-    public List<RelatedProduct> getCummulativeUpSaleProducts() {
+    public List<RelatedProduct> getCumulativeUpSaleProducts() {
     	List<RelatedProduct> products = getUpSaleProducts();
     	for (Category parentCategory : getAllParentCategories()) {
-    		products.addAll(parentCategory.getCummulativeUpSaleProducts());
+    		products.addAll(parentCategory.getCumulativeUpSaleProducts());
     	}
     	return products;
     }

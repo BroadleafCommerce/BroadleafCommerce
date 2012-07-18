@@ -676,16 +676,16 @@ public interface Product extends Serializable {
 	 * Returns a list of the cross sale products for this product as well
 	 * all cross sale products in all parent categories of this product.
 	 * 
-	 * @return the cummulative cross sale products
+	 * @return the cumulative cross sale products
 	 */
-	public List<RelatedProduct> getCummulativeCrossSaleProducts();
+	public List<RelatedProduct> getCumulativeCrossSaleProducts();
 	
 	/** 
 	 * Returns a list of the upsale products for this product as well as
 	 * all upsale products in all parent categories of this product.
 	 * 
-	 * @return the cummulative upsale products
+	 * @return the cumulative upsale products
 	 */
-	public List<RelatedProduct> getCummulativeUpSaleProducts();
+	public List<RelatedProduct> getCumulativeUpSaleProducts();
 
 }
