@@ -18,13 +18,14 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import net.sf.cglib.core.CollectionUtils;
 import net.sf.cglib.core.Predicate;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -62,6 +63,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -226,6 +228,16 @@ public class CategoryImpl implements Category, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
+    
+	@OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
+
+    @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -239,6 +251,12 @@ public class CategoryImpl implements Category, Status {
 
     @Transient
     protected List<FeaturedProduct> filteredFeaturedProducts = null;
+    
+    @Transient
+    protected List<RelatedProduct> filteredCrossSales = null;
+
+    @Transient
+    protected List<RelatedProduct> filteredUpSales = null;
 
     @Override
     public Long getId() {
@@ -496,8 +514,73 @@ public class CategoryImpl implements Category, Status {
     		this.featuredProducts.add(featuredProduct);
     	}
     }
+    
+    @Override
+    public List<RelatedProduct> getCrossSaleProducts() {
+        if (filteredCrossSales == null && crossSaleProducts != null) {
+            filteredCrossSales = new ArrayList<RelatedProduct>(crossSaleProducts.size());
+            filteredCrossSales.addAll(crossSaleProducts);
+            CollectionUtils.filter(crossSaleProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                }
+            });
+        }
+        return filteredCrossSales;
+    }
 
     @Override
+    public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
+        this.crossSaleProducts.clear();
+        for(RelatedProduct relatedProduct : crossSaleProducts){
+        	this.crossSaleProducts.add(relatedProduct);
+        }    	
+    }
+
+    @Override
+    public List<RelatedProduct> getUpSaleProducts() {
+        if (filteredUpSales == null && upSaleProducts != null) {
+            filteredUpSales = new ArrayList<RelatedProduct>(upSaleProducts.size());
+            filteredUpSales.addAll(upSaleProducts);
+            CollectionUtils.filter(upSaleProducts, new Predicate() {
+                @Override
+                public boolean evaluate(Object arg) {
+                    return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
+                }
+            });
+        }
+        return filteredUpSales;
+    }
+    
+    @Override
+    public List<RelatedProduct> getCummulativeCrossSaleProducts() {
+    	List<RelatedProduct> products = getCrossSaleProducts();
+    	for (Category parentCategory : getAllParentCategories()) {
+    		products.addAll(parentCategory.getCummulativeCrossSaleProducts());
+    	}
+    	return products;
+    }
+    
+    @Override
+    public List<RelatedProduct> getCummulativeUpSaleProducts() {
+    	List<RelatedProduct> products = getUpSaleProducts();
+    	for (Category parentCategory : getAllParentCategories()) {
+    		products.addAll(parentCategory.getCummulativeUpSaleProducts());
+    	}
+    	return products;
+    }
+
+    @Override
+    public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
+        this.upSaleProducts.clear();
+        for(RelatedProduct relatedProduct : upSaleProducts){
+        	this.upSaleProducts.add(relatedProduct);
+        }
+        this.upSaleProducts = upSaleProducts;
+    }
+
+	@Override
     public List<Product> getAllProducts() {
 		return allProducts;
 	}

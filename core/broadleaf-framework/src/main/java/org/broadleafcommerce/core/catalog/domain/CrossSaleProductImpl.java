@@ -18,11 +18,19 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -31,7 +39,7 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CrossSaleProductImpl implements RelatedProduct {
 
-	private static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
 	@Id
     @GeneratedValue(generator= "CrossSaleProductId")
@@ -48,24 +56,29 @@ public class CrossSaleProductImpl implements RelatedProduct {
         }
     )
     @Column(name = "CROSS_SALE_PRODUCT_ID")
-    private Long id;
+    protected Long id;
 	
 	@Column(name = "PROMOTION_MESSAGE")
     @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", largeEntry=true)
-    private String promotionMessage;
+    protected String promotionMessage;
 
     @Column(name = "SEQUENCE")
-    private Long sequence;
+    protected Long sequence;
     
-	@ManyToOne(targetEntity = ProductImpl.class, optional=false)
+	@ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="CROSSSALE_INDEX", columnNames={"PRODUCT_ID"})
-    private Product product = new ProductImpl();
+    protected Product product = new ProductImpl();
+	
+	@ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "CATEGORY_ID")
+    @Index(name="CROSSSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    protected Category category = new CategoryImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
-    private Product relatedSaleProduct = new ProductImpl();
+    protected Product relatedSaleProduct = new ProductImpl();
 
     public Long getId() {
         return id;
@@ -95,12 +108,20 @@ public class CrossSaleProductImpl implements RelatedProduct {
         return product;
     }
 
-    public Product getRelatedProduct() {
-        return relatedSaleProduct;
-    }
-
     public void setProduct(Product product) {
         this.product = product;
+    }
+    
+    public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public Product getRelatedProduct() {
+        return relatedSaleProduct;
     }
 
     public void setRelatedProduct(Product relatedSaleProduct) {

@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.media.domain.Media;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -402,5 +403,51 @@ public interface Category extends Serializable {
      * @param allProducts the list of products to associate with this category
      */
 	public void setAllProducts(@Nonnull List<Product> allProducts);
+
+	/**
+	 * Returns a list of cross sale products that are related to this category.
+	 * 
+	 * @return a list of cross sale products
+	 */
+	public List<RelatedProduct> getCrossSaleProducts();
+
+	/**
+	 * Sets the cross sale products that are related to this category.
+	 * 
+	 * @see #getCrossSaleProducts()
+	 * @param crossSaleProducts
+	 */
+	public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
+
+	/**
+	 * Returns a list of cross sale products that are related to this category.
+	 * 
+	 * @return a list of cross sale products
+	 */
+	public List<RelatedProduct> getUpSaleProducts();
+
+	/**
+	 * Sets the upsale products that are related to this category.
+	 * 
+	 * @see #getUpSaleProducts()
+	 * @param upSaleProducts
+	 */
+	public void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
+
+	/** 
+	 * Returns a list of the cross sale products in this category as well as
+	 * all cross sale products in all parent categories of this category.
+	 * 
+	 * @return the cummulative cross sale products
+	 */
+	public List<RelatedProduct> getCummulativeCrossSaleProducts();
+	
+	/** 
+	 * Returns a list of the upsale products in this category as well as
+	 * all upsale products in all parent categories of this category.
+	 * 
+	 * @return the cummulative upsale products
+	 */
+	public List<RelatedProduct> getCummulativeUpSaleProducts();
 
 }

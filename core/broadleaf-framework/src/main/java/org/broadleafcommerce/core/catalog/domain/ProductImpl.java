@@ -555,6 +555,24 @@ public class ProductImpl implements Product, Status {
         }
         this.upSaleProducts = upSaleProducts;
     }
+    
+    @Override
+    public List<RelatedProduct> getCummulativeCrossSaleProducts() {
+    	List<RelatedProduct> products = getCrossSaleProducts();
+    	for (Category parentCategory : getAllParentCategories()) {
+    		products.addAll(parentCategory.getCummulativeCrossSaleProducts());
+    	}
+    	return products;
+    }
+    
+    @Override
+    public List<RelatedProduct> getCummulativeUpSaleProducts() {
+    	List<RelatedProduct> products = getUpSaleProducts();
+    	for (Category parentCategory : getAllParentCategories()) {
+    		products.addAll(parentCategory.getCummulativeUpSaleProducts());
+    	}
+    	return products;
+    }
 
     @Override
     public List<ProductAttribute> getProductAttributes() {

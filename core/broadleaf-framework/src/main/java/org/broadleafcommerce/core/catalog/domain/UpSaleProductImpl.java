@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,9 +32,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.hibernate.annotations.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -65,6 +69,11 @@ public class UpSaleProductImpl implements RelatedProduct {
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     private Product product = new ProductImpl();
+    
+	@ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "CATEGORY_ID")
+    @Index(name="CROSSSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    protected Category category = new CategoryImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
@@ -98,14 +107,22 @@ public class UpSaleProductImpl implements RelatedProduct {
     public Product getProduct() {
         return product;
     }
-
-    public Product getRelatedProduct() {
-        return relatedSaleProduct;
-    }   
-
+    
     public void setProduct(Product product) {
         this.product = product;
     }
+    
+    public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public Product getRelatedProduct() {
+        return relatedSaleProduct;
+    }   
 
     public void setRelatedProduct(Product relatedSaleProduct) {
         this.relatedSaleProduct = relatedSaleProduct;
