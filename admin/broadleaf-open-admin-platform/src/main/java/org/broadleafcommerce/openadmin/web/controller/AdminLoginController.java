@@ -47,9 +47,20 @@ public class AdminLoginController extends BroadleafAbstractController {
     protected String forgotPasswordView = "/blcadmin/forgotPassword";
     protected String forgotUsernameView = "/blcadmin/forgotUsername";
     protected String resetPasswordView  = "/blcadmin/resetPassword";
+    protected String changePasswordView  = "/blcadmin/changePassword";
 
    
-    public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String getChangePasswordView() {
+		return changePasswordView;
+	}
+
+
+	public void setChangePasswordView(String changePasswordView) {
+		this.changePasswordView = changePasswordView;
+	}
+
+
+	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getLoginView();
     }
 
@@ -89,7 +100,7 @@ public class AdminLoginController extends BroadleafAbstractController {
     public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getResetPasswordView();
     }
-    
+
     public String resetPassword(ResetPasswordForm resetPasswordForm,
                                 HttpServletRequest request) {
         GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
@@ -161,4 +172,24 @@ public class AdminLoginController extends BroadleafAbstractController {
     public void setResetPasswordView(String resetPasswordView) {
         this.resetPasswordView = resetPasswordView;
     }
+    
+    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return getChangePasswordView();
+    }
+
+	public String processChangePassword(ResetPasswordForm resetPasswordForm,
+			HttpServletRequest request) {
+		GenericResponse errorResponse = adminSecurityService
+				.changePassword(resetPasswordForm.getUsername(),
+						resetPasswordForm.getOldPassword(),
+						resetPasswordForm.getPassword(),
+						resetPasswordForm.getConfirmPassword());
+		if (errorResponse.getHasErrors()) {
+			setErrors(errorResponse, request);
+			return getChangePasswordView();
+		} else {
+			return redirectToLoginWithMessage("passwordReset");
+		}
+}
+
 }
