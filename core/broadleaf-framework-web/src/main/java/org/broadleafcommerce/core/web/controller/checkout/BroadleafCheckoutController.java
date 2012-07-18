@@ -5,6 +5,7 @@ import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
@@ -68,8 +69,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model) {
     	Order cart = CartState.getCart();
-		model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
-        model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
+    	if (!(cart instanceof NullOrderImpl)) {
+			model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
+    	}
+	    model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
         model.addAttribute("validShipping", hasValidShippingAddresses(cart));
     	model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
