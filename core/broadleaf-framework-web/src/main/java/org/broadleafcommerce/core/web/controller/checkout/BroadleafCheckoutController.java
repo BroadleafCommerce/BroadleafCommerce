@@ -50,8 +50,9 @@ import java.util.Map;
  * @author Elbert Bautista (elbertbautista)
  */
 public class BroadleafCheckoutController extends AbstractCheckoutController {
-	
-	protected static String checkoutView = "checkout/checkout";
+
+    protected static String cartPageRedirect = "redirect:/cart";
+    protected static String checkoutView = "checkout/checkout";
 	protected static String checkoutPageRedirect = "redirect:/checkout";
 	protected static String multishipView = "ajax:checkout/multiship";
     protected static String multishipAddAddressView = "ajax:checkout/multishipAddAddressForm";
@@ -247,44 +248,48 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException {
 
         Order cart = CartState.getCart();
-        Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+        if (cart != null) {
+            Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
 
-        orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
+            orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
 
-        billingInfoFormValidator.validate(billingForm, result);
-        if (result.hasErrors()) {
-            checkout(request, response, model);
-            return getCheckoutView();
+            billingInfoFormValidator.validate(billingForm, result);
+            if (result.hasErrors()) {
+                checkout(request, response, model);
+                return getCheckoutView();
+            }
+
+            PaymentInfo ccInfo = creditCardPaymentInfoFactory.constructPaymentInfo(cart);
+            ccInfo.setAddress(billingForm.getAddress());
+            cart.getPaymentInfos().add(ccInfo);
+
+            CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
+            ccReference.setNameOnCard(billingForm.getCreditCardName());
+            ccReference.setReferenceNumber(ccInfo.getReferenceNumber());
+            ccReference.setPan(billingForm.getCreditCardNumber());
+            ccReference.setCvvCode(billingForm.getCreditCardCvvCode());
+            ccReference.setExpirationMonth(Integer.parseInt(billingForm.getCreditCardExpMonth()));
+            ccReference.setExpirationYear(Integer.parseInt(billingForm.getCreditCardExpYear()));
+
+            payments.put(ccInfo, ccReference);
+
+            cart.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
+            cart.setStatus(OrderStatus.SUBMITTED);
+            cart.setSubmitDate(Calendar.getInstance().getTime());
+
+            CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
+
+            if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
+                processFailedOrderCheckout(cart);
+                checkout(request, response, model);
+                result.rejectValue("creditCardNumber", "payment.exception", null, null);
+                return getCheckoutView();
+            }
+
+            return getConfirmationView(cart.getOrderNumber());
         }
 
-        PaymentInfo ccInfo = creditCardPaymentInfoFactory.constructPaymentInfo(cart);
-        ccInfo.setAddress(billingForm.getAddress());
-        cart.getPaymentInfos().add(ccInfo);
-
-        CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
-        ccReference.setNameOnCard(billingForm.getCreditCardName());
-        ccReference.setReferenceNumber(ccInfo.getReferenceNumber());
-        ccReference.setPan(billingForm.getCreditCardNumber());
-        ccReference.setCvvCode(billingForm.getCreditCardCvvCode());
-        ccReference.setExpirationMonth(Integer.parseInt(billingForm.getCreditCardExpMonth()));
-        ccReference.setExpirationYear(Integer.parseInt(billingForm.getCreditCardExpYear()));
-
-        payments.put(ccInfo, ccReference);
-
-        cart.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
-        cart.setStatus(OrderStatus.SUBMITTED);
-        cart.setSubmitDate(Calendar.getInstance().getTime());
-
-        CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
-
-        if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
-            processFailedOrderCheckout(cart);
-            checkout(request, response, model);
-            result.rejectValue("creditCardNumber", "payment.exception", null, null);
-            return getCheckoutView();
-        }
-
-        return getConfirmationView(cart.getOrderNumber());
+        return getCartPageRedirect();
     }
 
     /**
@@ -379,6 +384,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 setValue(country);
             }
         });
+    }
+
+    public String getCartPageRedirect() {
+        return cartPageRedirect;
     }
 
 	public String getCheckoutView() {
