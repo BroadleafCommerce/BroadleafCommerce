@@ -51,13 +51,13 @@ import java.util.Map;
  */
 public class BroadleafCheckoutController extends AbstractCheckoutController {
 	
-	protected String checkoutView = "checkout/checkout";
-	protected String checkoutPageRedirect = "redirect:/checkout";
-	protected String multishipView = "ajax:checkout/multiship";
-    protected String multishipAddAddressView = "ajax:checkout/multishipAddAddressForm";
-    protected String multishipAddAddressSuccessView = "redirect:/checkout/multiship";
-	protected String multishipSuccessView = "redirect:/checkout";
-	protected String baseConfirmationView = "ajaxredirect:/confirmation";
+	protected static String checkoutView = "checkout/checkout";
+	protected static String checkoutPageRedirect = "redirect:/checkout";
+	protected static String multishipView = "ajax:checkout/multiship";
+    protected static String multishipAddAddressView = "ajax:checkout/multishipAddAddressForm";
+    protected static String multishipAddAddressSuccessView = "redirect:/checkout/multiship";
+	protected static String multishipSuccessView = "redirect:/checkout";
+	protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
     /**
      * Renders the default checkout page.
@@ -385,32 +385,16 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 		return checkoutView;
 	}
 
-	public void setCheckoutView(String checkoutView) {
-		this.checkoutView = checkoutView;
-	}
-
 	public String getCheckoutPageRedirect() {
 		return checkoutPageRedirect;
-	}
-
-	public void setCheckoutPageRedirect(String checkoutPageRedirect) {
-		this.checkoutPageRedirect = checkoutPageRedirect;
 	}
 	
 	public String getMultishipView() {
 		return multishipView;
 	}
-
-	public void setMultishipView(String multishipView) {
-		this.multishipView = multishipView;
-	}
 	
 	public String getMultishipAddAddressView() {
 		return multishipAddAddressView;
-	}
-
-	public void setMultishipAddAddressView(String multishipAddAddressView) {
-		this.multishipAddAddressView = multishipAddAddressView;
 	}
 
 	public String getMultishipSuccessView() {
@@ -421,20 +405,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 		return multishipAddAddressSuccessView;
 	}
 
-	public void setMultishipAddAddressSuccessView(String multishipAddAddressSuccessView) {
-		this.multishipAddAddressSuccessView = multishipAddAddressSuccessView;
-	}
-
-	public void setMultishipSuccessView(String multishipSuccessView) {
-		this.multishipSuccessView = multishipSuccessView;
-	}
-
 	public String getBaseConfirmationView() {
 		return baseConfirmationView;
-	}
-
-	public void setBaseConfirmationView(String baseConfirmationView) {
-		this.baseConfirmationView = baseConfirmationView;
 	}
 	
 	protected String getConfirmationView(String orderNumber) {

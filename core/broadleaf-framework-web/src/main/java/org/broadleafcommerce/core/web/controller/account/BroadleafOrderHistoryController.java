@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
-    private String orderHistoryView = "account/orderHistory";
+    private static String orderHistoryView = "account/orderHistory";
 
     public String viewOrderHistory(HttpServletRequest request, Model model) {
         List<Order> orders = orderService.findOrdersForCustomer(CustomerState.getCustomer(), OrderStatus.SUBMITTED);
@@ -32,7 +32,4 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         return orderHistoryView;
     }
 
-    public void setOrderHistoryView(String orderHistoryView) {
-        this.orderHistoryView = orderHistoryView;
-    }
 }

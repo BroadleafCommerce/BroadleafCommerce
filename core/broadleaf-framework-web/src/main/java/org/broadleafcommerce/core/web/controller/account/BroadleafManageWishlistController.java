@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class BroadleafManageWishlistController extends AbstractAccountController {
     
-    protected static String ACCOUNT_WISHLIST_VIEW = "account/manageWishlist";
+    protected static String accountWishlistView = "account/manageWishlist";
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
             AddToCartItem itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
@@ -118,7 +118,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
     }
 
     public String getAccountWishlistView() {
-        return ACCOUNT_WISHLIST_VIEW;
+        return accountWishlistView;
     }
 
 }

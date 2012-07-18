@@ -13,7 +13,7 @@ public class BroadleafManageAddressesController extends BroadleafAbstractControl
     @Resource(name = "blAddressService")
     private AddressService addressService;
 
-    private String manageAddressesView = "account/manageAddresses";
+    private static String manageAddressesView = "account/manageAddresses";
 
     public String viewManageAddresses(HttpServletRequest request, HttpServletResponse response, Model model) {
         return getManageAddressesView();
@@ -27,7 +27,4 @@ public class BroadleafManageAddressesController extends BroadleafAbstractControl
         return manageAddressesView;
     }
 
-    public void setManageAddressesView(String manageAddressesView) {
-        this.manageAddressesView = manageAddressesView;
-    }
 }

@@ -40,7 +40,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
 	@Resource(name = "blSearchService")
     protected SearchService searchService;
 	
-	protected String searchView = "ajax:catalog/search";
+	protected static String searchView = "ajax:catalog/search";
 
 	//TODO: This isn't really implemented
     @SuppressWarnings("unchecked")
@@ -81,10 +81,6 @@ public class BroadleafSearchController extends AbstractCatalogController {
 
 	public String getSearchView() {
 		return searchView;
-	}
-
-	public void setSearchView(String searchView) {
-		this.searchView = searchView;
 	}
     
 }

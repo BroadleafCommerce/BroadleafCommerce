@@ -38,7 +38,7 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
     @Resource(name = "blChangePasswordValidator")
     protected ChangePasswordValidator changePasswordValidator;
 
-    protected String changePasswordView = "account/changePassword";
+    protected static String changePasswordView = "account/changePassword";
 
     public String viewChangePassword(HttpServletRequest request, Model model) {
         return getChangePasswordView();
@@ -66,7 +66,4 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
         return changePasswordView;
     }
 
-    public void setChangePasswordView(String changePasswordView) {
-        this.changePasswordView = changePasswordView;
-    }
 }
