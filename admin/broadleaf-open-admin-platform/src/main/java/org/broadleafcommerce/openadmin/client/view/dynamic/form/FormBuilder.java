@@ -538,15 +538,15 @@ public class FormBuilder {
         case HTML:
         	 HTMLTextItem cItem=new HTMLTextItem();
              formItem=cItem;
-             formItem.setHeight(300);
-              formItem.setWidth("*");
+             formItem.setHeight(540);
+              formItem.setWidth(600);
               formItem.setShouldSaveValue(true);
             break;
         case HTML_BASIC:
         	 HTMLTextItem cItem2=new HTMLTextItem(DisplayType.BASIC);
              formItem=cItem2;
-             formItem.setHeight(140);
-			 formItem.setWidth("*");
+             formItem.setHeight(200);
+			 formItem.setWidth(500);
 			 formItem.setShouldSaveValue(true);
       
              break;
@@ -570,7 +570,7 @@ public class FormBuilder {
 				formItem = new TextAreaItem();
 				((TextAreaItem)formItem).setLength(field.getLength());
 				formItem.setHeight(70);
-				formItem.setWidth("400");
+				formItem.setWidth("440");
 			}
 			break;
 		}
