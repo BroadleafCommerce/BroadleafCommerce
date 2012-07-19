@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * </ul>
  *
  */
-public class AdminLoginController extends BroadleafAbstractController {
+public class BroadleafAdminLoginController extends BroadleafAbstractController {
 
     @Resource(name="blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
