@@ -590,6 +590,15 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
+    public List<FeaturedProduct> getCumulativeFeaturedProducts() {
+    	List<FeaturedProduct> products = getFeaturedProducts();
+    	for (Category parentCategory : getAllParentCategories()) {
+    		products.addAll(parentCategory.getCumulativeFeaturedProducts());
+    	}
+    	return products;
+    }
+    
+    @Override
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for(RelatedProduct relatedProduct : upSaleProducts){

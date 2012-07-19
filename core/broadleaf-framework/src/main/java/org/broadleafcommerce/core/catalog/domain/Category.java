@@ -453,6 +453,14 @@ public interface Category extends Serializable {
 	public List<RelatedProduct> getCumulativeUpSaleProducts();
 
 	/**
+	 * Returns a list of the featured products in this category as well as
+	 * all featured products in all parent categories of this category.
+	 * 
+	 * @return the cumulative featured products
+	 */
+	public List<FeaturedProduct> getCumulativeFeaturedProducts();
+
+	/**
 	 * Returns all of the SearchFacets that are directly associated with this Category
 	 * 
 	 * @return related SearchFacets
@@ -490,6 +498,5 @@ public interface Category extends Serializable {
 	 * @return the current active search facets for this category and all parent categories
 	 */
 	public List<CategorySearchFacet> getCumulativeSearchFacets();
-
 
 }
