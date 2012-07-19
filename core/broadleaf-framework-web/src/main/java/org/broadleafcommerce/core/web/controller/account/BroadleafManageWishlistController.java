@@ -41,6 +41,7 @@ import java.util.List;
 public class BroadleafManageWishlistController extends AbstractAccountController {
     
     protected static String accountWishlistView = "account/manageWishlist";
+    protected static String accountWishlistRedirect = "redirect:/account/wishlist";
 
     public String add(HttpServletRequest request, HttpServletResponse response, Model model,
             AddToCartItem itemRequest, String wishlistName) throws IOException, AddToCartException, PricingException  {
@@ -69,7 +70,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
         orderService.removeItem(wishlist.getId(), itemId, false);
 
         model.addAttribute("wishlist", wishlist);
-        return getAccountWishlistView();
+        return getAccountWishlistRedirect();
     }
 
     public String moveItemToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
@@ -93,7 +94,7 @@ public class BroadleafManageWishlistController extends AbstractAccountController
 
         model.addAttribute("wishlist", wishlist);
 
-        return getAccountWishlistView();
+        return getAccountWishlistRedirect();
     }
     
     public String moveListToCart(HttpServletRequest request, HttpServletResponse response, Model model, 
@@ -103,11 +104,15 @@ public class BroadleafManageWishlistController extends AbstractAccountController
         orderService.addAllItemsFromNamedOrder(wishlist, true);
         
         model.addAttribute("wishlist", wishlist);
-        return getAccountWishlistView();
+        return getAccountWishlistRedirect();
     }
 
     public String getAccountWishlistView() {
         return accountWishlistView;
+    }
+    
+    public String getAccountWishlistRedirect() {
+        return accountWishlistRedirect;
     }
 
 }
