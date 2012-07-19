@@ -16,34 +16,37 @@
 
 package org.broadleafcommerce.core.search.domain;
 
-import org.broadleafcommerce.core.catalog.domain.Product;
-
-import java.util.List;
-
 /**
- * Container that holds the result of a ProductSearch
- * 
  * @author Andre Azzolini (apazzolini)
  */
-public class ProductSearchResult {
+public class SearchFacetResultDTO {
 	
-	protected List<Product> products;
-	protected List<SearchFacetDTO> facets;
-
-	public List<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
-
-	public List<SearchFacetDTO> getFacets() {
-		return facets;
-	}
-
-	public void setFacets(List<SearchFacetDTO> facets) {
-		this.facets = facets;
+	protected String value;
+	protected Integer quantity;
+	protected String displayValue;
+	
+	public String getValue() {
+		return value;
 	}
 	
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	public Integer getQuantity() {
+		return quantity;
+	}
+	
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+	
+	public String getDisplayValue() {
+		return displayValue;
+	}
+	
+	public void setDisplayValue(String displayValue) {
+		this.displayValue = displayValue;
+	}
+
 }

@@ -16,9 +16,8 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.Predicate;
-
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.Hydrated;
@@ -69,10 +68,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @author bTaylor
@@ -628,6 +630,33 @@ public class CategoryImpl implements Category, Status {
 	public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
 		this.excludedSearchFacets = excludedSearchFacets;
 	}
+    
+    @Override
+    public List<CategorySearchFacet> getCumulativeSearchFacets() {
+    	// We want to sort by position only within this level of facets
+    	SortedSet<CategorySearchFacet> sortedFacets = new TreeSet<CategorySearchFacet>(facetComparator);
+    	sortedFacets.addAll(getSearchFacets());
+    	
+    	// The parent facets are all on the same level, so we sort them together
+    	SortedSet<CategorySearchFacet> sortedParentFacets = new TreeSet<CategorySearchFacet>(facetComparator);
+    	for (Category category : getAllParentCategories()) {
+    		sortedParentFacets.addAll(category.getCumulativeSearchFacets());
+    	}
+    	
+    	CollectionUtils.filter(sortedParentFacets, new Predicate() {
+			@Override
+			public boolean evaluate(Object arg) {
+				CategorySearchFacet csf = (CategorySearchFacet) arg;
+				return !getExcludedSearchFacets().contains(csf.getSearchFacet());
+			}
+    	});
+    	
+    	// We want our facets followed by the parent facets
+    	List<CategorySearchFacet> facets = new ArrayList<CategorySearchFacet>();
+    	facets.addAll(sortedFacets);
+    	facets.addAll(sortedParentFacets);
+    	return facets;
+    }
 
 	@Override
     public Map<String, Media> getCategoryMedia() {
@@ -693,5 +722,12 @@ public class CategoryImpl implements Category, Status {
             return false;
         return true;
     }
+    
+    protected static Comparator<CategorySearchFacet> facetComparator = new Comparator<CategorySearchFacet>() {
+		@Override
+		public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
+			return o1.getPosition().compareTo(o2.getPosition());
+		}
+	};
 
 }
