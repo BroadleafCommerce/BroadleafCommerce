@@ -40,6 +40,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -143,6 +144,7 @@ public class SkuImpl implements Sku {
 
     /** The long description. */
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3, group = "SkuImpl_Sku_Description", largeEntry=true, groupOrder=4,fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;

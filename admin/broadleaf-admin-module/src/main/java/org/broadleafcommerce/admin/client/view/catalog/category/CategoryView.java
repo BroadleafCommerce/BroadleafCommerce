@@ -55,7 +55,8 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
 	protected GridStructureView featuredDisplay;
 	protected GridStructureView allCategoriesDisplay;
 	protected GridStructureView allProductsDisplay;
-	
+	protected GridStructureView crossSaleDisplay;
+	protected GridStructureView upSaleDisplay;
 	protected ToolStripButton removeOrphanedButton;
 	protected ToolStripButton insertOrphanButton;
 	protected ListGrid orphanedCategoryGrid;
@@ -127,6 +128,24 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(allCategoriesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
+        Tab crossSaleTab = new Tab(BLCMain.getMessageManager().getString("featuredTabTitle")); 
+        crossSaleTab.setID("productSkuCrossSaleTab");
+        
+        VLayout crossLayout = new VLayout();
+        crossLayout.setID("productSkuCrossLayout");
+        crossLayout.setHeight100();
+        crossLayout.setWidth100();
+        crossLayout.setBackgroundColor("#eaeaea");
+        crossLayout.setOverflow(Overflow.AUTO);
+        
+        crossSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("crossSaleProductsTitle"), true, true);
+        crossLayout.addMember(crossSaleDisplay);
+        
+        upSaleDisplay = new GridStructureView(BLCMain.getMessageManager().getString("upsaleProductsTitle"), true, true);
+        crossLayout.addMember(upSaleDisplay);
+        
+        crossSaleTab.setPane(crossLayout); 
+        
         Tab featuredTab = new Tab(BLCMain.getMessageManager().getString("productsTabTitle"));
         featuredTab.setID("categoryFeaturedTab");
         
@@ -161,6 +180,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         mediaTab.setPane(mediaLayout);
         
         topTabSet.addTab(detailsTab);
+        topTabSet.addTab(crossSaleTab);
         topTabSet.addTab(featuredTab);
         topTabSet.addTab(mediaTab);
         
@@ -207,5 +227,11 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
 	public GridStructureView getAllProductsDisplay() {
 		return allProductsDisplay;
 	}
-	
+	public GridStructureDisplay getCrossSaleDisplay() {
+		return crossSaleDisplay;
+	}
+
+	public GridStructureDisplay getUpSaleDisplay() {
+		return upSaleDisplay;
+	}
 }

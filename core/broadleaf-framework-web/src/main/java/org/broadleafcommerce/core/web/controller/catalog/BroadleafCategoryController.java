@@ -1,11 +1,10 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.service.ProductSearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -13,8 +12,6 @@ import org.springframework.web.servlet.mvc.Controller;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.util.List;
 
 /**
  * This class works in combination with the CategoryHandlerMapping which finds a category based upon
@@ -28,8 +25,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
     
-	@Resource(name = "blCatalogService")
-	protected CatalogService catalogService;
+	@Resource(name = "blProductSearchService")
+	protected ProductSearchService productSearchService;
 
 	@Override
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -40,8 +37,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 		model.addObject(CATEGORY_ATTRIBUTE_NAME, category);
 		
 		//TODO: Introduce paging, filtering, sorting
-		List<Product> productList = catalogService.findActiveProductsByCategory(category, SystemTime.asDate());
-    	model.addObject(PRODUCTS_ATTRIBUTE_NAME, productList);
+		ProductSearchResult result = productSearchService.findProductsByCategory(category, null);
+    	model.addObject(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
 
 		if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
 			model.setViewName(category.getDisplayTemplate());	

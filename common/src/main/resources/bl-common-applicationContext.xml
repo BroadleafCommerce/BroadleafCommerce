@@ -22,8 +22,8 @@
 			<set>
                 <value>production</value>
                 <value>staging</value>
-                <value>integrationQA</value>
-                <value>integrationDev</value>
+                <value>integrationqa</value>
+                <value>integrationdev</value>
                 <value>development</value>
                 <value>local</value>
 			</set>
@@ -31,6 +31,10 @@
 		<property name="defaultEnvironment" value="development"/>
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
+
+    <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
+        <constructor-arg ref="blMailSender"/>
+    </bean>
 
 	<bean id="blServerInfo" class="org.broadleafcommerce.common.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>

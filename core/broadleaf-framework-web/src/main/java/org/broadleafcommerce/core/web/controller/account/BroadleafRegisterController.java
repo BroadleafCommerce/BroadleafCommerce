@@ -48,8 +48,8 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafRegisterController extends BroadleafAbstractController {
 		
 	private boolean useEmailForLogin = true;
-	private String registerSuccessView = "ajaxredirect:/account";
-	private String registerView = "ajax:authentication/register";
+	protected static String registerSuccessView = "ajaxredirect:/";
+	protected static String registerView = "ajax:authentication/register";
 	
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
@@ -112,16 +112,12 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	 * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since 
 	 * this will cause the entire SpringSecurity pipeline to be fulfilled.
 	 * 
-	 * By default, returns "redirect:/account"
+	 * By default, returns "redirect:/"
 	 * 
 	 * @return
 	 */
 	public String getRegisterSuccessView() {
 		return registerSuccessView;
-	}
-
-	public void setRegisterSuccessView(String registerSuccessView) {
-		this.registerSuccessView = registerSuccessView;
 	}
 
 	/**
@@ -133,10 +129,6 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 	 */
 	public String getRegisterView() {
 		return registerView;
-	}
-
-	public void setRegisterView(String registerView) {
-		this.registerView = registerView;
 	}
 
 

@@ -29,6 +29,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -65,6 +66,7 @@ public abstract class FulfillmentOptionImpl implements FulfillmentOption {
     protected String name;
 
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
     protected String longDescription;
 

@@ -19,7 +19,7 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
     @Resource(name = "blUpdateAccountValidator")
     protected UpdateAccountValidator updateAccountValidator;
 
-    protected String updateAccountView = "account/updateAccount";
+    protected static String updateAccountView = "account/updateAccount";
 
     public String viewUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form) {
         Customer customer = CustomerState.getCustomer();
@@ -43,10 +43,6 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         customerService.saveCustomer(customer);
 
         return getUpdateAccountView();
-    }
-
-    public void setUpdateAccountView(String updateAccountView) {
-        this.updateAccountView = updateAccountView;
     }
 
     public String getUpdateAccountView() {

@@ -23,6 +23,8 @@ public interface RelatedProduct extends Serializable {
     public Long getId();
 
     public Product getProduct();
+    
+    public Category getCategory();
 
     public Product getRelatedProduct();
 
@@ -33,6 +35,8 @@ public interface RelatedProduct extends Serializable {
     public void setId(Long id);
 
     public void setProduct(Product product);
+    
+	public void setCategory(Category category);
 
     public void setRelatedProduct(Product relatedProduct);
 

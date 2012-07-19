@@ -65,7 +65,4 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
 		return orderConfirmationView;
 	}
 
-	public void setOrderConfirmationView(String orderConfirmationView) {
-		this.orderConfirmationView = orderConfirmationView;
-	}
 }

@@ -108,8 +108,19 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
 			
 			option.setOrder(order);
 			option.setOrderItem(orderItemService.readOrderItemById(dto.getOrderItemId()));
-			option.setAddress(addressService.readAddressById(dto.getAddressId()));
-			option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId()));
+			
+			if (dto.getAddressId() != null) {
+				option.setAddress(addressService.readAddressById(dto.getAddressId()));
+			} else {
+				option.setAddress(null);
+			}
+			
+			if (dto.getFulfillmentOptionId() != null) {
+				option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId()));
+			} else {
+				option.setFulfillmentOption(null);
+			}
+			
 			orderMultishipOptions.add(option);
 		}
 		

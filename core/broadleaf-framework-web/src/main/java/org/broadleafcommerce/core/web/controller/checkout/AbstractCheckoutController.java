@@ -18,12 +18,14 @@ package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
@@ -33,6 +35,7 @@ import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.StateService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its
@@ -40,7 +43,7 @@ import javax.annotation.Resource;
  *
  * @author elbertbautista
  */
-public class AbstractCheckoutController extends BroadleafAbstractController {
+public abstract class AbstractCheckoutController extends BroadleafAbstractController {
 
     /* Services */
     @Resource(name = "blOrderService")
@@ -86,5 +89,16 @@ public class AbstractCheckoutController extends BroadleafAbstractController {
 
     @Resource(name = "blBillingInfoFormValidator")
     protected BillingInfoFormValidator billingInfoFormValidator;
+
+    /* Abstract Methods */
+    protected abstract void initializeOrderForCheckout(Order order);
+
+    protected abstract void processFailedOrderCheckout(Order order) throws PricingException;
+
+    protected abstract boolean hasValidShippingAddresses(Order cart);
+
+    protected abstract List<String> populateExpirationMonths();
+
+    protected abstract List<String> populateExpirationYears();
 
 }

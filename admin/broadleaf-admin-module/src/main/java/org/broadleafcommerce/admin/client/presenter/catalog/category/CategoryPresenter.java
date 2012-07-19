@@ -48,7 +48,11 @@ import org.broadleafcommerce.admin.client.datasource.catalog.category.CategoryTr
 import org.broadleafcommerce.admin.client.datasource.catalog.category.FeaturedProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.MediaMapDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.category.OrphanedCategoryListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryCrossSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.CategoryUpSaleProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.CrossSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.datasource.catalog.product.ProductListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.catalog.product.UpSaleProductListDataSourceFactory;
 import org.broadleafcommerce.admin.client.view.catalog.category.CategoryDisplay;
 import org.broadleafcommerce.cms.admin.client.presenter.HtmlEditingPresenter;
 import org.broadleafcommerce.openadmin.client.BLCMain;
@@ -89,6 +93,8 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 	
 	protected SubPresentable featuredPresenter;
 	protected SubPresentable mediaPresenter;
+	protected SubPresentable crossSalePresenter;
+	protected SubPresentable upSalePresenter;
 	protected AllChildCategoriesPresenter allChildCategoriesPresenter;
 	protected SubPresentable childProductsPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>(10);
@@ -155,6 +161,9 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 			}
 		});
         display.getListDisplay().getAddButton().enable();
+        upSalePresenter.load(selectedRecord, dataSource, null);
+        crossSalePresenter.load(selectedRecord, dataSource, null);
+		
 		featuredPresenter.load(selectedRecord, dataSource, null);
 		childProductsPresenter.load(selectedRecord, dataSource, null);
 		getDisplay().getAllCategoriesDisplay().getRemoveButton().disable();
@@ -166,6 +175,8 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 		super.bind();
         fetchDataHandlerRegistration.removeHandler();
 		featuredPresenter.bind();
+		crossSalePresenter.bind();
+		upSalePresenter.bind();
 		mediaPresenter.bind();
 		allChildCategoriesPresenter.bind();
 		childProductsPresenter.bind();
@@ -225,6 +236,7 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 	}
 
 	public void setup() {
+		
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categoryTreeDS", new CategoryTreeDataSourceFactory(), null, new Object[]{rootId, rootName}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
@@ -318,6 +330,20 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
                 });
             }
         }));
+    	getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categoryCrossSaleProductsDS", new CategoryCrossSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
+			@Override
+            public void onSetupSuccess(DataSource result) {
+				crossSalePresenter = new EditableJoinStructurePresenter(getDisplay().getCrossSaleDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				crossSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
+			}
+		}));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("categoryUpSaleProductsDS", new CategoryUpSaleProductListDataSourceFactory(), new AsyncCallbackAdapter() {
+			@Override
+            public void onSetupSuccess(DataSource result) {
+				upSalePresenter = new EditableJoinStructurePresenter(getDisplay().getUpSaleDisplay(), (EntitySearchDialog) library.get("productSearchView"), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("productSearchTitle"), BLCMain.getMessageManager().getString("setPromotionMessageTitle"), "promotionMessage");
+				upSalePresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
+			}
+		}));
 	}
 	
 	public void reloadAllChildRecordsForId(String id) {

@@ -39,13 +39,13 @@ public class HTMLTextItem extends CanvasItem {
 		toolBar = new RichTextToolbar(getTextArea(),displayType);
 		VerticalPanel vp = new VerticalPanel();
 	    if(displayType == displayType.DETAILED) {
-		    getTextArea().setWidth("100%");
-		    getTextArea().setHeight("100%");
+		    getTextArea().setWidth("600px");
+		    getTextArea().setHeight("540px");
 	    	toolBar.setWidth("100%");
 	    	toolBar.setHeight("100%");
 	    } else {
-	    	getTextArea().setWidth("100%");
-			getTextArea().setHeight("60px");
+	    	getTextArea().setWidth("500px");
+			getTextArea().setHeight("160px");
 			toolBar.setWidth("100%");
 			toolBar.setHeight("40px");
 	    }

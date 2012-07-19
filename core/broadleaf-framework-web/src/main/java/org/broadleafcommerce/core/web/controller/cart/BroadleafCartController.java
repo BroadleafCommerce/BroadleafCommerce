@@ -28,8 +28,8 @@ import java.util.Map;
  */
 public class BroadleafCartController extends AbstractCartController {
 	
-	protected String cartView = "ajax:cart/cart";
-	protected String cartPageRedirect = "redirect:/cart";
+	protected static String cartView = "ajax:cart/cart";
+	protected static String cartPageRedirect = "redirect:/cart";
 	
 	/**
 	 * Renders the cart page.
@@ -239,16 +239,8 @@ public class BroadleafCartController extends AbstractCartController {
 		return cartView;
 	}
 
-	public void setCartView(String cartView) {
-		this.cartView = cartView;
-	}
-
 	public String getCartPageRedirect() {
 		return cartPageRedirect;
-	}
-
-	public void setCartPageRedirect(String cartPageRedirect) {
-		this.cartPageRedirect = cartPageRedirect;
 	}
 	
 }

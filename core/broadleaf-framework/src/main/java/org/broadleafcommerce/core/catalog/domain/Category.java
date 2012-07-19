@@ -20,9 +20,12 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -402,5 +405,80 @@ public interface Category extends Serializable {
      * @param allProducts the list of products to associate with this category
      */
 	public void setAllProducts(@Nonnull List<Product> allProducts);
+
+	/**
+	 * Returns a list of cross sale products that are related to this category.
+	 * 
+	 * @return a list of cross sale products
+	 */
+	public List<RelatedProduct> getCrossSaleProducts();
+
+	/**
+	 * Sets the cross sale products that are related to this category.
+	 * 
+	 * @see #getCrossSaleProducts()
+	 * @param crossSaleProducts
+	 */
+	public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
+
+	/**
+	 * Returns a list of cross sale products that are related to this category.
+	 * 
+	 * @return a list of cross sale products
+	 */
+	public List<RelatedProduct> getUpSaleProducts();
+
+	/**
+	 * Sets the upsale products that are related to this category.
+	 * 
+	 * @see #getUpSaleProducts()
+	 * @param upSaleProducts
+	 */
+	public void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
+
+	/** 
+	 * Returns a list of the cross sale products in this category as well as
+	 * all cross sale products in all parent categories of this category.
+	 * 
+	 * @return the cumulative cross sale products
+	 */
+	public List<RelatedProduct> getCumulativeCrossSaleProducts();
+	
+	/** 
+	 * Returns a list of the upsale products in this category as well as
+	 * all upsale products in all parent categories of this category.
+	 * 
+	 * @return the cumulative upsale products
+	 */
+	public List<RelatedProduct> getCumulativeUpSaleProducts();
+
+	/**
+	 * Returns all of the SearchFacets that are directly associated with this Category
+	 * 
+	 * @return related SearchFacets
+	 */
+	public List<CategorySearchFacet> getSearchFacets();
+
+	/**
+	 * Sets the SearchFacets that are directly associated with this Category
+	 * 
+	 * @param searchFacets
+	 */
+	public void setSearchFacets(List<CategorySearchFacet> searchFacets);
+
+	/**
+	 * Sets the SearchFacets that should not be rendered by this Category. Typically, this will include
+	 * facets from parent categories that do not apply to this category.
+	 * 
+	 * @param excludedSearchFacets
+	 */
+	void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets);
+
+	/**
+	 * Gets the excluded SearchFacets
+	 * @return the excluded SearchFacets
+	 */
+	List<SearchFacet> getExcludedSearchFacets();
+
 
 }
