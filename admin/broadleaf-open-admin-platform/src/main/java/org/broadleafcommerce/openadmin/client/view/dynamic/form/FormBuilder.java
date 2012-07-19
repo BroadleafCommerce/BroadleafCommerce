@@ -540,7 +540,7 @@ public class FormBuilder {
              formItem=cItem;
              formItem.setHeight(540);
               formItem.setWidth(600);
-              formItem.setShouldSaveValue(true);
+             // formItem.setShouldSaveValue(true);
             break;
         case HTML_BASIC:
         	 HTMLTextItem cItem2=new HTMLTextItem(DisplayType.BASIC);

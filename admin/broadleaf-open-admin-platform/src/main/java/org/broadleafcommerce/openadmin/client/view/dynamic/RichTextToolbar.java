@@ -584,7 +584,7 @@ public class RichTextToolbar extends Composite {
 				styleTextFormatter.createLink(richContent);
 			}
 		}
-		
+		saveCommand.execute();
 	}
 	
 	public void addAssetHandler(final Command command) {
@@ -601,8 +601,7 @@ public class RichTextToolbar extends Composite {
 	public String getHTML() {
 		if (texthtml.isDown()) {
 			return styleText.getText();
-		} else {
-			
+		} else {	
 			return styleText.getHTML();
 		}
 	}
