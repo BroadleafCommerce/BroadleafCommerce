@@ -68,12 +68,12 @@ public class CrossSaleProductImpl implements RelatedProduct {
 	@ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="CROSSSALE_INDEX", columnNames={"PRODUCT_ID"})
-    protected Product product = new ProductImpl();
+    protected Product product;
 	
 	@ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="CROSSSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
-    protected Category category = new CategoryImpl();
+    protected Category category;
 
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")

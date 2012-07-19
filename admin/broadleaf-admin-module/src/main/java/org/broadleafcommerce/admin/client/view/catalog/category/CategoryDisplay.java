@@ -50,4 +50,7 @@ public interface CategoryDisplay extends DynamicEditDisplay {
 	
 	public GridStructureView getAllProductsDisplay();
 	
+	public GridStructureDisplay getCrossSaleDisplay();
+	
+	public GridStructureDisplay getUpSaleDisplay();
 }
