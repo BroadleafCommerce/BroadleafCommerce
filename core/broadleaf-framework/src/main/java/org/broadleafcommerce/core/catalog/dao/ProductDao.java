@@ -20,10 +20,10 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
+import javax.annotation.Nonnull;
+
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 /**
  * {@code ProductDao} provides persistence access to {@code Product} instances
@@ -152,4 +152,14 @@ public interface ProductDao {
      * 
      */
 	List<Product> findProductByURI(String key);
+
+	/**
+	 * Returns the distinct values for the given fieldName as a list of the specified type
+	 * @param <T>
+	 * 
+	 * @param fieldName
+	 * @param fieldValueClass
+	 * @return  the distinct values for the field
+	 */
+	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass);
 }

@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.search.service;
 
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -24,6 +25,7 @@ import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,13 +39,16 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	@Resource(name = "blCatalogService")
 	protected CatalogService catalogService;
 	
+	@Resource(name = "blProductDao")
+	protected ProductDao productDao;
+	
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
 		ProductSearchResult result = new ProductSearchResult();
 		List<Product> products = catalogService.findActiveProductsByCategory(category, SystemTime.asDate());
-		//List<SearchFacetDTO> facets = getCategoryFacets(category);
+		List<SearchFacetDTO> facets = getCategoryFacets(category);
 		result.setProducts(products);
-		//result.setFacets(facets);
+		result.setFacets(facets);
 		return result;
 	}
 	
@@ -54,17 +59,25 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 			SearchFacetDTO dto = new SearchFacetDTO();
 			dto.setFacet(facet);
 			dto.setShowQuantity(false);
+			dto.setFacetValues(getFacetValues(facet));
+			facets.add(dto);
 		}
 		return facets;
 	}
 	
-	/*
 	protected List<SearchFacetResultDTO> getFacetValues(CategorySearchFacet facet) {
 		List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
+		String fieldName = facet.getSearchFacet().getFieldName();
+		List<String> values = productDao.readDistinctValuesForField(fieldName, String.class);
 		
+		for (String value : values) {
+			SearchFacetResultDTO dto = new SearchFacetResultDTO();
+			dto.setDisplayValue(value);
+			dto.setValue(value);
+			results.add(dto);
+		}
 		
+		return results;
 	}
-	*/
-	
 
 }

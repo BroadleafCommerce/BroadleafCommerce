@@ -33,6 +33,6 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 	public SearchFacet readSearchFacetById(Long id) {
     	return em.find(SearchFacetImpl.class, id);
     }
-
+    
 
 }
