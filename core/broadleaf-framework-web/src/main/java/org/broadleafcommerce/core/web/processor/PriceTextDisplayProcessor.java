@@ -22,6 +22,8 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
+import java.math.BigDecimal;
+
 /**
  * A Thymeleaf processor that renders a Money object according to the currently set locale options.
  * For example, when rendering "6.99" in a US locale, the output text would be "$6.99".
@@ -41,13 +43,20 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
 	
 	@Override
 	public int getPrecedence() {
-		return 10000;
+		return 1500;
 	}
 
 	// TODO: Actually make the returned text formatted for the given locale
 	@Override
 	protected String getText(Arguments arguments, Element element, String attributeName) {
-		Money price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+		Money price;
+		try {
+			price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+		} catch (ClassCastException e) {
+			BigDecimal value = (BigDecimal) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+			price = new Money(value);
+		}
+		
 		if (price == null || price.isZero()) {
 			return "$0.00";
 		} else {

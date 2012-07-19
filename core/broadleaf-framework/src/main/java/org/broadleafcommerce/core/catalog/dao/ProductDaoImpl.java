@@ -32,8 +32,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import java.util.Date;
 import java.util.List;
@@ -200,16 +198,5 @@ public class ProductDaoImpl implements ProductDao {
 		@SuppressWarnings("unchecked")
 		List<Product> results = (List<Product>) query.getResultList();
 		return results;
-	}
-	
-	@Override
-	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
-		CriteriaQuery<T> criteria = em.getCriteriaBuilder().createQuery(fieldValueClass);
-		Root<ProductImpl> root = criteria.from(ProductImpl.class);
-		
-		criteria.distinct(true)
-			.select(root.get(fieldName).as(fieldValueClass));
-		
-		return em.createQuery(criteria).getResultList();
 	}
 }

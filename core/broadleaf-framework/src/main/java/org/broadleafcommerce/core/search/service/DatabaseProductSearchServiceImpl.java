@@ -17,14 +17,17 @@
 package org.broadleafcommerce.core.search.service;
 
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.dao.SearchFacetValueDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +42,8 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	@Resource(name = "blCatalogService")
 	protected CatalogService catalogService;
 	
-	@Resource(name = "blProductDao")
-	protected ProductDao productDao;
+	@Resource(name = "blSearchFacetValueDao")
+	protected SearchFacetValueDao searchFacetValueDao;
 	
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
@@ -66,14 +69,46 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	}
 	
 	protected List<SearchFacetResultDTO> getFacetValues(CategorySearchFacet facet) {
+		String qualifiedFieldName = facet.getSearchFacet().getFieldName();
+		String[] splitFieldName = qualifiedFieldName.split("\\.");
+		
+		if (splitFieldName.length != 2) {
+			throw new IllegalArgumentException("The search facet field was not a qualified field: " + qualifiedFieldName);
+		}
+		
+		if (facet.getSearchFacet().getSearchFacetRanges().size() > 0) {
+			return getRangeFacetValues(facet, splitFieldName[0], splitFieldName[1]);
+		} else {
+			return getMatchFacetValues(facet, splitFieldName[0], splitFieldName[1]);
+		}
+	}
+	
+	protected List<SearchFacetResultDTO> getRangeFacetValues(CategorySearchFacet facet, String entityName, String fieldName) {
 		List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
-		String fieldName = facet.getSearchFacet().getFieldName();
-		List<String> values = productDao.readDistinctValuesForField(fieldName, String.class);
+		for (SearchFacetRange range : facet.getSearchFacet().getSearchFacetRanges()) {
+			SearchFacetResultDTO dto = new SearchFacetResultDTO();
+			dto.setMinValue(range.getMinValue());
+			dto.setMaxValue(range.getMaxValue());
+			dto.setFacet(facet);
+			results.add(dto);
+		}
+		return results;
+	}
+	
+	protected List<SearchFacetResultDTO> getMatchFacetValues(CategorySearchFacet facet, String entityName, String fieldName) {
+		List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
+		
+		List<String> values;
+		if (entityName.equals("sku")) {
+			values = searchFacetValueDao.readDistinctValuesForField(fieldName, SkuImpl.class, String.class);
+		} else {
+			values = searchFacetValueDao.readDistinctValuesForField(fieldName, ProductImpl.class, String.class);
+		}
 		
 		for (String value : values) {
 			SearchFacetResultDTO dto = new SearchFacetResultDTO();
-			dto.setDisplayValue(value);
 			dto.setValue(value);
+			dto.setFacet(facet);
 			results.add(dto);
 		}
 		

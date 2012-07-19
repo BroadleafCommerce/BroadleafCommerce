@@ -16,15 +16,30 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import java.math.BigDecimal;
+
 /**
  * @author Andre Azzolini (apazzolini)
  */
 public class SearchFacetResultDTO {
 	
-	protected String value;
-	protected Integer quantity;
-	protected String displayValue;
+	protected CategorySearchFacet facet;
 	
+	protected String value;
+	
+	protected BigDecimal minValue;
+	protected BigDecimal maxValue;
+	
+	protected Integer quantity;
+	
+	public CategorySearchFacet getFacet() {
+		return facet;
+	}
+
+	public void setFacet(CategorySearchFacet facet) {
+		this.facet = facet;
+	}
+
 	public String getValue() {
 		return value;
 	}
@@ -32,7 +47,23 @@ public class SearchFacetResultDTO {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
+	public BigDecimal getMinValue() {
+		return minValue;
+	}
+
+	public void setMinValue(BigDecimal minValue) {
+		this.minValue = minValue;
+	}
+
+	public BigDecimal getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(BigDecimal maxValue) {
+		this.maxValue = maxValue;
+	}
+
 	public Integer getQuantity() {
 		return quantity;
 	}
@@ -41,12 +72,4 @@ public class SearchFacetResultDTO {
 		this.quantity = quantity;
 	}
 	
-	public String getDisplayValue() {
-		return displayValue;
-	}
-	
-	public void setDisplayValue(String displayValue) {
-		this.displayValue = displayValue;
-	}
-
 }

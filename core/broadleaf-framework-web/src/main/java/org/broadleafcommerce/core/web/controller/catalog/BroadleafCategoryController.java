@@ -24,6 +24,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected String defaultCategoryView = "catalog/category";
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
+    protected static String FACETS_ATTRIBUTE_NAME = "facets";  
     
 	@Resource(name = "blProductSearchService")
 	protected ProductSearchService productSearchService;
@@ -39,6 +40,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 		//TODO: Introduce paging, filtering, sorting
 		ProductSearchResult result = productSearchService.findProductsByCategory(category, null);
     	model.addObject(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
+    	model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
 
 		if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
 			model.setViewName(category.getDisplayTemplate());	

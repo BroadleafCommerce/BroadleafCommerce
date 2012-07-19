@@ -16,23 +16,29 @@
 
 package org.broadleafcommerce.core.search.dao;
 
-import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-@Repository("blSearchFacetDao")
-public class SearchFacetDaoImpl implements SearchFacetDao {
+import java.util.List;
+
+@Repository("blSearchFacetValueDao")
+public class SearchFacetValueDaoImpl implements SearchFacetValueDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
     
-    @Override
-	public SearchFacet readSearchFacetById(Long id) {
-    	return em.find(SearchFacetImpl.class, id);
-    }
-    
+	
+	@Override
+	public <T, T2> List<T> readDistinctValuesForField(String fieldName, Class<T2> facetSearchClass, Class<T> fieldValueClass) {
+		CriteriaQuery<T> criteria = em.getCriteriaBuilder().createQuery(fieldValueClass);
+		Root<T2> root = criteria.from(facetSearchClass);
+		criteria.distinct(true)
+			.select(root.get(fieldName).as(fieldValueClass));
+		return em.createQuery(criteria).getResultList();
+	}
 
 }

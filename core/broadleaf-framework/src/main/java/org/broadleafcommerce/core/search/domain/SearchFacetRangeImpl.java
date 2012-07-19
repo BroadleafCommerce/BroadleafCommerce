@@ -51,7 +51,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange {
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
     protected SearchFacet searchFacet = new SearchFacetImpl();
     
-    @Column(name = "MIN_VALUE", precision=19, scale=5)
+    @Column(name = "MIN_VALUE", precision=19, scale=5, nullable = false)
     protected BigDecimal minValue;
     
     @Column(name = "MAX_VALUE", precision=19, scale=5)
