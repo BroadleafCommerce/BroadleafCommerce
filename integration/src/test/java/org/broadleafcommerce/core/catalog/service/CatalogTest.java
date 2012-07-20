@@ -95,8 +95,8 @@ public class CatalogTest extends BaseTest {
                 
         Map<String, Media> categoryMedia = testCategory.getCategoryMedia();
         Media media = new MediaImpl();
-        media.setLabel("test");
-        media.setName("large");
+        media.setAltText("test");
+        media.setTitle("large");
         media.setUrl("http://myUrl");
         categoryMedia.put("large", media);
         catalogService.saveCategory(testCategory);
