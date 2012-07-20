@@ -57,11 +57,11 @@ public class BandedPriceFulfillmentTest extends TestCase {
                                                           new FulfillmentBandResultAmountType[]{FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.RATE});
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("20.00"), 2)).equals(new Money("20.00")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("9.00"), 3)).equals(Money.ZERO));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("30.00"), 3)).equals(new Money("30.00")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)).equals(new Money("20.00")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)).equals(new Money("30.00")));
+        assertEquals(new Money("20.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("20.00"), 2)));
+        assertEquals(Money.ZERO, calculationResponse(option, createCandidateOrder(new BigDecimal("9.00"), 3)));
+        assertEquals(new Money("30.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("30.00"), 3)));
+        assertEquals(new Money("20.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)));
+        assertEquals(new Money("30.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)));
     }
     
     public void testPriceBandPercentage() throws Exception {
@@ -71,10 +71,10 @@ public class BandedPriceFulfillmentTest extends TestCase {
                                                                                                 FulfillmentBandResultAmountType.PERCENTAGE,
                                                                                                 FulfillmentBandResultAmountType.PERCENTAGE});
 
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("15.00"), 3)).equals(new Money("1.50")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("30.00"), 3)).equals(new Money("6.00")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)).equals(new Money("7.50")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)).equals(new Money("20.00")));
+        assertEquals(new Money("1.50"), calculationResponse(option, createCandidateOrder(new BigDecimal("15.00"), 3)));
+        assertEquals(new Money("6.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("30.00"), 3)));
+        assertEquals(new Money("7.50"), calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)));
+        assertEquals(new Money("20.00"), calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)));
     }
     
     public void testPriceBandRatesWithPercentages() throws Exception {
@@ -88,14 +88,14 @@ public class BandedPriceFulfillmentTest extends TestCase {
                                                                                                 FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.PERCENTAGE});
         
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("35.00"), 5)).equals(new Money("20")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("9999.00"), 9)).equals(new Money("20")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)).equals(new Money("7.50")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 6)).equals(new Money("1.80")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)).equals(new Money("50")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("9.00"), 3)).equals(new Money("5")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("66"), 6)).equals(new Money("20")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("150"), 5)).equals(new Money("20")));
+        assertEquals(new Money("20"), calculationResponse(option, createCandidateOrder(new BigDecimal("35.00"), 5)));
+        assertEquals(new Money("20"), calculationResponse(option, createCandidateOrder(new BigDecimal("9999.00"), 9)));
+        assertEquals(new Money("7.50"), calculationResponse(option, createCandidateOrder(new BigDecimal("25.00"), 5)));
+        assertEquals(new Money("1.80"), calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 6)));
+        assertEquals(new Money("50"), calculationResponse(option, createCandidateOrder(new BigDecimal("100.00"), 5)));
+        assertEquals(new Money("5"), calculationResponse(option, createCandidateOrder(new BigDecimal("9.00"), 3)));
+        assertEquals(new Money("20"), calculationResponse(option, createCandidateOrder(new BigDecimal("66"), 6)));
+        assertEquals(new Money("20"), calculationResponse(option, createCandidateOrder(new BigDecimal("150"), 5)));
     }
     
     /**
@@ -107,7 +107,7 @@ public class BandedPriceFulfillmentTest extends TestCase {
                                                           new FulfillmentBandResultAmountType[]{FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.RATE});
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("10.00"), 2)).equals(new Money("10.00")));
+        assertEquals(calculationResponse(option, createCandidateOrder(new BigDecimal("10.00"), 2)), new Money("10.00"));
     }
     
     public void testFlatRatesExclusive() throws Exception {
@@ -115,9 +115,9 @@ public class BandedPriceFulfillmentTest extends TestCase {
                                                           new String[]{"30"}, 
                                                           new FulfillmentBandResultAmountType[]{FulfillmentBandResultAmountType.RATE});
         
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 3, new String[]{"10", "15", "20"}, option)).equals(new Money("45")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("80.00"), 1, new String[]{"5"}, option)).equals(new Money("5")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 2, new String[]{"8", "2"}, option)).equals(new Money("10")));
+        assertEquals(new Money("45"), calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 3, new String[]{"10", "15", "20"}, option)));
+        assertEquals(new Money("5"), calculationResponse(option, createCandidateOrder(new BigDecimal("80.00"), 1, new String[]{"5"}, option)));
+        assertEquals(new Money("10"), calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 2, new String[]{"8", "2"}, option)));
     }
 
     public void testFlatRatesWithBands() throws Exception {
@@ -126,10 +126,9 @@ public class BandedPriceFulfillmentTest extends TestCase {
                                                           new FulfillmentBandResultAmountType[]{FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.RATE,
                                                                                                 FulfillmentBandResultAmountType.RATE});
-        
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 6, new String[]{"10", "15"}, option)).equals(new Money("35")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 6, new String[]{"5", "100", "20"}, option)).equals(new Money("125")));
-        assertTrue(calculationResponse(option, createCandidateOrder(new BigDecimal("60.00"), 6, new String[]{"8", "2", "1"}, option)).equals(new Money("41")));
+        assertEquals(new Money("35"), calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 6, new String[]{"10", "15"}, option)));
+        assertEquals(new Money("125"), calculationResponse(option, createCandidateOrder(new BigDecimal("18.00"), 6, new String[]{"5", "100", "20"}, option)));
+        assertEquals(new Money("41"), calculationResponse(option, createCandidateOrder(new BigDecimal("60.00"), 6, new String[]{"8", "2", "1"}, option)));
     }
     
     protected Order createCandidateOrder(BigDecimal retailTotal, int orderItemsToCreate) {

@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Embeddable
 public class Dimension implements Serializable {
