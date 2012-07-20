@@ -20,7 +20,11 @@ package org.broadleafcommerce.core.web.api.wrapper;
 import org.broadleafcommerce.core.media.domain.Media;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *  JAXB wrapper class for Media.
@@ -39,18 +43,23 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
     protected Long id;
 
     @XmlElement
-    protected String name;
+    protected String title;
 
     @XmlElement
     protected String url;
 
     @XmlElement
-    protected String label;
+    protected String altText;
     
+    @XmlElement
+    protected String tags;
+    
+    @Override
     public void wrap(Media media, HttpServletRequest request) {
         this.id = media.getId();
-        this.name = media.getName();
-        this.label = media.getLabel();
+        this.title = media.getTitle();
+        this.altText = media.getAltText();
+        this.tags = media.getTags();
         this.url = media.getUrl();
     }
 
@@ -67,7 +76,7 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
      * @param url
      */
     public void setUrl(String url) {
-        if (allowOverrideUrl){
+        if (allowOverrideUrl) {
             this.url = url;
         }
     }

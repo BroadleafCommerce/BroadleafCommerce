@@ -19,19 +19,25 @@ package org.broadleafcommerce.core.media.domain;
 import java.io.Serializable;
 
 public interface Media extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);
 
-    public String getName();
-
-    public void setName(String name);
-
     public String getUrl();
 
     public void setUrl(String url);
+    
+    public String getTitle();
 
-    public String getLabel();
+    public void setTitle(String title);
 
-    public void setLabel(String label);
+    public String getAltText();
+
+    public void setAltText(String altText);
+    
+    public String getTags();
+
+    public void setTags(String tags);
+
 }
