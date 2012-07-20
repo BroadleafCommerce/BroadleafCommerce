@@ -90,15 +90,4 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blBillingInfoFormValidator")
     protected BillingInfoFormValidator billingInfoFormValidator;
 
-    /* Abstract Methods */
-    protected abstract void initializeOrderForCheckout(Order order);
-
-    protected abstract void processFailedOrderCheckout(Order order) throws PricingException;
-
-    protected abstract boolean hasValidShippingAddresses(Order cart);
-
-    protected abstract List<String> populateExpirationMonths();
-
-    protected abstract List<String> populateExpirationYears();
-
 }
