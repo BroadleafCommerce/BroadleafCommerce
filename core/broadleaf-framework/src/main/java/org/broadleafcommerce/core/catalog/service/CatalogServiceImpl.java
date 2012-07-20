@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -67,6 +68,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate);
+    }
+    
+    @Override
+    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria) {
+        return productDao.readFilteredActiveProductsByCategory(category.getId(), currentDate, searchCriteria);
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import java.util.Map;
+
 
 /**
  * Container that holds additional criteria to consider when performing searches for Products
@@ -23,11 +25,15 @@ package org.broadleafcommerce.core.search.domain;
  * @author Andre Azzolini (apazzolini)
  */
 public class ProductSearchCriteria {
+    
+    public static String PAGE_SIZE_STRING = "pageSize";
+    public static String PAGE_NUMBER = "pageNumber";
+    public static String SORT_STRING = "sort";
 	
 	protected Integer page;
 	protected Integer pageSize;
 	protected String sortQuery;
-	protected String filterQuery;
+	protected Map<String, String[]> filterCriteria;
 	
 	public Integer getPage() {
 		return page;
@@ -52,13 +58,13 @@ public class ProductSearchCriteria {
 	public void setSortQuery(String sortQuery) {
 		this.sortQuery = sortQuery;
 	}
-	
-	public String getFilterQuery() {
-		return filterQuery;
+
+	public Map<String, String[]> getFilterCriteria() {
+		return filterCriteria;
 	}
-	
-	public void setFilterQuery(String filterQuery) {
-		this.filterQuery = filterQuery;
+
+	public void setFilterCriteria(Map<String, String[]> filterCriteria) {
+		this.filterCriteria = filterCriteria;
 	}
 	
 }

@@ -16,11 +16,15 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,13 +36,13 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
-public class SearchFacetValueProcessor extends AbstractAttributeModifierAttrProcessor {
+public class AddCriteriaLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 
 	/**
 	 * Sets the name of this processor to be used in Thymeleaf template
 	 */
-	public SearchFacetValueProcessor() {
-		super("facetvalue");
+	public AddCriteriaLinkProcessor() {
+		super("addcriterialink");
 	}
 	
 	@Override
@@ -47,20 +51,32 @@ public class SearchFacetValueProcessor extends AbstractAttributeModifierAttrProc
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
 		Map<String, String> attrs = new HashMap<String, String>();
 		
+		BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
+		HttpServletRequest request = blcContext.getRequest();
+		
+		String baseUrl = request.getRequestURL().toString();
+		Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
+		
 		SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-		String value = result.getFacet().getSearchFacet().getFieldName() + "[RESULT-VALUE]";
-		if (result.getValue() != null) {
-			value = value.replace("RESULT-VALUE", result.getValue());
-		} else {
-			value = value.replace("RESULT-VALUE", result.getMinValue() + "-" + result.getMaxValue());
+		
+		String key = result.getFacet().getSearchFacet().getFieldName();
+		String[] paramValues = params.get(key);
+		
+		String value = result.getValue();
+		if (value == null) {
+			value = "blcRange[" + result.getMinValue() + ":" + result.getMaxValue() + "]";
 		}
 		
-		attrs.put("id", value);
-		attrs.put("name", value);
+		paramValues = (String[]) ArrayUtils.add(paramValues, value);
+		params.put(key, paramValues);
 		
+		String url = ProcessorUtils.getUrl(baseUrl, params);
+		
+		attrs.put("href", url);
 		return attrs;
 	}
 

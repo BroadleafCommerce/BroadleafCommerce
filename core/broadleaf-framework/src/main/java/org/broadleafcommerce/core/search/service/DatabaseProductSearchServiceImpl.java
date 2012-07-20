@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.search.service;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.dao.SearchFacetValueDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
@@ -48,7 +46,7 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	@Override
 	public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
 		ProductSearchResult result = new ProductSearchResult();
-		List<Product> products = catalogService.findActiveProductsByCategory(category, SystemTime.asDate());
+		List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, SystemTime.asDate(), searchCriteria);
 		List<SearchFacetDTO> facets = getCategoryFacets(category);
 		result.setProducts(products);
 		result.setFacets(facets);
@@ -69,21 +67,14 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 	}
 	
 	protected List<SearchFacetResultDTO> getFacetValues(CategorySearchFacet facet) {
-		String qualifiedFieldName = facet.getSearchFacet().getFieldName();
-		String[] splitFieldName = qualifiedFieldName.split("\\.");
-		
-		if (splitFieldName.length != 2) {
-			throw new IllegalArgumentException("The search facet field was not a qualified field: " + qualifiedFieldName);
-		}
-		
 		if (facet.getSearchFacet().getSearchFacetRanges().size() > 0) {
-			return getRangeFacetValues(facet, splitFieldName[0], splitFieldName[1]);
+			return getRangeFacetValues(facet);
 		} else {
-			return getMatchFacetValues(facet, splitFieldName[0], splitFieldName[1]);
+			return getMatchFacetValues(facet);
 		}
 	}
 	
-	protected List<SearchFacetResultDTO> getRangeFacetValues(CategorySearchFacet facet, String entityName, String fieldName) {
+	protected List<SearchFacetResultDTO> getRangeFacetValues(CategorySearchFacet facet) {
 		List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
 		for (SearchFacetRange range : facet.getSearchFacet().getSearchFacetRanges()) {
 			SearchFacetResultDTO dto = new SearchFacetResultDTO();
@@ -95,15 +86,10 @@ public class DatabaseProductSearchServiceImpl implements ProductSearchService {
 		return results;
 	}
 	
-	protected List<SearchFacetResultDTO> getMatchFacetValues(CategorySearchFacet facet, String entityName, String fieldName) {
+	protected List<SearchFacetResultDTO> getMatchFacetValues(CategorySearchFacet facet) {
 		List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
 		
-		List<String> values;
-		if (entityName.equals("sku")) {
-			values = searchFacetValueDao.readDistinctValuesForField(fieldName, SkuImpl.class, String.class);
-		} else {
-			values = searchFacetValueDao.readDistinctValuesForField(fieldName, ProductImpl.class, String.class);
-		}
+		List<String> values = searchFacetValueDao.readDistinctValuesForField(facet.getSearchFacet().getFieldName(), String.class);
 		
 		for (String value : values) {
 			SearchFacetResultDTO dto = new SearchFacetResultDTO();

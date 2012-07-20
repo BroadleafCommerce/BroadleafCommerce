@@ -16,11 +16,16 @@
 
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 import java.util.List;
@@ -31,13 +36,24 @@ public class SearchFacetValueDaoImpl implements SearchFacetValueDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
     
-	
+    @Resource(name="blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+    
 	@Override
-	public <T, T2> List<T> readDistinctValuesForField(String fieldName, Class<T2> facetSearchClass, Class<T> fieldValueClass) {
+	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass) {
 		CriteriaQuery<T> criteria = em.getCriteriaBuilder().createQuery(fieldValueClass);
-		Root<T2> root = criteria.from(facetSearchClass);
-		criteria.distinct(true)
-			.select(root.get(fieldName).as(fieldValueClass));
+		Root<ProductImpl> product = criteria.from(ProductImpl.class);
+		Path<Sku> sku = product.get("defaultSku");
+		
+		Path<?> pathToUse;
+		if (fieldName.contains("defaultSku.")) {
+			pathToUse = sku;
+			fieldName = fieldName.substring("defaultSku.".length());
+		} else {
+			pathToUse = product;
+		}
+		criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
+		
 		return em.createQuery(criteria).getResultList();
 	}
 

@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +48,16 @@ public interface CatalogService {
     public List<Product> findProductsByName(String searchName, int limit, int offset);
 
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
+    
+    /**
+     * Given a category and a ProudctSearchCriteria, returns the appropriate matching products
+     * 
+     * @param category
+     * @param currentDate
+     * @param searchCriteria
+     * @return the matching products
+     */
+	public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
 
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
@@ -160,6 +171,7 @@ public interface CatalogService {
      * @return
      */    
     public Product findProductByURI(String uri);
+
 
     
 }

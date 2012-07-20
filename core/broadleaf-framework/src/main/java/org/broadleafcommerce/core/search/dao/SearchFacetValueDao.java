@@ -33,10 +33,9 @@ public interface SearchFacetValueDao {
 	 * List<String> of these values.
 	 * 
 	 * @param fieldName
-	 * @param facetSearchClass
 	 * @param fieldValueClass
 	 * @return  the distinct values for the field
 	 */
-	public <T, T2> List<T> readDistinctValuesForField(String fieldName, Class<T2> facetSearchClass, Class<T> fieldValueClass);
+	public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass);
 
 }

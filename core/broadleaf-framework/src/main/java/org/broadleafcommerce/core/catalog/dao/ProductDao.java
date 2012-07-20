@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
 import javax.annotation.Nonnull;
 
@@ -82,6 +83,18 @@ public interface ProductDao {
      */
     @Nonnull
     public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate);
+    
+    /**
+     * Find all products whose start and end dates are before and after the passed in
+     * date, who are related to the given category, and match the given search criteria
+     * 
+     * @param categoryId
+     * @param currentDate
+     * @param searchCriteria
+     * @return the matching products
+     */
+    @Nonnull
+	public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, ProductSearchCriteria searchCriteria);
 
     @Nonnull
     public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate, @Nonnull int limit, @Nonnull int offset);
@@ -152,4 +165,5 @@ public interface ProductDao {
      * 
      */
 	List<Product> findProductByURI(String key);
+
 }
