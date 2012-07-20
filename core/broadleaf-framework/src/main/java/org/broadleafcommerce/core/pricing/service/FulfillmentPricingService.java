@@ -21,14 +21,14 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
-import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupTotalActivity;
+import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity;
 
 import java.util.List;
 import java.util.Set;
 
 /**
  * This service can be used in a couple of different ways. First, this is used in the pricing workflow and specifically
- * {@link FulfillmentGroupTotalActivity} to calculate costs for {@link FulfillmentGroup}s in an {@link Order}. This can
+ * {@link FulfillmentGroupMerchandiseTotalActivity} to calculate costs for {@link FulfillmentGroup}s in an {@link Order}. This can
  * also be injected in a controller to provide estimations for various {@link FulfillmentOption}s to display to the user
  * before an option is actually selected.
  * 
