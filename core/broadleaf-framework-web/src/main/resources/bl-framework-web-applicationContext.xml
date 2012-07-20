@@ -28,6 +28,7 @@
 	    <property name="processors">
 		  <set>
 			<bean class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
+            <bean class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
 			<bean class="org.broadleafcommerce.core.web.processor.SearchFacetValueProcessor" />

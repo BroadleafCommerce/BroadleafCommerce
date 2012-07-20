@@ -20,6 +20,7 @@ public class BroadleafManageAddressesController extends BroadleafAbstractControl
     }
 
     public String processManageAddresses(HttpServletRequest request, HttpServletResponse response, Model model) {
+
         return getManageAddressesView();
     }
 

@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
@@ -49,6 +50,22 @@ public class ProcessorUtils {
 		}
 		return catalogService;
 	}
+
+    /**
+     * Gets the "blOrderService" bean via the Spring Web Application Context
+     * @param arguments the Thymeleaf arguments that's part of the request
+     * @return "blOrderService" bean instance
+     */
+    public static OrderService getOrderService(Arguments arguments) {
+        String key = "blOrderService";
+        OrderService orderService = (OrderService) cachedBeans.get(key);
+        if (orderService == null) {
+            final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext();
+            orderService = (OrderService) appCtx.getBean(key);
+            cachedBeans.put(key, orderService);
+        }
+        return orderService;
+    }
 	
 	/**
 	 * Gets the "blExploitProtectionService" bean via the Spring Web Application Context
