@@ -72,7 +72,7 @@ public class UpSaleProductImpl implements RelatedProduct {
     
 	@ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
-    @Index(name="CROSSSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    @Index(name="UPSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category;
 
     @ManyToOne(targetEntity = ProductImpl.class)
