@@ -31,17 +31,11 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup#setMerchandiseTotal(Money)}, {@link FulfillmentGroup#getMerchandiseTotal()}
  */
-public class FulfillmentGroupTotalActivity extends BaseActivity {
+public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext) context).getSeedData();
-        /*Money subTotal = new Money(0D);
-        List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
-            subTotal = subTotal.add(orderItem.getPrice().multiply(orderItem.getQuantity()));
-        }
-        order.setSubTotal(subTotal);*/
 
         for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             Money merchandiseTotal = new Money(0D);
