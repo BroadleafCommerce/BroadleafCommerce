@@ -66,7 +66,7 @@ public interface CategorySearchFacet {
 	public void setSearchFacet(SearchFacet searchFacet);
 
 	/**
-	 * Gets the priority of this search facet in relationhsip to other search facets in this category
+	 * Gets the priority of this search facet in relationship to other search facets in this category
 	 * 
 	 * @return the position of this search facet
 	 */
