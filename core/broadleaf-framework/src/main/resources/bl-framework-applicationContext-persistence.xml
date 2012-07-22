@@ -203,5 +203,10 @@
 		<aop:pointcut id="blContentServiceOperation" expression="execution(* org.broadleafcommerce.core.content.service.ContentService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRelatedProductOperation" expression="execution(* org.broadleafcommerce.core.catalog.service.RelatedProductsService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRelatedProductOperation"/>
+	</aop:config>
 
 </beans>
