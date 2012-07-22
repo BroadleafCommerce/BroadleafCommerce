@@ -16,27 +16,10 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.io.Serializable;
 
-public interface FeaturedProduct extends PromotableProduct {
-
-    Long getId();
-
-    void setId(Long id);
-
-    Category getCategory();
-
-    void setCategory(Category category);
-
+public interface PromotableProduct extends Serializable {
     Product getProduct();
-
-    void setProduct(Product product);
-
-    void setSequence(Long sequence);
     
-    Long getSequence();
-
     String getPromotionMessage();
-
-    void setPromotionMessage(String promotionMessage);
-
 }

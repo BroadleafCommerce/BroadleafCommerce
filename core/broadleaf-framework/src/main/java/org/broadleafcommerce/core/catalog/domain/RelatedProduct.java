@@ -16,9 +16,8 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.io.Serializable;
 
-public interface RelatedProduct extends Serializable {
+public interface RelatedProduct extends PromotableProduct {
 	
     public Long getId();
 
