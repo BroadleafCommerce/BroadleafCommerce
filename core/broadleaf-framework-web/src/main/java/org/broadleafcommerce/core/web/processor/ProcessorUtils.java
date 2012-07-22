@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.openadmin.server.service.ExploitProtectionService;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +38,22 @@ import java.util.Map.Entry;
 public class ProcessorUtils {
 	
 	protected static Map<String, Object> cachedBeans = new HashMap<String, Object>();
+	
+	/**
+	 * Gets the "blRelatedProductsService" bean via the Spring Web Application Context
+	 * @param arguments the Thymeleaf arguments that's part of the request
+	 * @return "blRelatedProductsService" bean instance
+	 */
+	public static RelatedProductsService getRelatedProductsService(Arguments arguments) {
+		String key = "blRelatedProductsService";
+		RelatedProductsService relatedProductsService = (RelatedProductsService) cachedBeans.get(key);
+		if (relatedProductsService == null) { 
+			final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext(); 
+			relatedProductsService = (RelatedProductsService) appCtx.getBean(key);
+			cachedBeans.put(key, relatedProductsService);
+		}
+		return relatedProductsService;
+	}
 
 	/**
 	 * Gets the "blCatalogService" bean via the Spring Web Application Context
