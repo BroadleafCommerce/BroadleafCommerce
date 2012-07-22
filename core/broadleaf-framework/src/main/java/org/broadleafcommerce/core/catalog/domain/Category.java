@@ -498,5 +498,14 @@ public interface Category extends Serializable {
 	 * @return the current active search facets for this category and all parent categories
 	 */
 	public List<CategorySearchFacet> getCumulativeSearchFacets();
+	
+	/**
+	 * Build category hierarchy by walking the default category tree up to the root category.
+	 * If the passed in tree is null then create the initial list.
+	 * 
+	 * @param currentHierarchy
+	 * @return
+	 */
+	public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy);
 
 }

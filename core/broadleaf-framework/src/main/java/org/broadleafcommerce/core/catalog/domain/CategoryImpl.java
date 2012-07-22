@@ -68,11 +68,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -262,7 +265,7 @@ public class CategoryImpl implements Category, Status {
 
     @Transient
     @Hydrated(factoryMethod = "createChildCategoryURLMap")
-    protected Map<String, List<Long>> childCategoryURLMap;
+    protected Map<String, List<Long>> childCategoryURLMap;        
 
     @Transient
     protected List<Category> childCategories = new ArrayList<Category>(50);
@@ -275,7 +278,7 @@ public class CategoryImpl implements Category, Status {
 
     @Transient
     protected List<RelatedProduct> filteredUpSales = null;
-
+    
     @Override
     public Long getId() {
         return id;
@@ -496,6 +499,19 @@ public class CategoryImpl implements Category, Status {
     public void setChildCategoryURLMap(Map<String, List<Long>> childCategoryURLMap) {
         this.childCategoryURLMap = childCategoryURLMap;
     }
+    
+    @Override
+    public List<Category> buildCategoryHierarchy(List<Category> currentHierarchy) {
+    	if (currentHierarchy == null) {
+    		currentHierarchy = new ArrayList<Category>();
+    		currentHierarchy.add(this);
+    	}
+    	if (defaultParentCategory != null && ! currentHierarchy.contains(defaultParentCategory)) {
+    		currentHierarchy.add(defaultParentCategory);
+    		defaultParentCategory.buildCategoryHierarchy(currentHierarchy);
+    	}
+    	return currentHierarchy;
+    }
 
     @Override
     public List<Category> getAllParentCategories() {
@@ -573,29 +589,35 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<RelatedProduct> getCumulativeCrossSaleProducts() {
-    	List<RelatedProduct> products = getCrossSaleProducts();
-    	for (Category parentCategory : getAllParentCategories()) {
-    		products.addAll(parentCategory.getCumulativeCrossSaleProducts());
+    	Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
+    	    	
+    	List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+    	for (Category category : categoryHierarchy) {
+    		returnProductsSet.addAll(category.getCrossSaleProducts());
     	}
-    	return products;
+    	return new ArrayList<RelatedProduct>(returnProductsSet);
     }
     
     @Override
     public List<RelatedProduct> getCumulativeUpSaleProducts() {
-    	List<RelatedProduct> products = getUpSaleProducts();
-    	for (Category parentCategory : getAllParentCategories()) {
-    		products.addAll(parentCategory.getCumulativeUpSaleProducts());
+    	Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
+    	
+    	List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+    	for (Category category : categoryHierarchy) {
+    		returnProductsSet.addAll(category.getUpSaleProducts());
     	}
-    	return products;
+    	return new ArrayList<RelatedProduct>(returnProductsSet);
     }
 
     @Override
     public List<FeaturedProduct> getCumulativeFeaturedProducts() {
-    	List<FeaturedProduct> products = getFeaturedProducts();
-    	for (Category parentCategory : getAllParentCategories()) {
-    		products.addAll(parentCategory.getCumulativeFeaturedProducts());
+    	Set<FeaturedProduct> returnProductsSet = new LinkedHashSet<FeaturedProduct>();
+    	
+    	List<Category> categoryHierarchy = buildCategoryHierarchy(null);
+    	for (Category category : categoryHierarchy) {
+    		returnProductsSet.addAll(category.getFeaturedProducts());
     	}
-    	return products;
+    	return new ArrayList<FeaturedProduct>(returnProductsSet);
     }
     
     @Override
@@ -642,29 +664,28 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
-    	// We want to sort by position only within this level of facets
-    	SortedSet<CategorySearchFacet> sortedFacets = new TreeSet<CategorySearchFacet>(facetComparator);
-    	sortedFacets.addAll(getSearchFacets());
+    	List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
+    	returnFacets.addAll(getSearchFacets());
+    	Collections.sort(returnFacets, facetComparator);
     	
-    	// The parent facets are all on the same level, so we sort them together
-    	SortedSet<CategorySearchFacet> sortedParentFacets = new TreeSet<CategorySearchFacet>(facetComparator);
-    	for (Category category : getAllParentCategories()) {
-    		sortedParentFacets.addAll(category.getCumulativeSearchFacets());
+    	
+    	// Add in parent facets unless they are excluded
+    	List<CategorySearchFacet> parentFacets = null;
+    	if (defaultParentCategory != null) {
+    		parentFacets = defaultParentCategory.getCumulativeSearchFacets();   
+        	CollectionUtils.filter(parentFacets, new Predicate() {
+    			@Override
+    			public boolean evaluate(Object arg) {
+    				CategorySearchFacet csf = (CategorySearchFacet) arg;
+    				return !getExcludedSearchFacets().contains(csf.getSearchFacet());
+    			}
+        	});
+    	}
+    	if (parentFacets != null) {
+    		returnFacets.addAll(parentFacets);
     	}
     	
-    	CollectionUtils.filter(sortedParentFacets, new Predicate() {
-			@Override
-			public boolean evaluate(Object arg) {
-				CategorySearchFacet csf = (CategorySearchFacet) arg;
-				return !getExcludedSearchFacets().contains(csf.getSearchFacet());
-			}
-    	});
-    	
-    	// We want our facets followed by the parent facets
-    	List<CategorySearchFacet> facets = new ArrayList<CategorySearchFacet>();
-    	facets.addAll(sortedFacets);
-    	facets.addAll(sortedParentFacets);
-    	return facets;
+    	return returnFacets;
     }
 
 	@Override
