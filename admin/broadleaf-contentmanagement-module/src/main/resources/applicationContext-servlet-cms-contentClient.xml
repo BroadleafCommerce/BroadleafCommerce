@@ -13,26 +13,8 @@
         http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-    <!-- This was not getting picked up.  -->
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
-   		<property name="propertyLocations">
-   			<set>
-   				<value>classpath:config/bc/cms/</value>
-   			</set>
-   		</property>
-   		<property name="environments">
-   			<set>
-                   <value>production</value>
-                   <value>staging</value>
-                   <value>integrationqa</value>
-                   <value>integrationdev</value>
-                   <value>development</value>
-                   <value>local</value>
-   			</set>
-   		</property>
-   		<property name="defaultEnvironment" value="development"/>
-   		<property name="ignoreUnresolvablePlaceholders" value="true"/>
-   	</bean>
+    <!-- Note that this bean must be defined in both the servlet and non-servlet application contexts -->
+    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
     <context:component-scan base-package="org.broadleafcommerce.cms"/>
 

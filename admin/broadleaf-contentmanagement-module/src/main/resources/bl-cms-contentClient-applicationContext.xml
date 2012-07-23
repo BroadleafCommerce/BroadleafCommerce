@@ -10,25 +10,7 @@
 	<context:component-scan base-package="org.broadleafcommerce.cms"/>
     <context:component-scan base-package="org.broadleafcommerce.common.locale"/>
 
-    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer">
-        <property name="propertyLocations">
-            <set>
-                <value>classpath:config/bc/cms/</value>
-            </set>
-        </property>
-        <property name="environments">
-            <set>
-                <value>production</value>
-                <value>staging</value>
-                <value>integrationQA</value>
-                <value>integrationDev</value>
-                <value>development</value>
-                <value>local</value>
-            </set>
-        </property>
-        <property name="defaultEnvironment" value="development"/>
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-    </bean>
+    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">

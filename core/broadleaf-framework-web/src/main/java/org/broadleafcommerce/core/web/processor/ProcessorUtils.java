@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -69,6 +70,22 @@ public class ProcessorUtils {
 			cachedBeans.put(key, catalogService);
 		}
 		return catalogService;
+	}
+	
+	/**
+	 * Gets the "blStaticAssetService" bean via the Spring Web Application Context
+	 * @param arguments the Thymeleaf arguments that's part of the request
+	 * @return "blStaticAssetService" bean instance
+	 */
+	public static StaticAssetService getStaticAssetService(Arguments arguments) {
+		String key = "blStaticAssetService";
+		StaticAssetService staticAssetService = (StaticAssetService) cachedBeans.get(key);
+		if (staticAssetService == null) { 
+			final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext(); 
+			staticAssetService = (StaticAssetService) appCtx.getBean(key);
+			cachedBeans.put(key, staticAssetService);
+		}
+		return staticAssetService;
 	}
 
     /**
