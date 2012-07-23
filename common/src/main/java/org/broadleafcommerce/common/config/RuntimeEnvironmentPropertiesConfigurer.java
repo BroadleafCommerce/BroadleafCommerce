@@ -30,10 +30,10 @@ import org.springframework.util.StringValueResolver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * A property resource configurer that chooses the property file at runtime
@@ -73,9 +73,9 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
     
-    protected static Set<String> defaultEnvironments = new TreeSet<String>();
-    protected static Set<Resource> defaultPropertyLocations = new TreeSet<Resource>();
-    protected static String defaultDefaultEnvironment = "development";
+    protected static Set<String> defaultEnvironments = new HashSet<String>();
+    protected static Set<Resource> blcPropertyLocations = new HashSet<Resource>();
+    protected static Set<Resource> defaultPropertyLocations = new HashSet<Resource>();
 
     
     static {
@@ -85,13 +85,15 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     	defaultEnvironments.add("integrationdev");
     	defaultEnvironments.add("development");
     	defaultEnvironments.add("local");
-		defaultPropertyLocations.add(new ClassPathResource("classpath:config/bc/admin/"));
-		defaultPropertyLocations.add(new ClassPathResource("classpath:config/bc/"));
-		defaultPropertyLocations.add(new ClassPathResource("classpath:config/bc/cms/"));
-		defaultPropertyLocations.add(new ClassPathResource("classpath:runtime-properties/"));
+    	
+		blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
+		blcPropertyLocations.add(new ClassPathResource("config/bc/"));
+		blcPropertyLocations.add(new ClassPathResource("config/bc/cms/"));
+		
+		defaultPropertyLocations.add(new ClassPathResource("runtime-properties/"));
     }
 
-    protected String defaultEnvironment;
+    protected String defaultEnvironment = "development";
     protected RuntimeEnvironmentKeyResolver keyResolver;
     protected Set<String> environments = Collections.emptySet();
     protected Set<Resource> propertyLocations;
@@ -109,14 +111,12 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     	}
     	
     	// Prepend the default property locations to the specified property locations (if any)
-    	if (propertyLocations == null || propertyLocations.size() == 0) {
-    		propertyLocations = defaultPropertyLocations;
-    	} else {
-    		Set<Resource> combinedLocations = new TreeSet<Resource>();
-    		combinedLocations.addAll(defaultPropertyLocations);
+		Set<Resource> combinedLocations = new HashSet<Resource>();
+		combinedLocations.addAll(defaultPropertyLocations);
+    	if (propertyLocations != null && propertyLocations.size() > 0) {
     		combinedLocations.addAll(propertyLocations);
-    		propertyLocations = combinedLocations;
     	}
+    	propertyLocations = combinedLocations;
     
         if (!environments.contains(defaultEnvironment)) {
             throw new AssertionError("Default environment '" + defaultEnvironment + "' not listed in environment list");
@@ -127,6 +127,8 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
 
         String environment = determineEnvironment();
+        
+        Resource[] blcPropertiesLocation = createBroadleafResource();
         
         Resource[] sharedPropertiesLocation = createSharedPropertiesResource(environment);
         Resource[] sharedCommonLocation = createSharedCommonResource();
@@ -141,6 +143,12 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
          * [environment]-shared.properties
          * common.properties
          * [environment].properties */
+        
+        for (Resource resource : blcPropertiesLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
         
         for (Resource resource : sharedCommonLocation) {
             if (resource.exists()) {
@@ -166,17 +174,19 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
             }
         }
         
-        Properties props = new Properties();
-        for (Resource resource : allLocations) {
-            if (resource.exists()) {
-                props = new Properties(props);
-                props.load(resource.getInputStream());
-                for (Entry<Object, Object> entry : props.entrySet()) {
-                	System.out.println("***** " + entry.getKey() + " " + entry.getValue());
-                }
-            } else {
-                LOG.warn("Unable to locate resource: " + resource.getFilename());
-            }
+        if (LOG.isDebugEnabled()) {
+	        Properties props = new Properties();
+	        for (Resource resource : allLocations) {
+	            if (resource.exists()) {
+	                props = new Properties(props);
+	                props.load(resource.getInputStream());
+	                for (Entry<Object, Object> entry : props.entrySet()) {
+	                	LOG.debug("Read " + entry.getKey() + " as " + entry.getValue());
+	                }
+	            } else {
+	                LOG.debug("Unable to locate resource: " + resource.getFilename());
+	            }
+	        }
         }
 
 
@@ -190,6 +200,16 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         int index = 0;
         for (Resource resource : propertyLocations) {
             resources[index] = resource.createRelative(fileName);
+            index++;
+        }
+        return resources;
+    }
+    
+    protected Resource[] createBroadleafResource() throws IOException {
+        Resource[] resources = new Resource[blcPropertyLocations.size()];
+        int index = 0;
+        for (Resource resource : blcPropertyLocations) {
+            resources[index] = resource.createRelative("common.properties");
             index++;
         }
         return resources;
