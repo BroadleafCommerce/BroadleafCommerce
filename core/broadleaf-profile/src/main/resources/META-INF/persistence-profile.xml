@@ -28,8 +28,6 @@
         <class>org.broadleafcommerce.profile.core.domain.PhoneImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.RoleImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.StateImpl</class>
-        <class>org.broadleafcommerce.profile.core.domain.UserImpl</class>
-        <class>org.broadleafcommerce.profile.core.domain.UserRoleImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.show_sql" value="true"/>

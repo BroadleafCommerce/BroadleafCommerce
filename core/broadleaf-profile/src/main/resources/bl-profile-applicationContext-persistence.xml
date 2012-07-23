@@ -174,16 +174,6 @@
 	</aop:config>	
 
 	<aop:config>
-		<aop:pointcut id="blUserServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.UserService.save*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blUserServiceOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blUserServiceOperation2" expression="execution(* org.broadleafcommerce.profile.core.service.UserService.change*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blUserServiceOperation2"/>
-	</aop:config>
-
-	<aop:config>
 		<aop:pointcut id="blIdGenerationDaoOperation" expression="execution(* org.broadleafcommerce.profile.core.dao.IdGenerationDao.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationDaoOperation"/>
 	</aop:config>
