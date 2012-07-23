@@ -35,5 +35,23 @@ public interface CustomerAddress extends Serializable {
     public Address getAddress();
 
     public void setAddress(Address address);
+    
+    /**
+     * If set to true, this address is the address that will populate the address on the checkout form
+     * for a logged in user.
+     * 
+     * @return
+     */
+    public Boolean getDefaultAddressFlag();
+
+    /**
+     * Used to set the indicator that the current address should be treated as the default address.
+     * The behavior of the system is undefined if there are multiple default addresses for 
+     * a customer.
+     * 
+     * @param defaultAddressFlag
+     */
+	public void setDefaultAddressFlag(Boolean defaultAddressFlag);
+	
 
 }

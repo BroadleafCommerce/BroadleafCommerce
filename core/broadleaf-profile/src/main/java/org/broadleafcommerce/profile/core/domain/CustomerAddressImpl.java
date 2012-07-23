@@ -78,6 +78,11 @@ public class CustomerAddressImpl implements CustomerAddress {
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
+    
+    
+    @Column(name = "DEFAULT_FLAG")
+    @AdminPresentation(friendlyName = "CustomerAddressImpl_Default_Flag", order=2, group="CustomerAddressImpl_Identification")
+    protected Boolean defaultAddressFlag; 
 
     public Long getId() {
         return id;
@@ -110,8 +115,21 @@ public class CustomerAddressImpl implements CustomerAddress {
     public void setAddress(Address address) {
         this.address = address;
     }
-    
+
     @Override
+    public Boolean getDefaultAddressFlag() {
+    	if (defaultAddressFlag == null) {
+    		return Boolean.FALSE;
+    	}
+		return defaultAddressFlag;
+	}
+
+    @Override
+	public void setDefaultAddressFlag(Boolean defaultAddressFlag) {
+		this.defaultAddressFlag = defaultAddressFlag;
+	}
+
+	@Override
     public String toString() {
     	return (addressName == null) 
         		? address.getFirstName() + " - " + address.getAddressLine1()
@@ -124,6 +142,7 @@ public class CustomerAddressImpl implements CustomerAddress {
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((addressName == null) ? 0 : addressName.hashCode());
+        result = prime * result + ((defaultAddressFlag == null) ? 0 : defaultAddressFlag.hashCode());
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
         return result;
     }
@@ -147,11 +166,19 @@ public class CustomerAddressImpl implements CustomerAddress {
                 return false;
         } else if (!address.equals(other.address))
             return false;
+        
         if (addressName == null) {
             if (other.addressName != null)
                 return false;
         } else if (!addressName.equals(other.addressName))
             return false;
+        
+        if (defaultAddressFlag == null) {
+            if (other.defaultAddressFlag != null)
+                return false;
+        } else if (!defaultAddressFlag.equals(other.defaultAddressFlag))
+            return false;        
+        
         if (customer == null) {
             if (other.customer != null)
                 return false;
