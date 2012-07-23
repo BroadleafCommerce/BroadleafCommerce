@@ -52,6 +52,14 @@ public interface GeneratedMessagesEntityCMS extends ConstantsWithLookup {
     public String PageTemplateImpl_Template_Id();
     public String PageTemplateImpl_Template_Name();
     public String PageTemplateImpl_Template_Path();
+    public String PageImpl_Priority();
+    public String PageImpl_Offline();
+    public String PageItemCriteriaImpl_basePageItemCriteria();
+    public String PageItemCriteriaImpl_Item_Criteria_Id();
+    public String PageItemCriteriaImpl_Quantity();
+    public String PageItemCriteriaImpl_Order_Item_Match_Rule();
+    
+    
     public String StructuredContentFieldTemplateImpl_baseStructuredContentFieldTemplate();
     public String StructuredContentFieldTemplateImpl_Field_Template_Name();
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.structure.domain;
+package org.broadleafcommerce.cms.page.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,97 +37,79 @@ import org.hibernate.annotations.Type;
 
 /**
  * 
- * @author jfischer
+ * @author bpolster
  *
  */
 @Entity
-@Table(name = "BLC_SC_ITEM_CRITERIA")
+@Table(name = "BLC_PAGE_ITEM_CRITERIA")
 @Inheritance(strategy=InheritanceType.JOINED)
-@AdminPresentationClass(friendlyName = "StructuredContentItemCriteriaImpl_baseStructuredContentItemCriteria")
-public class StructuredContentItemCriteriaImpl implements StructuredContentItemCriteria {
+@AdminPresentationClass(friendlyName = "PageItemCriteriaImpl_basePageItemCriteria")
+public class PageItemCriteriaImpl implements PageItemCriteria {
 	
 	public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "SCItemCriteriaId")
+    @GeneratedValue(generator= "PageItemCriteriaId")
     @GenericGenerator(
-        name="SCItemCriteriaId",
+        name="PageItemCriteriaId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
             @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
             @Parameter(name="segment_column_name", value="ID_NAME"),
             @Parameter(name="value_column_name", value="ID_VAL"),
-            @Parameter(name="segment_value", value="StructuredContentItemCriteriaImpl"),
+            @Parameter(name="segment_value", value="PageItemCriteriaImpl"),
             @Parameter(name="increment_size", value="50"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageItemCriteriaImpl")
         }
     )
-    @Column(name = "SC_ITEM_CRITERIA_ID")
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id", group = "StructuredContentItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @Column(name = "PAGE_ITEM_CRITERIA_ID")
+    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Item_Criteria_Id", group = "PageItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Quantity", group = "StructuredContentItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Quantity", group = "PageItemCriteriaImpl_Description", visibility =VisibilityEnum.HIDDEN_ALL)
 	protected Integer quantity;
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "ORDER_ITEM_MATCH_RULE")
-    @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Order_Item_Match_Rule", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
 	protected String orderItemMatchRule;
     
-    @ManyToOne(targetEntity = StructuredContentImpl.class)
-    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "SC_ID"))
-    protected StructuredContent structuredContent;
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getId()
-	 */
+    @ManyToOne(targetEntity = PageImpl.class)
+    @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", joinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_ID"))
+    protected Page page;
+	
 	public Long getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setId(java.lang.Long)
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getReceiveQuantity()
-	 */
 	public Integer getQuantity() {
 		return quantity;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setReceiveQuantity(java.lang.Integer)
-	 */
 	public void setQuantity(Integer receiveQuantity) {
 		this.quantity = receiveQuantity;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getOrderItemMatchRule()
-	 */
 	public String getOrderItemMatchRule() {
 		return orderItemMatchRule;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setOrderItemMatchRule(java.lang.String)
-	 */
 	public void setOrderItemMatchRule(String orderItemMatchRule) {
 		this.orderItemMatchRule = orderItemMatchRule;
 	}
 
-    public StructuredContent getStructuredContent() {
-        return structuredContent;
+    public Page getPage() {
+        return page;
     }
 
-    public void setStructuredContent(StructuredContent structuredContent) {
-        this.structuredContent = structuredContent;
+    public void setPage(Page page) {
+        this.page = page;
     }
 
     @Override
@@ -148,7 +130,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StructuredContentItemCriteriaImpl other = (StructuredContentItemCriteriaImpl) obj;
+		PageItemCriteriaImpl other = (PageItemCriteriaImpl) obj;
 		
 		if (id != null && other.id != null) {
             return id.equals(other.id);
@@ -167,8 +149,8 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
 		return true;
 	}
 
-    public StructuredContentItemCriteria cloneEntity() {
-        StructuredContentItemCriteriaImpl newField = new StructuredContentItemCriteriaImpl();
+    public PageItemCriteria cloneEntity() {
+        PageItemCriteriaImpl newField = new PageItemCriteriaImpl();
         newField.quantity = quantity;
         newField.orderItemMatchRule = orderItemMatchRule;
 

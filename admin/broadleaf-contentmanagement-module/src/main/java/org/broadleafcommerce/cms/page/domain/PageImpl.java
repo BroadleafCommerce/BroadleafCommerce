@@ -16,11 +16,27 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,25 +46,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by bpolster.
@@ -73,6 +79,8 @@ import org.hibernate.annotations.Index;
 public class PageImpl implements Page {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Integer ZERO = new Integer(0);
 
     @Id
     @GeneratedValue(generator = "PageId", strategy = GenerationType.TABLE)
@@ -129,7 +137,28 @@ public class PageImpl implements Page {
     @Column (name = "ORIG_PAGE_ID")
     @AdminPresentation(friendlyName = "PageImpl_Original_Page_ID", order=6, group = "PageImpl_Page", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ORIG_PAGE_ID_INDX", columnNames={"ORIG_PAGE_ID"})
-    protected Long originalPageId;
+    protected Long originalPageId;      
+    
+    @AdminPresentation(friendlyName = "PageImpl_Priority", order=3, group = "PageImpl_Description")
+    @Column(name = "PRIORITY")
+    protected Integer priority;
+    
+    @AdminPresentation(friendlyName = "PageImpl_Offline", order=4, group = "PageImpl_Description")
+    @Column(name = "OFFLINE_FLAG")
+    protected Boolean offlineFlag = false;     
+
+    @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_PAGE_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKeyColumn(name = "MAP_KEY", nullable = false)
+    Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade={CascadeType.ALL})
+    @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", joinColumns = @JoinColumn(name = "PAGE_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
+
+    
 
     @Embedded
     @AdminPresentation(excluded = true)
@@ -259,6 +288,53 @@ public class PageImpl implements Page {
     public void setLockedFlag(Boolean lockedFlag) {
         this.lockedFlag = lockedFlag;
     }
+    
+    @Override
+    public Boolean getOfflineFlag() {
+        if (offlineFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return offlineFlag;
+        }
+    }
+
+    @Override
+    public void setOfflineFlag(Boolean offlineFlag) {
+        this.offlineFlag = offlineFlag;
+    }
+
+    @Override
+    public Integer getPriority() {
+    	if (priority == null) {
+    		return ZERO;
+    	}
+        return priority;
+    }
+
+    @Override
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+    
+    @Override
+    public Map<String, PageRule> getPageMatchRules() {
+        return pageMatchRules;
+    }
+
+    @Override
+    public void setPageMatchRules(Map<String, PageRule> pageMatchRules) {
+        this.pageMatchRules = pageMatchRules;
+    }
+
+    @Override
+    public Set<PageItemCriteria> getQualifyingItemCriteria() {
+        return qualifyingItemCriteria;
+    }
+
+    @Override
+    public void setQualifyingItemCriteria(Set<PageItemCriteria> qualifyingItemCriteria) {
+        this.qualifyingItemCriteria = qualifyingItemCriteria;
+    }
 
     @Override
     public Page cloneEntity() {
@@ -270,8 +346,22 @@ public class PageImpl implements Page {
         newPage.description = description;
         newPage.sandbox = sandbox;
         newPage.originalPageId = originalPageId;
+        newPage.offlineFlag = offlineFlag;        
+        newPage.priority = priority;
         newPage.originalSandBox = originalSandBox;
         newPage.fullUrl = fullUrl;
+        
+        Map<String, PageRule> ruleMap = newPage.getPageMatchRules();
+        for (String key : pageMatchRules.keySet()) {
+            PageRule newField = pageMatchRules.get(key).cloneEntity();
+            ruleMap.put(key, newField);
+        }
+
+        Set<PageItemCriteria> criteriaList = newPage.getQualifyingItemCriteria();
+        for (PageItemCriteria pageItemCriteria : qualifyingItemCriteria) {
+            PageItemCriteria newField = pageItemCriteria.cloneEntity();
+            criteriaList.add(newField);
+        }
 
         for (PageField oldPageField: pageFields.values()) {
             PageField newPageField = oldPageField.cloneEntity();

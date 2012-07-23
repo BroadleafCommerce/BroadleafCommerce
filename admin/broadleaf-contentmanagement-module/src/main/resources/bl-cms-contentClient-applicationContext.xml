@@ -95,6 +95,24 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blPageDefaultRuleProcessor" class="org.broadleafcommerce.cms.page.service.PageDefaultRuleProcessor">
+        <property name="contextClassNames">
+            <map>
+                <entry key="customer" value="org.broadleafcommerce.profile.core.domain.Customer" />
+                <entry key="time" value="org.broadleafcommerce.common.TimeDTO" />
+                <entry key="request" value="org.broadleafcommerce.common.RequestDTO" />
+            </map>
+	    </property>
+    </bean>
+
+    <bean id="blPageRuleProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageDefaultRuleProcessor"/>
+            </list>
+        </property>
+    </bean>    
 
     <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
         <property name="namedOperationComponents">

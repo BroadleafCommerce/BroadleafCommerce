@@ -27,7 +27,8 @@
                   page.sandbox is null AND
                   page.pageTemplate.locale = :locale AND
                   page.archivedFlag = false AND
-                  page.deletedFlag = false
+                  page.deletedFlag = false AND
+                  (page.offlineFlag is null OR page.offlineFlag = false)
 		</query>
 	</named-query>
 
@@ -39,7 +40,8 @@
                   page.sandbox = :sandbox AND
                   page.pageTemplate.locale = :locale AND
                   page.archivedFlag = false AND
-                  page.deletedFlag = false
+                  page.deletedFlag = false AND
+                  (page.offlineFlag is null OR page.offlineFlag = false)
 		</query>
 	</named-query>
 

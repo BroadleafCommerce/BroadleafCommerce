@@ -16,8 +16,11 @@
 
 package org.broadleafcommerce.cms.page.dto;
 
+import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
+
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +39,10 @@ public class PageDTO implements Serializable {
     protected String templatePath;
     protected String url;
     protected Long sandboxId;
+    protected Integer priority;
     protected Map<String, String> pageFields = new HashMap<String,String>();
+    protected String ruleExpression;
+    protected List<ItemCriteriaDTO> itemCriteriaDTOList;
 
     public Long getId() {
         return id;
@@ -93,5 +99,30 @@ public class PageDTO implements Serializable {
     public void setPageFields(Map<String, String> pageFields) {
         this.pageFields = pageFields;
     }
+    
+    public String getRuleExpression() {
+        return ruleExpression;
+    }
+
+    public void setRuleExpression(String ruleExpression) {
+        this.ruleExpression = ruleExpression;
+    }
+
+    public List<ItemCriteriaDTO> getItemCriteriaDTOList() {
+        return itemCriteriaDTOList;
+    }
+
+    public void setItemCriteriaDTOList(List<ItemCriteriaDTO> itemCriteriaDTOList) {
+        this.itemCriteriaDTOList = itemCriteriaDTOList;
+    }
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}   
+    
 }
 
