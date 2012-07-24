@@ -106,5 +106,6 @@ public interface MerchandisingMessages extends ConstantsWithLookup {
     public String bundleItemQuantity();
     public String bundleItemSalePrice();
     public String bundleItemSalePriceTooltip();
+    public String cloneButtonTitle();
     
 }

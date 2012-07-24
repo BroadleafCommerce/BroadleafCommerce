@@ -58,13 +58,15 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 	protected ToolStripButton generateSkusButton;
 	protected SubItemView skusDisplay;
 	protected GridStructureView bundleItemsDisplay;
+	protected ToolStripButton cloneProductButton;
     
 	public OneToOneProductSkuView() {
 		setHeight100();
 		setWidth100();
 	}
 	
-	public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
+	@Override
+    public void build(DataSource entityDataSource, DataSource... additionalDataSources) {
 		VLayout leftVerticalLayout = new VLayout();
 		leftVerticalLayout.setID("productSkuLeftVerticalLayout");
 		leftVerticalLayout.setHeight100();
@@ -72,7 +74,10 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		leftVerticalLayout.setShowResizeBar(true);
         
 		listDisplay = new DynamicEntityListView(BLCMain.getMessageManager().getString("productsListTitle"), entityDataSource);
-        leftVerticalLayout.addMember(listDisplay);
+		cloneProductButton = new ToolStripButton(BLCMain.getMessageManager().getString("cloneButtonTitle"));
+		cloneProductButton.disable();
+		listDisplay.getToolBar().addButton(cloneProductButton);
+		leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet(); 
         topTabSet.setID("productSkuTopTabSet");
@@ -172,52 +177,69 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         addMember(topTabSet);
 	}
 
-	public Canvas asCanvas() {
+	@Override
+    public Canvas asCanvas() {
 		return this;
 	}
 
-	public GridStructureDisplay getCrossSaleDisplay() {
+	@Override
+    public GridStructureDisplay getCrossSaleDisplay() {
 		return crossSaleDisplay;
 	}
 
-	public GridStructureDisplay getUpSaleDisplay() {
+	@Override
+    public GridStructureDisplay getUpSaleDisplay() {
 		return upSaleDisplay;
 	}
 
-	public GridStructureDisplay getMediaDisplay() {
+	@Override
+    public GridStructureDisplay getMediaDisplay() {
 		return mediaDisplay;
 	}
 
-	public DynamicFormDisplay getDynamicFormDisplay() {
+	@Override
+    public DynamicFormDisplay getDynamicFormDisplay() {
 		return dynamicFormDisplay;
 	}
 	
-	public DynamicEntityListDisplay getListDisplay() {
+	@Override
+    public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
 	}
 	
-	public GridStructureDisplay getAttributesDisplay() {
+	@Override
+    public GridStructureDisplay getAttributesDisplay() {
 		return attributesDisplay;
 	}
 
-	public GridStructureDisplay getAllCategoriesDisplay() {
+	@Override
+    public GridStructureDisplay getAllCategoriesDisplay() {
 		return allCategoriesDisplay;
 	}
 
-	public ExpandableGridStructureDisplay getProductOptionsDisplay() {
+	@Override
+    public ExpandableGridStructureDisplay getProductOptionsDisplay() {
 	    return productOptionsDisplay;
 	}
 	
-	public ToolStripButton getGenerateSkusButton() {
+	@Override
+    public ToolStripButton getGenerateSkusButton() {
 	    return generateSkusButton;
 	}
 	
-	public SubItemDisplay getSkusDisplay() {
+	@Override
+    public SubItemDisplay getSkusDisplay() {
         return skusDisplay;
     }
 	
-	public GridStructureDisplay getBundleItemsDisplay() {
+	@Override
+    public GridStructureDisplay getBundleItemsDisplay() {
 	    return bundleItemsDisplay;
+	}
+	
+	@Override
+	public ToolStripButton getCloneProductButton() {
+	    return cloneProductButton;
 	}
 
 }

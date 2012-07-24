@@ -44,10 +44,8 @@ import org.broadleafcommerce.openadmin.client.datasource.dynamic.ListGridDataSou
 import org.broadleafcommerce.openadmin.client.datasource.dynamic.TileGridDataSource;
 import org.broadleafcommerce.openadmin.client.dto.OperationType;
 import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
-import org.broadleafcommerce.openadmin.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.entity.FormItemCallback;
 import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresentable;
-import org.broadleafcommerce.openadmin.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.EditableJoinStructurePresenter;
 import org.broadleafcommerce.openadmin.client.presenter.structure.SimpleSearchJoinStructurePresenter;
@@ -58,9 +56,7 @@ import org.broadleafcommerce.openadmin.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.AssetSearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.openadmin.client.view.dynamic.dialog.MapStructureEntityEditDialog;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.HTMLTextItem;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -115,6 +111,7 @@ public class OneToOneProductSkuPresenter extends HtmlEditingPresenter implements
         skusPresenter.load(selectedRecord, dataSource, null);
         bundleItemsPresenter.load(selectedRecord, dataSource, null);
         addListenerToFormItem(getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm());
+        getDisplay().getCloneProductButton().enable();
 	}
 
     @Override
@@ -164,6 +161,29 @@ public class OneToOneProductSkuPresenter extends HtmlEditingPresenter implements
                 
             }
         });
+		
+		getDisplay().getCloneProductButton().addClickHandler(new ClickHandler() {
+		    @Override
+		    public void onClick(ClickEvent event) {
+                final Long productId = Long.parseLong(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
+                final String productName = getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttribute("defaultSku.name");
+                AppServices.CATALOG.cloneProduct(productId, new AsyncCallback<Boolean>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        SC.say("There was an error when cloning product " + productName);
+                    }
+
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        if (result) {
+                            SC.say(productName + " has been cloned successfully");
+                        } else {
+                            SC.say("There was an error when cloning product " + productName);
+                        }
+                    }
+                });
+		    }
+		});
 	}
 	
 	@Override
@@ -277,7 +297,7 @@ public class OneToOneProductSkuPresenter extends HtmlEditingPresenter implements
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("skusDS", new ProductSkusDataSourceFactory(), new AsyncCallbackAdapter() {
             @Override
             public void onSetupSuccess(DataSource result) {
-                skusPresenter = new SubPresenter(getDisplay().getSkusDisplay());
+                skusPresenter = new SkusPresenter(getDisplay().getSkusDisplay(), "Add Sku", null, false, true, false);
                 //grid fields are managed by declared prominence on the entity itself
                 skusPresenter.setDataSource((ListGridDataSource) result, new String[]{}, new Boolean[]{});
             }
