@@ -76,6 +76,7 @@ import com.smartgwt.client.widgets.tree.events.DataArrivedHandler;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 
@@ -317,7 +318,10 @@ public class CategoryPresenter extends HtmlEditingPresenter implements Instantia
 		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("mediaMapDS", new MediaMapDataSourceFactory(this), null, new Object[]{getMediaMapKeys()}, new AsyncCallbackAdapter() {
 			@Override
             public void onSetupSuccess(DataSource result) {
-				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("newMediaTitle"));
+                Map<String, Object> initialValues = new HashMap<String, Object>(2);
+                initialValues.put("name", BLCMain.getMessageManager().getString("mediaNameDefault"));
+                initialValues.put("label", BLCMain.getMessageManager().getString("mediaLabelDefault"));
+				mediaPresenter = new MapStructurePresenter(getDisplay().getMediaDisplay(), getMediaEntityView(), new String[]{EntityImplementations.CATEGORY}, BLCMain.getMessageManager().getString("newMediaTitle"), initialValues);
                 mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "url", "title", "altText", "tags"}, new Boolean[]{true, true, true, true, true});
 			}
 		}));
