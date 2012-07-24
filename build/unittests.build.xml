@@ -36,7 +36,7 @@
 
 	<taskdef resource="testngtasks">
 		<classpath>
-			<pathelement location="${test.lib.dir}/testng-5.8-jdk15.jar" />
+			<pathelement location="${test.lib.dir}/testng-5.9-jdk15.jar" />
 		</classpath>
 	</taskdef>
 
@@ -87,8 +87,10 @@
 			reporter="org.testng.reporters.XMLReporter"
     		classpathref="test-lib-path">
 			<jvmarg value="-Xmx512M" />
+<!--
 			<jvmarg value="-Xdebug" />
 			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001" />
+-->
 			<sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.instrumented.classes}/cobertura.ser" />
 
 			<xmlfileset dir="${stage.dir}/test-folder" includes="**/*testng.xml"/>
