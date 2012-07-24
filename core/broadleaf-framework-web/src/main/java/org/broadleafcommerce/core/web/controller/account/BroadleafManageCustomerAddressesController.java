@@ -20,6 +20,7 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
 
@@ -31,10 +32,13 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
 	private CountryService countryService;
 	@Resource(name = "blCustomerAddressValidator")
 	private CustomerAddressValidator customerAddressValidator;
-	
 	@Resource(name = "blStateService")
 	private StateService stateService;
-    
+   
+    protected String addressUpdatedMessage = "Address successfully updated";
+    protected String addressAddedMessage = "Address successfully added";
+    protected String addressRemovedMessage = "Address successfully removed";
+	
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
     
@@ -96,7 +100,7 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     	return getCustomerAddressesView();
     }
 
-    public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result) {
+    public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) {
     	customerAddressValidator.validate(form, result);
     	if (result.hasErrors()) {
     		return getCustomerAddressesView();
@@ -106,15 +110,19 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         customerAddress.setAddress(address);
         customerAddress.setAddressName(form.getAddressName());
         customerAddress.setCustomer(CustomerState.getCustomer());
-        customerAddressService.saveCustomerAddress(customerAddress);
+        customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
+    	if (form.getAddress().isDefault()) {
+    		customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
+    	}
         if (!isAjaxRequest(request)) {
     		List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
     		model.addAttribute("addresses", addresses);
     	}
+        redirectAttributes.addFlashAttribute("successMessage", getAddressAddedMessage());
         return getCustomerAddressesRedirect();
     }
     
-    public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result) {
+    public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) {
     	customerAddressValidator.validate(form, result);
     	if (result.hasErrors()) {
     		return getCustomerAddressesView();
@@ -125,12 +133,17 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     	}
     	customerAddress.setAddress(form.getAddress());
     	customerAddress.setAddressName(form.getAddressName());
-    	customerAddressService.saveCustomerAddress(customerAddress);
+    	customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
+    	if (form.getAddress().isDefault()) {
+    		customerAddressService.makeCustomerAddressDefault(customerAddress.getId(), customerAddress.getCustomer().getId());
+    	}
+    	redirectAttributes.addFlashAttribute("successMessage", getAddressUpdatedMessage());
     	return getCustomerAddressesRedirect();
     }
     
-    public String removeCustomerAddress(HttpServletRequest request, Long customerAddressId) {
+    public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
     	customerAddressService.deleteCustomerAddressById(customerAddressId);
+    	redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
     	return getCustomerAddressesRedirect();
     }
 
@@ -150,4 +163,16 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
 		BroadleafManageCustomerAddressesController.customerAddressesRedirect = customerAddressesRedirect;
 	}
 
+	public String getAddressUpdatedMessage() {
+		return addressUpdatedMessage;
+	}
+
+	public String getAddressAddedMessage() {
+		return addressAddedMessage;
+	}
+
+	public String getAddressRemovedMessage() {
+		return addressRemovedMessage;
+	}
+	
 }
